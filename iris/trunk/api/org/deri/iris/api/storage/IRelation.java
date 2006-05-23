@@ -17,25 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.deri.iris.api.operations.tuple;
+package org.deri.iris.api.storage;
 
-import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.operations.basics.IUnificationSet;
+
 
 /**
  * Interface or class description
  *
- * Interface of a unification operation used to promote modularity of inference engines.
- * 
  * @author Darko Anicic
- * @date  11.04.2006 @time  15:54:09
+ * @date  11.04.2006 @time  14:55:12
  *
- * @version $Revision: 1.2 $ $Date: 2006-05-23 13:14:40 $
+ * @version $Revision: 1.1 $ $Date: 2006-05-23 13:15:09 $
  */
-public interface IUnification {
+public interface IRelation<Type extends ITuple> extends java.util.Collection<ITuple>{
 
-	public IUnificationSet unify(final IAtom arg0, final IAtom arg1);
-	
-	public IUnificationSet unify(final ITuple arg0, final ITuple arg1);
 }

@@ -19,21 +19,22 @@
  */
 package org.deri.iris.api.operations.relation;
 
-import java.util.Set;
-
-import org.deri.iris.api.storage.Relation;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.storage.IRelation;
 
 /**
  * Interface or class description
  *
- * Interface of a project operation used to promote modularity of inference engines.
+ * Interface of a select relation used to promote modularity of inference engines.
  *
  * @author Darko Anicic
- * @date  11.04.2006 @time  14:44:16
+ * @date  11.04.2006 @time  15:18:20
  *
- * @version $Revision: 1.1 $ $Date: 2006-05-17 14:08:05 $
+ * @version $Revision: 1.1 $ $Date: 2006-05-23 13:14:19 $
  */
-public interface Projection {
+public interface ISelection {
 
-	public Relation project(final Relation relation, final Set<Integer> arg);
+	// public IRelation select(final IRelation relation, final Set<ITuple> tuple);
+	
+	public IRelation select(final IRelation relation, final ITuple tuple);
 }

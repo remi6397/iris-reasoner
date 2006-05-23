@@ -17,22 +17,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.deri.iris.api.operations.relation;
+package org.deri.iris.api.factory;
 
-import org.deri.iris.api.storage.Relation;
+import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.IStringTerm;
+import org.deri.iris.api.terms.IVariable;
 
 /**
- * Interface or class description
- *
- * Interface of a join operation used to promote modularity of inference engines.
- 
- * @author Darko Anicic
- * @date  11.04.2006 @time  15:09:02
- *
- * @version $Revision: 1.1 $ $Date: 2006-05-17 14:08:05 $
+ * @author Darko Anicic, DERI Innsbruck
+ * 20.02.2006 16:05:29 
  */
-public interface Join {
+public interface ITermFactory {
 
-	public Relation join(final Relation arg0, final Relation arg1);
+	public IConstantTerm createConstantTerm(String arg);
 	
+	public IStringTerm createStringTerm(String arg);
+	
+	public IVariable createVariable(String name);
 }

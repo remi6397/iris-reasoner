@@ -19,19 +19,35 @@
  */
 package org.deri.iris.api.factory;
 
-import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.IStringTerm;
-import org.deri.iris.api.terms.IVariable;
 
 /**
  * @author Darko Anicic, DERI Innsbruck
- * 20.02.2006 16:05:29 
+ * @date   17.03.2006 11:55:35
  */
-public interface TermFactory {
+public interface IBuiltInsFactory {
 
-	public IConstantTerm createConstantTerm(String arg);
+	// public IBuiltinFunction createBuiltinFunction(IAtom atom);
 	
-	public IStringTerm createStringTerm(String arg);
+	public IBuiltInAtom numericEqual(INumericTerm x, INumericTerm y);
 	
-	public IVariable createVariable(String name);
+	public IBuiltInAtom numericInequal(INumericTerm x, INumericTerm y);
+	
+	public IBuiltInAtom numericGreaterThan(INumericTerm x, INumericTerm y);
+	
+	public IBuiltInAtom numericLessThan(INumericTerm x, INumericTerm y);
+	
+	public IBuiltInAtom stringEqual(IStringTerm x, IStringTerm y);
+	
+	public IBuiltInAtom stringInequal(IStringTerm x, IStringTerm y);
+	
+	public IBuiltInAtom numericAdd(INumericTerm z, INumericTerm x, INumericTerm y);
+	
+	public IBuiltInAtom numericSubtract(INumericTerm z, INumericTerm x, INumericTerm y);
+	
+	public IBuiltInAtom numericMultiply(INumericTerm z, INumericTerm x, INumericTerm y);
+	
+	public IBuiltInAtom numericDivide(INumericTerm z, INumericTerm x, INumericTerm y);
 }

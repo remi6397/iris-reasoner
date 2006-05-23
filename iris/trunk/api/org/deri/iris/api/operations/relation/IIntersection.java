@@ -19,19 +19,19 @@
  */
 package org.deri.iris.api.operations.relation;
 
-import org.deri.iris.api.storage.Relation;
+import org.deri.iris.api.storage.IRelation;
 
 /**
  * Interface or class description
  *
- * Interface of a difference operation used to promote modularity of inference engines.
+ * Interface of a intersection operation used to promote modularity of inference engines.
  * 
  * @author Darko Anicic
- * @date  11.04.2006 @time  15:25:17
+ * @date  11.04.2006 @time  15:42:32
  *
- * @version $Revision: 1.1 $ $Date: 2006-05-17 14:08:05 $
+ * @version $Revision: 1.1 $ $Date: 2006-05-23 13:14:19 $
  */
-public interface Difference {
+public interface IIntersection {
 
-	public Relation difference(final Relation arg0, final  Relation arg1);
+	public IRelation intersection(final IRelation arg0, final IRelation arg1);
 }

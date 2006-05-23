@@ -17,21 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.deri.iris.api.operations.relation;
-
-import org.deri.iris.api.storage.Relation;
+package org.deri.iris.api.operations.basics;
 
 /**
  * Interface or class description
  *
- * Interface of a union relation used to promote modularity of inference engines.
- *
+ * Represents the result of a unification comprising a collection containing the substitutions and
+ * the two unified terms with the replacements applied. It is supposed to be a class (not interface)
+ * 
  * @author Darko Anicic
- * @date  11.04.2006 @time  15:29:27
+ * @date  11.04.2006 @time  16:48:40
  *
- * @version $Revision: 1.1 $ $Date: 2006-05-17 14:08:05 $
+ * @version $Revision: 1.1 $ $Date: 2006-05-23 13:12:52 $
  */
-public interface Union {
-
-	public Relation union(final Relation arg0, final Relation arg1);
+public interface IUnificationSet {
+// 	todo
 }
