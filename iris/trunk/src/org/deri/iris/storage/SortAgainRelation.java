@@ -40,8 +40,10 @@ public class SortAgainRelation implements Relation<ITuple> {
 	private TupleComparator comparator;
 
 	public SortAgainRelation() {
+		WRITE.lock();
 		comparator = new TupleComparator();
 		elements = new TreeSet<ITuple>(comparator);
+		WRITE.unlock();
 	}
 
 	/**
