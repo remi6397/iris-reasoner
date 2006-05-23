@@ -10,14 +10,14 @@ import org.deri.iris.api.terms.ITerm;
  * <pre>
  *    Created on 11.04.2006
  *    Committed by $Author: darko $
- *    $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/GMonthDay.java,v $,
+ *    $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/IGMonthDay.java,v $,
  * </pre>
  * 
  * @author Richard Pöttler
  * 
- * @version $Revision: 1.1 $ $Date: 2006-05-17 14:08:06 $
+ * @version $Revision: 1.1 $ $Date: 2006-05-23 13:09:02 $
  */
-public interface GMonthDay extends ITerm, Cloneable, Comparable<GMonthDay> {
+public interface IGMonthDay extends ITerm<IGMonthDay>, Cloneable {
 	/**
 	 * Returns the month.
 	 * 

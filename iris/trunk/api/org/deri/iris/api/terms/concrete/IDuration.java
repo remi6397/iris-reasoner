@@ -11,14 +11,14 @@ import org.deri.iris.api.terms.ITerm;
  * <pre>
  * Created on 11.04.2006
  * Committed by $Author: darko $
- * $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/Duration.java,v $,
+ * $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/IDuration.java,v $,
  * </pre>
  *
  * @author Richard Pöttler
  *
- * @version $Revision: 1.1 $ $Date: 2006-05-17 14:08:06 $
+ * @version $Revision: 1.1 $ $Date: 2006-05-23 13:09:02 $
  */
-public interface Duration extends ITerm, Comparable<Duration>, Cloneable {
+public interface IDuration extends ITerm<IDuration>, Cloneable {
 	/**
 	 * Returns the corresponding Calendar object.
 	 * 

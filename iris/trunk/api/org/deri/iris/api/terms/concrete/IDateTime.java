@@ -6,7 +6,7 @@ import java.util.TimeZone;
 import org.deri.iris.api.terms.ITerm;
 
 /**
- * This is a representation of the builtin datatype DateTime.
+ * This is a representation of the builtin datatype IDateTime.
  * 
  * <br />
  * <code>ATTENTION: internally a Calendar is
@@ -17,14 +17,14 @@ import org.deri.iris.api.terms.ITerm;
  * <pre>
  *       Created on 06.04.2006
  *       Committed by $Author: darko $
- *       $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/DateTime.java,v $,
+ *       $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/IDateTime.java,v $,
  * </pre>
  * 
  * @author Richard Pöttler
  * 
- * @version $Revision: 1.1 $ $Date: 2006-05-17 14:08:06 $
+ * @version $Revision: 1.1 $ $Date: 2006-05-23 13:09:02 $
  */
-public interface DateTime extends ITerm, Comparable<DateTime>, Cloneable {
+public interface IDateTime extends ITerm<IDateTime>, Cloneable {
 	/**
 	 * Returns a copy of this Calendar object.
 	 * 
