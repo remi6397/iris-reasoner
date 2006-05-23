@@ -13,16 +13,19 @@ import org.deri.iris.api.storage.Relation;
 
 /**
  * This is a simple Relation implementation based on a TreeSet, so no dublicates
- * are allowed.
- * </br> <b>ATTENTION:</b> Everytime the index with the
+ * are allowed.</br></br>
+ * <b>ATTENTION:</b> Everytime the index with the
  * sortOn(int) method is changed the whole set will be sorted agein, which is
  * very time consuming.</br></br>
+ * <b>ATTENTION:</b> Because of the Comparator it is only allowed to store 
+ * tuples in this relation, because if you compare two entries where at least 
+ * one isn't a tuple, the Comparator will say that they are equal.</br></br>
  * <b>This implementaion is thread-save.</b>
  * 
  * @author richi
  * 
  */
-public class SortAgainRelation implements Relation<ITuple> {
+public class SortAgainRelation implements Relation {
 
 	/** The Lock to make this set threadsafe */
 	private final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
@@ -34,7 +37,7 @@ public class SortAgainRelation implements Relation<ITuple> {
 	private final Lock WRITE = LOCK.writeLock();
 
 	/** The Set containing all the elements */
-	private Set<ITuple> elements;
+	private Set elements;
 
 	/** The Comparator to compare all tuples to each other */
 	private TupleComparator comparator;
@@ -42,7 +45,7 @@ public class SortAgainRelation implements Relation<ITuple> {
 	public SortAgainRelation() {
 		WRITE.lock();
 		comparator = new TupleComparator();
-		elements = new TreeSet<ITuple>(comparator);
+		elements = new TreeSet(comparator);
 		WRITE.unlock();
 	}
 
@@ -98,7 +101,7 @@ public class SortAgainRelation implements Relation<ITuple> {
 		}
 	}
 
-	public Iterator<ITuple> iterator() {
+	public Iterator iterator() {
 		READ.lock();
 		try {
 			return elements.iterator();
@@ -116,16 +119,16 @@ public class SortAgainRelation implements Relation<ITuple> {
 		}
 	}
 
-	public <T> T[] toArray(T[] a) {
+	public Object[] toArray(Object[] o) {
 		READ.lock();
 		try {
-			return elements.toArray(a);
+			return elements.toArray(o);
 		} finally {
 			READ.unlock();
 		}
 	}
 
-	public boolean add(ITuple o) {
+	public boolean add(Object o) {
 		WRITE.lock();
 		try {
 			return elements.add(o);
@@ -143,7 +146,7 @@ public class SortAgainRelation implements Relation<ITuple> {
 		}
 	}
 
-	public boolean containsAll(Collection<?> c) {
+	public boolean containsAll(Collection c) {
 		READ.lock();
 		try {
 			return elements.containsAll(c);
@@ -152,7 +155,7 @@ public class SortAgainRelation implements Relation<ITuple> {
 		}
 	}
 
-	public boolean addAll(Collection<? extends ITuple> c) {
+	public boolean addAll(Collection c) {
 		WRITE.lock();
 		try {
 			return elements.addAll(c);
@@ -161,7 +164,7 @@ public class SortAgainRelation implements Relation<ITuple> {
 		}
 	}
 
-	public boolean removeAll(Collection<?> c) {
+	public boolean removeAll(Collection c) {
 		WRITE.lock();
 		try {
 			return elements.removeAll(c);
@@ -170,7 +173,7 @@ public class SortAgainRelation implements Relation<ITuple> {
 		}
 	}
 
-	public boolean retainAll(Collection<?> c) {
+	public boolean retainAll(Collection c) {
 		WRITE.lock();
 		try {
 			return elements.retainAll(c);
@@ -185,7 +188,7 @@ public class SortAgainRelation implements Relation<ITuple> {
 		WRITE.unlock();
 	}
 
-	private static class TupleComparator implements Comparator<ITuple> {
+	private static class TupleComparator implements Comparator {
 
 		private int indexField;
 
@@ -205,9 +208,13 @@ public class SortAgainRelation implements Relation<ITuple> {
 			return this.indexField;
 		}
 
-		@SuppressWarnings("unchecked")
-		public int compare(ITuple o1, ITuple o2) {
-			return o1.getTerm(indexField).compareTo(o2.getTerm(indexField));
+		public int compare(Object o1, Object o2) {
+			if (!(o1 instanceof ITuple) && !(o2 instanceof ITuple)) {
+				return 0;
+			}
+			ITuple t1 = (ITuple) o1;
+			ITuple t2 = (ITuple) o2;
+			return t1.getTerm(indexField).compareTo(t2.getTerm(indexField));
 		}
 	}
 }
