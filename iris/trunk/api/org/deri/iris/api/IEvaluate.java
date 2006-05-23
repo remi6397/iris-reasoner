@@ -21,8 +21,8 @@
 package org.deri.iris.api;
 
 import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.api.storage.Relation;
-import org.deri.iris.api.terms.concrete.Iri;
+import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.terms.concrete.IIri;
 
 /**
  * 
@@ -35,13 +35,13 @@ import org.deri.iris.api.terms.concrete.Iri;
  * 
  * @author Graham Hench
  * 
- * @version $Revision: 1.1 $ $Date: 2006-05-17 14:08:06 $
+ * @version $Revision: 1.2 $ $Date: 2006-05-23 15:05:26 $
  * 
  * The method evaluate alreday exists in IProgram interface
  */
 public interface IEvaluate {
 	
-	public Relation evaluate(IQuery q, Iri ontoID);
+	public IRelation evaluate(IQuery q, IIri ontoID);
 
 }
  

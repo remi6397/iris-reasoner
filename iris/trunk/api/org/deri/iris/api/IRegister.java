@@ -23,7 +23,7 @@ package org.deri.iris.api;
 import java.util.Set;
 
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.terms.concrete.Iri;
+import org.deri.iris.api.terms.concrete.IIri;
 
 /**
  * 
@@ -36,13 +36,13 @@ import org.deri.iris.api.terms.concrete.Iri;
  *
  * @author Graham Hench
  *
- * @version $Revision: 1.1 $ $Date: 2006-05-17 14:08:06 $
+ * @version $Revision: 1.2 $ $Date: 2006-05-23 15:05:26 $
  */
 public interface IRegister {
 	
-	public void register(Iri ontoID, Set<IRule> rules);
+	public void register(IIri ontoID, Set<IRule> rules);
 	
-	public void deRegister(Iri ontoID);
+	public void deRegister(IIri ontoID);
 	
 
 }
