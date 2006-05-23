@@ -19,7 +19,7 @@
  */
 package org.deri.iris.api.storage;
 
-import java.util.Collection;
+import java.util.SortedSet;
 
 import org.deri.iris.api.basics.ITuple;
 
@@ -30,10 +30,10 @@ import org.deri.iris.api.basics.ITuple;
  * @author Darko Anicic
  * @date  11.04.2006 @time  14:55:12
  *
- * @version $Revision: 1.2 $ $Date: 2006-05-23 13:25:57 $
+ * @version $Revision: 1.3 $ $Date: 2006-05-23 13:46:05 $
  */
-//We should SortedSet instead of Collection!
-public interface IRelation<Type extends ITuple> extends Collection<ITuple>{
+
+public interface IRelation<Type extends ITuple> extends SortedSet<ITuple>{
 
 }
 
