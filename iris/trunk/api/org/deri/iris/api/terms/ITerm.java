@@ -17,11 +17,11 @@ import java.util.List;
 	
 	More types of terms will be added.
 */
-public interface ITerm {
+public interface ITerm<Type extends ITerm> extends Comparable<Type> {
 	
 	public boolean isGround();
 	
-	public boolean compare(ITerm term);
+	//public int compare(ITerm term);
 	
 	//public List<ITerm> getSubTerms();
 	

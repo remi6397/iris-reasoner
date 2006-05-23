@@ -24,7 +24,7 @@ package org.deri.iris.api.terms;
  * @author Darko Anicic, DERI Innsbruck
  * @date   14.11.2005 17:48:47
  */
-public interface IConstantTerm extends ITerm{
+public interface IConstantTerm extends ITerm<IConstantTerm>{
 	
 	// setValue should not exist as IConstantTerm is a constant and
 	// value should not be changed once an object has been created
