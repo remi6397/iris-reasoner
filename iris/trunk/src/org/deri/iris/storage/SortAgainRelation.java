@@ -4,12 +4,13 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.storage.Relation;
+import org.deri.iris.api.storage.IRelation;
 
 /**
  * This is a simple Relation implementation based on a TreeSet, so no dublicates
@@ -25,7 +26,7 @@ import org.deri.iris.api.storage.Relation;
  * @author richi
  * 
  */
-public class SortAgainRelation implements Relation {
+public class SortAgainRelation implements IRelation<ITuple>  {
 
 	/** The Lock to make this set threadsafe */
 	private final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
@@ -36,8 +37,8 @@ public class SortAgainRelation implements Relation {
 	/** The write lock */
 	private final Lock WRITE = LOCK.writeLock();
 
-	/** The Set containing all the elements */
-	private Set elements;
+	/** The SortedSet containing all the elements */
+	private SortedSet elements;
 
 	/** The Comparator to compare all tuples to each other */
 	private TupleComparator comparator;
@@ -63,7 +64,7 @@ public class SortAgainRelation implements Relation {
 			boolean changed = false;
 			if (comparator.getIndexField() != index) {
 				comparator.setIndexField(index);
-				Set<ITuple> temp = new TreeSet<ITuple>();
+				SortedSet<ITuple> temp = new TreeSet<ITuple>();
 				temp.addAll(elements);
 				elements = temp;
 				changed = true;
@@ -128,7 +129,7 @@ public class SortAgainRelation implements Relation {
 		}
 	}
 
-	public boolean add(Object o) {
+	public boolean add(ITuple o) {
 		WRITE.lock();
 		try {
 			return elements.add(o);
@@ -186,6 +187,49 @@ public class SortAgainRelation implements Relation {
 		WRITE.lock();
 		elements.clear();
 		WRITE.unlock();
+	}
+	
+	/**
+	 * @param fromElement The element to position the tree at.
+	 * @return Returns a view of the portion of this sorted set whose 
+	 * elements are greater than or equal to fromElement.
+	 */
+	public SortedSet<ITuple> tailSet(ITuple fromElement) {
+		READ.lock();
+		try {
+			return elements.tailSet(fromElement);
+		} finally {
+			READ.unlock();
+		}
+	}
+	
+	/**
+	 * @param fromElement - low endpoint (inclusive) of the subSet.
+	 * @param toElement - high endpoint (exclusive) of the subSet.
+	 * @return Returns a view of the portion of this sorted set whose 
+	 * elements range from fromElement, inclusive, to toElement, exclusive.
+	 */
+	public SortedSet<ITuple> subSet(ITuple fromElement, ITuple toElement) {
+		READ.lock();
+		try {
+			return elements.subSet(fromElement, toElement);
+		} finally {
+			READ.unlock();
+		}
+	}
+	
+	/**
+	 * @param toElement - high endpoint (exclusive) of the headSet.
+	 * @return Returns a view of the portion of this sorted set whose 
+	 * elements are strictly less than toElement.
+	 */
+	public SortedSet<ITuple> headSet(ITuple toElement) {
+		READ.lock();
+		try {
+			return elements.headSet(toElement);
+		} finally {
+			READ.unlock();
+		}
 	}
 
 	private static class TupleComparator implements Comparator {
