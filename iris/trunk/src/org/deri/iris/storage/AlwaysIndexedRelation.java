@@ -369,11 +369,11 @@ public class AlwaysIndexedRelation implements IRelation<ITuple> {
 	 * taken
 	 */
 	public SortedSet<ITuple> subSet(ITuple fromElement, ITuple toElement) {
-		READ.lock();
+		WRITE.lock();
 		try {
 			return new SubRelation(fromElement, toElement, 0);
 		} finally {
-			READ.unlock();
+			WRITE.unlock();
 		}
 	}
 
@@ -382,11 +382,11 @@ public class AlwaysIndexedRelation implements IRelation<ITuple> {
 	 * taken
 	 */
 	public SortedSet<ITuple> headSet(ITuple toElement) {
-		READ.lock();
+		WRITE.lock();
 		try {
 			return new SubRelation(null, toElement, 0);
 		} finally {
-			READ.unlock();
+			WRITE.unlock();
 		}
 	}
 
@@ -395,11 +395,11 @@ public class AlwaysIndexedRelation implements IRelation<ITuple> {
 	 * taken
 	 */
 	public SortedSet<ITuple> tailSet(ITuple fromElement) {
-		READ.lock();
+		WRITE.lock();
 		try {
 			return new SubRelation(fromElement, null, 0);
 		} finally {
-			READ.unlock();
+			WRITE.unlock();
 		}
 	}
 
@@ -502,36 +502,36 @@ public class AlwaysIndexedRelation implements IRelation<ITuple> {
 		}
 
 		public SortedSet<ITuple> subSet(ITuple fromElement, ITuple toElement) {
-			READ.lock();
+			WRITE.lock();
 			try {
 				return new SubRelation(
 						((checkValidRange(fromElement)) ? fromElement : lowest),
 						((checkValidRange(toElement)) ? fromElement : highest),
 						index);
 			} finally {
-				READ.unlock();
+				WRITE.unlock();
 			}
 		}
 
 		public SortedSet<ITuple> headSet(final ITuple toElement) {
-			READ.lock();
+			WRITE.lock();
 			try {
 				return new SubRelation(lowest,
 						((checkValidRange(toElement)) ? toElement : highest),
 						index);
 			} finally {
-				READ.unlock();
+				WRITE.unlock();
 			}
 		}
 
 		public SortedSet<ITuple> tailSet(ITuple fromElement) {
-			READ.lock();
+			WRITE.lock();
 			try {
 				return new SubRelation(
 						((checkValidRange(fromElement)) ? fromElement : lowest),
 						highest, index);
 			} finally {
-				READ.unlock();
+				WRITE.unlock();
 			}
 		}
 
