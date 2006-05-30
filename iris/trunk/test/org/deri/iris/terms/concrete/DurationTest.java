@@ -47,7 +47,7 @@ public class DurationTest extends TestCase {
 	}
 
 	public void testBasic() {
-		DateTimeImpl dt = DateTimeImpl.parse(SREFERENCE);
+		DateTime dt = DateTime.parse(SREFERENCE);
 
 		assertEquals("Something wrong with getYear", 2005, dt.getYear());
 		assertEquals("Something wrong with getMonth", Calendar.MARCH, dt
@@ -57,33 +57,33 @@ public class DurationTest extends TestCase {
 		assertEquals("Something wrong with getMinute", 56, dt.getMinute());
 		assertEquals("Something wrong with getSecond", 00, dt.getSecond());
 
-		DateTimeImpl dt0 = new DateTimeImpl(2005, Calendar.MARCH, 10, 13, 56,
+		DateTime dt0 = new DateTime(2005, Calendar.MARCH, 10, 13, 56,
 				0, 1, 0);
 		assertEquals("Something wrong with setting or equals", dt, dt0);
-		dt0 = new DateTimeImpl(CALENDAR);
+		dt0 = new DateTime(CALENDAR);
 		assertEquals("Something wrong with setting or equals", dt, dt0);
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new DurationImpl(2000, 1, 1, 12, 01, 00),
-				new DurationImpl(2000, 1, 1, 12, 01, 00), new DurationImpl(
+		ObjectTest.runTestEquals(new Duration(2000, 1, 1, 12, 01, 00),
+				new Duration(2000, 1, 1, 12, 01, 00), new Duration(
 						2000, 1, 1, 12, 02, 00));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new DurationImpl(2000, 1, 1, 11, 01, 00),
-				new DurationImpl(2000, 1, 1, 11, 01, 00), new DurationImpl(
-						2000, 1, 1, 11, 02, 00), new DurationImpl(2000, 1, 1,
+		ObjectTest.runTestCompareTo(new Duration(2000, 1, 1, 11, 01, 00),
+				new Duration(2000, 1, 1, 11, 01, 00), new Duration(
+						2000, 1, 1, 11, 02, 00), new Duration(2000, 1, 1,
 						11, 03, 00));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new DurationImpl(CALENDAR));
+		ObjectTest.runTestClone(new Duration(CALENDAR));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new DurationImpl(CALENDAR),
-				new DurationImpl(CALENDAR));
+		ObjectTest.runTestHashCode(new Duration(CALENDAR),
+				new Duration(CALENDAR));
 	}
 
 	public static Test suite() {

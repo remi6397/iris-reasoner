@@ -47,7 +47,7 @@ public class DateTimeTest extends TestCase {
 	}
 
 	public void testBasic() {
-		DateTimeImpl dt = DateTimeImpl.parse(SREFERENCE);
+		DateTime dt = DateTime.parse(SREFERENCE);
 
 		assertEquals("Something wrong with getYear", 2005, dt.getYear());
 		assertEquals("Something wrong with getMonth", Calendar.MARCH, dt
@@ -57,34 +57,34 @@ public class DateTimeTest extends TestCase {
 		assertEquals("Something wrong with getMinute", 56, dt.getMinute());
 		assertEquals("Something wrong with getSecond", 00, dt.getSecond());
 
-		DateTimeImpl dt0 = new DateTimeImpl(2005, Calendar.MARCH, 10, 13, 56,
+		DateTime dt0 = new DateTime(2005, Calendar.MARCH, 10, 13, 56,
 				0, 1, 0);
 		assertEquals("Something wrong with setting or equals", dt, dt0);
-		dt0 = new DateTimeImpl(CALENDAR);
+		dt0 = new DateTime(CALENDAR);
 		assertEquals("Something wrong with setting or equals", dt, dt0);
 	}
 
 	public void testEquals() {
 		ObjectTest.runTestEquals(
-				new DateTimeImpl(2000, 1, 1, 12, 01, 00, 1, 0),
-				new DateTimeImpl(2000, 1, 1, 12, 01, 00, 1, 0),
-				new DateTimeImpl(2000, 1, 1, 12, 02, 00, 1, 0));
+				new DateTime(2000, 1, 1, 12, 01, 00, 1, 0),
+				new DateTime(2000, 1, 1, 12, 01, 00, 1, 0),
+				new DateTime(2000, 1, 1, 12, 02, 00, 1, 0));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new DateTimeImpl(2000, 1, 1, 12, 01, 00, 1,
-				0), new DateTimeImpl(2000, 1, 1, 11, 01, 00, 0, 0),
-				new DateTimeImpl(2000, 1, 1, 11, 02, 00, 0, 0),
-				new DateTimeImpl(2000, 1, 1, 11, 03, 00, 0, 0));
+		ObjectTest.runTestCompareTo(new DateTime(2000, 1, 1, 12, 01, 00, 1,
+				0), new DateTime(2000, 1, 1, 11, 01, 00, 0, 0),
+				new DateTime(2000, 1, 1, 11, 02, 00, 0, 0),
+				new DateTime(2000, 1, 1, 11, 03, 00, 0, 0));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new DateTimeImpl(CALENDAR));
+		ObjectTest.runTestClone(new DateTime(CALENDAR));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new DateTimeImpl(CALENDAR),
-				new DateTimeImpl(CALENDAR));
+		ObjectTest.runTestHashCode(new DateTime(CALENDAR),
+				new DateTime(CALENDAR));
 	}
 
 	public static Test suite() {

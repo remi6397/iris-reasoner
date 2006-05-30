@@ -29,25 +29,25 @@ package org.deri.iris.terms.concrete;
 import org.deri.iris.api.terms.concrete.IIri;
 import org.deri.iris.api.terms.concrete.ISqName;
 
-public class SqNameImpl implements ISqName, Cloneable {
+public class SqName implements ISqName, Cloneable {
 
 	private IIri namespace = null;
 
 	private String name = "";
 
-	protected SqNameImpl() {
+	protected SqName() {
 	}
 
-	public SqNameImpl(final String str) {
+	public SqName(final String str) {
 		this();
 		setValue(str);
 	}
 
-	public SqNameImpl(final String namespace, final String name) {
-		this(new IriImpl(namespace), name);
+	public SqName(final String namespace, final String name) {
+		this(new Iri(namespace), name);
 	}
 
-	public SqNameImpl(final IIri namespace, final String name) {
+	public SqName(final IIri namespace, final String name) {
 		this();
 		setNamespace(namespace);
 		setName(name);
@@ -82,10 +82,10 @@ public class SqNameImpl implements ISqName, Cloneable {
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof SqNameImpl)) {
+		if (!(obj instanceof SqName)) {
 			return false;
 		}
-		SqNameImpl sname = (SqNameImpl) obj;
+		SqName sname = (SqName) obj;
 		return sname.name.equals(name) && sname.namespace.equals(namespace);
 	}
 
@@ -97,8 +97,8 @@ public class SqNameImpl implements ISqName, Cloneable {
 
 	public Object clone() {
 		try {
-			SqNameImpl sq = (SqNameImpl) super.clone();
-			sq.namespace = (IriImpl) ((IriImpl) namespace).clone();
+			SqName sq = (SqName) super.clone();
+			sq.namespace = (Iri) ((Iri) namespace).clone();
 			return sq;
 		} catch (CloneNotSupportedException e) {
 			assert true : "Will never happen";
@@ -112,7 +112,7 @@ public class SqNameImpl implements ISqName, Cloneable {
 			throw new IllegalArgumentException(
 					"There must be at least one '#' in the string");
 		}
-		setNamespace(new IriImpl(frags[0]));
+		setNamespace(new Iri(frags[0]));
 		setName(frags[1]);
 	}
 

@@ -50,31 +50,31 @@ public class GYearTest extends TestCase {
 	}
 
 	public void testBasic() {
-		final GYearImpl D_REFERENCE = new GYearImpl(YEAR);
+		final GYear D_REFERENCE = new GYear(YEAR);
 
 		assertEquals("Somethin wrong with constructor", D_REFERENCE,
-				new GYearImpl(YEAR));
+				new GYear(YEAR));
 		assertEquals("Somethin wrong with constructor", D_REFERENCE,
-				new GYearImpl(REFERENCE));
+				new GYear(REFERENCE));
 		assertEquals("Somethin wrong with getYear", YEAR, D_REFERENCE.getYear());
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new GYearImpl(YEAR), new GYearImpl(YEAR),
-				new GYearImpl(YEARMORE));
+		ObjectTest.runTestEquals(new GYear(YEAR), new GYear(YEAR),
+				new GYear(YEARMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new GYearImpl(YEAR));
+		ObjectTest.runTestClone(new GYear(YEAR));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new GYearImpl(YEAR), new GYearImpl(YEAR),
-				new GYearImpl(YEARMORE), new GYearImpl(YEARMORE1));
+		ObjectTest.runTestCompareTo(new GYear(YEAR), new GYear(YEAR),
+				new GYear(YEARMORE), new GYear(YEARMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new GYearImpl(YEAR), new GYearImpl(YEAR));
+		ObjectTest.runTestHashCode(new GYear(YEAR), new GYear(YEAR));
 	}
 
 	public static Test suite() {

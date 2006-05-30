@@ -30,45 +30,47 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.deri.iris.api.terms.concrete.IGMonth;
+import org.deri.iris.api.terms.concrete.IGMonthDay;
 
-public class GMonthImpl implements IGMonth, Cloneable {
+public class GMonthDay implements IGMonthDay, Cloneable {
 
 	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 
-	public GMonthImpl(final Calendar calendar) {
-		this(calendar.get(Calendar.MONTH));
+	public GMonthDay(final Calendar calendar) {
+		this(calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 	}
 
-	public GMonthImpl(final int month) {
+	public GMonthDay(final int month, final int day) {
 		cal.clear();
-		setMonth(month);
+		setMonthDay(month, day);
 	}
 
 	public Object clone() {
-		try {
-			GMonthImpl gm = (GMonthImpl) super.clone();
-			gm.cal = (Calendar) cal.clone();
-			return gm;
-		} catch (CloneNotSupportedException e) {
-			assert true : "Can not happen";
-		}
-		return null;
+		return new GMonthDay(cal);
 	}
 
-	public int compareTo(IGMonth o) {
+	public int compareTo(IGMonthDay o) {
 		if (o == null) {
 			throw new NullPointerException("Can not compare with null");
 		}
-		return getMonth() - o.getMonth();
+		int iResult = getMonth() - o.getMonth();
+		if (iResult != 0) {
+			return iResult;
+		} else {
+			return getDay() - o.getDay();
+		}
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof GMonthImpl)) {
+		if (!(obj instanceof GMonthDay)) {
 			return false;
 		}
-		GMonthImpl gm = (GMonthImpl) obj;
-		return (gm.getMonth() == getMonth());
+		GMonthDay monthday = (GMonthDay) obj;
+		return ((monthday.getDay() == getDay()) && (monthday.getMonth() == getMonth()));
+	}
+
+	public int getDay() {
+		return cal.get(Calendar.DAY_OF_MONTH);
 	}
 
 	public int getMonth() {
@@ -79,12 +81,14 @@ public class GMonthImpl implements IGMonth, Cloneable {
 		return cal.hashCode();
 	}
 
-	protected void setMonth(final int month) {
+	protected void setMonthDay(int month, int day) {
+		cal.set(Calendar.DAY_OF_MONTH, day);
 		cal.set(Calendar.MONTH, month);
 	}
 
 	public String toString() {
-		return getClass().getName() + "[month=" + getMonth() + "]";
+		return getClass().getName() + "[month=" + getMonth() + ",day="
+				+ getDay() + "]";
 	}
 
 	public boolean isGround() {

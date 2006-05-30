@@ -44,30 +44,30 @@ public class HexBinaryTest extends TestCase {
 	private static final String[] VALID = new String[] { "0123456789abcdef" };
 
 	public void testBasic() {
-		HexBinaryImpl hb = new HexBinaryImpl(BASIC);
+		HexBinary hb = new HexBinary(BASIC);
 		assertEquals("Something wrong with getHexBinary", BASIC.toUpperCase(),
 				hb.getValue());
-		assertEquals("Something wrong with the parsing", hb, new HexBinaryImpl(
+		assertEquals("Something wrong with the parsing", hb, new HexBinary(
 				BASIC));
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new HexBinaryImpl(BASIC), new HexBinaryImpl(
-				BASIC), new HexBinaryImpl(BASICMORE));
+		ObjectTest.runTestEquals(new HexBinary(BASIC), new HexBinary(
+				BASIC), new HexBinary(BASICMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new HexBinaryImpl(BASIC));
+		ObjectTest.runTestClone(new HexBinary(BASIC));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new HexBinaryImpl(BASIC),
-				new HexBinaryImpl(BASIC), new HexBinaryImpl(BASICMORE),
-				new HexBinaryImpl(BASICMORE1));
+		ObjectTest.runTestCompareTo(new HexBinary(BASIC),
+				new HexBinary(BASIC), new HexBinary(BASICMORE),
+				new HexBinary(BASICMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new HexBinaryImpl(BASIC), new HexBinaryImpl(
+		ObjectTest.runTestHashCode(new HexBinary(BASIC), new HexBinary(
 				BASIC));
 	}
 
@@ -76,7 +76,7 @@ public class HexBinaryTest extends TestCase {
 			boolean gotException = false;
 			try {
 
-				new HexBinaryImpl(str);
+				new HexBinary(str);
 			} catch (IllegalArgumentException e) {
 				gotException = true;
 			}
@@ -90,7 +90,7 @@ public class HexBinaryTest extends TestCase {
 	public void testValidParsing() {
 		for (String str : VALID) {
 			assertEquals("The parsing of " + str + "should work", str
-					.toUpperCase(), new HexBinaryImpl(str).getValue());
+					.toUpperCase(), new HexBinary(str).getValue());
 		}
 	}
 

@@ -53,8 +53,8 @@ public class IriTest extends TestCase {
 	}
 
 	public void testBasic() {
-		IriImpl fix = new IriImpl(REFERENCE);
-		IriImpl test = new IriImpl(URISTR);
+		Iri fix = new Iri(REFERENCE);
+		Iri test = new Iri(URISTR);
 
 		assertEquals("Something wrong with getUri", REFERENCE, fix.getURI());
 		assertEquals("Something wrong with The toString", URISTR, fix
@@ -62,28 +62,28 @@ public class IriTest extends TestCase {
 
 		assertEquals("Something wrong with parsing", fix, test);
 
-		assertEquals("Something wrong with the creation", fix, new IriImpl(
+		assertEquals("Something wrong with the creation", fix, new Iri(
 				REFERENCE));
-		assertEquals("Something wrong with the creation", fix, new IriImpl(
+		assertEquals("Something wrong with the creation", fix, new Iri(
 				URISTR));
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new IriImpl(URISTR), new IriImpl(URISTR),
-				new IriImpl(URISTRMORE));
+		ObjectTest.runTestEquals(new Iri(URISTR), new Iri(URISTR),
+				new Iri(URISTRMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new IriImpl(URISTR));
+		ObjectTest.runTestClone(new Iri(URISTR));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new IriImpl(URISTR), new IriImpl(URISTR),
-				new IriImpl(URISTRMORE), new IriImpl(URISTRMORE1));
+		ObjectTest.runTestCompareTo(new Iri(URISTR), new Iri(URISTR),
+				new Iri(URISTRMORE), new Iri(URISTRMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new IriImpl(URISTR), new IriImpl(URISTR));
+		ObjectTest.runTestHashCode(new Iri(URISTR), new Iri(URISTR));
 	}
 
 	public static Test suite() {

@@ -34,14 +34,14 @@ import java.util.TimeZone;
 
 import org.deri.iris.api.terms.concrete.IDateTime;
 
-public class DateTimeImpl implements IDateTime, Cloneable {
+public class DateTime implements IDateTime, Cloneable {
 
 	private static final SimpleDateFormat FORMAT = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssz");
 
 	private Calendar cal;
 
-	public DateTimeImpl(final Calendar cal) {
+	public DateTime(final Calendar cal) {
 		this(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal
 				.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.HOUR_OF_DAY), cal
 				.get(Calendar.MINUTE), cal.get(Calendar.SECOND),
@@ -49,12 +49,12 @@ public class DateTimeImpl implements IDateTime, Cloneable {
 						.getTimeZone()));
 	}
 
-	public DateTimeImpl(int year, int month, int day, int hour, int minute,
+	public DateTime(int year, int month, int day, int hour, int minute,
 			int second) {
 		this(year, month, day, hour, minute, second, 0, 0);
 	}
 
-	public DateTimeImpl(int year, int month, int day, int hour, int minute,
+	public DateTime(int year, int month, int day, int hour, int minute,
 			int second, int tzHour, int tzMinute) {
 
 		final String timezone = "GMT" + ((tzHour >= 0) ? "+" : "-")
@@ -68,7 +68,7 @@ public class DateTimeImpl implements IDateTime, Cloneable {
 
 	public Object clone() {
 		try {
-			DateTimeImpl dt = (DateTimeImpl) super.clone();
+			DateTime dt = (DateTime) super.clone();
 			dt.cal = (Calendar) cal.clone();
 			return dt;
 		} catch (CloneNotSupportedException e) {
@@ -85,10 +85,10 @@ public class DateTimeImpl implements IDateTime, Cloneable {
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof DateTimeImpl)) {
+		if (!(obj instanceof DateTime)) {
 			return false;
 		}
-		DateTimeImpl dx = (DateTimeImpl) obj;
+		DateTime dx = (DateTime) obj;
 		return (dx.getYear() == this.getYear())
 				&& (dx.getMonth() == this.getMonth())
 				&& (dx.getDay() == this.getDay())
@@ -158,11 +158,11 @@ public class DateTimeImpl implements IDateTime, Cloneable {
 	 *            the String to parse
 	 * @see SimpleDateFormat
 	 */
-	public static DateTimeImpl parse(String str) {
+	public static DateTime parse(String str) {
 		try {
 			Calendar cal = new GregorianCalendar();
 			cal.setTime(FORMAT.parse(str));
-			return new DateTimeImpl(cal);
+			return new DateTime(cal);
 		} catch (ParseException e) {
 			throw new IllegalArgumentException("Wasn't able to parse: " + str
 					+ ". The String must have the format: "

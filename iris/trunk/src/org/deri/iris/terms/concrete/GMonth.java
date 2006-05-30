@@ -30,62 +30,61 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.deri.iris.api.terms.concrete.IGYear;
+import org.deri.iris.api.terms.concrete.IGMonth;
 
-public class GYearImpl implements IGYear, Cloneable {
+public class GMonth implements IGMonth, Cloneable {
 
-	private Calendar cal = new GregorianCalendar(TimeZone
-			.getTimeZone("GMT"));
+	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 
-	public GYearImpl(final Calendar calendar) {
-		this(calendar.get(Calendar.YEAR));
+	public GMonth(final Calendar calendar) {
+		this(calendar.get(Calendar.MONTH));
 	}
 
-	public GYearImpl(final int year) {
+	public GMonth(final int month) {
 		cal.clear();
-		setYear(year);
+		setMonth(month);
 	}
 
 	public Object clone() {
 		try {
-			GYearImpl gy = (GYearImpl) super.clone();
-			gy.cal = (Calendar) cal.clone();
-			return gy;
+			GMonth gm = (GMonth) super.clone();
+			gm.cal = (Calendar) cal.clone();
+			return gm;
 		} catch (CloneNotSupportedException e) {
 			assert true : "Can not happen";
 		}
 		return null;
 	}
 
-	public int compareTo(IGYear o) {
+	public int compareTo(IGMonth o) {
 		if (o == null) {
-			throw new IllegalArgumentException("Can not compare with null");
+			throw new NullPointerException("Can not compare with null");
 		}
-		return getYear() - o.getYear();
+		return getMonth() - o.getMonth();
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof GYearImpl)) {
+		if (!(obj instanceof GMonth)) {
 			return false;
 		}
-		GYearImpl gy = (GYearImpl) obj;
-		return gy.getYear() == getYear();
+		GMonth gm = (GMonth) obj;
+		return (gm.getMonth() == getMonth());
 	}
 
-	public int getYear() {
-		return cal.get(Calendar.YEAR);
+	public int getMonth() {
+		return cal.get(Calendar.MONTH);
 	}
-	
+
 	public int hashCode() {
 		return cal.hashCode();
 	}
 
-	protected void setYear(int year) {
-		cal.set(Calendar.YEAR, year);
+	protected void setMonth(final int month) {
+		cal.set(Calendar.MONTH, month);
 	}
 
 	public String toString() {
-		return getClass().getName() + "[year=" + getYear() + "]";
+		return getClass().getName() + "[month=" + getMonth() + "]";
 	}
 
 	public boolean isGround() {

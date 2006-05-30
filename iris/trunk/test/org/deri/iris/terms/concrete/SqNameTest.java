@@ -42,11 +42,11 @@ public class SqNameTest extends TestCase {
 
 	private static final String SPACE = "http://www.deri.org/reasoner";
 
-	private static final IIri SPACEIRI = new IriImpl(SPACE);
+	private static final IIri SPACEIRI = new Iri(SPACE);
 
 	public void testBasic() {
-		SqNameImpl fix = new SqNameImpl(SPACEIRI, NAME);
-		SqNameImpl test = new SqNameImpl(SPACE + "#" + NAME);
+		SqName fix = new SqName(SPACEIRI, NAME);
+		SqName test = new SqName(SPACE + "#" + NAME);
 
 		assertEquals("Something wrong whith instanciation", fix, test);
 		assertEquals("Something wrong with name", NAME, test.getName());
@@ -58,22 +58,22 @@ public class SqNameTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new SqNameImpl(SPACE, NAME), new SqNameImpl(
-				SPACE, NAME), new SqNameImpl(SPACE, NAMEMORE));
+		ObjectTest.runTestEquals(new SqName(SPACE, NAME), new SqName(
+				SPACE, NAME), new SqName(SPACE, NAMEMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new SqNameImpl(SPACE, NAME));
+		ObjectTest.runTestClone(new SqName(SPACE, NAME));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new SqNameImpl(SPACE, NAME),
-				new SqNameImpl(SPACE, NAME), new SqNameImpl(SPACE, NAMEMORE),
-				new SqNameImpl(SPACE, NAMEMORE1));
+		ObjectTest.runTestCompareTo(new SqName(SPACE, NAME),
+				new SqName(SPACE, NAME), new SqName(SPACE, NAMEMORE),
+				new SqName(SPACE, NAMEMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new SqNameImpl(SPACE, NAME), new SqNameImpl(
+		ObjectTest.runTestHashCode(new SqName(SPACE, NAME), new SqName(
 				SPACE, NAME));
 	}
 

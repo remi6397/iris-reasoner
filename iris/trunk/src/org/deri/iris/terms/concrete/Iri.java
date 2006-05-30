@@ -26,70 +26,83 @@
 
 package org.deri.iris.terms.concrete;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+// TODO: check whether URI.equals() is like URL.equals() (afaik URL needs network access)
 
-import org.deri.iris.api.terms.concrete.IGDay;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-public class GDayImpl implements IGDay, Cloneable {
+import org.deri.iris.api.terms.concrete.IIri;
 
-	private Calendar cal = new GregorianCalendar(TimeZone
-			.getTimeZone("GMT"));;
+public class Iri implements IIri, Cloneable {
 
-	public GDayImpl(final Calendar calendar) {
-		this(calendar.get(Calendar.DAY_OF_MONTH));
+	private URI uri = null;
+
+	public Iri(final String str) {
+		setValue(str);
 	}
 
-	public GDayImpl(final int day) {
-		cal.clear();
-		setDay(day);
+	public Iri(final URI uri) {
+		setValue(uri);
 	}
 
 	public Object clone() {
 		try {
-			GDayImpl gi = (GDayImpl) super.clone();
-			gi.cal = (Calendar)cal.clone();
-			return gi;
+			Iri i = (Iri) super.clone();
+			i.uri = new URI(uri.toString());
+			return i;
 		} catch (CloneNotSupportedException e) {
 			assert true : "Can not happen";
+		} catch (URISyntaxException e) {
+			//TODO: it's nasty to swallow exceptions!
 		}
 		return null;
 	}
 
-	public int compareTo(IGDay o) {
+	public int compareTo(IIri o) {
 		if (o == null) {
 			throw new NullPointerException("Can not compare with null");
 		}
-		return getDay() - o.getDay();
+		return uri.compareTo(o.getURI());
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof GDayImpl)) {
+		if (!(obj instanceof Iri)) {
 			return false;
 		}
-		GDayImpl gi = (GDayImpl) obj;
-		return getDay() == gi.getDay();
+		Iri i = (Iri) obj;
+		return i.uri.equals(uri);
 	}
 
-	public int getDay() {
-		return cal.get(Calendar.DAY_OF_MONTH);
+	public URI getURI() {
+		return uri;
+	}
+
+	public String getValue() {
+		return getURI().toString();
 	}
 	
 	public int hashCode() {
-		return cal.hashCode();
+		return uri.hashCode();
 	}
 
-	protected void setDay(int day) {
-		cal.set(Calendar.DAY_OF_MONTH, day);
+	public void setValue(final String arg) {
+		try {
+			setValue(new URI(arg));
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException("Wasn't able to parse: "
+					+ arg.trim());
+		}
+	}
+
+	protected void setValue(final URI uri) {
+		this.uri = uri;
 	}
 
 	public String toString() {
-		return getClass().getName() + "[day=" + getDay() + "]";
+		return getClass().getName() + "[uri=" + getValue() + "]";
 	}
 
 	public boolean isGround() {
 		return true;
 	}
-
 }

@@ -46,36 +46,36 @@ public class Base64BinaryTest extends TestCase {
 			"asdf", "as/ffA==", "SGVsbG8gV29ybGQ=" };
 
 	public void testBasic() {
-		Base64BinaryImpl bb = new Base64BinaryImpl(BASIC);
+		Base64Binary bb = new Base64Binary(BASIC);
 		assertEquals("Something wrong with getBase64Binary", BASIC, bb
 				.getValue());
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Base64BinaryImpl(BASIC),
-				new Base64BinaryImpl(BASIC), new Base64BinaryImpl(BASICMORE));
+		ObjectTest.runTestEquals(new Base64Binary(BASIC),
+				new Base64Binary(BASIC), new Base64Binary(BASICMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new Base64BinaryImpl(BASIC));
+		ObjectTest.runTestClone(new Base64Binary(BASIC));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new Base64BinaryImpl(BASIC),
-				new Base64BinaryImpl(BASIC), new Base64BinaryImpl(BASICMORE),
-				new Base64BinaryImpl(BASICMORE1));
+		ObjectTest.runTestCompareTo(new Base64Binary(BASIC),
+				new Base64Binary(BASIC), new Base64Binary(BASICMORE),
+				new Base64Binary(BASICMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Base64BinaryImpl(BASIC),
-				new Base64BinaryImpl(BASIC));
+		ObjectTest.runTestHashCode(new Base64Binary(BASIC),
+				new Base64Binary(BASIC));
 	}
 
 	public void testInValidParsing() {
 		for (String str : INVALID) {
 			boolean gotException = false;
 			try {
-				new Base64BinaryImpl(str);
+				new Base64Binary(str);
 			} catch (IllegalArgumentException e) {
 				gotException = true;
 			}
@@ -89,7 +89,7 @@ public class Base64BinaryTest extends TestCase {
 	public void testValidParsing() {
 		for (String str : VALID) {
 			assertEquals("The parsing of " + str + " should work", str,
-					new Base64BinaryImpl(str).getValue());
+					new Base64Binary(str).getValue());
 		}
 	}
 

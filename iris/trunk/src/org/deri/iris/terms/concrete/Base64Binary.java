@@ -41,7 +41,7 @@ import org.deri.iris.api.terms.concrete.IBase64Binary;
  * 
  * @version $Revision$ $Date$
  */
-public class Base64BinaryImpl implements IBase64Binary, Cloneable {
+public class Base64Binary implements IBase64Binary, Cloneable {
 
 	public static final Pattern PATTERN = Pattern.compile("([a-zA-Z0-9/+]{4})*"
 			+ "(([a-zA-Z0-9/+]{2}[AEIMQUYcgkosw048]=)|"
@@ -49,10 +49,10 @@ public class Base64BinaryImpl implements IBase64Binary, Cloneable {
 
 	private String content = "";
 
-	private Base64BinaryImpl() {
+	private Base64Binary() {
 	}
 
-	public Base64BinaryImpl(final String content) {
+	public Base64Binary(final String content) {
 		this();
 		setValue(content);
 	}
@@ -74,10 +74,10 @@ public class Base64BinaryImpl implements IBase64Binary, Cloneable {
 	}
 	
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof Base64BinaryImpl)) {
+		if (!(obj instanceof Base64Binary)) {
 			return false;
 		}
-		Base64BinaryImpl b64 = (Base64BinaryImpl) obj;
+		Base64Binary b64 = (Base64Binary) obj;
 		return content.equals(b64.content);
 	}
 

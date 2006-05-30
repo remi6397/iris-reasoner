@@ -34,31 +34,31 @@ import java.util.TimeZone;
 
 import org.deri.iris.api.terms.concrete.IDuration;
 
-public class DurationImpl implements IDuration, Cloneable {
+public class Duration implements IDuration, Cloneable {
 
 	private static final SimpleDateFormat FORMAT = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss");
 
 	private Calendar cal;
 
-	public DurationImpl(int year, int month, int day, int hour, int minute,
+	public Duration(int year, int month, int day, int hour, int minute,
 			int second) {
 		cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 		cal.clear();
 		cal.set(year, month, day, hour, minute, second);
 	}
 
-	public DurationImpl(final Calendar cal) {
+	public Duration(final Calendar cal) {
 		this(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal
 				.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.HOUR_OF_DAY), cal
 				.get(Calendar.MINUTE), cal.get(Calendar.SECOND));
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof DurationImpl)) {
+		if (!(obj instanceof Duration)) {
 			return false;
 		}
-		DurationImpl dx = (DurationImpl) obj;
+		Duration dx = (Duration) obj;
 		return (dx.getYear() == this.getYear())
 				&& (dx.getMonth() == this.getMonth())
 				&& (dx.getDay() == this.getDay())
@@ -108,11 +108,11 @@ public class DurationImpl implements IDuration, Cloneable {
 	 * @return the parsed objecrt
 	 * @see SimpleDateFormat
 	 */
-	public static DurationImpl parse(String str) {
+	public static Duration parse(String str) {
 		try {
 			Calendar cal = new GregorianCalendar();
 			cal.setTime(FORMAT.parse(str));
-			return new DurationImpl(cal);
+			return new Duration(cal);
 		} catch (ParseException e) {
 			throw new IllegalArgumentException("Wasn't able to parse: " + str
 					+ ". The String must have the format: "
@@ -126,7 +126,7 @@ public class DurationImpl implements IDuration, Cloneable {
 
 	public Object clone() {
 		try {
-			DurationImpl di = (DurationImpl) super.clone();
+			Duration di = (Duration) super.clone();
 			di.cal = (Calendar) cal.clone();
 			return di;
 		} catch (CloneNotSupportedException e) {

@@ -41,16 +41,16 @@ import org.deri.iris.api.terms.concrete.IHexBinary;
  * 
  * @version $Revision$ $Date$
  */
-public class HexBinaryImpl implements IHexBinary, Cloneable {
+public class HexBinary implements IHexBinary, Cloneable {
 
 	public static final Pattern PATTERN = Pattern.compile("([\\dA-F]{2})+");
 
 	private String content = "";
 
-	private HexBinaryImpl() {
+	private HexBinary() {
 	}
 
-	public HexBinaryImpl(final String content) {
+	public HexBinary(final String content) {
 		this();
 		setValue(content);
 	}
@@ -72,10 +72,10 @@ public class HexBinaryImpl implements IHexBinary, Cloneable {
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof HexBinaryImpl)) {
+		if (!(obj instanceof HexBinary)) {
 			return false;
 		}
-		HexBinaryImpl hb = (HexBinaryImpl)obj;
+		HexBinary hb = (HexBinary)obj;
 		return content.equals(hb.content);
 	}
 

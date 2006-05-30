@@ -54,36 +54,36 @@ public class GMonthDayTest extends TestCase {
 	}
 
 	public void testBasic() {
-		final GMonthDayImpl basic = new GMonthDayImpl(MONTH, DAY);
+		final GMonthDay basic = new GMonthDay(MONTH, DAY);
 
 		assertEquals("Somethin wrong with constructor", basic,
-				new GMonthDayImpl(MONTH, DAY));
+				new GMonthDay(MONTH, DAY));
 		assertEquals("Somethin wrong with constructor", basic,
-				new GMonthDayImpl(REFERENCE));
+				new GMonthDay(REFERENCE));
 		assertEquals("Somethin wrong with getDay", DAY, basic.getDay());
 		assertEquals("Somethin wrong with getMonth", MONTH, basic.getMonth());
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new GMonthDayImpl(MONTH, DAY),
-				new GMonthDayImpl(MONTH, DAY),
-				new GMonthDayImpl(MONTH, DAYMORE));
+		ObjectTest.runTestEquals(new GMonthDay(MONTH, DAY),
+				new GMonthDay(MONTH, DAY),
+				new GMonthDay(MONTH, DAYMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new GMonthDayImpl(MONTH, DAY));
+		ObjectTest.runTestClone(new GMonthDay(MONTH, DAY));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new GMonthDayImpl(MONTH, DAY),
-				new GMonthDayImpl(MONTH, DAY),
-				new GMonthDayImpl(MONTH, DAYMORE), new GMonthDayImpl(MONTH,
+		ObjectTest.runTestCompareTo(new GMonthDay(MONTH, DAY),
+				new GMonthDay(MONTH, DAY),
+				new GMonthDay(MONTH, DAYMORE), new GMonthDay(MONTH,
 						DAYMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new GMonthDayImpl(MONTH, DAY),
-				new GMonthDayImpl(MONTH, DAY));
+		ObjectTest.runTestHashCode(new GMonthDay(MONTH, DAY),
+				new GMonthDay(MONTH, DAY));
 	}
 
 	public static Test suite() {

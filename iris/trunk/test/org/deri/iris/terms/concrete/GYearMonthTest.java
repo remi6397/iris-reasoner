@@ -53,29 +53,29 @@ public class GYearMonthTest extends TestCase {
 	}
 
 	public void testBasic() {
-		final GYearMonthImpl basic = new GYearMonthImpl(YEAR, MONTH);
+		final GYearMonth basic = new GYearMonth(YEAR, MONTH);
 
 		assertEquals("Somethin wrong with constructor", basic,
-				new GYearMonthImpl(YEAR, MONTH));
+				new GYearMonth(YEAR, MONTH));
 		assertEquals("Somethin wrong with constructor", basic,
-				new GYearMonthImpl(REFERENCE));
+				new GYearMonth(REFERENCE));
 		assertEquals("Somethin wrong with getYear", YEAR, basic.getYear());
 		assertEquals("Somethin wrong with getMonth", MONTH, basic.getMonth());
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new GYearMonthImpl(YEAR, MONTH));
+		ObjectTest.runTestClone(new GYearMonth(YEAR, MONTH));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new GYearMonthImpl(YEAR, MONTH),
-				new GYearMonthImpl(YEAR, MONTH), new GYearMonthImpl(YEAR,
-						MONTHMORE), new GYearMonthImpl(YEAR, MONTHMORE1));
+		ObjectTest.runTestCompareTo(new GYearMonth(YEAR, MONTH),
+				new GYearMonth(YEAR, MONTH), new GYearMonth(YEAR,
+						MONTHMORE), new GYearMonth(YEAR, MONTHMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new GYearMonthImpl(YEAR, MONTH),
-				new GYearMonthImpl(YEAR, MONTH));
+		ObjectTest.runTestHashCode(new GYearMonth(YEAR, MONTH),
+				new GYearMonth(YEAR, MONTH));
 	}
 
 	public static Test suite() {

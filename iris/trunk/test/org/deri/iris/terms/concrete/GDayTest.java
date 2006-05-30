@@ -51,31 +51,31 @@ public class GDayTest extends TestCase {
 	}
 
 	public void testBasic() {
-		final GDayImpl equal = new GDayImpl(DAY);
+		final GDay equal = new GDay(DAY);
 
 		assertEquals("Somethin wrong with constructor", equal,
-				new GDayImpl(DAY));
-		assertEquals("Somethin wrong with constructor", equal, new GDayImpl(
+				new GDay(DAY));
+		assertEquals("Somethin wrong with constructor", equal, new GDay(
 				REFERENCE));
 		assertEquals("Somethin wrong with getDay", DAY, equal.getDay());
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new GDayImpl(DAY), new GDayImpl(DAY),
-				new GDayImpl(DAYMORE));
+		ObjectTest.runTestEquals(new GDay(DAY), new GDay(DAY),
+				new GDay(DAYMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new GDayImpl(DAY));
+		ObjectTest.runTestClone(new GDay(DAY));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new GDayImpl(DAY), new GDayImpl(DAY),
-				new GDayImpl(DAYMORE), new GDayImpl(DAYMORE1));
+		ObjectTest.runTestCompareTo(new GDay(DAY), new GDay(DAY),
+				new GDay(DAYMORE), new GDay(DAYMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new GDayImpl(DAY), new GDayImpl(DAY));
+		ObjectTest.runTestHashCode(new GDay(DAY), new GDay(DAY));
 	}
 
 	public static Test suite() {

@@ -30,65 +30,72 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.deri.iris.api.terms.concrete.IGMonthDay;
+import org.deri.iris.api.terms.concrete.IGYearMonth;
 
-public class GMonthDayImpl implements IGMonthDay, Cloneable {
+public class GYearMonth implements IGYearMonth, Cloneable {
 
 	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 
-	public GMonthDayImpl(final Calendar calendar) {
-		this(calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+	public GYearMonth(final Calendar calendar) {
+		this(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
 	}
 
-	public GMonthDayImpl(final int month, final int day) {
+	public GYearMonth(final int year, final int month) {
 		cal.clear();
-		setMonthDay(month, day);
+		setYearMonth(year, month);
 	}
 
 	public Object clone() {
-		return new GMonthDayImpl(cal);
+		try {
+			GYearMonth gm = (GYearMonth) super.clone();
+			gm.cal = (Calendar) cal.clone();
+			return gm;
+		} catch (CloneNotSupportedException e) {
+			assert true : "Can not happen";
+		}
+		return null;
 	}
 
-	public int compareTo(IGMonthDay o) {
+	public int compareTo(IGYearMonth o) {
 		if (o == null) {
 			throw new NullPointerException("Can not compare with null");
 		}
-		int iResult = getMonth() - o.getMonth();
+		int iResult = getYear() - o.getYear();
 		if (iResult != 0) {
 			return iResult;
 		} else {
-			return getDay() - o.getDay();
+			return getMonth() - o.getMonth();
 		}
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof GMonthDayImpl)) {
+		if (!(obj instanceof GYearMonth)) {
 			return false;
 		}
-		GMonthDayImpl monthday = (GMonthDayImpl) obj;
-		return ((monthday.getDay() == getDay()) && (monthday.getMonth() == getMonth()));
-	}
-
-	public int getDay() {
-		return cal.get(Calendar.DAY_OF_MONTH);
+		GYearMonth monthyear = (GYearMonth) obj;
+		return ((monthyear.getMonth() == getMonth()) && (monthyear.getYear() == getYear()));
 	}
 
 	public int getMonth() {
 		return cal.get(Calendar.MONTH);
 	}
 
+	public int getYear() {
+		return cal.get(Calendar.YEAR);
+	}
+
 	public int hashCode() {
 		return cal.hashCode();
 	}
 
-	protected void setMonthDay(int month, int day) {
-		cal.set(Calendar.DAY_OF_MONTH, day);
+	protected void setYearMonth(final int year, final int month) {
 		cal.set(Calendar.MONTH, month);
+		cal.set(Calendar.YEAR, year);
 	}
 
 	public String toString() {
-		return getClass().getName() + "[month=" + getMonth() + ",day="
-				+ getDay() + "]";
+		return getClass().getName() + "[year=" + getYear() + ",month="
+				+ getMonth() + "]";
 	}
 
 	public boolean isGround() {
