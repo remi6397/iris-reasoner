@@ -23,30 +23,56 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.terms.concrete;
+package org.deri.iris.terms;
 
-import org.deri.iris.terms.StringTermTest;
+import org.deri.iris.api.terms.IStringTerm;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+/**
+ * @author richi
+ *
+ */
+public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
+	
+	private String value = "";
+	
+	public StringTerm(final String value) {
+		setValue(value);
+	}
 
-public class AllDatatypesTest extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllDatatypesTest.class.getSimpleName());
-		suite.addTest(Base64BinaryTest.suite());
-		suite.addTest(BooleanTest.suite());
-		suite.addTest(DateTimeTest.suite());
-		suite.addTest(DurationTest.suite());
-		suite.addTest(GDayTest.suite());
-		suite.addTest(GMonthDayTest.suite());
-		suite.addTest(GMonthTest.suite());
-		suite.addTest(GYearMonthTest.suite());
-		suite.addTest(GYearTest.suite());
-		suite.addTest(HexBinaryTest.suite());
-		suite.addTest(IriTest.suite());
-		suite.addTest(SqNameTest.suite());
-		suite.addTest(StringTermTest.suite());
-		return suite;
+	public void setValue(String arg) {
+		this.value = arg;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public boolean isGround() {
+		return true;
+	}
+
+	public int compareTo(StringTerm o) {
+		return value.compareTo(o.value);
+	}
+	
+	public int hashCode() {
+		return value.hashCode();
+	}
+	
+	public boolean equals(final Object o) {
+		if (!(o instanceof StringTerm)) {
+			return false;
+		}
+		StringTerm st = (StringTerm) o;
+		return value.equals(st.value);
+	}
+	
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			assert true : "Will never happen";
+		}
+		return null;
 	}
 }

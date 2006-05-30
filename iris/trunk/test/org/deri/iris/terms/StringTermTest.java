@@ -23,30 +23,53 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.terms.concrete;
+package org.deri.iris.terms;
 
-import org.deri.iris.terms.StringTermTest;
+import org.deri.iris.ObjectTest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class AllDatatypesTest extends TestCase {
+/**
+ * @author richi
+ * 
+ */
+public class StringTermTest extends TestCase {
+
+	private static final String BASIC = "aaa";
+
+	private static final String MORE = "aab";
+
+	private static final String MORE1 = "aac";
+
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllDatatypesTest.class.getSimpleName());
-		suite.addTest(Base64BinaryTest.suite());
-		suite.addTest(BooleanTest.suite());
-		suite.addTest(DateTimeTest.suite());
-		suite.addTest(DurationTest.suite());
-		suite.addTest(GDayTest.suite());
-		suite.addTest(GMonthDayTest.suite());
-		suite.addTest(GMonthTest.suite());
-		suite.addTest(GYearMonthTest.suite());
-		suite.addTest(GYearTest.suite());
-		suite.addTest(HexBinaryTest.suite());
-		suite.addTest(IriTest.suite());
-		suite.addTest(SqNameTest.suite());
-		suite.addTest(StringTermTest.suite());
-		return suite;
+		return new TestSuite(StringTermTest.class, StringTermTest.class
+				.getSimpleName());
+	}
+
+	public void testBasic() {
+		assertEquals("Object not initialized correct", BASIC, new StringTerm(
+				BASIC).getValue());
+	}
+
+	public void testEquals() {
+		ObjectTest.runTestEquals(new StringTerm(BASIC), new StringTerm(BASIC),
+				new StringTerm(MORE1));
+	}
+
+	public void testClone() {
+		ObjectTest.runTestClone(new StringTerm(BASIC));
+	}
+
+	public void testHashCode() {
+		ObjectTest
+				.runTestHashCode(new StringTerm(BASIC), new StringTerm(BASIC));
+	}
+
+	public void testCompareTo() {
+		ObjectTest.runTestCompareTo(new StringTerm(BASIC),
+				new StringTerm(BASIC), new StringTerm(MORE), new StringTerm(
+						MORE1));
 	}
 }
