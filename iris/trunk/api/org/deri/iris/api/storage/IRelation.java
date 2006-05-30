@@ -30,10 +30,10 @@ import org.deri.iris.api.basics.ITuple;
  * @author Darko Anicic
  * @date  11.04.2006 @time  14:55:12
  *
- * @version $Revision: 1.3 $ $Date: 2006-05-23 13:46:05 $
+ * @version $Revision: 1.4 $ $Date: 2006-05-30 08:29:05 $
  */
 
 public interface IRelation<Type extends ITuple> extends SortedSet<ITuple>{
-
+	
 }
 
