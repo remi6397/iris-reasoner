@@ -29,9 +29,19 @@ import org.deri.iris.api.basics.ITuple;
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:45:10
  *
- * @version $Revision: 1.1 $ $Date: 2006-05-23 13:10:14 $
+ * @version $Revision: 1.2 $ $Date: 2006-05-30 08:26:52 $
  */
 public interface IConcatenation {
 
+	/**
+	 * Creates a new tuple concatenating two tuples. 
+	 * 
+	 * @param arg0
+	 * 				- the first tuple to be concatenated.
+	 * @param arg1
+	 * 				- the second tuple to be concatenated.
+	 * @return
+	 * 				- concatenated tuple.
+	 */
 	public ITuple concatenate(final ITuple arg0, final ITuple arg1);
 }
