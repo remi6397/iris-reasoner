@@ -1,0 +1,94 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
+ * 
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
+
+package org.deri.iris.terms.concrete;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
+import org.deri.iris.api.terms.concrete.IGYear;
+
+public class GYearImpl implements IGYear, Cloneable {
+
+	private Calendar cal = new GregorianCalendar(TimeZone
+			.getTimeZone("GMT"));
+
+	public GYearImpl(final Calendar calendar) {
+		this(calendar.get(Calendar.YEAR));
+	}
+
+	public GYearImpl(final int year) {
+		cal.clear();
+		setYear(year);
+	}
+
+	public Object clone() {
+		try {
+			GYearImpl gy = (GYearImpl) super.clone();
+			gy.cal = (Calendar) cal.clone();
+			return gy;
+		} catch (CloneNotSupportedException e) {
+			assert true : "Can not happen";
+		}
+		return null;
+	}
+
+	public int compareTo(IGYear o) {
+		if (o == null) {
+			throw new IllegalArgumentException("Can not compare with null");
+		}
+		return getYear() - o.getYear();
+	}
+
+	public boolean equals(final Object obj) {
+		if (!(obj instanceof GYearImpl)) {
+			return false;
+		}
+		GYearImpl gy = (GYearImpl) obj;
+		return gy.getYear() == getYear();
+	}
+
+	public int getYear() {
+		return cal.get(Calendar.YEAR);
+	}
+	
+	public int hashCode() {
+		return cal.hashCode();
+	}
+
+	protected void setYear(int year) {
+		cal.set(Calendar.YEAR, year);
+	}
+
+	public String toString() {
+		return getClass().getName() + "[year=" + getYear() + "]";
+	}
+
+	public boolean isGround() {
+		return true;
+	}
+}
