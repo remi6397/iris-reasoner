@@ -9,6 +9,7 @@ import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.basics.Tuple;
 import org.deri.iris.operations.relations.Join;
+import org.deri.iris.operations.relations.JoinCondition;
 import org.deri.iris.storage.Relation;
 import org.deri.iris.terms.Term;
 
@@ -32,12 +33,12 @@ public class JoinTest {
 		IRelation relation0 = new Relation(3);
 		IRelation relation1 = new Relation(3);
 		
-		relation0.add(this.createTuple("a","a","a"));
-		relation0.add(this.createTuple("a","b","a"));
+		relation0.add(this.createTuple("a","b","c"));
+		//relation0.add(this.createTuple("a","b","b"));
 		
-		relation1.add(this.createTuple("a","b","b"));
+		relation1.add(this.createTuple("c","b","b"));
 		relation1.add(this.createTuple("a","b","a"));
-		relation1.add(this.createTuple("a","b","c"));
+		//relation1.add(this.createTuple("a","b","c"));
 		
 		Iterator i = relation0.iterator();
 		while(i.hasNext()){
@@ -50,7 +51,8 @@ public class JoinTest {
 		
 		IJoin joiner = new Join();
 		int[]indexes = new int[]{-1, -1, 0};
-		IRelation result = joiner.join(relation0, relation1, indexes);
+		IRelation result = joiner.join(relation0, relation1, indexes, 
+				JoinCondition.EQUALS);
 		
 		i = result.iterator();
 		while(i.hasNext()){

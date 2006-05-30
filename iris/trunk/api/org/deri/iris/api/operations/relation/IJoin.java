@@ -20,6 +20,7 @@
 package org.deri.iris.api.operations.relation;
 
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.operations.relations.JoinCondition;
 
 /**
  * Interface or class description
@@ -29,10 +30,33 @@ import org.deri.iris.api.storage.IRelation;
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:09:02
  *
- * @version $Revision: 1.2 $ $Date: 2006-05-30 08:26:12 $
+ * @version $Revision: 1.3 $ $Date: 2006-05-30 10:35:56 $
+ * @param <JoinCondition>
  */
 public interface IJoin {
 	
-	public IRelation join(final IRelation arg0, final IRelation arg1, int[] indexes);
+	/**
+	 * Default join or equijoin is a join where a condition is '='
+	 * 
+	 * @param arg0
+	 * @param arg1
+	 * @param indexes
+	 * @return
+	 */
+	public IRelation equiJoin(final IRelation arg0, final IRelation arg1, 
+			int[] indexes);
 	
+	/**
+	 * General join operation where a specified condition 
+	 * (=, !=, <, >, <=, >=) must hold.
+	 * 
+	 * @param arg0
+	 * @param arg1
+	 * @param indexes
+	 * @param condition
+	 * @return
+	 */
+	public IRelation join(IRelation arg0, IRelation arg1, 
+			int[] indexes, JoinCondition condition);
+		
 }

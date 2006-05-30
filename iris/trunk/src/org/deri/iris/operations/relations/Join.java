@@ -38,13 +38,25 @@ public class Join implements IJoin{
 	
 	private IRelation relation0 = null;
 	private IRelation relation1 = null;
+	private TupleComparator comparator = null;
+	private JoinCondition condition = JoinCondition.EQUALS;
+	
+	public IRelation join(IRelation relation0, IRelation relation1, int[] indexes, JoinCondition condition) {
+		this.condition = condition;
+		return join(relation0, relation1, indexes);
+	}
+	
+	public IRelation equiJoin(IRelation arg0, IRelation arg1, int[] indexes) {
+		this.condition = JoinCondition.EQUALS;
+		return join(relation0, relation1, indexes);
+	}
 	
 	@SuppressWarnings("unchecked")
-	public IRelation join(IRelation relation0, IRelation relation1, int[] indexes) {
+	private IRelation join(IRelation relation0, IRelation relation1, int[] indexes) {
 		if (((ITuple)relation0.first()).getArity() != ((ITuple)relation1.first()).getArity()) {
 			throw new IllegalArgumentException("Couldn't join due to different arity of tuples.");
 		} 
-		TupleComparator comparator = new TupleComparator(indexes);
+		this.comparator = new TupleComparator(indexes);
 		IRelation joinRelation = new Relation(indexes.length*2);
 		
 		if(!((TupleComparator)relation0.comparator()).getSortIndexes().equals(indexes)){
@@ -65,13 +77,13 @@ public class Join implements IJoin{
 			iterator = relation0.iterator();
 			while(iterator.hasNext()){
 				tuple = iterator.next();
-				joinRelation.addAll(findAndJoin(relation1, tuple, indexes, order, comparator));
+				joinRelation.addAll(findAndJoin(relation1, tuple, indexes, order));
 			}
 		}else{
 			iterator = relation1.iterator();
 			while(iterator.hasNext()){
 				tuple = iterator.next();
-				joinRelation.addAll(findAndJoin(relation0, tuple, indexes, order, comparator));
+				joinRelation.addAll(findAndJoin(relation0, tuple, indexes, order));
 			}
 		}
 			
@@ -80,7 +92,7 @@ public class Join implements IJoin{
 	
 	@SuppressWarnings("unchecked")
 	private IRelation findAndJoin(IRelation relation, ITuple tuple, int[] indexes, 
-			boolean order, TupleComparator comparator){
+			boolean order){
 		
 		IRelation joinElements = new Relation(indexes.length*2);
 		Concatenation concatenator = new Concatenation();
@@ -97,15 +109,15 @@ public class Join implements IJoin{
 		while(iterator.hasNext()){
 			tmpTuple = iterator.next();
 			if(order){
-				if(comparator.joinCompare(tuple, tmpTuple) == 0){
-					// create joinTuple = tuple + tmpTuple
+				if(isConditionSatisfied(tuple, tmpTuple, this.condition)){
+					//create joinTuple = tuple + tmpTuple
 					concatenatedTuple = concatenator.concatenate(tuple, tmpTuple);
 					joinElements.add(concatenatedTuple);
 				}
 			}
 			else{
-				if(comparator.joinCompare(tmpTuple, tuple) == 0){
-					// create joinTuple = tmpTuple + tuple
+				if(isConditionSatisfied(tmpTuple, tuple, this.condition)){
+					//create joinTuple = tuple + tmpTuple
 					concatenatedTuple = concatenator.concatenate(tmpTuple, tuple);
 					joinElements.add(concatenatedTuple);
 				}
@@ -114,4 +126,35 @@ public class Join implements IJoin{
 		return joinElements;
 	}
 	
+	private boolean isConditionSatisfied(ITuple t0, ITuple t1, JoinCondition condition){
+		switch (condition){
+			case EQUALS:
+				if(comparator.joinCompare(t0, t1) == 0)
+					return true;
+				break;
+			case NOT_EQUAL:
+				if(comparator.joinCompare(t0, t1) != 0)
+					return true;
+				break;
+			case LESS_THAN:
+				if(comparator.joinCompare(t0, t1) < 0)
+					return true;
+				break;
+			case GREATER_THAN:
+				if(comparator.joinCompare(t0, t1) > 0)
+					return true;
+				break;
+			case LESS_OR_EQUAL:
+				if(comparator.joinCompare(t0, t1) < 0 ||
+						comparator.joinCompare(t0, t1) == 0)
+					return true;
+				break;
+			case GREATER_OR_EQUAL:
+				if(comparator.joinCompare(t0, t1) > 0 ||
+						comparator.joinCompare(t0, t1) == 0)
+					return true;
+		}
+		return false;
+	}
+
 }
