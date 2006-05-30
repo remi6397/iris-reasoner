@@ -25,7 +25,7 @@ import org.deri.iris.api.terms.ITerm;
  * @author Darko Anicic, DERI Innsbruck
  * @date   11.01.2006 15:25:47
  */
-public interface IBooleanTerm extends ITerm{
+public interface IBooleanTerm extends ITerm<IBooleanTerm> {
 	
 	public void setValue(boolean arg);
 	

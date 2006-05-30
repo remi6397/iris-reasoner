@@ -10,15 +10,15 @@ import org.deri.iris.api.terms.ITerm;
  *
  * <pre>
  * Created on 11.04.2006
- * Committed by $Author: darko $
+ * Committed by $Author: richardpoettler $
  * $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/IDuration.java,v $,
  * </pre>
  *
  * @author Richard Pöttler
  *
- * @version $Revision: 1.1 $ $Date: 2006-05-23 13:09:02 $
+ * @version $Revision: 1.2 $ $Date: 2006-05-30 14:56:18 $
  */
-public interface IDuration extends ITerm<IDuration>, Cloneable {
+public interface IDuration extends ITerm<IDuration> {
 	/**
 	 * Returns the corresponding Calendar object.
 	 * 
