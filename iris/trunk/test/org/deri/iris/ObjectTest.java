@@ -34,6 +34,10 @@ import junit.framework.Assert;
  * 
  */
 public final class ObjectTest {
+	
+	private ObjectTest() {
+		// prevent sublassing
+	}
 
 	public static void runTestEquals(final Object e0, final Object e1,
 			final Object ue0) {
