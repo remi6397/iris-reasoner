@@ -29,10 +29,10 @@ import org.deri.iris.api.storage.IRelation;
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:09:02
  *
- * @version $Revision: 1.1 $ $Date: 2006-05-23 13:14:19 $
+ * @version $Revision: 1.2 $ $Date: 2006-05-30 08:26:12 $
  */
 public interface IJoin {
-
-	public IRelation join(final IRelation arg0, final IRelation arg1);
+	
+	public IRelation join(final IRelation arg0, final IRelation arg1, int[] indexes);
 	
 }
