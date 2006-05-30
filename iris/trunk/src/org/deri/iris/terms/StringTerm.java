@@ -29,12 +29,12 @@ import org.deri.iris.api.terms.IStringTerm;
 
 /**
  * @author richi
- *
+ * 
  */
 public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
-	
+
 	private String value = "";
-	
+
 	public StringTerm(final String value) {
 		setValue(value);
 	}
@@ -54,11 +54,11 @@ public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
 	public int compareTo(StringTerm o) {
 		return value.compareTo(o.value);
 	}
-	
+
 	public int hashCode() {
 		return value.hashCode();
 	}
-	
+
 	public boolean equals(final Object o) {
 		if (!(o instanceof StringTerm)) {
 			return false;
@@ -66,7 +66,7 @@ public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
 		StringTerm st = (StringTerm) o;
 		return value.equals(st.value);
 	}
-	
+
 	public Object clone() {
 		try {
 			return super.clone();
@@ -74,5 +74,14 @@ public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
 			assert true : "Will never happen";
 		}
 		return null;
+	}
+
+	/**
+	 * Simple toString() method wich only returns the holded value
+	 * 
+	 * @return the containing String
+	 */
+	public String toString() {
+		return value;
 	}
 }
