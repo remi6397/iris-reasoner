@@ -79,6 +79,28 @@ public class JoinTest extends TestCase {
 		runJoin(new int[] { -1, 2, -1 }, e);
 	}
 	
+	public void testJoin_m1m1m1() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(createTuple("a", "b", "c", "c", "b", "b"));
+		e.add(createTuple("a", "b", "c", "c", "b", "a"));
+		e.add(createTuple("a", "b", "c", "a", "b", "c"));
+		e.add(createTuple("a", "b", "b", "c", "b", "b"));
+		e.add(createTuple("a", "b", "b", "c", "b", "a"));
+		e.add(createTuple("a", "b", "b", "a", "b", "c"));
+		runJoin(new int[] { -1, -1, -1 }, e);
+	}
+	
+	public void testJoin_111() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(createTuple("a", "b", "c", "c", "b", "b"));
+		e.add(createTuple("a", "b", "c", "c", "b", "a"));
+		e.add(createTuple("a", "b", "c", "a", "b", "c"));
+		e.add(createTuple("a", "b", "b", "c", "b", "b"));
+		e.add(createTuple("a", "b", "b", "c", "b", "a"));
+		e.add(createTuple("a", "b", "b", "a", "b", "c"));
+		runJoin(new int[] { 1, 1, 1 }, e);
+	}
+	
 	/**
 	 * Tests the relation against a list of tuples using the assert methods of
 	 * JUnit. The length of the relation and the list must be equal, and the
