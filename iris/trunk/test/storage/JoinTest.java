@@ -41,7 +41,7 @@ public class JoinTest extends TestCase {
 	 * @param e
 	 *            the Collection of expected tuples
 	 */
-	protected void runJoin(final int[] i, final Collection<ITuple> e) {
+	protected static void runJoin(final int[] i, final Collection<ITuple> e) {
 		IRelation<ITuple> relation0 = new Relation(3);
 		IRelation<ITuple> relation1 = new Relation(3);
 
