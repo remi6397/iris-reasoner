@@ -20,6 +20,7 @@
 
 package org.deri.iris.operations.relations;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.SortedSet;
 
@@ -30,6 +31,8 @@ import org.deri.iris.operations.tuple.Concatenation;
 import org.deri.iris.operations.tuple.TupleComparator;
 import org.deri.iris.storage.Relation;
 
+//TODO: indexes.length*2 should be replaced be r0.size() + r1.size() (what if
+//joining a relation of arity 2 to a relation of arity 6?)
 /**
  * @author Darko Anicic, DERI Innsbruck
  * @date   24.05.2006 09:26:43
@@ -59,11 +62,11 @@ public class Join implements IJoin{
 		this.comparator = new TupleComparator(indexes);
 		IRelation joinRelation = new Relation(indexes.length*2);
 		
-		if(!((TupleComparator)relation0.comparator()).getSortIndexes().equals(indexes)){
+		if(!Arrays.equals(((TupleComparator)relation0.comparator()).getSortIndexes(), indexes)){
 			this.relation0 = new Relation(comparator);
 		}
 		this.relation0.addAll(relation0);
-		if(!((TupleComparator)relation1.comparator()).getSortIndexes().equals(indexes)){
+		if(!Arrays.equals(((TupleComparator)relation1.comparator()).getSortIndexes(), indexes)){
 			this.relation1 = new Relation(comparator);
 		}
 		this.relation1.addAll(relation1);
