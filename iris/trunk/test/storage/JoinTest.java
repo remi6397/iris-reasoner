@@ -47,6 +47,9 @@ public class JoinTest extends TestCase {
 
 		relation0.add(createTuple("a", "b", "c"));
 		relation0.add(createTuple("a", "b", "b"));
+		relation0.add(createTuple("f", "g", "h"));
+		relation0.add(createTuple("h", "g", "f"));
+		relation0.add(createTuple("h", "g", "a"));
 
 		relation1.add(createTuple("c", "b", "b"));
 		relation1.add(createTuple("c", "b", "a"));
@@ -63,6 +66,7 @@ public class JoinTest extends TestCase {
 		final List<ITuple> e = new ArrayList<ITuple>();
 		e.add(createTuple("a", "b", "c", "c", "b", "b"));
 		e.add(createTuple("a", "b", "c", "c", "b", "a"));
+		e.add(createTuple("h", "g", "a", "a", "b", "c"));
 		runJoin(new int[] { -1, -1, 0 }, e);
 	}
 
@@ -87,6 +91,16 @@ public class JoinTest extends TestCase {
 		e.add(createTuple("a", "b", "b", "c", "b", "b"));
 		e.add(createTuple("a", "b", "b", "c", "b", "a"));
 		e.add(createTuple("a", "b", "b", "a", "b", "c"));
+		
+		e.add(createTuple("f", "g", "h", "c", "b", "b"));
+		e.add(createTuple("f", "g", "h", "c", "b", "a"));
+		e.add(createTuple("f", "g", "h", "a", "b", "c"));
+		e.add(createTuple("h", "g", "f", "c", "b", "b"));
+		e.add(createTuple("h", "g", "f", "c", "b", "a"));
+		e.add(createTuple("h", "g", "f", "a", "b", "c"));
+		e.add(createTuple("h", "g", "a", "c", "b", "b"));
+		e.add(createTuple("h", "g", "a", "c", "b", "a"));
+		e.add(createTuple("h", "g", "a", "a", "b", "c"));
 		runJoin(new int[] { -1, -1, -1 }, e);
 	}
 	
