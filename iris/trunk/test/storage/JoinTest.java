@@ -1,78 +1,114 @@
 package storage;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import junit.framework.Assert;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.basics.Tuple;
 import org.deri.iris.operations.relations.Join;
 import org.deri.iris.operations.relations.JoinCondition;
 import org.deri.iris.storage.Relation;
-import org.deri.iris.terms.Term;
+import org.deri.iris.terms.StringTerm;
 
 /**
+ * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @date   26.05.2006 13:59:43
+ * @date 26.05.2006 13:59:43
  */
-public class JoinTest {
+public class JoinTest extends TestCase {
 
-	public JoinTest() {
-		super();
+	public static Test suite() {
+		return new TestSuite(JoinTest.class, JoinTest.class.getSimpleName());
 	}
 
-	public static void main(String[] args) throws Exception {
-		JoinTest i = new JoinTest();
-		i.test();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void test() throws Exception {
-		IRelation relation0 = new Relation(3);
-		IRelation relation1 = new Relation(3);
-		
-		relation0.add(this.createTuple("a","b","c"));
-		//relation0.add(this.createTuple("a","b","b"));
-		
-		relation1.add(this.createTuple("c","b","b"));
-		relation1.add(this.createTuple("a","b","a"));
-		//relation1.add(this.createTuple("a","b","c"));
-		
-		Iterator i = relation0.iterator();
-		while(i.hasNext()){
-			System.out.println("relation0: " + ((Tuple)i.next()).toString());
-		}
-		i = relation1.iterator();
-		while(i.hasNext()){
-			System.out.println("relation1: " + i.next());
-		}
-		
+	/**
+	 * Joins two relations and then checks the result against the submitted
+	 * Collection of tuples.
+	 * 
+	 * @param i
+	 *            the indexes on which to join (see documentation for
+	 *            IJoin.join(..) for the computation of this array)
+	 * @param e
+	 *            the Collection of expected tuples
+	 */
+	protected void runJoin(final int[] i, final Collection<ITuple> e) {
+		IRelation<ITuple> relation0 = new Relation(3);
+		IRelation<ITuple> relation1 = new Relation(3);
+
+		relation0.add(createTuple("a", "b", "c"));
+		relation0.add(createTuple("a", "b", "b"));
+
+		relation1.add(createTuple("c", "b", "b"));
+		relation1.add(createTuple("c", "b", "a"));
+		relation1.add(createTuple("a", "b", "c"));
+
 		IJoin joiner = new Join();
-		int[]indexes = new int[]{-1, -1, 0};
-		IRelation result = joiner.join(relation0, relation1, indexes, 
+		IRelation result = joiner.join(relation0, relation1, i,
 				JoinCondition.EQUALS);
-		
-		i = result.iterator();
-		while(i.hasNext()){
-			System.out.println("result: " + i.next());
-		}
-		
-		System.out.println("End");
+
+		assertResults(result, e);
+	}
+
+	public void testJoin_m1m10() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(createTuple("a", "b", "c", "c", "b", "b"));
+		e.add(createTuple("a", "b", "c", "c", "b", "a"));
+		runJoin(new int[] { -1, -1, 0 }, e);
+	}
+
+	public void testJoin_210() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(createTuple("a", "b", "c", "c", "b", "a"));
+		runJoin(new int[] { 2, 1, 0 }, e);
 	}
 	
-	private ITuple createTuple(String s0, String s1, String s2){
-		Term term0 = new Term(s0);
-		Term term1 = new Term(s1);
-		Term term2 = new Term(s2);
-		
-		List termList = new LinkedList();
-		termList.add(term0);
-		termList.add(term1);
-		termList.add(term2);
-		
-		ITuple tuple = new Tuple(termList);
-		return tuple;
+	public void testJoin_m12m1() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(createTuple("a", "b", "c", "c", "b", "b"));
+		e.add(createTuple("a", "b", "b", "c", "b", "b"));
+		runJoin(new int[] { -1, 2, -1 }, e);
+	}
+	
+	/**
+	 * Tests the relation against a list of tuples using the assert methods of
+	 * JUnit. The length of the relation and the list must be equal, and the
+	 * relation must contain all tuples of the list.
+	 * 
+	 * @param r
+	 *            the relation to check
+	 * @param e
+	 *            the Collection containing all expected tuples
+	 */
+	protected static void assertResults(final IRelation<ITuple> r,
+			final Collection<ITuple> e) {
+		Assert.assertEquals("The length of relation and the list of"
+				+ " expected tuples must be equal", e.size(), r.size());
+		Assert.assertTrue("The relation must contain all expected tuples", r
+				.containsAll(e));
+	}
+
+	/**
+	 * Creates a tuple consisting of StringTerms of the submitted strings
+	 * 
+	 * @param s
+	 *            the Strings to add to the tuple
+	 * @return the tuple
+	 */
+	protected static ITuple createTuple(final String... s) {
+		List<ITerm> termList = new LinkedList<ITerm>();
+		for (String str : s) {
+			termList.add(new StringTerm(str));
+		}
+		return new Tuple(termList);
 	}
 }
