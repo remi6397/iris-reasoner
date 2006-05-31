@@ -92,12 +92,6 @@ public class JoinTest extends TestCase {
 	
 	public void testJoin_111() {
 		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(createTuple("a", "b", "c", "c", "b", "b"));
-		e.add(createTuple("a", "b", "c", "c", "b", "a"));
-		e.add(createTuple("a", "b", "c", "a", "b", "c"));
-		e.add(createTuple("a", "b", "b", "c", "b", "b"));
-		e.add(createTuple("a", "b", "b", "c", "b", "a"));
-		e.add(createTuple("a", "b", "b", "a", "b", "c"));
 		runJoin(new int[] { 1, 1, 1 }, e);
 	}
 	
