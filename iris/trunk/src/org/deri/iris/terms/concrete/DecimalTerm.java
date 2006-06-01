@@ -25,32 +25,67 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.terms.StringTermTest;
+import org.deri.iris.api.terms.concrete.IDecimalTerm;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+/**
+ * @author richi
+ * 
+ */
+public class DecimalTerm implements IDecimalTerm, Cloneable {
 
-public class AllDatatypesTest extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllDatatypesTest.class.getSimpleName());
-		suite.addTest(Base64BinaryTest.suite());
-		suite.addTest(BooleanTest.suite());
-		suite.addTest(DateTimeTest.suite());
-		suite.addTest(DurationTest.suite());
-		suite.addTest(GDayTest.suite());
-		suite.addTest(GMonthDayTest.suite());
-		suite.addTest(GMonthTest.suite());
-		suite.addTest(GYearMonthTest.suite());
-		suite.addTest(GYearTest.suite());
-		suite.addTest(HexBinaryTest.suite());
-		suite.addTest(IriTest.suite());
-		suite.addTest(SqNameTest.suite());
-		suite.addTest(StringTermTest.suite());
-		suite.addTest(IntegerTest.suite());
-		suite.addTest(FloatTest.suite());
-		suite.addTest(DecimalTest.suite());
-		suite.addTest(DoubleTest.suite());
-		return suite;
+	private double d = 0d;
+
+	public DecimalTerm(final double d) {
+		setValue(d);
+	}
+
+	public void setValue(double arg) {
+		d = arg;
+	}
+
+	public double getValue() {
+		return d;
+	}
+
+	public TypeOfNumericTerm getTypeOfNumericTerm() {
+		return TypeOfNumericTerm.IDoubleTerm;
+	}
+
+	public boolean isGround() {
+		return true;
+	}
+
+	public int compareTo(IDecimalTerm o) {
+		return Double.compare(d, o.getValue());
+	}
+
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			assert true : "Will never happen";
+		}
+		return null;
+	}
+
+	public boolean equals(final Object o) {
+		if (!(o instanceof DecimalTerm)) {
+			return false;
+		}
+		DecimalTerm dt = (DecimalTerm) o;
+		return Double.doubleToLongBits(d) == Double.doubleToLongBits(dt.d);
+	}
+
+	public int hashCode() {
+		return Double.valueOf(d).hashCode();
+	}
+
+	/**
+	 * Simply returns the String representation of the holded double.
+	 * 
+	 * @return the String representation of the holded double
+	 */
+	public String toString() {
+		return Double.toString(d);
 	}
 }

@@ -25,32 +25,54 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.terms.StringTermTest;
+import org.deri.iris.ObjectTest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class AllDatatypesTest extends TestCase {
+/**
+ * @author richi
+ * 
+ */
+public class DoubleTest extends TestCase {
+
+	private final static double BASIC = 0.1d;
+
+	private final static double MORE = 0.2d;
+
+	private final static double MORE1 = 0.3d;
+
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllDatatypesTest.class.getSimpleName());
-		suite.addTest(Base64BinaryTest.suite());
-		suite.addTest(BooleanTest.suite());
-		suite.addTest(DateTimeTest.suite());
-		suite.addTest(DurationTest.suite());
-		suite.addTest(GDayTest.suite());
-		suite.addTest(GMonthDayTest.suite());
-		suite.addTest(GMonthTest.suite());
-		suite.addTest(GYearMonthTest.suite());
-		suite.addTest(GYearTest.suite());
-		suite.addTest(HexBinaryTest.suite());
-		suite.addTest(IriTest.suite());
-		suite.addTest(SqNameTest.suite());
-		suite.addTest(StringTermTest.suite());
-		suite.addTest(IntegerTest.suite());
-		suite.addTest(FloatTest.suite());
-		suite.addTest(DecimalTest.suite());
-		suite.addTest(DoubleTest.suite());
-		return suite;
+		return new TestSuite(DoubleTest.class, DoubleTest.class
+				.getSimpleName());
+	}
+
+	public void testBasic() {
+		DoubleTerm basic = new DoubleTerm(BASIC);
+		DoubleTerm changed = new DoubleTerm(MORE);
+		changed.setValue(BASIC);
+		assertEquals("object not initialized correctly", BASIC, basic
+				.getValue());
+		assertEquals("setValue(..) doesn't work correctly", basic, changed);
+	}
+
+	public void testEquals() {
+		ObjectTest.runTestEquals(new DoubleTerm(BASIC),
+				new DoubleTerm(BASIC), new DoubleTerm(MORE));
+	}
+
+	public void testClone() {
+		ObjectTest.runTestClone(new DoubleTerm(BASIC));
+	}
+
+	public void testCompare() {
+		ObjectTest.runTestCompareTo(new DoubleTerm(BASIC), new DoubleTerm(
+				BASIC), new DoubleTerm(MORE), new DoubleTerm(MORE1));
+	}
+
+	public void testHashCode() {
+		ObjectTest.runTestHashCode(new DoubleTerm(BASIC), new DoubleTerm(
+				BASIC));
 	}
 }

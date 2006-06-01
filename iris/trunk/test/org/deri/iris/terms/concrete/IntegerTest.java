@@ -25,32 +25,54 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.terms.StringTermTest;
+import org.deri.iris.ObjectTest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class AllDatatypesTest extends TestCase {
+/**
+ * @author richi
+ * 
+ */
+public class IntegerTest extends TestCase {
+
+	private final static int BASIC = 1;
+
+	private final static int MORE = 2;
+
+	private final static int MORE1 = 3;
+
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllDatatypesTest.class.getSimpleName());
-		suite.addTest(Base64BinaryTest.suite());
-		suite.addTest(BooleanTest.suite());
-		suite.addTest(DateTimeTest.suite());
-		suite.addTest(DurationTest.suite());
-		suite.addTest(GDayTest.suite());
-		suite.addTest(GMonthDayTest.suite());
-		suite.addTest(GMonthTest.suite());
-		suite.addTest(GYearMonthTest.suite());
-		suite.addTest(GYearTest.suite());
-		suite.addTest(HexBinaryTest.suite());
-		suite.addTest(IriTest.suite());
-		suite.addTest(SqNameTest.suite());
-		suite.addTest(StringTermTest.suite());
-		suite.addTest(IntegerTest.suite());
-		suite.addTest(FloatTest.suite());
-		suite.addTest(DecimalTest.suite());
-		suite.addTest(DoubleTest.suite());
-		return suite;
+		return new TestSuite(IntegerTest.class, IntegerTest.class
+				.getSimpleName());
+	}
+
+	public void testBasic() {
+		IntegerTerm basic = new IntegerTerm(BASIC);
+		IntegerTerm changed = new IntegerTerm(MORE);
+		changed.setValue(BASIC);
+		assertEquals("object not initialized correctly", BASIC, basic
+				.getValue());
+		assertEquals("setValue(..) doesn't work correctly", basic, changed);
+	}
+
+	public void testEquals() {
+		ObjectTest.runTestEquals(new IntegerTerm(BASIC),
+				new IntegerTerm(BASIC), new IntegerTerm(MORE));
+	}
+
+	public void testClone() {
+		ObjectTest.runTestClone(new IntegerTerm(BASIC));
+	}
+
+	public void testCompare() {
+		ObjectTest.runTestCompareTo(new IntegerTerm(BASIC), new IntegerTerm(
+				BASIC), new IntegerTerm(MORE), new IntegerTerm(MORE1));
+	}
+
+	public void testHashCode() {
+		ObjectTest.runTestHashCode(new IntegerTerm(BASIC), new IntegerTerm(
+				BASIC));
 	}
 }

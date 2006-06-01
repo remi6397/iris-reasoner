@@ -25,32 +25,62 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.terms.StringTermTest;
+import org.deri.iris.api.terms.concrete.IFloatTerm;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+/**
+ * @author richi
+ *
+ */
+public class FloatTerm implements IFloatTerm, Cloneable {
 
-public class AllDatatypesTest extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllDatatypesTest.class.getSimpleName());
-		suite.addTest(Base64BinaryTest.suite());
-		suite.addTest(BooleanTest.suite());
-		suite.addTest(DateTimeTest.suite());
-		suite.addTest(DurationTest.suite());
-		suite.addTest(GDayTest.suite());
-		suite.addTest(GMonthDayTest.suite());
-		suite.addTest(GMonthTest.suite());
-		suite.addTest(GYearMonthTest.suite());
-		suite.addTest(GYearTest.suite());
-		suite.addTest(HexBinaryTest.suite());
-		suite.addTest(IriTest.suite());
-		suite.addTest(SqNameTest.suite());
-		suite.addTest(StringTermTest.suite());
-		suite.addTest(IntegerTest.suite());
-		suite.addTest(FloatTest.suite());
-		suite.addTest(DecimalTest.suite());
-		suite.addTest(DoubleTest.suite());
-		return suite;
+	private float f = 0f;
+	
+	public FloatTerm(final Float f) {
+		setValue(f);
+	}
+	
+	public void setValue(final float arg) {
+		f = arg;
+	}
+
+	public float getValue() {
+		return f;
+	}
+
+	public TypeOfNumericTerm getTypeOfNumericTerm() {
+		return TypeOfNumericTerm.IFloatTerm;
+	}
+
+	public boolean isGround() {
+		return true;
+	}
+
+	public int compareTo(IFloatTerm o) {
+		return Float.compare(f, o.getValue());
+	}
+
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			assert true : "Will never happen";
+		}
+		return null;
+	}
+	
+	public int hashCode() {
+		return Float.valueOf(f).hashCode();
+	}
+	
+	public boolean equals(Object o) {
+		if (!(o instanceof FloatTerm)) {
+			return false;
+		}
+		FloatTerm ft = (FloatTerm) o;
+		return Float.floatToIntBits(f) == Float.floatToIntBits(ft.f);
+	}
+	
+	public String toString() {
+		return Float.toString(f);
 	}
 }

@@ -25,32 +25,54 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.terms.StringTermTest;
+import org.deri.iris.ObjectTest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class AllDatatypesTest extends TestCase {
+/**
+ * @author richi
+ * 
+ */
+public class FloatTest extends TestCase {
+
+	private final static float BASIC = 0.1f;
+
+	private final static float MORE = 0.2f;
+
+	private final static float MORE1 = 0.3f;
+
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllDatatypesTest.class.getSimpleName());
-		suite.addTest(Base64BinaryTest.suite());
-		suite.addTest(BooleanTest.suite());
-		suite.addTest(DateTimeTest.suite());
-		suite.addTest(DurationTest.suite());
-		suite.addTest(GDayTest.suite());
-		suite.addTest(GMonthDayTest.suite());
-		suite.addTest(GMonthTest.suite());
-		suite.addTest(GYearMonthTest.suite());
-		suite.addTest(GYearTest.suite());
-		suite.addTest(HexBinaryTest.suite());
-		suite.addTest(IriTest.suite());
-		suite.addTest(SqNameTest.suite());
-		suite.addTest(StringTermTest.suite());
-		suite.addTest(IntegerTest.suite());
-		suite.addTest(FloatTest.suite());
-		suite.addTest(DecimalTest.suite());
-		suite.addTest(DoubleTest.suite());
-		return suite;
+		return new TestSuite(FloatTest.class, FloatTest.class
+				.getSimpleName());
+	}
+
+	public void testBasic() {
+		FloatTerm basic = new FloatTerm(BASIC);
+		FloatTerm changed = new FloatTerm(MORE);
+		changed.setValue(BASIC);
+		assertEquals("object not initialized correctly", BASIC, basic
+				.getValue());
+		assertEquals("setValue(..) doesn't work correctly", basic, changed);
+	}
+
+	public void testEquals() {
+		ObjectTest.runTestEquals(new FloatTerm(BASIC),
+				new FloatTerm(BASIC), new FloatTerm(MORE));
+	}
+
+	public void testClone() {
+		ObjectTest.runTestClone(new FloatTerm(BASIC));
+	}
+
+	public void testCompare() {
+		ObjectTest.runTestCompareTo(new FloatTerm(BASIC), new FloatTerm(
+				BASIC), new FloatTerm(MORE), new FloatTerm(MORE1));
+	}
+
+	public void testHashCode() {
+		ObjectTest.runTestHashCode(new FloatTerm(BASIC), new FloatTerm(
+				BASIC));
 	}
 }

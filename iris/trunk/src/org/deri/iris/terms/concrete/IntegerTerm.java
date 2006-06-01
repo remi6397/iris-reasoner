@@ -81,6 +81,14 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 		return null;
 	}
 	
+	public boolean equals(final Object o) {
+		if (!(o instanceof IntegerTerm)) {
+			return false;
+		}
+		IntegerTerm it = (IntegerTerm) o;
+		return i == it.i;
+	}
+	
 	/**
 	 * Simply returns the String representation of the holded int.
 	 * 
