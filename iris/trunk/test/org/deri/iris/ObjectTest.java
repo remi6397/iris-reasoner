@@ -34,7 +34,7 @@ import junit.framework.Assert;
  * 
  */
 public final class ObjectTest {
-	
+
 	private ObjectTest() {
 		// prevent sublassing
 	}
@@ -59,21 +59,28 @@ public final class ObjectTest {
 	@SuppressWarnings("unchecked")
 	public static <T extends Comparable> void runTestCompareTo(final T basic,
 			final T equal, final T more, final T evenMore) {
-		Assert.assertTrue("Something wrong with compareTo", basic
+		Assert.assertTrue("Something wrong with compareTo (" + basic
+				+ " should be smaller than " + more + ")", basic
 				.compareTo(more) < 0);
-		Assert.assertTrue("Something wrong with compareTo", more
+		Assert.assertTrue("Something wrong with compareTo (" + more
+				+ " should be smaller than " + evenMore + ")", more
 				.compareTo(evenMore) < 0);
-		Assert.assertTrue("Something wrong with compareTo", basic
+		Assert.assertTrue("Something wrong with compareTo (" + basic
+				+ " should be smaller than " + evenMore + ")", basic
 				.compareTo(evenMore) < 0);
 
-		Assert.assertTrue("Something wrong with compareTo", basic
-				.compareTo(equal) == 0);
+		Assert.assertTrue("Something wrong with compareTo (" + basic
+				+ " should be equal to " + equal + ")",
+				basic.compareTo(equal) == 0);
 
-		Assert.assertTrue("Something wrong with compareTo", evenMore
+		Assert.assertTrue("Something wrong with compareTo (" + evenMore
+				+ " should be greater than " + more + ")", evenMore
 				.compareTo(more) > 0);
-		Assert.assertTrue("Something wrong with compareTo", more
+		Assert.assertTrue("Something wrong with compareTo (" + more
+				+ " should be greater than " + basic + ")", more
 				.compareTo(basic) > 0);
-		Assert.assertTrue("Something wrong with compareTo", evenMore
+		Assert.assertTrue("Something wrong with compareTo (" + evenMore
+				+ " should be greater than " + basic + ")", evenMore
 				.compareTo(basic) > 0);
 	}
 
