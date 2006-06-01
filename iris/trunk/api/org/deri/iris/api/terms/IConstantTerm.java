@@ -26,9 +26,5 @@ package org.deri.iris.api.terms;
  */
 public interface IConstantTerm<Type extends IConstantTerm> extends ITerm<Type>{
 	
-	// setValue should not exist as IConstantTerm is a constant and
-	// value should not be changed once an object has been created
-	public void setValue(String value);
-	
 	public String getValue();	
 }
