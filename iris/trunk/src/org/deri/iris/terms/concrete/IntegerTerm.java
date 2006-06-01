@@ -45,15 +45,11 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 	private int i; 
 
 	public IntegerTerm(int z) {
-		i = z;
-	}
-
-	public int getInt() {
-		return i;
+		setValue(z);
 	}
 
 	public void setValue(int arg) {
-		this.i = arg;
+		i = arg;
 	}
 
 	public int getValue() {
@@ -69,11 +65,11 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 	}
 
 	public int compareTo(IntegerTerm o) {
-		return Integer.valueOf(i).compareTo(o.getInt());
+		return Integer.valueOf(i).compareTo(o.getValue());
 	}
 	
 	public int hashCode() {
-		return Integer.valueOf(i).hashCode();
+		return i;
 	}
 	
 	public Object clone() {
@@ -83,5 +79,14 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 			assert true : "Can never happen";
 		}
 		return null;
+	}
+	
+	/**
+	 * Simply returns the String representation of the holded int.
+	 * 
+	 * @return the String representation of the holded int
+	 */
+	public String toString() {
+		return Integer.toString(i);
 	}
 }
