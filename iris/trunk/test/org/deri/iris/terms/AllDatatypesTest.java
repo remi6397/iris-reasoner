@@ -23,13 +23,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.terms.concrete;
-
-import org.deri.iris.terms.StringTermTest;
+package org.deri.iris.terms;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.deri.iris.terms.concrete.Base64BinaryTest;
+import org.deri.iris.terms.concrete.BooleanTest;
+import org.deri.iris.terms.concrete.DateTimeTest;
+import org.deri.iris.terms.concrete.DecimalTest;
+import org.deri.iris.terms.concrete.DoubleTest;
+import org.deri.iris.terms.concrete.DurationTest;
+import org.deri.iris.terms.concrete.FloatTest;
+import org.deri.iris.terms.concrete.GDayTest;
+import org.deri.iris.terms.concrete.GMonthDayTest;
+import org.deri.iris.terms.concrete.GMonthTest;
+import org.deri.iris.terms.concrete.GYearMonthTest;
+import org.deri.iris.terms.concrete.GYearTest;
+import org.deri.iris.terms.concrete.HexBinaryTest;
+import org.deri.iris.terms.concrete.IntegerTest;
+import org.deri.iris.terms.concrete.IriTest;
+import org.deri.iris.terms.concrete.SqNameTest;
 
 public class AllDatatypesTest extends TestCase {
 	public static Test suite() {
@@ -51,6 +66,9 @@ public class AllDatatypesTest extends TestCase {
 		suite.addTest(FloatTest.suite());
 		suite.addTest(DecimalTest.suite());
 		suite.addTest(DoubleTest.suite());
+		suite.addTest(VariableTest.suite());
+		suite.addTest(ConstantTermTest.suite());
+		suite.addTest(ConstructedTermTest.suite());
 		return suite;
 	}
 }
