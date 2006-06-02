@@ -24,7 +24,7 @@ import org.deri.iris.operations.tuple.TupleComparator;
 public class Relation implements IRelation<ITuple> {
 
 	/** The Comparator to compare all tuples to each other */
-	private TupleComparator comparator;
+	private Comparator comparator;
 
 	/** The SortedSet containing all the elements */
 	private SortedSet<ITuple> elements;
@@ -38,14 +38,24 @@ public class Relation implements IRelation<ITuple> {
 	/** The write lock */
 	private final Lock WRITE = LOCK.writeLock();
 
+	/**
+	 * @param arity
+	 * 				- arity of tuples to be stored in the relation.
+	 */
 	public Relation(int arity) {
 		WRITE.lock();
 		this.comparator = new TupleComparator(arity);
 		this.elements = new TreeSet<ITuple>(comparator);
+		
 		WRITE.unlock();
 	}
 
-	public Relation(TupleComparator comparator) {
+	/**
+	 * @param comparator
+	 * 					 -	Comparator that defines tuple ordering 
+	 * 						in the relation.
+	 */
+	public Relation(Comparator comparator) {
 		WRITE.lock();
 		this.comparator = comparator;
 		this.elements = new TreeSet<ITuple>(comparator);
