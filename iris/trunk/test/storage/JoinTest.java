@@ -101,6 +101,7 @@ public class JoinTest extends TestCase {
 		e.add(createTuple("h", "g", "a", "c", "b", "b"));
 		e.add(createTuple("h", "g", "a", "c", "b", "a"));
 		e.add(createTuple("h", "g", "a", "a", "b", "c"));
+		// -1, -1, -1 means join all with all
 		runJoin(new int[] { -1, -1, -1 }, e);
 	}
 	
