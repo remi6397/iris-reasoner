@@ -35,4 +35,12 @@ public class Term implements ITerm{
 		return this.term;
 	}
 
+	/* Override this method in specific implementation of each term.
+	 * (non-Javadoc)
+	 * @see org.deri.iris.api.terms.ITerm#getMinValue()
+	 */
+	public ITerm getMinValue() {
+		return null;
+	}
+
 }

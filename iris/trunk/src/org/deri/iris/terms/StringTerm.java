@@ -34,7 +34,7 @@ import org.deri.iris.api.terms.IStringTerm;
 public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
 
 	private String value = "";
-
+	
 	public StringTerm(final String value) {
 		setValue(value);
 	}
@@ -46,7 +46,7 @@ public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
 	public String getValue() {
 		return value;
 	}
-
+	
 	public boolean isGround() {
 		return true;
 	}
@@ -83,5 +83,9 @@ public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
 	 */
 	public String toString() {
 		return value;
+	}
+
+	public StringTerm getMinValue() {
+		return new StringTerm("");
 	}
 }
