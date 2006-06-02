@@ -52,4 +52,7 @@ public interface ITerm<Type extends ITerm> extends Comparable<Type> {
 	public boolean equals(Object o);
 	 
 	public int hashCode();
+	
+	public Type getMinValue();
+	
 }
