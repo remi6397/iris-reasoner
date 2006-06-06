@@ -145,4 +145,8 @@ public class Duration implements IDuration, Cloneable {
 	public boolean isGround() {
 		return true;
 	}
+
+	public IDuration getMinValue() {
+		return new Duration(0, 0, 0, 0, 0, 0);
+	}
 }

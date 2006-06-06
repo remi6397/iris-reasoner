@@ -107,4 +107,8 @@ public class HexBinary implements IHexBinary, Cloneable {
 	public boolean isGround() {
 		return true;
 	}
+
+	public IHexBinary getMinValue() {
+		return new HexBinary("00");
+	}
 }

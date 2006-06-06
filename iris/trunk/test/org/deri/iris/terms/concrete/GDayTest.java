@@ -30,6 +30,7 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.TermTest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -80,5 +81,9 @@ public class GDayTest extends TestCase {
 
 	public static Test suite() {
 		return new TestSuite(GDayTest.class, GDayTest.class.getSimpleName());
+	}
+	
+	public void testGetMinValue() {
+		TermTest.runTestGetMinValue(new GDay(2));
 	}
 }

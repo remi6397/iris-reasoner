@@ -26,6 +26,7 @@
 package org.deri.iris.terms.concrete;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.TermTest;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
@@ -96,5 +97,9 @@ public class Base64BinaryTest extends TestCase {
 	public static Test suite() {
 		return new TestSuite(Base64BinaryTest.class, Base64BinaryTest.class
 				.getSimpleName());
+	}
+	
+	public void testGetMinValue() {
+		TermTest.runTestGetMinValue(new Base64Binary("0A=="));
 	}
 }

@@ -32,10 +32,16 @@ import java.util.TimeZone;
 
 import org.deri.iris.api.terms.concrete.IGYear;
 
+/**
+ * This class represents a year. <br/><b>ATTENTION:</b> At the moment it is
+ * not possible to represent BC dates
+ * 
+ * @author richi
+ * 
+ */
 public class GYear implements IGYear, Cloneable {
 
-	private Calendar cal = new GregorianCalendar(TimeZone
-			.getTimeZone("GMT"));
+	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 
 	public GYear(final Calendar calendar) {
 		this(calendar.get(Calendar.YEAR));
@@ -75,7 +81,7 @@ public class GYear implements IGYear, Cloneable {
 	public int getYear() {
 		return cal.get(Calendar.YEAR);
 	}
-	
+
 	public int hashCode() {
 		return cal.hashCode();
 	}
@@ -90,5 +96,9 @@ public class GYear implements IGYear, Cloneable {
 
 	public boolean isGround() {
 		return true;
+	}
+
+	public IGYear getMinValue() {
+		return new GYear(1);
 	}
 }

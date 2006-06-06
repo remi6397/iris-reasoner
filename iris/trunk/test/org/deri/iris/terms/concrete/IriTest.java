@@ -33,6 +33,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.TermTest;
 
 public class IriTest extends TestCase {
 	private static final URI REFERENCE;
@@ -88,5 +89,9 @@ public class IriTest extends TestCase {
 
 	public static Test suite() {
 		return new TestSuite(IriTest.class, IriTest.class.getSimpleName());
+	}
+	
+	public void testGetMinValue() {
+		TermTest.runTestGetMinValue(new Iri("a"));
 	}
 }

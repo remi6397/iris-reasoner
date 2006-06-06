@@ -101,4 +101,9 @@ public class GYearMonth implements IGYearMonth, Cloneable {
 	public boolean isGround() {
 		return true;
 	}
+
+	public IGYearMonth getMinValue() {
+		// TODO: maybe year should be negative
+		return new GYearMonth(1, 1);
+	}
 }

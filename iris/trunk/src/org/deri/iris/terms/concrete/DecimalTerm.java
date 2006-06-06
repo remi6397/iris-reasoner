@@ -88,4 +88,8 @@ public class DecimalTerm implements IDecimalTerm, Cloneable {
 	public String toString() {
 		return Double.toString(d);
 	}
+
+	public IDecimalTerm getMinValue() {
+		return new DecimalTerm(Double.MIN_VALUE);
+	}
 }

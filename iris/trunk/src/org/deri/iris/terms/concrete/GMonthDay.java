@@ -94,4 +94,8 @@ public class GMonthDay implements IGMonthDay, Cloneable {
 	public boolean isGround() {
 		return true;
 	}
+
+	public IGMonthDay getMinValue() {
+		return new GMonthDay(Calendar.JANUARY, 1);
+	}
 }

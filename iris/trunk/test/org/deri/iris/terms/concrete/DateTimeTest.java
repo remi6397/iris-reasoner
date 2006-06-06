@@ -30,6 +30,7 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.TermTest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -90,5 +91,9 @@ public class DateTimeTest extends TestCase {
 	public static Test suite() {
 		return new TestSuite(DateTimeTest.class, DateTimeTest.class
 				.getSimpleName());
+	}
+	
+	public void testGetMinValue() {
+		TermTest.runTestGetMinValue(new DateTime(0, 0, 0, 0, 0, 1));
 	}
 }

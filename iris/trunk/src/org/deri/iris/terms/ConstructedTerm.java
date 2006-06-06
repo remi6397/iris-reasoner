@@ -155,4 +155,8 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 			throw new IllegalArgumentException(e);
 		}
 	}
+
+	public IConstructedTerm getMinValue() {
+		return null;
+	}
 }

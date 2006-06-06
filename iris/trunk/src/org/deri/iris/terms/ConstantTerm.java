@@ -82,4 +82,8 @@ public class ConstantTerm implements IConstantTerm<IConstantTerm>, Cloneable {
 	public String toString() {
 		return getClass().getName() + "[value=" + value + "]";
 	}
+
+	public IConstantTerm getMinValue() {
+		return null;
+	}
 }

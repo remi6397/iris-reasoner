@@ -26,6 +26,7 @@
 package org.deri.iris.terms;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.TermTest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -71,5 +72,9 @@ public class StringTermTest extends TestCase {
 		ObjectTest.runTestCompareTo(new StringTerm(BASIC),
 				new StringTerm(BASIC), new StringTerm(MORE), new StringTerm(
 						MORE1));
+	}
+	
+	public void testGetMinValue() {
+		TermTest.runTestGetMinValue(new StringTerm("a"));
 	}
 }

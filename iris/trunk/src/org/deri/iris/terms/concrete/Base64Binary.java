@@ -46,7 +46,7 @@ public class Base64Binary implements IBase64Binary, Cloneable {
 	public static final Pattern PATTERN = Pattern.compile("([a-zA-Z0-9/+]{4})*"
 			+ "(([a-zA-Z0-9/+]{2}[AEIMQUYcgkosw048]=)|"
 			+ "([a-zA-Z0-9/+]{1}[AQgw]==))?");
-
+	
 	private String content = "";
 
 	private Base64Binary() {
@@ -104,5 +104,9 @@ public class Base64Binary implements IBase64Binary, Cloneable {
 
 	public boolean isGround() {
 		return true;
+	}
+
+	public IBase64Binary getMinValue() {
+		return new Base64Binary("");
 	}
 }

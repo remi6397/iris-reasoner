@@ -92,4 +92,8 @@ public class GDay implements IGDay, Cloneable {
 		return true;
 	}
 
+	public IGDay getMinValue() {
+		return new GDay(1);
+	}
+
 }

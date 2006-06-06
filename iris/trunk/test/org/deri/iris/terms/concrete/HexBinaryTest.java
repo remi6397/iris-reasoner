@@ -31,6 +31,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.TermTest;
 
 public class HexBinaryTest extends TestCase {
 	private static final String BASIC = "adf3";
@@ -97,5 +98,9 @@ public class HexBinaryTest extends TestCase {
 	public static Test suite() {
 		return new TestSuite(HexBinaryTest.class, HexBinaryTest.class
 				.getSimpleName());
+	}
+	
+	public void testGetMinValue() {
+		TermTest.runTestGetMinValue(new HexBinary("0a"));
 	}
 }

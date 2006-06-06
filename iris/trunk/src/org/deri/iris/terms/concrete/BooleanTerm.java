@@ -109,4 +109,8 @@ public class BooleanTerm implements IBooleanTerm, Cloneable {
 		}
 		return Boolean.valueOf(value).compareTo(o.getValue());
 	}
+
+	public IBooleanTerm getMinValue() {
+		return new BooleanTerm(false);
+	}
 }

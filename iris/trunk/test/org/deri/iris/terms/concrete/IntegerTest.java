@@ -26,6 +26,7 @@
 package org.deri.iris.terms.concrete;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.TermTest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -74,5 +75,9 @@ public class IntegerTest extends TestCase {
 	public void testHashCode() {
 		ObjectTest.runTestHashCode(new IntegerTerm(BASIC), new IntegerTerm(
 				BASIC));
+	}
+	
+	public void testGetMinValue() {
+		TermTest.runTestGetMinValue(new IntegerTerm(Integer.MIN_VALUE + 1));
 	}
 }

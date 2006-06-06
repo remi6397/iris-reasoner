@@ -86,4 +86,8 @@ public class Variable implements IVariable<IVariable>, Cloneable {
 	public String toString() {
 		return getClass().getName() + "[name=" + name + "]";
 	}
+
+	public IVariable getMinValue() {
+		return null;
+	}
 }

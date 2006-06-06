@@ -136,4 +136,8 @@ public class SqName implements ISqName, Cloneable {
 	public boolean isGround() {
 		return true;
 	}
+
+	public ISqName getMinValue() {
+		return new SqName("#0");
+	}
 }

@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.TermTest;
 import org.deri.iris.api.terms.concrete.IIri;
 
 public class SqNameTest extends TestCase {
@@ -79,5 +80,9 @@ public class SqNameTest extends TestCase {
 
 	public static Test suite() {
 		return new TestSuite(SqNameTest.class, SqNameTest.class.getSimpleName());
+	}
+	
+	public void testGetMinValue() {
+		TermTest.runTestGetMinValue(new SqName("", "a"));
 	}
 }

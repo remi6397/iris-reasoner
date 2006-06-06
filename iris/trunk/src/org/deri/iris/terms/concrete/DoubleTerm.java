@@ -88,4 +88,8 @@ public class DoubleTerm implements IDoubleTerm, Cloneable {
 	public String toString() {
 		return Double.toString(d);
 	}
+
+	public IDoubleTerm getMinValue() {
+		return new DoubleTerm(Double.MIN_VALUE);
+	}
 }

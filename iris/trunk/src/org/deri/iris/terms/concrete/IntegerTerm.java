@@ -97,4 +97,8 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 	public String toString() {
 		return Integer.toString(i);
 	}
+
+	public IntegerTerm getMinValue() {
+		return new IntegerTerm(Integer.MIN_VALUE);
+	}
 }

@@ -26,6 +26,7 @@
 package org.deri.iris.terms.concrete;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.TermTest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -65,4 +66,7 @@ public class BooleanTest extends TestCase {
 				.getSimpleName());
 	}
 
+	public void testGetMinValue() {
+		TermTest.runTestGetMinValue(new BooleanTerm(true));
+	}
 }

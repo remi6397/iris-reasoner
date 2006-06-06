@@ -36,9 +36,7 @@ import org.deri.iris.api.terms.ITerm;
  * 
  * imple of integer
  * 
- * Created on 26.04.2006
- * Committed by $Author$
- * $Source$,
+ * Created on 26.04.2006 Committed by $Author$ $Source$,
  * 
  * @author Holger Lausen
  * 
@@ -91,5 +89,9 @@ public class DateTerm implements ITerm<DateTerm> {
 			throw new NullPointerException("Can not compare with null");
 		}
 		return cal.compareTo(o.cal);
+	}
+
+	public DateTerm getMinValue() {
+		return new DateTerm(0, 0, 0);
 	}
 }

@@ -35,7 +35,7 @@ import java.util.TimeZone;
 import org.deri.iris.api.terms.concrete.IDateTime;
 
 public class DateTime implements IDateTime, Cloneable {
-
+	
 	private static final SimpleDateFormat FORMAT = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssz");
 
@@ -172,5 +172,9 @@ public class DateTime implements IDateTime, Cloneable {
 
 	public boolean isGround() {
 		return true;
+	}
+
+	public DateTime getMinValue() {
+		return new DateTime(0, 0, 0, 0, 0, 0, 0, 0);
 	}
 }

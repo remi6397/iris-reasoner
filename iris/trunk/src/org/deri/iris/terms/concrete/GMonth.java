@@ -90,4 +90,8 @@ public class GMonth implements IGMonth, Cloneable {
 	public boolean isGround() {
 		return true;
 	}
+
+	public IGMonth getMinValue() {
+		return new GMonth(0);
+	}
 }

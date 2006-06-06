@@ -25,11 +25,12 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.ObjectTest;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.deri.iris.ObjectTest;
+import org.deri.iris.TermTest;
 
 /**
  * @author richi
@@ -74,5 +75,9 @@ public class DoubleTest extends TestCase {
 	public void testHashCode() {
 		ObjectTest.runTestHashCode(new DoubleTerm(BASIC), new DoubleTerm(
 				BASIC));
+	}
+	
+	public void testGetMinValue() {
+		TermTest.runTestGetMinValue(new DoubleTerm(Double.MIN_VALUE + 0.0001));
 	}
 }

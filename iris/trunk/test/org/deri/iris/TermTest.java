@@ -23,68 +23,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.terms.concrete;
+package org.deri.iris;
 
-import org.deri.iris.api.terms.concrete.IFloatTerm;
+import junit.framework.Assert;
+
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * @author richi
- *
+ * 
  */
-public class FloatTerm implements IFloatTerm, Cloneable {
+public final class TermTest {
 
-	private float f = 0f;
-	
-	public FloatTerm(final Float f) {
-		setValue(f);
-	}
-	
-	public void setValue(final float arg) {
-		f = arg;
+	private TermTest() {
+		// prevent subclassing
 	}
 
-	public float getValue() {
-		return f;
+	@SuppressWarnings("unchecked")
+	public static void runTestGetMinValue(ITerm small) {
+		Assert.assertTrue("The smallest value of "
+				+ small.getClass().getSimpleName() + " mmust be smaller than "
+				+ small, small.getMinValue().compareTo(small) < 0);
 	}
 
-	public TypeOfNumericTerm getTypeOfNumericTerm() {
-		return TypeOfNumericTerm.IFloatTerm;
-	}
-
-	public boolean isGround() {
-		return true;
-	}
-
-	public int compareTo(IFloatTerm o) {
-		return Float.compare(f, o.getValue());
-	}
-
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			assert true : "Will never happen";
-		}
-		return null;
-	}
-	
-	public int hashCode() {
-		return Float.valueOf(f).hashCode();
-	}
-	
-	public boolean equals(Object o) {
-		if (!(o instanceof FloatTerm)) {
-			return false;
-		}
-		FloatTerm ft = (FloatTerm) o;
-		return Float.floatToIntBits(f) == Float.floatToIntBits(ft.f);
-	}
-	
-	public String toString() {
-		return Float.toString(f);
-	}
-
-	public IFloatTerm getMinValue() {
-		return new FloatTerm(Float.MIN_VALUE);
-	}
 }

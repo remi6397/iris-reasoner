@@ -105,4 +105,8 @@ public class Iri implements IIri, Cloneable {
 	public boolean isGround() {
 		return true;
 	}
+
+	public IIri getMinValue() {
+		return new Iri("");
+	}
 }
