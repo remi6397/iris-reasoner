@@ -7,7 +7,7 @@ package org.deri.iris.api.basics;
 * @date   07.01.2006 12:00:00
 */
 
-public interface IPredicate {
+public interface IPredicate extends Comparable<IPredicate> {
 
     public void setPredicateSymbol(String name);
     
@@ -22,6 +22,4 @@ public interface IPredicate {
 	public boolean equals(Object o);
 	
 	public String toString();
-	
-	//public int hashCode();
 }

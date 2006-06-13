@@ -22,15 +22,13 @@ package org.deri.iris.api.basics;
 
 /**
  * @author Darko Anicic, DERI Innsbruck
- * @date   14.11.2005 17:20:27
+ * @date 14.11.2005 17:20:27
  */
-public interface ILiteral extends IAtom{
-	
+public interface ILiteral<Type extends ILiteral> extends IAtom<Type> {
+
 	public boolean isPositive();
 
 	public void setPositive(boolean arg);
-	
-	public String toString();
-	
-	//public int hashCode();
+
+	public IAtom getAtom();
 }

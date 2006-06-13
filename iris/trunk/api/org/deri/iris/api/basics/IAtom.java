@@ -28,10 +28,7 @@ import org.deri.iris.api.terms.ITerm;
  * @author Darko Anicic, DERI Innsbruck
  * @date   14.11.2005 11:59:34
  */
-public interface IAtom {
-	
-	// no need for this, ontobroker too
-	//public void setPredicate(IPredicate p);
+public interface IAtom<Type extends IAtom> extends Comparable<Type> {
 	
 	public IPredicate getPredicate();
 	
@@ -43,26 +40,10 @@ public interface IAtom {
 	
 	public ITerm getTerm(int arg);
 	
-	/**
-	 *  If isGround() is false for an atom, using
-	 *  getTerms() and getTypeOfTerm() we can get variables
-	 *  of the atom. Do we need this?
-	 */
-	//public IVariable[] getVariables();
-	//public void setVariables(IVariable[] variables);
-	
 	public boolean isGround();
 	
 	public boolean isInCycle();
 	
 	// is the atom "sure", "true" or...
 	public boolean isKnown();
-	
-	// public boolean equals(Object o);
-	
-	public boolean compare(IAtom atom);
-	
-	//public String toString();
-	
-	//public int hashCode();
 }
