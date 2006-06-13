@@ -18,8 +18,4 @@ public interface IPredicate extends Comparable<IPredicate> {
 	public void setBuiltIn(boolean arg);
 	
 	public boolean isBuiltIn();
-	
-	public boolean equals(Object o);
-	
-	public String toString();
 }

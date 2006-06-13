@@ -17,10 +17,4 @@ public interface IRule extends IHead, IBody{
 	public boolean isFact();
 	
 	public boolean isBuiltIn();
-	
-	public boolean equals(Object obj);
-	
-	public String toString();
-	
-	public int hashCode();
 }

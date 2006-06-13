@@ -42,11 +42,4 @@ public interface IQuery {
 	public List<IVariable> getQueryVariables();
 	
 	public boolean equals(Object obj);
-	
-	public String toString();
-	
-	// public void print(PrintStream p);
-	
-	// public int hashCode();
-
 }

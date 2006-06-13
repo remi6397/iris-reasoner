@@ -21,10 +21,4 @@ public interface IHead {
 	public List<ILiteral> getHeadLiterals();
 	
 	public List<IVariable> getHeadVariables();
-	
-	public boolean equals(Object obj);
-	
-	public String toString();
-	
-	public int hashCode();
 }

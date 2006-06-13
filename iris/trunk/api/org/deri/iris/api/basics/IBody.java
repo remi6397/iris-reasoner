@@ -42,6 +42,4 @@ public interface IBody {
 	public List<IVariable> getBodyVariables();
 	
 	public boolean equals(Object obj);
-	
-	public String toString();
 }
