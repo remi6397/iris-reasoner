@@ -142,8 +142,7 @@ public class Atom implements IAtom<IAtom> {
 		}
 
 		Atom a = (Atom) o;
-		return (predicate.equals(a.predicate)) && (terms.size() == a.terms.size())
-				&& (terms.containsAll(a.terms));
+		return (predicate.equals(a.predicate)) && terms.equals(a.terms);
 	}
 
 	public String toString() {

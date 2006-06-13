@@ -86,8 +86,7 @@ public class Head implements IHead {
 			return false;
 		}
 		Head h = (Head) o;
-		return (literals.size() == h.literals.size())
-				&& literals.containsAll(h.literals);
+		return literals.equals(h.literals);
 	}
 
 	public String toString() {

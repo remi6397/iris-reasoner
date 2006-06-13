@@ -86,8 +86,7 @@ public class Body implements IBody {
 			return false;
 		}
 		Body b = (Body) o;
-		return (literals.size() == b.literals.size())
-				&& literals.containsAll(b.literals);
+		return literals.equals(b.literals);
 	}
 
 	public String toString() {
