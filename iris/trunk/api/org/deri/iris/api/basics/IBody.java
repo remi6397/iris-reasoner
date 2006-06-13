@@ -35,17 +35,13 @@ public interface IBody {
 
 	public int getBodyLenght();
 	
-	public ILiteral getBodyLiteral(int arg) throws java.lang.IndexOutOfBoundsException;
+	public ILiteral getBodyLiteral(int arg);
 	
-	public java.util.List<ILiteral> getBodyLiterals();
+	public List<ILiteral> getBodyLiterals();
 	
 	public List<IVariable> getBodyVariables();
 	
 	public boolean equals(Object obj);
 	
 	public String toString();
-	
-	//public void print(PrintStream p);
-	
-	//public int hashCode();
 }
