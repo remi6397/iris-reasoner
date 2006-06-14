@@ -26,8 +26,6 @@
 
 package org.deri.iris.terms.concrete;
 
-// TODO: check whether URI.equals() is like URL.equals() (afaik URL needs network access)
-
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -53,7 +51,7 @@ public class Iri implements IIri, Cloneable {
 		} catch (CloneNotSupportedException e) {
 			assert true : "Can not happen";
 		} catch (URISyntaxException e) {
-			//TODO: it's nasty to swallow exceptions!
+			throw new IllegalArgumentException(e);
 		}
 		return null;
 	}
