@@ -1,0 +1,99 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
+ * 
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
+package org.deri.iris.graph;
+
+import org._3pq.jgrapht.LabeledElement;
+import org._3pq.jgrapht.edge.DirectedEdge;
+
+/**
+ * This class represents a simple implementation of a labeled edge.
+ * 
+ * @author richi
+ * 
+ */
+public class LabeledDirectedEdge extends DirectedEdge implements LabeledElement {
+
+	/** label of this edge */
+	private Object label = null;
+
+	private static final long serialVersionUID = -5367041421559427861L;
+
+	/**
+	 * A simple constructor which sets the source and the taget.
+	 * 
+	 * @param source
+	 *            the source vertex
+	 * @param target
+	 *            the target vertex
+	 */
+	public LabeledDirectedEdge(final Object source, final Object target) {
+		super(source, target);
+	}
+
+	/**
+	 * A simple constructor which sets the source, taget and the label.
+	 * 
+	 * @param source
+	 *            the source vertex
+	 * @param target
+	 *            the target vertex
+	 * @param label
+	 *            the label to set
+	 */
+	public LabeledDirectedEdge(final Object source, final Object target,
+			final Object label) {
+		super(source, target);
+		setLabel(label);
+	}
+
+	/**
+	 * This method sets the label of the edge
+	 * 
+	 * @param label
+	 *            the label to set
+	 */
+	public void setLabel(Object label) {
+		this.label = label;
+	}
+
+	/**
+	 * Returns the actual label of the edge
+	 * 
+	 * @return the label
+	 */
+	public Object getLabel() {
+		return label;
+	}
+
+	/**
+	 * Returns whether there is actually a label set
+	 * 
+	 * @return true if the label is not null, otherwise false
+	 */
+	public boolean hasLabel() {
+		return label != null;
+	}
+}
