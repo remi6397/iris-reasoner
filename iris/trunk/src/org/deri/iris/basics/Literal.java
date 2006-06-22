@@ -50,12 +50,11 @@ public class Literal implements ILiteral<ILiteral> {
 		atom = new Atom(predicate, terms);
 	}
 
-	public Literal(final IPredicate predicate, final List<ITerm> terms,
-			final boolean positive) {
-		this(predicate, terms);
+	public Literal(final boolean positive, final IPredicate predicate) {
+		this(predicate);
 		setPositive(positive);
 	}
-
+	
 	public Literal(final boolean positive, final IPredicate predicate,
 			final List<ITerm> terms) {
 		this(predicate, terms);
@@ -107,17 +106,12 @@ public class Literal implements ILiteral<ILiteral> {
 	}
 
 	public int compareTo(final ILiteral o) {
-		int res;
-		if ((positive != o.isPositive()) && positive){
+		if ((positive != o.isPositive()) && positive) {
 			return 1;
-		} else if ((positive != o.isPositive()) && !positive){
+		} else if ((positive != o.isPositive()) && !positive) {
 			return -1;
 		}
-			
-		if ((res = atom.compareTo(o.getAtom())) != 0) {
-			return res;
-		}
-		return 0;
+		return atom.compareTo(o.getAtom());
 	}
 
 	public int hashCode() {
