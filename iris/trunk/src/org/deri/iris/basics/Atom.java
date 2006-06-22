@@ -151,6 +151,9 @@ public class Atom implements IAtom<IAtom> {
 		for (ITerm t : terms) {
 			buffer.append(t).append(", ");
 		}
+		if (terms.size() <= 0) {
+			return buffer.append(")").toString();
+		}
 		return buffer.substring(0, buffer.length() - 2) + ")";
 	}
 }
