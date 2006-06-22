@@ -96,4 +96,17 @@ public class LabeledDirectedEdge extends DirectedEdge implements LabeledElement 
 	public boolean hasLabel() {
 		return label != null;
 	}
+
+	public boolean equals(final Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof LabeledDirectedEdge)) {
+			return false;
+		}
+		LabeledDirectedEdge le = (LabeledDirectedEdge) o;
+
+		return le.getSource().equals(getSource())
+				&& le.getTarget().equals(getTarget()) && label.equals(le.label);
+	}
 }

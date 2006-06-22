@@ -25,9 +25,15 @@
  */
 package org.deri.iris.graph;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org._3pq.jgrapht.DirectedGraph;
+import org._3pq.jgrapht.Edge;
+import org._3pq.jgrapht.GraphHelper;
 import org._3pq.jgrapht.alg.CycleDetector;
-import org._3pq.jgrapht.graph.DefaultDirectedGraph;
+import org._3pq.jgrapht.graph.DirectedMultigraph;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.graph.IPredicateGraph;
@@ -38,7 +44,7 @@ import org.deri.iris.api.graph.IPredicateGraph;
  */
 public class PredicateGraph implements IPredicateGraph {
 
-	private DirectedGraph g = new DefaultDirectedGraph();
+	private DirectedGraph g = new DirectedMultigraph();
 
 	private CycleDetector cd = new CycleDetector(g);
 
@@ -46,11 +52,25 @@ public class PredicateGraph implements IPredicateGraph {
 		if (rule == null) {
 			throw new IllegalArgumentException("The rule must not be null");
 		}
-		
+
 		for (ILiteral h : rule.getHeadLiterals()) {
+			g.addVertex(h.getPredicate());
 			for (ILiteral b : rule.getBodyLiterals()) {
-				g.addEdge(new LabeledDirectedEdge(b.getPredicate(), h
-						.getPredicate(), b.isPositive()));
+				boolean doubled = false;
+				g.addVertex(b.getPredicate());
+				Edge e = new LabeledDirectedEdge(b.getPredicate(), h
+						.getPredicate(), b.isPositive());
+				List edges = g.getAllEdges(b.getPredicate(), h.getPredicate());
+
+				for (Object edge : edges) {
+					if (e.equals(edge)) {
+						doubled = true;
+						break;
+					}
+				}
+				if (!doubled) {
+					g.addEdge(e);
+				}
 			}
 		}
 	}
@@ -59,9 +79,39 @@ public class PredicateGraph implements IPredicateGraph {
 		return cd.detectCycles();
 	}
 
-	public void findCycles() {
-		// TODO Auto-generated method stub
-
+	public Set findVertexesForCycle() {
+		return cd.findCycles();
 	}
 
+	public Set<Edge> findEdgesForCycle() {
+		Set cycle = findVertexesForCycle();
+		Set<Edge> edges = new HashSet<Edge>();
+		for (Object v : cycle) {
+			List s = GraphHelper.successorListOf(g, v);
+			for (Object p : s) {
+				if (cycle.contains(p)) {
+					edges.add(g.getEdge(v, p));
+					break;
+				}
+			}
+		}
+		assert (edges.size() != cycle.size()) : 
+			"the number of edges and vertexes must be equal";
+		return edges;
+	}
+
+	public int countNegativesForCycle() {
+		int neg = 0;
+		for (Object e : findEdgesForCycle()) {
+			if (e instanceof LabeledDirectedEdge) {
+				Object l = ((LabeledDirectedEdge) e).getLabel();
+				if (l instanceof Boolean) {
+					if (!((Boolean) l)) {
+						neg++;
+					}
+				}
+			}
+		}
+		return neg;
+	}
 }

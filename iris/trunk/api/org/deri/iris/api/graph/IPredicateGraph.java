@@ -25,6 +25,8 @@
  */
 package org.deri.iris.api.graph;
 
+import java.util.Set;
+
 import org.deri.iris.api.basics.IRule;
 
 /**
@@ -48,8 +50,23 @@ public interface IPredicateGraph {
 	public abstract boolean detectCycles();
 
 	/**
-	 * At the moment it is unclear what this method should return.
-	 *
+	 * Determines the vertexes contained in the cycle
+	 * 
+	 * @return a Set containing all the vertexes
 	 */
-	public abstract void findCycles();
+	public abstract Set findVertexesForCycle();
+
+	/**
+	 * Determines the edges contained in the cycle
+	 * 
+	 * @return a Set containing all the vertexes
+	 */
+	public abstract Set findEdgesForCycle();
+	
+	/**
+	 * Returns the number of negative Literals in the cycle
+	 * 
+	 * @return the number of negative literals
+	 */
+	public abstract int countNegativesForCycle();
 }
