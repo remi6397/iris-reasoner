@@ -107,6 +107,9 @@ public class LabeledDirectedEdge extends DirectedEdge implements LabeledElement 
 		LabeledDirectedEdge le = (LabeledDirectedEdge) o;
 
 		return le.getSource().equals(getSource())
-				&& le.getTarget().equals(getTarget()) && label.equals(le.label);
+				&& le.getTarget().equals(getTarget())
+				&& label.equals(le.label)
+				&& (Double.doubleToLongBits(getWeight()) == Double
+						.doubleToLongBits(le.getWeight()));
 	}
 }
