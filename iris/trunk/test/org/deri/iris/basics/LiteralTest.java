@@ -79,7 +79,7 @@ public class LiteralTest extends TestCase {
 	}
 
 	public void testBasic() {
-		Literal REFERENCE = new Literal(PREDICATE, TERMS, NEGATIVE);
+		Literal REFERENCE = new Literal(NEGATIVE, PREDICATE, TERMS);
 		Literal MUTABLE = new Literal(PREDICATE);
 		boolean rightExceptionThrown = false;
 		List<ITerm> tooManyTerms = new ArrayList<ITerm>(ARITY + 1);
@@ -140,28 +140,26 @@ public class LiteralTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Literal(PREDICATE, TERMS, NEGATIVE),
-				new Literal(PREDICATE, TERMS, NEGATIVE), new Literal(PREDICATE,
+		ObjectTest.runTestEquals(new Literal(NEGATIVE, PREDICATE, TERMS),
+				new Literal(NEGATIVE, PREDICATE, TERMS), new Literal(PREDICATE,
 						TERMSMORE));
-		ObjectTest.runTestEquals(new Literal(PREDICATE, TERMS, NEGATIVE),
-				new Literal(PREDICATE, TERMS, NEGATIVE), new Literal(PREDICATE,
-						TERMS, !NEGATIVE));
+		ObjectTest.runTestEquals(new Literal(NEGATIVE, PREDICATE, TERMS),
+				new Literal(NEGATIVE, PREDICATE, TERMS), new Literal(!NEGATIVE,
+						PREDICATE, TERMS));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Literal(PREDICATE, TERMS, NEGATIVE),
-				new Literal(PREDICATE, TERMS, NEGATIVE));
+		ObjectTest.runTestHashCode(new Literal(NEGATIVE, PREDICATE, TERMS),
+				new Literal(NEGATIVE, PREDICATE, TERMS));
 	}
 
 	public void testCompareTo() {
 		ObjectTest.runTestCompareTo(new Literal(PREDICATE, TERMS), new Literal(
 				PREDICATE, TERMS), new Literal(PREDICATE, TERMSMORE),
 				new Literal(PREDICATEMORE, TERMS));
-		ObjectTest
-				.runTestCompareTo(new Literal(PREDICATE, TERMS, NEGATIVE),
-						new Literal(PREDICATE, TERMS, NEGATIVE), new Literal(
-								PREDICATE, TERMSMORE, NEGATIVE), new Literal(
-								PREDICATE, TERMS));
+		ObjectTest.runTestCompareTo(new Literal(NEGATIVE, PREDICATE, TERMS),
+				new Literal(NEGATIVE, PREDICATE, TERMS), new Literal(NEGATIVE,
+						PREDICATE, TERMSMORE), new Literal(PREDICATE, TERMS));
 	}
 
 }
