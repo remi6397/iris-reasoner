@@ -25,10 +25,9 @@
  */
 package org.deri.iris.graph;
 
-import static org.deri.iris.factory.Factory.*;
-import java.util.ArrayList;
+import static org.deri.iris.factory.Factory.BASIC;
+
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import junit.framework.Test;
@@ -39,11 +38,6 @@ import org._3pq.jgrapht.Edge;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.basics.Body;
-import org.deri.iris.basics.Head;
-import org.deri.iris.basics.Literal;
-import org.deri.iris.basics.Predicate;
-import org.deri.iris.basics.Rule;
 
 /**
  * @author richi
