@@ -24,26 +24,55 @@
  * MA  02110-1301, USA.
  */
 
-package org.deri.iris.api.operations.relation;
+package org.deri.iris.operations.relations;
 
+import java.util.Iterator;
+
+import org.deri.iris.MiscHelper;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.basics.Tuple;
+import org.deri.iris.storage.Relation;
+
 
 /**
- * Interface or class description
- *
- * Interface of a project operation used to promote modularity of 
- * inference engines.
- *
  * @author Darko Anicic, DERI Innsbruck
- * @date   23.06.2006 17:19:58
+ * @date   31.05.200611:34:30
  */
+public class SelectionTest {
 
-public interface IProjection {
+	public SelectionTest() {
+		super();
+	}
 
-	/**
-	 * @param relation
-	 * @param indexes
-	 * @return
-	 */
-	public IRelation project(final IRelation relation, final int[] indexes);
+	public static void main(String[] args) throws Exception {
+		SelectionTest i = new SelectionTest();
+		i.test();
+	}
+	
+	public void test() throws Exception {
+		IRelation relation0 = new Relation(3);
+		
+		relation0.add(this.createTuple("a","c","c"));
+		relation0.add(this.createTuple("b","d","a"));
+		relation0.add(this.createTuple("c","a","a"));
+		
+		Iterator i = relation0.iterator();
+		while(i.hasNext()){
+			System.out.println("relation0: " + ((Tuple)i.next()).toString());
+		}
+		
+		Selection selection = new Selection();
+		ITuple pattern = this.createTuple("b", "a", "a");
+		IRelation result = selection.select(relation0, pattern);
+		
+		i = result.iterator();
+		while(i.hasNext()){
+			System.out.println("result: " + i.next());
+		}
+	}
+	
+	private ITuple createTuple(String s0, String s1, String s2){
+		return MiscHelper.createTuple(s0,s1,s2);
+	}
 }

@@ -36,7 +36,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.operations.tuple.TupleComparator;
+import org.deri.iris.operations.tuple.BasicComparator;
 
 
 /**
@@ -70,7 +70,7 @@ public class Relation implements IRelation<ITuple> {
 	 */
 	public Relation(int arity) {
 		WRITE.lock();
-		this.comparator = new TupleComparator(arity);
+		this.comparator = new BasicComparator(arity);
 		this.elements = new TreeSet<ITuple>(comparator);
 		
 		WRITE.unlock();

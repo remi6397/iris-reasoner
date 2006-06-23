@@ -35,7 +35,7 @@ import org.deri.iris.api.basics.ITuple;
  * @author Darko Anicic, DERI Innsbruck
  * @date   31.05.2006 11:08:41
  */
-public class SelectionComparator extends TupleComparator{
+public class SelectionComparator extends BasicComparator{
 
 	public SelectionComparator(int arity) {
 		super(arity);

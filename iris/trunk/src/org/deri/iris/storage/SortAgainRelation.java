@@ -48,15 +48,15 @@ import org.deri.iris.api.storage.IRelation;
  */
 public class SortAgainRelation implements IRelation<ITuple> {
 
-	private static class TupleComparator implements Comparator<ITuple> {
+	private static class BasicComparator implements Comparator<ITuple> {
 
 		private int indexField;
 
-		public TupleComparator() {
+		public BasicComparator() {
 			this(0);
 		}
 
-		public TupleComparator(final int indexField) {
+		public BasicComparator(final int indexField) {
 			this.indexField = indexField;
 		}
 
@@ -75,7 +75,7 @@ public class SortAgainRelation implements IRelation<ITuple> {
 	}
 
 	/** The Comparator to compare all tuples to each other */
-	private TupleComparator comparator;
+	private BasicComparator comparator;
 
 	/** The SortedSet containing all the elements */
 	private SortedSet<ITuple> elements;
@@ -91,7 +91,7 @@ public class SortAgainRelation implements IRelation<ITuple> {
 
 	public SortAgainRelation() {
 		WRITE.lock();
-		comparator = new TupleComparator();
+		comparator = new BasicComparator();
 		elements = new TreeSet<ITuple>(comparator);
 		WRITE.unlock();
 	}

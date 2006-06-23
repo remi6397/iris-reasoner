@@ -26,6 +26,7 @@
 
 package org.deri.iris.operations.tuple;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 import org.deri.iris.api.basics.ITuple;
@@ -34,7 +35,7 @@ import org.deri.iris.api.basics.ITuple;
  * @author Darko Anicic, DERI Innsbruck
  * @date   31.05.2006 15:10:34
  */
-public abstract class BasicComparator implements Comparator<ITuple> {
+public class BasicComparator implements Comparator<ITuple> {
 
 	private int[] sortIndexes;
 
@@ -47,9 +48,9 @@ public abstract class BasicComparator implements Comparator<ITuple> {
 	 * @param arity
 	 * 				of tuples that will be compared
 	 */
-	/*public BasicComparator(int arity) {
+	public BasicComparator(int arity) {
 		this.sortIndexes = this.getDefaultSortIndexes(arity);
-	}*/
+	}
 
 	/**
 	 * Comparator defined by sort indexes
@@ -61,8 +62,13 @@ public abstract class BasicComparator implements Comparator<ITuple> {
 	}
 
 	/**
-	 * This method is supposed to be overridden by a comparator 
-	 * implementation that extends this class. 
+	 * Compares its two arguments for order. Comparison is based on 
+	 * the sort indexes. Returns a negative integer, zero, or a positive
+	 * integer as the first argument is less than, equal to, or greater 
+	 * than the second. If two tuples are equal comparing them on 
+	 * the sort indexes then compare them in an ascending order.
+	 * This method is used whenever a new tuple is added to a tree or 
+	 * an index tree.
 	 * 
 	 * @param t0
 	 * 			the first tuple to be compared.
@@ -77,8 +83,40 @@ public abstract class BasicComparator implements Comparator<ITuple> {
 	 * 			- if the arguments' arity prevent them from being 
 	 * 			compared by this Comparator.
 	 */
+	@SuppressWarnings("unchecked")
 	public int compare(ITuple t0, ITuple t1){
-		return 0;
+		if (t0.getArity() != t1.getArity()) {
+			throw new IllegalArgumentException("Couldn't compare due to different arity of tuples.");
+		} 
+		int comparison = 0;
+		if(Arrays.equals(this.getSortIndexes(), null)) 
+			this.setSortIndexes(getDefaultSortIndexes(t0.getArity()));
+		for(int i=0; i<this.getSortIndexes().length; i++){
+			/* coompare tuples on each index that is differnt from -1.
+			 * sortIndexes[i] == -1 means the term with that index
+			 * is not relevant for the current sorting.
+			 */
+		    if(this.getSortIndexes()[i] != -1){
+		    	comparison = t0.getTerm(i).compareTo(
+						t1.getTerm(this.getSortIndexes()[i]));
+				if(comparison != 0){
+					return comparison;
+				}
+			}
+		}
+		/*
+		 * If two tuples are equal comparing them on the sort indexes
+		 * then compare them in an ascending order
+		 */
+		for(int i=0; i<this.getSortIndexes().length; i++){
+		 	comparison = t0.getTerm(i).compareTo(
+					t1.getTerm(i));
+			if(comparison != 0){	
+		 		// not equal
+				return comparison;
+			}
+		}
+		return comparison;
 	}
 
 	public int[] getSortIndexes() {
@@ -89,11 +127,11 @@ public abstract class BasicComparator implements Comparator<ITuple> {
 		this.sortIndexes = sortIndexes;
 	}
 	
-	/*private int[] getDefaultSortIndexes(int arity){
+	private int[] getDefaultSortIndexes(int arity){
 		int[] indexes = new int[arity];
 		for(int i=0; i<arity; i++){
 			indexes[i] = i;
 		}
 		return indexes;
-	}*/
+	}
 }

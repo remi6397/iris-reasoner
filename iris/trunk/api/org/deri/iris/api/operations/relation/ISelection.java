@@ -30,11 +30,11 @@ import org.deri.iris.api.storage.IRelation;
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:18:20
  *
- * @version $Revision: 1.1 $ $Date: 2006-05-23 13:14:19 $
+ * @version $Revision: 1.2 $ $Date: 2006-06-23 15:43:25 $
  */
 public interface ISelection {
 
 	// public IRelation select(final IRelation relation, final Set<ITuple> tuple);
 	
-	public IRelation select(final IRelation relation, final ITuple tuple);
+	public IRelation select(final IRelation relation, final ITuple pattern);
 }
