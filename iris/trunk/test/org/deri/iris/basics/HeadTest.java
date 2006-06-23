@@ -25,6 +25,7 @@
  */
 package org.deri.iris.basics;
 
+import static org.deri.iris.factory.Factory.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,18 +57,19 @@ public class HeadTest extends TestCase {
 		List<ILiteral> tempLiteralsUnequ = new ArrayList<ILiteral>();
 		List<ITerm> tempVariables = new ArrayList<ITerm>();
 
-		ILiteral literal = new Literal(new Predicate("sin", 1));
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
+				"sin", 1));
 		literal.setTerm(new IntegerTerm(1), 0);
 		tempLiterals.add(literal);
 		tempLiteralsUnequ.add(literal);
 
-		literal = new Literal(new Predicate("cos", 1));
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
 		literal.setTerm(new Variable("X"), 0);
 		tempLiterals.add(literal);
 		tempLiteralsUnequ.add(literal);
 		tempVariables.add(literal.getTerm(0));
 
-		literal = new Literal(new Predicate("date", 3));
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
 		literal.setTerm(new IntegerTerm(2005), 0);
 		literal.setTerm(new IntegerTerm(12), 1);
 		literal.setTerm(new IntegerTerm(24), 2);

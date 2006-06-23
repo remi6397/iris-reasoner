@@ -25,6 +25,7 @@
  */
 package org.deri.iris.basics;
 
+import static org.deri.iris.factory.Factory.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,15 +51,16 @@ public class RuleTest extends TestCase {
 	static {
 		List<ILiteral> tempLiterals = new ArrayList<ILiteral>();
 
-		ILiteral literal = new Literal(new Predicate("sin", 1));
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
+				"sin", 1));
 		literal.setTerm(new IntegerTerm(1), 0);
 		tempLiterals.add(literal);
 
-		literal = new Literal(new Predicate("cos", 1));
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
 		literal.setTerm(new Variable("X"), 0);
 		tempLiterals.add(literal);
 
-		literal = new Literal(new Predicate("date", 3));
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
 		literal.setTerm(new IntegerTerm(2005), 0);
 		literal.setTerm(new IntegerTerm(12), 1);
 		literal.setTerm(new IntegerTerm(24), 2);
@@ -68,15 +70,15 @@ public class RuleTest extends TestCase {
 
 		tempLiterals = new ArrayList<ILiteral>();
 
-		literal = new Literal(new Predicate("sin", 1));
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("sin", 1));
 		literal.setTerm(new IntegerTerm(1), 0);
 		tempLiterals.add(literal);
 
-		literal = new Literal(new Predicate("cos", 1));
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
 		literal.setTerm(new Variable("X"), 0);
 		tempLiterals.add(literal);
 
-		literal = new Literal(new Predicate("date", 3));
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
 		literal.setTerm(new Variable("J"), 0);
 		literal.setTerm(new Variable("K"), 1);
 		literal.setTerm(new Variable("L"), 2);
@@ -97,7 +99,7 @@ public class RuleTest extends TestCase {
 		ObjectTest.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
 				new Rule(new Head(BODY.getBodyLiterals()), BODY));
 	}
-	
+
 	public void testHashCode() {
 		ObjectTest.runTestHashCode(new Rule(HEAD, BODY), new Rule(HEAD, BODY));
 	}

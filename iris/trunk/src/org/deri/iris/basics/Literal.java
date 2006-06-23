@@ -42,25 +42,15 @@ public class Literal implements ILiteral<ILiteral> {
 
 	private IAtom atom = null;
 
-	public Literal(final IPredicate predicate) {
-		atom = new Atom(predicate);
+	Literal(final IAtom atom) {
+		this.atom = atom;
 	}
-
-	public Literal(final IPredicate predicate, final List<ITerm> terms) {
-		atom = new Atom(predicate, terms);
-	}
-
-	public Literal(final boolean positive, final IPredicate predicate) {
-		this(predicate);
+	
+	Literal(final boolean positive, final IAtom atom) {
+		this.atom = atom;
 		setPositive(positive);
 	}
 	
-	public Literal(final boolean positive, final IPredicate predicate,
-			final List<ITerm> terms) {
-		this(predicate, terms);
-		setPositive(positive);
-	}
-
 	public boolean isPositive() {
 		return positive;
 	}
@@ -117,7 +107,7 @@ public class Literal implements ILiteral<ILiteral> {
 	public int hashCode() {
 		int result = 37;
 		result = result * 17 + atom.hashCode();
-		result = result * 17 + Boolean.valueOf(positive).hashCode();
+		result = result * 17 + (positive ? 1 : 0);
 		return result;
 	}
 

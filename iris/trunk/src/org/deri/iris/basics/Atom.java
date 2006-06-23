@@ -42,7 +42,7 @@ public class Atom implements IAtom<IAtom> {
 
 	private final IPredicate predicate;
 
-	public Atom(final IPredicate predicate) {
+	Atom(final IPredicate predicate) {
 		if (predicate == null) {
 			throw new IllegalArgumentException("The predicate must not be null");
 		}
@@ -50,7 +50,7 @@ public class Atom implements IAtom<IAtom> {
 		terms = new ArrayList<ITerm>(predicate.getArity());
 	}
 	
-	public Atom(final IPredicate predicate, final List<ITerm> terms) {
+	Atom(final IPredicate predicate, final List<ITerm> terms) {
 		this(predicate);
 		setTerms(terms);
 	}

@@ -35,7 +35,7 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.basics.Tuple;
+import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.tuple.BasicComparator;
 import org.deri.iris.operations.tuple.Concatenation;
 import org.deri.iris.operations.tuple.IndexComparator;
@@ -254,7 +254,7 @@ public class Join implements IJoin{
 		}
 		for(int i=0; i<tuple.getArity(); i++)
 			termList.add(terms[i]);
-		return new Tuple(termList);
+		return Factory.BASIC.createTuple(termList);
 	}
 	
 	// Refactor it!
@@ -271,7 +271,7 @@ public class Join implements IJoin{
 		}
 		for(int i=0; i<tuple.getArity(); i++)
 			termList.add(terms[i]);
-		return new Tuple(termList);
+		return Factory.BASIC.createTuple(termList);
 	}
 }
 

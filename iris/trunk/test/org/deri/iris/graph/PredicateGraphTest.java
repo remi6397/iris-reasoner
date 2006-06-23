@@ -25,6 +25,7 @@
  */
 package org.deri.iris.graph;
 
+import static org.deri.iris.factory.Factory.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -49,35 +50,35 @@ import org.deri.iris.basics.Rule;
  * 
  */
 public class PredicateGraphTest extends TestCase {
-	private static final IPredicate a = new Predicate("a", 0);
+	private static final IPredicate a = BASIC.createPredicate("a", 0);
 
-	private static final IPredicate b = new Predicate("b", 0);
+	private static final IPredicate b = BASIC.createPredicate("b", 0);
 
-	private static final IPredicate c = new Predicate("c", 0);
+	private static final IPredicate c = BASIC.createPredicate("c", 0);
 
-	private static final IPredicate d = new Predicate("d", 0);
+	private static final IPredicate d = BASIC.createPredicate("d", 0);
 
-	private static final IPredicate e = new Predicate("e", 0);
+	private static final IPredicate e = BASIC.createPredicate("e", 0);
 
-	private static final ILiteral pa = new Literal(a);
+	private static final ILiteral pa = BASIC.createLiteral(true, a);
 
-	private static final ILiteral pb = new Literal(b);
+	private static final ILiteral pb = BASIC.createLiteral(true, b);
 
-	private static final ILiteral pc = new Literal(c);
+	private static final ILiteral pc = BASIC.createLiteral(true, c);
 
-	private static final ILiteral pd = new Literal(d);
+	private static final ILiteral pd = BASIC.createLiteral(true, d);
 
-	private static final ILiteral pe = new Literal(e);
+	private static final ILiteral pe = BASIC.createLiteral(true, e);
 
-	private static final ILiteral na = new Literal(false, a);
+	private static final ILiteral na = BASIC.createLiteral(false, a);
 
-	private static final ILiteral nb = new Literal(false, b);
+	private static final ILiteral nb = BASIC.createLiteral(false, b);
 
-	private static final ILiteral nc = new Literal(false, c);
+	private static final ILiteral nc = BASIC.createLiteral(false, c);
 
-	private static final ILiteral nd = new Literal(false, d);
+	private static final ILiteral nd = BASIC.createLiteral(false, d);
 
-	private static final ILiteral ne = new Literal(false, e);
+	private static final ILiteral ne = BASIC.createLiteral(false, e);
 
 	public static Test suite() {
 		return new TestSuite(PredicateGraphTest.class, PredicateGraphTest.class
@@ -132,39 +133,15 @@ public class PredicateGraphTest extends TestCase {
 	private static PredicateGraph constructGraph_1() {
 		PredicateGraph pg = new PredicateGraph();
 
-		// head literals
-		List<ILiteral> ha = new ArrayList<ILiteral>(1);
-		ha.add(pa);
-		List<ILiteral> hb = new ArrayList<ILiteral>(1);
-		hb.add(pb);
-		List<ILiteral> hc = new ArrayList<ILiteral>(1);
-		hc.add(pc);
-		List<ILiteral> hd = new ArrayList<ILiteral>(1);
-		hd.add(pd);
-		List<ILiteral> he = new ArrayList<ILiteral>(1);
-		he.add(pe);
-
-		// body literals
-		List<ILiteral> ba = new ArrayList<ILiteral>(1);
-		ba.add(pe);
-		List<ILiteral> bb = new ArrayList<ILiteral>(2);
-		bb.add(pa);
-		bb.add(nc);
-		List<ILiteral> bc = new ArrayList<ILiteral>(1);
-		bc.add(na);
-		List<ILiteral> bd = new ArrayList<ILiteral>(2);
-		bd.add(pc);
-		bd.add(ne);
-		List<ILiteral> be = new ArrayList<ILiteral>(2);
-		be.add(pd);
-		be.add(nc);
-
 		// constructing the rules
-		IRule ra = new Rule(new Head(ha), new Body(ba));
-		IRule rb = new Rule(new Head(hb), new Body(bb));
-		IRule rc = new Rule(new Head(hc), new Body(bc));
-		IRule rd = new Rule(new Head(hd), new Body(bd));
-		IRule re = new Rule(new Head(he), new Body(be));
+		IRule ra = BASIC.createRule(BASIC.createHead(pa), BASIC.createBody(pe));
+		IRule rb = BASIC.createRule(BASIC.createHead(pb), BASIC.createBody(pa,
+				nc));
+		IRule rc = BASIC.createRule(BASIC.createHead(pc), BASIC.createBody(na));
+		IRule rd = BASIC.createRule(BASIC.createHead(pd), BASIC.createBody(pc,
+				ne));
+		IRule re = BASIC.createRule(BASIC.createHead(pe), BASIC.createBody(pd,
+				nc));
 
 		// adding the rules to the graph
 		pg.addRule(ra);

@@ -25,6 +25,7 @@
  */
 package org.deri.iris.basics;
 
+import static org.deri.iris.factory.Factory.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,43 +47,43 @@ public class QueryTest extends TestCase {
 	private static final Body BODY;
 
 	private static final Body BODYMORE;
-	
+
 	static {
 		List<ILiteral> tempLiterals = new ArrayList<ILiteral>();
 
-		ILiteral literal = new Literal(new Predicate("sin", 1));
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
+				"sin", 1));
 		literal.setTerm(new IntegerTerm(1), 0);
 		tempLiterals.add(literal);
 
-		literal = new Literal(new Predicate("cos", 1));
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
 		literal.setTerm(new Variable("X"), 0);
 		tempLiterals.add(literal);
 
-		literal = new Literal(new Predicate("date", 3));
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
 		literal.setTerm(new Variable("J"), 0);
 		literal.setTerm(new Variable("K"), 1);
 		literal.setTerm(new Variable("L"), 2);
 		tempLiterals.add(literal);
 
 		BODY = new Body(tempLiterals);
-		
-		
+
 		tempLiterals = new ArrayList<ILiteral>();
-		
-		literal = new Literal(new Predicate("sin", 1));
+
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("sin", 1));
 		literal.setTerm(new IntegerTerm(1), 0);
 		tempLiterals.add(literal);
-		
-		literal = new Literal(new Predicate("cos", 1));
+
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
 		literal.setTerm(new Variable("X"), 0);
 		tempLiterals.add(literal);
-		
-		literal = new Literal(new Predicate("date", 3));
+
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
 		literal.setTerm(new Variable("J"), 0);
 		literal.setTerm(new Variable("Q"), 1);
 		literal.setTerm(new Variable("L"), 2);
 		tempLiterals.add(literal);
-		
+
 		BODYMORE = new Body(tempLiterals);
 	}
 
@@ -91,12 +92,12 @@ public class QueryTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Query(BODY), new Query(BODY),
-				new Query(BODYMORE));
-		ObjectTest.runTestEquals(new Query(BODY), new Query(BODY),
-				new Query(null));
+		ObjectTest.runTestEquals(new Query(BODY), new Query(BODY), new Query(
+				BODYMORE));
+		ObjectTest.runTestEquals(new Query(BODY), new Query(BODY), new Query(
+				null));
 	}
-	
+
 	public void testHashCode() {
 		ObjectTest.runTestHashCode(new Query(BODY), new Query(BODY));
 	}

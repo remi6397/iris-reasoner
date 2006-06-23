@@ -25,6 +25,8 @@
  */
 package org.deri.iris.basics;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -79,8 +81,9 @@ public class LiteralTest extends TestCase {
 	}
 
 	public void testBasic() {
-		Literal REFERENCE = new Literal(NEGATIVE, PREDICATE, TERMS);
-		Literal MUTABLE = new Literal(PREDICATE);
+		Literal REFERENCE = new Literal(NEGATIVE, BASIC.createAtom(PREDICATE,
+				TERMS));
+		Literal MUTABLE = new Literal(NEGATIVE, BASIC.createAtom(PREDICATE));
 		boolean rightExceptionThrown = false;
 		List<ITerm> tooManyTerms = new ArrayList<ITerm>(ARITY + 1);
 		tooManyTerms.add(new StringTerm("a"));
@@ -140,26 +143,32 @@ public class LiteralTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Literal(NEGATIVE, PREDICATE, TERMS),
-				new Literal(NEGATIVE, PREDICATE, TERMS), new Literal(PREDICATE,
-						TERMSMORE));
-		ObjectTest.runTestEquals(new Literal(NEGATIVE, PREDICATE, TERMS),
-				new Literal(NEGATIVE, PREDICATE, TERMS), new Literal(!NEGATIVE,
-						PREDICATE, TERMS));
+		ObjectTest.runTestEquals(new Literal(NEGATIVE, BASIC.createAtom(
+				PREDICATE, TERMS)), new Literal(NEGATIVE, BASIC.createAtom(
+				PREDICATE, TERMS)), new Literal(BASIC.createAtom(PREDICATE,
+				TERMSMORE)));
+		ObjectTest.runTestEquals(new Literal(NEGATIVE, BASIC.createAtom(
+				PREDICATE, TERMS)), new Literal(NEGATIVE, BASIC.createAtom(
+				PREDICATE, TERMS)), new Literal(!NEGATIVE, BASIC.createAtom(
+				PREDICATE, TERMS)));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Literal(NEGATIVE, PREDICATE, TERMS),
-				new Literal(NEGATIVE, PREDICATE, TERMS));
+		ObjectTest.runTestHashCode(new Literal(NEGATIVE, BASIC.createAtom(
+				PREDICATE, TERMS)), new Literal(NEGATIVE, BASIC.createAtom(
+				PREDICATE, TERMS)));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new Literal(PREDICATE, TERMS), new Literal(
-				PREDICATE, TERMS), new Literal(PREDICATE, TERMSMORE),
-				new Literal(PREDICATEMORE, TERMS));
-		ObjectTest.runTestCompareTo(new Literal(NEGATIVE, PREDICATE, TERMS),
-				new Literal(NEGATIVE, PREDICATE, TERMS), new Literal(NEGATIVE,
-						PREDICATE, TERMSMORE), new Literal(PREDICATE, TERMS));
+		ObjectTest.runTestCompareTo(new Literal(BASIC.createAtom(PREDICATE,
+				TERMS)), new Literal(BASIC.createAtom(PREDICATE, TERMS)),
+				new Literal(BASIC.createAtom(PREDICATE, TERMSMORE)),
+				new Literal(BASIC.createAtom(PREDICATEMORE, TERMS)));
+		ObjectTest.runTestCompareTo(new Literal(NEGATIVE, BASIC.createAtom(
+				PREDICATE, TERMS)), new Literal(NEGATIVE, BASIC.createAtom(
+				PREDICATE, TERMS)), new Literal(NEGATIVE, BASIC.createAtom(
+				PREDICATE, TERMSMORE)), new Literal(BASIC.createAtom(PREDICATE,
+				TERMS)));
 	}
 
 }

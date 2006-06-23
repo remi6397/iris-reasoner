@@ -25,6 +25,8 @@
  */
 package org.deri.iris.basics;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +37,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.terms.StringTerm;
 
@@ -52,10 +55,11 @@ public class AtomTest extends TestCase {
 
 	private static final List<ITerm> TERMSMORE;
 
-	private static final Predicate PREDICATE = new Predicate(SYMBOL, ARITY);
-
-	private static final Predicate PREDICATEMORE = new Predicate(SYMBOL + 1,
+	private static final IPredicate PREDICATE = BASIC.createPredicate(SYMBOL,
 			ARITY);
+
+	private static final IPredicate PREDICATEMORE = BASIC.createPredicate(
+			SYMBOL + 1, ARITY);
 
 	static {
 		List<ITerm> temp = new ArrayList<ITerm>(ARITY);

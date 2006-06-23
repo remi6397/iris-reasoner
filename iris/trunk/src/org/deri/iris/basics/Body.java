@@ -40,7 +40,7 @@ public class Body implements IBody {
 
 	private List<ILiteral> literals = new ArrayList<ILiteral>();
 
-	public Body(final List<ILiteral> literals) {
+	Body(final List<ILiteral> literals) {
 		this.literals = literals;
 	}
 

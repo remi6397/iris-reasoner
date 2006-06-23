@@ -40,7 +40,7 @@ public class Query implements IQuery {
 	
 	private IBody body = null;
 	
-	public Query(final IBody body) {
+	Query(final IBody body) {
 		this.body = body;
 	}
 

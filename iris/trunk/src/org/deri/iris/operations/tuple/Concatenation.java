@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.tuple.IConcatenation;
-import org.deri.iris.basics.Tuple;
+import org.deri.iris.factory.Factory;
 
 /**
  * @author Darko Anicic, DERI Innsbruck
@@ -22,7 +22,7 @@ public class Concatenation implements IConcatenation{
 		tupleList.addAll(arg0.getTerms());
 		tupleList.addAll(arg1.getTerms());
 		
-		return new Tuple(tupleList);
+		return Factory.BASIC.createTuple(tupleList);
 	}
 
 }

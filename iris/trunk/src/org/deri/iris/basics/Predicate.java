@@ -39,7 +39,7 @@ public class Predicate implements IPredicate, Cloneable {
 
 	private final int arity;
 
-	public Predicate(final String symbol, final int arity) {
+	Predicate(final String symbol, final int arity) {
 		setPredicateSymbol(symbol);
 		this.arity = arity;
 	}

@@ -1,5 +1,6 @@
 package storage;
 
+import static org.deri.iris.factory.Factory.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -140,6 +141,6 @@ public class JoinTest extends TestCase {
 		for (String str : s) {
 			termList.add(new StringTerm(str));
 		}
-		return new Tuple(termList);
+		return BASIC.createTuple(termList);
 	}
 }

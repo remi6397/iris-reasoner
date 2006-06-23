@@ -42,7 +42,7 @@ public class Rule implements IRule {
 	private IHead head = null;
 	private IBody body = null;
 	
-	public Rule(final IHead head, final IBody body) {
+	Rule(final IHead head, final IBody body) {
 		if (body == null) {
 			throw new IllegalArgumentException("The body must not be null");
 		}

@@ -51,7 +51,7 @@ public class Tuple implements ITuple{
 	private final Lock WRITE = LOCK.writeLock();
 	
 	
-	public Tuple(List<ITerm> terms){
+	Tuple(List<ITerm> terms){
 		this.terms = terms;
 	}
 	

@@ -40,7 +40,7 @@ public class Head implements IHead {
 	
 	private List<ILiteral> literals = new ArrayList<ILiteral>();
 
-	public Head(final List<ILiteral> literals) {
+	Head(final List<ILiteral> literals) {
 		this.literals = literals;
 	}
 	
