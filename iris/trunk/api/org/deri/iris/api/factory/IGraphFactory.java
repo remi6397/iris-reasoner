@@ -23,21 +23,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.factory;
+package org.deri.iris.api.factory;
 
-import org.deri.iris.api.factory.IBasicFactory;
-import org.deri.iris.api.factory.IGraphFactory;
-import org.deri.iris.api.factory.ITermFactory;
-import org.deri.iris.basics.BasicFactory;
-import org.deri.iris.graph.GraphFactory;
-import org.deri.iris.terms.TermFactory;
+import org.deri.iris.api.graph.IPredicateGraph;
 
 /**
  * @author richi
  *
  */
-public class Factory {
-	public static final IBasicFactory BASIC = BasicFactory.getInstance();
-	public static final ITermFactory TERM = TermFactory.getInstance();
-	public static final IGraphFactory GRAPH = GraphFactory.getInstance();
+public interface IGraphFactory {
+	public IPredicateGraph createPredicateGraph();
 }
