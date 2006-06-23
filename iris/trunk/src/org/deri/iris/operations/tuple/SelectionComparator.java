@@ -29,46 +29,51 @@ package org.deri.iris.operations.tuple;
 import org.deri.iris.api.basics.ITuple;
 
 /**
- * This implementation does not defines a compare method that is used 
- * for comparing two tuples in the join operation.
+ * This implementation does not defines a compare method that is used
+ * for comparing two tuples in the selection operation.
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @date   31.05.200615:47:47
+ * @date   31.05.2006 11:08:41
  */
-public class JoinComparator extends BasicComparator{
-	
-	public JoinComparator(final int[] sortIndexes) {
-		super(sortIndexes);
+public class SelectionComparator extends TupleComparator{
+
+	public SelectionComparator(int arity) {
+		super(arity);
+		// TODO Auto-generated constructor stub
 	}
 	
-	/**
-	 * Compares its two arguments for order. Comparison is based on 
-	 * the sort indexes. Returns a negative integer, zero, or a positive
-	 * integer as the first argument is less than, equal to, or greater 
-	 * than the second.
-	 * joinCompare is a compare method used for comparing two tuples in
-	 * the Join operation.
-	 * 
-	 * @param t0
-	 * 			 - the first tuple to be compared.
-	 * @param t1
-	 * 			 - the second tuple to be compared.
-	 * @return
-	 * 			 - a negative integer, zero, or a positive integer as 
-	 * 			   the first argument is less than, equal to, or greater 
-	 * 			   than the second.
-	 */
-	public int compare(ITuple t0, ITuple t1) {
+	public SelectionComparator(final int[] sortIndexes) {
+		super(sortIndexes);
+	}
+
+	// Correct it!
+	public int compare(ITuple t0, ITuple t1){
+		if (t0.getArity() != t1.getArity()) {
+			throw new IllegalArgumentException("Couldn't compare due to different arity of tuples.");
+		} 
 		int comparison = 0;
+		int equal = 10;
+		//if(this.sortIndexes == null) this.sortIndexes = getDefaultSortIndexes(t0.getArity());
 		for(int i=0; i<this.getSortIndexes().length; i++){
-			if(this.getSortIndexes()[i] != -1){
+			/* coompare tuples on each index that is differnt from -1.
+			 * sortIndexes[i] == -1 means the term with that index
+			 * is not relevant for the current sorting.
+			 */
+		    if(this.getSortIndexes()[i] != -1){
 		    	comparison = t0.getTerm(i).compareTo(
 						t1.getTerm(this.getSortIndexes()[i]));
-				if(comparison != 0){
+				//if(comparison != 0){
+		    	if(comparison > 0){
 					return comparison;
 				}
+		    	if(comparison == 0){
+					return 0;
+				}
+		    	/*else{
+					return 0;
+				}*/
 			}
 		}
-		return 0;
+		return comparison;
 	}
 }

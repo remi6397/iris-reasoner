@@ -29,46 +29,57 @@ package org.deri.iris.operations.tuple;
 import org.deri.iris.api.basics.ITuple;
 
 /**
- * This implementation does not defines a compare method that is used 
- * for comparing two tuples in the join operation.
+ * Implementation of the Comparator interface meant to be 
+ * used for creating an index tree. 
+ * This implementation does not handle duplicate tuples. Duplicate tuples
+ * are those tuples that have identical terms on positions defined by sort
+ * indexes. 
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @date   31.05.200615:47:47
+ * @date   31.05.2006 14:20:06
  */
-public class JoinComparator extends BasicComparator{
-	
-	public JoinComparator(final int[] sortIndexes) {
+public class IndexComparatorSimple extends BasicComparator{
+
+	public IndexComparatorSimple(final int[] sortIndexes) {
 		super(sortIndexes);
 	}
-	
-	/**
-	 * Compares its two arguments for order. Comparison is based on 
-	 * the sort indexes. Returns a negative integer, zero, or a positive
-	 * integer as the first argument is less than, equal to, or greater 
-	 * than the second.
-	 * joinCompare is a compare method used for comparing two tuples in
-	 * the Join operation.
+
+	/* 
+	 * This tree is sorted on some particular index (or set of indexes) 
+	 * where duplicate tuples are 
+	 * grouped in one single tree node. Duplicate tuples are those tuples 
+	 * that have identical terms on positions defined by sort indexes. 
 	 * 
-	 * @param t0
-	 * 			 - the first tuple to be compared.
-	 * @param t1
-	 * 			 - the second tuple to be compared.
-	 * @return
-	 * 			 - a negative integer, zero, or a positive integer as 
-	 * 			   the first argument is less than, equal to, or greater 
-	 * 			   than the second.
+	 * Also see:
+	 * (non-Javadoc)
+	 * @see org.deri.iris.operations.tuple.BasicComparator#compare(org.deri.iris.api.basics.ITuple, org.deri.iris.api.basics.ITuple)
 	 */
-	public int compare(ITuple t0, ITuple t1) {
+	public int compare(ITuple t0, ITuple t1){
+		if (t0.getArity() != t1.getArity()) {
+			throw new IllegalArgumentException("Couldn't compare due to different arity of tuples.");
+		} 
 		int comparison = 0;
+		//if(this.sortIndexes == null) this.sortIndexes = getDefaultSortIndexes(t0.getArity());
 		for(int i=0; i<this.getSortIndexes().length; i++){
 			if(this.getSortIndexes()[i] != -1){
 		    	comparison = t0.getTerm(i).compareTo(
 						t1.getTerm(this.getSortIndexes()[i]));
-				if(comparison != 0){
+		    	if(comparison != 0){
 					return comparison;
 				}
 			}
 		}
-		return 0;
+		
+		//If two tuples are equal comparing them on the sort indexes
+		//then compare them in an ascending order
+		for(int i=0; i<this.getSortIndexes().length; i++){
+		 	comparison = t0.getTerm(i).compareTo(
+					t1.getTerm(i));
+			if(comparison != 0){	
+		 		// not equal
+				return comparison;
+			}
+		}
+		return comparison;
 	}
 }

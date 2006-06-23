@@ -27,8 +27,15 @@
 package org.deri.iris.operations.tuple;
 
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.basics.MinimalTuple;
 
 /**
+ * Implementation of the Comparator interface meant to be 
+ * used for creating an index tree. 
+ * This implementation handles duplicate tuples. Duplicate tuples
+ * are those tuples that have identical terms on positions defined by sort
+ * indexes. 
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   31.05.2006 14:20:06
  */
@@ -39,7 +46,7 @@ public class IndexComparator extends BasicComparator{
 	}
 
 	/* 
-	 * This is an implementation of the Comparator interface meant to be 
+	 * Implementation of the Comparator interface meant to be 
 	 * used for creating an index tree. This tree is sorted on some 
 	 * particular index (or set of indexes) where duplicate tuples are 
 	 * grouped in one single tree node. Duplicate tuples are those tuples 
@@ -54,28 +61,35 @@ public class IndexComparator extends BasicComparator{
 			throw new IllegalArgumentException("Couldn't compare due to different arity of tuples.");
 		} 
 		int comparison = 0;
-		//if(this.sortIndexes == null) this.sortIndexes = getDefaultSortIndexes(t0.getArity());
+		int forEachRelevantIndex = 0;
+		int forEachIndex = 0;
+		int equal = 0;
 		for(int i=0; i<this.getSortIndexes().length; i++){
+			comparison = t0.getTerm(i).compareTo(t1.getTerm(i));
+			if(comparison == 0) forEachIndex++;
 			if(this.getSortIndexes()[i] != -1){
-		    	comparison = t0.getTerm(i).compareTo(
+				comparison = t0.getTerm(i).compareTo(
 						t1.getTerm(this.getSortIndexes()[i]));
-		    	if(comparison != 0){
+		    	forEachRelevantIndex++;
+				if(comparison != 0){
 					return comparison;
+				}else{
+					equal++;
 				}
 			}
 		}
+		// Tuples t0 and t1 are duplicates if they have identical terms  
+		// for each sort index.
+		//if(forEachRelevantIndex == equal && t0.getArity() != forEachIndex){
 		
-		//If two tuples are equal comparing them on the sort indexes
-		//then compare them in an ascending order
-		 
-		for(int i=0; i<this.getSortIndexes().length; i++){
-		 	comparison = t0.getTerm(i).compareTo(
-					t1.getTerm(i));
-			if(comparison != 0){	
-		 		// not equal
-				return comparison;
-			}
+		//if(forEachIndex == equal && !(t0 instanceof MinimalTuple) && !(t1 instanceof MinimalTuple)){
+		if(forEachRelevantIndex == equal && !(t0 instanceof MinimalTuple) && !(t1 instanceof MinimalTuple)){
+				
+			// forEachRelevantIndex
+			ITuple tmp = t1.getDuplicate();
+			t0.setDuplicate(tmp);
+			t1.setDuplicate(t0);
 		}
-		return comparison;
+		return 0;
 	}
 }

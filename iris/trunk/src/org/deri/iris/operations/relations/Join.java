@@ -36,7 +36,6 @@ import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.basics.MinimalTuple;
-import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.tuple.BasicComparator;
 import org.deri.iris.operations.tuple.Concatenation;
 import org.deri.iris.operations.tuple.IndexComparatorD;
