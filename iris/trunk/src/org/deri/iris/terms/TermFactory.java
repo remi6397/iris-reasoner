@@ -23,10 +23,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.api.factory;
+package org.deri.iris.terms;
 
+import java.util.Arrays;
 import java.util.Collection;
 
+import org.deri.iris.api.factory.ITermFactory;
 import org.deri.iris.api.terms.IConstantTerm;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.IStringTerm;
@@ -34,18 +36,39 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
 /**
- * @author Darko Anicic, DERI Innsbruck 20.02.2006 16:05:29
+ * @author richi
+ *
  */
-public interface ITermFactory {
+public class TermFactory implements ITermFactory {
+	
+	private static final ITermFactory FACTORY = new TermFactory();
+	
+	private TermFactory() {
+		// this is a singelton
+	}
+	
+	public IConstantTerm createConstant(String arg) {
+		return new ConstantTerm(arg);
+	}
 
-	public IConstantTerm createConstant(String arg);
+	public IConstructedTerm createConstruct(String name, Collection<ITerm> terms) {
+		return new ConstructedTerm(name, terms);
+	}
 
-	public IConstructedTerm createConstruct(final String name,
-			Collection<ITerm> terms);
+	public IConstructedTerm createConstruct(String name, ITerm... terms) {
+		return createConstruct(name, Arrays.asList(terms));
+	}
 
-	public IConstructedTerm createConstruct(final String name, ITerm... terms);
+	public IStringTerm createString(String arg) {
+		return new StringTerm(arg);
+	}
 
-	public IStringTerm createString(String arg);
+	public IVariable createVariable(String name) {
+		return new Variable(name);
+	}
 
-	public IVariable createVariable(String name);
+	public static ITermFactory getInstance() {
+		return FACTORY;
+	}
+
 }

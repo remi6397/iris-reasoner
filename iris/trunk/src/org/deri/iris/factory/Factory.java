@@ -26,7 +26,9 @@
 package org.deri.iris.factory;
 
 import org.deri.iris.api.factory.IBasicFactory;
+import org.deri.iris.api.factory.ITermFactory;
 import org.deri.iris.basics.BasicFactory;
+import org.deri.iris.terms.TermFactory;
 
 /**
  * @author richi
@@ -34,4 +36,5 @@ import org.deri.iris.basics.BasicFactory;
  */
 public class Factory {
 	public static final IBasicFactory BASIC = BasicFactory.getInstance();
+	public static final ITermFactory TERM = TermFactory.getInstance();
 }
