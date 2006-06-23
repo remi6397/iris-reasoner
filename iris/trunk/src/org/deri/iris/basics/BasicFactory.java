@@ -25,6 +25,8 @@
  */
 package org.deri.iris.basics;
 
+import static org.deri.iris.factory.Factory.GRAPH;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -117,7 +119,9 @@ public class BasicFactory implements IBasicFactory {
 	}
 
 	public IRule createRule(IHead head, IBody body) {
-		return new Rule(head, body);
+		IRule r =new Rule(head, body); 
+		GRAPH.createPredicateGraph().addRule(r);
+		return r;
 	}
 
 	public ITuple createTuple(ITerm... terms) {

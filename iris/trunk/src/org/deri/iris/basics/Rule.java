@@ -25,6 +25,8 @@
  */
 package org.deri.iris.basics;
 
+import static org.deri.iris.factory.Factory.GRAPH;
+
 import java.util.List;
 
 import org.deri.iris.api.basics.IBody;
@@ -61,8 +63,7 @@ public class Rule implements IRule {
 	}
 
 	public boolean isCycled() {
-		// TODO Auto-generated method stub
-		return false;
+		return GRAPH.createPredicateGraph().detectCycles();
 	}
 
 	public boolean isFact() {
