@@ -34,7 +34,7 @@ import org._3pq.jgrapht.edge.DirectedEdge;
  * @author richi
  * 
  */
-public class LabeledDirectedEdge extends DirectedEdge implements LabeledElement {
+class LabeledDirectedEdge extends DirectedEdge implements LabeledElement {
 
 	/** label of this edge */
 	private Object label = null;
