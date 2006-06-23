@@ -27,6 +27,16 @@
 package org.deri.iris.operations.relations;
 
 /**
+ * Theta-join operation is defined by the theta operator. 
+ * This operator can one of the following values:
+ * 
+ * EQUALS,
+ * NOT_EQUAL,
+ * LESS_THAN,
+ * GREATER_THAN,
+ * LESS_OR_EQUAL,
+ * GREATER_OR_EQUAL;
+	
  * @author Darko Anicic, DERI Innsbruck
  * @date   30.05.2006 11:58:23
  */
