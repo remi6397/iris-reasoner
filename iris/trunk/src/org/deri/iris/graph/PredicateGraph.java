@@ -50,7 +50,7 @@ public class PredicateGraph implements IPredicateGraph {
 
 	PredicateGraph() {
 	}
-	
+
 	public void addRule(final IRule rule) {
 		if (rule == null) {
 			throw new IllegalArgumentException("The rule must not be null");
@@ -86,6 +86,21 @@ public class PredicateGraph implements IPredicateGraph {
 		return cd.findCycles();
 	}
 
+	/**
+	 * This method returns a &quot;set&quot; of edges which are involved in the
+	 * cycle.</br></br>NOTE: This Set doesn't behave like a &quot;normal
+	 * set&quot; in the meaning, that it is possible to store multible equal
+	 * object in this set. This is a problem of the underlying implementation,
+	 * which is using <code>HashSet</code> and doesn't implement the
+	 * <code>hashCode</code> method for the objects stored in this set. So, to
+	 * check whether a edge is in the set you sould iterate through the set and
+	 * compare the objects using the equals method. This should work, because
+	 * the edges (LabeledDirectedEdge) used in this graph are impelmenting this
+	 * mehtod.
+	 * 
+	 * @see LabeledDirectedEdge
+	 * @return the set of edges
+	 */
 	public Set<Edge> findEdgesForCycle() {
 		Set cycle = findVertexesForCycle();
 		Set<Edge> edges = new HashSet<Edge>();
@@ -98,8 +113,7 @@ public class PredicateGraph implements IPredicateGraph {
 				}
 			}
 		}
-		assert (edges.size() != cycle.size()) : 
-			"the number of edges and vertexes must be equal";
+		assert (edges.size() != cycle.size()) : "the number of edges and vertexes must be equal";
 		return edges;
 	}
 
