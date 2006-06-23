@@ -26,6 +26,7 @@
 package org.deri.iris.basics;
 
 import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +40,6 @@ import junit.framework.TestSuite;
 import org.deri.iris.ObjectTest;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.terms.StringTerm;
 
 /**
  * @author richi
@@ -63,15 +63,15 @@ public class AtomTest extends TestCase {
 
 	static {
 		List<ITerm> temp = new ArrayList<ITerm>(ARITY);
-		temp.add(new StringTerm("a"));
-		temp.add(new StringTerm("b"));
-		temp.add(new StringTerm("c"));
+		temp.add(TERM.createString("a"));
+		temp.add(TERM.createString("b"));
+		temp.add(TERM.createString("c"));
 		TERMS = Collections.unmodifiableList(temp);
 
 		temp = new ArrayList<ITerm>(ARITY);
-		temp.add(new StringTerm("a"));
-		temp.add(new StringTerm("b"));
-		temp.add(new StringTerm("d"));
+		temp.add(TERM.createString("a"));
+		temp.add(TERM.createString("b"));
+		temp.add(TERM.createString("d"));
 		TERMSMORE = Collections.unmodifiableList(temp);
 	}
 
@@ -84,17 +84,17 @@ public class AtomTest extends TestCase {
 		Atom MUTABLE = new Atom(PREDICATE);
 		boolean rightExceptionThrown = false;
 		List<ITerm> tooManyTerms = new ArrayList<ITerm>(ARITY + 1);
-		tooManyTerms.add(new StringTerm("a"));
-		tooManyTerms.add(new StringTerm("b"));
-		tooManyTerms.add(new StringTerm("c"));
-		tooManyTerms.add(new StringTerm("d"));
+		tooManyTerms.add(TERM.createString("a"));
+		tooManyTerms.add(TERM.createString("b"));
+		tooManyTerms.add(TERM.createString("c"));
+		tooManyTerms.add(TERM.createString("d"));
 
-		MUTABLE.setTerm(new StringTerm("a"), 0);
-		MUTABLE.setTerm(new StringTerm("b"), 1);
-		MUTABLE.setTerm(new StringTerm("c"), 2);
+		MUTABLE.setTerm(TERM.createString("a"), 0);
+		MUTABLE.setTerm(TERM.createString("b"), 1);
+		MUTABLE.setTerm(TERM.createString("c"), 2);
 
 		try {
-			MUTABLE.setTerm(new StringTerm("d"), 3);
+			MUTABLE.setTerm(TERM.createString("d"), 3);
 		} catch (IllegalArgumentException e) {
 			rightExceptionThrown = true;
 		} finally {

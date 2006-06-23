@@ -25,7 +25,9 @@
  */
 package org.deri.iris.basics;
 
-import static org.deri.iris.factory.Factory.*;
+import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.TERM;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +37,6 @@ import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTest;
 import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.terms.Variable;
 import org.deri.iris.terms.concrete.IntegerTerm;
 
 /**
@@ -57,13 +58,13 @@ public class QueryTest extends TestCase {
 		tempLiterals.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
-		literal.setTerm(new Variable("X"), 0);
+		literal.setTerm(TERM.createVariable("X"), 0);
 		tempLiterals.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
-		literal.setTerm(new Variable("J"), 0);
-		literal.setTerm(new Variable("K"), 1);
-		literal.setTerm(new Variable("L"), 2);
+		literal.setTerm(TERM.createVariable("J"), 0);
+		literal.setTerm(TERM.createVariable("K"), 1);
+		literal.setTerm(TERM.createVariable("L"), 2);
 		tempLiterals.add(literal);
 
 		BODY = new Body(tempLiterals);
@@ -75,13 +76,13 @@ public class QueryTest extends TestCase {
 		tempLiterals.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
-		literal.setTerm(new Variable("X"), 0);
+		literal.setTerm(TERM.createVariable("X"), 0);
 		tempLiterals.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
-		literal.setTerm(new Variable("J"), 0);
-		literal.setTerm(new Variable("Q"), 1);
-		literal.setTerm(new Variable("L"), 2);
+		literal.setTerm(TERM.createVariable("J"), 0);
+		literal.setTerm(TERM.createVariable("Q"), 1);
+		literal.setTerm(TERM.createVariable("L"), 2);
 		tempLiterals.add(literal);
 
 		BODYMORE = new Body(tempLiterals);

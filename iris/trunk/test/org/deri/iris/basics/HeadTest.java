@@ -25,20 +25,21 @@
  */
 package org.deri.iris.basics;
 
-import static org.deri.iris.factory.Factory.*;
+import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.TERM;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.terms.Variable;
-import org.deri.iris.terms.concrete.IntegerTerm;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.deri.iris.ObjectTest;
+import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.terms.concrete.IntegerTerm;
 
 /**
  * @author richi
@@ -64,7 +65,7 @@ public class HeadTest extends TestCase {
 		tempLiteralsUnequ.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
-		literal.setTerm(new Variable("X"), 0);
+		literal.setTerm(TERM.createVariable("X"), 0);
 		tempLiterals.add(literal);
 		tempLiteralsUnequ.add(literal);
 		tempVariables.add(literal.getTerm(0));

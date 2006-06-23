@@ -43,12 +43,18 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 
 	private String symbol = "";
 
-	public ConstructedTerm(final String symbol, final Collection<ITerm> terms) {
+	ConstructedTerm(final String symbol, final Collection<ITerm> terms) {
+		if (terms == null) {
+			throw new IllegalArgumentException("The terms must not be null");
+		}
 		setFunctionSymbol(symbol);
 		this.terms.addAll(terms);
 	}
 
 	public void setFunctionSymbol(String arg) {
+		if (arg == null) {
+			throw new IllegalArgumentException("The symbol must not be null");
+		}
 		symbol = arg;
 	}
 

@@ -35,7 +35,7 @@ public class Variable implements IVariable<IVariable>, Cloneable {
 
 	private String name = "";
 
-	public Variable(final String name) {
+	Variable(final String name) {
 		setName(name);
 	}
 

@@ -35,7 +35,7 @@ public class ConstantTerm implements IConstantTerm<IConstantTerm>, Cloneable {
 	
 	private String value = "";
 	
-	public ConstantTerm(final String sconst) {
+	ConstantTerm(final String sconst) {
 		value = sconst;
 	}
 

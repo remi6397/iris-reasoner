@@ -1,6 +1,8 @@
 package storage;
 
-import static org.deri.iris.factory.Factory.*;
+import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.TERM;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -15,11 +17,9 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.basics.Tuple;
 import org.deri.iris.operations.relations.Join;
 import org.deri.iris.operations.relations.JoinCondition;
 import org.deri.iris.storage.Relation;
-import org.deri.iris.terms.StringTerm;
 
 /**
  * @author Richard Pöttler
@@ -139,7 +139,7 @@ public class JoinTest extends TestCase {
 	protected static ITuple createTuple(final String... s) {
 		List<ITerm> termList = new LinkedList<ITerm>();
 		for (String str : s) {
-			termList.add(new StringTerm(str));
+			termList.add(TERM.createString(str));
 		}
 		return BASIC.createTuple(termList);
 	}

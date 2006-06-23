@@ -35,7 +35,7 @@ public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
 
 	private String value = "";
 	
-	public StringTerm(final String value) {
+	StringTerm(final String value) {
 		setValue(value);
 	}
 
