@@ -48,6 +48,9 @@ public class PredicateGraph implements IPredicateGraph {
 
 	private CycleDetector cd = new CycleDetector(g);
 
+	PredicateGraph() {
+	}
+	
 	public void addRule(final IRule rule) {
 		if (rule == null) {
 			throw new IllegalArgumentException("The rule must not be null");
