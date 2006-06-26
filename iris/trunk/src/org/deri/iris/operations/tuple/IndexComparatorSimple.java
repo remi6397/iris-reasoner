@@ -45,10 +45,7 @@ public class IndexComparatorSimple extends BasicComparator{
 	}
 
 	/* 
-	 * This tree is sorted on some particular index (or set of indexes) 
-	 * where duplicate tuples are 
-	 * grouped in one single tree node. Duplicate tuples are those tuples 
-	 * that have identical terms on positions defined by sort indexes. 
+	 * This tree is sorted on some particular index (or set of indexes).
 	 * 
 	 * Also see:
 	 * (non-Javadoc)
