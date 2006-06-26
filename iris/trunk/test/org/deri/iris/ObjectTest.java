@@ -41,7 +41,7 @@ public final class ObjectTest {
 
 	public static void runTestEquals(final Object e0, final Object e1,
 			final Object ue0) {
-		Assert.assertEquals("A object must be equal to itself", e0, e1);
+		Assert.assertEquals("A object must be equal to itself", e0, e0);
 		Assert.assertEquals("The objects are equal", e0, e1);
 		Assert.assertEquals("The objects are equal", e1, e0);
 		Assert.assertFalse("The objects are unequal", e0.equals(ue0));
