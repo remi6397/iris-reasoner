@@ -53,7 +53,7 @@ public class IntegerTest extends TestCase {
 		IntegerTerm basic = new IntegerTerm(BASIC);
 		IntegerTerm changed = new IntegerTerm(MORE);
 		changed.setValue(BASIC);
-		assertEquals("object not initialized correctly", BASIC, basic
+		assertEquals("object not initialized correctly", Integer.valueOf(BASIC), basic
 				.getValue());
 		assertEquals("setValue(..) doesn't work correctly", basic, changed);
 	}
