@@ -19,7 +19,6 @@
  */
 package org.deri.iris.api.operations.relation;
 
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
 
 /**
@@ -30,11 +29,9 @@ import org.deri.iris.api.storage.IRelation;
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:18:20
  *
- * @version $Revision: 1.2 $ $Date: 2006-06-23 15:43:25 $
+ * @version $Revision: 1.3 $ $Date: 2006-06-26 16:07:16 $
  */
 public interface ISelection {
-
-	// public IRelation select(final IRelation relation, final Set<ITuple> tuple);
 	
-	public IRelation select(final IRelation relation, final ITuple pattern);
+	public IRelation select();
 }
