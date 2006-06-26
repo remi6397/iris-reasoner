@@ -7,7 +7,7 @@ import java.util.List;
  * @author Darko Anicic, DERI Innsbruck
  * @date   14.11.2005 11:34:59
  */
-public interface IConstructedTerm<Type extends IConstructedTerm> extends ITerm<Type>{
+public interface IConstructedTerm<Type extends IConstructedTerm> extends ITerm<Type, List<ITerm>>{
 
 	public void setFunctionSymbol(String arg);
 	

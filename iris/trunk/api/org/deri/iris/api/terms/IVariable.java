@@ -24,10 +24,6 @@ package org.deri.iris.api.terms;
  * @author Darko Anicic, DERI Innsbruck
  * @date   14.11.2005 12:17:48
  */
-public interface IVariable<Type extends IVariable> extends ITerm<IVariable>{
-	
-	public void setName(String name);
-	
-	public String getName();
+public interface IVariable<Type extends IVariable> extends ITerm<IVariable, String>{
 	
 }

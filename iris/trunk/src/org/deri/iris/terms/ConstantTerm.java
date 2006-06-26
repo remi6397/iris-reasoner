@@ -48,7 +48,7 @@ public class ConstantTerm implements IConstantTerm<IConstantTerm>, Cloneable {
 	}
 
 	public int compareTo(IConstantTerm o) {
-		return value.compareTo(o.getValue());
+		return value.compareTo((String) o.getValue());
 	}
 
 	public boolean equals(final Object o) {
@@ -85,5 +85,9 @@ public class ConstantTerm implements IConstantTerm<IConstantTerm>, Cloneable {
 
 	public IConstantTerm getMinValue() {
 		return null;
+	}
+
+	public void setValue(String t) {
+		this.value = t;
 	}
 }

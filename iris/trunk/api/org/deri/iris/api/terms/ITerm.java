@@ -35,7 +35,7 @@ package org.deri.iris.api.terms;
 	
 	More types of terms will be added.
 */
-public interface ITerm<Type extends ITerm> extends Comparable<Type> {
+public interface ITerm<Type extends ITerm, Type0> extends Comparable<Type> {
 	
 	public boolean isGround();
 	
@@ -55,4 +55,7 @@ public interface ITerm<Type extends ITerm> extends Comparable<Type> {
 	
 	public Type getMinValue();
 	
+	public Type0 getValue();
+	
+	public void setValue(Type0 t);
 }

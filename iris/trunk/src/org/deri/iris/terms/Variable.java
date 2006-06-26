@@ -52,7 +52,7 @@ public class Variable implements IVariable<IVariable>, Cloneable {
 	}
 
 	public int compareTo(IVariable o) {
-		return name.compareTo(o.getName());
+		return name.compareTo((String) o.getValue());
 	}
 
 	public int hashCode() {
@@ -89,5 +89,13 @@ public class Variable implements IVariable<IVariable>, Cloneable {
 
 	public IVariable getMinValue() {
 		return null;
+	}
+
+	public String getValue() {
+		return this.name;
+	}
+
+	public void setValue(String t) {
+		this.name = t;
 	}
 }

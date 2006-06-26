@@ -165,4 +165,12 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 	public IConstructedTerm getMinValue() {
 		return null;
 	}
+
+	public List<ITerm> getValue() {
+		return this.terms;
+	}
+
+	public void setValue(List<ITerm> t) {
+		this.terms = t;
+	}
 }

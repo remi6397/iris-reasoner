@@ -24,7 +24,7 @@ package org.deri.iris.api.terms;
  * @author Darko Anicic, DERI Innsbruck
  * @date   14.11.2005 17:48:47
  */
-public interface IConstantTerm<Type extends IConstantTerm> extends ITerm<Type>{
+public interface IConstantTerm<Type extends IConstantTerm> extends ITerm<Type, String>{
 	
-	public String getValue();	
+	//public String getValue();	
 }
