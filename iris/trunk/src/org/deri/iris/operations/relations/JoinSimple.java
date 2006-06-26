@@ -38,7 +38,7 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.basics.MinimalTuple;
 import org.deri.iris.operations.tuple.BasicComparator;
 import org.deri.iris.operations.tuple.Concatenation;
-import org.deri.iris.operations.tuple.IndexComparatorSimple;
+import org.deri.iris.operations.tuple.IndexComparator;
 import org.deri.iris.operations.tuple.JoinComparator;
 import org.deri.iris.storage.Relation;
 
@@ -51,43 +51,57 @@ import org.deri.iris.storage.Relation;
  * @date   24.05.2006 09:26:43
  */
 public class JoinSimple implements IJoin{
-	
 	private IRelation relation0 = null;
 	private IRelation relation1 = null;
+	private IRelation joinRelation = null;
 	private BasicComparator comparator = null;
 	private int[] indexes = null;
-	
 	private JoinCondition condition = JoinCondition.EQUALS;
 	
-	public IRelation join(IRelation relation0, IRelation relation1, int[] indexes, JoinCondition condition) {
-		this.condition = condition;
-		this.indexes = indexes;
-		return join(relation0, relation1);
+	JoinSimple(IRelation arg0, IRelation arg1, int[] indexes){
+		if (arg0 == null || arg1 == null || indexes == null) {
+			throw new IllegalArgumentException("All construcotr " +
+					"parameters must not be null");
+		}
+		constructJoinOperator(arg0, arg1, indexes);
+		this.condition = JoinCondition.EQUALS; 
 	}
 	
-	public IRelation equiJoin(IRelation arg0, IRelation arg1, int[] indexes) {
-		this.condition = JoinCondition.EQUALS;
+	JoinSimple(IRelation arg0, IRelation arg1, int[] indexes, 
+			JoinCondition condition){
+		if (arg0 == null || arg1 == null || 
+				indexes == null || condition == null) {
+			throw new IllegalArgumentException("All construcotr " +
+					"parameters must not be null");
+		}
+		constructJoinOperator(arg0, arg1, indexes);
+		this.condition = condition; 
+	}
+	
+	private void constructJoinOperator(IRelation arg0, IRelation arg1, int[] indexes){
+		this.relation0 = arg0;
+		this.relation1 = arg1;
 		this.indexes = indexes;
-		return join(relation0, relation1);
+		this.joinRelation = new Relation(this.indexes.length*2);
+		
+		// Sort arg0 on those tupples defined by sort indexes
+		this.comparator = new IndexComparator(this.indexTransformer0(indexes));
+		IRelation rel0 = new Relation(comparator);
+		rel0.addAll(this.relation0);
+		this.relation0 = rel0;
+		
+		// Sort arg1 on those tupples defined by sort indexes
+		this.comparator = new IndexComparator(this.indexTransformer1(indexes));
+		IRelation rel1 = new Relation(comparator);
+		rel1.addAll(this.relation1);
+		this.relation1 = rel1;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private IRelation join(IRelation relation0, IRelation relation1) {
+	public IRelation join() {
 		if (((ITuple)relation0.first()).getArity() != ((ITuple)relation1.first()).getArity()) {
 			throw new IllegalArgumentException("Couldn't join due to different arity of tuples.");
 		} 
-		IRelation joinRelation = new Relation(this.indexes.length*2);
-		
-		// Sort relation0 on those tupples defined by sort indexes
-		this.comparator = new IndexComparatorSimple(this.indexTransformer0(indexes));
-		this.relation0 = new Relation(comparator);
-		this.relation0.addAll(relation0);
-	
-		// Sort relation1 on those tupples defined by sort indexes
-		this.comparator = new IndexComparatorSimple(this.indexTransformer1(indexes));
-		this.relation1 = new Relation(comparator);
-		this.relation1.addAll(relation1);
-		
 		Iterator<ITuple> iterator;
 		ITuple tuple;
 		boolean order = false;
@@ -106,13 +120,11 @@ public class JoinSimple implements IJoin{
 				joinRelation.addAll(findAndJoin(tuple, order));
 			}
 		}
-			
 		return joinRelation;
 	}
 	
 	@SuppressWarnings("unchecked")
 	private IRelation findAndJoin(ITuple tuple, boolean order){
-		
 		if(relation1.first() == null) return null;
 		IRelation joinElements = 
 			new Relation(((ITuple)relation1.first()).getArity()*2);

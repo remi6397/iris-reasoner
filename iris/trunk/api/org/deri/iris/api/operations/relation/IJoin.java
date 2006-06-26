@@ -27,44 +27,29 @@
 package org.deri.iris.api.operations.relation;
 
 import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.operations.relations.JoinCondition;
 
 /**
- * Interface or class description
- *
  * Interface of a join operation used to promote modularity 
  * of inference engines.
+ * 
+ * Note: Implementation of the join operation assumes an implementation of
+ * this interface and an implementation of the IRelationFactory interface
+ * (createJoinOperator methods).
  * 
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:09:02
  *
- * @version $Revision: 1.4 $ $Date: 2006-06-23 14:21:06 $
+ * @version $Revision: 1.5 $ $Date: 2006-06-26 15:30:47 $
  * @param <JoinCondition>
  */
 public interface IJoin {
 	
 	/**
-	 * Default join or equijoin is a join where a condition is '='
-	 * 
-	 * @param arg0
-	 * @param arg1
-	 * @param indexes
-	 * @return
-	 */
-	public IRelation equiJoin(final IRelation arg0, final IRelation arg1, 
-			int[] indexes);
-	
-	/**
 	 * General join operation where a specified condition 
 	 * (=, !=, <, >, <=, >=) must hold.
 	 * 
-	 * @param arg0
-	 * @param arg1
-	 * @param indexes
-	 * @param condition
 	 * @return
 	 */
-	public IRelation join(IRelation arg0, IRelation arg1, 
-			int[] indexes, JoinCondition condition);
+	public IRelation join();
 		
 }
