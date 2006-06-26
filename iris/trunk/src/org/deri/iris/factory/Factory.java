@@ -26,11 +26,13 @@
 package org.deri.iris.factory;
 
 import org.deri.iris.api.factory.IBasicFactory;
+import org.deri.iris.api.factory.IConcreteFactory;
 import org.deri.iris.api.factory.IGraphFactory;
 import org.deri.iris.api.factory.ITermFactory;
 import org.deri.iris.basics.BasicFactory;
 import org.deri.iris.graph.GraphFactory;
 import org.deri.iris.terms.TermFactory;
+import org.deri.iris.terms.concrete.ConcreteFactory;
 
 /**
  * @author richi
@@ -39,5 +41,6 @@ import org.deri.iris.terms.TermFactory;
 public class Factory {
 	public static final IBasicFactory BASIC = BasicFactory.getInstance();
 	public static final ITermFactory TERM = TermFactory.getInstance();
+	public static final IConcreteFactory CONCRETE = ConcreteFactory.getInstance();
 	public static final IGraphFactory GRAPH = GraphFactory.getInstance();
 }
