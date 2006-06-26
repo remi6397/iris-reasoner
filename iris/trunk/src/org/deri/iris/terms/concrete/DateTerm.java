@@ -30,7 +30,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.concrete.IDateTerm;
 
 /**
  * 
@@ -42,7 +42,7 @@ import org.deri.iris.api.terms.ITerm;
  * 
  * @version $Revision$ $Date$
  */
-public class DateTerm implements ITerm<DateTerm> {
+public class DateTerm implements IDateTerm, Cloneable {
 
 	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 
@@ -84,14 +84,33 @@ public class DateTerm implements ITerm<DateTerm> {
 		return true;
 	}
 
-	public int compareTo(DateTerm o) {
+	public int compareTo(IDateTerm o) {
 		if (o == null) {
 			throw new NullPointerException("Can not compare with null");
 		}
-		return cal.compareTo(o.cal);
+		int result = 0;
+		if ((result = getYear() - o.getYear()) != 0) {
+			return result;
+		}
+		if ((result = getMonth() - o.getMonth()) != 0) {
+			return result;
+		}
+		return getDay() - o.getDay();
 	}
 
 	public DateTerm getMinValue() {
 		return new DateTerm(0, 0, 0);
+	}
+
+	public int getMonth() {
+		return cal.get(Calendar.MONTH);
+	}
+
+	public int getYear() {
+		return cal.get(Calendar.YEAR);
+	}
+
+	public int getDay() {
+		return cal.get(Calendar.DAY_OF_MONTH);
 	}
 }

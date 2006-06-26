@@ -28,6 +28,7 @@ package org.deri.iris.terms.concrete;
 import org.deri.iris.api.factory.IConcreteFactory;
 import org.deri.iris.api.terms.concrete.IBase64Binary;
 import org.deri.iris.api.terms.concrete.IBooleanTerm;
+import org.deri.iris.api.terms.concrete.IDateTerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
@@ -65,6 +66,11 @@ public class ConcreteFactory implements IConcreteFactory {
 
 	public IBooleanTerm createBoolean(final boolean b) {
 		return new BooleanTerm(b);
+	}
+
+	public IDateTerm createDate(final int year, final int month,
+			final int day) {
+		return new DateTerm(year, month, day);
 	}
 
 	public IDateTime createDateTime(final int year, final int month,
@@ -119,7 +125,7 @@ public class ConcreteFactory implements IConcreteFactory {
 	public IHexBinary createHexBinary(final String s) {
 		return new HexBinary(s);
 	}
-	
+
 	public IIntegerTerm createInteger(final int i) {
 		return new IntegerTerm(i);
 	}

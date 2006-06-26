@@ -27,6 +27,7 @@ package org.deri.iris.api.factory;
 
 import org.deri.iris.api.terms.concrete.IBase64Binary;
 import org.deri.iris.api.terms.concrete.IBooleanTerm;
+import org.deri.iris.api.terms.concrete.IDateTerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
@@ -55,6 +56,8 @@ public interface IConcreteFactory {
 			final int day, final int hour, final int minute, final int second,
 			final int tzHour, final int tzMinute);
 
+	public IDateTerm createDate(final int year, final int month, final int day);
+
 	public IDateTime createDateTime(final int year, final int month,
 			final int day, final int hour, final int minute, final int second);
 
@@ -74,7 +77,7 @@ public interface IConcreteFactory {
 	public IGMonth createGMonth(final int month);
 
 	public IGYearMonth createGYearMonth(final int year, final int month);
-	
+
 	public IIntegerTerm createInteger(final int i);
 
 	public IGYear createGYear(final int year);
