@@ -94,4 +94,15 @@ public class GMonth implements IGMonth, Cloneable {
 	public IGMonth getMinValue() {
 		return new GMonth(0);
 	}
+
+	public Integer getValue() {
+		return cal.get(Calendar.MONTH);
+	}
+
+	public void setValue(Integer t) {
+		if (t == null) {
+			throw new IllegalArgumentException("The value must not be null");
+		}
+		cal.set(Calendar.MONTH, t);
+	}
 }

@@ -92,7 +92,10 @@ public class Iri implements IIri, Cloneable {
 		}
 	}
 
-	protected void setValue(final URI uri) {
+	public void setValue(final URI uri) {
+		if (uri == null) {
+			throw new IllegalArgumentException("The value must not be null");
+		}
 		this.uri = uri;
 	}
 

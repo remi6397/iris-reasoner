@@ -66,7 +66,7 @@ public class BooleanTerm implements IBooleanTerm, Cloneable {
 		return value == bt.value;
 	}
 
-	public boolean getValue() {
+	public Boolean getValue() {
 		return value;
 	}
 
@@ -112,5 +112,12 @@ public class BooleanTerm implements IBooleanTerm, Cloneable {
 
 	public IBooleanTerm getMinValue() {
 		return new BooleanTerm(false);
+	}
+
+	public void setValue(Boolean t) {
+		if (t == null) {
+			throw new IllegalArgumentException("The value must not be null");
+		}
+		value = t;
 	}
 }

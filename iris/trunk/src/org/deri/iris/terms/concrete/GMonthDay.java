@@ -97,4 +97,21 @@ public class GMonthDay implements IGMonthDay, Cloneable {
 	public IGMonthDay getMinValue() {
 		return new GMonthDay(Calendar.JANUARY, 1);
 	}
+
+	public Integer[] getValue() {
+		return new Integer[] { cal.get(Calendar.MONTH),
+				cal.get(Calendar.DAY_OF_MONTH) };
+	}
+
+	public void setValue(Integer[] t) {
+		if (t == null) {
+			throw new IllegalArgumentException("The value must not be null");
+		}
+		if (t.length < 2) {
+			throw new IllegalArgumentException(
+					"The array must contain at least 2 fields");
+		}
+		cal.set(Calendar.MONTH, t[0]);
+		cal.set(Calendar.DAY_OF_MONTH, t[1]);
+	}
 }

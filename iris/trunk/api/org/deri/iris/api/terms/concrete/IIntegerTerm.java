@@ -7,10 +7,5 @@ import org.deri.iris.terms.concrete.IntegerTerm;
  * @author Darko Anicic, DERI Innsbruck
  * @date   06.01.2006 17:18:34
  */
-public interface IIntegerTerm extends INumericTerm<IntegerTerm> {
-
-	public void setValue(int arg);
-	
-	public int getValue();
-	
+public interface IIntegerTerm extends INumericTerm<IntegerTerm, Integer> {
 }

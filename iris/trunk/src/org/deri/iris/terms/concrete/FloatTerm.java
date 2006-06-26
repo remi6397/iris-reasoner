@@ -39,11 +39,14 @@ public class FloatTerm implements IFloatTerm, Cloneable {
 		setValue(f);
 	}
 	
-	public void setValue(final float arg) {
+	public void setValue(final Float arg) {
+		if (arg == null) {
+			throw new IllegalArgumentException("The value must not be null");
+		}
 		f = arg;
 	}
 
-	public float getValue() {
+	public Float getValue() {
 		return f;
 	}
 

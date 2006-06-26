@@ -35,7 +35,7 @@ import java.util.TimeZone;
 import org.deri.iris.api.terms.concrete.IDateTime;
 
 public class DateTime implements IDateTime, Cloneable {
-	
+
 	private static final SimpleDateFormat FORMAT = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssz");
 
@@ -49,13 +49,12 @@ public class DateTime implements IDateTime, Cloneable {
 						.getTimeZone()));
 	}
 
-	DateTime(int year, int month, int day, int hour, int minute,
-			int second) {
+	DateTime(int year, int month, int day, int hour, int minute, int second) {
 		this(year, month, day, hour, minute, second, 0, 0);
 	}
 
-	DateTime(int year, int month, int day, int hour, int minute,
-			int second, int tzHour, int tzMinute) {
+	DateTime(int year, int month, int day, int hour, int minute, int second,
+			int tzHour, int tzMinute) {
 
 		final String timezone = "GMT" + ((tzHour >= 0) ? "+" : "-")
 				+ ((tzHour < 10) ? "0" : "") + tzHour + ":"
@@ -98,7 +97,7 @@ public class DateTime implements IDateTime, Cloneable {
 				&& (dx.getTimeZone().getRawOffset() == this.getTimeZone()
 						.getRawOffset());
 	}
-	
+
 	public Calendar getDateTime() {
 		return (Calendar) cal.clone();
 	}
@@ -130,7 +129,7 @@ public class DateTime implements IDateTime, Cloneable {
 	public int getYear() {
 		return cal.get(Calendar.YEAR);
 	}
-	
+
 	public int hashCode() {
 		return cal.hashCode();
 	}
@@ -176,5 +175,18 @@ public class DateTime implements IDateTime, Cloneable {
 
 	public DateTime getMinValue() {
 		return new DateTime(0, 0, 0, 0, 0, 0, 0, 0);
+	}
+
+	public Calendar getValue() {
+		// TODO shouldn't a copy be returned?
+		return cal;
+	}
+
+	public void setValue(Calendar t) {
+		// TODO shouldn't a copy be made?
+		if (t == null) {
+			throw new IllegalArgumentException("The value must not be null");
+		}
+		cal = t;
 	}
 }

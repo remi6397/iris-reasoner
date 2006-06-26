@@ -149,4 +149,20 @@ public class Duration implements IDuration, Cloneable {
 	public IDuration getMinValue() {
 		return new Duration(0, 0, 0, 0, 0, 0);
 	}
+
+	public Calendar getValue() {
+		return cal;
+	}
+
+	public void setValue(Calendar t) {
+		if (t == null) {
+			throw new IllegalArgumentException("The value must not be null");
+		}
+		cal.set(Calendar.YEAR, t.get(Calendar.YEAR));
+		cal.set(Calendar.MONTH, t.get(Calendar.MONTH));
+		cal.set(Calendar.DAY_OF_MONTH, t.get(Calendar.DAY_OF_MONTH));
+		cal.set(Calendar.HOUR_OF_DAY, t.get(Calendar.HOUR_OF_DAY));
+		cal.set(Calendar.MINUTE, t.get(Calendar.MINUTE));
+		cal.set(Calendar.SECOND, t.get(Calendar.SECOND));
+	}
 }

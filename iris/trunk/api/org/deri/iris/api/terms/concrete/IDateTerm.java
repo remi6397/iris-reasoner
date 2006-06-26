@@ -25,13 +25,15 @@
  */
 package org.deri.iris.api.terms.concrete;
 
+import java.util.Calendar;
+
 import org.deri.iris.api.terms.ITerm;
 
 /**
  * @author richi
  *
  */
-public interface IDateTerm extends ITerm<IDateTerm> {
+public interface IDateTerm extends ITerm<IDateTerm, Calendar> {
 	public int getMonth();
 	public int getYear();
 	public int getDay();

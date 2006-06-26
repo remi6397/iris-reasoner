@@ -39,11 +39,14 @@ public class DoubleTerm implements IDoubleTerm, Cloneable {
 		setValue(d);
 	}
 	
-	public void setValue(double arg) {
+	public void setValue(final Double arg) {
+		if (arg == null) {
+			throw new IllegalArgumentException("The value must not be null");
+		}
 		d = arg;
 	}
 
-	public double getValue() {
+	public Double getValue() {
 		return d;
 	}
 

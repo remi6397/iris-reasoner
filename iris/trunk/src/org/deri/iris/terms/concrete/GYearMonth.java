@@ -64,7 +64,7 @@ public class GYearMonth implements IGYearMonth, Cloneable {
 		if (iResult != 0) {
 			return iResult;
 		}
-			return getMonth() - o.getMonth();
+		return getMonth() - o.getMonth();
 	}
 
 	public boolean equals(final Object obj) {
@@ -104,5 +104,21 @@ public class GYearMonth implements IGYearMonth, Cloneable {
 	public IGYearMonth getMinValue() {
 		// TODO: maybe year should be negative
 		return new GYearMonth(1, 1);
+	}
+
+	public Integer[] getValue() {
+		return new Integer[] { cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) };
+	}
+
+	public void setValue(Integer[] t) {
+		if (t == null) {
+			throw new IllegalArgumentException("The value must not be null");
+		}
+		if (t.length < 2) {
+			throw new IllegalArgumentException(
+					"The array must contain at least 2 fields");
+		}
+		cal.set(Calendar.YEAR, t[0]);
+		cal.set(Calendar.MONTH, t[1]);
 	}
 }

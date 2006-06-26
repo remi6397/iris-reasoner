@@ -22,9 +22,9 @@ import org.deri.iris.api.terms.ITerm;
  * 
  * @author Richard Pöttler
  * 
- * @version $Revision: 1.2 $ $Date: 2006-05-30 14:56:18 $
+ * @version $Revision: 1.3 $ $Date: 2006-06-26 12:35:22 $
  */
-public interface IDateTime extends ITerm<IDateTime> {
+public interface IDateTime extends ITerm<IDateTime, Calendar> {
 	/**
 	 * Returns a copy of this Calendar object.
 	 * 

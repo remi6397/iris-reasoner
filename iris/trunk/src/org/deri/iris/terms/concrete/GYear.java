@@ -101,4 +101,15 @@ public class GYear implements IGYear, Cloneable {
 	public IGYear getMinValue() {
 		return new GYear(1);
 	}
+
+	public Integer getValue() {
+		return cal.get(Calendar.YEAR);
+	}
+
+	public void setValue(Integer t) {
+		if (t == null) {
+			throw new IllegalArgumentException("The value must not be null");
+		}
+		cal.set(Calendar.YEAR, t);
+	}
 }

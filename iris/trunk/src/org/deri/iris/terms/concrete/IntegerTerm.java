@@ -48,11 +48,14 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 		setValue(z);
 	}
 
-	public void setValue(int arg) {
+	public void setValue(final Integer arg) {
+		if (arg == null) {
+			throw new IllegalArgumentException("The value must not be null");
+		}
 		i = arg;
 	}
 
-	public int getValue() {
+	public Integer getValue() {
 		return i;
 	}
 

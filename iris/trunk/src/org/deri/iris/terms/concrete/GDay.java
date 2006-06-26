@@ -96,4 +96,15 @@ public class GDay implements IGDay, Cloneable {
 		return new GDay(1);
 	}
 
+	public Integer getValue() {
+		return cal.get(Calendar.DAY_OF_MONTH);
+	}
+
+	public void setValue(Integer t) {
+		if (t == null) {
+			throw new IllegalArgumentException("The value must not be null");
+		}
+		cal.set(Calendar.DAY_OF_MONTH, t);
+	}
+
 }

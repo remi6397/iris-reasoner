@@ -113,4 +113,18 @@ public class DateTerm implements IDateTerm, Cloneable {
 	public int getDay() {
 		return cal.get(Calendar.DAY_OF_MONTH);
 	}
+
+	public Calendar getValue() {
+		// TODO: shouldn't a copy be returned?
+		return cal;
+	}
+
+	public void setValue(Calendar t) {
+		if (t == null) {
+			throw new IllegalArgumentException("The value must not be null");
+		}
+		cal.set(Calendar.YEAR, t.get(Calendar.YEAR));
+		cal.set(Calendar.MONTH, t.get(Calendar.MONTH));
+		cal.set(Calendar.DAY_OF_MONTH, t.get(Calendar.DAY_OF_MONTH));
+	}
 }
