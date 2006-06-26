@@ -29,8 +29,9 @@ package org.deri.iris.operations.tuple;
 import org.deri.iris.api.basics.ITuple;
 
 /**
- * This implementation does not defines a compare method that is used
- * for comparing two tuples in the selection operation.
+ * 
+ * Implementation of the Comparator interface meant to be used in the 
+ * implementation of the selection operation.
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   31.05.2006 11:08:41
@@ -46,34 +47,20 @@ public class SelectionComparator extends BasicComparator{
 		super(sortIndexes);
 	}
 
-	// Correct it!
 	public int compare(ITuple t0, ITuple t1){
 		if (t0.getArity() != t1.getArity()) {
 			throw new IllegalArgumentException("Couldn't compare due to different arity of tuples.");
 		} 
 		int comparison = 0;
-		int equal = 10;
-		//if(this.sortIndexes == null) this.sortIndexes = getDefaultSortIndexes(t0.getArity());
 		for(int i=0; i<this.getSortIndexes().length; i++){
-			/* coompare tuples on each index that is differnt from -1.
-			 * sortIndexes[i] == -1 means the term with that index
-			 * is not relevant for the current sorting.
-			 */
-		    if(this.getSortIndexes()[i] != -1){
+			if(this.getSortIndexes()[i] != -1){
 		    	comparison = t0.getTerm(i).compareTo(
 						t1.getTerm(this.getSortIndexes()[i]));
-				//if(comparison != 0){
-		    	if(comparison > 0){
+		    	if(comparison != 0){
 					return comparison;
 				}
-		    	if(comparison == 0){
-					return 0;
-				}
-		    	/*else{
-					return 0;
-				}*/
 			}
 		}
-		return comparison;
+		return 0;
 	}
 }
