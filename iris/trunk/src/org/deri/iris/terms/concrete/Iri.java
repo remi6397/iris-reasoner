@@ -35,11 +35,11 @@ public class Iri implements IIri, Cloneable {
 
 	private URI uri = null;
 
-	public Iri(final String str) {
+	Iri(final String str) {
 		setValue(str);
 	}
 
-	public Iri(final URI uri) {
+	Iri(final URI uri) {
 		setValue(uri);
 	}
 

@@ -37,11 +37,11 @@ public class GDay implements IGDay, Cloneable {
 	private Calendar cal = new GregorianCalendar(TimeZone
 			.getTimeZone("GMT"));;
 
-	public GDay(final Calendar calendar) {
+	GDay(final Calendar calendar) {
 		this(calendar.get(Calendar.DAY_OF_MONTH));
 	}
 
-	public GDay(final int day) {
+	GDay(final int day) {
 		cal.clear();
 		setDay(day);
 	}

@@ -47,11 +47,7 @@ public class HexBinary implements IHexBinary, Cloneable {
 
 	private String content = "";
 
-	private HexBinary() {
-	}
-
-	public HexBinary(final String content) {
-		this();
+	HexBinary(final String content) {
 		setValue(content);
 	}
 

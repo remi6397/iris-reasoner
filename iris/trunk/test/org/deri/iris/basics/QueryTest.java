@@ -26,6 +26,7 @@
 package org.deri.iris.basics;
 
 import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
@@ -37,7 +38,6 @@ import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTest;
 import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.terms.concrete.IntegerTerm;
 
 /**
  * @author richi
@@ -54,7 +54,7 @@ public class QueryTest extends TestCase {
 
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
 				"sin", 1));
-		literal.setTerm(new IntegerTerm(1), 0);
+		literal.setTerm(CONCRETE.createInteger(1), 0);
 		tempLiterals.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
@@ -72,7 +72,7 @@ public class QueryTest extends TestCase {
 		tempLiterals = new ArrayList<ILiteral>();
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("sin", 1));
-		literal.setTerm(new IntegerTerm(1), 0);
+		literal.setTerm(CONCRETE.createInteger(1), 0);
 		tempLiterals.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));

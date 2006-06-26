@@ -36,11 +36,11 @@ public class GMonthDay implements IGMonthDay, Cloneable {
 
 	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 
-	public GMonthDay(final Calendar calendar) {
+	GMonthDay(final Calendar calendar) {
 		this(calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 	}
 
-	public GMonthDay(final int month, final int day) {
+	GMonthDay(final int month, final int day) {
 		cal.clear();
 		setMonthDay(month, day);
 	}
@@ -56,9 +56,8 @@ public class GMonthDay implements IGMonthDay, Cloneable {
 		int iResult = getMonth() - o.getMonth();
 		if (iResult != 0) {
 			return iResult;
-		} else {
-			return getDay() - o.getDay();
 		}
+		return getDay() - o.getDay();
 	}
 
 	public boolean equals(final Object obj) {

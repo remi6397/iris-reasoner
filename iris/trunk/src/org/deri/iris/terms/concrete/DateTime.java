@@ -41,7 +41,7 @@ public class DateTime implements IDateTime, Cloneable {
 
 	private Calendar cal;
 
-	public DateTime(final Calendar cal) {
+	DateTime(final Calendar cal) {
 		this(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal
 				.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.HOUR_OF_DAY), cal
 				.get(Calendar.MINUTE), cal.get(Calendar.SECOND),
@@ -49,12 +49,12 @@ public class DateTime implements IDateTime, Cloneable {
 						.getTimeZone()));
 	}
 
-	public DateTime(int year, int month, int day, int hour, int minute,
+	DateTime(int year, int month, int day, int hour, int minute,
 			int second) {
 		this(year, month, day, hour, minute, second, 0, 0);
 	}
 
-	public DateTime(int year, int month, int day, int hour, int minute,
+	DateTime(int year, int month, int day, int hour, int minute,
 			int second, int tzHour, int tzMinute) {
 
 		final String timezone = "GMT" + ((tzHour >= 0) ? "+" : "-")
@@ -143,7 +143,7 @@ public class DateTime implements IDateTime, Cloneable {
 	}
 
 	protected static int getTimeZoneHour(final TimeZone tz) {
-		return (int) (tz.getRawOffset() / 3600000);
+		return tz.getRawOffset() / 3600000;
 	}
 
 	protected static int getTimeZoneMinute(final TimeZone tz) {

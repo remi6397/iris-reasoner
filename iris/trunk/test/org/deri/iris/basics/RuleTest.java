@@ -26,6 +26,7 @@
 package org.deri.iris.basics;
 
 import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
@@ -37,7 +38,6 @@ import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTest;
 import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.terms.concrete.IntegerTerm;
 
 /**
  * @author richi
@@ -54,7 +54,7 @@ public class RuleTest extends TestCase {
 
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
 				"sin", 1));
-		literal.setTerm(new IntegerTerm(1), 0);
+		literal.setTerm(CONCRETE.createInteger(1), 0);
 		tempLiterals.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
@@ -62,9 +62,9 @@ public class RuleTest extends TestCase {
 		tempLiterals.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
-		literal.setTerm(new IntegerTerm(2005), 0);
-		literal.setTerm(new IntegerTerm(12), 1);
-		literal.setTerm(new IntegerTerm(24), 2);
+		literal.setTerm(CONCRETE.createInteger(2005), 0);
+		literal.setTerm(CONCRETE.createInteger(12), 1);
+		literal.setTerm(CONCRETE.createInteger(24), 2);
 		tempLiterals.add(literal);
 
 		HEAD = new Head(tempLiterals);
@@ -72,7 +72,7 @@ public class RuleTest extends TestCase {
 		tempLiterals = new ArrayList<ILiteral>();
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("sin", 1));
-		literal.setTerm(new IntegerTerm(1), 0);
+		literal.setTerm(CONCRETE.createInteger(1), 0);
 		tempLiterals.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));

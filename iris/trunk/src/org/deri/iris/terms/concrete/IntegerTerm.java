@@ -44,7 +44,7 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 	/** integer to represent this datatype */
 	private int i; 
 
-	public IntegerTerm(int z) {
+	IntegerTerm(int z) {
 		setValue(z);
 	}
 

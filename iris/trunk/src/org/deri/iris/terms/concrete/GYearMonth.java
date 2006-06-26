@@ -36,11 +36,11 @@ public class GYearMonth implements IGYearMonth, Cloneable {
 
 	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 
-	public GYearMonth(final Calendar calendar) {
+	GYearMonth(final Calendar calendar) {
 		this(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
 	}
 
-	public GYearMonth(final int year, final int month) {
+	GYearMonth(final int year, final int month) {
 		cal.clear();
 		setYearMonth(year, month);
 	}
@@ -63,9 +63,8 @@ public class GYearMonth implements IGYearMonth, Cloneable {
 		int iResult = getYear() - o.getYear();
 		if (iResult != 0) {
 			return iResult;
-		} else {
-			return getMonth() - o.getMonth();
 		}
+			return getMonth() - o.getMonth();
 	}
 
 	public boolean equals(final Object obj) {

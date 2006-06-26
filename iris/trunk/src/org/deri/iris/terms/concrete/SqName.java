@@ -128,9 +128,8 @@ public class SqName implements ISqName, Cloneable {
 		int iResult = getNamespace().compareTo(o.getNamespace());
 		if (iResult != 0) {
 			return iResult;
-		} else {
-			return getName().compareTo(o.getName());
 		}
+		return getName().compareTo(o.getName());
 	}
 
 	public boolean isGround() {

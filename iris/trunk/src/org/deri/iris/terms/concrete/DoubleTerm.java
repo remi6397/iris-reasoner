@@ -35,7 +35,7 @@ public class DoubleTerm implements IDoubleTerm, Cloneable {
 
 	private double d = 0d;
 	
-	public DoubleTerm(final double d) {
+	DoubleTerm(final double d) {
 		setValue(d);
 	}
 	

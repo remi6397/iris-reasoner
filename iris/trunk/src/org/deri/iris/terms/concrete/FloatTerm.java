@@ -35,7 +35,7 @@ public class FloatTerm implements IFloatTerm, Cloneable {
 
 	private float f = 0f;
 	
-	public FloatTerm(final Float f) {
+	FloatTerm(final Float f) {
 		setValue(f);
 	}
 	

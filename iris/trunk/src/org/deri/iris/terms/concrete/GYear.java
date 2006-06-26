@@ -43,7 +43,7 @@ public class GYear implements IGYear, Cloneable {
 
 	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 
-	public GYear(final Calendar calendar) {
+	GYear(final Calendar calendar) {
 		this(calendar.get(Calendar.YEAR));
 	}
 

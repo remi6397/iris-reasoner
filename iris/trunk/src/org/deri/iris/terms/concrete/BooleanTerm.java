@@ -37,15 +37,15 @@ public class BooleanTerm implements IBooleanTerm, Cloneable {
 
 	private boolean value = false;
 
-	private BooleanTerm() {
+	BooleanTerm() {
 	}
 
-	public BooleanTerm(final boolean value) {
+	BooleanTerm(final boolean value) {
 		this();
 		setValue(value);
 	}
 
-	public BooleanTerm(final String value) {
+	BooleanTerm(final String value) {
 		this(Boolean.valueOf(value));
 	}
 

@@ -46,7 +46,7 @@ public class DateTerm implements ITerm<DateTerm> {
 
 	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 
-	public DateTerm(int year, int month, int day) {
+	DateTerm(int year, int month, int day) {
 		cal.clear();
 		cal = new GregorianCalendar(year, month, day);
 	}

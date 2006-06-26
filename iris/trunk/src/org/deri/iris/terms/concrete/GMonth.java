@@ -36,11 +36,11 @@ public class GMonth implements IGMonth, Cloneable {
 
 	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 
-	public GMonth(final Calendar calendar) {
+	GMonth(final Calendar calendar) {
 		this(calendar.get(Calendar.MONTH));
 	}
 
-	public GMonth(final int month) {
+	GMonth(final int month) {
 		cal.clear();
 		setMonth(month);
 	}

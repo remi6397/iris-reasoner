@@ -35,7 +35,7 @@ public class DecimalTerm implements IDecimalTerm, Cloneable {
 
 	private double d = 0d;
 
-	public DecimalTerm(final double d) {
+	DecimalTerm(final double d) {
 		setValue(d);
 	}
 

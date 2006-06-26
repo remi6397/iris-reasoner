@@ -49,10 +49,10 @@ public class Base64Binary implements IBase64Binary, Cloneable {
 	
 	private String content = "";
 
-	private Base64Binary() {
+	Base64Binary() {
 	}
 
-	public Base64Binary(final String content) {
+	Base64Binary(final String content) {
 		this();
 		setValue(content);
 	}
