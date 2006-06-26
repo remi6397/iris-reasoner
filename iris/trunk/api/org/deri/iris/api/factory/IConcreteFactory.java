@@ -55,11 +55,10 @@ public interface IConcreteFactory {
 	public IDateTime createDateTime(final int year, final int month,
 			final int day, final int hour, final int minute, final int second,
 			final int tzHour, final int tzMinute);
-
-	public IDateTerm createDate(final int year, final int month, final int day);
-
 	public IDateTime createDateTime(final int year, final int month,
 			final int day, final int hour, final int minute, final int second);
+
+	public IDateTerm createDate(final int year, final int month, final int day);
 
 	public IDecimalTerm createDecimal(final double d);
 

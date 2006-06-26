@@ -39,10 +39,9 @@ import org.deri.iris.api.terms.IVariable;
 public interface ITermFactory {
 
 	public IConstantTerm createConstant(String arg);
-
+	
 	public IConstructedTerm createConstruct(final String name,
 			Collection<ITerm> terms);
-
 	public IConstructedTerm createConstruct(final String name, ITerm... terms);
 
 	public IStringTerm createString(String arg);
