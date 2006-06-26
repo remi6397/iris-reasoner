@@ -33,7 +33,6 @@ import java.util.List;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.terms.ConstantTerm;
 
 /**
  * @author richi
