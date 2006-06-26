@@ -63,7 +63,8 @@ public class SelectionTest {
 		}
 		
 		Selection selection = new Selection();
-		ITuple pattern = this.createTuple("b", "a", "a");
+		ITuple pattern = this.createTuple(null, null, "a");
+		//ITuple pattern = this.createTuple("b", "d", "a");
 		IRelation result = selection.select(relation0, pattern);
 		
 		i = result.iterator();
