@@ -82,8 +82,7 @@ public class RelationFactory implements IRelationFactory{
 
 	public ISelection createSelectionOperator(IRelation relation, 
 			ITuple pattern) {
-		
-		return null;
+		return new Selection(relation, pattern);
 	}
 
 	public static IRelationFactory getInstance() {

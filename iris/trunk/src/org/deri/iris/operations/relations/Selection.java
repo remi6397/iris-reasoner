@@ -34,7 +34,6 @@ import java.util.SortedSet;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.basics.MinimalTuple;
 import org.deri.iris.operations.tuple.IndexComparator;
@@ -52,26 +51,32 @@ import org.deri.iris.storage.Relation;
  */
 public class Selection implements ISelection{
 	private IRelation relation = null;
+	private IRelation selectRelation = null;
 	private ITuple pattern = null;
 	private IndexComparator indexComparator = null;
 	private SelectionComparator selectionComparator = null;
 	
-	public IRelation select(IRelation relation, ITuple pattern) {
-		IRelation selectRelation = 
-			new Relation(((ITuple)relation.first()).getArity());
-		
+	Selection(IRelation relation, ITuple pattern){
+		if (relation == null || pattern == null) {
+			throw new IllegalArgumentException("All construcotr " +
+					"parameters must not be specified (non null values");
+		}
+		this.relation = relation;
 		this.pattern = pattern;
-		
+		selectRelation = 
+			new Relation(((ITuple)relation.first()).getArity());
+	}
+	
+	public IRelation select() {
 		// Sort relation on tupples defined by the pattern
-		//this.comparator = new SelectionComparator(createIndexes(this.pattern));
-		
 		int[] indexes = this.getIndexes(this.pattern);
 		this.indexComparator = new IndexComparator(indexes);
-		this.relation = new Relation(this.indexComparator);
-		this.relation.addAll(relation);
+		IRelation rel = new Relation(this.indexComparator);
+		rel.addAll(this.relation);
+		this.relation = rel;
 		
 		ITuple transformedTuple = this.getMinimalTupleValue(pattern, indexes);
-		SortedSet set = relation.tailSet(pattern);
+		SortedSet set = relation.tailSet(transformedTuple);
 		
 		Iterator<ITuple> iterator = set.iterator();
 		ITuple tuple;
@@ -79,7 +84,12 @@ public class Selection implements ISelection{
 		while(iterator.hasNext()){
 			tuple = iterator.next();
 			if(selectionComparator.compare(tuple, transformedTuple) == 0){
-				selectRelation.add(tuple);
+				while(tuple != null){
+					if(!(tuple instanceof MinimalTuple)){
+						selectRelation.add(tuple);
+					}
+					tuple = tuple.getDuplicate();
+				}
 			}else{
 				return selectRelation;
 			}	

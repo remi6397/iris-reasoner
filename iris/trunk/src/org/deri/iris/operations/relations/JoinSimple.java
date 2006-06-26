@@ -61,7 +61,7 @@ public class JoinSimple implements IJoin{
 	JoinSimple(IRelation arg0, IRelation arg1, int[] indexes){
 		if (arg0 == null || arg1 == null || indexes == null) {
 			throw new IllegalArgumentException("All construcotr " +
-					"parameters must not be null");
+			"parameters must not be specified (non null values");
 		}
 		constructJoinOperator(arg0, arg1, indexes);
 		this.condition = JoinCondition.EQUALS; 
@@ -72,7 +72,7 @@ public class JoinSimple implements IJoin{
 		if (arg0 == null || arg1 == null || 
 				indexes == null || condition == null) {
 			throw new IllegalArgumentException("All construcotr " +
-					"parameters must not be null");
+			"parameters must not be specified (non null values");
 		}
 		constructJoinOperator(arg0, arg1, indexes);
 		this.condition = condition; 
