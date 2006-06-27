@@ -41,10 +41,7 @@ import org.deri.iris.operations.tuple.SelectionComparator;
 import org.deri.iris.storage.Relation;
 
 /**
- * Implementation of the Selection operation meant to be used for 
- * selecting a portion of a relation (tree). Basically the functionality of 
- * this operation is to select all tuples, from a relation, that are equal
- * regarding the condition defined by a certain pattern (tuple).
+ * Implementation of 
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   31.05.2006 10:38:40
@@ -94,7 +91,7 @@ public class Selection implements ISelection{
 				return selectRelation;
 			}	
 		}
-		return null;
+		return selectRelation;
 	}
 
 	private int[]getIndexes(ITuple pattern){
