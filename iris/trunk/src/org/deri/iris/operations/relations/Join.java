@@ -26,6 +26,8 @@
 
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,6 +59,7 @@ public class Join implements IJoin{
 	private IRelation joinRelation = null;
 	private BasicComparator comparator = null;
 	private int[] indexes = null;
+	private int[] projectIndexes = null;
 	private JoinCondition condition = null;
 	
 	Join(IRelation arg0, IRelation arg1, int[] indexes){
@@ -79,11 +82,22 @@ public class Join implements IJoin{
 		this.condition = condition; 
 	}
 	
+	Join(IRelation arg0, IRelation arg1, int[] indexes, 
+			JoinCondition condition, int[] projectIndexes){
+		if (arg0 == null || arg1 == null || 
+				indexes == null || condition == null) {
+			throw new IllegalArgumentException("Construcotr " +
+			"parameters are not specified correctly");
+		}
+		this.projectIndexes = projectIndexes;
+		constructJoinOperator(arg0, arg1, indexes);
+		this.condition = condition; 
+	}
+	
 	private void constructJoinOperator(IRelation arg0, IRelation arg1, int[] indexes){
 		this.relation0 = arg0;
 		this.relation1 = arg1;
 		this.indexes = indexes;
-		this.joinRelation = new Relation(this.indexes.length*2);
 		
 		// Sort arg0 on those tupples defined by sort indexes
 		this.comparator = new IndexComparator(this.indexTransformer0(indexes));
@@ -96,6 +110,14 @@ public class Join implements IJoin{
 		IRelation rel1 = new Relation(comparator);
 		rel1.addAll(this.relation1);
 		this.relation1 = rel1;
+		/*
+		 * If not specified join tuples will be simple merged.
+		 */
+		if(this.projectIndexes == null){
+			this.projectIndexes = this.indexTransformer0(
+					new int[this.indexes.length*2]);
+		}
+		this.joinRelation = new Relation(this.projectIndexes.length);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -340,14 +362,7 @@ public class Join implements IJoin{
 			if(terms[j] == null)
 				terms[j] = tuple.getTerm(j).getMinValue();
 		}
-		for(int i=0; i<tuple.getArity(); i++)
-			termList.add(terms[i]);
-		
-		// Correct it!
-		//MiscHelper.createTuple(terms);
-		//Factory.BASIC.createTuple(tupleList);
-		
-		return new MinimalTuple(termList);
+		return BASIC.createMinimalTuple(terms);
 	}
 	
 	private ITuple getMinimalTupleValue1(ITuple tuple, int[] indexes){
@@ -361,10 +376,7 @@ public class Join implements IJoin{
 			if(terms[j] == null)
 				terms[j] = tuple.getTerm(j).getMinValue();
 		}
-		for(int i=0; i<tuple.getArity(); i++)
-			termList.add(terms[i]);
-		
-		return new MinimalTuple(termList);
+		return BASIC.createMinimalTuple(terms);
 	}
 }
 

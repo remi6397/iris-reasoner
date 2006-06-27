@@ -67,6 +67,20 @@ public interface IRelationFactory {
 	public IJoin createJoinOperator(IRelation relation0, 
 			IRelation relation1, int[] indexes, JoinCondition condition);
 	/**
+	 * @param relation0
+	 * @param relation1
+	 * @param indexes
+	 * @param condition
+	 * @param projectIndexes
+	 * 						define indexes which the projection operation
+	 * 						will be applied on.  If not specified join 
+	 * 						tuples will be simple merged.
+	 * @return
+	 */
+	public IJoin createJoinOperator(IRelation relation0, 
+			IRelation relation1, int[] indexes, JoinCondition condition,
+			int[] projectIndexes);
+	/**
 	 * No duplicates handled,
 	 * 
 	 * @param arg0
@@ -87,6 +101,20 @@ public interface IRelationFactory {
 	 */
 	public IJoin createJoinSimpleOperator(IRelation relation0, 
 			IRelation relation1, int[] indexes, JoinCondition condition);
+	/**
+	 * @param relation0
+	 * @param relation1
+	 * @param indexes
+	 * @param condition
+	 * @param projectIndexes
+	 * 						define indexes which the projection operation
+	 * 						will be applied on.  If not specified join 
+	 * 						tuples will be simple merged.
+	 * @return
+	 */
+	public IJoin createJoinSimpleOperator(IRelation relation0, 
+			IRelation relation1, int[] indexes, JoinCondition condition,
+			int[] projectIndexes);
 	
 	public IProjection createProjectionOperator(IRelation relation, int[] indexes);
 	
