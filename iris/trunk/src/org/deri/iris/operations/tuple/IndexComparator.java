@@ -58,7 +58,8 @@ public class IndexComparator extends BasicComparator{
 	 */
 	public int compare(ITuple t0, ITuple t1){
 		if (t0.getArity() != t1.getArity()) {
-			throw new IllegalArgumentException("Couldn't compare due to different arity of tuples.");
+			throw new IllegalArgumentException(
+					"Couldn't compare due to different arity of tuples.");
 		} 
 		int comparison = 0;
 		int forEachRelevantIndex = 0;
@@ -78,14 +79,12 @@ public class IndexComparator extends BasicComparator{
 				}
 			}
 		}
-		// Tuples t0 and t1 are duplicates if they have identical terms  
-		// for each sort index.
-		//if(forEachRelevantIndex == equal && t0.getArity() != forEachIndex){
-		
-		//if(forEachIndex == equal && !(t0 instanceof MinimalTuple) && !(t1 instanceof MinimalTuple)){
-		if(forEachRelevantIndex == equal && !(t0 instanceof MinimalTuple) && !(t1 instanceof MinimalTuple)){
-				
-			// forEachRelevantIndex
+		/* 
+		 * Tuples t0 and t1 are duplicates if they have identical terms  
+		 * for each sort index.
+		 */
+		if(forEachRelevantIndex == equal && !(t0 instanceof MinimalTuple) &&
+				!(t1 instanceof MinimalTuple)){
 			ITuple tmp = t1.getDuplicate();
 			t0.setDuplicate(tmp);
 			t1.setDuplicate(t0);

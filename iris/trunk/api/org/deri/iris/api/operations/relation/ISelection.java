@@ -24,12 +24,22 @@ import org.deri.iris.api.storage.IRelation;
 /**
  * Interface or class description
  *
- * Interface of a select relation used to promote modularity of inference engines.
+ * Interface of a select relation used to promote modularity of inference
+ * engines.
+ * 
+ * The Selection operation is meant to be used for selecting a portion of
+ * a relation (tree). Basically the functionality of this operation is to
+ * select all tuples, from a relation, that are equal regarding the 
+ * condition defined by a certain pattern (tuple).
  *
+ * Note: Implementation of the selection operation assumes an implementation
+ * of this interface and an implementation of the IRelationFactory interface
+ * (createSelectionOperator method/s).
+ * 
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:18:20
  *
- * @version $Revision: 1.3 $ $Date: 2006-06-26 16:07:16 $
+ * @version $Revision: 1.4 $ $Date: 2006-06-27 08:53:13 $
  */
 public interface ISelection {
 	
