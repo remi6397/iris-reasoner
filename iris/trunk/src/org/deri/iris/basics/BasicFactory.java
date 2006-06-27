@@ -25,9 +25,11 @@
  */
 package org.deri.iris.basics;
 
+import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.GRAPH;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.deri.iris.api.basics.IAtom;
@@ -106,6 +108,14 @@ public class BasicFactory implements IBasicFactory {
 		return createLiteral(positive, createAtom(p, terms));
 	}
 
+	public ITuple createMinimalTuple(ITerm... terms) {
+		return createMinimalTuple(Arrays.asList(terms));
+	}
+
+	public ITuple createMinimalTuple(List<ITerm> terms) {
+		return new MinimalTuple(terms);
+	}
+	
 	public IPredicate createPredicate(String symbol, int arity) {
 		return new Predicate(symbol, arity);
 	}
@@ -125,7 +135,16 @@ public class BasicFactory implements IBasicFactory {
 	}
 
 	public ITuple createTuple(ITerm... terms) {
-		return createTuple(Arrays.asList(terms));
+		/*
+		 * Check whether a term can be null. If yes then:
+		 * return createTuple(Arrays.asList(terms));
+		 * Otherwise:
+		*/
+		List<ITerm> termList = new LinkedList<ITerm>();
+		for (ITerm term : terms) {
+			if(term != null) termList.add(term);
+		}
+		return createTuple(termList);
 	}
 
 	public ITuple createTuple(List<ITerm> terms) {
@@ -135,5 +154,4 @@ public class BasicFactory implements IBasicFactory {
 	public static IBasicFactory getInstance() {
 		return FACTORY;
 	}
-
 }
