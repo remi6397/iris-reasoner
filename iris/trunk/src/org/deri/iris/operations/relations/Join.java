@@ -82,6 +82,24 @@ public class Join implements IJoin{
 		this.condition = condition; 
 	}
 	
+	/**
+	 * @param arg0
+	 * @param arg1
+	 * @param indexes
+	 * @param condition
+	 * @param projectIndexes
+	 * 						define indexes which the projection operation
+	 * 						will be applied on. For example, if set of 
+	 * 						tuples of arity 3 needs to be projected on 
+	 * 						the first and last term, the projectIndexes 
+	 * 						will look like: [1, -1, 1]. -1 means that terms
+	 * 						with that index will be omitted. Note that an 
+	 * 						equivalent array for the project indexes could 
+	 * 						be also: [0, -1, 2], in which case the array 
+	 * 						values represent the term indexes in a tuple.  
+	 * 						If not specified join tuples will be simple 
+	 * 						merged.
+	 */
 	Join(IRelation arg0, IRelation arg1, int[] indexes, 
 			JoinCondition condition, int[] projectIndexes){
 		if (arg0 == null || arg1 == null || 
@@ -117,7 +135,7 @@ public class Join implements IJoin{
 			this.projectIndexes = this.indexTransformer0(
 					new int[this.indexes.length*2]);
 		}
-		this.joinRelation = new Relation(this.projectIndexes.length);
+		this.joinRelation = new Relation(this.getRelationLength());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -157,8 +175,9 @@ public class Join implements IJoin{
 	 */
 	private IRelation selectAndJoin(ITuple tuple, boolean order){
 		if(relation1.first() == null) return null;
-		IRelation joinElements = 
-			new Relation(((ITuple)relation1.first()).getArity()*2);
+		//IRelation joinElements = new Relation(((ITuple)relation1.first()).getArity()*2);
+		IRelation joinElements = new Relation(this.getRelationLength());
+		
 		SortedSet subSet = null;
 		ITuple transformedTuple;
 		if(order){
@@ -183,8 +202,8 @@ public class Join implements IJoin{
 	 * @return
 	 */
 	private IRelation checkAndJoin0(ITuple tuple, SortedSet subSet){
-		IRelation joinElements = 
-			new Relation(((ITuple)relation1.first()).getArity()*2);
+		//IRelation joinElements = new Relation(((ITuple)relation1.first()).getArity()*2);
+		IRelation joinElements = new Relation(this.getRelationLength());
 		
 		Concatenation concatenator = new Concatenation();
 		ITuple tmpTuple, copyTuple, copyTmpTuple, concatenatedTuple = null;
@@ -205,7 +224,8 @@ public class Join implements IJoin{
 					while(copyTuple != null){	
 						while(copyTmpTuple != null){
 							if(!(copyTmpTuple instanceof MinimalTuple)){
-								concatenatedTuple = concatenator.concatenate(copyTmpTuple, copyTuple);
+								concatenatedTuple = concatenator.concatenate(
+										copyTmpTuple, copyTuple, this.projectIndexes);
 								joinElements.add(concatenatedTuple);
 							}
 							copyTmpTuple = copyTmpTuple.getDuplicate();
@@ -232,8 +252,8 @@ public class Join implements IJoin{
 	 * @return
 	 */
 	private IRelation checkAndJoin1(ITuple tuple, SortedSet subSet){
-		IRelation joinElements = 
-			new Relation(((ITuple)relation1.first()).getArity()*2);
+		//IRelation joinElements = new Relation(((ITuple)relation1.first()).getArity()*2);
+		IRelation joinElements = new Relation(this.getRelationLength());
 		
 		Concatenation concatenator = new Concatenation();
 		ITuple tmpTuple, copyTuple, copyTmpTuple, concatenatedTuple = null;
@@ -254,7 +274,8 @@ public class Join implements IJoin{
 					while(copyTuple != null){
 						while(copyTmpTuple != null){
 							if(!(copyTmpTuple instanceof MinimalTuple)){
-								concatenatedTuple = concatenator.concatenate(copyTuple, copyTmpTuple);
+								concatenatedTuple = concatenator.concatenate(
+										copyTuple, copyTmpTuple, this.projectIndexes);
 								joinElements.add(concatenatedTuple);
 							}
 							copyTmpTuple = copyTmpTuple.getDuplicate();
@@ -377,6 +398,14 @@ public class Join implements IJoin{
 				terms[j] = tuple.getTerm(j).getMinValue();
 		}
 		return BASIC.createMinimalTuple(terms);
+	}
+	
+	private int getRelationLength(){
+		int j=0;
+		for(int i=0; i<this.projectIndexes.length; i++){
+			if(this.projectIndexes[i] != -1) j++;
+		}
+		return j;
 	}
 }
 

@@ -136,15 +136,16 @@ public class BasicFactory implements IBasicFactory {
 
 	public ITuple createTuple(ITerm... terms) {
 		/*
-		 * Check whether a term can be null. If yes then:
-		 * return createTuple(Arrays.asList(terms));
-		 * Otherwise:
-		*/
+		Check whether a term can becreated as null. If no then:
+		
 		List<ITerm> termList = new LinkedList<ITerm>();
 		for (ITerm term : terms) {
 			if(term != null) termList.add(term);
 		}
 		return createTuple(termList);
+		
+		Otherwise:	*/
+		return createTuple(Arrays.asList(terms));
 	}
 
 	public ITuple createTuple(List<ITerm> terms) {

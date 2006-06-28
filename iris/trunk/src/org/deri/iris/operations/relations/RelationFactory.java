@@ -65,11 +65,11 @@ public class RelationFactory implements IRelationFactory{
 			int[] indexes, JoinCondition condition) {
 		return new Join(arg0, arg1, indexes, condition);
 	}
-	public IJoin createJoinOperator(IRelation relation0, 
-			IRelation relation1, int[] indexes, JoinCondition condition, 
+	public IJoin createJoinOperator(IRelation arg0, 
+			IRelation arg1, int[] indexes, JoinCondition condition, 
 			int[] projectIndexes) {
 		
-		return null;
+		return new Join(arg0, arg1, indexes, condition, projectIndexes);
 	}
 	public IJoin createJoinSimpleOperator(IRelation arg0, IRelation arg1, 
 			int[] indexes) {
@@ -79,8 +79,8 @@ public class RelationFactory implements IRelationFactory{
 			int[] indexes, JoinCondition condition) {
 		return new Join(arg0, arg1, indexes, condition);
 	}
-	public IJoin createJoinSimpleOperator(IRelation relation0, 
-			IRelation relation1, int[] indexes, JoinCondition condition, 
+	public IJoin createJoinSimpleOperator(IRelation arg0, 
+			IRelation arg1, int[] indexes, JoinCondition condition, 
 			int[] projectIndexes) {
 		
 		return null;

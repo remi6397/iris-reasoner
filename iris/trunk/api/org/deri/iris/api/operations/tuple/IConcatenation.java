@@ -29,7 +29,7 @@ import org.deri.iris.api.basics.ITuple;
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:45:10
  *
- * @version $Revision: 1.2 $ $Date: 2006-05-30 08:26:52 $
+ * @version $Revision: 1.3 $ $Date: 2006-06-28 08:15:12 $
  */
 public interface IConcatenation {
 
@@ -44,4 +44,16 @@ public interface IConcatenation {
 	 * 				- concatenated tuple.
 	 */
 	public ITuple concatenate(final ITuple arg0, final ITuple arg1);
+	
+	/**
+	 * @param arg0
+	 * @param arg1
+	 * @param projectIndexes
+	 * 						define indexes which the projection operation
+	 * 						will be applied on.  If not specified join 
+	 * 						tuples will be simple merged.
+	 * @return
+	 */
+	public ITuple concatenate(final ITuple arg0, final ITuple arg1, 
+			final int[] projectIndexes);
 }

@@ -59,26 +59,34 @@ public interface IRelationFactory {
 	 * conditions: =, !=, <, >, <=, >= must hold.
 	 * 
 	 * @param relation0
-	 * @param relation1
+	 * @param arg1
 	 * @param indexes
 	 * @param condition
 	 * @return
 	 */
-	public IJoin createJoinOperator(IRelation relation0, 
-			IRelation relation1, int[] indexes, JoinCondition condition);
+	public IJoin createJoinOperator(IRelation arg0, 
+			IRelation arg1, int[] indexes, JoinCondition condition);
 	/**
-	 * @param relation0
-	 * @param relation1
+	 * @param arg0
+	 * @param arg1
 	 * @param indexes
 	 * @param condition
 	 * @param projectIndexes
 	 * 						define indexes which the projection operation
-	 * 						will be applied on.  If not specified join 
-	 * 						tuples will be simple merged.
+	 * 						will be applied on. For example, if set of 
+	 * 						tuples of arity 3 needs to be projected on 
+	 * 						the first and last term, the projectIndexes 
+	 * 						will look like: [1, -1, 1]. -1 means that terms
+	 * 						with that index will be omitted. Note that an 
+	 * 						equivalent array for the project indexes could 
+	 * 						be also: [0, -1, 2], in which case the array 
+	 * 						values represent the term indexes in a tuple.  
+	 * 						If not specified join tuples will be simple 
+	 * 						merged.
 	 * @return
 	 */
-	public IJoin createJoinOperator(IRelation relation0, 
-			IRelation relation1, int[] indexes, JoinCondition condition,
+	public IJoin createJoinOperator(IRelation arg0, 
+			IRelation arg1, int[] indexes, JoinCondition condition,
 			int[] projectIndexes);
 	/**
 	 * No duplicates handled,
@@ -93,17 +101,17 @@ public interface IRelationFactory {
 	/**
 	 * No duplicates handled.
 	 * 
-	 * @param relation0
-	 * @param relation1
+	 * @param arg0
+	 * @param arg1
 	 * @param indexes
 	 * @param condition
 	 * @return
 	 */
-	public IJoin createJoinSimpleOperator(IRelation relation0, 
-			IRelation relation1, int[] indexes, JoinCondition condition);
+	public IJoin createJoinSimpleOperator(IRelation arg0, 
+			IRelation arg1, int[] indexes, JoinCondition condition);
 	/**
-	 * @param relation0
-	 * @param relation1
+	 * @param arg0
+	 * @param arg1
 	 * @param indexes
 	 * @param condition
 	 * @param projectIndexes
@@ -112,8 +120,8 @@ public interface IRelationFactory {
 	 * 						tuples will be simple merged.
 	 * @return
 	 */
-	public IJoin createJoinSimpleOperator(IRelation relation0, 
-			IRelation relation1, int[] indexes, JoinCondition condition,
+	public IJoin createJoinSimpleOperator(IRelation arg0, 
+			IRelation arg1, int[] indexes, JoinCondition condition,
 			int[] projectIndexes);
 	
 	public IProjection createProjectionOperator(IRelation relation, int[] indexes);

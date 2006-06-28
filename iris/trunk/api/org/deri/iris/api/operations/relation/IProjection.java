@@ -43,6 +43,8 @@ public interface IProjection {
 	/**
 	 * @param relation
 	 * @param indexes
+	 * 					define indexes which the projection operation
+ * 						will be applied on.
 	 * @return
 	 */
 	public IRelation project(final IRelation relation, final int[] indexes);
