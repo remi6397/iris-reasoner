@@ -25,21 +25,27 @@
  */
 package org.deri.iris.graph;
 
-import org._3pq.jgrapht.LabeledElement;
 import org._3pq.jgrapht.edge.DirectedEdge;
 
+// TODO: implement LabeledElement (it doesn't support generics -> do it in jgraphT v0.7)
+
 /**
- * This class represents a simple implementation of a labeled edge.
+ * This class represents a simple implementation of a labeled edge.</br></br>
+ * <b>NOTE: do not use this class outside of this project! We don't know whether
+ * to keep this class in the api!</b>
+ * 
+ * </br></br>$Id$
  * 
  * @author richi
+ * @version $Revision$
  * 
  */
-class LabeledDirectedEdge extends DirectedEdge implements LabeledElement {
+public class LabeledDirectedEdge<Type> extends DirectedEdge {
 
 	/** label of this edge */
-	private Object label = null;
+	private Type label = null;
 
-	private static final long serialVersionUID = -5367041421559427861L;
+	private static final long serialVersionUID = -3260958362372872661L;
 
 	/**
 	 * A simple constructor which sets the source and the taget.
@@ -64,7 +70,7 @@ class LabeledDirectedEdge extends DirectedEdge implements LabeledElement {
 	 *            the label to set
 	 */
 	public LabeledDirectedEdge(final Object source, final Object target,
-			final Object label) {
+			final Type label) {
 		super(source, target);
 		setLabel(label);
 	}
@@ -75,7 +81,7 @@ class LabeledDirectedEdge extends DirectedEdge implements LabeledElement {
 	 * @param label
 	 *            the label to set
 	 */
-	public void setLabel(Object label) {
+	public void setLabel(Type label) {
 		this.label = label;
 	}
 
@@ -84,7 +90,7 @@ class LabeledDirectedEdge extends DirectedEdge implements LabeledElement {
 	 * 
 	 * @return the label
 	 */
-	public Object getLabel() {
+	public Type getLabel() {
 		return label;
 	}
 
@@ -111,5 +117,14 @@ class LabeledDirectedEdge extends DirectedEdge implements LabeledElement {
 				&& label.equals(le.label)
 				&& (Double.doubleToLongBits(getWeight()) == Double
 						.doubleToLongBits(le.getWeight()));
+	}
+
+	/**
+	 * Returns a simple string representation of this labeled directed edge.
+	 * </br><b>The subject of the stringrepresentation is to change.</b> </br>An
+	 * example String could be: <code>source->(label)->target<code>.
+	 */
+	public String toString() {
+		return getSource() + " ->( " + label + " )-> " + getTarget();
 	}
 }
