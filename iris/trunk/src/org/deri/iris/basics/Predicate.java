@@ -28,29 +28,32 @@ package org.deri.iris.basics;
 import org.deri.iris.api.basics.IPredicate;
 
 /**
+ * This is a simple IPredicate implementation.</br>
+ * <b>NOTE: This implementation is immutable</b>
+ * </br></br>$Id$
  * @author richi
- * 
+ * @version $Revision$
  */
 public class Predicate implements IPredicate, Cloneable {
 
-	private String symbol;
+	private final String symbol;
 
-	private boolean builtin;
+	private final boolean builtin;
 
 	private final int arity;
 
 	Predicate(final String symbol, final int arity) {
-		setPredicateSymbol(symbol);
+		this.symbol = symbol;
+		this.builtin = false;
 		this.arity = arity;
 	}
 
-	// TODO: I think setting the symbol after initialisation shouldn't be
-	// possible
+	/**
+	 * In this implementation the changing of the symbol is not supported
+	 * @throws UnsupportedOperationException because it should be immutable
+	 */
 	public void setPredicateSymbol(final String symbol) {
-		if (symbol == null) {
-			throw new IllegalArgumentException("The symbol must not be null");
-		}
-		this.symbol = symbol;
+		throw new UnsupportedOperationException("This implementation should be immutable");
 	}
 
 	public String getPredicateSymbol() {
@@ -61,8 +64,12 @@ public class Predicate implements IPredicate, Cloneable {
 		return arity;
 	}
 
+	/**
+	 * In this implementation the changing of the symbol is not supported
+	 * @throws UnsupportedOperationException because it should be immutable
+	 */
 	public void setBuiltIn(boolean arg) {
-		builtin = arg;
+		throw new UnsupportedOperationException("This implementation should be immutable");
 	}
 
 	public boolean isBuiltIn() {
@@ -70,9 +77,10 @@ public class Predicate implements IPredicate, Cloneable {
 	}
 
 	public int hashCode() {
-		int result = 37;
-		result = result * 17 + Boolean.valueOf(builtin).hashCode();
-		result = result * 17 + symbol.hashCode();
+		int result = 17;
+		result = result * 37 + (builtin ? 0 : 1);
+		result = result * 37 + arity;
+		result = result * 37 + symbol.hashCode();
 		return result;
 	}
 
@@ -86,6 +94,9 @@ public class Predicate implements IPredicate, Cloneable {
 	}
 
 	public boolean equals(final Object o) {
+		if (o == this) {
+			return true;
+		}
 		if (!(o instanceof Predicate)) {
 			return false;
 		}
@@ -110,7 +121,6 @@ public class Predicate implements IPredicate, Cloneable {
 	}
 
 	public String toString() {
-		return getClass().getName() + "[symbol=" + symbol + ",arity=" + arity
-				+ ",builtin=" + builtin + "]";
+		return symbol;
 	}
 }
