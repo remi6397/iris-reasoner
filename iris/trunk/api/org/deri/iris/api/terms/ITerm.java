@@ -58,4 +58,6 @@ public interface ITerm<Type extends ITerm, Type0> extends Comparable<Type> {
 	public Type0 getValue();
 	
 	public void setValue(Type0 t);
+	
+	public Object clone() throws CloneNotSupportedException;
 }
