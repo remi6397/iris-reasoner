@@ -33,7 +33,10 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
 
 /**
+ * A simple Atom implementation
+ * </br></br>$Id$
  * @author richi
+ * @version $Revision$
  * 
  */
 public class Atom implements IAtom<IAtom> {
@@ -123,11 +126,11 @@ public class Atom implements IAtom<IAtom> {
 	}
 
 	public int hashCode() {
-		int result = 37;
-		result = result * 17 + predicate.hashCode();
+		int result = 17;
+		result = result * 37 + predicate.hashCode();
 		for (ITerm t : terms) {
 			if (t != null) {
-				result = result * 17 + t.hashCode();
+				result = result * 37 + t.hashCode();
 			}
 		}
 		return result;
@@ -147,7 +150,7 @@ public class Atom implements IAtom<IAtom> {
 
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		buffer.append(predicate.getPredicateSymbol()).append("(");
+		buffer.append(predicate).append("(");
 		for (ITerm t : terms) {
 			buffer.append(t).append(", ");
 		}
