@@ -47,7 +47,7 @@ public class TermFactory implements ITermFactory {
 		// this is a singelton
 	}
 	
-	public IConstantTerm createConstant(String arg) {
+	public IConstantTerm createConstant(ITerm arg) {
 		return new ConstantTerm(arg);
 	}
 

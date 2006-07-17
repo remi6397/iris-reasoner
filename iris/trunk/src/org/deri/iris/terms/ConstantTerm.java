@@ -26,20 +26,21 @@
 package org.deri.iris.terms;
 
 import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * @author richi
- *
+ * 
  */
-public class ConstantTerm implements IConstantTerm<IConstantTerm>, Cloneable {
-	
-	private String value = "";
-	
-	ConstantTerm(final String sconst) {
+public class ConstantTerm implements IConstantTerm<ITerm>, Cloneable {
+
+	private ITerm value = null;
+
+	ConstantTerm(final ITerm sconst) {
 		value = sconst;
 	}
 
-	public String getValue() {
+	public ITerm getValue() {
 		return value;
 	}
 
@@ -47,7 +48,16 @@ public class ConstantTerm implements IConstantTerm<IConstantTerm>, Cloneable {
 		return true;
 	}
 
-	public int compareTo(IConstantTerm o) {
+	/**
+	 * This compareTo method uses the compareTo method of the constants stored
+	 * by this object.
+	 * 
+	 * @param o
+	 *            the other constant / term to compare with
+	 * @return -1 if <code>this</code> is smaller, 0 if they are equal and 1
+	 *         if <code>this</code> other is bigger
+	 */
+	public int compareTo(ITerm o) {
 		return value.compareTo((String) o.getValue());
 	}
 
@@ -58,20 +68,22 @@ public class ConstantTerm implements IConstantTerm<IConstantTerm>, Cloneable {
 		ConstantTerm ct = (ConstantTerm) o;
 		return value.equals(ct.value);
 	}
-	
+
 	public Object clone() {
 		try {
-			return super.clone();
+			ConstantTerm c = (ConstantTerm) super.clone();
+			c.value = (ITerm) value.clone();
+			return c;
 		} catch (CloneNotSupportedException e) {
 			assert true : "Will never happen";
 		}
 		return null;
 	}
-	
+
 	public int hashCode() {
 		return value.hashCode();
 	}
-	
+
 	/**
 	 * Returns a String representation of this object. The subject of the string
 	 * format is to change. An example return value might be
@@ -80,14 +92,15 @@ public class ConstantTerm implements IConstantTerm<IConstantTerm>, Cloneable {
 	 * @return the String representation
 	 */
 	public String toString() {
-		return getClass().getName() + "[value=" + value + "]";
+		return value.toString();
 	}
 
 	public IConstantTerm getMinValue() {
+		// or return value.getMinValue() ?
 		return null;
 	}
 
-	public void setValue(String t) {
+	public void setValue(ITerm t) {
 		this.value = t;
 	}
 }
