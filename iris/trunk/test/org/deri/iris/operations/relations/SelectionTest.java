@@ -110,9 +110,9 @@ public class SelectionTest extends TestCase {
 	}
 	
 	/**
-	 * Tests the relation against a list of tuples using the assert methods of
-	 * JUnit. The length of the relation and the list must be equal, and the
-	 * relation must contain all tuples of the list.
+	 * Tests the relation against a list of tuples using the assert methods
+	 * of JUnit. The length of the relation and the list must be equal, 
+	 * and the relation must contain all tuples of the list.
 	 * 
 	 * @param r
 	 *            the relation to check
