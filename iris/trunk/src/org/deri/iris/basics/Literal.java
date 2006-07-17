@@ -33,8 +33,9 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
 
 /**
+ * Simple literal implementation.</br></br>$Id$
  * @author richi
- * 
+ * @version $Revision$
  */
 public class Literal implements ILiteral<ILiteral> {
 
@@ -105,9 +106,9 @@ public class Literal implements ILiteral<ILiteral> {
 	}
 
 	public int hashCode() {
-		int result = 37;
-		result = result * 17 + atom.hashCode();
-		result = result * 17 + (positive ? 1 : 0);
+		int result = 17;
+		result = result * 37 + atom.hashCode();
+		result = result * 37 + (positive ? 1 : 0);
 		return result;
 	}
 
