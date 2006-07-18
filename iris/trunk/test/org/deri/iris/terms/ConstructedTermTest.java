@@ -30,6 +30,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.api.terms.IStringTerm;
+import org.deri.iris.factory.Factory;
 
 /**
  * @author richi
@@ -37,15 +39,15 @@ import org.deri.iris.ObjectTest;
  */
 public class ConstructedTermTest extends TestCase {
 
-	private static final String BASIC = "aaa";
+	private static final IStringTerm BASIC = Factory.TERM.createString("aaa");
 
-	private static final String MORE = "aab";
+	private static final IStringTerm MORE = Factory.TERM.createString("aab");
 
-	private static final String MORE1 = "aac";
+	private static final IStringTerm MORE1 = Factory.TERM.createString("aac");
 
 	public static Test suite() {
-		return new TestSuite(ConstructedTermTest.class, ConstructedTermTest.class
-				.getSimpleName());
+		return new TestSuite(ConstructedTermTest.class,
+				ConstructedTermTest.class.getSimpleName());
 	}
 
 	public void testBasic() {
