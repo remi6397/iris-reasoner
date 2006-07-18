@@ -124,7 +124,7 @@ public interface IRelationFactory {
 			IRelation arg1, int[] indexes, JoinCondition condition,
 			int[] projectIndexes);
 	
-	public IProjection createProjectionOperator(IRelation relation, int[] indexes);
+	public IProjection createProjectionOperator(IRelation relation, int[] pattern);
 	
 	public ISelection createSelectionOperator(IRelation relation, ITuple pattern);
 	
