@@ -32,14 +32,14 @@ import org.deri.iris.api.storage.IRelation;
  * Interface of a join operation used to promote modularity 
  * of inference engines.
  * 
- * Note: Implementation of the join operation assumes an implementation of
- * this interface and an implementation of the IRelationFactory interface
- * (createJoinOperator methods).
+ * Note: Implementation of the IJoin interface assumes an 
+ * implementation of this interface itself and an implementation of 
+ * the IRelationFactory interface (createJoinOperator methods).
  * 
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:09:02
  *
- * @version $Revision: 1.5 $ $Date: 2006-06-26 15:30:47 $
+ * @version $Revision: 1.6 $ $Date: 2006-07-18 09:30:23 $
  * @param <JoinCondition>
  */
 public interface IJoin {

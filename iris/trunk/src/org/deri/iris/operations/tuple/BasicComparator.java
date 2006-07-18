@@ -92,7 +92,7 @@ public class BasicComparator implements Comparator<ITuple> {
 		if(Arrays.equals(this.getSortIndexes(), null)) 
 			this.setSortIndexes(getDefaultSortIndexes(t0.getArity()));
 		for(int i=0; i<this.getSortIndexes().length; i++){
-			/* coompare tuples on each index that is differnt from -1.
+			/* compare tuples on each index that is differnt from -1.
 			 * sortIndexes[i] == -1 means the term with that index
 			 * is not relevant for the current sorting.
 			 */
