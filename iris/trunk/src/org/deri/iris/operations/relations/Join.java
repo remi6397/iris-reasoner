@@ -118,13 +118,13 @@ public class Join implements IJoin{
 		this.indexes = indexes;
 		
 		// Sort arg0 on those tupples defined by sort indexes
-		this.comparator = new IndexComparator(this.indexTransformer0(indexes));
+		this.comparator = new IndexComparator(this.transformIndexes0(indexes));
 		IRelation rel0 = new Relation(comparator);
 		rel0.addAll(this.relation0);
 		this.relation0 = rel0;
 		
 		// Sort arg1 on those tupples defined by sort indexes
-		this.comparator = new IndexComparator(this.indexTransformer1(indexes));
+		this.comparator = new IndexComparator(this.transformIndexes1(indexes));
 		IRelation rel1 = new Relation(comparator);
 		rel1.addAll(this.relation1);
 		this.relation1 = rel1;
@@ -132,10 +132,10 @@ public class Join implements IJoin{
 		 * If not specified join tuples will be simple merged.
 		 */
 		if(this.projectIndexes == null){
-			this.projectIndexes = this.indexTransformer0(
+			this.projectIndexes = this.transformIndexes0(
 					new int[this.indexes.length*2]);
 		}
-		this.joinRelation = new Relation(this.getRelationLength());
+		this.joinRelation = new Relation(this.getRelationArity());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -176,7 +176,7 @@ public class Join implements IJoin{
 	private IRelation selectAndJoin(ITuple tuple, boolean order){
 		if(relation1.first() == null) return null;
 		//IRelation joinElements = new Relation(((ITuple)relation1.first()).getArity()*2);
-		IRelation joinElements = new Relation(this.getRelationLength());
+		IRelation joinElements = new Relation(this.getRelationArity());
 		
 		SortedSet subSet = null;
 		ITuple transformedTuple;
@@ -203,7 +203,7 @@ public class Join implements IJoin{
 	 */
 	private IRelation checkAndJoin0(ITuple tuple, SortedSet subSet){
 		//IRelation joinElements = new Relation(((ITuple)relation1.first()).getArity()*2);
-		IRelation joinElements = new Relation(this.getRelationLength());
+		IRelation joinElements = new Relation(this.getRelationArity());
 		
 		Concatenation concatenator = new Concatenation();
 		ITuple tmpTuple, copyTuple, copyTmpTuple, concatenatedTuple = null;
@@ -253,7 +253,7 @@ public class Join implements IJoin{
 	 */
 	private IRelation checkAndJoin1(ITuple tuple, SortedSet subSet){
 		//IRelation joinElements = new Relation(((ITuple)relation1.first()).getArity()*2);
-		IRelation joinElements = new Relation(this.getRelationLength());
+		IRelation joinElements = new Relation(this.getRelationArity());
 		
 		Concatenation concatenator = new Concatenation();
 		ITuple tmpTuple, copyTuple, copyTmpTuple, concatenatedTuple = null;
@@ -341,7 +341,7 @@ public class Join implements IJoin{
 	 * @param indexes
 	 * @return transformed indexes
 	 */
-	private int[] indexTransformer0(int[] indexes){
+	private int[] transformIndexes0(int[] indexes){
 		int[] tranformedIndexes = new int [indexes.length];
 		for(int i=0; i<indexes.length; i++){
 			if(indexes[i] != -1)tranformedIndexes[i]= i;
@@ -359,7 +359,7 @@ public class Join implements IJoin{
 	 * @param indexes
 	 * @return transformed indexes
 	 */
-	private int[] indexTransformer1(int[] indexes){
+	private int[] transformIndexes1(int[] indexes){
 		int[] tranformedIndexes = new int [indexes.length];
 		for(int i=0; i<indexes.length; i++){
 			tranformedIndexes[i] = -1;
@@ -400,7 +400,7 @@ public class Join implements IJoin{
 		return BASIC.createMinimalTuple(terms);
 	}
 	
-	private int getRelationLength(){
+	private int getRelationArity(){
 		int j=0;
 		for(int i=0; i<this.projectIndexes.length; i++){
 			if(this.projectIndexes[i] != -1) j++;

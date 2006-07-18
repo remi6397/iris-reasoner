@@ -39,33 +39,32 @@ import junit.framework.TestSuite;
 
 import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.operations.relation.ISelection;
+import org.deri.iris.api.operations.relation.IProjection;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.storage.Relation;
 
-
 /**
  * @author Darko Anicic, DERI Innsbruck
- * @date   31.05.2006 11:34:30
+ * @date   17.07.2006 16:19:43
  */
-public class SelectionTest extends TestCase {
-
+public class ProjectionTest extends TestCase {
 	
 	public static Test suite() {
-		return new TestSuite(SelectionTest.class, SelectionTest.class.getSimpleName());
+		return new TestSuite(ProjectionTest.class, ProjectionTest.class.getSimpleName());
 	}
 
 	/**
-	 * Select a portion of a relation (tree) based on a condition (tuple) and 
-	 * then checks the result against the submitted Collection of tuples.
+	 * Project a relation (tree) on set of arguments. 
+	 * The arguments are defined by an array.
 	 * 
 	 * @param p
-	 *            the pattern that defines which tuples should be selected
-	 *            (see documentation for ISelection.select(..) )
+	 *            the pattern that defines how projection should be 
+	 *            performed (see documentation for IProjection.project(..))
 	 * @param e
 	 *            the Collection of expected tuples
 	 */
-	protected static void runSelection(final ITuple p, final Collection<ITuple> e) {
+	protected static void runProjection(
+			final int[] p, final Collection<ITuple> e) {
 		IRelation<ITuple> relation = new Relation(3);
 	
 		relation.add(MiscHelper.createTuple("a", "a", "a"));
@@ -74,48 +73,96 @@ public class SelectionTest extends TestCase {
 		
 		relation.add(MiscHelper.createTuple("d", "d", "d"));
 		relation.add(MiscHelper.createTuple("d", "d", "a"));
-		relation.add(MiscHelper.createTuple("a", "d", "d"));
+		relation.add(MiscHelper.createTuple("a", "d", "c"));
 		
-		// test Select operation handling duplicates
-		ISelection selectionOperator = RELATION.createSelectionOperator(
+		// test the projection operation handling duplicates
+		IProjection projectionOperator = RELATION.createProjectionOperator(
 				relation, p);
-		IRelation result = selectionOperator.select();
+		IRelation result = projectionOperator.project();
 		assertResults(result, e);
 	}
 
-	public void testSelect_ann() {
+	/**
+	 * Projection on the tuple arguments in the first column 
+	 * (those with index 0th).
+	 */
+	public void testProjection_pnn() {
 		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a", "d", "d"));
+		e.add(MiscHelper.createTuple("a"));
+		e.add(MiscHelper.createTuple("d"));
+		runProjection(new int[]{0, -1, -1}, e);
+	}
+	
+	public void testProjection_npn() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(MiscHelper.createTuple("a"));
+		e.add(MiscHelper.createTuple("d"));
+		e.add(MiscHelper.createTuple("b"));
+		runProjection(new int[]{-1, 0, -1}, e);
+	}
+	
+	/**
+	 * This test is equivalent to the testProjection_npn.
+	 * In both test we have a value different of -1 in 
+	 * the second index. Thus the projection operation will
+	 * be performed on the arguments with the index 1 in 
+	 * both cases.
+	 * The value for the second index is different, 
+	 * but as the projection will be performed only on one
+	 * argument in each tuple, the projected tuple will be
+	 * of arity 1 and the index of its argument is 0 in 
+	 * both cases. 
+	 */
+	public void testProjection_npn_1() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(MiscHelper.createTuple("a"));
+		e.add(MiscHelper.createTuple("d"));
+		e.add(MiscHelper.createTuple("b"));
+		runProjection(new int[]{-1, 1, -1}, e);
+	}
+	
+	/**
+	 * Do projection on the 0th and 1st index and then swap
+	 * 0th and 1st argument in each tuple. 
+	 */
+	public void testProjection_pnp_reverse() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(MiscHelper.createTuple("a", "a"));
+		e.add(MiscHelper.createTuple("b", "a"));
+		e.add(MiscHelper.createTuple("d", "d"));
+		e.add(MiscHelper.createTuple("a", "d"));
+		e.add(MiscHelper.createTuple("c", "a"));
+		runProjection(new int[]{1, -1, 0}, e);
+	}
+	
+	/**
+	 * For the following indexes: [0, 1, 2] nothing will 
+	 * be changed after performing the projection.
+	 */
+	public void testProjection_ppp() {
+		final List<ITuple> e = new ArrayList<ITuple>();
 		e.add(MiscHelper.createTuple("a", "a", "a"));
 		e.add(MiscHelper.createTuple("a", "b", "a"));
 		e.add(MiscHelper.createTuple("a", "b", "b"));
-		runSelection(MiscHelper.createTuple("a", null, null), e);
-	}
-	
-	public void testSelect_aaa() {
-		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a", "a", "a"));
-		runSelection(MiscHelper.createTuple("a", "a", "a"), e);
-	}
-	
-	public void testSelect_ana() {
-		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a", "a", "a"));
-		e.add(MiscHelper.createTuple("a", "b", "a"));
-		runSelection(MiscHelper.createTuple("a", null, "a"), e);
-	}
-	
-	public void testSelect_anb() {
-		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a", "b", "b"));
-		runSelection(MiscHelper.createTuple("a", null, "b"), e);
-	}
-	
-	public void testSelect_ndd() {
-		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a", "d", "d"));
 		e.add(MiscHelper.createTuple("d", "d", "d"));
-		runSelection(MiscHelper.createTuple(null, "d", "d"), e);
+		e.add(MiscHelper.createTuple("d", "d", "a"));
+		e.add(MiscHelper.createTuple("a", "d", "c"));
+		runProjection(new int[]{0, 1, 2}, e);
+	}
+	
+	/**
+	 * Do not do projection, only swap attributes with
+	 * 0th index with those with 1st index.
+	 */
+	public void testProjection_ppp_reverse() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(MiscHelper.createTuple("a", "a", "a"));
+		e.add(MiscHelper.createTuple("a", "b", "a"));
+		e.add(MiscHelper.createTuple("b", "b", "a"));
+		e.add(MiscHelper.createTuple("d", "d", "d"));
+		e.add(MiscHelper.createTuple("a", "d", "d"));
+		e.add(MiscHelper.createTuple("c", "d", "a"));
+		runProjection(new int[]{2, 1, 0}, e);
 	}
 	
 	/**

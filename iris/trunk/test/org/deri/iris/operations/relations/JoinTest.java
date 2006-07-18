@@ -165,6 +165,22 @@ public class JoinTest extends TestCase {
 		runJoin(new int[] { 1, 1, 1 }, e);
 	}
 	
+	/**
+	 * Demonstration of use the projection operation after 
+	 * the join operation has been performed.
+	 * 
+	 * After the join operation we have two produced tuples:
+	 * 
+	 * <a,b,c,c,b,b>
+	 * <a,b,b,c,b,b>
+	 * 
+	 * Then we perform the projection on attributes with 
+	 * values different from -1 (from the projectIndexes array).
+	 * This means we want the projection on attributes with 
+	 * indexes: 0th, 3rd, 5th. Thus we will get:
+	 * 
+	 * <a,c,b>
+	 */
 	public void testJoin_projection() {
 		final List<ITuple> e = new ArrayList<ITuple>();
 		e.add(MiscHelper.createTuple("a", "c", "b"));

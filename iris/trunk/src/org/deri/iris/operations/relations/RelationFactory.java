@@ -87,9 +87,8 @@ public class RelationFactory implements IRelationFactory{
 	}
 	
 	public IProjection createProjectionOperator(IRelation relation, 
-			int[] indexes) {
-		
-		return null;
+			int[] pattern) {
+		return new Projection(relation, pattern);
 	}
 
 	public ISelection createSelectionOperator(IRelation relation, 

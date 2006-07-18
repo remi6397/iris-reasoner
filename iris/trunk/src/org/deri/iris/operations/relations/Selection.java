@@ -41,14 +41,19 @@ import org.deri.iris.operations.tuple.SelectionComparator;
 import org.deri.iris.storage.Relation;
 
 /**
- * Implementation of 
+ * Implementation of the ISelection interface
+ * 
+ * The Selection operation is meant to be used for selecting a portion of
+ * a relation (tree). Basically the functionality of this operation is to
+ * select all tuples, from a relation, that are equal regarding the 
+ * condition defined by a certain pattern (tuple).
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   31.05.2006 10:38:40
  */
 public class Selection implements ISelection{
 	private IRelation relation = null;
-	private IRelation selectRelation = null;
+	private IRelation selectionRelation = null;
 	private ITuple pattern = null;
 	private IndexComparator indexComparator = null;
 	private SelectionComparator selectionComparator = null;
@@ -60,7 +65,7 @@ public class Selection implements ISelection{
 		}
 		this.relation = relation;
 		this.pattern = pattern;
-		selectRelation = 
+		selectionRelation = 
 			new Relation(((ITuple)relation.first()).getArity());
 	}
 	
@@ -83,15 +88,15 @@ public class Selection implements ISelection{
 			if(selectionComparator.compare(tuple, transformedTuple) == 0){
 				while(tuple != null){
 					if(!(tuple instanceof MinimalTuple)){
-						selectRelation.add(tuple);
+						selectionRelation.add(tuple);
 					}
 					tuple = tuple.getDuplicate();
 				}
 			}else{
-				return selectRelation;
+				return selectionRelation;
 			}	
 		}
-		return selectRelation;
+		return selectionRelation;
 	}
 
 	private int[]getIndexes(ITuple pattern){
