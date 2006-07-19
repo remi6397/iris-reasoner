@@ -34,7 +34,7 @@
 		</sablecc>
 	</target>
 
-	<target name="cleanup" depends="init">
+	<target name="cleanup" description="deletes ALL generated files" depends="init">
 		<delete dir="${dir.build}" />
 	</target>
 
