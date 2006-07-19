@@ -1,36 +1,49 @@
 <project basedir="." default="init">
-	<property file="build.properties"></property>
-	
+	<property file="build.properties">
+	</property>
+
 	<path id="sablecccp">
 		<fileset dir="${dir.lib}">
-			<include name="**/sablecc-anttask.jar"/>
-			<include name="**/sablecc.jar"/>
+			<include name="**/sablecc-anttask.jar" />
+			<include name="**/sablecc.jar" />
 		</fileset>
 	</path>
-	
-	
-	<taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc" classpathref="sablecccp"/>
-	
+
+	<path id="defaultcp">
+		<fileset dir="${dir.lib}">
+			<include name="**/jgrapht*.jar" />
+		</fileset>
+	</path>
+
+
+	<taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc" classpathref="sablecccp" />
+
 	<target name="init">
-		<tstamp/>
+		<tstamp />
 	</target>
-	
-	<target name="javac" description="compiles all the class files" depends="init,prepareclasses">
-		<javac srcdir="${dir.api}:${dir.src}:${dir.sablecc.src}" destdir="${dir.classes}">
-			<include name="**/*.java"/>
+
+	<target name="javac" description="compiles all the class files" depends="init,prepareclasses,preparesablecc">
+		<javac srcdir="${dir.api}:${dir.src}:${dir.sablecc.src}" classpathref="defaultcp" destdir="${dir.classes}">
+			<include name="**/*.java" />
 		</javac>
 	</target>
-	
+
 	<target name="sablecc" description="creates the parser" depends="init,preparesablecc">
-		<sablecc src="${file.sablecc.grammar}" outputdirectory="${dir.sablecc.src}"/>
+		<sablecc src="${dir.sablecc.grammar}" outputdirectory="${dir.sablecc.src}">
+			<include name="*.scc" />
+		</sablecc>
 	</target>
-	
+
+	<target name="cleanup" depends="init">
+		<delete dir="${dir.build}" />
+	</target>
+
 	<target name="preparesablecc" depends="init">
-		<mkdir dir="${dir.sablecc.src}"/>
+		<mkdir dir="${dir.sablecc.src}" />
 	</target>
-	
+
 	<target name="prepareclasses" depends="init">
-		<mkdir dir="${dir.classes}"/>
+		<mkdir dir="${dir.classes}" />
 	</target>
-	
+
 </project>
