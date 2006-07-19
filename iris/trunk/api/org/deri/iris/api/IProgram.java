@@ -19,7 +19,7 @@
  */
 package org.deri.iris.api;
 
-import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import org.deri.iris.api.basics.IAtom;
@@ -51,15 +51,15 @@ public interface IProgram {
    
     /**
      * adds a set of ground facts to the predicate extension
-     * @param the list of facts to be added
+     * @param the set of facts to be added
      * @return has fact been added
      */
-    public boolean addFacts(final List<IAtom> facts); 
+    public boolean addFacts(final Set<IAtom> facts); 
     
     /** Removes a fact from the knowledge database */
     public boolean removeFact(final IAtom fact) throws DataNotFoundException;
     
-    public boolean removeFacts(final List<IAtom> facts) throws DataNotFoundException;
+    public boolean removeFacts(final Set<IAtom> facts) throws DataNotFoundException;
     
     public boolean hasFact(final IAtom fact);
     
@@ -72,17 +72,15 @@ public interface IProgram {
     /**
      * are there facts for predicate p and selection filter f available
      * @param predicat p
-     * @param list of selection tuples
-     * 
-     * ? List
+     * @param set of selection tuples
      */
-    public boolean hasFacts(final IPredicate p, final List<ITuple> filter);
+    public boolean hasFacts(final IPredicate p, final Set<ITuple> filter);
     
     /**
      * Get all instantiated predicates (predicates with facts)
-     * @return list of all predicates
+     * @return Set of all predicates
      */
-	public List<IPredicate> getPredicates();
+	public Set<IPredicate> getPredicates();
     
 	public int getNumberOfFacts(final IPredicate predicate);
 	
@@ -90,23 +88,23 @@ public interface IProgram {
      * returns the number of filtered facts for predicate p from the EDB
      * with selection tuples filter
      * @param predicate p
-     * @param list of selection tuples
+     * @param set of selection tuples
      * @return the number of facts
      */
-    public int getNumberOfFacts(final IPredicate p, final List<ITuple> filter);
+    public int getNumberOfFacts(final IPredicate p, final Set<ITuple> filter);
     
     /**
      * returns all facts of a predicate
      * @param predicate p
-     * @return an iterator for the facts of p
+     * @return an set for the facts of p
      */
-    public List<IAtom> getFacts(final IPredicate p);
+    public Set<IAtom> getFacts(final IPredicate p);
     
     /**
      * returns all facts from the Knowledge Base
-     * @return an iterator for the facts
+     * @return an set for the facts
      */
-    public List<IAtom> getFacts();
+    public Set<IAtom> getFacts();
     
     /**
      * is the edb empty, i.e. does it contain no facts
@@ -167,7 +165,7 @@ public interface IProgram {
      */
     public boolean removeRule(final IRule r) throws DataNotFoundException;
     
-    public List<IRule> getRules();
+    public Set<IRule> getRules();
     
     
     /********************************/
