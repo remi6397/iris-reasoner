@@ -31,8 +31,7 @@ import org.deri.iris.compiler.ParserImpl;
 import org.deri.iris.compiler.SymbolMap;
 
 /**
- * @author Darko Anicic, DERI Innsbruck
- * @date   19.07.2006 12:15:57
+ * @author Holger Lausen
  */
 public class UseParser {
 	public static void main(String[] args) throws Exception {
