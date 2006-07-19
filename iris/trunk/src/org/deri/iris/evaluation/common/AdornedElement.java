@@ -23,10 +23,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.evaluation.basics;
+package org.deri.iris.evaluation.common;
 
 /**
- * $Id: AdornedElement.java,v 1.1 2006-07-19 08:22:34 darko Exp $
+ * $Id: AdornedElement.java,v 1.1 2006-07-19 08:27:19 darko Exp $
  * @author richi
  * @version $Revision: 1.1 $
  */

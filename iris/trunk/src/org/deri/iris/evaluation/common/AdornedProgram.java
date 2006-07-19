@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.evaluation.basics;
+package org.deri.iris.evaluation.common;
 
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
@@ -47,7 +47,7 @@ import org.deri.iris.evaluation.magic.SIPImpl;
 
 /**
  * This is a simple implementation of an adorned program. <b>NOTE: At the moment
- * this class only works with rules with one literal in the head.</b> </br></br>$Id: AdornedProgram.java,v 1.1 2006-07-19 08:22:34 darko Exp $
+ * this class only works with rules with one literal in the head.</b> </br></br>$Id: AdornedProgram.java,v 1.1 2006-07-19 08:27:19 darko Exp $
  * 
  * @author richi
  * @version $Revision: 1.1 $
