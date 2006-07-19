@@ -1,44 +1,41 @@
 /*
- * MINS (Mins Is Not Silri) A Prolog Egine based on the Silri  
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
  * 
- * Copyright (C) 1999-2005  Juergen Angele and Stefan Decker
- *                          University of Innsbruck, Austria  
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
  */
+
 package example;
 
-import org.deri.iris.compiler.*;
-import org.deri.mins.*;
-import org.deri.mins.builtins.BuiltinConfig;
+import org.deri.iris.compiler.Parser;
+import org.deri.iris.compiler.ParserImpl;
+import org.deri.iris.compiler.SymbolMap;
 
 /**
- * Use Parser
- *
- * <pre>
- * Created on 16.11.2005
- * Committed by $Author: darko $
- * $Source: /tmp/iris-cvsbackup/iris/parser/example/UseParser.java,v $,
- * </pre>
- *
- * @author Holger Lausen
- *
- * @version $Revision: 1.2 $ $Date: 2006-07-19 10:12:44 $
+ * @author Darko Anicic, DERI Innsbruck
+ * @date   19.07.2006 12:15:57
  */
 public class UseParser {
-    
-    public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
         UseParser i = new UseParser();
         i.test();
     }
@@ -73,6 +70,5 @@ public class UseParser {
             }
             a = s.Next();
         }
-        
     }
 }
