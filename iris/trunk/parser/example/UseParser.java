@@ -19,9 +19,9 @@
  */
 package example;
 
+import org.deri.iris.compiler.*;
 import org.deri.mins.*;
 import org.deri.mins.builtins.BuiltinConfig;
-import org.deri.mins.compiler.*;
 
 /**
  * Use Parser
@@ -34,7 +34,7 @@ import org.deri.mins.compiler.*;
  *
  * @author Holger Lausen
  *
- * @version $Revision: 1.1 $ $Date: 2006-07-19 10:03:31 $
+ * @version $Revision: 1.2 $ $Date: 2006-07-19 10:12:44 $
  */
 public class UseParser {
     
