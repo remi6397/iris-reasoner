@@ -1,4 +1,7 @@
-<project basedir="." default="init">
+<project basedir="." default="jar">
+	
+	<!-- $Id$ -->
+	
 	<property file="build.properties">
 	</property>
 
@@ -34,6 +37,25 @@
 		</sablecc>
 	</target>
 
+	<target name="javadoc" description="generates the javadoc" depends="init,preparejavadoc">
+		<javadoc destdir="${dir.javadoc}" link="http://java.sun.com/j2se/1.5.0/docs/api/">
+			<fileset dir="${dir.api}">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${dir.src}">
+				<include name="**/*.java" />
+			</fileset>
+		</javadoc>
+	</target>
+
+	<target name="jar" description="creates the jar file" depends="init,javac,preparejar">
+		<jar basedir="${dir.classes}" destfile="${dir.jar}/${file.jar.main}" index="true" />
+	</target>
+
+	<target name="delclasses" description="deletes only the class files" depends="init">
+		<delete dir="${dir.classes}" />
+	</target>
+
 	<target name="cleanup" description="deletes ALL generated files" depends="init">
 		<delete dir="${dir.build}" />
 	</target>
@@ -44,6 +66,14 @@
 
 	<target name="prepareclasses" depends="init">
 		<mkdir dir="${dir.classes}" />
+	</target>
+
+	<target name="preparejavadoc" depends="init">
+		<mkdir dir="${dir.javadoc}" />
+	</target>
+
+	<target name="preparejar" depends="init">
+		<mkdir dir="${dir.jar}" />
 	</target>
 
 </project>
