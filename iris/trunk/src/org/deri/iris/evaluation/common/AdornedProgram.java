@@ -47,11 +47,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
 
 /**
  * This is a simple implementation of an adorned program. <b>NOTE: At the moment
- * this class only works with rules with one literal in the head.</b> </br></br>$Id: AdornedProgram.java,v 1.2 2006-07-19 12:52:30 richardpoettler Exp $
+ * this class only works with rules with one literal in the head.</b> <br/><br/>$Id: AdornedProgram.java,v 1.3 2006-07-20 09:02:51 richardpoettler Exp $
  * 
  * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-07-19 12:52:30 $
+ * @version $Revision: 1.3 $
+ * @date $Date: 2006-07-20 09:02:51 $
  */
 public class AdornedProgram  {
 
@@ -152,9 +152,9 @@ public class AdornedProgram  {
 	/**
 	 * This returns a simple string representation of this program. <b>The
 	 * subject of this representation is to change.</b> The return of this
-	 * method will look something like:</br>&lt;list of all adorned rules
-	 * separated by newlines&gt;</br><code>newline</code></br>&lt;list of
-	 * all rules separated by newlines&gt;</br><code>newline</code></br>&lt;the
+	 * method will look something like:<br/>&lt;list of all adorned rules
+	 * separated by newlines&gt;<br/><code>newline</code><br/>&lt;list of
+	 * all rules separated by newlines&gt;<br/><code>newline</code><br/>&lt;the
 	 * query&gt;
 	 * 
 	 * @return the string representation
@@ -216,7 +216,7 @@ public class AdornedProgram  {
 	}
 
 	/**
-	 * Processes a literal of a given adorned rule.</br> This method will frist
+	 * Processes a literal of a given adorned rule.<br/> This method will frist
 	 * determine, whether the predicate of this literal is derived, and if it is
 	 * the predicate will be adorned with the variables passed in from the sip
 	 * of the adorned rule. The predicate of the literal of the adorned rule

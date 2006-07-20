@@ -47,11 +47,11 @@ import org.deri.iris.graph.LabeledDirectedEdge;
 
 /**
  * This is a simple implementation of sip's.
- * </br></br>$Id: SIPImpl.java,v 1.2 2006-07-19 08:55:31 richardpoettler Exp $
+ * <br/><br/>$Id: SIPImpl.java,v 1.3 2006-07-20 09:02:51 richardpoettler Exp $
  * 
  * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-07-19 08:55:31 $
+ * @version $Revision: 1.3 $
+ * @date $Date: 2006-07-20 09:02:51 $
  */
 public class SIPImpl {
 	// TODO: implement hashCode and equals
@@ -71,7 +71,7 @@ public class SIPImpl {
 	private IQuery query = null;
 
 	/**
-	 * Creates a SIP for the given rule with bindings for the given query</br>
+	 * Creates a SIP for the given rule with bindings for the given query<br/>
 	 * NOTE: at the moment only the first literal of the head and the query are
 	 * recognized.
 	 * 
@@ -242,7 +242,7 @@ public class SIPImpl {
 	 * This method finds literals which are connected to the given one. It
 	 * ignores literals already in the graph and literals which would be
 	 * connected, but only though a variables which is equal with one in the
-	 * ignore set.</br>This method returns a map witch the connected literal
+	 * ignore set.<br/>This method returns a map witch the connected literal
 	 * as key, and with all connected variables as values.
 	 * 
 	 * @param l

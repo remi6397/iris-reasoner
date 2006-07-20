@@ -41,7 +41,7 @@ import org.deri.iris.operations.tuple.BasicComparator;
 
 /**
  * This is a simple Relation implementation based on a TreeSet, so no dublicates
- * are allowed.</br></br><b>This implementaion is thread-save.</b>
+ * are allowed.<br/><br/><b>This implementaion is thread-save.</b>
  * 
  * @author richi
  * @author Darko Anicic, DERI Innsbruck

@@ -28,9 +28,9 @@ package org.deri.iris.basics;
 import org.deri.iris.api.basics.IPredicate;
 
 /**
- * This is a simple IPredicate implementation.</br>
+ * This is a simple IPredicate implementation.<br/>
  * <b>NOTE: This implementation is immutable</b>
- * </br></br>$Id$
+ * <br/><br/>$Id$
  * @author richi
  * @version $Revision$
  */

@@ -88,7 +88,7 @@ public class PredicateGraph implements IPredicateGraph {
 
 	/**
 	 * This method returns a &quot;set&quot; of edges which are involved in the
-	 * cycle.</br></br>NOTE: This Set doesn't behave like a &quot;normal
+	 * cycle.<br/><br/>NOTE: This Set doesn't behave like a &quot;normal
 	 * set&quot; in the meaning, that it is possible to store multible equal
 	 * object in this set. This is a problem of the underlying implementation,
 	 * which is using <code>HashSet</code> and doesn't implement the

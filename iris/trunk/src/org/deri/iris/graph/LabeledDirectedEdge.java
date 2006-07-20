@@ -30,11 +30,11 @@ import org._3pq.jgrapht.edge.DirectedEdge;
 // TODO: implement LabeledElement (it doesn't support generics -> do it in jgraphT v0.7)
 
 /**
- * This class represents a simple implementation of a labeled edge.</br></br>
+ * This class represents a simple implementation of a labeled edge.<br/><br/>
  * <b>NOTE: do not use this class outside of this project! We don't know whether
  * to keep this class in the api!</b>
  * 
- * </br></br>$Id$
+ * <br/><br/>$Id$
  * 
  * @author richi
  * @version $Revision$
@@ -121,7 +121,7 @@ public class LabeledDirectedEdge<Type> extends DirectedEdge {
 
 	/**
 	 * Returns a simple string representation of this labeled directed edge.
-	 * </br><b>The subject of the stringrepresentation is to change.</b> </br>An
+	 * <br/><b>The subject of the stringrepresentation is to change.</b> <br/>An
 	 * example String could be: <code>source->(label)->target<code>.
 	 */
 	public String toString() {

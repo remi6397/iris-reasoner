@@ -58,7 +58,7 @@ import org.deri.iris.api.terms.ITerm;
  * the stored tuples. Therefor it creates an index for every column and holds
  * it. The tuples will be indexed every time you add or remove a tuple to or
  * from this relation. Substitutional to that the relation wont have to be
- * sorted if you join on a column, because it is already sorted.</br> <b>This
+ * sorted if you join on a column, because it is already sorted.<br/> <b>This
  * implementaion is thread-save.</b>
  * 
  * @author richi

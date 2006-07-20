@@ -33,7 +33,7 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
 
 /**
- * Simple literal implementation.</br></br>$Id$
+ * Simple literal implementation.<br/><br/>$Id$
  * @author richi
  * @version $Revision$
  */

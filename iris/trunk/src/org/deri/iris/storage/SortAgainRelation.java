@@ -39,9 +39,9 @@ import org.deri.iris.api.storage.IRelation;
 
 /**
  * This is a simple Relation implementation based on a TreeSet, so no dublicates
- * are allowed.</br></br> <b>ATTENTION:</b> Everytime the index with the
+ * are allowed.<br/><br/> <b>ATTENTION:</b> Everytime the index with the
  * sortOn(int) method is changed the whole set will be sorted agein, which is
- * very time consuming.</br></br> <b>This implementaion is thread-save.</b>
+ * very time consuming.<br/><br/> <b>This implementaion is thread-save.</b>
  * 
  * @author richi
  * 
@@ -236,7 +236,7 @@ public class SortAgainRelation implements IRelation<ITuple> {
 
 	/**
 	 * Reorganizes the Tree, so that the Tree is sorted on the <i>index</i>'th
-	 * Term.</br></br>ATTENTION: changing the index is very time consuming.
+	 * Term.<br/><br/>ATTENTION: changing the index is very time consuming.
 	 * 
 	 * @param index
 	 *            of the Term on which to sort

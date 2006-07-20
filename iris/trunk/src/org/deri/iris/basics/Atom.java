@@ -34,7 +34,7 @@ import org.deri.iris.api.terms.ITerm;
 
 /**
  * A simple Atom implementation
- * </br></br>$Id$
+ * <br/><br/>$Id$
  * @author richi
  * @version $Revision$
  * 
