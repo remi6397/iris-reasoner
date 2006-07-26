@@ -1,0 +1,63 @@
+/*
+ * MINS (Mins Is Not Silri) A Prolog Egine based on the Silri  
+ * 
+ * Copyright (C) 1999-2005  Juergen Angele and Stefan Decker
+ *                          University of Innsbruck, Austria  
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+package org.deri.iris.api.terms;
+
+/**
+ * @author Darko Anicic, DERI Innsbruck
+ * @date   14.11.2005 12:09:01
+ */
+
+/*Type of terms: 
+
+	ConstantTerm, 
+	ConstructedTerm,
+	NumericTerm,
+	StringTerm,
+	Variable
+	
+	More types of terms will be added.
+*/
+public interface ITerm<Type extends ITerm, Type0> extends Comparable<Type> {
+	
+	public boolean isGround();
+	
+	//public int compare(ITerm term);
+	
+	//public List<ITerm> getSubTerms();
+	
+	//public List<ITerm> getTerms();
+	
+	//public int getType();
+	
+	public String toString();
+	
+	public boolean equals(Object o);
+	 
+	public int hashCode();
+	
+	public Type getMinValue();
+	
+	public Type0 getValue();
+	
+	public void setValue(Type0 t);
+	
+	public Object clone() throws CloneNotSupportedException;
+}

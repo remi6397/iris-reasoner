@@ -1,0 +1,84 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
+ * 
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
+package org.deri.iris.basics;
+
+import org.deri.iris.ObjectTest;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+/**
+ * @author richi
+ * 
+ */
+public class PredicateTest extends TestCase {
+
+	private static final int ARITY = 3;
+
+	private static final int ARITYMORE = 4;
+
+	private static final String SYMBOL = "date";
+
+	private static final String SYMBOLMORE = "date1";
+
+	public static Test suite() {
+		return new TestSuite(PredicateTest.class, PredicateTest.class
+				.getSimpleName());
+	}
+
+	public void testBasic() {
+		final Predicate REFERENCE = new Predicate(SYMBOL, ARITY);
+		final Predicate MUTABLE = new Predicate(SYMBOL + "1", ARITY);
+		MUTABLE.setPredicateSymbol(SYMBOL);
+		assertEquals("getPredicateSymbol doesn't work properly", SYMBOL,
+				REFERENCE.getPredicateSymbol());
+		assertEquals("getArity doesn't work properly", ARITY, REFERENCE
+				.getArity());
+		assertEquals("setPredicateSymbol doesn't work properly", SYMBOL,
+				MUTABLE.getPredicateSymbol());
+	}
+
+	public void testEquals() {
+		ObjectTest.runTestEquals(new Predicate(SYMBOL, ARITY), new Predicate(
+				SYMBOL, ARITY), new Predicate(SYMBOL, ARITYMORE));
+	}
+
+	public void testHashCode() {
+		ObjectTest.runTestHashCode(new Predicate(SYMBOL, ARITY), new Predicate(
+				SYMBOL, ARITY));
+	}
+
+	public void testClone() {
+		ObjectTest.runTestClone(new Predicate(SYMBOL, ARITY));
+	}
+
+	public void testCompareTo() {
+		ObjectTest.runTestCompareTo(new Predicate(SYMBOL, ARITY),
+				new Predicate(SYMBOL, ARITY), new Predicate(SYMBOL, ARITYMORE),
+				new Predicate(SYMBOLMORE, ARITY));
+	}
+}
