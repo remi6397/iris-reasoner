@@ -32,7 +32,7 @@ import org.deri.iris.api.factory.IRelationFactory;
 import org.deri.iris.api.factory.ITermFactory;
 import org.deri.iris.basics.BasicFactory;
 import org.deri.iris.graph.GraphFactory;
-import org.deri.iris.operations.relations.RelationFactory;
+import org.deri.iris.operations.relations.OperationFactory;
 import org.deri.iris.terms.TermFactory;
 import org.deri.iris.terms.concrete.ConcreteFactory;
 
@@ -45,5 +45,5 @@ public class Factory {
 	public static final ITermFactory TERM = TermFactory.getInstance();
 	public static final IConcreteFactory CONCRETE = ConcreteFactory.getInstance();
 	public static final IGraphFactory GRAPH = GraphFactory.getInstance();
-	public static final IRelationFactory RELATION = RelationFactory.getInstance();
+	public static final IRelationFactory RELATION = OperationFactory.getInstance();
 }

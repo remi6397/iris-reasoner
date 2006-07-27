@@ -38,10 +38,10 @@ import org.deri.iris.api.storage.IRelation;
  * @author Darko Anicic, DERI Innsbruck
  * @date   26.06.2006 14:47:03
  */
-public class RelationFactory implements IRelationFactory{
-	private static final IRelationFactory FACTORY = new RelationFactory();
+public class OperationFactory implements IRelationFactory{
+	private static final IRelationFactory FACTORY = new OperationFactory();
 	
-	private RelationFactory() {
+	private OperationFactory() {
 		// this is a singelton
 	}
 	
