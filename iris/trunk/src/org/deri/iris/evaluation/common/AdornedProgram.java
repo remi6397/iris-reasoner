@@ -47,52 +47,35 @@ import org.deri.iris.evaluation.magic.SIPImpl;
 
 /**
  * This is a simple implementation of an adorned program. <b>NOTE: At the moment
- * this class only works with rules with one literal in the head.</b> <br/><br/>$Id: AdornedProgram.java,v 1.3 2006-07-20 09:02:51 richardpoettler Exp $
+ * this class only works with rules with one literal in the head.</b> </br></br>$Id: AdornedProgram.java,v 1.4 2006-07-27 12:52:44 darko Exp $
  * 
  * @author richi
- * @version $Revision: 1.3 $
- * @date $Date: 2006-07-20 09:02:51 $
+ * @version $Revision: 1.4 $
  */
-public class AdornedProgram  {
+public class AdornedProgram {
 
 	// TODO: make a smaller empty-constant-term
-	/** Dummy constant object */
 	private static final ITerm EMPTY_CONSTANT_TERM = TERM.createConstant(TERM
-			.createString("const"));
+			.createString(""));
 
-	/** Set of all derived predicates */
 	private final Set<IPredicate> deriveredPredicates = new HashSet<IPredicate>();;
 
-	/** Set of all adorned predicates */
 	private final Set<AdornedPredicate> adornedPredicates = new HashSet<AdornedPredicate>();
 
-	/** Set of all adorned rules */
 	private final Set<AdornedRule> adornedRules = new HashSet<AdornedRule>();
 
-	/** Set of all normal rules */
 	private final Set<IRule> rules;
 
-	/** Query for this program */
 	private final IQuery query;
 
-	/**
-	 * Creates a new adorned program depending on the submitted rules and the
-	 * query.
-	 * 
-	 * @param rules
-	 *            for which to create the program
-	 * @param query
-	 *            for the program
-	 * @throws NullPointerException
-	 *             if the rule, or the query are null
-	 * @throws IllegalArgumentException
-	 *             if the size of the head literals, or of the query literals is
-	 *             bigger than 1
-	 */
 	public AdornedProgram(final Set<IRule> rules, final IQuery query) {
+
 		// check the parameters
-		if ((rules == null) || (query == null)) {
-			throw new NullPointerException();
+		if (rules == null) {
+			throw new IllegalArgumentException("The rules must not be null");
+		}
+		if (query == null) {
+			throw new IllegalArgumentException("The query must not be null");
 		}
 		for (IRule r : rules) {
 			if (r.getHeadLiterals().size() > 1) {
@@ -105,7 +88,6 @@ public class AdornedProgram  {
 					+ "queries with one literal supported");
 		}
 
-		// TODO: maybe defensive copy should be made
 		this.rules = rules;
 		this.query = query;
 
@@ -149,27 +131,16 @@ public class AdornedProgram  {
 		}
 	}
 
-	/**
-	 * This returns a simple string representation of this program. <b>The
-	 * subject of this representation is to change.</b> The return of this
-	 * method will look something like:<br/>&lt;list of all adorned rules
-	 * separated by newlines&gt;<br/><code>newline</code><br/>&lt;list of
-	 * all rules separated by newlines&gt;<br/><code>newline</code><br/>&lt;the
-	 * query&gt;
-	 * 
-	 * @return the string representation
-	 */
 	public String toString() {
-		final StringBuilder buffer = new StringBuilder();
-		final String LINESEPERATOR = System.getProperty("line.separator");
+		StringBuilder buffer = new StringBuilder();
 		for (AdornedRule r : adornedRules) {
-			buffer.append(r).append(LINESEPERATOR);
+			buffer.append(r).append("\n");
 		}
-		buffer.append(LINESEPERATOR);
+		buffer.append("\n");
 		for (IRule r : rules) {
-			buffer.append(r).append(LINESEPERATOR);
+			buffer.append(r).append("\n");
 		}
-		buffer.append(LINESEPERATOR);
+		buffer.append("\n");
 		buffer.append(query);
 		return buffer.toString();
 	}
@@ -179,7 +150,9 @@ public class AdornedProgram  {
 		// because all other member variables should then be the same
 		int result = 17;
 		result = result * 37 + query.hashCode();
-		result = result * 37 + rules.hashCode();
+		for (IRule r : rules) {
+			result = result * 37 + r.hashCode();
+		}
 		return result;
 	}
 
@@ -196,48 +169,29 @@ public class AdornedProgram  {
 		return query.equals(ap.query) && (rules.size() == ap.rules.size())
 				&& rules.containsAll(ap.rules);
 	}
-
-	/**
-	 * Return a set of all adorned rules
-	 * 
-	 * @return the set of adorned rules
-	 */
+	
 	public Set<AdornedRule> getAdornedRules() {
 		return Collections.unmodifiableSet(adornedRules);
 	}
-
-	/**
-	 * Returns a set of all adorned predicates of this program.
-	 * 
-	 * @return the set of adorned predicates
-	 */
+	
+	public Set<IRule> getNormalRules() {
+		return Collections.unmodifiableSet(rules);
+	}
+	
 	public Set<AdornedPredicate> getAdornedPredicates() {
 		return Collections.unmodifiableSet(adornedPredicates);
 	}
 
-	/**
-	 * Processes a literal of a given adorned rule.<br/> This method will frist
-	 * determine, whether the predicate of this literal is derived, and if it is
-	 * the predicate will be adorned with the variables passed in from the sip
-	 * of the adorned rule. The predicate of the literal of the adorned rule
-	 * passed in will be replaced by the adorned one. If the predicate was
-	 * derived, the adorned predicate will be returned, otherwise null.
-	 * 
-	 * @param l
-	 *            the literal to process
-	 * @param r
-	 *            the adorned rule containing the literal
-	 * @return the adorned predicate for this literal corresponding to the
-	 *         passed variables of the adorned rule, or null, if the predicate
-	 *         of the literal wasn't derived.
-	 * @throws NullPointerException
-	 *             if the rule, or the literal are null
-	 */
+	public Set<IPredicate> getDerivedPredicates() {
+		return Collections.unmodifiableSet(deriveredPredicates);
+	}
+	
+	public IQuery getQuery() {
+		return query;
+	}
+	
 	private AdornedPredicate processLiteral(final ILiteral l,
 			final AdornedRule r) {
-		if ((r == null) || l == null) {
-			throw new NullPointerException();
-		}
 		AdornedPredicate ap = null;
 		if (deriveredPredicates.contains(l.getPredicate())) {
 			ap = new AdornedPredicate(l, r.getSIP().getBoundVariables(l));
@@ -246,62 +200,20 @@ public class AdornedProgram  {
 		return ap;
 	}
 
-	/**
-	 * Determines, whether the signature of two predicates matches. Therefore it
-	 * will compare the arities and the symbold of the predicates.
-	 * 
-	 * @param p0
-	 *            the first predicate to compare
-	 * @param p1
-	 *            the second predicate to compare
-	 * @return true if the signature (arity and symbol) of the predicates
-	 *         matches, otherwise false
-	 */
 	private static boolean hasSameSignature(final IPredicate p0,
 			final IPredicate p1) {
-		if ((p0 == null) || (p1 == null)) {
-			throw new NullPointerException();
-		}
 		return p0.getPredicateSymbol().equals(p1.getPredicateSymbol())
 				&& (p0.getArity() == p1.getArity());
 	}
 
-	/**
-	 * Determines all derived predicates of the program and adds them to the
-	 * derivedPredicates set.
-	 */
 	private void updateDerivedPredicates() {
 		for (IRule r : rules) {
 			deriveredPredicates.add(r.getHeadLiteral(0).getPredicate());
 		}
 	}
 
-	/**
-	 * Creates a query out of an adored predicate and a literal. Therefore it
-	 * creates a literal with the specified arity, and puts constant terms for
-	 * the position of the bound's and the variables of the literals for the
-	 * free's in the terms.
-	 * 
-	 * @param ap
-	 *            the adored predivate from where to take the bound's and free's
-	 * @param hl
-	 *            the literal for which to create the query
-	 * @return the query
-	 * @throws NullPointerException
-	 *             if the literal or the adored predicate are null
-	 * @throws IllegalArgumentException
-	 *             if the arity of the predicate of the literal and the adored
-	 *             predicate desn't match
-	 */
 	private static IQuery createQueryForAP(final AdornedPredicate ap,
 			final ILiteral hl) {
-		if ((hl == null) || (ap == null)) {
-			throw new NullPointerException();
-		}
-		if (hl.getPredicate().getArity() != ap.getArity()) {
-			throw new IllegalArgumentException("The arity of the predicate of "
-					+ "the literal and the adorned predicate must match");
-		}
 		ITerm[] terms = new ITerm[ap.getArity()];
 		int iCounter = 0;
 		for (Adornment a : ap.getAdornment()) {
@@ -310,16 +222,16 @@ public class AdornedProgram  {
 					terms[iCounter] = EMPTY_CONSTANT_TERM;
 					break;
 				case FREE:
-					terms[iCounter] = hl.getTerm(iCounter);
+					terms[iCounter] = hl.getTuple().getTerm(iCounter);
 					break;
 				default:
-					assert true : "only BOUND and FREE are supported";
 					break;
 			}
 			iCounter++;
 		}
 		return BASIC.createQuery(BASIC
-				.createLiteral(hl.isPositive(), ap, terms));
+				.createLiteral(hl.isPositive(), ap, 
+						BASIC.createTuple(terms)));
 	}
 
 	public static class AdornedPredicate implements IPredicate, AdornedElement {
@@ -331,42 +243,34 @@ public class AdornedProgram  {
 
 		public AdornedPredicate(final String symbol, final int arity,
 				final Adornment[] adornment) {
-			if ((adornment == null) || (symbol == null)) {
-				throw new NullPointerException();
-			}
-			if (adornment.length != arity) {
+			if (adornment == null) {
 				throw new IllegalArgumentException(
-						"The length of the adornment "
-								+ "and the arity of the predicate doesn't match.");
+						"The adornment must not be null");
 			}
 			this.p = BASIC.createPredicate(symbol, arity);
-			this.adornment = new Adornment[adornment.length];
-			System.arraycopy(adornment, 0, this.adornment, 0, adornment.length);
-
-			// prechecking the adornmetns
-			for (Adornment a : this.adornment) {
-				if (a == null) {
-					throw new IllegalArgumentException("The adornment array "
-							+ "was corrupted (contained null).");
-				}
-			}
-
+			// TODO: maybe a defensive copy should be made
+			this.adornment = adornment;
 		}
 
 		public AdornedPredicate(final ILiteral l, final Set<IVariable> bounds) {
-			// TODO: maybe a defensive copy should be made
-			p = l.getPredicate();
+			int iCoutner = 0;
 
 			// checking the arguments
-			if ((p == null) || (bounds == null)) {
-				throw new NullPointerException();
+			if (l == null) {
+				throw new IllegalArgumentException(
+						"The literal must not be null");
+			}
+			if (bounds == null) {
+				throw new IllegalArgumentException("The bound variables"
+						+ " must not be null");
 			}
 
-			int iCoutner = 0;
+			// TODO: maybe a defensive copy should be made
+			p = l.getPredicate();
 			adornment = new Adornment[p.getArity()];
 
 			// computing the adornment
-			for (Object t : l.getTerms()) {
+			for (Object t : l.getTuple().getTerms()) {
 				if (bounds.contains(t)) {
 					adornment[iCoutner] = Adornment.BOUND;
 				} else {
@@ -377,20 +281,24 @@ public class AdornedProgram  {
 		}
 
 		public AdornedPredicate(final IQuery q) {
-			// TODO: maybe a defensive copy should be made
-			final ILiteral literal = q.getQueryLiteral(0);
-			this.p = literal.getPredicate();
+			final ILiteral literal;
+			int iCounter = 0;
 
 			// checking the submitted values
-			if (p == null) {
-				throw new NullPointerException();
+			if (q == null) {
+				throw new IllegalArgumentException("The query must not be null");
+			}
+			if ((literal = q.getQueryLiteral(0)) == null) {
+				throw new IllegalArgumentException("There must be at least one"
+						+ " literal in the query");
 			}
 
-			int iCounter = 0;
+			// TODO: maybe a defensive copy should be made
+			this.p = literal.getPredicate();
 
 			// computing the adornment
 			adornment = new Adornment[p.getArity()];
-			for (Object t : literal.getTerms()) {
+			for (Object t : literal.getTuple().getTerms()) {
 				if (t instanceof IVariable) {
 					adornment[iCounter] = Adornment.FREE;
 				} else {
@@ -431,7 +339,9 @@ public class AdornedProgram  {
 		public int hashCode() {
 			int result = 17;
 			result = result * 37 + p.hashCode();
-			result = result * 37 + Arrays.hashCode(adornment);
+			for (Adornment a : adornment) {
+				result = result * 37 + a.hashCode();
+			}
 			return result;
 		}
 
@@ -498,14 +408,14 @@ public class AdornedProgram  {
 
 		public void replaceHeadLiteral(final int pos, final IPredicate p) {
 			ILiteral l = getHeadLiteral(pos);
-			headReplacements.put(pos, BASIC.createLiteral(l.isPositive(), p, l
-					.getTerms()));
+			headReplacements.put(pos, BASIC.createLiteral(l.isPositive(), p, 
+					BASIC.createTuple(l.getTuple().getTerms())));
 		}
 
 		public void replaceBodyLiteral(final int pos, final IPredicate p) {
 			ILiteral l = getBodyLiteral(pos);
-			bodyReplacements.put(pos, BASIC.createLiteral(l.isPositive(), p, l
-					.getTerms()));
+			bodyReplacements.put(pos, BASIC.createLiteral(l.isPositive(), p, 
+					BASIC.createTuple(l.getTuple().getTerms())));
 		}
 
 		public String toString() {
@@ -519,7 +429,7 @@ public class AdornedProgram  {
 			}
 			return buffer.substring(0, buffer.length() - 1);
 		}
-
+		
 		public boolean isBuiltIn() {
 			return originalRule.isBuiltIn();
 		}

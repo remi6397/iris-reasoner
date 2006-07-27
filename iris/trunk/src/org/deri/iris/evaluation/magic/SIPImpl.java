@@ -25,7 +25,6 @@
  */
 package org.deri.iris.evaluation.magic;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,12 +45,10 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.graph.LabeledDirectedEdge;
 
 /**
- * This is a simple implementation of sip's.
- * <br/><br/>$Id: SIPImpl.java,v 1.3 2006-07-20 09:02:51 richardpoettler Exp $
+ * $Id: SIPImpl.java,v 1.4 2006-07-27 12:52:44 darko Exp $
  * 
  * @author richi
- * @version $Revision: 1.3 $
- * @date $Date: 2006-07-20 09:02:51 $
+ * @version $Revision: 1.4 $
  */
 public class SIPImpl {
 	// TODO: implement hashCode and equals
@@ -59,9 +56,7 @@ public class SIPImpl {
 	/** The graph on which the variables are padded along */
 	private DirectedGraph sipGraph = new SimpleDirectedGraph();
 
-	/**
-	 * A map for all the possible substitutions (at the moment not used)
-	 */
+	/** A map for all the possible substitutions (at the moment not really in use) */
 	private Map<IVariable, Set<ITerm>> substitutions = new HashMap<IVariable, Set<ITerm>>();
 
 	/** The rule which is represented by this sip */
@@ -71,7 +66,7 @@ public class SIPImpl {
 	private IQuery query = null;
 
 	/**
-	 * Creates a SIP for the given rule with bindings for the given query<br/>
+	 * Creates a SIP for the given rule with bindings for the given query</br>
 	 * NOTE: at the moment only the first literal of the head and the query are
 	 * recognized.
 	 * 
@@ -79,20 +74,8 @@ public class SIPImpl {
 	 *            the rule for which to construct the graph
 	 * @param q
 	 *            the query for this rule
-	 * @throws NullPointerException
-	 *             if the rule or the query is null
-	 * @throws IllegalArgumentException
-	 *             if the symbol and the arity of the head of the rule and the
-	 *             query doesn't match
 	 */
 	public SIPImpl(final IRule r, final IQuery q) {
-		if ((r == null) || (q == null)) {
-			throw new NullPointerException();
-		}
-
-		rule = r;
-		query = q;
-
 		Set<IVariable> assumedKnown = new HashSet<IVariable>();
 		Set<ILiteral> literalsToDo = new HashSet<ILiteral>();
 		ILiteral actualLiteral = null;
@@ -115,16 +98,19 @@ public class SIPImpl {
 					+ "head and the query predicates must be the same");
 		}
 
+		rule = r;
+		query = q;
+
 		// registring the variables
 		for (ILiteral l : r.getHeadLiterals()) {
-			for (Object t : l.getTerms()) {
+			for (Object t : l.getTuple().getTerms()) {
 				if ((t instanceof IVariable) && (!substitutions.containsKey(t))) {
 					substitutions.put((IVariable) t, new HashSet<ITerm>());
 				}
 			}
 		}
 		for (ILiteral l : r.getBodyLiterals()) {
-			for (Object t : l.getTerms()) {
+			for (Object t : l.getTuple().getTerms()) {
 				if ((t instanceof IVariable) && (!substitutions.containsKey(t))) {
 					substitutions.put((IVariable) t, new HashSet<ITerm>());
 				}
@@ -132,8 +118,8 @@ public class SIPImpl {
 		}
 
 		// binding the first variable submitted by the query
-		Iterator ruleTerms = headLiteral.getTerms().iterator();
-		Iterator queryTerms = queryLiteral.getTerms().iterator();
+		Iterator ruleTerms = headLiteral.getTuple().getTerms().iterator();
+		Iterator queryTerms = queryLiteral.getTuple().getTerms().iterator();
 		while (ruleTerms.hasNext() && queryTerms.hasNext()) {
 			Object ruleT = ruleTerms.next();
 			Object queryT = queryTerms.next();
@@ -143,9 +129,6 @@ public class SIPImpl {
 			}
 		}
 
-		// adding all literals to the graph
-		sipGraph.addAllVertices(rule.getBodyLiterals());
-
 		// doint the first step -> putting in the head
 		literalsToDo.addAll(jumpFromHeadLiteral(headLiteral));
 
@@ -153,12 +136,16 @@ public class SIPImpl {
 			actualLiteral = literalsToDo.iterator().next();
 			literalsToDo.remove(actualLiteral);
 
+			// adding the actualLiteral to the sipGraph
+			sipGraph.addVertex(actualLiteral);
+
 			// searching for connected literals to the actualLiteral
 			Map<ILiteral, Set<IVariable>> connectedLiterals = getConnectedLiterals(
 					actualLiteral, assumedKnown);
 
 			for (ILiteral l : connectedLiterals.keySet()) {
 				// adding the vertex and the edge with the label to the sipGraph
+				sipGraph.addVertex(l);
 				sipGraph.addEdge(new LabeledDirectedEdge<Set<IVariable>>(
 						actualLiteral, l, connectedLiterals.get(l)));
 				// updating the variabled assumed to be know and the literals to
@@ -167,6 +154,7 @@ public class SIPImpl {
 				literalsToDo.add(l);
 			}
 		}
+		// FIXME: add unconnected literals
 	}
 
 	/**
@@ -194,8 +182,8 @@ public class SIPImpl {
 		// substitutions
 		// determining the unbound variables -> ignore them when searching for
 		// connected literals
-		Iterator<ITerm> headTerms = hl.getTerms().iterator();
-		Iterator<ITerm> queryTerms = query.getQueryLiteral(0).getTerms()
+		Iterator<ITerm> headTerms = hl.getTuple().getTerms().iterator();
+		Iterator<ITerm> queryTerms = query.getQueryLiteral(0).getTuple().getTerms()
 				.iterator();
 		while (headTerms.hasNext() && queryTerms.hasNext()) {
 			ITerm qt = queryTerms.next();
@@ -208,31 +196,20 @@ public class SIPImpl {
 		Map<ILiteral, Set<IVariable>> connected = getConnectedLiterals(hl,
 				unbound);
 		for (ILiteral l : connected.keySet()) {
+			sipGraph.addVertex(l);
 			sipGraph.addEdge(new LabeledDirectedEdge<Set<IVariable>>(hl, l,
 					connected.get(l)));
 		}
 		return connected.keySet();
 	}
 
-	/**
-	 * Determines all variables, wich are passed to this literal.
-	 * 
-	 * @param l
-	 *            the literal for which to determine the variables
-	 * @return the set of variables
-	 * @throws if
-	 *             the literal is null
-	 */
 	public Set<IVariable> getBoundVariables(final ILiteral l) {
-		if (l == null) {
-			throw new NullPointerException();
-		}
 		Set<IVariable> variables = new HashSet<IVariable>();
 		List predecessors = GraphHelper.predecessorListOf(sipGraph, l);
 		for (Object o : predecessors) {
 			for (Object e : sipGraph.getAllEdges(o, l)) {
-				variables.addAll(((LabeledDirectedEdge<Set<IVariable>>) e)
-						.getLabel());
+				LabeledDirectedEdge<Set<IVariable>> edge = (LabeledDirectedEdge<Set<IVariable>>) e;
+				variables.addAll(edge.getLabel());
 			}
 		}
 		return variables;
@@ -242,43 +219,30 @@ public class SIPImpl {
 	 * This method finds literals which are connected to the given one. It
 	 * ignores literals already in the graph and literals which would be
 	 * connected, but only though a variables which is equal with one in the
-	 * ignore set.<br/>This method returns a map witch the connected literal
+	 * ignore set.</br>This method returns a map witch the connected literal
 	 * as key, and with all connected variables as values.
 	 * 
 	 * @param l
 	 *            the literal for which to check for connections
 	 * @param ignore
-	 *            a set of variables to ignore. If ignore is null, it will be
-	 *            handeled as a empty set.
+	 *            a set of variables to ignore
 	 * @return the result map
-	 * @throws NullPointerException
-	 *             if the literal is null
 	 */
 	private Map<ILiteral, Set<IVariable>> getConnectedLiterals(
 			final ILiteral l, final Set<IVariable> ignore) {
-		final Set<IVariable> toIgnore;
-		final Map<ILiteral, Set<IVariable>> connectedLiterals = new HashMap<ILiteral, Set<IVariable>>();
-		final Set<IVariable> freeVariables = new HashSet<IVariable>();
-
-		if (l == null) {
-			throw new NullPointerException();
-		}
-		if (ignore == null) {
-			toIgnore = Collections.EMPTY_SET;
-		} else {
-			toIgnore = ignore;
-		}
-
+		// TODO: should this really be a map?
+		Map<ILiteral, Set<IVariable>> connectedLiterals = new HashMap<ILiteral, Set<IVariable>>();
 		// searching for variables which are assumed not to be bound
-		for (Object o : l.getTerms()) {
-			if ((o instanceof IVariable) && (!toIgnore.contains(o))) {
+		Set<IVariable> freeVariables = new HashSet<IVariable>();
+		for (Object o : l.getTuple().getTerms()) {
+			if ((o instanceof IVariable) && (!ignore.contains(o))) {
 				freeVariables.add((IVariable) o);
 			}
 		}
 		// searching for connected literals
 		for (ILiteral bodyL : rule.getBodyLiterals()) {
 			if (!sipGraph.containsVertex(bodyL)) {
-				for (Object o : bodyL.getTerms()) {
+				for (Object o : bodyL.getTuple().getTerms()) {
 					if (freeVariables.contains(o)) {
 						if (connectedLiterals.containsKey(bodyL)) {
 							connectedLiterals.get(bodyL).add((IVariable) o);
@@ -294,46 +258,10 @@ public class SIPImpl {
 		return connectedLiterals;
 	}
 
-	/**
-	 * Searches for literals on which the submitted literal depends.
-	 * 
-	 * @param l
-	 *            the literal for which to search for dependencies
-	 * @return the set of literal on which the submitted literal depends
-	 * @throws NullPointerException
-	 *             if the literal is null
-	 */
-	public Set<ILiteral> getDepends(final ILiteral l) {
-		final Set<ILiteral> dependencies = new HashSet<ILiteral>();
-		final Set<ILiteral> todoDependencies = new HashSet<ILiteral>();
-		if (l == null) {
-			throw new NullPointerException();
-		}
-
-		todoDependencies.add(l);
-		while (!todoDependencies.isEmpty()) {
-			ILiteral actual = todoDependencies.iterator().next();
-			todoDependencies.remove(actual);
-
-			List vertices = GraphHelper.predecessorListOf(sipGraph, actual);
-			dependencies.addAll(vertices);
-			todoDependencies.addAll(vertices);
-		}
-
-		return dependencies;
-	}
-
-	/**
-	 * Returns a simple string representation of this graph. <b>The subject of
-	 * the returned string is to change.</b> The returned string may be a list
-	 * of all edges of this graph separated by newlines.
-	 * @return the string representation
-	 */
 	public String toString() {
-		final String NEWLINE = System.getProperty("line.separator");
 		StringBuilder buffer = new StringBuilder();
 		for (Object o : sipGraph.edgeSet()) {
-			buffer.append(o).append(NEWLINE);
+			buffer.append(o).append("\n");
 		}
 		return buffer.toString();
 	}
