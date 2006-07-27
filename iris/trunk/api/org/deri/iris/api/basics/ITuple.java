@@ -35,7 +35,7 @@ import org.deri.iris.api.terms.ITerm;
 * @date   07.12.2005 08:45:24
 */
 
-public interface ITuple {
+public interface ITuple<Type extends ITuple> extends Comparable<Type>{
 
 	public int getArity();
 	
@@ -47,11 +47,30 @@ public interface ITuple {
 	
 	/**
 	 * Inserts all of the elements in the specified collection into this 
-	 * list at the specified position. Shifts 
-	 * the element currently at that position (if any) and any subsequent 
-	 * elements to the right (increases their indices). The new elements 
+	 * list (starting from 0th position). The new elements 
 	 * will appear in this list in the order that they are returned by 
 	 * the specified collection's iterator. This method is thread-save.
+	 * 
+	 * @param terms
+	 * 				- elements to be inserted into this list.
+	 * @return true 
+	 * 				if this list changed as a result of the call.
+	 */
+	public boolean setTerms(List<ITerm> terms);
+	
+	/**
+	 * Inserts all of the elements in the specified collection into this 
+	 * list at the specified position. Shifts 
+	 * the element currently at that position (if any) and any subsequent 
+	 * elements to the right.
+	 * Replaces the element currently at that position (if any) and any 
+	 * subsequent elements to the right. It does not increases their indices. 
+	 * Thus an IndexOutOfBoundsException exception will be thrown if size of
+	 * a term list exceeds the number of available positions, which is: 
+	 * 'tuple arity' - index.  
+	 * The new elements will appear in this list in the order that they are 
+	 * returned by the specified collection's iterator. This method is 
+	 * thread-save.
 	 * 
 	 * @param index
 	 * 				- index at which to insert first element from 
@@ -63,18 +82,19 @@ public interface ITuple {
 	 */
 	public boolean setTerms(int index, List<ITerm> terms);
 	
-	public boolean equals(Object o);
+	public boolean isGround();
 	
-	public String toString();
-	
-	//public boolean isGround();
-	
-	//public void print(PrintStream p);
-	
-	//public int hashCode();
-	
-	// Correct it!
+	/**
+	 * Tuples t0 and t1 are duplicates if they have identical terms  
+	 * for each sort index. Used in operations on relations 
+	 * (e.g. for tuple sorting – IndexComparator) to increase the 
+	 * efficiency of the operations.
+	 * 
+	 * @param duplicate
+	 * 					a tuple that will be stored in a list of 
+	 * 					duplicates for the entire tuple.  
+	 */
 	public void setDuplicate(ITuple duplicate);
-	// Correct it!
+	
 	public ITuple getDuplicate();
 }
