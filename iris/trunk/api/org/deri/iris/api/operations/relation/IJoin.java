@@ -30,7 +30,7 @@ import org.deri.iris.api.storage.IRelation;
 
 /**
  * Interface of a join operation used to promote modularity 
- * of inference engines.
+ * of the inference engine.
  * 
  * Note: Implementation of the IJoin interface assumes an 
  * implementation of this interface itself and an implementation of 
@@ -39,7 +39,7 @@ import org.deri.iris.api.storage.IRelation;
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:09:02
  *
- * @version $Revision: 1.6 $ $Date: 2006-07-18 09:30:23 $
+ * @version $Revision: 1.7 $ $Date: 2006-07-27 12:42:26 $
  * @param <JoinCondition>
  */
 public interface IJoin {

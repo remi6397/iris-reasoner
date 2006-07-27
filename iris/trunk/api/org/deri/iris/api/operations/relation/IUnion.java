@@ -24,12 +24,13 @@ import org.deri.iris.api.storage.IRelation;
 /**
  * Interface or class description
  *
- * Interface of a union relation used to promote modularity of inference engines.
+ * Interface of a union relation used to promote modularity 
+ * of the inference engine.
  *
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:29:27
  *
- * @version $Revision: 1.1 $ $Date: 2006-05-23 13:14:19 $
+ * @version $Revision: 1.2 $ $Date: 2006-07-27 12:42:26 $
  */
 public interface IUnion {
 

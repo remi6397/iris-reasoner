@@ -25,12 +25,13 @@ import org.deri.iris.api.basics.ITuple;
 /**
  * Interface or class description
  *
- * Interface of a matching operation used to promote modularity of inference engines.
+ * Interface of a matching operation used to promote modularity 
+ * of the inference engine.
  * 
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:51:27
  *
- * @version $Revision: 1.1 $ $Date: 2006-05-23 13:10:14 $
+ * @version $Revision: 1.2 $ $Date: 2006-07-27 12:42:44 $
  */
 public interface IMatching {
 

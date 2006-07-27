@@ -24,12 +24,13 @@ import org.deri.iris.api.basics.ITuple;
 /**
  * Interface or class description
  *
- * Interface of a concatenation operation used to promote modularity of inference engines.
+ * Interface of a concatenation operation used to promote modularity 
+ * of the inference engine.
  * 
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:45:10
  *
- * @version $Revision: 1.3 $ $Date: 2006-06-28 08:15:12 $
+ * @version $Revision: 1.4 $ $Date: 2006-07-27 12:42:44 $
  */
 public interface IConcatenation {
 

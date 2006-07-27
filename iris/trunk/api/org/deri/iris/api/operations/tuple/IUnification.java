@@ -26,12 +26,13 @@ import org.deri.iris.api.operations.basics.IUnificationSet;
 /**
  * Interface or class description
  *
- * Interface of a unification operation used to promote modularity of inference engines.
+ * Interface of a unification operation used to promote modularity 
+ * of the inference engine.
  * 
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:54:09
  *
- * @version $Revision: 1.2 $ $Date: 2006-05-23 13:14:40 $
+ * @version $Revision: 1.3 $ $Date: 2006-07-27 12:42:44 $
  */
 public interface IUnification {
 
