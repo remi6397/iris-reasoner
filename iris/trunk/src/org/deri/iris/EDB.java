@@ -35,6 +35,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.deri.iris.api.IEDB;
 import org.deri.iris.api.basics.IAtom;
@@ -50,6 +52,9 @@ import org.deri.iris.storage.Relation;
 import org.deri.iris.terms.ConstructedTerm;
 
 /**
+ * This is an implementation of the IEDB interface.
+ * <br/><br/><b>This implementaion is thread-save.</b>
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   26.07.2006 16:53:36
  */
@@ -61,16 +66,51 @@ public class EDB implements IEDB{
 	
 	private Set<IRule> rules;
 	
+	/** The Lock to make this set threadsafe */
+	private final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
+
+	/** The read lock */
+	private final Lock READ = LOCK.readLock();
+
+	/** The write lock */
+	private final Lock WRITE = LOCK.writeLock();
 	
+	
+	/**
+	 * Creates an empty extensional database (knowledge base) 
+	 * ready to be filled up with facts, rules and queries.
+	 */
+	EDB() {
+		WRITE.lock();
+			this.rules = new HashSet<IRule>();
+			this.queries = new HashSet<IQuery>();
+		WRITE.unlock();
+	}
+	
+	/**
+	 * Creates an extensional database (knowledge base) with 
+	 * predefined facts, rules and queries. This EDB can also
+	 * be modified later (e.g. to add/remove facts, rules and 
+	 * queries).
+	 * 
+	 * @param f
+	 * 			a set of ground atoms (facts) to be added into the EDB.
+	 * @param r
+	 * 			a set of rules to be added into the EDB.
+	 * @param q
+	 * 			a set of queries to be added into the EDB.
+	 */
 	EDB(final Set<IAtom> f, final Set<IRule> r, final Set<IQuery> q) {
 		if ((f == null) || (r == null) || (q == null)) {
 			throw new NullPointerException("Input parameters must not be null");
 		}
-		for (IAtom a : f) {
-			addFact(a);
-		}
-		this.rules = r;
-		this.queries = q;
+		WRITE.lock();
+			for (IAtom a : f) {
+				addFact(a);
+			}
+			this.rules = r;
+			this.queries = q;
+		WRITE.unlock();
 	}
 
 	/** ***************************** */
@@ -78,6 +118,12 @@ public class EDB implements IEDB{
 	/* (handling facts)    */
 	/** ***************************** */
 	
+	/* (non-Javadoc)
+	 * @see org.deri.iris.api.IEDB#addFact(org.deri.iris.api.basics.IAtom)
+	 * Note: 
+	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
+	 * 		so this method is thread-save.  
+	 */
 	public boolean addFact(IAtom a) {
 		if(!a.isGround()){
 			throw new IllegalArgumentException("The input parameter: " + 
@@ -92,6 +138,12 @@ public class EDB implements IEDB{
 		return rel.add(a.getTuple());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.deri.iris.api.IEDB#addFacts(java.util.Set)
+	 * Note: 
+	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
+	 * 		so this method is thread-save.
+	 */
 	public boolean addFacts(Set<IAtom> facts) {
 		boolean bReturn = false;
 		for (IAtom f : facts) {
@@ -102,6 +154,12 @@ public class EDB implements IEDB{
 		return bReturn;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.deri.iris.api.IEDB#removeFact(org.deri.iris.api.basics.IAtom)
+	 * Note: 
+	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
+	 * 		so this method is thread-save.
+	 */
 	public boolean removeFact(IAtom a) {
 		if(!a.isGround()){
 			throw new IllegalArgumentException("The input parameter: " + 
@@ -117,6 +175,12 @@ public class EDB implements IEDB{
 		return bChanged;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.deri.iris.api.IEDB#removeFacts(java.util.Set)
+	 * Note: 
+	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
+	 * 		so this method is thread-save.
+	 */
 	public boolean removeFacts(Set<IAtom> f) {
 		boolean bChanged = false;
 		for (IAtom a : f) {
@@ -127,6 +191,12 @@ public class EDB implements IEDB{
 		return bChanged;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.deri.iris.api.IEDB#hasFact(org.deri.iris.api.basics.IAtom)
+	 * Note: 
+	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
+	 * 		so this method is thread-save.
+	 */
 	public boolean hasFact(IAtom a) {
 		if(!a.isGround()){
 			throw new IllegalArgumentException("The input parameter: " + 
@@ -135,10 +205,22 @@ public class EDB implements IEDB{
 		return this.facts.get(a.getPredicate()).contains(a.getTuple());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.deri.iris.api.IEDB#hasFacts(org.deri.iris.api.basics.IPredicate)
+	 * Note: 
+	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
+	 * 		so this method is thread-save.
+	 */
 	public boolean hasFacts(IPredicate p) {
 		return facts.keySet().contains(p);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.deri.iris.api.IEDB#hasFacts(org.deri.iris.api.basics.IPredicate, java.util.Set)
+	 * Note: 
+	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
+	 * 		so this method is thread-save.
+	 */
 	public boolean hasFacts(IPredicate p, Set<ITuple> filter) {
 		return (getNumberOfFacts(p, filter) > 0);
 	}
@@ -147,10 +229,22 @@ public class EDB implements IEDB{
 		return Collections.unmodifiableSet(facts.keySet());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.deri.iris.api.IEDB#getNumberOfFacts(org.deri.iris.api.basics.IPredicate)
+	 * Note: 
+	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
+	 * 		so this method is thread-save.
+	 */
 	public int getNumberOfFacts(IPredicate predicate) {
 		return getFacts(predicate).size();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.deri.iris.api.IEDB#getNumberOfFacts(org.deri.iris.api.basics.IPredicate, java.util.Set)
+	 * Note: 
+	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
+	 * 		so this method is thread-save.
+	 */
 	public int getNumberOfFacts(IPredicate p, Set<ITuple> filter) {
 		int result = 0;
 		for (ITuple t : filter) {
@@ -160,10 +254,22 @@ public class EDB implements IEDB{
 		return result;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.deri.iris.api.IEDB#getFacts(org.deri.iris.api.basics.IPredicate)
+	 * Note: 
+	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
+	 * 		so this method is thread-save.
+	 */
 	public Set<IAtom> getFacts(IPredicate p) {
 		return Collections.unmodifiableSet(creatAtomSetfor(p, facts.get(p)));
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.deri.iris.api.IEDB#getFacts()
+	 * Note: 
+	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
+	 * 		so this method is thread-save.
+	 */
 	public Set<IAtom> getFacts() {
 		Set<IAtom> atoms = new HashSet<IAtom>();
 		for (IPredicate p : facts.keySet()) {
@@ -172,10 +278,22 @@ public class EDB implements IEDB{
 		return Collections.unmodifiableSet(atoms);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.deri.iris.api.IEDB#isEmpty()
+	 * Note: 
+	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
+	 * 		so this method is thread-save.
+	 */
 	public boolean isEmpty() {
 		return facts.isEmpty();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.deri.iris.api.IEDB#existsTerm(org.deri.iris.api.terms.ITerm)
+	 * Note: 
+	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
+	 * 		so this method is thread-save.
+	 */
 	public boolean existsTerm(ITerm t) {
 		for (IPredicate p : facts.keySet()) {
 			for (ITuple tup : facts.get(p)) {
@@ -198,15 +316,20 @@ public class EDB implements IEDB{
 	 * @throws NullPointerException
 	 *             if the predicate of the set are null
 	 */
-	private static Set<IAtom> creatAtomSetfor(final IPredicate p,
+	private Set<IAtom> creatAtomSetfor(final IPredicate p,
 			Collection<ITuple> tuple) {
 		if ((p == null) || (tuple == null)) {
 			throw new NullPointerException();
 		}
 		Set<IAtom> atoms = new HashSet<IAtom>();
-		for (ITuple t : tuple) {
-			atoms.add(BASIC.createAtom(p, 
-						BASIC.createTuple(t.getTerms())));
+		WRITE.lock();
+		try {
+			for (ITuple t : tuple) {
+				atoms.add(BASIC.createAtom(p, 
+							BASIC.createTuple(t.getTerms())));
+			}
+		} finally {
+			WRITE.unlock();
 		}
 		return atoms;
 	}
@@ -220,7 +343,12 @@ public class EDB implements IEDB{
 			throw new NullPointerException(
 					"The input parameter must not be null");
 		}
-		return this.rules.add(r);
+		WRITE.lock();
+		try {
+			return this.rules.add(r);
+		} finally {
+			WRITE.unlock();
+		}
 	}
 	
 	public boolean removeRule(IRule r){
@@ -228,11 +356,21 @@ public class EDB implements IEDB{
 			throw new NullPointerException(
 					"The input parameter must not be null");
 		}
-		return this.rules.remove(r);
+		WRITE.lock();
+		try {
+			return this.rules.remove(r);
+		} finally {
+			WRITE.unlock();
+		}
 	}
 	
 	public Set<IRule> getRules() {
-		return Collections.unmodifiableSet(rules);
+		READ.lock();
+		try {
+			return Collections.unmodifiableSet(rules);
+		} finally {
+			READ.unlock();
+		}
 	}
 	
 	public boolean isStratified() {
@@ -241,38 +379,53 @@ public class EDB implements IEDB{
 	}
 	
 	public boolean hasNegation() {
-		for (IRule r : rules) {
-			for (ILiteral l : r.getBodyLiterals()) {
-				if (!l.isPositive()) {
-					return true;
+		READ.lock();
+		try {
+			for (IRule r : rules) {
+				for (ILiteral l : r.getBodyLiterals()) {
+					if (!l.isPositive()) {
+						return true;
+					}
 				}
 			}
+			return false;
+		} finally {
+			READ.unlock();
 		}
-		return false;
 	}
 	
 	public boolean hasConstructedTerms() {
-		for (IRule r : rules) {
-			for (ILiteral l : r.getBodyLiterals()) {
-				for (Object t : l.getTuple().getTerms()) {
-					if (t instanceof ConstructedTerm) {
-						return true;
+		READ.lock();
+		try {
+			for (IRule r : rules) {
+				for (ILiteral l : r.getBodyLiterals()) {
+					for (Object t : l.getTuple().getTerms()) {
+						if (t instanceof ConstructedTerm) {
+							return true;
+						}
+					}
+				}
+				for (ILiteral l : r.getHeadLiterals()) {
+					for (Object t : l.getTuple().getTerms()) {
+						if (t instanceof ConstructedTerm) {
+							return true;
+						}
 					}
 				}
 			}
-			for (ILiteral l : r.getHeadLiterals()) {
-				for (Object t : l.getTuple().getTerms()) {
-					if (t instanceof ConstructedTerm) {
-						return true;
-					}
-				}
-			}
+			return false;
+		} finally {
+			READ.unlock();
 		}
-		return false;
 	}
 	
 	public int ruleCount() {
-		return rules.size();
+		READ.lock();
+		try {
+			return rules.size();
+		} finally {
+			READ.unlock();
+		}
 	}
 	
 	
@@ -285,11 +438,21 @@ public class EDB implements IEDB{
 			throw new NullPointerException(
 					"The input parameter must not be null");
 		}
-		return this.queries.add(q);
+		WRITE.lock();
+		try {
+			return this.queries.add(q);
+		} finally {
+			WRITE.unlock();
+		}
 	}
 
 	public Iterator queryIterator() throws DataNotFoundException {
-		return this.queries.iterator();
+		READ.lock();
+		try {
+			return this.queries.iterator();
+		} finally {
+			READ.unlock();
+		}
 	}
 	
 	public boolean removeQuery(IQuery q) {
@@ -297,7 +460,12 @@ public class EDB implements IEDB{
 			throw new NullPointerException(
 					"The input parameter must not be null");
 		}
-		return this.queries.remove(q);
+		WRITE.lock();
+		try {
+			return this.queries.remove(q);
+		} finally {
+			WRITE.unlock();
+		}
 	}
 
 }
