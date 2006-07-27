@@ -39,8 +39,6 @@ public interface ITerm<Type extends ITerm, Type0> extends Comparable<Type> {
 	
 	public boolean isGround();
 	
-	//public int compare(ITerm term);
-	
 	//public List<ITerm> getSubTerms();
 	
 	//public List<ITerm> getTerms();
