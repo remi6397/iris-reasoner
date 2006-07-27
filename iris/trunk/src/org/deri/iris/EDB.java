@@ -35,11 +35,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.deri.iris.api.IEDB;
-import org.deri.iris.api.IProgram.EvaluationMethod;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
@@ -58,16 +55,7 @@ import org.deri.iris.terms.ConstructedTerm;
  */
 public class EDB implements IEDB{
 
-	/**
-	 * Correct it! This is not valid for all evaluation methods 
-	 * (relevant to computation of adorned rules).
-	 */
-	/*private UnsupportedOperationException SHOULD_BE_IMMUTABLE = 
-		new UnsupportedOperationException("Only new Facts should be added/removed");*/
-
 	private Map<IPredicate, IRelation<ITuple>> facts = new HashMap<IPredicate, IRelation<ITuple>>();
-	
-	//private IQuery query;
 	
 	private Set<IQuery> queries;
 	
