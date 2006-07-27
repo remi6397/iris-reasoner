@@ -25,11 +25,9 @@
  */
 package org.deri.iris.basics;
 
-import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.GRAPH;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.deri.iris.api.basics.IAtom;
@@ -60,13 +58,9 @@ public class BasicFactory implements IBasicFactory {
 	public IAtom createAtom(IPredicate p) {
 		return new Atom(p);
 	}
-
-	public IAtom createAtom(IPredicate p, ITerm... terms) {
-		return createAtom(p, Arrays.asList(terms));
-	}
-
-	public IAtom createAtom(IPredicate p, List<ITerm> terms) {
-		return new Atom(p, terms);
+	
+	public IAtom createAtom(IPredicate p, ITuple tuple) {
+		return new Atom(p, tuple);
 	}
 
 	public IBody createBody(ILiteral... literals) {
@@ -99,13 +93,8 @@ public class BasicFactory implements IBasicFactory {
 	}
 
 	public ILiteral createLiteral(boolean positive, IPredicate p,
-			ITerm... terms) {
-		return createLiteral(positive, p, Arrays.asList(terms));
-	}
-
-	public ILiteral createLiteral(boolean positive, IPredicate p,
-			List<ITerm> terms) {
-		return createLiteral(positive, createAtom(p, terms));
+			ITuple tuple) {
+		return createLiteral(positive, createAtom(p, tuple));
 	}
 
 	public ITuple createMinimalTuple(ITerm... terms) {
@@ -134,20 +123,14 @@ public class BasicFactory implements IBasicFactory {
 		return r;
 	}
 
+	public ITuple createTuple(int arity) {
+		return new Tuple(arity);
+	}
+	
 	public ITuple createTuple(ITerm... terms) {
-		/*
-		Check whether a term can becreated as null. If no then:
-		
-		List<ITerm> termList = new LinkedList<ITerm>();
-		for (ITerm term : terms) {
-			if(term != null) termList.add(term);
-		}
-		return createTuple(termList);
-		
-		Otherwise:	*/
 		return createTuple(Arrays.asList(terms));
 	}
-
+	
 	public ITuple createTuple(List<ITerm> terms) {
 		return new Tuple(terms);
 	}

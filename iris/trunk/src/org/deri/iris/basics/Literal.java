@@ -25,17 +25,16 @@
  */
 package org.deri.iris.basics;
 
-import java.util.List;
-
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.basics.ITuple;
 
 /**
  * Simple literal implementation.<br/><br/>$Id$
  * @author richi
- * @version $Revision$
+ * 
+ * Revision 1.1  26.07.2006 09:23:14  Darko Anicic, DERI Innsbruck
  */
 public class Literal implements ILiteral<ILiteral> {
 
@@ -64,36 +63,20 @@ public class Literal implements ILiteral<ILiteral> {
 		return atom.getPredicate();
 	}
 
-	public void setTerms(List<ITerm> terms) {
-		atom.setTerms(terms);
+	public ITuple getTuple() {
+		return this.atom.getTuple();
 	}
 
-	public List<ITerm> getTerms() {
-		return atom.getTerms();
+	public IAtom getAtom() {
+		return atom;
 	}
-
-	public void setTerm(ITerm term, int arg) {
-		atom.setTerm(term, arg);
-	}
-
-	public ITerm getTerm(int arg) {
-		return atom.getTerm(arg);
-	}
-
+	
 	public boolean isGround() {
 		return atom.isGround();
 	}
 
 	public boolean isInCycle() {
 		return atom.isInCycle();
-	}
-
-	public boolean isKnown() {
-		return atom.isKnown();
-	}
-
-	public IAtom getAtom() {
-		return atom;
 	}
 
 	public int compareTo(final ILiteral o) {
@@ -120,10 +103,15 @@ public class Literal implements ILiteral<ILiteral> {
 			return false;
 		}
 		Literal l = (Literal) o;
+		
+		boolean b1 = atom.equals(l.atom);
+		boolean b2 = positive == l.positive;
+		
 		return atom.equals(l.atom) && (positive == l.positive);
 	}
 
 	public String toString() {
 		return (positive ? "" : "-") + atom;
 	}
+
 }

@@ -25,77 +25,58 @@
  */
 package org.deri.iris.basics;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.deri.iris.factory.Factory.BASIC;
 
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.basics.ITuple;
 
 /**
  * A simple Atom implementation
  * <br/><br/>$Id$
  * @author richi
- * @version $Revision$
+ * @author Darko Anicic, DERI Innsbruck
  * 
+ * @version $Revision$
  */
 public class Atom implements IAtom<IAtom> {
 
-	private List<ITerm> terms;
-
 	private final IPredicate predicate;
+	
+	private final ITuple tuple;;
 
 	Atom(final IPredicate predicate) {
 		if (predicate == null) {
 			throw new IllegalArgumentException("The predicate must not be null");
 		}
 		this.predicate = predicate;
-		terms = new ArrayList<ITerm>(predicate.getArity());
+		this.tuple = BASIC.createTuple(predicate.getArity());
 	}
 	
-	Atom(final IPredicate predicate, final List<ITerm> terms) {
-		this(predicate);
-		setTerms(terms);
+	@SuppressWarnings("unchecked") 
+	Atom(final IPredicate predicate, final ITuple tuple) {
+		if (predicate == null || tuple == null) {
+			throw new IllegalArgumentException("The parameters must not be null");
+		}
+		if (predicate.getArity() != tuple.getArity()) {
+			throw new IllegalArgumentException("Cannot create an atom when" +
+					" a tuple's arity does not match the predicate’s arity.");
+		}
+		this.predicate = predicate;
+		this.tuple = tuple;
 	}
 
 	public IPredicate getPredicate() {
 		return predicate;
 	}
-
-	public void setTerms(List terms) {
-		if (terms.size() != predicate.getArity()) {
-			throw new IllegalArgumentException(
-					"The number of submitted terms ("
-							+ terms.size()
-							+ ") doesn't match the arity of the arity of the predicate ("
-							+ predicate.getArity() + ")");
-		}
-		this.terms = terms;
+	
+	public ITuple getTuple() {
+		return this.tuple;
 	}
 
-	public List<ITerm> getTerms() {
-		return terms;
-	}
-
-	public void setTerm(ITerm term, int arg) {
-		if (arg >= predicate.getArity()) {
-			throw new IllegalArgumentException("Can't set a more terms (" + arg
-					+ ") than the arity of the arity of the predicate ("
-					+ predicate.getArity() + ")");
-		}
-		if (arg >= terms.size()) {
-			terms.add(arg, term);
-		}
-		terms.set(arg, term);
-	}
-
-	public ITerm getTerm(int arg) {
-		return terms.get(arg);
-	}
-
+	@SuppressWarnings("unchecked")
 	public boolean isGround() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.tuple.isGround();
 	}
 
 	public boolean isInCycle() {
@@ -103,36 +84,23 @@ public class Atom implements IAtom<IAtom> {
 		return false;
 	}
 
-	public boolean isKnown() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	@SuppressWarnings("unchecked")
 	public int compareTo(IAtom o) {
 		int res = 0;
-		int minsize = 0;
 		if ((res = predicate.compareTo(o.getPredicate())) != 0) {
 			return res;
 		}
-
-		minsize = Math.min(terms.size(), o.getTerms().size());
-		for (int iCounter = 0; iCounter < minsize; iCounter++) {
-			if ((res = terms.get(iCounter).compareTo(o.getTerm(iCounter))) != 0) {
-				return res;
-			}
+		if ((res = this.tuple.compareTo(o.getTuple())) != 0) {
+			return res;
 		}
-
-		return terms.size() - o.getTerms().size();
+		return 0;
 	}
 
 	public int hashCode() {
 		int result = 17;
-		result = result * 37 + predicate.hashCode();
-		for (ITerm t : terms) {
-			if (t != null) {
-				result = result * 37 + t.hashCode();
-			}
-		}
+		result = result * 37 + this.predicate.hashCode();
+		result = result * 37 + this.tuple.hashCode();
+		
 		return result;
 	}
 
@@ -143,20 +111,18 @@ public class Atom implements IAtom<IAtom> {
 		if (!(o instanceof Atom)) {
 			return false;
 		}
-
 		Atom a = (Atom) o;
-		return (predicate.equals(a.predicate)) && terms.equals(a.terms);
+		boolean b = this.tuple.equals(a.getTuple());
+		
+		return (this.predicate.equals(a.predicate)) && 
+				this.tuple.equals(a.getTuple());
 	}
 
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		buffer.append(predicate).append("(");
-		for (ITerm t : terms) {
-			buffer.append(t).append(", ");
-		}
-		if (terms.size() <= 0) {
-			return buffer.append(")").toString();
-		}
-		return buffer.substring(0, buffer.length() - 2) + ")";
+		buffer.append(this.predicate);
+		buffer.append(this.tuple);
+		
+		return buffer.toString();
 	}
 }

@@ -45,8 +45,7 @@ import org.deri.iris.api.terms.ITerm;
 public interface IBasicFactory {
 
 	public IAtom createAtom(IPredicate p);
-	public IAtom createAtom(IPredicate p, ITerm... terms);
-	public IAtom createAtom(IPredicate p, List<ITerm> terms);
+	public IAtom createAtom(IPredicate p, ITuple tuple);
 
 	public IBody createBody(ILiteral... literals);
 	public IBody createBody(List<ILiteral> literals);
@@ -58,9 +57,7 @@ public interface IBasicFactory {
 	public ILiteral createLiteral(boolean isPositive, IBuiltInAtom builtinAtom);
 	public ILiteral createLiteral(boolean isPositive, IPredicate predicate);
 	public ILiteral createLiteral(boolean isPositive, IPredicate predicate,
-			ITerm... terms);
-	public ILiteral createLiteral(boolean isPositive, IPredicate predicate,
-			List<ITerm> terms);
+			ITuple tuple);
 
 	public ITuple createMinimalTuple(ITerm... terms);
 	public ITuple createMinimalTuple(List<ITerm> terms);
@@ -72,6 +69,7 @@ public interface IBasicFactory {
 
 	public IRule createRule(IHead head, IBody body);
 
+	public ITuple createTuple(int arity);
 	public ITuple createTuple(ITerm... terms);
 	public ITuple createTuple(List<ITerm> terms);
 }

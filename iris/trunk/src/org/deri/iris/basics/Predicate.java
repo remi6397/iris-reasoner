@@ -49,7 +49,7 @@ public class Predicate implements IPredicate, Cloneable {
 	}
 
 	/**
-	 * In this implementation the changing of the symbol is not supported
+	 * In this implementation the change of the symbol is not supported
 	 * @throws UnsupportedOperationException because it should be immutable
 	 */
 	public void setPredicateSymbol(final String symbol) {

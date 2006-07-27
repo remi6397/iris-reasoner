@@ -59,7 +59,7 @@ public class Head implements IHead {
 	public List<IVariable> getHeadVariables() {
 		List<IVariable> vars = new ArrayList<IVariable>();
 		for (ILiteral l : literals) {
-			for (Object o : l.getTerms()) {
+			for (Object o : l.getTuple().getTerms()) {
 				if (o instanceof IVariable) {
 					vars.add((IVariable) o);
 				}
