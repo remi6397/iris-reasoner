@@ -27,6 +27,7 @@
 package org.deri.iris.terms.concrete;
 
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
+import org.deri.iris.basics.Tuple;
 
 /**
  * 

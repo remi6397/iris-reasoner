@@ -38,6 +38,7 @@ import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.evaluation.common.AdornedProgram;
 
 /**
  * @author richi
@@ -51,46 +52,72 @@ public class SimpleTest {
 	}
 	
 	private static void test1(){
+		System.out.println("*** TEST 1 ******");
+		
 		Set<IRule> rules = new HashSet<IRule>();
 
 		// computing head: first rule
-		ILiteral lh = BASIC.createLiteral(true, BASIC.createPredicate("sg", 2),
-				TERM.createVariable("X"), TERM.createVariable("Y"));
+		ILiteral lh = BASIC.createLiteral(true, 
+						BASIC.createPredicate("sg", 2),
+						BASIC.createTuple(
+							TERM.createVariable("X"), 
+							TERM.createVariable("Y")));
 		IHead head = BASIC.createHead(lh);
 		// computing body: first rule
-		ILiteral lb = BASIC.createLiteral(true, BASIC
-				.createPredicate("flat", 2), TERM.createVariable("X"), TERM
-				.createVariable("Y"));
+		ILiteral lb = BASIC.createLiteral(true, 
+						BASIC.createPredicate("flat", 2), 
+						BASIC.createTuple(
+								TERM.createVariable("X"), 
+								TERM.createVariable("Y")));
 		IBody body = BASIC.createBody(lb);
 
 		rules.add(BASIC.createRule(head, body));
 
 		// computing head: second rule
-		lh = BASIC.createLiteral(true, BASIC.createPredicate("sg", 2), TERM
-				.createVariable("X"), TERM.createVariable("Y"));
+		lh = BASIC.createLiteral(true, BASIC.createPredicate("sg", 2), 
+				BASIC.createTuple(
+						TERM.createVariable("X"), 
+						TERM.createVariable("Y")));
 		head = BASIC.createHead(lh);
 		// computing body: first rule
 		List<ILiteral> bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(BASIC.createLiteral(true, BASIC.createPredicate("up",
-				2), TERM.createVariable("X"), TERM.createVariable("Z1")));
-		bodyLiterals.add(BASIC.createLiteral(true, BASIC.createPredicate("sg",
-				2), TERM.createVariable("Z1"), TERM.createVariable("Z2")));
-		bodyLiterals.add(BASIC.createLiteral(true, BASIC.createPredicate(
-				"flat", 2), TERM.createVariable("Z2"), TERM
-				.createVariable("Z3")));
-		bodyLiterals.add(BASIC.createLiteral(true, BASIC.createPredicate("sg",
-				2), TERM.createVariable("Z3"), TERM.createVariable("Z4")));
-		bodyLiterals.add(BASIC
-				.createLiteral(true, BASIC.createPredicate("down", 2), TERM
-						.createVariable("Z4"), TERM.createVariable("Y")));
+		bodyLiterals.add(BASIC.createLiteral(true, 
+							BASIC.createPredicate("up",2), 
+							BASIC.createTuple(
+								TERM.createVariable("X"), 
+								TERM.createVariable("Z1"))));
+		bodyLiterals.add(BASIC.createLiteral(true, 
+						BASIC.createPredicate("sg",2),
+						BASIC.createTuple(
+								TERM.createVariable("Z1"), 
+								TERM.createVariable("Z2"))));
+		bodyLiterals.add(BASIC.createLiteral(true, 
+						BASIC.createPredicate("flat", 2),
+						BASIC.createTuple(
+							TERM.createVariable("Z2"), 
+							TERM.createVariable("Z3"))));
+		bodyLiterals.add(BASIC.createLiteral(true, 
+				BASIC.createPredicate("sg",2), 
+				BASIC.createTuple(
+						TERM.createVariable("Z3"), 
+						TERM.createVariable("Z4"))));
+		bodyLiterals.add(BASIC.createLiteral(true, 
+				BASIC.createPredicate("down", 2), 
+				BASIC.createTuple(
+						TERM.createVariable("Z4"), 
+						TERM.createVariable("Y"))));
 
 		body = BASIC.createBody(bodyLiterals);
 
 		rules.add(BASIC.createRule(head, body));
 
-		IQuery query = BASIC.createQuery(BASIC.createLiteral(true, BASIC
-				.createPredicate("sg", 2), TERM.createConstant(TERM
-				.createString("john")), TERM.createVariable("X")));
+		IQuery query = BASIC.createQuery(
+				BASIC.createLiteral(true, 
+						BASIC.createPredicate("sg", 2), 
+						BASIC.createTuple(
+								TERM.createConstant(
+										TERM.createString("john")), 
+										TERM.createVariable("X"))));
 
 		System.out.println("*** input: ******");
 		for (IRule r : rules) {
@@ -112,16 +139,16 @@ public class SimpleTest {
 		// computing head: first rule
 		ILiteral lh = BASIC.createLiteral(true, 
 				BASIC.createPredicate("rsg", 2),
-				
+				BASIC.createTuple(
 						TERM.createVariable("X"), 
-						TERM.createVariable("Y"));
+						TERM.createVariable("Y")));
 		IHead head = BASIC.createHead(lh);
 		// computing body: first rule
 		ILiteral lb = BASIC.createLiteral(true, 
 						BASIC.createPredicate("flat", 2), 
-						
+						BASIC.createTuple(
 								TERM.createVariable("X"), 
-								TERM.createVariable("Y"));
+								TERM.createVariable("Y")));
 		IBody body = BASIC.createBody(lb);
 
 		rules.add(BASIC.createRule(head, body));
@@ -129,27 +156,27 @@ public class SimpleTest {
 		// computing head: second rule
 		lh = BASIC.createLiteral(true, 
 				BASIC.createPredicate("rsg", 2), 
-				
+				BASIC.createTuple(
 						TERM.createVariable("X"), 
-						TERM.createVariable("Y"));
+						TERM.createVariable("Y")));
 		head = BASIC.createHead(lh);
 		// computing body: first rule
 		List<ILiteral> bodyLiterals = new ArrayList<ILiteral>();
 		bodyLiterals.add(BASIC.createLiteral(true, 
 							BASIC.createPredicate("up",2), 
-							
+							BASIC.createTuple(
 									TERM.createVariable("X"), 
-									TERM.createVariable("X1")));
+									TERM.createVariable("X1"))));
 		bodyLiterals.add(BASIC.createLiteral(true, 
 							BASIC.createPredicate("rsg",2), 
-							
+							BASIC.createTuple(
 									TERM.createVariable("Y1"), 
-									TERM.createVariable("X1")));
+									TERM.createVariable("X1"))));
 		bodyLiterals.add(BASIC.createLiteral(true, 
 							BASIC.createPredicate("down", 2), 
-							
+							BASIC.createTuple(
 									TERM.createVariable("Y1"), 
-									TERM.createVariable("Y")));
+									TERM.createVariable("Y"))));
 
 		body = BASIC.createBody(bodyLiterals);
 
@@ -158,10 +185,10 @@ public class SimpleTest {
 		IQuery query = BASIC.createQuery(
 							BASIC.createLiteral(true, 
 									BASIC.createPredicate("rsg", 2), 
-									
+									BASIC.createTuple(
 											TERM.createConstant(
 													TERM.createString("a")), 
-													TERM.createVariable("Y")));
+													TERM.createVariable("Y"))));
 
 		System.out.println("*** input: ******");
 		for (IRule r : rules) {

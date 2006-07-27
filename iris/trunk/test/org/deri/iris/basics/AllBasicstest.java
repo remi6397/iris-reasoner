@@ -32,11 +32,13 @@ import junit.framework.TestSuite;
 /**
  * @author richi
  * 
+ * Revision 1.1  26.07.2006 09:16:56  Darko Anicic, DERI Innsbruck
  */
 public class AllBasicstest extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllBasicstest.class.getSimpleName());
 		suite.addTest(PredicateTest.suite());
+		suite.addTest(TupleTest.suite());
 		suite.addTest(AtomTest.suite());
 		suite.addTest(LiteralTest.suite());
 		suite.addTest(HeadTest.suite());

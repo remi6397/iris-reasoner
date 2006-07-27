@@ -44,6 +44,8 @@ import org.deri.iris.api.terms.ITerm;
 /**
  * @author richi
  * 
+ * Revision 1.1  26.07.2006 09:11:56  Darko Anicic, DERI Innsbruck
+ * 
  */
 public class BodyTest extends TestCase {
 
@@ -60,20 +62,20 @@ public class BodyTest extends TestCase {
 
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
 				"sin", 1));
-		literal.setTerm(CONCRETE.createInteger(1), 0);
+		literal.getTuple().setTerm(0, CONCRETE.createInteger(1));
 		tempLiterals.add(literal);
 		tempLiteralsUnequ.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
-		literal.setTerm(TERM.createVariable("X"), 0);
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
 		tempLiterals.add(literal);
 		tempLiteralsUnequ.add(literal);
-		tempVariables.add(literal.getTerm(0));
+		tempVariables.add(literal.getTuple().getTerm(0));
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
-		literal.setTerm(CONCRETE.createInteger(2005), 0);
-		literal.setTerm(CONCRETE.createInteger(12), 1);
-		literal.setTerm(CONCRETE.createInteger(24), 2);
+		literal.getTuple().setTerm(0, CONCRETE.createInteger(2005));
+		literal.getTuple().setTerm(1, CONCRETE.createInteger(12));
+		literal.getTuple().setTerm(2, CONCRETE.createInteger(24));
 		tempLiterals.add(literal);
 
 		LITERALS = Collections.unmodifiableList(tempLiterals);

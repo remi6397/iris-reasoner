@@ -42,6 +42,7 @@ import org.deri.iris.api.basics.ILiteral;
 /**
  * @author richi
  * 
+ * Revision 1.1  26.07.2006 11:52:46  Darko Anicic, DERI Innsbruck
  */
 public class QueryTest extends TestCase {
 
@@ -54,17 +55,17 @@ public class QueryTest extends TestCase {
 
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
 				"sin", 1));
-		literal.setTerm(CONCRETE.createInteger(1), 0);
+		literal.getTuple().setTerm(0, CONCRETE.createInteger(1));
 		tempLiterals.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
-		literal.setTerm(TERM.createVariable("X"), 0);
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
 		tempLiterals.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
-		literal.setTerm(TERM.createVariable("J"), 0);
-		literal.setTerm(TERM.createVariable("K"), 1);
-		literal.setTerm(TERM.createVariable("L"), 2);
+		literal.getTuple().setTerm(0, TERM.createVariable("J"));
+		literal.getTuple().setTerm(1, TERM.createVariable("K"));
+		literal.getTuple().setTerm(2, TERM.createVariable("L"));
 		tempLiterals.add(literal);
 
 		BODY = new Body(tempLiterals);
@@ -72,17 +73,17 @@ public class QueryTest extends TestCase {
 		tempLiterals = new ArrayList<ILiteral>();
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("sin", 1));
-		literal.setTerm(CONCRETE.createInteger(1), 0);
+		literal.getTuple().setTerm(0, CONCRETE.createInteger(1));
 		tempLiterals.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
-		literal.setTerm(TERM.createVariable("X"), 0);
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
 		tempLiterals.add(literal);
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
-		literal.setTerm(TERM.createVariable("J"), 0);
-		literal.setTerm(TERM.createVariable("Q"), 1);
-		literal.setTerm(TERM.createVariable("L"), 2);
+		literal.getTuple().setTerm(0, TERM.createVariable("J"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Q"));
+		literal.getTuple().setTerm(2, TERM.createVariable("L"));
 		tempLiterals.add(literal);
 
 		BODYMORE = new Body(tempLiterals);

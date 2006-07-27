@@ -44,6 +44,8 @@ import org.deri.iris.api.terms.ITerm;
 /**
  * @author richi
  * 
+ * Revision 1.1  24.07.2006 15:16:56  Darko Anicic, DERI Innsbruck
+ * 
  */
 public class AtomTest extends TestCase {
 
@@ -55,6 +57,10 @@ public class AtomTest extends TestCase {
 
 	private static final List<ITerm> TERMSMORE;
 
+	private static final Tuple TUPLE;
+	
+	private static final Tuple TUPLEMORE;
+	
 	private static final IPredicate PREDICATE = BASIC.createPredicate(SYMBOL,
 			ARITY);
 
@@ -67,12 +73,15 @@ public class AtomTest extends TestCase {
 		temp.add(TERM.createString("b"));
 		temp.add(TERM.createString("c"));
 		TERMS = Collections.unmodifiableList(temp);
+		TUPLE = new Tuple(TERMS);
+		
 
 		temp = new ArrayList<ITerm>(ARITY);
 		temp.add(TERM.createString("a"));
 		temp.add(TERM.createString("b"));
 		temp.add(TERM.createString("d"));
 		TERMSMORE = Collections.unmodifiableList(temp);
+		TUPLEMORE = new Tuple(TERMSMORE);
 	}
 
 	public static Test suite() {
@@ -80,7 +89,7 @@ public class AtomTest extends TestCase {
 	}
 
 	public void testBasic() {
-		Atom REFERENCE = new Atom(PREDICATE, TERMS);
+		Atom REFERENCE = new Atom(PREDICATE, TUPLE);
 		Atom MUTABLE = new Atom(PREDICATE);
 		boolean rightExceptionThrown = false;
 		List<ITerm> tooManyTerms = new ArrayList<ITerm>(ARITY + 1);
@@ -89,13 +98,13 @@ public class AtomTest extends TestCase {
 		tooManyTerms.add(TERM.createString("c"));
 		tooManyTerms.add(TERM.createString("d"));
 
-		MUTABLE.setTerm(TERM.createString("a"), 0);
-		MUTABLE.setTerm(TERM.createString("b"), 1);
-		MUTABLE.setTerm(TERM.createString("c"), 2);
+		MUTABLE.getTuple().setTerm(0, TERM.createString("a"));
+		MUTABLE.getTuple().setTerm(1, TERM.createString("b"));
+		MUTABLE.getTuple().setTerm(2, TERM.createString("c"));
 
 		try {
-			MUTABLE.setTerm(TERM.createString("d"), 3);
-		} catch (IllegalArgumentException e) {
+			MUTABLE.getTuple().setTerm(3, TERM.createString("d"));
+		} catch (IndexOutOfBoundsException e) {
 			rightExceptionThrown = true;
 		} finally {
 			if (!rightExceptionThrown) {
@@ -106,8 +115,8 @@ public class AtomTest extends TestCase {
 		}
 
 		try {
-			MUTABLE.setTerms(tooManyTerms);
-		} catch (IllegalArgumentException e) {
+			MUTABLE.getTuple().setTerms(tooManyTerms);
+		} catch (IndexOutOfBoundsException e) {
 			rightExceptionThrown = true;
 		} finally {
 			if (!rightExceptionThrown) {
@@ -117,7 +126,7 @@ public class AtomTest extends TestCase {
 			}
 		}
 
-		MUTABLE.setTerms(TERMS);
+		MUTABLE.getTuple().setTerms(TERMS);
 
 		assertEquals("getPredicate doesn't work properly", PREDICATE, REFERENCE
 				.getPredicate());
@@ -125,30 +134,30 @@ public class AtomTest extends TestCase {
 				.getPredicate());
 		for (int iCounter = 0; iCounter < TERMS.size(); iCounter++) {
 			assertEquals("getTerm doesn't work properly", TERMS.get(iCounter),
-					REFERENCE.getTerm(iCounter));
+					REFERENCE.getTuple().getTerm(iCounter));
 		}
 		for (int iCounter = 0; iCounter < TERMS.size(); iCounter++) {
 			assertEquals("getTerm doesn't work properly", TERMS.get(iCounter),
-					MUTABLE.getTerm(iCounter));
+					MUTABLE.getTuple().getTerm(iCounter));
 		}
 		assertEquals("The two objects should be equal", REFERENCE, MUTABLE);
 
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Atom(PREDICATE, TERMS), new Atom(
-				PREDICATE, TERMS), new Atom(PREDICATE, TERMSMORE));
+		ObjectTest.runTestEquals(new Atom(PREDICATE, TUPLE), new Atom(
+				PREDICATE, TUPLE), new Atom(PREDICATE, TUPLEMORE));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Atom(PREDICATE, TERMS), new Atom(
-				PREDICATE, TERMS));
+		ObjectTest.runTestHashCode(new Atom(PREDICATE, TUPLE), new Atom(
+				PREDICATE, TUPLE));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new Atom(PREDICATE, TERMS), new Atom(
-				PREDICATE, TERMS), new Atom(PREDICATE, TERMSMORE), new Atom(
-				PREDICATEMORE, TERMS));
+		ObjectTest.runTestCompareTo(new Atom(PREDICATE, TUPLE), new Atom(
+				PREDICATE, TUPLE), new Atom(PREDICATE, TUPLEMORE), new Atom(
+				PREDICATEMORE, TUPLE));
 	}
 
 }
