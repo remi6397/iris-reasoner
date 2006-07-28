@@ -25,60 +25,67 @@
  */
 package org.deri.iris.compiler;
 
-import org.deri.mins.*;
+import org.deri.iris.api.*;
+import org.deri.iris.api.basics.*;
 
 /**
  * Interface or class description
  *
  * <pre>
  * Created on 16.11.2005
- * Committed by $Author: darko $
+ * Committed by $Author: franciscogarcia $
  * $Source: /tmp/iris-cvsbackup/iris/parser/org/deri/iris/compiler/Parser.java,v $,
  * </pre>
  *
- * @author Holger Lausen
+ * @author Francisco Garcia
  *
- * @version $Revision: 1.2 $ $Date: 2006-07-19 10:22:29 $
+ * @version $Revision: 1.3 $ $Date: 2006-07-28 10:08:43 $
  */
 public interface Parser {
 
     /**
      * This method compiles a RuleSet from a given test input according 
      * to the following grammar:
-     *      expr         = {rule} predicate t_impliedby conjunction t_dot |
-     {fact} predicate t_dot |
-     {query} t_query conjunction t_dot;
-     
-     conjunction  = {body} body |
-     conjunction t_and body;
-     
-     body         = {negated} t_not predicate |
-     predicate;
-     
-     predicate    = id paramlist?;
-     
-     id           = t_alpha t_alphanum*;
-     
-     paramlist    = t_lpar termlist? t_rpar;
-     
-     termlist     = {term} term |
-     termlist t_comma term;
-     
-     term         = id paramlist? | //constant or fsymbol
-     {var} t_variable;
+     *      
+    program      = expr* ;
+    
+    expr         = {rule} rule |
+                   {fact} fact |
+                   {query} query;
+    
+    rule 		= predicate t_impliedby body t_dot;
+    
+    fact 		= predicate t_dot;
+    
+    query		= t_query body t_dot;
+    
+    body	 	= literal |
+                  {and} body t_and literal |
+                  {comma} body t_comma literal;
+    
+    literal     = {negated} t_not predicate |
+                   predicate;
+                
+    predicate    = t_id paramlist?;
+    
+
+    paramlist    = t_lpar termlist? t_rpar;
+
+    termlist     = {term} term |
+                   termlist t_comma term;
+                   
+    term         = {function} t_id paramlist |
+                   {var} t_variable |
+                   {constant} t_id; // constant
      
      * @param reader Reader containing a String adhering to above grammar
      * @param rs non null RuleSet that programm gets inserted
      * @throws Exception
      */
-    public void compileKB(String kb, RuleSet rs) throws Exception;
+    public void compileKB(String kb, IEDB p) throws Exception;
 
-    public void setSymbolMap(SymbolMap sm);
+    public IRule compileRule(String rule) throws Exception;
 
-    public SymbolMap getSymbolMap();
-
-    public Rule compileRule(String rule) throws Exception;
-
-    public Fact compileFact(String fact) throws Exception;
+    public IAtom compileFact(String fact) throws Exception;
 
 }

@@ -23,30 +23,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.factory;
+package org.deri.iris;
 
-import org.deri.iris.api.factory.IBasicFactory;
-import org.deri.iris.api.factory.IConcreteFactory;
-import org.deri.iris.api.factory.IGraphFactory;
-import org.deri.iris.api.factory.IRelationFactory;
-import org.deri.iris.api.factory.ITermFactory;
 import org.deri.iris.api.factory.IProgramFactory;
-import org.deri.iris.basics.BasicFactory;
-import org.deri.iris.graph.GraphFactory;
-import org.deri.iris.operations.relations.OperationFactory;
-import org.deri.iris.terms.TermFactory;
-import org.deri.iris.terms.concrete.ConcreteFactory;
-import org.deri.iris.ProgramFactory;
+import org.deri.iris.api.IEDB;
 
 /**
- * @author richi
- * @author Darko Anicic, DERI Innsbruck
+ * @author Francisco Garcia
+ *
  */
-public class Factory {
-	public static final IBasicFactory BASIC = BasicFactory.getInstance();
-	public static final ITermFactory TERM = TermFactory.getInstance();
-	public static final IConcreteFactory CONCRETE = ConcreteFactory.getInstance();
-	public static final IGraphFactory GRAPH = GraphFactory.getInstance();
-	public static final IRelationFactory RELATION = OperationFactory.getInstance();
-	public static final IProgramFactory PROGRAM = ProgramFactory.getInstance();
+public class ProgramFactory implements IProgramFactory {
+	private static final IProgramFactory FACTORY = new ProgramFactory();
+	
+	private ProgramFactory() {
+		// this is a singelton
+	}
+	
+	public IEDB createEDB()
+	{
+		return new EDB();
+	}
+
+	public static IProgramFactory getInstance() {
+		return FACTORY;
+	}
+
 }

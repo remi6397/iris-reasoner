@@ -32,51 +32,36 @@ import org.deri.iris.parser.lexer.LexerException;
 import org.deri.iris.parser.node.Node;
 import org.deri.iris.parser.parser.Parser;
 import org.deri.iris.parser.parser.ParserException;
-import org.deri.mins.*;
+import org.deri.iris.api.*;
+import org.deri.iris.api.basics.*;
 
 /**
  * Interface or class description
  *
  * <pre>
  * Created on 14.11.2005
- * Committed by $Author: darko $
+ * Committed by $Author: franciscogarcia $
  * $Source: /tmp/iris-cvsbackup/iris/parser/org/deri/iris/compiler/ParserImpl.java,v $,
  * </pre>
  *
- * @author Holger Lausen
+ * @author Francisco Garcia
  *
- * @version $Revision: 1.2 $ $Date: 2006-07-19 10:22:29 $
+ * @version $Revision: 1.3 $ $Date: 2006-07-28 10:08:43 $
  */
 public class ParserImpl implements org.deri.iris.compiler.Parser {
      
-    public SymbolMap sm = new SymbolMap();
-    
     /* (non-Javadoc)
      * @see org.deri.iris.compiler.Parser#compileKB(java.lang.StringBuffer, org.deri.mins.RuleSet)
      */
-    public void compileKB(String kb, RuleSet rs) throws Exception {
-        generateParseTree(kb).apply(new TreeWalker(rs, sm));
+    public void compileKB(String kb, IEDB p) throws Exception {
+        generateParseTree(kb).apply(new TreeWalker(p));
     }
     
-    /* (non-Javadoc)
-     * @see org.deri.iris.compiler.Parser#setSymbolMap(org.deri.iris.compiler.SymbolMap)
-     */
-    public void setSymbolMap(SymbolMap sm){
-        this.sm = sm;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.deri.iris.compiler.Parser#getSymbolMap()
-     */
-    public SymbolMap getSymbolMap(){
-        return sm;
-    }
- 
     /* (non-Javadoc)
      * @see org.deri.iris.compiler.Parser#compileRule(java.lang.String)
      */
-    public Rule compileRule(String rule) throws Exception{
-        TreeWalker tw = new TreeWalker(null,sm);
+    public IRule compileRule(String rule) throws Exception{
+        TreeWalker tw = new TreeWalker(null);
         generateParseTree(rule).apply(tw);
         return tw.getLastRule();
     }
@@ -84,8 +69,8 @@ public class ParserImpl implements org.deri.iris.compiler.Parser {
     /* (non-Javadoc)
      * @see org.deri.iris.compiler.Parser#compileFact(java.lang.String)
      */
-    public Fact compileFact(String fact) throws Exception{
-        TreeWalker tw = new TreeWalker(null,sm);
+    public IAtom compileFact(String fact) throws Exception{
+        TreeWalker tw = new TreeWalker(null);
         generateParseTree(fact).apply(tw);
         return tw.getLastFact();
     }

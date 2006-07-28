@@ -1,4 +1,4 @@
-Package org.deri.mins.parser;
+Package org.deri.iris.parser;
 
 /************************************************************
  * Helpers                                                  *
@@ -41,6 +41,7 @@ Tokens
     t_variable = '?' letter+;
     t_query = '?-';
     t_id = letter+ | quoted_id;
+    t_const = quoted_id;
     
 
 /************************************************************
@@ -57,15 +58,21 @@ Ignored Tokens
 Productions
     program      = expr* ;
     
-    expr         = {rule} predicate t_impliedby conjunction t_dot |
-                   {fact} predicate t_dot |
-                   {query} t_query conjunction t_dot;
+    expr         = {rule} rule |
+                   {fact} fact |
+                   {query} query;
     
-    conjunction  = {body} body |
-                   {and} conjunction t_and body |
-                   {comma} conjunction t_comma body;
+    rule 		= predicate t_impliedby body t_dot;
     
-    body         = {negated} t_not predicate |
+    fact 		= predicate t_dot;
+    
+    query		= t_query body t_dot;
+    
+    body	 	= literal |
+                  {and} body t_and literal |
+                  {comma} body t_comma literal;
+    
+    literal     = {negated} t_not predicate |
                    predicate;
                 
     predicate    = t_id paramlist?;
@@ -76,6 +83,8 @@ Productions
     termlist     = {term} term |
                    termlist t_comma term;
                    
-    term         = t_id paramlist? | //constant or fsymbol
-                   {var} t_variable;
+    term         = {function} t_id paramlist |
+                   {var} t_variable |
+                   {constant} t_id; // constant
+                   
    

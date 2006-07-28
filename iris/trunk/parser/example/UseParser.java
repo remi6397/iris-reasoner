@@ -26,12 +26,13 @@
 
 package example;
 
-import org.deri.iris.compiler.Parser;
-import org.deri.iris.compiler.ParserImpl;
-import org.deri.iris.compiler.SymbolMap;
-
+import org.deri.iris.compiler.*;
+import org.deri.iris.api.IEDB;
+import org.deri.iris.factory.*;
+import java.util.*;
+import org.deri.iris.api.basics.*;
 /**
- * @author Holger Lausen
+ * @author Francisco Garcia
  */
 public class UseParser {
 	public static void main(String[] args) throws Exception {
@@ -40,34 +41,41 @@ public class UseParser {
     }
 
     public void test() throws Exception{
-        String test = "" +
-                "isa(?x,?z) :- isa(?x,?y) and sub(?y,?z). \n" +
-                "sub(bigdog,dog). \n" +
-                "isa(wau,bigdog). \n" +
-                "hasValue(lisa,owns,wau). " +
-                "";
-        String qry = "?- hasValue(?person,owns,?value) and naf isa(?value,dog) . ";
-        //qry="?- isa(?x,dog) .";
-        
-        Parser p = new ParserImpl();
-        RuleSet rs = new RuleSet(new BuiltinConfig(), new DB());
-        rs.setEvaluationMethod(2);
-        SymbolMap sm = p.getSymbolMap();
-        rs.debuglevel=0;
-        p.compileKB(test,rs);
-        Rule query = p.compileRule(qry);
-        //System.out.println(query);
-        rs.addRule(query);
-        rs.evaluate();
-        Substitution s = rs.getSubstitution(query);
-        GroundAtom a = s.First();
-        while (a!=null){
-            for (int i=0; i<a.terms.length; i++){
-                System.out.println(
-                        sm.getVariableSymbol(i, query) + ": " +
-                        sm.getConstantSymbol(a.terms[i]));
-            }
-            a = s.Next();
-        }
+    	org.deri.iris.compiler.Parser pa = new ParserImpl();
+    	IEDB p = Factory.PROGRAM.createEDB();
+    	
+    	String transmission = "rule(?x, ?y) :- r(?x, func('paco',?l), f(?y, ff(?x))), q(?y, 'deri'). " + 
+    	"?- query(?x, 'deri'). " + 
+    	"fact('paco'). ";
+    	
+		
+    	pa.compileKB(transmission, p);
+		// * Results
+		System.out.println("These are the results for the input: \n" + transmission + "\n\n");
+		Set<IRule> rules = p.getRules();
+		Iterator<IRule> it = rules.iterator();
+		System.out.println("Rules:\n");
+		while (it.hasNext())
+		{
+			IRule r = it.next();
+			System.out.println(r.toString() + "\n");
+
+		}
+		Set<IAtom> facts = p.getFacts();
+		Iterator<IAtom> itf = facts.iterator();
+		System.out.println("Facts:\n");
+		while (itf.hasNext())
+		{
+			IAtom f = itf.next();
+			System.out.println(f.toString() + "\n");
+
+		}
+		System.out.println("Queries:\n");
+		
+		Iterator qIt = p.queryIterator();
+		while (qIt.hasNext())
+			System.out.println(((IQuery)qIt.next()).toString());
+	//	IQuery q =p.queryIterator();
+	//	System.out.println(q.toString() + "\n");
     }
 }
