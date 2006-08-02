@@ -28,11 +28,11 @@ package org.deri.iris.evaluation.common;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,14 +43,16 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.basics.BasicFactory;
 import org.deri.iris.evaluation.magic.SIPImpl;
 
 /**
  * This is a simple implementation of an adorned program. <b>NOTE: At the moment
- * this class only works with rules with one literal in the head.</b> </br></br>$Id: AdornedProgram.java,v 1.4 2006-07-27 12:52:44 darko Exp $
+ * this class only works with rules with one literal in the head.</b><br/><br/>
  * 
  * @author richi
- * @version $Revision: 1.4 $
+ * $Id: AdornedProgram.java,v 1.5 2006-08-02 12:32:38 darko Exp $
+ * @version $Revision: 1.5 $
  */
 public class AdornedProgram {
 
@@ -58,7 +60,7 @@ public class AdornedProgram {
 	private static final ITerm EMPTY_CONSTANT_TERM = TERM.createConstant(TERM
 			.createString(""));
 
-	private final Set<IPredicate> deriveredPredicates = new HashSet<IPredicate>();;
+	private final Set<IPredicate> deriveredPredicates = new HashSet<IPredicate>();
 
 	private final Set<AdornedPredicate> adornedPredicates = new HashSet<AdornedPredicate>();
 
@@ -119,8 +121,10 @@ public class AdornedProgram {
 					adornedRules.add(ra);
 
 					// iterating through all bodyliterals of the
-					for (ILiteral l : r.getBodyLiterals()) {
-						AdornedPredicate newAP = processLiteral(l, ra);
+					Iterator<ILiteral> i = r.getBodyLiterals().iterator();
+					while(i.hasNext()){
+						//AdornedPredicate newAP = processLiteral(l, ra);
+						AdornedPredicate newAP = processLiteral(i.next(), ra);
 						// adding the adorned predicate to the sets
 						if ((newAP != null) && (adornedPredicates.add(newAP))) {
 							predicatesToProcess.add(newAP);
@@ -399,11 +403,15 @@ public class AdornedProgram {
 		}
 
 		public void replaceHeadLiteral(final ILiteral l, final IPredicate p) {
-			replaceHeadLiteral(originalRule.getHeadLiterals().indexOf(l), p);
+			replaceHeadLiteral(
+					BasicFactory.convertSetToList(originalRule.getHeadLiterals())
+							.indexOf(l), p);
 		}
 
 		public void replaceBodyLiteral(final ILiteral l, final IPredicate p) {
-			replaceBodyLiteral(originalRule.getBodyLiterals().indexOf(l), p);
+			replaceBodyLiteral(
+					BasicFactory.convertSetToList(originalRule.getBodyLiterals())
+						.indexOf(l), p);
 		}
 
 		public void replaceHeadLiteral(final int pos, final IPredicate p) {
@@ -462,16 +470,16 @@ public class AdornedProgram {
 			return originalRule.getHeadLiteral(arg);
 		}
 
-		public List<ILiteral> getHeadLiterals() {
-			List<ILiteral> l = new ArrayList<ILiteral>(originalRule
+		public Set<ILiteral> getHeadLiterals() {
+			Set<ILiteral> l = new HashSet<ILiteral>(originalRule
 					.getHeadLenght());
 			for (int iCounter = 0; iCounter < originalRule.getHeadLenght(); iCounter++) {
-				l.add(iCounter, getHeadLiteral(iCounter));
+				l.add(getHeadLiteral(iCounter));
 			}
 			return l;
 		}
 
-		public List<IVariable> getHeadVariables() {
+		public Set<IVariable> getHeadVariables() {
 			return originalRule.getHeadVariables();
 		}
 
@@ -487,16 +495,16 @@ public class AdornedProgram {
 			return originalRule.getBodyLiteral(arg);
 		}
 
-		public List<ILiteral> getBodyLiterals() {
-			List<ILiteral> l = new ArrayList<ILiteral>(originalRule
+		public Set<ILiteral> getBodyLiterals() {
+			Set<ILiteral> l = new HashSet<ILiteral>(originalRule
 					.getBodyLenght());
 			for (int iCounter = 0; iCounter < originalRule.getBodyLenght(); iCounter++) {
-				l.add(iCounter, getBodyLiteral(iCounter));
+				l.add(getBodyLiteral(iCounter));
 			}
 			return l;
 		}
 
-		public List<IVariable> getBodyVariables() {
+		public Set<IVariable> getBodyVariables() {
 			return originalRule.getBodyVariables();
 		}
 
