@@ -28,9 +28,7 @@ package org.deri.iris.evaluation.common;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.deri.iris.api.basics.IBody;
@@ -80,7 +78,7 @@ public class SimpleTest {
 						TERM.createVariable("Y")));
 		head = BASIC.createHead(lh);
 		// computing body: first rule
-		List<ILiteral> bodyLiterals = new ArrayList<ILiteral>();
+		Set<ILiteral> bodyLiterals = new HashSet<ILiteral>();
 		bodyLiterals.add(BASIC.createLiteral(true, 
 							BASIC.createPredicate("up",2), 
 							BASIC.createTuple(
@@ -161,7 +159,7 @@ public class SimpleTest {
 						TERM.createVariable("Y")));
 		head = BASIC.createHead(lh);
 		// computing body: first rule
-		List<ILiteral> bodyLiterals = new ArrayList<ILiteral>();
+		Set<ILiteral> bodyLiterals = new HashSet<ILiteral>();
 		bodyLiterals.add(BASIC.createLiteral(true, 
 							BASIC.createPredicate("up",2), 
 							BASIC.createTuple(

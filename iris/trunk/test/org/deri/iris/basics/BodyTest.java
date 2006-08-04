@@ -29,9 +29,9 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -49,16 +49,16 @@ import org.deri.iris.api.terms.ITerm;
  */
 public class BodyTest extends TestCase {
 
-	private static final List<ILiteral> LITERALS;
+	private static final Set<ILiteral> LITERALS;
 
-	private static final List<ILiteral> LITERALS_UNEQ;
+	private static final Set<ILiteral> LITERALS_UNEQ;
 
-	private static final List<ITerm> VARIABLES;
+	private static final Set<ITerm> VARIABLES;
 
 	static {
-		List<ILiteral> tempLiterals = new ArrayList<ILiteral>();
-		List<ILiteral> tempLiteralsUnequ = new ArrayList<ILiteral>();
-		List<ITerm> tempVariables = new ArrayList<ITerm>();
+		Set<ILiteral> tempLiterals = new HashSet<ILiteral>();
+		Set<ILiteral> tempLiteralsUnequ = new HashSet<ILiteral>();
+		Set<ITerm> tempVariables = new HashSet<ITerm>();
 
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
 				"sin", 1));
@@ -78,9 +78,9 @@ public class BodyTest extends TestCase {
 		literal.getTuple().setTerm(2, CONCRETE.createInteger(24));
 		tempLiterals.add(literal);
 
-		LITERALS = Collections.unmodifiableList(tempLiterals);
-		LITERALS_UNEQ = Collections.unmodifiableList(tempLiteralsUnequ);
-		VARIABLES = Collections.unmodifiableList(tempVariables);
+		LITERALS = Collections.unmodifiableSet(tempLiterals);
+		LITERALS_UNEQ = Collections.unmodifiableSet(tempLiteralsUnequ);
+		VARIABLES = Collections.unmodifiableSet(tempVariables);
 	}
 
 	public static Test suite() {
@@ -93,9 +93,11 @@ public class BodyTest extends TestCase {
 				REFERENCE.getBodyLenght());
 		assertTrue("getBodyLiterals doesn't work properly", REFERENCE
 				.getBodyLiterals().equals(LITERALS));
+		ILiteral[] l = new ILiteral[LITERALS.size()];
+		l = LITERALS.toArray(l);
 		for (int iCounter = 0; iCounter < LITERALS.size(); iCounter++) {
-			assertEquals("getBodyLiteral doesn't work properly", LITERALS
-					.get(iCounter), REFERENCE.getBodyLiteral(iCounter));
+			assertEquals("getBodyLiteral doesn't work properly", 
+					l[iCounter], REFERENCE.getBodyLiteral(iCounter));
 		}
 		assertEquals("The size of getBodyVariables doesn't work properly",
 				VARIABLES.size(), REFERENCE.getBodyVariables().size());
