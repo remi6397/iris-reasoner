@@ -50,10 +50,6 @@ public class QSQTemplate {
 	
 	private Set<QSQRule> qsqRules;
 	
-	//private Set<SupplementaryRelation> supplementaryRelations; 
-	
-	private LinkedList<SupplementaryRelation> supplementaryRelations;
-	
 	/**
 	 * Set of variables of the first supplementary relation
 	 */
@@ -83,9 +79,10 @@ public class QSQTemplate {
 		AdornedRule adornedRule = null;
 		int j = 0;
 		while(i.hasNext()){
-			supplementaryRelations = new LinkedList();
+			LinkedList<SupplementaryRelation> supplementaryRelations 
+							= new LinkedList<SupplementaryRelation>();
 			adornedRule = (AdornedRule)i.next();
-			createSupplementaryRelations(j, adornedRule);
+			supplementaryRelations = createSupplementaryRelations(j, adornedRule);
 			qsqRule = new QSQRule(adornedRule, supplementaryRelations);
 			this.qsqRules.add(qsqRule);
 			j++;
@@ -93,21 +90,32 @@ public class QSQTemplate {
 		return this.qsqRules;
 	}
 	// Correct it!
-	private void createSupplementaryRelations(int superscript, AdornedRule ar){
+	private LinkedList<SupplementaryRelation> createSupplementaryRelations(
+			int superscript, AdornedRule ar){
+		
+		LinkedList<SupplementaryRelation> supplementaryRelations 
+						= new LinkedList<SupplementaryRelation>();
 		SupplementaryRelation supplementaryRelation = null;
 		ILiteral head = ar.getHeadLiteral(0);
 		
-		supplementaryRelation = getFirstAndLastSupplementaryRelations(
-				superscript, ar.getBodyLiterals().size(), head);
+		supplementaryRelations.add(getFirstAndLastSupplementaryRelations(
+				superscript, ar.getBodyLiterals().size(), head).getFirst());
 		
-		getSupplementaryRelations(superscript, ar.getBodyLiterals());
-		this.supplementaryRelations.add(supplementaryRelation);
+		supplementaryRelations.addAll(
+				getSupplementaryRelations(superscript, ar.getBodyLiterals()));
+		
+		supplementaryRelations.add(getFirstAndLastSupplementaryRelations(
+				superscript, ar.getBodyLiterals().size(), head).getLast());
+		
+		return supplementaryRelations;
 	}
 	
 	// Correct it!
-	private SupplementaryRelation getFirstAndLastSupplementaryRelations(
+	private LinkedList<SupplementaryRelation> getFirstAndLastSupplementaryRelations(
 			int superscript, int subscript, ILiteral h){
 		
+		LinkedList<SupplementaryRelation> supplementaryRelations 
+						= new LinkedList<SupplementaryRelation>();
 		this.variables_0 = new HashSet();
 		this.variables_n = new HashSet();
 		SupplementaryRelation supplementaryRelation = null;
@@ -131,17 +139,20 @@ public class QSQTemplate {
 //				}
 			}
 		}
-		supplementaryRelation = new SupplementaryRelation(superscript, 0, variables_0);
-		supplementaryRelations.add(supplementaryRelation);
-		
-		return supplementaryRelation = new SupplementaryRelation(
-				superscript, subscript, variables_n);
+		supplementaryRelations.add(
+				new SupplementaryRelation(superscript, 0, variables_0));
+		supplementaryRelations.add(		
+				new SupplementaryRelation(
+						superscript, subscript, variables_n));
+		return supplementaryRelations;
 	}
 	
 	// Correct it!
-	private void getSupplementaryRelations(
+	private LinkedList<SupplementaryRelation> getSupplementaryRelations(
 			int superscript, Set<ILiteral> bodyLiterals){
 		
+		LinkedList<SupplementaryRelation> supplementaryRelations 
+						= new LinkedList<SupplementaryRelation>();
 		SupplementaryRelation supplementaryRelation = null;
 		Set<IVariable> variables_before = null;
 		Set<IVariable> variables_after = null;
@@ -175,9 +186,10 @@ public class QSQTemplate {
 					variables.add(variable);
 				}
 			}
-			supplementaryRelation = new SupplementaryRelation(superscript, i+1, variables);
-			supplementaryRelations.add(supplementaryRelation);
+			supplementaryRelations.add(
+					new SupplementaryRelation(superscript, i+1, variables));
 		}
+		return supplementaryRelations;
 	}
 
 	public String toString() {
