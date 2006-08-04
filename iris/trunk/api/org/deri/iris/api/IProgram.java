@@ -37,13 +37,18 @@ import org.deri.iris.api.basics.IQuery;
  * An implementation of this interface is supposed to get implementations
  * of the IEDB and the IEvaluator interfaces as input parameters and to 
  * produce a substitution or a set of substitutions as an output of 
- * the evaluation process.   
+ * the evaluation process.  
+ * This interface also defines a procedure for analyzing a given program 
+ * (particularly the entire EDB) and applies the best set of optimization 
+ * and evaluation techniques, which are available in IRIS, in order to 
+ * produce answers. 
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date 10.11.2005
  */
 public interface IProgram {
 
+	// Correct it!
 	public enum EvaluationMethod {
 		SEMI_NAIVE_EVALUATION, DYNAMIC_FILTERING_EVALUATION,
 		WELLFOUNDED_withAFP_EVALUATION, WELLFOUNDED_EVALUATION
