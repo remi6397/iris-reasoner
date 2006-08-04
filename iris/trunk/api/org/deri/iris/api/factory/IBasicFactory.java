@@ -26,6 +26,7 @@
 package org.deri.iris.api.factory;
 
 import java.util.List;
+import java.util.Set;
 
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IBody;
@@ -48,10 +49,10 @@ public interface IBasicFactory {
 	public IAtom createAtom(IPredicate p, ITuple tuple);
 
 	public IBody createBody(ILiteral... literals);
-	public IBody createBody(List<ILiteral> literals);
+	public IBody createBody(Set<ILiteral> literals);
 
 	public IHead createHead(ILiteral... literals);
-	public IHead createHead(List<ILiteral> literals);
+	public IHead createHead(Set<ILiteral> literals);
 
 	public ILiteral createLiteral(boolean isPositive, IAtom atom);
 	public ILiteral createLiteral(boolean isPositive, IBuiltInAtom builtinAtom);
@@ -65,7 +66,7 @@ public interface IBasicFactory {
 	public IPredicate createPredicate(String symbol, int arity);
 	
 	public IQuery createQuery(ILiteral... literals);
-	public IQuery createQuery(List<ILiteral> literals);
+	public IQuery createQuery(Set<ILiteral> literals);
 
 	public IRule createRule(IHead head, IBody body);
 

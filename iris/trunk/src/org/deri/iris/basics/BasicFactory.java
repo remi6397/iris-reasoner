@@ -27,8 +27,11 @@ package org.deri.iris.basics;
 
 import static org.deri.iris.factory.Factory.GRAPH;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IBody;
@@ -64,18 +67,18 @@ public class BasicFactory implements IBasicFactory {
 	}
 
 	public IBody createBody(ILiteral... literals) {
-		return createBody(Arrays.asList(literals));
+		return createBody(convertArrayToSet(literals));
 	}
 
-	public IBody createBody(List<ILiteral> literals) {
+	public IBody createBody(Set<ILiteral> literals) {
 		return new Body(literals);
 	}
 
 	public IHead createHead(ILiteral... literals) {
-		return createHead(Arrays.asList(literals));
+		return createHead(convertArrayToSet(literals));
 	}
 
-	public IHead createHead(List<ILiteral> literals) {
+	public IHead createHead(Set<ILiteral> literals) {
 		return new Head(literals);
 	}
 
@@ -113,7 +116,7 @@ public class BasicFactory implements IBasicFactory {
 		return new Query(createBody(literals));
 	}
 
-	public IQuery createQuery(List<ILiteral> literals) {
+	public IQuery createQuery(Set<ILiteral> literals) {
 		return new Query(createBody(literals));
 	}
 
@@ -137,5 +140,21 @@ public class BasicFactory implements IBasicFactory {
 
 	public static IBasicFactory getInstance() {
 		return FACTORY;
+	}
+
+	private static Set convertArrayToSet(final ILiteral[] l){
+		Set literals = new HashSet(l.length);
+		for(ILiteral literal:Arrays.asList(l)){
+			literals.add(literal);
+		}
+		return literals;
+	}
+	
+	public static List convertSetToList(final Set<ILiteral> l){
+		ILiteral[] literals = new ILiteral[l.size()];
+		literals = l.toArray(literals);
+		List<ILiteral> lit = Arrays.asList(literals);
+		
+		return lit;
 	}
 }

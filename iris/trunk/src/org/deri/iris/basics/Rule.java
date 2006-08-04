@@ -27,7 +27,7 @@ package org.deri.iris.basics;
 
 import static org.deri.iris.factory.Factory.GRAPH;
 
-import java.util.List;
+import java.util.Set;
 
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
@@ -84,11 +84,11 @@ public class Rule implements IRule {
 		return head.getHeadLiteral(arg);
 	}
 
-	public List<ILiteral> getHeadLiterals() {
+	public Set<ILiteral> getHeadLiterals() {
 		return head.getHeadLiterals();
 	}
 
-	public List<IVariable> getHeadVariables() {
+	public Set<IVariable> getHeadVariables() {
 		return head.getHeadVariables();
 	}
 
@@ -100,11 +100,11 @@ public class Rule implements IRule {
 		return body.getBodyLiteral(arg);
 	}
 
-	public List<ILiteral> getBodyLiterals() {
+	public Set<ILiteral> getBodyLiterals() {
 		return body.getBodyLiterals();
 	}
 
-	public List<IVariable> getBodyVariables() {
+	public Set<IVariable> getBodyVariables() {
 		return body.getBodyVariables();
 	}
 	

@@ -20,6 +20,7 @@
 package org.deri.iris.api.basics;
 
 import java.util.List;
+import java.util.Set;
 
 import org.deri.iris.api.terms.IVariable;
 
@@ -37,9 +38,9 @@ public interface IQuery {
 	
 	public ILiteral getQueryLiteral(int arg);
 	
-	public java.util.List<ILiteral> getQueryLiterals();
+	public Set<ILiteral> getQueryLiterals();
 	
-	public List<IVariable> getQueryVariables();
+	public Set<IVariable> getQueryVariables();
 	
 	public boolean equals(Object obj);
 }
