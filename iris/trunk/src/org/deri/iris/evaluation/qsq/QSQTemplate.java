@@ -34,6 +34,8 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.common.AdornedProgram;
+import org.deri.iris.evaluation.common.Adornment;
+import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 
 /**
@@ -77,9 +79,10 @@ public class QSQTemplate {
 		Iterator<AdornedRule> i = this.adornedProgram.getAdornedRules().iterator();
 		QSQRule qsqRule = null;
 		AdornedRule adornedRule = null;
+		LinkedList<SupplementaryRelation> supplementaryRelations = null;
 		int j = 0;
 		while(i.hasNext()){
-			LinkedList<SupplementaryRelation> supplementaryRelations 
+			supplementaryRelations 
 							= new LinkedList<SupplementaryRelation>();
 			adornedRule = (AdornedRule)i.next();
 			supplementaryRelations = createSupplementaryRelations(j, adornedRule);
@@ -89,7 +92,7 @@ public class QSQTemplate {
 		}
 		return this.qsqRules;
 	}
-	// Correct it!
+	
 	private LinkedList<SupplementaryRelation> createSupplementaryRelations(
 			int superscript, AdornedRule ar){
 		
@@ -110,7 +113,6 @@ public class QSQTemplate {
 		return supplementaryRelations;
 	}
 	
-	// Correct it!
 	private LinkedList<SupplementaryRelation> getFirstAndLastSupplementaryRelations(
 			int superscript, int subscript, ILiteral h){
 		
@@ -119,16 +121,20 @@ public class QSQTemplate {
 		this.variables_0 = new HashSet();
 		this.variables_n = new HashSet();
 		SupplementaryRelation supplementaryRelation = null;
+		AdornedPredicate predicate = null;
+		
 		StringBuilder buffer = new StringBuilder();
 		String head = h.getPredicate().toString();
-		buffer.append(head.substring(head.lastIndexOf("^")+1, head.length()));
-		char b = 'b';
 		ITerm term;
 		
-		for(int i=0; i<buffer.length(); i++){
+		if(h.getPredicate()instanceof AdornedPredicate)
+			predicate = (AdornedPredicate)h.getPredicate();
+		Adornment[] adornments = predicate.getAdornment();
+		
+		for(int i=0; i<adornments.length; i++){
 			term = h.getTuple().getTerm(i);
 			if(term instanceof IVariable){
-				if(buffer.charAt(i)==b){
+				if(adornments[i].compareTo(Adornment.BOUND) == 0){
 					variables_0.add((IVariable)term);
 				}
 				variables_n.add((IVariable)term);
@@ -147,7 +153,6 @@ public class QSQTemplate {
 		return supplementaryRelations;
 	}
 	
-	// Correct it!
 	private LinkedList<SupplementaryRelation> getSupplementaryRelations(
 			int superscript, Set<ILiteral> bodyLiterals){
 		
@@ -171,7 +176,6 @@ public class QSQTemplate {
 			
 			for(int j=0; j<i+1; j++){
 				literal = body[j];
-				// only IVariable terms add
 				variables_before.addAll(literal.getTuple().getTerms());
 			}
 			for(int j=i+1; j<body.length; j++){
