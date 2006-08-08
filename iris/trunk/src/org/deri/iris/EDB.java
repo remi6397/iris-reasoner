@@ -55,6 +55,7 @@ import org.deri.iris.terms.ConstructedTerm;
  * This is an implementation of the IEDB interface.
  * <br/><br/><b>This implementaion is thread-save.</b>
  * 
+ * @author richi
  * @author Darko Anicic, DERI Innsbruck
  * @date   26.07.2006 16:53:36
  */
