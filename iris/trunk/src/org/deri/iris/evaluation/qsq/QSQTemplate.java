@@ -125,10 +125,7 @@ public class QSQTemplate {
 		this.variables_n = new ArrayList<IVariable>();
 		SupplementaryRelation supplementaryRelation = null;
 		AdornedPredicate predicate = null;
-		
-		StringBuilder buffer = new StringBuilder();
-		String head = h.getPredicate().toString();
-		ITerm term;
+		ITerm term = null;
 		
 		if(h.getPredicate()instanceof AdornedPredicate)
 			predicate = (AdornedPredicate)h.getPredicate();
@@ -157,38 +154,40 @@ public class QSQTemplate {
 	}
 	
 	private LinkedList<SupplementaryRelation> getSupplementaryRelations(
-			int superscript, List<ILiteral> bodyLiterals){
+			int superscript, List<ILiteral> body){
 		
 		LinkedList<SupplementaryRelation> supplementaryRelations 
 						= new LinkedList<SupplementaryRelation>();
-		SupplementaryRelation supplementaryRelation = null;
 		List<IVariable> variables_before = null;
 		List<IVariable> variables_after = null;
 		List<IVariable> variables = null;
-		IVariable variable = null;
 		ILiteral literal = null;
-		ILiteral[] body = new ILiteral[bodyLiterals.size()];
-		body = bodyLiterals.toArray(body);
-		Iterator iterator = null;
+		List<IVariable> terms = null;
 		
-		for(int i=0; i<body.length-1; i++){
+		for(int i=0; i<body.size()-1; i++){
 			variables_before = new ArrayList<IVariable>();
 			variables_before.addAll(variables_0);
 			variables_after = new ArrayList<IVariable>();
 			variables_after.addAll(variables_n);
 			
 			for(int j=0; j<i+1; j++){
-				literal = body[j];
-				variables_before.addAll(literal.getTuple().getTerms());
+				literal = body.get(j);
+				terms = literal.getTuple().getTerms();
+				for(ITerm term : terms){
+					if(term instanceof IVariable && !variables_before.contains(term))
+						variables_before.add((IVariable)term);
+				}
 			}
-			for(int j=i+1; j<body.length; j++){
-				literal = body[j];
-				variables_after.addAll(literal.getTuple().getTerms());
+			for(int j=i+1; j<body.size(); j++){
+				literal = body.get(j);
+				terms = literal.getTuple().getTerms();
+				for(ITerm term : terms){
+					if(term instanceof IVariable && !variables_after.contains(term))
+						variables_after.add((IVariable)term);
+				}
 			}
-			iterator = variables_after.iterator();
 			variables = new ArrayList<IVariable>();
-			while(iterator.hasNext()){
-				variable = (IVariable)iterator.next();
+			for(IVariable variable : variables_after){
 				if(variable != null && variables_before.contains(variable)){
 					variables.add(variable);
 				}
