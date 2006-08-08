@@ -20,7 +20,6 @@
 package org.deri.iris.api.basics;
 
 import java.util.List;
-import java.util.Set;
 
 import org.deri.iris.api.terms.IVariable;
 
@@ -38,9 +37,9 @@ public interface IBody {
 	
 	public ILiteral getBodyLiteral(int arg);
 	
-	public Set<ILiteral> getBodyLiterals();
+	public List<ILiteral> getBodyLiterals();
 	
-	public Set<IVariable> getBodyVariables();
+	public List<IVariable> getBodyVariables();
 	
 	public boolean equals(Object obj);
 }

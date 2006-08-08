@@ -1,6 +1,6 @@
 package org.deri.iris.api.basics;
 
-import java.util.Set;
+import java.util.List;
 
 import org.deri.iris.api.terms.IVariable;
 
@@ -18,7 +18,7 @@ public interface IHead {
 	
 	public ILiteral getHeadLiteral(int arg);
 	
-	public Set<ILiteral> getHeadLiterals();
+	public List<ILiteral> getHeadLiterals();
 	
-	public Set<IVariable> getHeadVariables();
+	public List<IVariable> getHeadVariables();
 }

@@ -30,8 +30,7 @@ import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -52,7 +51,7 @@ public class QueryTest extends TestCase {
 	private static final Body BODYMORE;
 
 	static {
-		Set<ILiteral> tempLiterals = new HashSet<ILiteral>();
+		List<ILiteral> tempLiterals = new ArrayList<ILiteral>();
 
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
 				"sin", 1));
@@ -71,7 +70,7 @@ public class QueryTest extends TestCase {
 
 		BODY = new Body(tempLiterals);
 
-		tempLiterals = new HashSet<ILiteral>();
+		tempLiterals = new ArrayList<ILiteral>();
 
 		literal = BASIC.createLiteral(true, BASIC.createPredicate("sin", 1));
 		literal.getTuple().setTerm(0, CONCRETE.createInteger(1));

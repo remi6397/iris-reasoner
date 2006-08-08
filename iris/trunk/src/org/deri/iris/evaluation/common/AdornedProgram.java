@@ -28,11 +28,11 @@ package org.deri.iris.evaluation.common;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,15 +43,14 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.basics.BasicFactory;
 import org.deri.iris.evaluation.magic.SIPImpl;
 
 /**
  * This is a simple implementation of an adorned program. <b>NOTE: At the moment
  * this class only works with rules with one literal in the head.</b><br/><br/>
  * 
- * @author richi $Id: AdornedProgram.java,v 1.6 2006-08-07 14:05:25 richardpoettler Exp $
- * @version $Revision: 1.6 $
+ * @author richi $Id: AdornedProgram.java,v 1.7 2006-08-08 08:32:06 darko Exp $
+ * @version $Revision: 1.7 $
  */
 public class AdornedProgram {
 
@@ -507,13 +506,11 @@ public class AdornedProgram {
 		}
 
 		public void replaceHeadLiteral(final ILiteral l, final IPredicate p) {
-			replaceHeadLiteral(BasicFactory.convertSetToList(
-					originalRule.getHeadLiterals()).indexOf(l), p);
+			replaceHeadLiteral(originalRule.getHeadLiterals().indexOf(l), p);
 		}
 
 		public void replaceBodyLiteral(final ILiteral l, final IPredicate p) {
-			replaceBodyLiteral(BasicFactory.convertSetToList(
-					originalRule.getBodyLiterals()).indexOf(l), p);
+			replaceBodyLiteral(originalRule.getBodyLiterals().indexOf(l), p);
 		}
 
 		public void replaceHeadLiteral(final int pos, final IPredicate p) {
@@ -572,16 +569,16 @@ public class AdornedProgram {
 			return originalRule.getHeadLiteral(arg);
 		}
 
-		public Set<ILiteral> getHeadLiterals() {
-			Set<ILiteral> l = new HashSet<ILiteral>(originalRule
+		public List<ILiteral> getHeadLiterals() {
+			List<ILiteral> l = new ArrayList<ILiteral>(originalRule
 					.getHeadLenght());
 			for (int iCounter = 0; iCounter < originalRule.getHeadLenght(); iCounter++) {
-				l.add(getHeadLiteral(iCounter));
+				l.add(iCounter, getHeadLiteral(iCounter));
 			}
 			return l;
 		}
 
-		public Set<IVariable> getHeadVariables() {
+		public List<IVariable> getHeadVariables() {
 			return originalRule.getHeadVariables();
 		}
 
@@ -597,16 +594,16 @@ public class AdornedProgram {
 			return originalRule.getBodyLiteral(arg);
 		}
 
-		public Set<ILiteral> getBodyLiterals() {
-			Set<ILiteral> l = new HashSet<ILiteral>(originalRule
+		public List<ILiteral> getBodyLiterals() {
+			List<ILiteral> l = new ArrayList<ILiteral>(originalRule
 					.getBodyLenght());
 			for (int iCounter = 0; iCounter < originalRule.getBodyLenght(); iCounter++) {
-				l.add(getBodyLiteral(iCounter));
+				l.add(iCounter, getBodyLiteral(iCounter));
 			}
 			return l;
 		}
 
-		public Set<IVariable> getBodyVariables() {
+		public List<IVariable> getBodyVariables() {
 			return originalRule.getBodyVariables();
 		}
 

@@ -25,8 +25,8 @@
  */
 package org.deri.iris.basics;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
@@ -38,9 +38,9 @@ import org.deri.iris.api.terms.IVariable;
  */
 public class Head implements IHead {
 	
-	private Set<ILiteral> literals = new HashSet<ILiteral>();
+	private List<ILiteral> literals = new ArrayList<ILiteral>();
 
-	Head(final Set<ILiteral> literals) {
+	Head(final List<ILiteral> literals) {
 		this.literals = literals;
 	}
 	
@@ -49,18 +49,15 @@ public class Head implements IHead {
 	}
 
 	public ILiteral getHeadLiteral(int arg) {
-		ILiteral[] l = new ILiteral[this.literals.size()];
-		l = this.literals.toArray(l);
-		
-		return l[arg];
+		return literals.get(arg);
 	}
 
-	public Set<ILiteral> getHeadLiterals() {
+	public List<ILiteral> getHeadLiterals() {
 		return literals;
 	}
 
-	public Set<IVariable> getHeadVariables() {
-		Set<IVariable> vars = new HashSet<IVariable>();
+	public List<IVariable> getHeadVariables() {
+		List<IVariable> vars = new ArrayList<IVariable>();
 		for (ILiteral l : literals) {
 			for (Object o : l.getTuple().getTerms()) {
 				if (o instanceof IVariable) {

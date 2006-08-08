@@ -25,8 +25,8 @@
  */
 package org.deri.iris.basics;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.ILiteral;
@@ -38,9 +38,9 @@ import org.deri.iris.api.terms.IVariable;
  */
 public class Body implements IBody {
 
-	private Set<ILiteral> literals = new HashSet<ILiteral>();
+	private List<ILiteral> literals = new ArrayList<ILiteral>();
 
-	Body(final Set<ILiteral> literals) {
+	Body(final List<ILiteral> literals) {
 		this.literals = literals;
 	}
 
@@ -49,18 +49,15 @@ public class Body implements IBody {
 	}
 
 	public ILiteral getBodyLiteral(int arg) {
-		ILiteral[] l = new ILiteral[this.literals.size()];
-		l = this.literals.toArray(l);
-		
-		return l[arg];
+		return literals.get(arg);
 	}
 
-	public Set<ILiteral> getBodyLiterals() {
+	public List<ILiteral> getBodyLiterals() {
 		return literals;
 	}
 
-	public Set<IVariable> getBodyVariables() {
-		Set<IVariable> vars = new HashSet<IVariable>();
+	public List<IVariable> getBodyVariables() {
+		List<IVariable> vars = new ArrayList<IVariable>();
 		for (ILiteral l : literals) {
 			for (Object o : l.getTuple().getTerms()) {
 				if (o instanceof IVariable) {

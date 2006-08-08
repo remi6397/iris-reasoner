@@ -25,9 +25,11 @@
  */
 package org.deri.iris.evaluation.qsq;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.deri.iris.api.basics.ILiteral;
@@ -41,8 +43,9 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 /**
  * 
  * <b>NOTE: At the moment
- * this class only works with rules with one literal in the head!</b>
+ * this class only works with rules which have one literal in the head!</b>
  * <b>NOTE: Constructed terms (function symbols) currently not supported!</b>
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   28.07.2006 09:10:51
  */
@@ -53,14 +56,14 @@ public class QSQTemplate {
 	private Set<QSQRule> qsqRules;
 	
 	/**
-	 * Set of variables of the first supplementary relation
+	 * List of variables of the first supplementary relation
 	 */
-	Set<IVariable> variables_0 = null;
+	List<IVariable> variables_0 = null;
 		
 	/**
-	 * Set of variables of the last supplementary relation
+	 * List of variables of the last supplementary relation
 	 */
-	Set<IVariable> variables_n = null;
+	List<IVariable> variables_n = null;
 	
 	
 	QSQTemplate(final AdornedProgram ap){
@@ -118,8 +121,8 @@ public class QSQTemplate {
 		
 		LinkedList<SupplementaryRelation> supplementaryRelations 
 						= new LinkedList<SupplementaryRelation>();
-		this.variables_0 = new HashSet();
-		this.variables_n = new HashSet();
+		this.variables_0 = new ArrayList<IVariable>();
+		this.variables_n = new ArrayList<IVariable>();
 		SupplementaryRelation supplementaryRelation = null;
 		AdornedPredicate predicate = null;
 		
@@ -154,14 +157,14 @@ public class QSQTemplate {
 	}
 	
 	private LinkedList<SupplementaryRelation> getSupplementaryRelations(
-			int superscript, Set<ILiteral> bodyLiterals){
+			int superscript, List<ILiteral> bodyLiterals){
 		
 		LinkedList<SupplementaryRelation> supplementaryRelations 
 						= new LinkedList<SupplementaryRelation>();
 		SupplementaryRelation supplementaryRelation = null;
-		Set<IVariable> variables_before = null;
-		Set<IVariable> variables_after = null;
-		Set<IVariable> variables = null;
+		List<IVariable> variables_before = null;
+		List<IVariable> variables_after = null;
+		List<IVariable> variables = null;
 		IVariable variable = null;
 		ILiteral literal = null;
 		ILiteral[] body = new ILiteral[bodyLiterals.size()];
@@ -169,9 +172,9 @@ public class QSQTemplate {
 		Iterator iterator = null;
 		
 		for(int i=0; i<body.length-1; i++){
-			variables_before = new HashSet();
+			variables_before = new ArrayList<IVariable>();
 			variables_before.addAll(variables_0);
-			variables_after = new HashSet();
+			variables_after = new ArrayList<IVariable>();
 			variables_after.addAll(variables_n);
 			
 			for(int j=0; j<i+1; j++){
@@ -183,7 +186,7 @@ public class QSQTemplate {
 				variables_after.addAll(literal.getTuple().getTerms());
 			}
 			iterator = variables_after.iterator();
-			variables = new HashSet();
+			variables = new ArrayList<IVariable>();
 			while(iterator.hasNext()){
 				variable = (IVariable)iterator.next();
 				if(variable != null && variables_before.contains(variable)){

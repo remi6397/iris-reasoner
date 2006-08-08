@@ -25,7 +25,7 @@
  */
 package org.deri.iris.basics;
 
-import java.util.Set;
+import java.util.List;
 
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.ILiteral;
@@ -52,11 +52,11 @@ public class Query implements IQuery {
 		return body.getBodyLiteral(arg);
 	}
 
-	public Set<ILiteral> getQueryLiterals() {
+	public List<ILiteral> getQueryLiterals() {
 		return body.getBodyLiterals();
 	}
 
-	public Set<IVariable> getQueryVariables() {
+	public List<IVariable> getQueryVariables() {
 		return body.getBodyVariables();
 	}
 	

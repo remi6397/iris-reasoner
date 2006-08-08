@@ -20,17 +20,15 @@
 package org.deri.iris.api.basics;
 
 import java.util.List;
-import java.util.Set;
 
 import org.deri.iris.api.terms.IVariable;
 
 /**
+ * A query is a rule without the head.
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   19.11.2005 15:35:44
  */
-
-// A query is a rule without the head - 
-// Do we need a separate interface for a query
 
 public interface IQuery {
     
@@ -38,9 +36,9 @@ public interface IQuery {
 	
 	public ILiteral getQueryLiteral(int arg);
 	
-	public Set<ILiteral> getQueryLiterals();
+	public List<ILiteral> getQueryLiterals();
 	
-	public Set<IVariable> getQueryVariables();
+	public List<IVariable> getQueryVariables();
 	
 	public boolean equals(Object obj);
 }
