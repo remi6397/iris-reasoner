@@ -103,7 +103,7 @@ public class EDB implements IEDB{
 	 */
 	EDB(final Set<IAtom> f, final Set<IRule> r, final Set<IQuery> q) {
 		if ((f == null) || (r == null) || (q == null)) {
-			throw new NullPointerException("Input parameters must not be null");
+			throw new IllegalArgumentException("Input parameters must not be null");
 		}
 		WRITE.lock();
 			for (IAtom a : f) {
