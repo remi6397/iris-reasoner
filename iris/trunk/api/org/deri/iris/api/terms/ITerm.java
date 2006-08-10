@@ -25,25 +25,9 @@ package org.deri.iris.api.terms;
  * @date   14.11.2005 12:09:01
  */
 
-/*Type of terms: 
-
-	ConstantTerm, 
-	ConstructedTerm,
-	NumericTerm,
-	StringTerm,
-	Variable
-	
-	More types of terms will be added.
-*/
 public interface ITerm<Type extends ITerm, Type0> extends Comparable<Type> {
 	
 	public boolean isGround();
-	
-	//public List<ITerm> getSubTerms();
-	
-	//public List<ITerm> getTerms();
-	
-	//public int getType();
 	
 	public String toString();
 	
