@@ -29,8 +29,10 @@ import org.deri.iris.api.terms.IConstantTerm;
 import org.deri.iris.api.terms.ITerm;
 
 /**
+ * <br/><br/>$Id$
  * @author richi
- * 
+ * @version $Revision$
+ * @date $Date$
  */
 public class ConstantTerm implements IConstantTerm<ITerm>, Cloneable {
 
@@ -58,7 +60,8 @@ public class ConstantTerm implements IConstantTerm<ITerm>, Cloneable {
 	 *         if <code>this</code> other is bigger
 	 */
 	public int compareTo(ITerm o) {
-		return value.compareTo((String) o.getValue());
+		// TODO: maybe throw an classcastexception, if the types doesn't match
+		return value.compareTo(o.getValue());
 	}
 
 	public boolean equals(final Object o) {
