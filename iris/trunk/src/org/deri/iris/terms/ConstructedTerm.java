@@ -28,24 +28,34 @@ package org.deri.iris.terms;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 
 /**
  * @author richi
+ * @author Darko Anicic, DERI Innsbruck
  * 
  */
 public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Cloneable {
 
+	/**
+	 * A constructed term consist of a list of terms, where these terms 
+	 * can be constructed or non-constructed ones in a general case.
+	 */
 	private List<ITerm> terms = new ArrayList<ITerm>();
 
 	private String symbol = "";
-
+	
+	
 	ConstructedTerm(final String symbol, final Collection<ITerm> terms) {
-		if (terms == null) {
-			throw new IllegalArgumentException("The terms must not be null");
+		if (symbol == null || terms == null) {
+			throw new IllegalArgumentException("Input parameters must " +
+					"not be null");
 		}
 		setFunctionSymbol(symbol);
 		this.terms.addAll(terms);
@@ -75,14 +85,29 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 	}
 
 	public boolean isGround() {
-		for (ITerm t : terms) {
-			if (!t.isGround()) {
-				return false;
+		for(ITerm term : this.terms){
+			if(term instanceof ConstructedTerm){
+				if(!isGround((IConstructedTerm)term)) return false;
+			}else{
+				if (!term.isGround()) return false;
+			}
+				
+		}
+		return true;
+	}
+	
+	private boolean isGround(IConstructedTerm t) {
+		List<ITerm> termList = t.getParameters();
+		for(ITerm term : termList){
+			if(term instanceof ConstructedTerm){
+				if(!isGround((IConstructedTerm)term)) return false;
+			}else{
+				if (!term.isGround()) return false;
 			}
 		}
 		return true;
 	}
-
+	
 	public int hashCode() {
 		int result = 17;
 		result = result * 37 + symbol.hashCode();
@@ -173,4 +198,29 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 	public void setValue(List<ITerm> t) {
 		this.terms = t;
 	}
+
+	public Set<IVariable> getVariables() {
+		Set variables = new HashSet<ITerm>();
+		for(ITerm term : this.terms){
+			if(term instanceof IVariable)
+				variables.add(term);
+			if(term instanceof IConstructedTerm)
+				variables.addAll(getVariables((IConstructedTerm)term));
+				
+		}
+		return variables;
+	}
+	
+	private Set<IVariable> getVariables(IConstructedTerm t) {
+		Set variables = new HashSet<ITerm>();
+		List<IConstructedTerm> termList = t.getParameters();
+		for(ITerm term : termList){
+			if(term instanceof IVariable)
+				variables.add(term);
+			if(term instanceof IConstructedTerm)
+				variables.addAll(getVariables((IConstructedTerm)term));
+		}
+		return variables;
+	}
+
 }
