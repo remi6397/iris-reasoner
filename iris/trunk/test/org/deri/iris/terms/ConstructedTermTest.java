@@ -25,12 +25,17 @@
  */
 package org.deri.iris.terms;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.IStringTerm;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -74,4 +79,27 @@ public class ConstructedTermTest extends TestCase {
 		ObjectTest.runTestCompareTo(new ConstantTerm(BASIC), new ConstantTerm(
 				BASIC), new ConstantTerm(MORE), new ConstantTerm(MORE1));
 	}
+	
+	public void testGroundness() {
+		IConstructedTerm c1 = Factory.TERM.createConstruct("c1", BASIC, 
+				Factory.TERM.createVariable("X"));
+		IConstructedTerm c2 = Factory.TERM.createConstruct("c2", c1, BASIC);
+		
+		assertFalse("c1 is not ground, thus c2 is not ground too", c2.isGround());
+	}
+	
+	public void testVariables() {
+		Set<IVariable> variables = new HashSet<IVariable>();
+		IVariable x = Factory.TERM.createVariable("X");
+		IVariable y = Factory.TERM.createVariable("Y");
+		
+		variables.add(x);
+		variables.add(y);
+		
+		IConstructedTerm c1 = Factory.TERM.createConstruct("c1", BASIC, y);
+		IConstructedTerm c2 = Factory.TERM.createConstruct("c2", c1, x);
+		
+		assertEquals(variables, c2.getVariables());
+	}
+	
 }
