@@ -29,7 +29,9 @@ import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
@@ -37,7 +39,10 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.factory.Factory;
 
 /**
  * @author Darko Anicic, DERI Innsbruck
@@ -161,5 +166,23 @@ public class TupleTest extends TestCase {
 		// something has changed MUTABLE in meantime!
 		MUTABLE.setTerms(TERMS);
 		ObjectTest.runTestHashCode(REFERENCE, MUTABLE);
+	}
+	
+	public void testVariables() {
+		Set<IVariable> variables = new HashSet<IVariable>();
+		IVariable x = Factory.TERM.createVariable("X");
+		IVariable y = Factory.TERM.createVariable("Y");
+		
+		variables.add(x);
+		variables.add(y);
+		
+		IConstructedTerm c1 = Factory.TERM.createConstruct("c1", y);
+		IConstructedTerm c2 = Factory.TERM.createConstruct("c2", c1, x);
+		List<ITerm> terms = new ArrayList<ITerm>();
+		terms.addAll(TERMS);
+		terms.add(c2);
+		
+		assertEquals(variables, 
+				Factory.BASIC.createTuple(terms).getVariables());
 	}
 }
