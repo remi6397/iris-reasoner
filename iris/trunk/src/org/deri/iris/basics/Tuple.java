@@ -212,18 +212,17 @@ public class Tuple implements ITuple<ITuple>{
 			return false;
 		}
 		Tuple tuple = (Tuple) o;
+		if((this.terms.size() - tuple.getTerms().size()) != 0) return false;
 		ITerm t0, t1;
 		for(int i=0; i<tuple.getTerms().size(); i++){
 			t0 = this.terms.get(i);
 			t1 = tuple.getTerm(i);
-			// Correct it!
 			if (!(t0.getClass() == t1.getClass())) {
 				return false;
 			}
 			if(t0.compareTo(t1) != 0)
 				return false;
 		}
-		if((this.terms.size() - tuple.getTerms().size()) != 0) return false;
 		return true;
 	}
 }
