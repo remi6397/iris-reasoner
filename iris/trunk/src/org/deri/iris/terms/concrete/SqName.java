@@ -29,39 +29,100 @@ package org.deri.iris.terms.concrete;
 import org.deri.iris.api.terms.concrete.IIri;
 import org.deri.iris.api.terms.concrete.ISqName;
 
+/**
+ * Represents an sqname. </br></br>$Id$
+ * 
+ * @author richi
+ * @version $Revision$
+ * @date $Date$
+ * 
+ */
 public class SqName implements ISqName, Cloneable {
 
-	private IIri namespace = null;
+	/** Namespace for this sqname */
+	private IIri namespace;
 
-	private String name = "";
+	/** name for this sqname */
+	private String name;
 
-	protected SqName() {
-	}
-
+	/**
+	 * Constructs a sqname. The format of the string must be
+	 * <code>&lt;namespace&gt;#&lt;name&gt;</code>.
+	 * 
+	 * @param str
+	 *            the string to parse
+	 * @throws NullPointerException
+	 *             if arg is null
+	 * @throws IllegalArgumentException
+	 *             if the string got an invalid format
+	 */
 	public SqName(final String str) {
-		this();
 		setValue(str);
 	}
 
+	/**
+	 * Contructs a sqname.
+	 * 
+	 * @param namespace
+	 *            for the sqname
+	 * @param name
+	 *            for the sqname
+	 * @throws NullPointerException
+	 *             if namespace or name is null
+	 * @throws IllegalArgumentException
+	 *             if name is an empty stirng
+	 */
 	public SqName(final String namespace, final String name) {
 		this(new Iri(namespace), name);
 	}
 
+	/**
+	 * Contructs a sqname.
+	 * 
+	 * @param namespace
+	 *            for the sqname
+	 * @param name
+	 *            for the sqname
+	 * @throws NullPointerException
+	 *             if namespace or name is null
+	 * @throws IllegalArgumentException
+	 *             if name is an empty stirng
+	 */
 	public SqName(final IIri namespace, final String name) {
-		this();
 		setNamespace(namespace);
 		setName(name);
 	}
 
+	/**
+	 * Sets the namespace.
+	 * 
+	 * @param iri
+	 *            the namespace for this sqname
+	 * @throws NullPointerException
+	 *             if the iri is null
+	 */
 	protected void setNamespace(final IIri iri) {
 		if (iri == null) {
-			throw new IllegalArgumentException("The iri must not be null");
+			throw new NullPointerException("The iri must not be null");
 		}
 		this.namespace = iri;
 	}
 
+	/**
+	 * Sets the name.
+	 * 
+	 * @param str
+	 *            the name for this sqname
+	 * @throws NullPointerException
+	 *             if the str is null
+	 * @throws IllegalArgumentException
+	 *             if the name is an empty string
+	 */
 	protected void setName(final String str) {
-		if ((str == null) || (str.trim().length() <= 0)) {
+		if (str == null) {
+			throw new NullPointerException("The srt must not be null");
+		}
+		if (str.trim().length() <= 0) {
 			throw new IllegalArgumentException(
 					"The name must not be null and must be longer than 0");
 		}
@@ -106,7 +167,21 @@ public class SqName implements ISqName, Cloneable {
 		return null;
 	}
 
+	/**
+	 * Sets the value for this sqname. The format of the string must be
+	 * <code>&lt;namespace&gt;#&lt;name&gt;</code>.
+	 * 
+	 * @param arg
+	 *            the string to parse
+	 * @throws NullPointerException
+	 *             if arg is null
+	 * @throws IllegalArgumentException
+	 *             if the string got an invalid format
+	 */
 	public void setValue(final String arg) {
+		if (arg == null) {
+			throw new NullPointerException("arg must not be null");
+		}
 		final String[] frags = arg.split("#");
 		if (frags.length < 2) {
 			throw new IllegalArgumentException(

@@ -31,14 +31,40 @@ import java.net.URISyntaxException;
 
 import org.deri.iris.api.terms.concrete.IIri;
 
+/**
+ * Represents an iri. </br></br>$Id$
+ * 
+ * @author richi
+ * @version $Revision$
+ * @date $Date$
+ */
 public class Iri implements IIri, Cloneable {
 
-	private URI uri = null;
+	/** the uri represented by this object */
+	private URI uri;
 
+	/**
+	 * Constructs a new iri.
+	 * 
+	 * @param arg
+	 *            the string of the uri
+	 * @throws NullPointerException
+	 *             if the string is null
+	 * @throws IllegalArgumentException
+	 *             if the string couldn't be parsed to an URI
+	 */
 	Iri(final String str) {
 		setValue(str);
 	}
 
+	/**
+	 * Constructs a new iri.
+	 * 
+	 * @param uri
+	 *            the new uri
+	 * @throws NullPointerException
+	 *             if the uri is null
+	 */
 	Iri(final URI uri) {
 		setValue(uri);
 	}
@@ -78,12 +104,25 @@ public class Iri implements IIri, Cloneable {
 	public String getValue() {
 		return getURI().toString();
 	}
-	
+
 	public int hashCode() {
 		return uri.hashCode();
 	}
 
+	/**
+	 * Sets the uri.
+	 * 
+	 * @param arg
+	 *            the string of the uri
+	 * @throws NullPointerException
+	 *             if the string is null
+	 * @throws IllegalArgumentException
+	 *             if the string couldn't be parsed to an URI
+	 */
 	public void setValue(final String arg) {
+		if (arg == null) {
+			throw new NullPointerException("arg must not be null");
+		}
 		try {
 			setValue(new URI(arg));
 		} catch (URISyntaxException e) {
@@ -92,15 +131,23 @@ public class Iri implements IIri, Cloneable {
 		}
 	}
 
+	/**
+	 * Sets the uri.
+	 * 
+	 * @param uri
+	 *            the new uri
+	 * @throws NullPointerException
+	 *             if the uri is null
+	 */
 	public void setValue(final URI uri) {
 		if (uri == null) {
-			throw new IllegalArgumentException("The value must not be null");
+			throw new NullPointerException("The value must not be null");
 		}
 		this.uri = uri;
 	}
 
 	public String toString() {
-		return getClass().getName() + "[uri=" + getValue() + "]";
+		return uri.toString();
 	}
 
 	public boolean isGround() {

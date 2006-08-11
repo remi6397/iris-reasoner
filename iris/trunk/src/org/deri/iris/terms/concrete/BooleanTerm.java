@@ -35,18 +35,42 @@ import org.deri.iris.api.terms.concrete.IBooleanTerm;
 
 public class BooleanTerm implements IBooleanTerm, Cloneable {
 
-	private boolean value = false;
+	/** The boolean value represented by this object */
+	private boolean value;
 
+	/**
+	 * Constructs a boolean with the value <code>false</code>.
+	 */
 	BooleanTerm() {
+		setValue(false);
 	}
 
+	/**
+	 * Constructs a boolean with the given value.
+	 * 
+	 * @param value
+	 *            the boolean to which to set the value to
+	 */
 	BooleanTerm(final boolean value) {
-		this();
 		setValue(value);
 	}
 
+	/**
+	 * Constructs a boolean with the given value. If the string isn't a valid
+	 * boolean representation the default will be false (according to
+	 * Boolean.valueOf(String)).
+	 * 
+	 * @param value
+	 *            string representation of the boolean
+	 * @throws NullPointerException
+	 *             if the string is null
+	 * @see Boolean.valueOf(String)
+	 */
 	BooleanTerm(final String value) {
-		this(Boolean.valueOf(value));
+		if (value == null) {
+			throw new NullPointerException();
+		}
+		setValue(Boolean.valueOf(value));
 	}
 
 	public Object clone() {

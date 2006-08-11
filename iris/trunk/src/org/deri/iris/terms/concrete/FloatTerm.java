@@ -28,20 +28,38 @@ package org.deri.iris.terms.concrete;
 import org.deri.iris.api.terms.concrete.IFloatTerm;
 
 /**
+ * Represents a float.
+ * </br></br>$Id$
  * @author richi
- *
+ * @version $Revision$
+ * @date $Date$
  */
 public class FloatTerm implements IFloatTerm, Cloneable {
 
-	private float f = 0f;
+	/** The float represented by this object */
+	private float f;
 	
+	
+	/**
+	 * Constructs a new float with the given value.
+	 * @param f the float value for this object
+	 * @throws NullPointerException if the float is null
+	 */
 	FloatTerm(final Float f) {
+		if (f == null) {
+			throw new NullPointerException();
+		}
 		setValue(f);
 	}
 	
+	/**
+	 * Sets the value to the given float.
+	 * @param arg the value for this object
+	 * @throws NullPointerException if the float is null
+	 */
 	public void setValue(final Float arg) {
 		if (arg == null) {
-			throw new IllegalArgumentException("The value must not be null");
+			throw new NullPointerException();
 		}
 		f = arg;
 	}
