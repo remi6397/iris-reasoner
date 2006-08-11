@@ -27,12 +27,16 @@
 package org.deri.iris.basics;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 
 /**
  * @author Darko Anicic, DERI Innsbruck
@@ -224,5 +228,29 @@ public class Tuple implements ITuple<ITuple>{
 				return false;
 		}
 		return true;
+	}
+
+	public Set<IVariable> getVariables() {
+		Set variables = new HashSet<ITerm>();
+		for(ITerm term : this.terms){
+			if(term instanceof IVariable)
+				variables.add(term);
+			if(term instanceof IConstructedTerm)
+				variables.addAll(getVariables((IConstructedTerm)term));
+				
+		}
+		return variables;
+	}
+	
+	private Set<IVariable> getVariables(IConstructedTerm t) {
+		Set variables = new HashSet<ITerm>();
+		List<IConstructedTerm> termList = (List<IConstructedTerm>)t.getValue();
+		for(ITerm term : termList){
+			if(term instanceof IVariable)
+				variables.add(term);
+			if(term instanceof IConstructedTerm)
+				variables.addAll(getVariables((IConstructedTerm)term));
+		}
+		return variables;
 	}
 }

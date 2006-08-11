@@ -27,8 +27,10 @@
 package org.deri.iris.api.basics;
 
 import java.util.List;
+import java.util.Set;
 
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 
 /**
 * @author Darko Anicic, DERI Innsbruck
@@ -83,6 +85,8 @@ public interface ITuple<Type extends ITuple> extends Comparable<Type>{
 	public boolean setTerms(int index, List<ITerm> terms);
 	
 	public boolean isGround();
+	
+	public Set<IVariable> getVariables();
 	
 	/**
 	 * Tuples t0 and t1 are duplicates if they have identical terms  
