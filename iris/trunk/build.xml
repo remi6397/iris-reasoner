@@ -47,6 +47,21 @@
 			</fileset>
 		</javadoc>
 	</target>
+	
+	<target name="doccheck" description="checks the documentation of the project" depends="init,preparedoccheck">
+		<javadoc destdir="${dir.doccheck}">
+			<doclet name="com.sun.tools.doclets.doccheck.DocCheck" path="${jar.doccheck}">
+				<param name="-title" value="IRIS"/>
+			</doclet>
+			<packageset dir="${dir.api}">
+				<include name="org/deri/iris/**"/>
+			</packageset>
+			<packageset dir="${dir.src}">
+				<include name="org/deri/iris/**"/>
+			</packageset>
+		</javadoc>
+		
+	</target>
 
 	<target name="jar" description="creates the jar file" depends="init,javac,preparejar">
 		<jar basedir="${dir.classes}" destfile="${dir.jar}/${file.jar.main}" index="true" />
@@ -74,6 +89,10 @@
 
 	<target name="preparejar" depends="init">
 		<mkdir dir="${dir.jar}" />
+	</target>
+	
+	<target name="preparedoccheck" depends="init">
+		<mkdir dir="${dir.build}/doccheck"/>
 	</target>
 
 </project>
