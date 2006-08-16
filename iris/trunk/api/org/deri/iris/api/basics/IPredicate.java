@@ -15,6 +15,10 @@ public interface IPredicate extends Comparable<IPredicate> {
 	
 	public int getArity();
 	
+	public int setStratum(int s);
+	
+	public int getStratum();
+	
 	public void setBuiltIn(boolean arg);
 	
 	public boolean isBuiltIn();
