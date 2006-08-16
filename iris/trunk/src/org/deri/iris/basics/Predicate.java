@@ -28,9 +28,9 @@ package org.deri.iris.basics;
 import org.deri.iris.api.basics.IPredicate;
 
 /**
- * This is a simple IPredicate implementation.<br/>
+ * This is a simple IPredicate implementation.</br>
  * <b>NOTE: This implementation is immutable</b>
- * <br/><br/>$Id$
+ * </br></br>$Id$
  * @author richi
  * @version $Revision$
  */
@@ -41,6 +41,8 @@ public class Predicate implements IPredicate, Cloneable {
 	private final boolean builtin;
 
 	private final int arity;
+	
+	private int stratum;
 
 	Predicate(final String symbol, final int arity) {
 		this.symbol = symbol;
@@ -81,6 +83,7 @@ public class Predicate implements IPredicate, Cloneable {
 		result = result * 37 + (builtin ? 0 : 1);
 		result = result * 37 + arity;
 		result = result * 37 + symbol.hashCode();
+		result = result * 37 + stratum;
 		return result;
 	}
 
@@ -118,6 +121,14 @@ public class Predicate implements IPredicate, Cloneable {
 			return res;
 		}
 		return 0;
+	}
+
+	public int getStratum() {
+		return stratum;
+	}
+
+	public int setStratum(int stratum) {
+		return this.stratum = stratum;
 	}
 
 	public String toString() {
