@@ -48,21 +48,24 @@ import org.deri.iris.evaluation.magic.SIPImpl;
 /**
  * This is a simple implementation of an adorned program. <b>NOTE: At the moment
  * this class only works with rules with one literal in the head.</b><br/><br/>
+ * $Id: AdornedProgram.java,v 1.8 2006-08-16 12:30:26 richardpoettler Exp $
  * 
- * @author richi $Id: AdornedProgram.java,v 1.7 2006-08-08 08:32:06 darko Exp $
- * @version $Revision: 1.7 $
+ * @author richi
+ * @version $Revision: 1.8 $
  */
 public class AdornedProgram {
 
 	// TODO: make a smaller empty-constant-term
-	private static final ITerm EMPTY_CONSTANT_TERM = TERM.createConstant(TERM
-			.createString(""));
+	private static final ITerm EMPTY_CONSTANT_TERM =
+			TERM.createConstant(TERM.createString(""));
 
 	/** Set of all derived predicates */
-	private final Set<IPredicate> deriveredPredicates = new HashSet<IPredicate>();;
+	private final Set<IPredicate> deriveredPredicates =
+			new HashSet<IPredicate>();
 
 	/** Set of all adorned predicates */
-	private final Set<AdornedPredicate> adornedPredicates = new HashSet<AdornedPredicate>();
+	private final Set<AdornedPredicate> adornedPredicates =
+			new HashSet<AdornedPredicate>();
 
 	/** Set of all adorned rules */
 	private final Set<AdornedRule> adornedRules = new HashSet<AdornedRule>();
@@ -112,7 +115,8 @@ public class AdornedProgram {
 		// creating an adored predicate out of the query, and add it to the
 		// predicate sets
 		AdornedPredicate qa = new AdornedPredicate(query);
-		Set<AdornedPredicate> predicatesToProcess = new HashSet<AdornedPredicate>();
+		Set<AdornedPredicate> predicatesToProcess =
+				new HashSet<AdornedPredicate>();
 		predicatesToProcess.add(qa);
 		adornedPredicates.add(qa);
 
@@ -127,7 +131,7 @@ public class AdornedProgram {
 
 				// if the headliteral and the adorned predicate have the
 				// same signature
-				if (hasSameSignature(ap, ph)) {
+				if (ap.hasSameSignature(ph)) {
 					// creating a sip for the actual rule and the ap
 					SIPImpl sip = new SIPImpl(r, createQueryForAP(ap, lh));
 					AdornedRule ra = new AdornedRule(r, sip);
@@ -257,26 +261,6 @@ public class AdornedProgram {
 	}
 
 	/**
-	 * Determines, whether the signature of two predicates matches. Therefore it
-	 * will compare the arities and the symbold of the predicates.
-	 * 
-	 * @param p0
-	 *            the first predicate to compare
-	 * @param p1
-	 *            the second predicate to compare
-	 * @return true if the signature (arity and symbol) of the predicates
-	 *         matches, otherwise false
-	 */
-	private static boolean hasSameSignature(final IPredicate p0,
-			final IPredicate p1) {
-		if ((p0 == null) || (p1 == null)) {
-			throw new NullPointerException();
-		}
-		return p0.getPredicateSymbol().equals(p1.getPredicateSymbol())
-				&& (p0.getArity() == p1.getArity());
-	}
-
-	/**
 	 * Determines all derived predicates of the program and adds them to the
 	 * derivedPredicates set.
 	 */
@@ -301,7 +285,10 @@ public class AdornedProgram {
 	 *             if the literal or the adored predicate are null
 	 * @throws IllegalArgumentException
 	 *             if the arity of the predicate of the literal and the adored
-	 *             predicate desn't match
+	 *             predicate isn't equal
+	 * @throws IllegalArgumentException
+	 *             if the adornment of the predicate contains something else
+	 *             than BOUND or FREE.
 	 */
 	private static IQuery createQueryForAP(final AdornedPredicate ap,
 			final ILiteral hl) {
@@ -310,7 +297,7 @@ public class AdornedProgram {
 		}
 		if (hl.getPredicate().getArity() != ap.getArity()) {
 			throw new IllegalArgumentException("The arity of the predicate of "
-					+ "the literal and the adorned predicate must match");
+					+ "the literal and the adorned predicate be equal");
 		}
 		ITerm[] terms = new ITerm[ap.getArity()];
 		int iCounter = 0;
@@ -323,8 +310,8 @@ public class AdornedProgram {
 					terms[iCounter] = hl.getTuple().getTerm(iCounter);
 					break;
 				default:
-					assert true : "onyl BOUND and FREE are supported";
-					break;
+					throw new IllegalArgumentException(
+							"Only BOUND and FREE are allowed as adornments");
 			}
 			iCounter++;
 		}
@@ -344,7 +331,7 @@ public class AdornedProgram {
 			if ((adornment == null) || (symbol == null)) {
 				throw new NullPointerException();
 			}
-			if (adornment.length != arity) {
+			if (adornment.length < arity) {
 				throw new IllegalArgumentException(
 						"The length of the adornment "
 								+ "and the arity of the predicate doesn't match.");
@@ -386,6 +373,13 @@ public class AdornedProgram {
 		}
 
 		public AdornedPredicate(final IQuery q) {
+			if (q == null) {
+				throw new NullPointerException();
+			}
+			if (q.getQueryLenght() != 1) {
+				throw new IllegalArgumentException(
+						"At the moment only queries with length 1 are allowed");
+			}
 			// TODO: maybe a defensive copy should be made
 			final ILiteral literal = q.getQueryLiteral(0);
 			this.p = literal.getPredicate();
@@ -406,6 +400,32 @@ public class AdornedProgram {
 				}
 				iCounter++;
 			}
+		}
+
+		/**
+		 * Determines whether a predicate has the same sinature as this
+		 * predicate. Same signature means same arity and predicate symbol.
+		 * 
+		 * @param pred
+		 *            the other predicate to compare to
+		 * @return true if they got the same signature
+		 */
+		public boolean hasSameSignature(final IPredicate pred) {
+			if (pred == null) {
+				throw new NullPointerException();
+			}
+			return (pred.getArity() == p.getArity())
+					&& (pred.getPredicateSymbol()
+							.equals(p.getPredicateSymbol()));
+		}
+
+		/**
+		 * Returns this as an undadorned predicate.
+		 * 
+		 * @return the undadorned predicate
+		 */
+		public IPredicate getUnadornedPredicate() {
+			return p;
 		}
 
 		public Adornment[] getAdornment() {
@@ -487,9 +507,11 @@ public class AdornedProgram {
 
 		private final SIPImpl sip;
 
-		private final Map<Integer, ILiteral> headReplacements = new HashMap<Integer, ILiteral>();
+		private final Map<Integer, ILiteral> headReplacements =
+				new HashMap<Integer, ILiteral>();
 
-		private final Map<Integer, ILiteral> bodyReplacements = new HashMap<Integer, ILiteral>();
+		private final Map<Integer, ILiteral> bodyReplacements =
+				new HashMap<Integer, ILiteral>();
 
 		public AdornedRule(final IRule r, final SIPImpl s) {
 			// checking arguments
@@ -570,8 +592,8 @@ public class AdornedProgram {
 		}
 
 		public List<ILiteral> getHeadLiterals() {
-			List<ILiteral> l = new ArrayList<ILiteral>(originalRule
-					.getHeadLenght());
+			List<ILiteral> l =
+					new ArrayList<ILiteral>(originalRule.getHeadLenght());
 			for (int iCounter = 0; iCounter < originalRule.getHeadLenght(); iCounter++) {
 				l.add(iCounter, getHeadLiteral(iCounter));
 			}
@@ -595,8 +617,8 @@ public class AdornedProgram {
 		}
 
 		public List<ILiteral> getBodyLiterals() {
-			List<ILiteral> l = new ArrayList<ILiteral>(originalRule
-					.getBodyLenght());
+			List<ILiteral> l =
+					new ArrayList<ILiteral>(originalRule.getBodyLenght());
 			for (int iCounter = 0; iCounter < originalRule.getBodyLenght(); iCounter++) {
 				l.add(iCounter, getBodyLiteral(iCounter));
 			}
