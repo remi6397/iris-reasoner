@@ -64,8 +64,7 @@ public class Join implements IJoin{
 	
 	Join(IRelation arg0, IRelation arg1, int[] indexes){
 		if (arg0 == null || arg1 == null || indexes == null) {
-			throw new IllegalArgumentException("All construcotr " +
-				"parameters must not be specified (non null values");
+			throw new IllegalArgumentException("Input parameters must not be null");
 		}
 		constructJoinOperator(arg0, arg1, indexes);
 		this.condition = JoinCondition.EQUALS; 
