@@ -25,12 +25,14 @@
  */
 package org.deri.iris.api.factory;
 
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IDifference;
 import org.deri.iris.api.operations.relation.IIntersection;
 import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.operations.relation.IProjection;
 import org.deri.iris.api.operations.relation.ISelection;
+import org.deri.iris.api.operations.tuple.IUnification;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.operations.relations.JoinCondition;
 
@@ -127,5 +129,9 @@ public interface IRelationFactory {
 	public IProjection createProjectionOperator(IRelation relation, int[] pattern);
 	
 	public ISelection createSelectionOperator(IRelation relation, ITuple pattern);
+	
+	public IUnification createUnificationOperator(final ITuple arg0, final ITuple arg1);
+	
+	public IUnification createUnificationOperator(final IAtom arg0, final IAtom arg1);
 	
 }
