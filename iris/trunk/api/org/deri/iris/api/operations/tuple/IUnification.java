@@ -25,24 +25,34 @@
  */
 package org.deri.iris.api.operations.tuple;
 
-import org.deri.iris.api.basics.IAtom;
-import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.operations.basics.IUnificationSet;
+import java.util.List;
+
+import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.operations.relations.Multiequation;
+import org.deri.iris.operations.relations.MultiequationSystem;
 
 /**
- * Interface or class description
  *
  * Interface of a unification operation used to promote modularity 
  * of the inference engine.
  * 
+ * Given two terms containing some variables, find, if it exists, 
+ * the simplest substitution (i.e., an assignment of some term to every 
+ * variable) which makes the two terms equal. The resulting substitution 
+ * is called the most general unifier and is unique up to variable renaming.
+ * 
+ * An implementation of this interface is supposed to find the most general
+ * unifier for two atoms or two tupples.
+ * 
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:54:09
  *
- * @version $Revision: 1.4 $ $Date: 2006-08-04 15:00:16 $
+ * @version $Revision: 1.5 $ $Date: 2006-08-17 12:45:27 $
  */
 public interface IUnification {
 
-	public IUnificationSet unify(final IAtom arg0, final IAtom arg1);
+	public List<Multiequation> unify();
+
+	public MultiequationSystem createInitialMultiequationSystem(ITerm term, ITerm term2);
 	
-	public IUnificationSet unify(final ITuple arg0, final ITuple arg1);
 }
