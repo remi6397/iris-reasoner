@@ -80,9 +80,9 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 		return terms.get(arg);
 	}
 
-	public List<ITerm> getParameters() {
+	/*public List<ITerm> getParameters() {
 		return terms;
-	}
+	}*/
 
 	public boolean isGround() {
 		for(ITerm term : this.terms){
@@ -97,7 +97,7 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 	}
 	
 	private boolean isGround(IConstructedTerm t) {
-		List<ITerm> termList = t.getParameters();
+		List<ITerm> termList = (List<ITerm>)t.getValue();
 		for(ITerm term : termList){
 			if(term instanceof ConstructedTerm){
 				if(!isGround((IConstructedTerm)term)) return false;
@@ -132,8 +132,7 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 	}
 
 	public String toString() {
-		return getClass().getName() + "[symbol=" + symbol + ",terms="
-				+ terms.toString() + "]";
+		return symbol + terms.toString();
 	}
 
 	public boolean equals(final Object o) {
@@ -152,7 +151,7 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 			return result;
 		}
 		
-		int min = Math.min(terms.size(), o.getParameters().size());
+		int min = Math.min(terms.size(), ((List<ITerm>)o.getValue()).size());
 		
 		for (int iCounter = 0; iCounter < min; iCounter++) {
 			result = terms.get(iCounter).compareTo(o.getParameter(iCounter));
@@ -160,7 +159,7 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 				return result;
 			}
 		}
-		return terms.size() - o.getParameters().size();
+		return terms.size() - ((List<ITerm>)o.getValue()).size();
 	}
 
 	/**
@@ -213,7 +212,7 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 	
 	private Set<IVariable> getVariables(IConstructedTerm t) {
 		Set variables = new HashSet<ITerm>();
-		List<IConstructedTerm> termList = t.getParameters();
+		List<IConstructedTerm> termList = (List<IConstructedTerm>)t.getValue();
 		for(ITerm term : termList){
 			if(term instanceof IVariable)
 				variables.add(term);
