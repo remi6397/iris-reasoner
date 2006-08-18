@@ -1,27 +1,25 @@
 /*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions by 
- * built-in predicates, default negation (under well-founded semantics), 
- * function symbols and contexts. 
+ * Integrated Rule Inference System (IRIS): An extensible rule inference system
+ * for datalog with extensions by built-in predicates, default negation (under
+ * well-founded semantics), function symbols and contexts.
  * 
- * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
- * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
- * A-6020 Innsbruck. Austria.
+ * Copyright (C) 2006 Digital Enterprise Research Institute (DERI),
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, A-6020
+ * Innsbruck. Austria.
  * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
  * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package org.deri.iris.evaluation.common;
 
@@ -31,10 +29,8 @@ import static org.deri.iris.factory.Factory.TERM;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.basics.ILiteral;
@@ -47,11 +43,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
 
 /**
  * This is a simple implementation of an adorned program. <b>NOTE: At the moment
- * this class only works with rules with one literal in the head.</b><br/><br/>
- * $Id: AdornedProgram.java,v 1.8 2006-08-16 12:30:26 richardpoettler Exp $
+ * this class only works with rules with one literal in the head.</b></br></br>
+ * $Id: AdornedProgram.java,v 1.9 2006-08-18 09:23:53 richardpoettler Exp $
  * 
  * @author richi
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class AdornedProgram {
 
@@ -494,140 +490,173 @@ public class AdornedProgram {
 			AdornedPredicate p = (AdornedPredicate) o;
 			return this.p.equals(p.p) && Arrays.equals(adornment, p.adornment);
 		}
+
+		public int getStratum() {
+			return getStratum();
+		}
+
+		public int setStratum(int s) {
+			return setStratum(s);
+		}
 	}
 
 	/**
-	 * @deprecated this is a dirty hack - IRule should be cloneable
+	 * Simple representation of an adorned rule. </br><b>ATTENTION: the
+	 * replaceHeadLiterla and replaceBodyLiteral are slow, because they copy the
+	 * head and body for each invocation.</b>
+	 * 
 	 * @author richi
 	 */
 	public static class AdornedRule implements IRule {
 		// TODO: implement hashCode and equals
 
-		private final IRule originalRule;
+		/** The inner rule represented by this object */
+		private IRule rule;
 
+		/** The sip for this rule */
 		private final SIPImpl sip;
 
-		private final Map<Integer, ILiteral> headReplacements =
-				new HashMap<Integer, ILiteral>();
-
-		private final Map<Integer, ILiteral> bodyReplacements =
-				new HashMap<Integer, ILiteral>();
-
+		/**
+		 * Constructs a new adorned rule.
+		 * 
+		 * @param r
+		 *            the rule
+		 * @param s
+		 *            the sip for this rule
+		 * @throws NullPointerException
+		 *             if the rule or the sip is null
+		 */
 		public AdornedRule(final IRule r, final SIPImpl s) {
 			// checking arguments
 			if ((r == null) || (s == null)) {
 				throw new NullPointerException();
 			}
 			// TODO: a defensive copy should be made
-			originalRule = r;
+			rule =
+					BASIC.createRule(BASIC.createHead(new ArrayList<ILiteral>(r
+							.getHeadLiterals())), BASIC
+							.createBody(new ArrayList<ILiteral>(r
+									.getBodyLiterals())));
 			sip = s;
 		}
 
+		/**
+		 * Retruns the sip associated with this rule.
+		 * 
+		 * @return the sip
+		 */
 		public SIPImpl getSIP() {
 			return sip;
 		}
 
+		/**
+		 * Replaces the predicate of a given literal in the head. <b>This method
+		 * is slow</b>, because it copies the head and the body for each
+		 * invokation.
+		 * 
+		 * @param l
+		 *            the literal of which to replace the predicate
+		 * @param p
+		 *            the new predicate.
+		 * @throws NullPointerException
+		 *             if the literal or the predicate are null.
+		 */
 		public void replaceHeadLiteral(final ILiteral l, final IPredicate p) {
-			replaceHeadLiteral(originalRule.getHeadLiterals().indexOf(l), p);
+			if ((l == null) || (p == null)) {
+				throw new NullPointerException(
+						"The literal and the predcate must not be null");
+			}
+
+			// FIXME: what if the literal could not be found
+			final List<ILiteral> head = rule.getHeadLiterals();
+			head.set(head.indexOf(l), BASIC.createLiteral(l.isPositive(), p, l
+					.getTuple()));
+			rule =
+					BASIC.createRule(BASIC.createHead(head), BASIC
+							.createBody(rule.getBodyLiterals()));
 		}
 
+		/**
+		 * Replaces the predicate of a given literal in the body. <b>This method
+		 * is slow</b>, because it copies the head and the body for each
+		 * invokation.
+		 * 
+		 * @param l
+		 *            the literal of which to replace the predicate
+		 * @param p
+		 *            the new predicate.
+		 * @throws NullPointerException
+		 *             if the literal or the predicate are null.
+		 */
 		public void replaceBodyLiteral(final ILiteral l, final IPredicate p) {
-			replaceBodyLiteral(originalRule.getBodyLiterals().indexOf(l), p);
-		}
+			if ((l == null) || (p == null)) {
+				throw new NullPointerException(
+						"The literal and the predcate must not be null");
+			}
 
-		public void replaceHeadLiteral(final int pos, final IPredicate p) {
-			ILiteral l = getHeadLiteral(pos);
-			headReplacements.put(pos, BASIC.createLiteral(l.isPositive(), p,
-					BASIC.createTuple(l.getTuple().getTerms())));
-		}
-
-		public void replaceBodyLiteral(final int pos, final IPredicate p) {
-			ILiteral l = getBodyLiteral(pos);
-			bodyReplacements.put(pos, BASIC.createLiteral(l.isPositive(), p,
-					BASIC.createTuple(l.getTuple().getTerms())));
+			// FIXME: what if the literal could not be found
+			final List<ILiteral> body = rule.getBodyLiterals();
+			body.set(body.indexOf(l), BASIC.createLiteral(l.isPositive(), p, l
+					.getTuple()));
+			rule =
+					BASIC.createRule(BASIC.createHead(rule.getHeadLiterals()),
+							BASIC.createBody(body));
 		}
 
 		public String toString() {
-			StringBuilder buffer = new StringBuilder();
-			for (ILiteral l : getHeadLiterals()) {
-				buffer.append(l).append(" ");
-			}
-			buffer.append(":- ");
-			for (ILiteral l : getBodyLiterals()) {
-				buffer.append(l).append(" ");
-			}
-			return buffer.substring(0, buffer.length() - 1);
+			return rule.toString();
 		}
 
 		public boolean isBuiltIn() {
-			return originalRule.isBuiltIn();
+			return rule.isBuiltIn();
 		}
 
 		public boolean isCycled() {
-			return originalRule.isCycled();
+			return rule.isCycled();
 		}
 
 		public boolean isFact() {
-			return originalRule.isFact();
+			return rule.isFact();
 		}
 
 		public boolean isRectified() {
-			return originalRule.isRectified();
+			return rule.isRectified();
 		}
 
 		public boolean isSafe() {
-			return originalRule.isSafe();
+			return rule.isSafe();
 		}
 
 		public int getHeadLenght() {
-			return originalRule.getHeadLenght();
+			return rule.getHeadLenght();
 		}
 
 		public ILiteral getHeadLiteral(int arg) {
-			ILiteral l = null;
-			if ((l = headReplacements.get(arg)) != null) {
-				return l;
-			}
-			return originalRule.getHeadLiteral(arg);
+			return rule.getHeadLiteral(arg);
 		}
 
 		public List<ILiteral> getHeadLiterals() {
-			List<ILiteral> l =
-					new ArrayList<ILiteral>(originalRule.getHeadLenght());
-			for (int iCounter = 0; iCounter < originalRule.getHeadLenght(); iCounter++) {
-				l.add(iCounter, getHeadLiteral(iCounter));
-			}
-			return l;
+			return Collections.unmodifiableList(rule.getHeadLiterals());
 		}
 
 		public List<IVariable> getHeadVariables() {
-			return originalRule.getHeadVariables();
+			return Collections.unmodifiableList(rule.getHeadVariables());
 		}
 
 		public int getBodyLenght() {
-			return originalRule.getBodyLenght();
+			return rule.getBodyLenght();
 		}
 
 		public ILiteral getBodyLiteral(int arg) {
-			ILiteral l = null;
-			if ((l = bodyReplacements.get(arg)) != null) {
-				return l;
-			}
-			return originalRule.getBodyLiteral(arg);
+			return rule.getBodyLiteral(arg);
 		}
 
 		public List<ILiteral> getBodyLiterals() {
-			List<ILiteral> l =
-					new ArrayList<ILiteral>(originalRule.getBodyLenght());
-			for (int iCounter = 0; iCounter < originalRule.getBodyLenght(); iCounter++) {
-				l.add(iCounter, getBodyLiteral(iCounter));
-			}
-			return l;
+			return Collections.unmodifiableList(rule.getBodyLiterals());
 		}
 
 		public List<IVariable> getBodyVariables() {
-			return originalRule.getBodyVariables();
+			return Collections.unmodifiableList(rule.getBodyVariables());
 		}
-
 	}
 }
