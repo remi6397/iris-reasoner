@@ -44,10 +44,10 @@ import org.deri.iris.evaluation.magic.SIPImpl;
 /**
  * This is a simple implementation of an adorned program. <b>NOTE: At the moment
  * this class only works with rules with one literal in the head.</b></br></br>
- * $Id: AdornedProgram.java,v 1.10 2006-08-22 09:56:43 richardpoettler Exp $
+ * $Id: AdornedProgram.java,v 1.11 2006-08-22 10:49:40 richardpoettler Exp $
  * 
  * @author richi
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class AdornedProgram {
 
@@ -85,19 +85,26 @@ public class AdornedProgram {
 	 * @throws IllegalArgumentException
 	 *             if the size of the head literals, or of the query literals is
 	 *             bigger than 1
+	 * @throws IllegalArgumentException
+	 *             if the list of rules contains null
 	 */
 	public AdornedProgram(final Set<IRule> rules, final IQuery query) {
 		// check the parameters
 		if ((rules == null) || (query == null)) {
-			throw new NullPointerException();
+			throw new NullPointerException(
+					"The rules and the query must not be null");
+		}
+		if (rules.contains(null)) {
+			throw new IllegalArgumentException(
+					"The list of rules must not contain null");
 		}
 		for (IRule r : rules) {
-			if (r.getHeadLiterals().size() > 1) {
+			if (r.getHeadLiterals().size() != 1) {
 				throw new IllegalArgumentException("At the moment this class "
 						+ "only works with rules with one literal in the head.");
 			}
 		}
-		if (query.getQueryLenght() > 1) {
+		if (query.getQueryLenght() != 1) {
 			throw new IllegalArgumentException("At the moment there are only "
 					+ "queries with one literal supported");
 		}
@@ -110,7 +117,7 @@ public class AdornedProgram {
 
 		// creating an adored predicate out of the query, and add it to the
 		// predicate sets
-		AdornedPredicate qa = new AdornedPredicate(query);
+		AdornedPredicate qa = new AdornedPredicate(query.getQueryLiteral(0));
 		Set<AdornedPredicate> predicatesToProcess =
 				new HashSet<AdornedPredicate>();
 		predicatesToProcess.add(qa);
@@ -246,7 +253,8 @@ public class AdornedProgram {
 	private AdornedPredicate processLiteral(final ILiteral l,
 			final AdornedRule r) {
 		if ((l == null) || (r == null)) {
-			throw new NullPointerException();
+			throw new NullPointerException(
+					"The literal and rule must not be null");
 		}
 		AdornedPredicate ap = null;
 		if (deriveredPredicates.contains(l.getPredicate())) {
@@ -289,7 +297,8 @@ public class AdornedProgram {
 	private static IQuery createQueryForAP(final AdornedPredicate ap,
 			final ILiteral hl) {
 		if ((hl == null) || (ap == null)) {
-			throw new NullPointerException();
+			throw new NullPointerException(
+					"The predicate and literal must not be null");
 		}
 		if (hl.getPredicate().getArity() != ap.getArity()) {
 			throw new IllegalArgumentException("The arity of the predicate of "
@@ -322,10 +331,48 @@ public class AdornedProgram {
 		/** The adornment of the predicate */
 		private final Adornment[] adornment;
 
+		/**
+		 * Constructs an adorned predicate.
+		 * 
+		 * @param symbol
+		 *            symbol for the predicate
+		 * @param adornment
+		 *            the array of bound and frees
+		 * @throws NullPointerException
+		 *             if the adornment of the symbol is null
+		 * @throws IllegalArgumentException
+		 *             if the adornment contains null
+		 */
+		public AdornedPredicate(final String symbol, final Adornment[] adornment) {
+			this(symbol, adornment.length, adornment);
+		}
+
+		/**
+		 * Constructs an adorned predicate. The length of the adornment must be
+		 * at least as long as the arity.
+		 * 
+		 * @param symbol
+		 *            symbol for the predicate
+		 * @param arity
+		 *            the arity of the predicate.
+		 * @param adornment
+		 *            the array of bound and frees
+		 * @throws NullPointerException
+		 *             if the adornment of the symbol is null
+		 * @throws IllegalArgumentException
+		 *             if the adornment contains null
+		 * @throws IllegalArgumentException
+		 *             if the arity is bigger than the length of the adornment
+		 */
 		public AdornedPredicate(final String symbol, final int arity,
 				final Adornment[] adornment) {
 			if ((adornment == null) || (symbol == null)) {
-				throw new NullPointerException();
+				throw new NullPointerException(
+						"The symbol and the adornment must not be null");
+			}
+			if (Arrays.asList(adornment).contains(null)) {
+				throw new IllegalArgumentException(
+						"The adornments must not contain null");
 			}
 			if (adornment.length < arity) {
 				throw new IllegalArgumentException(
@@ -335,23 +382,31 @@ public class AdornedProgram {
 			this.p = BASIC.createPredicate(symbol, arity);
 			this.adornment = new Adornment[adornment.length];
 			System.arraycopy(adornment, 0, this.adornment, 0, adornment.length);
-
-			// prechecking the adornmetns
-			for (Adornment a : this.adornment) {
-				if (a == null) {
-					throw new IllegalArgumentException("The adornment array "
-							+ "was corrupted (contained null).");
-				}
-			}
 		}
 
+		/**
+		 * Constructs an adorned predicate out of a literal and its bound
+		 * variables. All occurences in the literal of the bound variables will
+		 * be marked as bound in the adornment.
+		 * 
+		 * @param l
+		 *            the literal where to take the predicate and the variables
+		 *            from
+		 * @param bounds
+		 *            set of all bound variables of the literal
+		 * @throw nullpointer exception if the literal, the predicate of the
+		 *        literal or the bounds is null.
+		 */
 		public AdornedPredicate(final ILiteral l, final Set<IVariable> bounds) {
 			// TODO: maybe a defensive copy should be made
+			if (l == null) {
+				throw new NullPointerException("The literal must not be null");
+			}
 			p = l.getPredicate();
 
-			// checking the arguments
 			if ((p == null) || (bounds == null)) {
-				throw new NullPointerException();
+				throw new NullPointerException(
+						"The predicate or set of bound variables must not be null");
 			}
 
 			int iCoutner = 0;
@@ -368,31 +423,34 @@ public class AdornedProgram {
 			}
 		}
 
-		public AdornedPredicate(final IQuery q) {
-			if (q == null) {
-				throw new NullPointerException();
+		/**
+		 * Constructs an adorned predicate out of a literal. All ground terms will
+		 * be marked as bound.
+		 * 
+		 * @param l for which to construct the adorned predicate
+		 * @throws NullPointerException if the literal of the predicate of the literal is null
+		 */
+		public AdornedPredicate(final ILiteral l) {
+			if (l == null) {
+				throw new NullPointerException("The literal must not be null");
 			}
-			if (q.getQueryLenght() != 1) {
-				throw new IllegalArgumentException(
-						"At the moment only queries with length 1 are allowed");
-			}
+			
 			// TODO: maybe a defensive copy should be made
-			final ILiteral literal = q.getQueryLiteral(0);
-			this.p = literal.getPredicate();
+			this.p = l.getPredicate();
 
 			// checking the submitted values
 			if (p == null) {
-				throw new NullPointerException();
+				throw new NullPointerException("The predicate of the literal must not be null");
 			}
 
 			int iCounter = 0;
 			// computing the adornment
 			adornment = new Adornment[p.getArity()];
-			for (Object t : literal.getTuple().getTerms()) {
-				if (t instanceof IVariable) {
-					adornment[iCounter] = Adornment.FREE;
-				} else {
+			for (ITerm t : (List<ITerm>) l.getTuple().getTerms()) {
+				if (t.isGround()) {
 					adornment[iCounter] = Adornment.BOUND;
+				} else {
+					adornment[iCounter] = Adornment.FREE;
 				}
 				iCounter++;
 			}
@@ -405,10 +463,11 @@ public class AdornedProgram {
 		 * @param pred
 		 *            the other predicate to compare to
 		 * @return true if they got the same signature
+		 * @throws NullPointerException if pred is null
 		 */
 		public boolean hasSameSignature(final IPredicate pred) {
 			if (pred == null) {
-				throw new NullPointerException();
+				throw new NullPointerException("The predicate must not be null");
 			}
 			return (pred.getArity() == p.getArity())
 					&& (pred.getPredicateSymbol()
@@ -425,7 +484,9 @@ public class AdornedProgram {
 		}
 
 		public Adornment[] getAdornment() {
-			return adornment;
+			Adornment[] copy = new Adornment[adornment.length];
+			System.arraycopy(adornment, 0, copy, 0, adornment.length);
+			return copy;
 		}
 
 		public int getArity() {
@@ -529,7 +590,8 @@ public class AdornedProgram {
 		public AdornedRule(final IRule r, final SIPImpl s) {
 			// checking arguments
 			if ((r == null) || (s == null)) {
-				throw new NullPointerException();
+				throw new NullPointerException(
+						"The rule and the sip must not be null");
 			}
 			// TODO: a defensive copy should be made
 			rule =
