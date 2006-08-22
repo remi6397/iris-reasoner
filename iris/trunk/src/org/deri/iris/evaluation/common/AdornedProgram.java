@@ -44,10 +44,10 @@ import org.deri.iris.evaluation.magic.SIPImpl;
 /**
  * This is a simple implementation of an adorned program. <b>NOTE: At the moment
  * this class only works with rules with one literal in the head.</b></br></br>
- * $Id: AdornedProgram.java,v 1.9 2006-08-18 09:23:53 richardpoettler Exp $
+ * $Id: AdornedProgram.java,v 1.10 2006-08-22 09:56:43 richardpoettler Exp $
  * 
  * @author richi
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class AdornedProgram {
 
@@ -560,17 +560,34 @@ public class AdornedProgram {
 		 *            the new predicate.
 		 * @throws NullPointerException
 		 *             if the literal or the predicate are null.
+		 * @throws IllegalArgumentException
+		 *             if the arity of the predicate of the literal and the new
+		 *             predicate doesn't match
+		 * @throws IllegalArgumentException
+		 *             if the literal couldn't be found in the head
 		 */
 		public void replaceHeadLiteral(final ILiteral l, final IPredicate p) {
 			if ((l == null) || (p == null)) {
 				throw new NullPointerException(
 						"The literal and the predcate must not be null");
 			}
+			if (l.getPredicate().getArity() != p.getArity()) {
+				throw new IllegalArgumentException(
+						"The arities of the predicate of the literal "
+								+ "and the new predicate doesn't match.");
+			}
 
-			// FIXME: what if the literal could not be found
-			final List<ILiteral> head = rule.getHeadLiterals();
-			head.set(head.indexOf(l), BASIC.createLiteral(l.isPositive(), p, l
-					.getTuple()));
+			final List<ILiteral> head =
+					new ArrayList<ILiteral>(rule.getHeadLiterals());
+
+			final int index = head.indexOf(l);
+			if (index == -1) {
+				throw new IllegalArgumentException("The literal (" + l
+						+ ") couldn't be found in head (" + head + ")");
+			}
+
+			head.set(index, BASIC
+					.createLiteral(l.isPositive(), p, l.getTuple()));
 			rule =
 					BASIC.createRule(BASIC.createHead(head), BASIC
 							.createBody(rule.getBodyLiterals()));
@@ -587,17 +604,34 @@ public class AdornedProgram {
 		 *            the new predicate.
 		 * @throws NullPointerException
 		 *             if the literal or the predicate are null.
+		 * @throws IllegalArgumentException
+		 *             if the arity of the predicate of the literal and the new
+		 *             predicate doesn't match
+		 * @throws IllegalArgumentException
+		 *             if the literal couldn't be found in the body
 		 */
 		public void replaceBodyLiteral(final ILiteral l, final IPredicate p) {
 			if ((l == null) || (p == null)) {
 				throw new NullPointerException(
 						"The literal and the predcate must not be null");
 			}
+			if (l.getPredicate().getArity() != p.getArity()) {
+				throw new IllegalArgumentException(
+						"The arities of the predicate of the literal "
+								+ "and the new predicate doesn't match.");
+			}
 
-			// FIXME: what if the literal could not be found
-			final List<ILiteral> body = rule.getBodyLiterals();
-			body.set(body.indexOf(l), BASIC.createLiteral(l.isPositive(), p, l
-					.getTuple()));
+			final List<ILiteral> body =
+					new ArrayList<ILiteral>(rule.getBodyLiterals());
+
+			final int index = body.indexOf(l);
+			if (index == -1) {
+				throw new IllegalArgumentException("The literal (" + l
+						+ ") couldn't be found in body (" + body + ")");
+			}
+
+			body.set(index, BASIC
+					.createLiteral(l.isPositive(), p, l.getTuple()));
 			rule =
 					BASIC.createRule(BASIC.createHead(rule.getHeadLiterals()),
 							BASIC.createBody(body));
