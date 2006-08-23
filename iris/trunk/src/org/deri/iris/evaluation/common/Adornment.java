@@ -26,9 +26,10 @@
 package org.deri.iris.evaluation.common;
 
 /**
- * $Id: Adornment.java,v 1.1 2006-07-19 08:27:19 darko Exp $
+ * <p>Represents a state of an adornment.</p>
+ * <p>$Id: Adornment.java,v 1.2 2006-08-23 09:27:09 richardpoettler Exp $</p>
  * @author richi
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public enum Adornment {
 	BOUND("b"), FREE("f");

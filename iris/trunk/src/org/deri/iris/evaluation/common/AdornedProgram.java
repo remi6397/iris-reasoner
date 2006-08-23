@@ -42,12 +42,17 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.magic.SIPImpl;
 
 /**
+ * <p>
  * This is a simple implementation of an adorned program. <b>NOTE: At the moment
- * this class only works with rules with one literal in the head.</b></br></br>
- * $Id: AdornedProgram.java,v 1.11 2006-08-22 10:49:40 richardpoettler Exp $
+ * this class only works with rules with one literal in the head.</b>
+ * </p>
+ * <p>
+ * $Id: AdornedProgram.java,v 1.12 2006-08-23 09:27:09 richardpoettler Exp $
+ * </p>
  * 
  * @author richi
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
+ * @date $Date: 2006-08-23 09:27:09 $
  */
 public class AdornedProgram {
 
@@ -155,11 +160,15 @@ public class AdornedProgram {
 	}
 
 	/**
+	 * <p>
 	 * This returns a simple string representation of this program. <b>The
-	 * subject of this representation is to change.</b> The return of this
-	 * method will look something like:<br/>&lt;list of all adorned rules
-	 * separated by newlines&gt;<br/><code>newline</code><br/>&lt;list of
-	 * all rules separated by newlines&gt;<br/><code>newline</code><br/>&lt;the
+	 * subject of this representation is to change.</b>
+	 * </p>
+	 * <p>
+	 * The return of this method will look something like:
+	 * </p>
+	 * &lt;list of all adorned rules separated by newlines&gt;</br><code>newline</code></br>&lt;list
+	 * of all rules separated by newlines&gt;</br><code>newline</code></br>&lt;the
 	 * query&gt;
 	 * 
 	 * @return the string representation
@@ -203,7 +212,7 @@ public class AdornedProgram {
 	}
 
 	/**
-	 * Return a set of all adorned rules
+	 * Return a set of all adorned rules.
 	 * 
 	 * @return the set of adorned rules
 	 */
@@ -324,6 +333,11 @@ public class AdornedProgram {
 				.createTuple(terms)));
 	}
 
+	/**
+	 * Represents an adorned predicate.
+	 * 
+	 * @author richi
+	 */
 	public static class AdornedPredicate implements IPredicate, AdornedElement {
 		/** The predicate which should be adorned */
 		private final IPredicate p;
@@ -424,23 +438,26 @@ public class AdornedProgram {
 		}
 
 		/**
-		 * Constructs an adorned predicate out of a literal. All ground terms will
-		 * be marked as bound.
+		 * Constructs an adorned predicate out of a literal. All ground terms
+		 * will be marked as bound.
 		 * 
-		 * @param l for which to construct the adorned predicate
-		 * @throws NullPointerException if the literal of the predicate of the literal is null
+		 * @param l
+		 *            for which to construct the adorned predicate
+		 * @throws NullPointerException
+		 *             if the literal of the predicate of the literal is null
 		 */
 		public AdornedPredicate(final ILiteral l) {
 			if (l == null) {
 				throw new NullPointerException("The literal must not be null");
 			}
-			
+
 			// TODO: maybe a defensive copy should be made
 			this.p = l.getPredicate();
 
 			// checking the submitted values
 			if (p == null) {
-				throw new NullPointerException("The predicate of the literal must not be null");
+				throw new NullPointerException(
+						"The predicate of the literal must not be null");
 			}
 
 			int iCounter = 0;
@@ -463,7 +480,8 @@ public class AdornedProgram {
 		 * @param pred
 		 *            the other predicate to compare to
 		 * @return true if they got the same signature
-		 * @throws NullPointerException if pred is null
+		 * @throws NullPointerException
+		 *             if pred is null
 		 */
 		public boolean hasSameSignature(final IPredicate pred) {
 			if (pred == null) {
@@ -506,6 +524,7 @@ public class AdornedProgram {
 		 * 
 		 * @throws UnsupportedOperationException
 		 *             will be thrown every time.
+		 * @see #isBuiltIn()
 		 */
 		public void setBuiltIn(boolean arg) {
 			throw new UnsupportedOperationException();
@@ -516,6 +535,7 @@ public class AdornedProgram {
 		 * 
 		 * @throws UnsupportedOperationException
 		 *             will be thrown every time.
+		 * @see #getPredicateSymbol()
 		 */
 		public void setPredicateSymbol(String name) {
 			throw new UnsupportedOperationException();
@@ -562,9 +582,12 @@ public class AdornedProgram {
 	}
 
 	/**
-	 * Simple representation of an adorned rule. </br><b>ATTENTION: the
-	 * replaceHeadLiterla and replaceBodyLiteral are slow, because they copy the
-	 * head and body for each invocation.</b>
+	 * <p>
+	 * Simple representation of an adorned rule.</p
+	 * <p>
+	 * <b>ATTENTION: the replaceHeadLiterla and replaceBodyLiteral are slow,
+	 * because they copy the head and body for each invocation.</b>
+	 * </p>
 	 * 
 	 * @author richi
 	 */

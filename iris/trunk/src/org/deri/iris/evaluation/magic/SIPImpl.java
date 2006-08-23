@@ -49,11 +49,16 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.graph.LabeledDirectedEdge;
 
 /**
+ * <p>
  * A SIP Implementation according to the &quot;The Power of Magic&quot; paper.
- * </br></br>$Id: SIPImpl.java,v 1.6 2006-08-22 09:04:04 richardpoettler Exp $
+ * </p>
+ * <p>
+ * $Id: SIPImpl.java,v 1.7 2006-08-23 09:27:30 richardpoettler Exp $
+ * </p>
  * 
  * @author richi
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
+ * @date $Date: 2006-08-23 09:27:30 $
  */
 public class SIPImpl {
 	// TODO: implement hashCode and equals

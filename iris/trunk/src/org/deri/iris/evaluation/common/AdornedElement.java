@@ -26,13 +26,15 @@
 package org.deri.iris.evaluation.common;
 
 /**
- * $Id: AdornedElement.java,v 1.1 2006-07-19 08:27:19 darko Exp $
+ * <p>Marks an adorned element.</p>
+ * <p>$Id: AdornedElement.java,v 1.2 2006-08-23 09:27:09 richardpoettler Exp $</p>
  * @author richi
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-08-23 09:27:09 $
  */
 public interface AdornedElement {
 	/**
-	 * Returns the adornments of this element
+	 * Returns the adornments of this element.
 	 * @return the adornment
 	 */
 	public Adornment[] getAdornment();
