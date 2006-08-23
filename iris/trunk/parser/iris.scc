@@ -42,6 +42,7 @@ Tokens
     t_query = '?-';
     t_id = letter+ | quoted_id;
     t_const = quoted_id;
+    t_eq = '=';
     
 
 /************************************************************
@@ -73,8 +74,9 @@ Productions
                   {comma} body t_comma literal;
     
     literal     = {negated} t_not predicate |
-                   predicate;
-                
+                   predicate |
+                   {builtin} builtin;
+    
     predicate    = t_id paramlist?;
     
 
@@ -87,4 +89,5 @@ Productions
                    {var} t_variable |
                    {constant} t_id; // constant
                    
-   
+    builtin 	 =	[first]:t_variable t_eq [second]:t_variable |
+    				{idbuilt} t_variable t_eq t_id;

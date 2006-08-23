@@ -46,7 +46,7 @@ import org.deri.iris.factory.*;
  *
  * @author Francisco Garcia
  *
- * @version $Revision: 1.3 $ $Date: 2006-07-28 10:08:43 $
+ * @version $Revision: 1.4 $ $Date: 2006-08-23 14:09:55 $
  */
 public class TreeWalker extends DepthFirstAdapter {
     
@@ -131,10 +131,11 @@ public class TreeWalker extends DepthFirstAdapter {
     	IAtom a = Factory.BASIC.createAtom(p, Factory.BASIC.createTuple(terms));
     	// Initialite terms
     	terms = new Vector<ITerm>();
-    	// ******* set the boolean value
+    	// TODO. ******* set the boolean value
     	ILiteral l = Factory.BASIC.createLiteral(true, a); 
     	literals.add(l);
     }
+    // TODO Check the difference between predicate literals and builtin literals
     
     public void outAConstantTerm(AConstantTerm _ct)
     {
