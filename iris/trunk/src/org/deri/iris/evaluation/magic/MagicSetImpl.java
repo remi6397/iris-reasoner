@@ -106,8 +106,6 @@ public class MagicSetImpl {
 					final IRule magicRule =
 							createMagicRule(l, r, Collections
 									.unmodifiableList(sortedBody));
-					rewrittenBody.add(rewrittenBody.indexOf(l), magicRule
-							.getHeadLiteral(0));
 					magicRules.add(magicRule);
 				}
 			}
@@ -202,11 +200,7 @@ public class MagicSetImpl {
 		bodyLiterals.add(createMagicLiteral(headLiteral));
 
 		for (int counter = 0, index = sortedBody.indexOf(l); counter < index; counter++) {
-			final ILiteral literalToAdd = sortedBody.get(counter);
-			if (literalToAdd.getPredicate() instanceof AdornedPredicate) {
-				bodyLiterals.add(createMagicLiteral(literalToAdd));
-			}
-			bodyLiterals.add(literalToAdd);
+			bodyLiterals.add(sortedBody.get(counter));
 		}
 		final IBody body = BASIC.createBody(bodyLiterals);
 
