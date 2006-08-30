@@ -23,8 +23,6 @@
  */
 package org.deri.iris.evaluation.magic;
 
-import static org.deri.iris.factory.Factory.BASIC;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org._3pq.jgrapht.DirectedGraph;
+import org._3pq.jgrapht.Edge;
 import org._3pq.jgrapht.GraphHelper;
 import org._3pq.jgrapht.graph.SimpleDirectedGraph;
 import org.deri.iris.api.basics.ILiteral;
@@ -45,7 +44,6 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IConstantTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.graph.LabeledDirectedEdge;
 
 /**
@@ -53,17 +51,28 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * A SIP Implementation according to the &quot;The Power of Magic&quot; paper.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.7 2006-08-23 09:27:30 richardpoettler Exp $
+ * This class is final, because the conscructor is calling public nonfinal
+ * methods.
+ * </p>
+ * <p>
+ * $Id: SIPImpl.java,v 1.8 2006-08-30 12:51:01 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.7 $
- * @date $Date: 2006-08-23 09:27:30 $
+ * @version $Revision: 1.8 $
+ * @date $Date: 2006-08-30 12:51:01 $
  */
-public class SIPImpl {
+public final class SIPImpl {
 	// TODO: implement hashCode and equals
 
-	/** Comparator to compare literals according to their position in the sips. */
+	/**
+	 * Comparator to compare literals according to their position in the sips.
+	 * If you want to use this comparator with adorned literals use the
+	 * SipHelper.getAdornedSip(AdornedRule) method to get the sip for adorned
+	 * literals, otherwise it wont work as expected.
+	 * 
+	 * @see SipHelper#getAdornedSip(org.deri.iris.evaluation.common.AdornedProgram.AdornedRule)
+	 */
 	public final Comparator<ILiteral> LITERAL_COMP = new LiteralComparator();
 
 	/** The graph on which the variables are padded along. */
@@ -127,10 +136,10 @@ public class SIPImpl {
 
 		// determining the known variables of the head
 		final Set<IVariable> assumedKnown = new HashSet<IVariable>();
-		for (final Iterator<ITerm> headTerms =
-				headLiteral.getTuple().getTerms().iterator(), queryTerms =
-				queryLiteral.getTuple().getTerms().iterator(); (headTerms
-				.hasNext() && queryTerms.hasNext());) {
+		for (final Iterator<ITerm> headTerms = headLiteral.getTuple()
+				.getTerms().iterator(), queryTerms = queryLiteral.getTuple()
+				.getTerms().iterator(); (headTerms.hasNext() && queryTerms
+				.hasNext());) {
 			final ITerm headT = headTerms.next();
 			final ITerm queryT = queryTerms.next();
 			// FIXME: be aware of constructed terms
@@ -149,8 +158,8 @@ public class SIPImpl {
 			Collections.sort(literalsTodo, passingOrder);
 			final ILiteral l = literalsTodo.remove(0);
 
-			final Map<ILiteral, Set<IVariable>> toAdd =
-					getNextByFree(l, assumedKnown);
+			final Map<ILiteral, Set<IVariable>> toAdd = getNextByFree(l,
+					assumedKnown);
 			for (ILiteral connected : toAdd.keySet()) {
 				updateSip(l, connected, toAdd.get(connected));
 				literalsTodo.add(connected);
@@ -285,8 +294,7 @@ public class SIPImpl {
 					"The literal or the set of bounds must not be null");
 		}
 
-		final Map<ILiteral, Set<IVariable>> connected =
-				new HashMap<ILiteral, Set<IVariable>>();
+		final Map<ILiteral, Set<IVariable>> connected = new HashMap<ILiteral, Set<IVariable>>();
 
 		final Set<IVariable> bounds = l.getTuple().getVariables();
 		bounds.retainAll(known);
@@ -295,8 +303,8 @@ public class SIPImpl {
 		}
 
 		for (ILiteral lit : rule.getBodyLiterals()) {
-			final Set<IVariable> variables =
-					new HashSet<IVariable>(lit.getTuple().getVariables());
+			final Set<IVariable> variables = new HashSet<IVariable>(lit
+					.getTuple().getVariables());
 			variables.retainAll(bounds);
 			if (!variables.isEmpty()) {
 				connected.put(lit, variables);
@@ -328,12 +336,11 @@ public class SIPImpl {
 			throw new NullPointerException("The literal must not be null");
 		}
 
-		final Map<ILiteral, Set<IVariable>> connected =
-				new HashMap<ILiteral, Set<IVariable>>();
+		final Map<ILiteral, Set<IVariable>> connected = new HashMap<ILiteral, Set<IVariable>>();
 
 		// determine all possible successors of this literal
-		final Set<ILiteral> possibleSuccessors =
-				new HashSet<ILiteral>(rule.getBodyLiterals());
+		final Set<ILiteral> possibleSuccessors = new HashSet<ILiteral>(rule
+				.getBodyLiterals());
 
 		possibleSuccessors.remove(l);
 
@@ -343,8 +350,8 @@ public class SIPImpl {
 		unbound.removeAll(initiallyKnown);
 
 		for (final ILiteral possible : possibleSuccessors) {
-			final Set<IVariable> commonVars =
-					new HashSet<IVariable>(possible.getTuple().getVariables());
+			final Set<IVariable> commonVars = new HashSet<IVariable>(possible
+					.getTuple().getVariables());
 			commonVars.retainAll(unbound);
 			if (!commonVars.isEmpty()) {
 				connected.put(possible, commonVars);
@@ -397,13 +404,86 @@ public class SIPImpl {
 			final ILiteral actual = todoDependencies.iterator().next();
 			todoDependencies.remove(actual);
 
-			final List vertices =
-					GraphHelper.predecessorListOf(sipGraph, actual);
+			final List vertices = GraphHelper.predecessorListOf(sipGraph,
+					actual);
 			dependencies.addAll(vertices);
 			todoDependencies.addAll(vertices);
 		}
 
 		return dependencies;
+	}
+
+	/**
+	 * Searches for edges entering this literal.
+	 * 
+	 * @param l
+	 *            the literal for which to search for entering edges
+	 * @return set of edges entering this literal
+	 * @throws NullPointerException
+	 *             if the literal is null
+	 */
+	public Set<LabeledDirectedEdge<Set<IVariable>>> getEdgesEnteringLiteral(
+			final ILiteral l) {
+		if (l == null) {
+			throw new NullPointerException("The literal must not be null");
+		}
+		final List predecessors = GraphHelper.predecessorListOf(sipGraph, l);
+		final Set<LabeledDirectedEdge<Set<IVariable>>> edges = new HashSet<LabeledDirectedEdge<Set<IVariable>>>(
+				predecessors.size());
+		for (final Object o : predecessors) {
+			edges.add((LabeledDirectedEdge<Set<IVariable>>) sipGraph.getEdge(o,
+					l));
+		}
+		return edges;
+	}
+
+	/**
+	 * Determines the set of variables passed to one literal by one specific
+	 * edge.
+	 * 
+	 * @param e
+	 *            edge which passes the variables
+	 * @return the set of variables
+	 * @throws NullPointerException
+	 *             if the edge is null
+	 * @throws IllegalArgumentException
+	 *             if one of the vertices of the edge isn't a literal
+	 */
+	public Set<IVariable> variablesPassedByEdge(final Edge e) {
+		if (e == null) {
+			throw new NullPointerException("The edge must not be null");
+		}
+		if (!(e.getSource() instanceof ILiteral)
+				|| !(e.getTarget() instanceof ILiteral)) {
+			throw new IllegalArgumentException(
+					"The vertices of the edge must be literals");
+		}
+		return variablesPassedByLiteral((ILiteral) e.getSource(), (ILiteral) e
+				.getTarget());
+	}
+
+	/**
+	 * Determines the set of variables passed to one literal by one specific
+	 * edge.
+	 * 
+	 * @param source
+	 *            the source of the edge
+	 * @param target
+	 *            the target of the edge
+	 * @return the set of variables
+	 * @throws NullPointerException
+	 *             if one of the literal is null
+	 */
+	public Set<IVariable> variablesPassedByLiteral(final ILiteral source,
+			final ILiteral target) {
+		if ((source == null) || (target == null)) {
+			throw new NullPointerException(
+					"The source and the target must not be null");
+		}
+		Set<IVariable> vars = new HashSet<IVariable>(getBoundVariables(source));
+		vars.addAll(((LabeledDirectedEdge<Set<IVariable>>) sipGraph.getEdge(
+				source, target)).getLabel());
+		return vars;
 	}
 
 	/**
@@ -456,42 +536,17 @@ public class SIPImpl {
 				throw new NullPointerException();
 			}
 
-			final ILiteral l1 = getUnadornedLiteral(o1);
-			final ILiteral l2 = getUnadornedLiteral(o2);
-
-			if (!sipGraph.containsVertex(l1) && !sipGraph.containsVertex(l2)) {
+			if (!sipGraph.containsVertex(o1) && !sipGraph.containsVertex(o2)) {
 				return 0;
-			} else if (!sipGraph.containsVertex(l1)) {
+			} else if (!sipGraph.containsVertex(o1)) {
 				return 1;
-			} else if (!sipGraph.containsVertex(l2)) {
+			} else if (!sipGraph.containsVertex(o2)) {
 				return -1;
 			}
-			if (getDepends(l2).contains(l1)) {
+			if (getDepends(o2).contains(o1)) {
 				return -1;
 			}
 			return 1;
-		}
-
-		/**
-		 * Returns a literal with an unadorned predicate for one which might be
-		 * adorned.
-		 * 
-		 * @param l
-		 *            the literal which might be adorned
-		 * @return the literal with an unadorned predicate
-		 * @throws NullPointerException
-		 *             if the literal is null
-		 */
-		private ILiteral getUnadornedLiteral(final ILiteral l) {
-			if (l == null) {
-				throw new NullPointerException();
-			}
-			if (l.getPredicate() instanceof AdornedPredicate) {
-				return BASIC.createLiteral(l.isPositive(),
-						((AdornedPredicate) l.getPredicate())
-								.getUnadornedPredicate(), l.getTuple());
-			}
-			return l;
 		}
 	}
 
@@ -513,15 +568,13 @@ public class SIPImpl {
 
 			headPredicate = headLiteral.getPredicate();
 
-			for (final Iterator<ITerm> headTerms =
-					headLiteral.getTuple().getTerms().iterator(), queryTerms =
-					queryLiteral.getTuple().getTerms().iterator(); (headTerms
-					.hasNext() && queryTerms.hasNext());) {
+			for (final Iterator<ITerm> headTerms = headLiteral.getTuple()
+					.getTerms().iterator(), queryTerms = queryLiteral
+					.getTuple().getTerms().iterator(); (headTerms.hasNext() && queryTerms
+					.hasNext());) {
 				final ITerm headT = headTerms.next();
 				final ITerm queryT = queryTerms.next();
-				// FIXME: be aware of constructed terms
-				if ((queryT instanceof IVariable)
-						&& (headT instanceof IVariable)) {
+				if (!queryT.isGround() && !headT.isGround()) {
 					freeByQuery.add((IVariable) headT);
 				}
 			}
