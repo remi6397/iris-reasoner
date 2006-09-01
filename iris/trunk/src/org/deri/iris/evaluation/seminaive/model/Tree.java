@@ -25,20 +25,33 @@
  */
 package org.deri.iris.evaluation.seminaive.model;
 
-import java.util.*;
-
-import org.deri.iris.api.evaluation.seminaive.model.Component;
+import org.deri.iris.api.evaluation.seminaive.model.ITree;
 
 /**
- * 
- * @author Paco Garcia, University of Murcia
+ * Contains the head of a rule
+ * @author Paco García, University of Murcia
  * @date 01-sep-2006
  *
  */
-public abstract class Leaf implements Component{
+public class Tree extends Composite implements ITree{
+	private String name;
+	private int arity;
 	
-	public ArrayList<Component> getChildren() { return null; }
+	Tree(String name, int arity) {
+		this.name = name;
+		this.arity = arity;
+	}
 	
-	public boolean addComponent(Component c) { return false; }
-	public boolean removeComponent(Component c) { return false; }
+	public String getName() {
+		return name;
+	}
+	
+	public int getArity() {
+		return arity;
+	}
+	
+	
+	public String toString() {
+		return "Relation['" + name + "', " + arity  + "]";
+	}	
 }

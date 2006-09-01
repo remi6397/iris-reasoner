@@ -24,6 +24,7 @@ public interface Analysis extends Switch
     void caseACommaBody(ACommaBody node);
     void caseANegatedLiteral(ANegatedLiteral node);
     void caseALiteral(ALiteral node);
+    void caseABuiltinLiteral(ABuiltinLiteral node);
     void caseAPredicate(APredicate node);
     void caseAParamlist(AParamlist node);
     void caseATermTermlist(ATermTermlist node);
@@ -31,6 +32,8 @@ public interface Analysis extends Switch
     void caseAFunctionTerm(AFunctionTerm node);
     void caseAVarTerm(AVarTerm node);
     void caseAConstantTerm(AConstantTerm node);
+    void caseABuiltin(ABuiltin node);
+    void caseAIdbuiltBuiltin(AIdbuiltBuiltin node);
 
     void caseTTBlank(TTBlank node);
     void caseTTComment(TTComment node);
@@ -45,5 +48,6 @@ public interface Analysis extends Switch
     void caseTTQuery(TTQuery node);
     void caseTTId(TTId node);
     void caseTTConst(TTConst node);
+    void caseTTEq(TTEq node);
     void caseEOF(EOF node);
 }

@@ -1,3 +1,28 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
+ * 
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
 package org.deri.iris.evaluation.seminaive;
 
 import java.util.Set;
@@ -18,6 +43,15 @@ import org.deri.iris.evaluation.seminaive.model.ModelFactory;
 import org.deri.iris.api.evaluation.seminaive.model.*;
 
 
+/**
+ * Implementation of Algorithm 3.1: Computing the Relation for a Rule Body, 
+ * Using Relational Algebra Operations.
+ * Chapter 3. Logic as a Data Model.
+ * 
+ * @author Paco Garcia, University of Murcia
+ * @date 01-sep-2006
+ *
+ */
 public class Rule2Relation {
 	private Set<IRule> rules = null;
 	
@@ -38,7 +72,11 @@ public class Rule2Relation {
 		return result;
 	}
 	
-	private ITree evalRule(IRule r)
+	/**
+	 * Algorithm 3.1
+	 * @param r Rule Body
+	 * @return A tree with the relational algebra operations for the input rule
+	 */private ITree evalRule(IRule r)
 	{
 		// Temporal variable repository local to the method to store the literals where a variable appears
 		java.util.Hashtable<ITerm, ILiteral> variables = new java.util.Hashtable<ITerm, ILiteral>();
@@ -48,7 +86,11 @@ public class Rule2Relation {
 		 * Algorithm 3.1: Computing the relation for a Rule Body, Using relational Algebra Operation
 		 * Chapter 3. Logic as a data model. 
 		 */
-		ITree result = ModelFactory.FACTORY.createJoin(null, JoinCondition.EQUALS);
+		
+		// TODO. Check whether it is possible a datalog rule with more than one predicate in the head
+		ITree result = ModelFactory.FACTORY.createTree(r.getHeadLiteral(0).getPredicate().getPredicateSymbol(), 
+				r.getHeadLiteral(0).getPredicate().getArity());
+		IJoin globalJoin = ModelFactory.FACTORY.createJoin(null, JoinCondition.EQUALS);
 		
 		/*
 		 * INPUT: Body of rule r = S1,...,Sn with variables X1,...,Xm;
@@ -167,7 +209,7 @@ public class Rule2Relation {
 			}
 			
 			// C. Natural join of all the things generated (E)
-			result.addComponent(temporalResult); 
+			globalJoin.addComponent(temporalResult); 
 		}
 		
 		// TODO. D. EVAL-RULE(r, R1,...,Rn) = SELECTION_F(E)
@@ -177,9 +219,10 @@ public class Rule2Relation {
 			// TODO. Depends on the builtins implementation
 			ITuple pattern = BasicFactory.getInstance().createTuple(/* pattern terms */);
 			ISelection selection = ModelFactory.FACTORY.createSelection(pattern);
-		    selection.addComponent(result);
-		    result = selection;
-		}
+		    selection.addComponent(globalJoin);
+		    result.addComponent(selection);
+		} else
+			result.addComponent(globalJoin);
 		return result;
 	}
 

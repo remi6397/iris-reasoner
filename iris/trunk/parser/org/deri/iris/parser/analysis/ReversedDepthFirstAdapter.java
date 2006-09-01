@@ -336,6 +336,27 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         outALiteral(node);
     }
 
+    public void inABuiltinLiteral(ABuiltinLiteral node)
+    {
+        defaultIn(node);
+    }
+
+    public void outABuiltinLiteral(ABuiltinLiteral node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseABuiltinLiteral(ABuiltinLiteral node)
+    {
+        inABuiltinLiteral(node);
+        if(node.getBuiltin() != null)
+        {
+            node.getBuiltin().apply(this);
+        }
+        outABuiltinLiteral(node);
+    }
+
     public void inAPredicate(APredicate node)
     {
         defaultIn(node);
@@ -505,5 +526,63 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
             node.getTId().apply(this);
         }
         outAConstantTerm(node);
+    }
+
+    public void inABuiltin(ABuiltin node)
+    {
+        defaultIn(node);
+    }
+
+    public void outABuiltin(ABuiltin node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseABuiltin(ABuiltin node)
+    {
+        inABuiltin(node);
+        if(node.getSecond() != null)
+        {
+            node.getSecond().apply(this);
+        }
+        if(node.getTEq() != null)
+        {
+            node.getTEq().apply(this);
+        }
+        if(node.getFirst() != null)
+        {
+            node.getFirst().apply(this);
+        }
+        outABuiltin(node);
+    }
+
+    public void inAIdbuiltBuiltin(AIdbuiltBuiltin node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAIdbuiltBuiltin(AIdbuiltBuiltin node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAIdbuiltBuiltin(AIdbuiltBuiltin node)
+    {
+        inAIdbuiltBuiltin(node);
+        if(node.getTId() != null)
+        {
+            node.getTId().apply(this);
+        }
+        if(node.getTEq() != null)
+        {
+            node.getTEq().apply(this);
+        }
+        if(node.getTVariable() != null)
+        {
+            node.getTVariable().apply(this);
+        }
+        outAIdbuiltBuiltin(node);
     }
 }

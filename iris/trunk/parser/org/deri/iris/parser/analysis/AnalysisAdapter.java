@@ -129,6 +129,11 @@ public class AnalysisAdapter implements Analysis
         defaultCase(node);
     }
 
+    public void caseABuiltinLiteral(ABuiltinLiteral node)
+    {
+        defaultCase(node);
+    }
+
     public void caseAPredicate(APredicate node)
     {
         defaultCase(node);
@@ -160,6 +165,16 @@ public class AnalysisAdapter implements Analysis
     }
 
     public void caseAConstantTerm(AConstantTerm node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseABuiltin(ABuiltin node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseAIdbuiltBuiltin(AIdbuiltBuiltin node)
     {
         defaultCase(node);
     }
@@ -225,6 +240,11 @@ public class AnalysisAdapter implements Analysis
     }
 
     public void caseTTConst(TTConst node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseTTEq(TTEq node)
     {
         defaultCase(node);
     }
