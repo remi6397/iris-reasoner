@@ -59,7 +59,9 @@ public class ModelFactory implements IModelFactory {
 	public IJoin createJoin(int[] indexes, JoinCondition condition) {
 		return new Join(indexes, condition);
 	}
-
+	public INaturalJoin createNaturalJoin() {
+		return new NaturalJoin();
+	}
 	public IDifference createDifference() {
 		return new Difference();
 	}

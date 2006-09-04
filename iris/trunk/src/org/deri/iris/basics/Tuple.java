@@ -164,7 +164,10 @@ public class Tuple implements ITuple<ITuple>{
 	public String toString(){
 		String s = "(";
 		for(int i=0; i<this.getArity(); i++){
-			s = s + this.getTerm(i).toString();
+			if (this.getTerm(i) != null)
+				s = s + this.getTerm(i).toString();
+			else 
+				s = s + " ";
 			if(i<this.getArity()-1)s = s + ", ";
 			else s = s + ")";
 		}

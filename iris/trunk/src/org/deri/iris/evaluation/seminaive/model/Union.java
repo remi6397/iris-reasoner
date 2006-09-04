@@ -37,6 +37,16 @@ public class Union extends Composite implements IUnion{
 	Union() {}
 	
 	public String toString() {
-		return "UNION (" + this.getChildren().get(0).toString() + ") , (" + this.getChildren().get(1).toString() + ")";
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("UNION \n{(");
+		for (int i = 0; i < this.getChildren().size(); i++) 
+		{
+			buffer.append(this.getChildren().get(i).toString());
+			buffer.append("),\n(");
+		}
+		buffer.delete(buffer.length() - 2, buffer.length());
+		buffer.append("}");
+		
+		return buffer.toString();
 	}
 }

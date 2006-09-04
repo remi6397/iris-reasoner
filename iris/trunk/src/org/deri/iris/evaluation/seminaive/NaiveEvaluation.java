@@ -55,7 +55,7 @@ import java.util.Arrays;
  * until Pi = Qi for all i, 1 <= i <= m;
  * output Pi's 
  * 
- * @author PACO
+ * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  */
 public class NaiveEvaluation {
@@ -117,15 +117,17 @@ public class NaiveEvaluation {
 		
 	}
 
-	// TODO
-	private boolean compare(IRelation[] P, IRelation[] Q)
-	{
-		boolean result = true;
+	/**
+	 * 
+	 * @param P set of original relations
+	 * @param Q set of temporal backup relations
+	 * @return If there are no new tuples in any relation in P, true; otherwise, false
+	 */private boolean compare(IRelation[] P, IRelation[] Q)
+	{		
+		for (int i = 0; i < P.length; i++) 
+			if (!Q[i].containsAll(Arrays.asList(P[i].toArray()))) 
+				return false;
 		
-		for (int i = 0; (i < P.length) && result == true; i++) 
-			if (!Q[i].containsAll(Arrays.asList(P))) 
-				result = false;
-		
-		return result;
+		return true;
 	}
 }

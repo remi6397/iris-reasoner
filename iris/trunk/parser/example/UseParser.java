@@ -31,6 +31,8 @@ import org.deri.iris.api.IEDB;
 import org.deri.iris.factory.*;
 import java.util.*;
 import org.deri.iris.api.basics.*;
+import org.deri.iris.evaluation.seminaive.Rule2Relation;
+import org.deri.iris.api.evaluation.seminaive.model.ITree;
 /**
  * @author Francisco Garcia
  */
@@ -44,14 +46,16 @@ public class UseParser {
     	org.deri.iris.compiler.Parser pa = new ParserImpl();
     	IEDB p = Factory.PROGRAM.createEDB();
     	
-    	String transmission = "rule(?x, ?y) :- r(?x, func('paco',?l), f(?y, ff(?x))), q(?y, 'deri'). " + 
-    	"?- query(?x, 'deri'). " + 
-    	"fact('paco'). ";
+    	String program = 
+    		"p(?X,?Y) :- r(?Z, ?Y) and ?X='a'. " + 
+    		"p(?X,?Y) :- s(?X, ?Z) and r(?Z, ?Y). " + 
+    		"q(?X,?Y) :- p(?X, 'b') and ?X=?Y. " +
+    		"q(?X,?Y) :- p(?X, ?Z) and s(?Z, ?Y). ";
     	
 		
-    	pa.compileKB(transmission, p);
+    	pa.compileKB(program, p);
 		// * Results
-		System.out.println("These are the results for the input: \n" + transmission + "\n\n");
+		System.out.println("These are the results for the input: \n" + program + "\n\n");
 		Set<IRule> rules = p.getRules();
 		Iterator<IRule> it = rules.iterator();
 		System.out.println("Rules:\n");
@@ -77,5 +81,16 @@ public class UseParser {
 			System.out.println(((IQuery)qIt.next()).toString());
 	//	IQuery q =p.queryIterator();
 	//	System.out.println(q.toString() + "\n");
+		Rule2Relation r2r = new Rule2Relation(p.getRules());
+		Map result = r2r.eval();
+		Iterator kIt = result.keySet().iterator();
+		while (kIt.hasNext()){
+			org.deri.iris.api.evaluation.seminaive.model.IRule head = 
+				(org.deri.iris.api.evaluation.seminaive.model.IRule)kIt.next();
+//			System.out.println(head.toString() + "->" + result.get(head).toString());
+//			result.get(head);
+		}
+
+		
     }
 }

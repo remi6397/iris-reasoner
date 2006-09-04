@@ -27,10 +27,12 @@ package org.deri.iris.evaluation.seminaive;
 
 import java.util.Set;
 import java.util.List;
+import java.util.Map;
+import java.util.Hashtable;
 import java.util.ArrayList;
+import java.util.Iterator;
 
-
-import org.deri.iris.api.basics.IRule;
+//import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltInAtom;
@@ -53,22 +55,38 @@ import org.deri.iris.api.evaluation.seminaive.model.*;
  *
  */
 public class Rule2Relation {
-	private Set<IRule> rules = null;
+	private Set<org.deri.iris.api.basics.IRule> rules = null;
 	
-	public Rule2Relation(final Set<IRule> r) {
+	public Rule2Relation(final Set<org.deri.iris.api.basics.IRule> r) {
 		if (r == null) {
 			throw new NullPointerException("Input parameters must not be null");
 		}
 		this.rules = r;		
 	}
 	
-	public ITree eval()
+	public Map eval()
 	{
-		ITree result = ModelFactory.FACTORY.createUnion();
-		for (IRule r : rules) {
-			ITree c = evalRule(r);
-			result.addComponent(c);			
+		Map<org.deri.iris.api.evaluation.seminaive.model.IRule, ITree> result = new Hashtable<org.deri.iris.api.evaluation.seminaive.model.IRule, ITree>();
+		
+		for (org.deri.iris.api.basics.IRule r: rules) {
+			org.deri.iris.api.evaluation.seminaive.model.IRule head = 
+				ModelFactory.FACTORY.createRule(r.getHeadLiteral(0).getPredicate().getPredicateSymbol(), 
+					r.getHeadLiteral(0).getPredicate().getArity()); 
+			ITree body = evalRule(r);
+			// TODO. This clause doesn't work
+			if (result.containsKey(head))
+			{
+				System.out.println("The comparition has returned true!");
+				// UNION
+				ITree newBody = ModelFactory.FACTORY.createUnion();
+				newBody.addComponent(result.get(head));
+				newBody.addComponent(body);
+				result.put(head, newBody);
+			} else {
+				result.put(head, body);
+			}
 		}
+		
 		return result;
 	}
 	
@@ -76,7 +94,7 @@ public class Rule2Relation {
 	 * Algorithm 3.1
 	 * @param r Rule Body
 	 * @return A tree with the relational algebra operations for the input rule
-	 */private ITree evalRule(IRule r)
+	 */private ITree evalRule(org.deri.iris.api.basics.IRule r)
 	{
 		// Temporal variable repository local to the method to store the literals where a variable appears
 		java.util.Hashtable<ITerm, ILiteral> variables = new java.util.Hashtable<ITerm, ILiteral>();
@@ -88,9 +106,8 @@ public class Rule2Relation {
 		 */
 		
 		// TODO. Check whether it is possible a datalog rule with more than one predicate in the head
-		ITree result = ModelFactory.FACTORY.createTree(r.getHeadLiteral(0).getPredicate().getPredicateSymbol(), 
-				r.getHeadLiteral(0).getPredicate().getArity());
-		IJoin globalJoin = ModelFactory.FACTORY.createJoin(null, JoinCondition.EQUALS);
+		ITree result;
+		INaturalJoin globalJoin = ModelFactory.FACTORY.createNaturalJoin();
 		
 		/*
 		 * INPUT: Body of rule r = S1,...,Sn with variables X1,...,Xm;
@@ -220,9 +237,9 @@ public class Rule2Relation {
 			ITuple pattern = BasicFactory.getInstance().createTuple(/* pattern terms */);
 			ISelection selection = ModelFactory.FACTORY.createSelection(pattern);
 		    selection.addComponent(globalJoin);
-		    result.addComponent(selection);
+		    result = selection;
 		} else
-			result.addComponent(globalJoin);
+			result = globalJoin;
 		return result;
 	}
 

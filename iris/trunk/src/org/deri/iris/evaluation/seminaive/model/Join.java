@@ -57,14 +57,21 @@ public class Join extends Composite implements IJoin{
 	}
 	
 	public String toString() {
-		String result = " JOIN " + condition + "[";
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("JOIN");
+		buffer.append(condition);
+		buffer.append("[");
 		for(int i = 0; i < indexes.length; i++)
 		{
-			result += new Integer(indexes[i]).toString() + " ";			
+			buffer.append(indexes[i]);
+			buffer.append(", ");
 		}
-		result += "] (" + this.getChildren().get(0).toString() + ") , (" +
-		this.getChildren().get(1).toString() + ")";
-		
-		return result;
+		buffer.delete(buffer.length() - 2, buffer.length());
+		buffer.append("]\n{(");
+		buffer.append(this.getChildren().get(0).toString());
+		buffer.append("),(");
+		buffer.append(this.getChildren().get(1).toString());
+		buffer.append(")}");
+		return buffer.toString();
 	}
 }

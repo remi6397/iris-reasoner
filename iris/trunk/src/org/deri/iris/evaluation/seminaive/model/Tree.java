@@ -52,6 +52,13 @@ public class Tree extends Composite implements ITree{
 	
 	
 	public String toString() {
-		return "Relation['" + name + "', " + arity  + "]";
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("RELATION['");
+		buffer.append(name);
+		buffer.append("', ");
+		buffer.append(arity);
+		buffer.append("] --> \n");
+		buffer.append(this.getChildren().get(0).toString());
+		return buffer.toString();
 	}	
 }

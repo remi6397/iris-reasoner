@@ -50,8 +50,21 @@ public class Rule extends Leaf implements IRule{
 		return arity;
 	}
 	
+	public boolean equals(final Object o) {
+		boolean result = (this.name.equalsIgnoreCase(((IRule)o).getName()) &&
+				this.arity == ((IRule)o).getArity());
+		System.out.println("Comparing("+ System.currentTimeMillis()+"): " + this.toString() + " & " + o.toString() + "--> " + result);
+		return (this.name.equalsIgnoreCase(((IRule)o).getName()) &&
+				this.arity == ((IRule)o).getArity());
+	}
 	
 	public String toString() {
-		return "Relation['" + name + "', " + arity  + "]";
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("RELATION['");
+		buffer.append(name);
+		buffer.append("', ");
+		buffer.append(arity);
+		buffer.append("]");
+		return buffer.toString();
 	}
 }

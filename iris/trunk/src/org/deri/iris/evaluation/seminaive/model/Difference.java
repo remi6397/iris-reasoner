@@ -38,8 +38,12 @@ public class Difference extends Composite implements IDifference{
 	Difference() {}
 	
 	public String toString() {
-		return "DIFFERENCE\n\t(" + this.getChildren().get(0).toString() + 
-		") , (" + 
-		this.getChildren().get(1).toString() + ")";
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("DIFFERENCE\n{(");
+		buffer.append(this.getChildren().get(0).toString());
+		buffer.append("),(");
+		buffer.append(this.getChildren().get(1).toString());
+		buffer.append(")}");
+		return buffer.toString();	
 	}
 }

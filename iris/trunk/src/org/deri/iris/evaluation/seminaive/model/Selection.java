@@ -50,6 +50,12 @@ public class Selection extends Composite implements ISelection{
 	
 	public String toString()
 	{
-		return "SELECTION[" + pattern.toString() + "] (" + this.getChildren().get(0).toString() + ")";
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("SELECTION[");
+		buffer.append(pattern);
+		buffer.append("]\n(");
+		buffer.append(this.getChildren().get(0).toString());
+		buffer.append(")");
+		return buffer.toString();
 	}
 }
