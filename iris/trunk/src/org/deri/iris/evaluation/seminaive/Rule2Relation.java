@@ -57,7 +57,7 @@ import org.deri.iris.api.evaluation.seminaive.model.*;
 public class Rule2Relation {
 	private Set<org.deri.iris.api.basics.IRule> rules = null;
 	
-	public Map eval(final Set<org.deri.iris.api.basics.IRule> rule)
+	public Map<org.deri.iris.api.evaluation.seminaive.model.IRule, ITree> eval(final Set<org.deri.iris.api.basics.IRule> rule)
 	{
 		if (rule == null) {
 			throw new NullPointerException("Input parameters must not be null");

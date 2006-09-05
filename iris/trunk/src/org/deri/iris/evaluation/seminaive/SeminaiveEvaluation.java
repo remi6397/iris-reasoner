@@ -56,12 +56,12 @@ import java.util.Arrays;
  * output Pi's 
  * 
  * @author Paco Garcia, University of Murcia
- * @date 01-sep-2006
+ * @date 05-sep-2006
  */
-public class NaiveEvaluation {
+public class SeminaiveEvaluation {
 	private IEvaluator evaluator;
 	
-	NaiveEvaluation(IEvaluator e) {
+	SeminaiveEvaluation(IEvaluator e) {
 		this.evaluator = e;
 	}
 	
@@ -71,57 +71,93 @@ public class NaiveEvaluation {
 		 * of the ITree
 		 */
 		IRelation[] P = new IRelation[IDB.size()];
-		IRelation[] Q = new IRelation[IDB.size()];
+		IRelation[] AP = new IRelation[IDB.size()];
+		IRelation[] AQ = new IRelation[IDB.size()];
 		int i = 0;
 		for (IRule head: IDB.keySet())
 		{
 			int arity = head.getArity();
 			P[i] = new Relation(arity);
-			Q[i] = new Relation(arity);
+			AP[i] = new Relation(arity);
+			AQ[i] = new Relation(arity);
 			i++;
 		}
 		
-		// 1st iteration
+		/*
+		 * for i := 1 to m do begin
+		 *    APi := EVAL(pi, R1,...,Rk,0,...0);
+		 *    Pi := APi;
+		 * end;
+		 */
 		i=0;
 		for (IRule head: IDB.keySet())
 		{
 			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-			eval(IDB.get(head), P[i], Q);
+			eval(IDB.get(head), AP[i], AQ);
 			i++;
 		}
+		copy(AP, P);
 		
-		for (; !compare(P, Q);) {
-			for (i = 0; i < P.length; i++)
-			{
-				Q[i].addAll(Arrays.asList(P[i].toArray()));
-			}
+		/*
+		 * repeat
+		 *    for i := 1 to m do
+		 *       AQ := APi;
+		 *    for i := 1 to m do begin
+		 *       APi := EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
+		 *       APi := APi - Pi;
+		 *    end;
+		 *    for i := 1 to m do
+		 *       Pi := Pi U APi;
+		 * until APi = 0 for all i;
+		 */		
+		for (; !empty(AP);) {
+			copy(AP, AQ);
 			i = 0;
 			for (IRule head: IDB.keySet())
 			{
-				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-				
-				eval(IDB.get(head), P[i], Q);
+				// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
+				eval_incr(IDB.get(head), AP[i], P, AQ);
+				AP[i].removeAll(Arrays.asList(P[i].toArray()));
 				i++;
-			}			
+			}
+			for (i = 0; i < P.length; i++)
+			{
+				P[i].addAll(Arrays.asList(AP[i].toArray()));
+			}
 		}
 		return P;
 		
 	}
 
 	/**
-	 * 
-	 * @param P set of original relations
-	 * @param Q set of temporal backup relations
-	 * @return If there are no new tuples in any relation in P, true; otherwise, false
+	 * @param AP set of incremental relations
+	 * @return True if all the incremental relations are empty; false otherwise
 	 */
-	private boolean compare(IRelation[] P, IRelation[] Q){		
-		for (int i = 0; i < P.length; i++) 
-			if (!Q[i].containsAll(Arrays.asList(P[i].toArray()))) 
+	private boolean empty(IRelation[] AP){		
+		
+		for (int i = 0; i < AP.length; i++) 
+			if (!AP[i].isEmpty())
 				return false;
 		
 		return true;
 	}
 	
+	private void copy(IRelation[] source, IRelation[] target) {
+		for (int i = 0; i < target.length; i++) {
+			// 1st. Empty target
+			target[i].clear();
+			// 2nd. Copy all
+			target[i].addAll(Arrays.asList(source[i].toArray()));
+		}
+	}
+	
+	/**
+	 * 
+	 * @param body Rule to evaluate
+	 * @param Pbody Tuples for the rule to evaluate (to add in this method)
+	 * @param Q Tuples already discovered
+	 * @return true if no problems happen; false otherwise
+	 */
 	private boolean eval(ITree body, IRelation Pbody, IRelation[] Q){
 		// TODO Set parameters
 		// R1,..., Rk & pi = body;
@@ -132,4 +168,24 @@ public class NaiveEvaluation {
 		//Pbody.addAll(evaluator.evaluate());
 
 	}
+	
+	/**
+	 * 
+	 * @param body Rule to evaluate
+	 * @param Pbody Tuples for the rule to evaluate (to add in this method)
+	 * @param P All the tuples discovered
+	 * @param AQ Tuples discovered during the last iteration
+	 * @return true if no problems happen; false otherwise
+	 */
+	private boolean eval_incr(ITree body, IRelation Pbody, IRelation[] P, IRelation[] AQ){
+		// TODO Set parameters
+		// R1,..., Rk & pi = body;
+		// Q1,...,Qm; = Q
+		return evaluator.evaluate();
+		
+		//TODO Get the results 
+		//Pbody.addAll(evaluator.evaluate());
+
+	}
+
 }
