@@ -51,9 +51,6 @@ public class Rule extends Leaf implements IRule{
 	}
 	
 	public boolean equals(final Object o) {
-		boolean result = (this.name.equalsIgnoreCase(((IRule)o).getName()) &&
-				this.arity == ((IRule)o).getArity());
-		System.out.println("Comparing("+ System.currentTimeMillis()+"): " + this.toString() + " & " + o.toString() + "--> " + result);
 		return (this.name.equalsIgnoreCase(((IRule)o).getName()) &&
 				this.arity == ((IRule)o).getArity());
 	}

@@ -57,15 +57,13 @@ import org.deri.iris.api.evaluation.seminaive.model.*;
 public class Rule2Relation {
 	private Set<org.deri.iris.api.basics.IRule> rules = null;
 	
-	public Rule2Relation(final Set<org.deri.iris.api.basics.IRule> r) {
-		if (r == null) {
+	public Map eval(final Set<org.deri.iris.api.basics.IRule> rule)
+	{
+		if (rule == null) {
 			throw new NullPointerException("Input parameters must not be null");
 		}
-		this.rules = r;		
-	}
-	
-	public Map eval()
-	{
+		this.rules = rule;		
+
 		Map<org.deri.iris.api.evaluation.seminaive.model.IRule, ITree> result = new Hashtable<org.deri.iris.api.evaluation.seminaive.model.IRule, ITree>();
 		
 		for (org.deri.iris.api.basics.IRule r: rules) {
@@ -73,13 +71,13 @@ public class Rule2Relation {
 				ModelFactory.FACTORY.createRule(r.getHeadLiteral(0).getPredicate().getPredicateSymbol(), 
 					r.getHeadLiteral(0).getPredicate().getArity()); 
 			ITree body = evalRule(r);
-			// TODO. This clause doesn't work
-			if (result.containsKey(head))
+			IRule oldHead;
+			if ((oldHead = containsKey(result.keySet(), head))!= null)
 			{
-				System.out.println("The comparition has returned true!");
 				// UNION
 				ITree newBody = ModelFactory.FACTORY.createUnion();
-				newBody.addComponent(result.get(head));
+				newBody.addComponent(result.get(oldHead));
+				result.remove(oldHead);
 				newBody.addComponent(body);
 				result.put(head, newBody);
 			} else {
@@ -90,6 +88,20 @@ public class Rule2Relation {
 		return result;
 	}
 	
+	private IRule containsKey(Set<IRule> keySet, IRule head) {
+		Iterator<IRule> keys = keySet.iterator();
+		
+		while (keys.hasNext())
+		{
+			IRule r = keys.next();
+			if (r.equals(head))
+			{
+				return r;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Algorithm 3.1
 	 * @param r Rule Body

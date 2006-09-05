@@ -81,13 +81,14 @@ public class UseParser {
 			System.out.println(((IQuery)qIt.next()).toString());
 	//	IQuery q =p.queryIterator();
 	//	System.out.println(q.toString() + "\n");
-		Rule2Relation r2r = new Rule2Relation(p.getRules());
-		Map result = r2r.eval();
+		Rule2Relation r2r = new Rule2Relation();
+		Map result = r2r.eval(p.getRules());
 		Iterator kIt = result.keySet().iterator();
+		System.out.println(result.size());
 		while (kIt.hasNext()){
 			org.deri.iris.api.evaluation.seminaive.model.IRule head = 
 				(org.deri.iris.api.evaluation.seminaive.model.IRule)kIt.next();
-//			System.out.println(head.toString() + "->" + result.get(head).toString());
+			System.out.println(head.toString() + "->" + result.get(head).toString());
 //			result.get(head);
 		}
 

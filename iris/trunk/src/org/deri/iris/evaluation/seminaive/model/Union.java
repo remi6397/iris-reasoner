@@ -44,7 +44,7 @@ public class Union extends Composite implements IUnion{
 			buffer.append(this.getChildren().get(i).toString());
 			buffer.append("),\n(");
 		}
-		buffer.delete(buffer.length() - 2, buffer.length());
+		buffer.delete(buffer.length() - 3, buffer.length());
 		buffer.append("}");
 		
 		return buffer.toString();
