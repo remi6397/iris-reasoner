@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.evaluation.common.Adornment;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
@@ -42,12 +44,12 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
  * Helpermethods to interact with sips.
  * </p>
  * <p>
- * $Id: SipHelper.java,v 1.1 2006-08-30 12:51:26 richardpoettler Exp $
+ * $Id: SipHelper.java,v 1.2 2006-09-06 07:46:07 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-08-30 12:51:26 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-09-06 07:46:07 $
  */
 public class SipHelper {
 
@@ -75,40 +77,102 @@ public class SipHelper {
 					"At the moment only heads with length 1 are allowed");
 		}
 
-		final ILiteral headLiteral = r.getHeadLiteral(0);
+		final SIPImpl copy = r.getSIP().defensifeCopy();
+		// exchanging all occurences of unadorned literals in the sip through
+		// the adorned ones in the head
+		for (final ILiteral l : r.getHeadLiterals()) {
+			if (l.getPredicate() instanceof AdornedPredicate) {
+				final AdornedPredicate p = (AdornedPredicate) l.getPredicate();
+				final ILiteral unadornedLiteral = BASIC.createLiteral(l
+						.isPositive(), p.getUnadornedPredicate(), l.getTuple());
+				while (copy.containsVertex(unadornedLiteral)) {
+					copy.exchangeLiteral(unadornedLiteral, l);
+				}
+			}
+		}
+		// exchanging all occurences of unadorned literals in the sip through
+		// the adorned ones in the body
+		for (final ILiteral l : r.getBodyLiterals()) {
+			if (l.getPredicate() instanceof AdornedPredicate) {
+				final AdornedPredicate p = (AdornedPredicate) l.getPredicate();
+				final ILiteral unadornedLiteral = BASIC.createLiteral(l
+						.isPositive(), p.getUnadornedPredicate(), l.getTuple());
+				while (copy.containsVertex(unadornedLiteral)) {
+					copy.exchangeLiteral(unadornedLiteral, l);
+				}
+			}
+		}
+		return copy;
+	}
 
-		if (!(headLiteral.getPredicate() instanceof AdornedPredicate)) {
+	/**
+	 * Creates a query for an adorned literal.
+	 * 
+	 * @param l
+	 *            for which to create the query
+	 * @return the created query
+	 * @throws NullPointerException
+	 *             if the literal is null
+	 * @throws IllegalArgumentException
+	 *             if the predicate of the literal isn't adorned
+	 * @throws IllegalArgumentException
+	 *             if the adornment contains something else than BOUND's and
+	 *             FREE's
+	 */
+	public static IQuery createQueryForLiteral(final ILiteral l) {
+		if (l == null) {
+			throw new NullPointerException("The literal must not be null");
+		}
+		if (!(l.getPredicate() instanceof AdornedPredicate)) {
 			throw new IllegalArgumentException(
 					"The predicate of the literal must be adorned");
 		}
+		final AdornedPredicate p = (AdornedPredicate) l.getPredicate();
+		final int realLength = p.getAdornment().length;
+		final ITuple t = l.getTuple();
+		final List<ITerm> queryTerms = new ArrayList<ITerm>(realLength);
 
-		final AdornedPredicate p = (AdornedPredicate) headLiteral
-				.getPredicate();
-
-		// create query
-		List<ITerm> queryTerms = new ArrayList<ITerm>(headLiteral.getTuple()
-				.getArity());
-		int counter = 0;
-		for (final Adornment a : p.getAdornment()) {
-			switch (a) {
-			case BOUND:
-				queryTerms.add(MINIMAL_CONST_TERM);
+		if (t.getArity() == realLength) { // if the arity matches the lenght
+			// of the adornemt
+			int counter = 0;
+			for (final Adornment a : p.getAdornment()) {
+				final ITerm actualTerm = t.getTerm(counter);
+				switch (a) {
+				case BOUND:
+					if (t.isGround()) {
+						queryTerms.add(actualTerm);
+					} else {
+						queryTerms.add(MINIMAL_CONST_TERM);
+					}
+					break;
+				case FREE:
+					queryTerms.add(t.getTerm(counter));
+					break;
+				default:
+					throw new IllegalArgumentException(
+							"Can only handle BOUND and FREE as adornments");
+				}
 				counter++;
-				break;
-			case FREE:
-				queryTerms.add(headLiteral.getTuple().getTerm(counter));
+			}
+		} else { // if the arities doesn't match -> might be an adorned
+			// predicate
+			int counter = 0;
+			for (final Adornment a : p.getAdornment()) {
+				switch (a) {
+				case BOUND:
+					queryTerms.add(MINIMAL_CONST_TERM);
+					break;
+				case FREE:
+					queryTerms.add(t.getTerm(counter));
+					break;
+				default:
+					throw new IllegalArgumentException(
+							"Can only handle BOUND and FREE as adornments");
+				}
 				counter++;
-				break;
-			default:
-				throw new IllegalArgumentException(
-						"Can only handle BOUND and FREE as adornments");
 			}
 		}
-
-		// recreating the sip -> maybe should be done in a pretier way
-		// TODO: create the sip directly, not through the computation of the
-		// constructor
-		return new SIPImpl(r, BASIC.createQuery(BASIC.createLiteral(headLiteral
-				.isPositive(), p, BASIC.createTuple(queryTerms))));
+		return BASIC.createQuery(BASIC.createLiteral(l.isPositive(), p, BASIC
+				.createTuple(queryTerms)));
 	}
 }
