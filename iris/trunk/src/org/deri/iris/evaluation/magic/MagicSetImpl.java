@@ -56,22 +56,22 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * @version $Revision$
  * @date $Date$
  */
-public class MagicSetImpl {
+public final class MagicSetImpl {
 
 	/** The prefix for the magic predicates. */
-	private static final String MAGIC_PREDICATE_PREFIX = "magic_";
+	static final String MAGIC_PREDICATE_PREFIX = "magic_";
 
 	/** The prefix for the labeled predicates. */
-	private static final String MAGIC_LABEL_PREFIX = "label_";
+	static final String MAGIC_LABEL_PREFIX = "label_";
 
-	/** Cache for all adorned sips */
+	/** Cache for all adorned sips. */
 	private final Map<AdornedRule, SIPImpl> adornedSipCache = new HashMap<AdornedRule, SIPImpl>();
 
 	/** Holds all magic rules. */
 	private Set<IRule> magicRules = new HashSet<IRule>();
 
 	/** Holds all rewritten rules. */
-	private Set<IRule> rewrittenRules = new HashSet<IRule>();
+	private Set<AdornedRule> rewrittenRules = new HashSet<AdornedRule>();
 
 	/** The seed for this magic set. */
 	private IQuery seed;
@@ -88,7 +88,7 @@ public class MagicSetImpl {
 	 */
 	public MagicSetImpl(final AdornedProgram program) {
 		if (program == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("The program must not be null");
 		}
 
 		// TODO: maybe a defensive copy should be made
@@ -105,23 +105,74 @@ public class MagicSetImpl {
 					magicRules.addAll(generateRules(l, r));
 				}
 			}
-
-			final List<ILiteral> temp = new ArrayList<ILiteral>(r
-					.getBodyLiterals());
-			Collections.sort(temp, getAdornedSip(r).LITERAL_COMP);
-			final List<ILiteral> sortedBody = Collections
-					.unmodifiableList(temp);
-
 			// adding the rewritten rule
-			final List<ILiteral> rewrittenBody = new ArrayList<ILiteral>(
-					sortedBody);
-			rewrittenBody.add(0, createMagicLiteral(r.getHeadLiteral(0)));
-			rewrittenRules.add(BASIC.createRule(BASIC.createHead(r
-					.getHeadLiterals()), BASIC.createBody(rewrittenBody)));
-
-			// creating the seed
-			seed = createSeed(program.getQuery());
+			rewrittenRules.add(getRewrittenRule(r));
 		}
+		// creating the seed
+		seed = createSeed(program.getQuery());
+	}
+
+	/**
+	 * <p>
+	 * Creates a rewritten rule for the adorned one.
+	 * </p>
+	 * 
+	 * @param r
+	 *            the rule which to rewrite
+	 * @return the rewritten rule
+	 * @throws NullPointerException
+	 *             if the rule is null
+	 * @throws IllegalArgumentException
+	 *             if the length of the head is unequal to 1
+	 */
+	private AdornedRule getRewrittenRule(final AdornedRule r) {
+		if (r == null) {
+			throw new NullPointerException("The rule must not be null");
+		}
+		if (r.getHeadLenght() != 1) {
+			throw new IllegalArgumentException("At the moment only heads "
+					+ "with length of 1 are allowed");
+		}
+
+		final ILiteral headL = r.getHeadLiteral(0);
+
+		// computing the sorted body
+		final List<ILiteral> temp = new ArrayList<ILiteral>(r.getBodyLiterals());
+		Collections.sort(temp, getAdornedSip(r).LITERAL_COMP);
+		final List<ILiteral> sortedBody = Collections.unmodifiableList(temp);
+
+		// computing the rewritten body
+		final List<ILiteral> rewrittenBody = new ArrayList<ILiteral>(sortedBody);
+		final ILiteral magicL = createMagicLiteral(headL);
+		rewrittenBody.add(0, magicL);
+
+		// modifying the sip
+		final SIPImpl adornedSip = getAdornedSip(r).defensifeCopy();
+		final Set<IVariable> boundVars = new HashSet<IVariable>();
+		for (ITerm t : getBounds(headL)) {
+			if (!(t instanceof IVariable)) {
+				// TODO: what to do when it is a constant?
+				// TODO: add this exception to the javadoc
+				throw new IllegalArgumentException(
+						"All bounds of the head must be variables");
+			}
+			boundVars.add((IVariable) t);
+		}
+
+		for (final LabeledDirectedEdge<Set<IVariable>> e : adornedSip
+				.getEdgesLeavingLiteral(headL)) {
+			adornedSip.removeEdge(e);
+			adornedSip
+					.updateSip(magicL, (ILiteral) e.getTarget(), e.getLabel());
+		}
+		adornedSip.updateSip(headL, magicL, boundVars);
+
+		// creating the normal rule
+		IRule tmpRule = BASIC.createRule(BASIC.createHead(r.getHeadLiterals()),
+				BASIC.createBody(rewrittenBody));
+
+		// creating the adorned rule
+		return new AdornedRule(tmpRule, adornedSip);
 	}
 
 	/**
@@ -259,6 +310,7 @@ public class MagicSetImpl {
 			if (bodyLiterals.get(counter).equals(headLiteral)) {
 				bodyLiterals.set(counter, createMagicLiteral(bodyLiterals
 						.get(counter)));
+				break;
 			}
 		}
 
@@ -337,6 +389,7 @@ public class MagicSetImpl {
 			if (bodyLiterals.get(counter).equals(headLiteral)) {
 				bodyLiterals.set(counter, createMagicLiteral(bodyLiterals
 						.get(counter)));
+				break;
 			}
 		}
 
@@ -420,7 +473,34 @@ public class MagicSetImpl {
 
 	/**
 	 * Returns the list of bound terms of the literal according to the bounds of
-	 * the adorned predicate. The order of the terms won't be changed.
+	 * the adorned predicate of the literak. The order of the terms won't be
+	 * changed.
+	 * 
+	 * @param l
+	 *            containing all the terms
+	 * @return the list of bound terms
+	 * @throws NullPointerException
+	 *             if the literal is null
+	 * @throws IllegalArgumentException
+	 *             if the predicate of the literal isn't adorned
+	 * @throws IllegalArgumentException
+	 *             if the signature of the adorned predicate doesn't match the
+	 *             signature of the literal predicate
+	 */
+	private static List<ITerm> getBounds(final ILiteral l) {
+		if (l == null) {
+			throw new NullPointerException("The literal must not be null");
+		}
+		if (!(l.getPredicate() instanceof AdornedPredicate)) {
+			throw new IllegalArgumentException(
+					"The predicate of the literal must be adorned");
+		}
+		return getBounds((AdornedPredicate) l.getPredicate(), l);
+	}
+
+	/**
+	 * Returns the list of bound terms of the literal according to the bounds of
+	 * the adornment of the predicate. The order of the terms won't be changed.
 	 * 
 	 * @param p
 	 *            wher to take the adornments from
@@ -486,7 +566,7 @@ public class MagicSetImpl {
 	 * 
 	 * @return the unmodifiable set of rules
 	 */
-	public Set<IRule> getRewrittenRules() {
+	public Set<AdornedRule> getRewrittenRules() {
 		return Collections.unmodifiableSet(rewrittenRules);
 	}
 
