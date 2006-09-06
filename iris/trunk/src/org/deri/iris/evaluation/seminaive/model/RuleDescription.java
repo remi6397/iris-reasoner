@@ -22,10 +22,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
- */package org.deri.iris.evaluation.seminaive.model;
+ */
+package org.deri.iris.evaluation.seminaive.model;
 
-import org.deri.iris.api.evaluation.seminaive.model.ISelection;
-import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.evaluation.seminaive.model.IRule;
 
 /**
  * 
@@ -33,29 +33,35 @@ import org.deri.iris.api.basics.ITuple;
  * @date 01-sep-2006
  *
  */
-public class Selection extends Composite implements ISelection{
-	private ITuple pattern = null;
+public class RuleDescription extends Leaf implements IRule{
+	private String name;
+	private int arity;
 	
-	Selection(ITuple pattern) {
-		if (pattern == null) {
-			throw new IllegalArgumentException("All constructor " +
-					"parameters must not be specified (non null values");
-		}
-		this.pattern = pattern;
+	RuleDescription(String name, int arity) {
+		this.name = name;
+		this.arity = arity;
 	}
 	
-	public ITuple getPattern() {
-		return pattern;
+	public String getName() {
+		return name;
 	}
 	
-	public String toString()
-	{
+	public int getArity() {
+		return arity;
+	}
+	
+	public boolean equals(final Object o) {
+		return (this.name.equalsIgnoreCase(((IRule)o).getName()) &&
+				this.arity == ((IRule)o).getArity());
+	}
+	
+	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		buffer.append("SELECTION[");
-		buffer.append(pattern);
-		buffer.append("]\n(");
-		buffer.append(this.getChildren().get(0).toString());
-		buffer.append(")");
+		buffer.append("RELATION['");
+		buffer.append(name);
+		buffer.append("', ");
+		buffer.append(arity);
+		buffer.append("]");
 		return buffer.toString();
 	}
 }

@@ -12,7 +12,7 @@ import org.deri.iris.api.evaluation.seminaive.model.IUnion;
 import org.deri.iris.operations.relations.JoinCondition;
 
 public interface IModelFactory {
-	public ITree createTree(String relationName, int relationArity);
+
 	public IProjection createProjection(int[] indexes);
 	public ISelection createSelection(ITuple pattern);
 	public IJoin createJoin(int[] indexes, JoinCondition condition);

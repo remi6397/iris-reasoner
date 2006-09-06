@@ -25,7 +25,7 @@
  */
 package org.deri.iris.evaluation.seminaive.model;
 
-import org.deri.iris.api.evaluation.seminaive.model.IRule;
+import org.deri.iris.api.evaluation.seminaive.model.IDifference;
 
 /**
  * 
@@ -33,35 +33,17 @@ import org.deri.iris.api.evaluation.seminaive.model.IRule;
  * @date 01-sep-2006
  *
  */
-public class Rule extends Leaf implements IRule{
-	private String name;
-	private int arity;
-	
-	Rule(String name, int arity) {
-		this.name = name;
-		this.arity = arity;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public int getArity() {
-		return arity;
-	}
-	
-	public boolean equals(final Object o) {
-		return (this.name.equalsIgnoreCase(((IRule)o).getName()) &&
-				this.arity == ((IRule)o).getArity());
-	}
+public class DifferenceDescription extends Composite implements IDifference{
+
+	DifferenceDescription() {}
 	
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		buffer.append("RELATION['");
-		buffer.append(name);
-		buffer.append("', ");
-		buffer.append(arity);
-		buffer.append("]");
-		return buffer.toString();
+		buffer.append("DIFFERENCE\n{(");
+		buffer.append(this.getChildren().get(0).toString());
+		buffer.append("),(");
+		buffer.append(this.getChildren().get(1).toString());
+		buffer.append(")}");
+		return buffer.toString();	
 	}
 }

@@ -44,34 +44,30 @@ public class ModelFactory implements IModelFactory {
 		// This is a singleton
 	}
 	
-	public ITree createTree(String relationName, int relationArity){
-		return new Tree(relationName, relationArity);
-	}
-	
 	public ISelection createSelection(ITuple pattern) {
-		return new Selection(pattern);
+		return new SelectionDescription(pattern);
 	}
 	
 	public IProjection createProjection(int[] indexes) {
-		return new Projection(indexes);
+		return new ProjectionDescription(indexes);
 	}
 	
 	public IJoin createJoin(int[] indexes, JoinCondition condition) {
-		return new Join(indexes, condition);
+		return new JoinDescription(indexes, condition);
 	}
 	public INaturalJoin createNaturalJoin() {
-		return new NaturalJoin();
+		return new NaturalJoinDescription();
 	}
 	public IDifference createDifference() {
-		return new Difference();
+		return new DifferenceDescription();
 	}
 	
 	public IUnion createUnion() {
-		return new Union();
+		return new UnionDescription();
 	}
 	
 	public IRule createRule(String relationName, int relationArity) {
-		return new Rule(relationName, relationArity);
+		return new RuleDescription(relationName, relationArity);
 	}
 
 	

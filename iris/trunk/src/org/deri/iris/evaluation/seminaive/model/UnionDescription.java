@@ -25,7 +25,7 @@
  */
 package org.deri.iris.evaluation.seminaive.model;
 
-import org.deri.iris.api.evaluation.seminaive.model.IDifference;
+import org.deri.iris.api.evaluation.seminaive.model.IUnion;
 
 /**
  * 
@@ -33,17 +33,20 @@ import org.deri.iris.api.evaluation.seminaive.model.IDifference;
  * @date 01-sep-2006
  *
  */
-public class Difference extends Composite implements IDifference{
-
-	Difference() {}
+public class UnionDescription extends Composite implements IUnion{
+	UnionDescription() {}
 	
 	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("DIFFERENCE\n{(");
-		buffer.append(this.getChildren().get(0).toString());
-		buffer.append("),(");
-		buffer.append(this.getChildren().get(1).toString());
-		buffer.append(")}");
-		return buffer.toString();	
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("UNION \n{(");
+		for (int i = 0; i < this.getChildren().size(); i++) 
+		{
+			buffer.append(this.getChildren().get(i).toString());
+			buffer.append("),\n(");
+		}
+		buffer.delete(buffer.length() - 3, buffer.length());
+		buffer.append("}");
+		
+		return buffer.toString();
 	}
 }

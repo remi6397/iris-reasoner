@@ -25,23 +25,26 @@
  */
 package org.deri.iris.evaluation.seminaive.model;
 
-import org.deri.iris.api.evaluation.seminaive.model.IProjection;
+import org.deri.iris.api.evaluation.seminaive.model.IJoin;
+import org.deri.iris.operations.relations.JoinCondition;
 
 /**
  * 
- * @author Paco Garcia, University of Murcia
+ * @author Paco Garcia, University of Murcia 
  * @date 01-sep-2006
  *
  */
-public class Projection extends Composite implements IProjection{
+public class JoinDescription extends Composite implements IJoin{
 	private int[] indexes = null;
+	private JoinCondition condition = null;
 	
-	Projection(int[] indexes) {
-		if (indexes == null) {
+	JoinDescription(int[] indexes, JoinCondition condition) {
+		if (indexes == null || condition == null) {
 			throw new IllegalArgumentException("All constructor " +
-					"parameters must not be specified (non null values");
+				"parameters must not be specified (non null values");
 		}
-		
+
+		this.condition = condition;
 		this.indexes = indexes;
 	}
 
@@ -49,18 +52,26 @@ public class Projection extends Composite implements IProjection{
 		return indexes;
 	}
 	
+	public JoinCondition getCondition() {
+		return condition;
+	}
+	
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		buffer.append("PROJECTION [");
+		buffer.append("JOIN");
+		buffer.append(condition);
+		buffer.append("[");
 		for(int i = 0; i < indexes.length; i++)
 		{
 			buffer.append(indexes[i]);
 			buffer.append(", ");
 		}
 		buffer.delete(buffer.length() - 2, buffer.length());
-		buffer.append("]\n(");
+		buffer.append("]\n{(");
 		buffer.append(this.getChildren().get(0).toString());
-		buffer.append(")");
+		buffer.append("),(");
+		buffer.append(this.getChildren().get(1).toString());
+		buffer.append(")}");
 		return buffer.toString();
 	}
 }

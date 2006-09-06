@@ -119,7 +119,7 @@ public class Rule2Relation {
 		
 		// TODO. Check whether it is possible a datalog rule with more than one predicate in the head
 		ITree result;
-		INaturalJoin globalJoin = ModelFactory.FACTORY.createNaturalJoin();
+		ITree globalJoin = ModelFactory.FACTORY.createNaturalJoin();
 		
 		/*
 		 * INPUT: Body of rule r = S1,...,Sn with variables X1,...,Xm;
@@ -176,6 +176,9 @@ public class Rule2Relation {
 						patternTerms.add(null);
 						// Store the literal referencing this variable
 						variables.put(t, l); 
+						// TODO. Check whether the variable appeared before in this literal
+						// and, if so, add condition $k = $l in the "patternTerms way"
+						// How can it be expressed?
 					}
 					i++;
 				}
@@ -240,7 +243,8 @@ public class Rule2Relation {
 			// C. Natural join of all the things generated (E)
 			globalJoin.addComponent(temporalResult); 
 		}
-		
+		if (globalJoin.getChildren().size() == 1)
+			globalJoin = (ITree)globalJoin.getChildren().get(0);
 		// TODO. D. EVAL-RULE(r, R1,...,Rn) = SELECTION_F(E)
 		// F conjunction of built-in subgoals appearing.
 		if (!builtins.isEmpty())

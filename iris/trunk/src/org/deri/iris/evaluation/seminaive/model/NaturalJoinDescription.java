@@ -2,8 +2,8 @@ package org.deri.iris.evaluation.seminaive.model;
 
 import org.deri.iris.api.evaluation.seminaive.model.INaturalJoin;
 
-public class NaturalJoin  extends Composite implements INaturalJoin{
-	NaturalJoin() {}
+public class NaturalJoinDescription  extends Composite implements INaturalJoin{
+	NaturalJoinDescription() {}
 
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();

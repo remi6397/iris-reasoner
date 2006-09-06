@@ -22,56 +22,40 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
- */
-package org.deri.iris.evaluation.seminaive.model;
+ */package org.deri.iris.evaluation.seminaive.model;
 
-import org.deri.iris.api.evaluation.seminaive.model.IJoin;
-import org.deri.iris.operations.relations.JoinCondition;
+import org.deri.iris.api.evaluation.seminaive.model.ISelection;
+import org.deri.iris.api.basics.ITuple;
 
 /**
  * 
- * @author Paco Garcia, University of Murcia 
+ * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  *
  */
-public class Join extends Composite implements IJoin{
-	private int[] indexes = null;
-	private JoinCondition condition = null;
+public class SelectionDescription extends Composite implements ISelection{
+	private ITuple pattern = null;
 	
-	Join(int[] indexes, JoinCondition condition) {
-		if (indexes == null || condition == null) {
+	SelectionDescription(ITuple pattern) {
+		if (pattern == null) {
 			throw new IllegalArgumentException("All constructor " +
-				"parameters must not be specified (non null values");
+					"parameters must not be specified (non null values");
 		}
-
-		this.condition = condition;
-		this.indexes = indexes;
-	}
-
-	public int[] getIndexes() {
-		return indexes;
+		this.pattern = pattern;
 	}
 	
-	public JoinCondition getCondition() {
-		return condition;
+	public ITuple getPattern() {
+		return pattern;
 	}
 	
-	public String toString() {
+	public String toString()
+	{
 		StringBuilder buffer = new StringBuilder();
-		buffer.append("JOIN");
-		buffer.append(condition);
-		buffer.append("[");
-		for(int i = 0; i < indexes.length; i++)
-		{
-			buffer.append(indexes[i]);
-			buffer.append(", ");
-		}
-		buffer.delete(buffer.length() - 2, buffer.length());
-		buffer.append("]\n{(");
+		buffer.append("SELECTION[");
+		buffer.append(pattern);
+		buffer.append("]\n(");
 		buffer.append(this.getChildren().get(0).toString());
-		buffer.append("),(");
-		buffer.append(this.getChildren().get(1).toString());
-		buffer.append(")}");
+		buffer.append(")");
 		return buffer.toString();
 	}
 }

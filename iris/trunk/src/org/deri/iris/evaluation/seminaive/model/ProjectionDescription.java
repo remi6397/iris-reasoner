@@ -25,7 +25,7 @@
  */
 package org.deri.iris.evaluation.seminaive.model;
 
-import org.deri.iris.api.evaluation.seminaive.model.IUnion;
+import org.deri.iris.api.evaluation.seminaive.model.IProjection;
 
 /**
  * 
@@ -33,20 +33,34 @@ import org.deri.iris.api.evaluation.seminaive.model.IUnion;
  * @date 01-sep-2006
  *
  */
-public class Union extends Composite implements IUnion{
-	Union() {}
+public class ProjectionDescription extends Composite implements IProjection{
+	private int[] indexes = null;
+	
+	ProjectionDescription(int[] indexes) {
+		if (indexes == null) {
+			throw new IllegalArgumentException("All constructor " +
+					"parameters must not be specified (non null values");
+		}
+		
+		this.indexes = indexes;
+	}
+
+	public int[] getIndexes() {
+		return indexes;
+	}
 	
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("UNION \n{(");
-		for (int i = 0; i < this.getChildren().size(); i++) 
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("PROJECTION [");
+		for(int i = 0; i < indexes.length; i++)
 		{
-			buffer.append(this.getChildren().get(i).toString());
-			buffer.append("),\n(");
+			buffer.append(indexes[i]);
+			buffer.append(", ");
 		}
-		buffer.delete(buffer.length() - 3, buffer.length());
-		buffer.append("}");
-		
+		buffer.delete(buffer.length() - 2, buffer.length());
+		buffer.append("]\n(");
+		buffer.append(this.getChildren().get(0).toString());
+		buffer.append(")");
 		return buffer.toString();
 	}
 }
