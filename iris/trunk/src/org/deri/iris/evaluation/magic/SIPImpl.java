@@ -55,12 +55,12 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.8 2006-08-30 12:51:01 richardpoettler Exp $
+ * $Id: SIPImpl.java,v 1.9 2006-09-06 07:43:26 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.8 $
- * @date $Date: 2006-08-30 12:51:01 $
+ * @version $Revision: 1.9 $
+ * @date $Date: 2006-09-06 07:43:26 $
  */
 public final class SIPImpl {
 	// TODO: implement hashCode and equals
@@ -83,6 +83,9 @@ public final class SIPImpl {
 
 	/** The query for wich the sip was created. */
 	private IQuery query = null;
+
+	private SIPImpl() {
+	}
 
 	/**
 	 * Creates a SIP for the given rule with bindings for the given query.<b>
@@ -169,8 +172,15 @@ public final class SIPImpl {
 	}
 
 	/**
-	 * Updates the sip, so that it contains an edge from the source whitch
-	 * passes the given variables to the target.
+	 * <p>
+	 * Updates the sip. If it doesn't contains an edge from the source whitch
+	 * passes the given variables to the target the specific edge will be added.
+	 * If it contains such an edge, the variables in passedTo will be added to
+	 * the passed variables.
+	 * </p>
+	 * <p>
+	 * <b>ATTENTION: There's no error checking whether the sip is still valid.</b>
+	 * </p>
 	 * 
 	 * @param source
 	 *            the source literal
@@ -182,12 +192,18 @@ public final class SIPImpl {
 	 * @throws NullPointerException
 	 *             if the source, target or set of variables is null
 	 */
-	private void updateSip(final ILiteral source, final ILiteral target,
+	public void updateSip(final ILiteral source, final ILiteral target,
 			final Set<IVariable> passedTo) {
 		if ((source == null) || (target == null) || (passedTo == null)) {
 			throw new NullPointerException(
 					"The source, target and passed variables must not be null");
 		}
+		if (sipGraph.containsEdge(source, target)) { // updating the edge
+			final LabeledDirectedEdge<Set<IVariable>> e = (LabeledDirectedEdge<Set<IVariable>>) sipGraph
+					.getEdge(source, target);
+			e.getLabel().addAll(passedTo);
+		}
+		// adding a new edge
 		GraphHelper.addEdgeWithVertices(sipGraph, constructEdge(source, target,
 				passedTo));
 	}
@@ -438,6 +454,30 @@ public final class SIPImpl {
 	}
 
 	/**
+	 * Searches for edges leaving this literal.
+	 * 
+	 * @param l
+	 *            the literal for which to search for entering edges
+	 * @return set of edges entering this literal
+	 * @throws NullPointerException
+	 *             if the literal is null
+	 */
+	public Set<LabeledDirectedEdge<Set<IVariable>>> getEdgesLeavingLiteral(
+			final ILiteral l) {
+		if (l == null) {
+			throw new NullPointerException("The literal must not be null");
+		}
+		final List successors = GraphHelper.successorListOf(sipGraph, l);
+		final Set<LabeledDirectedEdge<Set<IVariable>>> edges = new HashSet<LabeledDirectedEdge<Set<IVariable>>>(
+				successors.size());
+		for (final Object o : successors) {
+			edges.add((LabeledDirectedEdge<Set<IVariable>>) sipGraph.getEdge(l,
+					o));
+		}
+		return edges;
+	}
+
+	/**
 	 * Determines the set of variables passed to one literal by one specific
 	 * edge.
 	 * 
@@ -500,6 +540,162 @@ public final class SIPImpl {
 			buffer.append(o).append(NEWLINE);
 		}
 		return buffer.toString();
+	}
+
+	/**
+	 * <p>
+	 * Creates a copy of this sip.
+	 * </p>
+	 * <p>
+	 * Nothing will be cloned except the graph.
+	 * </p>
+	 * 
+	 * @return the copy
+	 * @throws NullPointerException
+	 *             if the rule of the query are null
+	 */
+	public SIPImpl defensifeCopy() {
+		return defensifeCopy(rule, query);
+	}
+
+	/**
+	 * <p>
+	 * Creates a copy of this sip. There will be no check whether the rule
+	 * matches to teh sip, or not, so inconsistency checks and repair work must
+	 * be done by the user of this method.
+	 * </p>
+	 * <p>
+	 * Nothing will be cloned except the graph.
+	 * </p>
+	 * 
+	 * @param r
+	 *            the new rule for the copy
+	 * @param q
+	 *            the query for the copy
+	 * @return the copy
+	 * @throws NullPointerException
+	 *             if the rule of the query are null
+	 */
+	public SIPImpl defensifeCopy(final IRule r, final IQuery q) {
+		if ((r == null) || (q == null)) {
+			throw new NullPointerException(
+					"The rule and the query must not be null");
+		}
+		// TODO: maybe check the predicates of the query and the rulehead
+		SIPImpl copy = new SIPImpl();
+		copy.rule = r;
+		copy.query = q;
+		copy.sipGraph = (DirectedGraph) ((SimpleDirectedGraph) sipGraph)
+				.clone();
+		return copy;
+	}
+
+	/**
+	 * <p>
+	 * Exchanges a literal in the sip. All the edges entering and leaving the
+	 * original vertex will now enter of leave the new one.
+	 * </p>
+	 * <p>
+	 * <b>ATTENTION: There's no error checking whether the sip is still valid.</b>
+	 * </p>
+	 * 
+	 * @param from
+	 *            the old literal
+	 * @param to
+	 *            the new literal
+	 * @throws NullPointerException
+	 *             if one of the literals is null
+	 */
+	public void exchangeLiteral(final ILiteral from, final ILiteral to) {
+		if ((from == null) || (to == null)) {
+			throw new NullPointerException("The literals must not be null");
+		}
+		for (LabeledDirectedEdge<Set<IVariable>> e : getEdgesEnteringLiteral(from)) {
+			updateSip((ILiteral) e.getSource(), to, e.getLabel());
+			sipGraph.removeEdge(e);
+		}
+		for (LabeledDirectedEdge<Set<IVariable>> e : getEdgesLeavingLiteral(from)) {
+			sipGraph.removeEdge(e);
+			updateSip(to, (ILiteral) e.getTarget(), e.getLabel());
+		}
+		// needs no check for neighbours, because we deleted all edges
+		sipGraph.removeVertex(from);
+	}
+
+	/**
+	 * <p>
+	 * Removes a edge from the sip graph.
+	 * </p>
+	 * <p>
+	 * <b>ATTENTION: There's no error checking whether the sip is still valid.</b>
+	 * </p>
+	 * 
+	 * @param e
+	 *            the edge to remove
+	 * @throws NullPointerException
+	 *             if the edge is null
+	 */
+	public void removeEdge(final LabeledDirectedEdge<Set<IVariable>> e) {
+		if (e == null) {
+			throw new NullPointerException("The edge must not be null");
+		}
+		sipGraph.removeEdge(e);
+	}
+
+	/**
+	 * <p>
+	 * Removes the edge with the given source and target from the sip graph.
+	 * </p>
+	 * <p>
+	 * <b>ATTENTION: There's no error checking whether the sip is still valid.</b>
+	 * </p>
+	 * 
+	 * @param source
+	 *            the source literal
+	 * @param target
+	 *            the target literal
+	 * @throws NullPointerException
+	 *             if one of the literals is null
+	 */
+	public void removeEdge(final ILiteral source, final ILiteral target) {
+		if ((source == null) || (target == null)) {
+			throw new NullPointerException(
+					"The source and the target must not be null");
+		}
+		removeEdge((LabeledDirectedEdge<Set<IVariable>>) sipGraph.getEdge(
+				source, target));
+	}
+
+	/**
+	 * Determines whether the sip constains a specific literal.
+	 * 
+	 * @param l
+	 *            the literal for which to search for
+	 * @return whether or not the literal is in the sip
+	 * @throws NullPointerException
+	 *             if the literal is null
+	 */
+	public boolean containsVertex(final ILiteral l) {
+		if (l == null) {
+			throw new NullPointerException("The literal must not be null");
+		}
+		return sipGraph.containsVertex(l);
+	}
+
+	/**
+	 * Determines the roots of this graph. A root is a Literal (vertex) with no
+	 * entering arcs.
+	 * 
+	 * @return the set of literals with no entering arcs
+	 */
+	public Set<ILiteral> getRootVertices() {
+		final Set<ILiteral> roots = new HashSet<ILiteral>();
+		for (final Object o : sipGraph.vertexSet()) {
+			if (GraphHelper.predecessorListOf(sipGraph, o).size() == 0) {
+				roots.add((ILiteral) o);
+			}
+		}
+		return roots;
 	}
 
 	/**
