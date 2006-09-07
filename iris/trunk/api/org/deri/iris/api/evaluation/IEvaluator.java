@@ -46,12 +46,10 @@ public interface IEvaluator {
 	/**
 	 * Evaluates all queries which have been added to the entire EDB. <br>
 	 * until answers have been derived.<br>
-	 * Returns true if more answers are expected. Must be called until
-	 * evaluation is finished. <br>
-	 * The new answers are returned by "LastResult" or "LastSubstitution". All
-	 * answers up to now are returned by "Result" or "Substitution".
+	 * Returns true if the evaluation has terminated, otherwise false is returned.
+	 * All answers up to now are returned by "Result" or "Substitution".
 	 */
 	public boolean evaluate() throws DataModelException;
-
+ 
 }
  
