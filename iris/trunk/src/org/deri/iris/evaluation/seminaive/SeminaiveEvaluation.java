@@ -25,54 +25,61 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
+import org.deri.iris.api.IEDB;
 import org.deri.iris.api.evaluation.IEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.storage.Relation;
+import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.api.evaluation.seminaive.model.*;
-
+import org.deri.iris.api.basics.ITuple;
 import java.util.Map;
 import java.util.Arrays;
 
 
 /**
- * Algorithm 3.3: Evaluation of Datalog Equations
+ * Algorithm 3.4: Semi-Naive Evaluation of Datalog Equations
  * 
- * INPUT: A collection of datalog rules with EDB predicates r1,...rk and
- * IDB predicates p1,...,pm. A list of relations R1, ..., Rk to serve as 
+ * INPUT: A collection of rectified datalog rules with EDB predicates r1,...rk and
+ * IDB predicates p1,...,pm. Also, a list of relations R1, ..., Rk to serve as 
  * values of the EDB predicates.
  * 
  * OUTPUT: The least fixed point solution to the datalog equations obtained 
  * from these rules.
  * 
- * for i:=1 to m do
- *    Pi := 0;
+ * for i:=1 to m do begin
+ *    APi := EVAL(pi, R1,...,Rk, 0,...,0);
+ *    Pi := APi;
+ * end;
  * repeat
  *    for i:= 1 to m do
- *       Qi := Pi; // save old values of Pi's
+ *       AQi := APi; // save old values of APi's
+ *    for i := 1 to m do begin
+ *       APi := EVAL-INCR(pi,R1,...,Rk,P1,...,Pm,AQ1,...,AQm);
+ *       APi := APi - Pi // remove 'new' tuples that actually appeared before
+ *    end;
  *    for i := 1 to m do
- *       Pi := EVAL(pi, R1, ..., Rk, Q1,..., Qm);
- * until Pi = Qi for all i, 1 <= i <= m;
+ *       Pi := Pi U APi; 
+ * until APi = 0 for all i, 1 <= i <= m;
  * output Pi's 
  * 
  * @author Paco Garcia, University of Murcia
  * @date 05-sep-2006
  */
-public class SeminaiveEvaluation {
-	private IEvaluator evaluator;
-	
-	SeminaiveEvaluation(IEvaluator e) {
-		this.evaluator = e;
+public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
+
+	SeminaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<IRule, ITree> IDB) {
+		super(e, EDB, IDB);
 	}
-	
-	public IRelation[] evaluation(Map<IRule, ITree> IDB) {
+
+	public IRelation<ITuple>[] evaluate() {
 		/*
 		 * Input: IDB --> pi = ITree; Relevants Rs for each IDB are the leaves
 		 * of the ITree
 		 */
-		IRelation[] P = new IRelation[IDB.size()];
-		IRelation[] AP = new IRelation[IDB.size()];
-		IRelation[] AQ = new IRelation[IDB.size()];
+		IRelation<ITuple>[] P =  new IRelation[IDB.size()];;
+		IRelation<ITuple>[] AP = new IRelation[IDB.size()];
+		IRelation<ITuple>[] AQ = new IRelation[IDB.size()];
 		int i = 0;
 		for (IRule head: IDB.keySet())
 		{
@@ -93,10 +100,10 @@ public class SeminaiveEvaluation {
 		for (IRule head: IDB.keySet())
 		{
 			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-			eval(IDB.get(head), AP[i], AQ);
+			AP[i] = method.eval(IDB.get(head), EDB, AQ);
 			i++;
 		}
-		copy(AP, P);
+		copyRelations(AP, P);
 		
 		/*
 		 * repeat
@@ -110,46 +117,22 @@ public class SeminaiveEvaluation {
 		 *       Pi := Pi U APi;
 		 * until APi = 0 for all i;
 		 */		
-		for (; !empty(AP);) {
-			copy(AP, AQ);
+		for (; !isEmpty(AP);) {
+			copyRelations(AP, AQ);
 			i = 0;
 			for (IRule head: IDB.keySet())
 			{
 				// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
-				eval_incr(IDB.get(head), AP[i], P, AQ);
+				AP[i] = method.eval_incr(IDB.get(head), EDB, P, AQ);
 				AP[i].removeAll(Arrays.asList(P[i].toArray()));
 				i++;
 			}
-			for (i = 0; i < P.length; i++)
-			{
-				P[i].addAll(Arrays.asList(AP[i].toArray()));
-			}
+			addRelations(AP, P);
 		}
 		return P;
 		
 	}
 
-	/**
-	 * @param AP set of incremental relations
-	 * @return True if all the incremental relations are empty; false otherwise
-	 */
-	private boolean empty(IRelation[] AP){		
-		
-		for (int i = 0; i < AP.length; i++) 
-			if (!AP[i].isEmpty())
-				return false;
-		
-		return true;
-	}
-	
-	private void copy(IRelation[] source, IRelation[] target) {
-		for (int i = 0; i < target.length; i++) {
-			// 1st. Empty target
-			target[i].clear();
-			// 2nd. Copy all
-			target[i].addAll(Arrays.asList(source[i].toArray()));
-		}
-	}
 	
 	/**
 	 * 

@@ -47,7 +47,7 @@ import org.deri.iris.api.builtins.*;
  *
  * @author Francisco Garcia
  *
- * @version $Revision: 1.5 $ $Date: 2006-08-24 08:00:21 $
+ * @version $Revision: 1.6 $ $Date: 2006-09-08 14:04:34 $
  */
 public class TreeWalker extends DepthFirstAdapter {
     
@@ -84,7 +84,7 @@ public class TreeWalker extends DepthFirstAdapter {
    	 	_r.getBody().apply(this);
    	 	IBody ruleBody = Factory.BASIC.createBody(literals);
     	IRule r = Factory.BASIC.createRule(ruleHead, ruleBody);
-    	p.addRule(r);
+     	p.addRule(r);
 
     	// Initialite literals
     	literals = new Vector<ILiteral>();

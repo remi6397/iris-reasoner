@@ -25,14 +25,8 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
-import java.util.Set;
-import java.util.List;
-import java.util.Map;
-import java.util.Hashtable;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
-//import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltInAtom;
@@ -55,16 +49,21 @@ import org.deri.iris.api.evaluation.seminaive.model.*;
  *
  */
 public class Rule2Relation {
-	private Set<org.deri.iris.api.basics.IRule> rules = null;
+	private Collection<org.deri.iris.api.basics.IRule> rules = null;
+	private Map<org.deri.iris.api.evaluation.seminaive.model.IRule, ITree> results = new Hashtable<org.deri.iris.api.evaluation.seminaive.model.IRule, ITree>();
 	
-	public Map<org.deri.iris.api.evaluation.seminaive.model.IRule, ITree> eval(final Set<org.deri.iris.api.basics.IRule> rule)
+	/**
+	 * Transform a set of rules into relational algebra operations 
+	 * @param rule Collection that contains the rules in the program (PRECONDITION: the rules are ordered according to the dependences within the program)
+	 * @return An structure that contains the predicates head of the rules and the algebra operations for these rules
+	 */
+	public Map<org.deri.iris.api.evaluation.seminaive.model.IRule, ITree> eval(final Collection<org.deri.iris.api.basics.IRule> rule)
 	{
 		if (rule == null) {
 			throw new NullPointerException("Input parameters must not be null");
 		}
 		this.rules = rule;		
 
-		Map<org.deri.iris.api.evaluation.seminaive.model.IRule, ITree> result = new Hashtable<org.deri.iris.api.evaluation.seminaive.model.IRule, ITree>();
 		
 		for (org.deri.iris.api.basics.IRule r: rules) {
 			org.deri.iris.api.evaluation.seminaive.model.IRule head = 
@@ -72,20 +71,20 @@ public class Rule2Relation {
 					r.getHeadLiteral(0).getPredicate().getArity()); 
 			ITree body = evalRule(r);
 			IRule oldHead;
-			if ((oldHead = containsKey(result.keySet(), head))!= null)
+			if ((oldHead = containsKey(results.keySet(), head))!= null)
 			{
 				// UNION
 				ITree newBody = ModelFactory.FACTORY.createUnion();
-				newBody.addComponent(result.get(oldHead));
-				result.remove(oldHead);
+				newBody.addComponent(results.get(oldHead));
+				results.remove(oldHead);
 				newBody.addComponent(body);
-				result.put(head, newBody);
+				results.put(head, newBody);
 			} else {
-				result.put(head, body);
+				results.put(head, body);
 			}
 		}
 		
-		return result;
+		return results;
 	}
 	
 	private IRule containsKey(Set<IRule> keySet, IRule head) {
@@ -140,9 +139,17 @@ public class Rule2Relation {
 				
 				// A. FOR ORDINARY SUBGOALS (e.g. Si = p(X, b) )
 				// 1. Ri
-				org.deri.iris.api.evaluation.seminaive.model.IRule leaf = ModelFactory.FACTORY.createRule(
+				org.deri.iris.api.evaluation.seminaive.model.ITree leaf = ModelFactory.FACTORY.createRule(
 						l.getPredicate().getPredicateSymbol(),
 						l.getPredicate().getArity());
+				
+				IRule temporalHead;
+				if ((temporalHead = containsKey(results.keySet(), (IRule)leaf)) != null)
+				{
+					// TODO In order for this to work properly, the rules have to be ordered.
+					leaf = results.get(temporalHead);
+				}
+				
 				// 2. SELECTION_Fi(Ri)
 				// 2.1. Fi (pattern) & Vi (int[]);
 				/*

@@ -28,8 +28,10 @@ package org.deri.iris.evaluation.seminaive;
 import org.deri.iris.api.evaluation.IEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.storage.Relation;
+import org.deri.iris.api.IEDB;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.api.evaluation.seminaive.model.*;
+import org.deri.iris.api.basics.ITuple;
 
 import java.util.Map;
 import java.util.Arrays;
@@ -58,20 +60,14 @@ import java.util.Arrays;
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  */
-public class NaiveEvaluation {
-	private IEvaluator evaluator;
-	
-	NaiveEvaluation(IEvaluator e) {
-		this.evaluator = e;
-	}
-	
-	public IRelation[] evaluation(Map<IRule, ITree> IDB) {
+public class NaiveEvaluation extends GeneralSeminaiveEvaluation{
+	public boolean evaluate() throws DataModelException {
 		/*
 		 * Input: IDB --> pi = ITree; Relevants Rs for each IDB are the leaves
 		 * of the ITree
 		 */
-		IRelation[] P = new IRelation[IDB.size()];
-		IRelation[] Q = new IRelation[IDB.size()];
+		IRelation<ITuple>[] P = new IRelation<ITuple>[IDB.size()];
+		IRelation<ITuple>[] Q = new IRelation<ITuple>[IDB.size()];
 		int i = 0;
 		for (IRule head: IDB.keySet())
 		{
@@ -86,7 +82,7 @@ public class NaiveEvaluation {
 		for (IRule head: IDB.keySet())
 		{
 			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-			eval(IDB.get(head), P[i], Q);
+			P[i] = method.eval(IDB.get(head), EDB, Q);
 			i++;
 		}
 		
@@ -100,36 +96,11 @@ public class NaiveEvaluation {
 			{
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 				
-				eval(IDB.get(head), P[i], Q);
+				method.eval(IDB.get(head), P[i], Q);
 				i++;
 			}			
 		}
 		return P;
 		
-	}
-
-	/**
-	 * 
-	 * @param P set of original relations
-	 * @param Q set of temporal backup relations
-	 * @return If there are no new tuples in any relation in P, true; otherwise, false
-	 */
-	private boolean compare(IRelation[] P, IRelation[] Q){		
-		for (int i = 0; i < P.length; i++) 
-			if (!Q[i].containsAll(Arrays.asList(P[i].toArray()))) 
-				return false;
-		
-		return true;
-	}
-	
-	private boolean eval(ITree body, IRelation Pbody, IRelation[] Q){
-		// TODO Set parameters
-		// R1,..., Rk & pi = body;
-		// Q1,...,Qm; = Q
-		return evaluator.evaluate();
-		
-		//TODO Get the results 
-		//Pbody.addAll(evaluator.evaluate());
-
 	}
 }
