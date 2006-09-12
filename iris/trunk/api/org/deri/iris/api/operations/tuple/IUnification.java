@@ -47,12 +47,12 @@ import org.deri.iris.operations.relations.MultiequationSystem;
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:54:09
  *
- * @version $Revision: 1.5 $ $Date: 2006-08-17 12:45:27 $
+ * @version $Revision: 1.6 $ $Date: 2006-09-12 07:36:26 $
  */
 public interface IUnification {
 
 	public List<Multiequation> unify();
 
-	public MultiequationSystem createInitialMultiequationSystem(ITerm term, ITerm term2);
+	public MultiequationSystem createInitialMultiequationSystem(ITerm term0, ITerm term1);
 	
 }
