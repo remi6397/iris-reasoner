@@ -25,6 +25,7 @@
  */
 package org.deri.iris.operations.relations;
 
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.factory.IRelationFactory;
 import org.deri.iris.api.operations.relation.IDifference;
@@ -32,6 +33,7 @@ import org.deri.iris.api.operations.relation.IIntersection;
 import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.operations.relation.IProjection;
 import org.deri.iris.api.operations.relation.ISelection;
+import org.deri.iris.api.operations.tuple.IUnification;
 import org.deri.iris.api.storage.IRelation;
 
 /**
@@ -94,6 +96,14 @@ public class OperationFactory implements IRelationFactory{
 	public ISelection createSelectionOperator(IRelation relation, 
 			ITuple pattern) {
 		return new Selection(relation, pattern);
+	}
+
+	public IUnification createUnificationOperator(ITuple arg0, ITuple arg1) {
+		return new Unification(arg0, arg1);
+	}
+
+	public IUnification createUnificationOperator(IAtom arg0, IAtom arg1) {
+		return new Unification(arg0, arg1);
 	}
 
 	public static IRelationFactory getInstance() {
