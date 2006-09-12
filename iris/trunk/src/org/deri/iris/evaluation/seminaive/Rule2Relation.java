@@ -63,7 +63,7 @@ public class Rule2Relation {
 			IRule head = 
 				ModelFactory.FACTORY.createRule(r.getHeadLiteral(0).getPredicate().getPredicateSymbol(), 
 					r.getHeadLiteral(0).getPredicate().getArity()); 
-			ITree body = evalRule(r);
+			ITree body = evalRule(r, head.getArity());
 			// Check whether is a rule with the same head predicate; if so, the bodies must be united
 			IRule oldHead;
 			if ((oldHead = containsKey(results.keySet(), head))!= null)
@@ -104,7 +104,7 @@ public class Rule2Relation {
 	 * Algorithm 3.1
 	 * @param r Rule Body
 	 * @return A tree with the relational algebra operations for the input rule
-	 */private ITree evalRule(org.deri.iris.api.basics.IRule r)
+	 */private ITree evalRule(org.deri.iris.api.basics.IRule r, int headArity)
 	{
 		java.util.Hashtable<ITerm, ILiteral> variables = new java.util.Hashtable<ITerm, ILiteral>();
 		List<ILiteral> builtins = new java.util.LinkedList<ILiteral>();
@@ -279,7 +279,13 @@ public class Rule2Relation {
 		    result = selection;
 		} else
 			result = globalJoin;
-		return result;
+		
+		int[] globalProjectionIndex = new int[headArity];
+		for (int i = 0; i < headArity; i++)
+			globalProjectionIndex[i] = 0;
+		IProjection globalProjection = ModelFactory.FACTORY.createProjection(globalProjectionIndex);
+		globalProjection.addComponent(result);
+		return globalProjection;
 	}
 
 }

@@ -29,6 +29,7 @@ import org.deri.iris.api.evaluation.IEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.storage.Relation;
 import org.deri.iris.api.IEDB;
+import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.api.evaluation.seminaive.model.*;
 import org.deri.iris.api.basics.ITuple;
@@ -61,13 +62,18 @@ import java.util.Arrays;
  * @date 01-sep-2006
  */
 public class NaiveEvaluation extends GeneralSeminaiveEvaluation{
+
+	NaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<IRule, ITree> IDB) {
+		super(e, EDB, IDB);
+	}
+	
 	public boolean evaluate() throws DataModelException {
 		/*
 		 * Input: IDB --> pi = ITree; Relevants Rs for each IDB are the leaves
 		 * of the ITree
 		 */
-		IRelation<ITuple>[] P = new IRelation<ITuple>[IDB.size()];
-		IRelation<ITuple>[] Q = new IRelation<ITuple>[IDB.size()];
+		IRelation<ITuple>[] P = new IRelation[IDB.size()];
+		IRelation<ITuple>[] Q = new IRelation[IDB.size()];
 		int i = 0;
 		for (IRule head: IDB.keySet())
 		{
