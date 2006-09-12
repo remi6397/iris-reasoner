@@ -47,26 +47,24 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.12 2006-08-23 09:27:09 richardpoettler Exp $
+ * $Id: AdornedProgram.java,v 1.13 2006-09-12 12:50:33 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.12 $
- * @date $Date: 2006-08-23 09:27:09 $
+ * @version $Revision: 1.13 $
+ * @date $Date: 2006-09-12 12:50:33 $
  */
 public class AdornedProgram {
 
 	// TODO: make a smaller empty-constant-term
-	private static final ITerm EMPTY_CONSTANT_TERM =
-			TERM.createConstant(TERM.createString(""));
+	private static final ITerm EMPTY_CONSTANT_TERM = TERM.createConstant(TERM
+			.createString(""));
 
 	/** Set of all derived predicates */
-	private final Set<IPredicate> deriveredPredicates =
-			new HashSet<IPredicate>();
+	private final Set<IPredicate> deriveredPredicates = new HashSet<IPredicate>();
 
 	/** Set of all adorned predicates */
-	private final Set<AdornedPredicate> adornedPredicates =
-			new HashSet<AdornedPredicate>();
+	private final Set<AdornedPredicate> adornedPredicates = new HashSet<AdornedPredicate>();
 
 	/** Set of all adorned rules */
 	private final Set<AdornedRule> adornedRules = new HashSet<AdornedRule>();
@@ -123,8 +121,7 @@ public class AdornedProgram {
 		// creating an adored predicate out of the query, and add it to the
 		// predicate sets
 		AdornedPredicate qa = new AdornedPredicate(query.getQueryLiteral(0));
-		Set<AdornedPredicate> predicatesToProcess =
-				new HashSet<AdornedPredicate>();
+		Set<AdornedPredicate> predicatesToProcess = new HashSet<AdornedPredicate>();
 		predicatesToProcess.add(qa);
 		adornedPredicates.add(qa);
 
@@ -178,6 +175,7 @@ public class AdornedProgram {
 		StringBuilder buffer = new StringBuilder();
 		for (AdornedRule r : adornedRules) {
 			buffer.append(r).append(NEWLINE);
+//			buffer.append("\t").append(r.getSIP().toString().replaceAll(NEWLINE, NEWLINE + "\t")).append(NEWLINE);
 		}
 		buffer.append(NEWLINE);
 		for (IRule r : rules) {
@@ -317,15 +315,15 @@ public class AdornedProgram {
 		int iCounter = 0;
 		for (Adornment a : ap.getAdornment()) {
 			switch (a) {
-				case BOUND:
-					terms[iCounter] = EMPTY_CONSTANT_TERM;
-					break;
-				case FREE:
-					terms[iCounter] = hl.getTuple().getTerm(iCounter);
-					break;
-				default:
-					throw new IllegalArgumentException(
-							"Only BOUND and FREE are allowed as adornments");
+			case BOUND:
+				terms[iCounter] = EMPTY_CONSTANT_TERM;
+				break;
+			case FREE:
+				terms[iCounter] = hl.getTuple().getTerm(iCounter);
+				break;
+			default:
+				throw new IllegalArgumentException(
+						"Only BOUND and FREE are allowed as adornments");
 			}
 			iCounter++;
 		}
@@ -573,17 +571,19 @@ public class AdornedProgram {
 		}
 
 		public int getStratum() {
-			return getStratum();
+			return p.getStratum();
 		}
 
 		public int setStratum(int s) {
-			return setStratum(s);
+			return p.setStratum(s);
 		}
 	}
 
 	/**
 	 * <p>
-	 * Simple representation of an adorned rule.</p
+	 * Simple representation of an adorned rule. The only difference to an
+	 * odinary rule is, that it has a sip attached, and that you can exchange
+	 * literals.
 	 * <p>
 	 * <b>ATTENTION: the replaceHeadLiterla and replaceBodyLiteral are slow,
 	 * because they copy the head and body for each invocation.</b>
@@ -617,11 +617,9 @@ public class AdornedProgram {
 						"The rule and the sip must not be null");
 			}
 			// TODO: a defensive copy should be made
-			rule =
-					BASIC.createRule(BASIC.createHead(new ArrayList<ILiteral>(r
-							.getHeadLiterals())), BASIC
-							.createBody(new ArrayList<ILiteral>(r
-									.getBodyLiterals())));
+			rule = BASIC.createRule(BASIC.createHead(new ArrayList<ILiteral>(r
+					.getHeadLiterals())), BASIC
+					.createBody(new ArrayList<ILiteral>(r.getBodyLiterals())));
 			sip = s;
 		}
 
@@ -662,8 +660,8 @@ public class AdornedProgram {
 								+ "and the new predicate doesn't match.");
 			}
 
-			final List<ILiteral> head =
-					new ArrayList<ILiteral>(rule.getHeadLiterals());
+			final List<ILiteral> head = new ArrayList<ILiteral>(rule
+					.getHeadLiterals());
 
 			final int index = head.indexOf(l);
 			if (index == -1) {
@@ -673,9 +671,8 @@ public class AdornedProgram {
 
 			head.set(index, BASIC
 					.createLiteral(l.isPositive(), p, l.getTuple()));
-			rule =
-					BASIC.createRule(BASIC.createHead(head), BASIC
-							.createBody(rule.getBodyLiterals()));
+			rule = BASIC.createRule(BASIC.createHead(head), BASIC
+					.createBody(rule.getBodyLiterals()));
 		}
 
 		/**
@@ -706,8 +703,8 @@ public class AdornedProgram {
 								+ "and the new predicate doesn't match.");
 			}
 
-			final List<ILiteral> body =
-					new ArrayList<ILiteral>(rule.getBodyLiterals());
+			final List<ILiteral> body = new ArrayList<ILiteral>(rule
+					.getBodyLiterals());
 
 			final int index = body.indexOf(l);
 			if (index == -1) {
@@ -717,9 +714,8 @@ public class AdornedProgram {
 
 			body.set(index, BASIC
 					.createLiteral(l.isPositive(), p, l.getTuple()));
-			rule =
-					BASIC.createRule(BASIC.createHead(rule.getHeadLiterals()),
-							BASIC.createBody(body));
+			rule = BASIC.createRule(BASIC.createHead(rule.getHeadLiterals()),
+					BASIC.createBody(body));
 		}
 
 		public String toString() {
