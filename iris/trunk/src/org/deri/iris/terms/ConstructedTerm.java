@@ -80,9 +80,9 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 		return terms.get(arg);
 	}
 
-	/*public List<ITerm> getParameters() {
+	public List<ITerm> getParameters() {
 		return terms;
-	}*/
+	}
 
 	public boolean isGround() {
 		for(ITerm term : this.terms){
