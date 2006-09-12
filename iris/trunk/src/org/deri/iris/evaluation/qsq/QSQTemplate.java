@@ -153,7 +153,7 @@ public class QSQTemplate {
 		return supplementaryRelations;
 	}
 	
-	private LinkedList<SupplementaryRelation> getSupplementaryRelations(
+	/*private LinkedList<SupplementaryRelation> getSupplementaryRelations(
 			int superscript, List<ILiteral> body){
 		
 		LinkedList<SupplementaryRelation> supplementaryRelations 
@@ -196,8 +196,55 @@ public class QSQTemplate {
 					new SupplementaryRelation(superscript, i+1, variables));
 		}
 		return supplementaryRelations;
-	}
+	}*/
 
+	/**
+	 * maybe slightly more efficient implementation of the above method 
+	 * (that is commented).
+	 * But the order of variables in each supplementary relation is not
+	 * preserved. 
+	 */
+	private LinkedList<SupplementaryRelation> getSupplementaryRelations(
+			int superscript, List<ILiteral> body){
+		
+		LinkedList<SupplementaryRelation> supplementaryRelations 
+						= new LinkedList<SupplementaryRelation>();
+		List<IVariable> variables_before = null;
+		List<IVariable> variables = null;
+		ILiteral literal = null;
+		List<IVariable> terms = null;
+		
+		for(int i=0; i<body.size()-1; i++){
+			variables_before = new ArrayList<IVariable>();
+			variables_before.addAll(variables_0);
+			variables = new ArrayList<IVariable>();
+			
+			for(int j=0; j<i+1; j++){
+				literal = body.get(j);
+				terms = literal.getTuple().getTerms();
+				for(ITerm term : terms){
+					if(term instanceof IVariable && !variables_before.contains(term))
+						variables_before.add((IVariable)term);
+				}
+			}
+			for(int j=i+1; j<body.size(); j++){
+				literal = body.get(j);
+				terms = literal.getTuple().getTerms();
+				for(ITerm term : terms){
+					if(term instanceof IVariable && variables_before.contains(term))
+						variables.add((IVariable)term);
+				}
+			}
+			for(IVariable variable : variables_n){
+				if(variables_before.contains(variable) && !variables.contains(variable))
+					variables.add(variable);
+			}
+			supplementaryRelations.add(
+					new SupplementaryRelation(superscript, i+1, variables));
+		}
+		return supplementaryRelations;
+	}
+	
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		Iterator i = qsqRules.iterator();
