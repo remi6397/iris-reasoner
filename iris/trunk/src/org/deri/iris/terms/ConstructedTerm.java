@@ -199,10 +199,10 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 	}
 
 	public Set<IVariable> getVariables() {
-		Set variables = new HashSet<ITerm>();
+		Set<IVariable> variables = new HashSet<IVariable>();
 		for(ITerm term : this.terms){
 			if(term instanceof IVariable)
-				variables.add(term);
+				variables.add((IVariable)term);
 			if(term instanceof IConstructedTerm)
 				variables.addAll(getVariables((IConstructedTerm)term));
 				
@@ -211,11 +211,11 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 	}
 	
 	private Set<IVariable> getVariables(IConstructedTerm t) {
-		Set variables = new HashSet<ITerm>();
-		List<IConstructedTerm> termList = (List<IConstructedTerm>)t.getValue();
+		Set<IVariable> variables = new HashSet<IVariable>();
+		List<ITerm> termList = (List<ITerm>)t.getValue();
 		for(ITerm term : termList){
 			if(term instanceof IVariable)
-				variables.add(term);
+				variables.add((IVariable)term);
 			if(term instanceof IConstructedTerm)
 				variables.addAll(getVariables((IConstructedTerm)term));
 		}
