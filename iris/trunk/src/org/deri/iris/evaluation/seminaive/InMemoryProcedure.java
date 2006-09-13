@@ -25,15 +25,19 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
+import java.util.Map;
+
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.evaluation.seminaive.model.IRule;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.evaluation.seminaive.model.*;
 import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.basics.ITuple;
-
+import org.deri.iris.operations.relations.*;
 import org.deri.iris.api.IEDB;
 
+
 /**
- * TODO. To implement
  * @author Paco Garcia, University of Murcia
  * @date 08-sep-2006
  */
@@ -46,13 +50,8 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 	 * @param Q Tuples already discovered
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation<ITuple> eval(ITree pi, IEDB EDB, IRelation<ITuple>[] Q) {
-		// R1,..., Rk & pi = body;
-		// Q1,...,Qm; = Q
-
-		//TODO Get the results 
-		//Pbody.addAll(evaluator.evaluate());
-		return null;
+	public IRelation<ITuple> eval(ITree pi, IEDB EDB, Map<IRule, IRelation<ITuple>> IDB) {
+		return evaluate(pi, EDB, IDB);
 	}
 	 
 	 
@@ -64,7 +63,7 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 	 * @param AQ Tuples discovered during the last iteration
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation<ITuple> eval_incr(ITree pi, IEDB EDB, IRelation<ITuple>[] P, IRelation<ITuple>[] AQ) {
+	public IRelation<ITuple> eval_incr(ITree pi, IEDB EDB, Map<IRule, IRelation<ITuple>>  P, Map<IRule, IRelation<ITuple>>  AQ) {
 		// TODO Set parameters
 		// R1,..., Rk & pi = body;
 		// Q1,...,Qm; = Q		
@@ -73,5 +72,56 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 		return null;
 	}
 
+	private IRelation<ITuple> evaluate(ITree node, IEDB EDB, Map<IRule, IRelation<ITuple>> IDB){
+		if (node instanceof DifferenceDescription){
+			
+		}else if (node instanceof JoinDescription){
+			JoinDescription j = (JoinDescription)node;
+			org.deri.iris.api.operations.relation.IJoin join = 
+				OperationFactory.getInstance().createJoinOperator(
+						evaluate((ITree)j.getChildren().get(0), EDB, IDB), 
+						evaluate((ITree)j.getChildren().get(1), EDB, IDB),
+						j.getIndexes(), j.getCondition() );
+			return join.join();
+		}else if (node instanceof NaturalJoinDescription){
+			NaturalJoinDescription nj = (NaturalJoinDescription)node;
+			// TODO. Cartesian product
+			
+		}else if (node instanceof ProjectionDescription){
+			ProjectionDescription p = (ProjectionDescription)node;
+			org.deri.iris.api.operations.relation.IProjection projection =
+				OperationFactory.getInstance().createProjectionOperator(
+						evaluate((ITree)p.getChildren().get(0), EDB, IDB),
+						p.getIndexes());
+			return projection.project();
+		}else if (node instanceof RuleDescription){
+			RuleDescription r = (RuleDescription)node;
+			// A leaf can be either an EDB predicate or an IDB predicate
+			if (IDB.containsKey(r)) {
+				// This leaf is an IDB
+				return IDB.get(r);
+			} else {
+				// This leaf is an EDB
+				for (org.deri.iris.api.basics.IPredicate p: EDB.getPredicates()) {
+					// Is the predicate in EDB refering to the same as 'r'?
+					if (p.getPredicateSymbol().equalsIgnoreCase(r.getName()) && 
+							p.getArity() == r.getArity())
+						return EDB.getFacts(p);
+				}
+			}			
+		}else if (node instanceof SelectionDescription){
+			SelectionDescription s = (SelectionDescription)node;
+			org.deri.iris.api.operations.relation.ISelection selection =
+				OperationFactory.getInstance().createSelectionOperator(
+						evaluate((ITree)s.getChildren().get(0), EDB, IDB),
+						s.getPattern());
+			return selection.select();			
+		}else if (node instanceof UnionDescription){
+			UnionDescription u = (UnionDescription)node;
+			//TODO. Union
+		}
+			
+		
+	}
 
 }

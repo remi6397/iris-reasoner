@@ -33,6 +33,8 @@ import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.api.evaluation.seminaive.model.*;
 import org.deri.iris.api.basics.ITuple;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
 
@@ -77,17 +79,16 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
 		 * Input: IDB --> pi = ITree; Relevants Rs for each IDB are the leaves
 		 * of the ITree
 		 */
-		IRelation<ITuple>[] P =  new IRelation[IDB.size()];;
-		IRelation<ITuple>[] AP = new IRelation[IDB.size()];
-		IRelation<ITuple>[] AQ = new IRelation[IDB.size()];
-		int i = 0;
+		Map<IRule, IRelation<ITuple>> P = new HashMap<IRule, IRelation<ITuple>>();
+		Map<IRule, IRelation<ITuple>> AP = new HashMap<IRule, IRelation<ITuple>>();
+		Map<IRule, IRelation<ITuple>> AQ = new HashMap<IRule, IRelation<ITuple>>();
+
 		for (IRule head: IDB.keySet())
 		{
 			int arity = head.getArity();
-			P[i] = new Relation(arity);
-			AP[i] = new Relation(arity);
-			AQ[i] = new Relation(arity);
-			i++;
+			P.put(head, new Relation(arity));
+			AP.put(head, new Relation(arity));
+			AQ.put(head, new Relation(arity));
 		}
 		
 		/*
@@ -96,13 +97,12 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
 		 *    Pi := APi;
 		 * end;
 		 */
-		i=0;
 		for (IRule head: IDB.keySet())
 		{
 			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-			AP[i] = method.eval(IDB.get(head), EDB, AQ);
-			i++;
+			AP.put(head, method.eval(IDB.get(head), EDB, AQ));
 		}
+		
 		copyRelations(AP, P);
 		
 		/*
@@ -119,56 +119,15 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
 		 */		
 		for (; !isEmpty(AP);) {
 			copyRelations(AP, AQ);
-			i = 0;
 			for (IRule head: IDB.keySet())
 			{
 				// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
-				AP[i] = method.eval_incr(IDB.get(head), EDB, P, AQ);
-				AP[i].removeAll(Arrays.asList(P[i].toArray()));
-				i++;
+				AP.put(head, method.eval_incr(IDB.get(head), EDB, P, AQ));
+				AP.get(head).removeAll(Arrays.asList(P.get(head).toArray()));
 			}
 			addRelations(AP, P);
 		}
 		return P;
 		
 	}
-
-	
-	/**
-	 * 
-	 * @param body Rule to evaluate
-	 * @param Pbody Tuples for the rule to evaluate (to add in this method)
-	 * @param Q Tuples already discovered
-	 * @return true if no problems happen; false otherwise
-	 */
-	private boolean eval(ITree body, IRelation Pbody, IRelation[] Q){
-		// TODO Set parameters
-		// R1,..., Rk & pi = body;
-		// Q1,...,Qm; = Q
-		return evaluator.evaluate();
-		
-		//TODO Get the results 
-		//Pbody.addAll(evaluator.evaluate());
-
-	}
-	
-	/**
-	 * 
-	 * @param body Rule to evaluate
-	 * @param Pbody Tuples for the rule to evaluate (to add in this method)
-	 * @param P All the tuples discovered
-	 * @param AQ Tuples discovered during the last iteration
-	 * @return true if no problems happen; false otherwise
-	 */
-	private boolean eval_incr(ITree body, IRelation Pbody, IRelation[] P, IRelation[] AQ){
-		// TODO Set parameters
-		// R1,..., Rk & pi = body;
-		// Q1,...,Qm; = Q
-		return evaluator.evaluate();
-		
-		//TODO Get the results 
-		//Pbody.addAll(evaluator.evaluate());
-
-	}
-
 }

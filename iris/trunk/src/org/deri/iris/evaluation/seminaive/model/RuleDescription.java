@@ -51,6 +51,7 @@ public class RuleDescription extends Leaf implements IRule{
 	}
 	
 	public boolean equals(final Object o) {
+		if (!(o instanceof RuleDescription)) return false;
 		return (this.name.equalsIgnoreCase(((IRule)o).getName()) &&
 				this.arity == ((IRule)o).getArity());
 	}

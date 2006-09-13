@@ -106,7 +106,7 @@ public class Rule2Relation {
 	 * @return A tree with the relational algebra operations for the input rule
 	 */private ITree evalRule(org.deri.iris.api.basics.IRule r, int headArity)
 	{
-		java.util.Hashtable<ITerm, ILiteral> variables = new java.util.Hashtable<ITerm, ILiteral>();
+		Map<ITerm, ILiteral> variables = new java.util.Hashtable<ITerm, ILiteral>();
 		List<ILiteral> builtins = new java.util.LinkedList<ILiteral>();
 		
 		/* 
@@ -137,13 +137,7 @@ public class Rule2Relation {
 						l.getPredicate().getPredicateSymbol(),
 						l.getPredicate().getArity());
 				
-				// Check whether the predicate is another IDB rule; if so, the leaf will be replace for the whole body of the predicate
-				IRule temporalHead;
-				if ((temporalHead = containsKey(results.keySet(), (IRule)leaf)) != null)
-				{
-					leaf = results.get(temporalHead);
-				}
-				
+	
 				/*
 				 * 2. SELECTION_Fi(Ri)
 				 * Fi: -patternTerms-

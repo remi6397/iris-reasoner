@@ -62,11 +62,12 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param Q set of temporal backup relations
 	 * @return True if there are no new tuples in any relation in P; false otherwise
 	 */
-	protected boolean compare(IRelation<ITuple>[] P, IRelation<ITuple>[] Q){		
-		for (int i = 0; i < P.length; i++) 
-			if (!Q[i].containsAll(Arrays.asList(P[i].toArray()))) 
+	protected boolean compare(Map<IRule, IRelation<ITuple>> P, Map<IRule, IRelation<ITuple>> Q){		
+		for (IRule head : P.keySet())
+		{
+			if (!Q.get(head).containsAll(Arrays.asList(P.get(head).toArray())))
 				return false;
-		
+		}
 		return true;
 	}
 	
@@ -74,12 +75,10 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param r set of relations
 	 * @return True if all the relations are empty; false otherwise
 	 */
-	protected boolean isEmpty(IRelation[] r){		
-		
-		for (int i = 0; i < r.length; i++) 
-			if (!r[i].isEmpty())
+	protected boolean isEmpty(Map<IRule, IRelation<ITuple>> r){		
+		for (IRule head: r.keySet())
+			if (!r.get(head).isEmpty())
 				return false;
-		
 		return true;
 	}
 	
@@ -88,12 +87,12 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param source Set of source relations
 	 * @param target Set of target relations
 	 */
-	protected void copyRelations(IRelation[] source, IRelation[] target) {
-		for (int i = 0; i < target.length; i++) {
+	protected void copyRelations(Map<IRule, IRelation<ITuple>> source, Map<IRule, IRelation<ITuple>> target) {
+		for (IRule head: source.keySet()){
 			// 1st. Empty target
-			target[i].clear();
+			target.get(head).clear();
 			// 2nd. Copy all
-			target[i].addAll(Arrays.asList(source[i].toArray()));
+			target.get(head).addAll(Arrays.asList(source.get(head).toArray()));
 		}
 	}
 	
@@ -102,9 +101,9 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param source Set of source relations
 	 * @param target Set of target relations
 	 */
-	protected void addRelations(IRelation[] source, IRelation[] target) {
-		for (int i = 0; i < target.length; i++) 
-			target[i].addAll(Arrays.asList(source[i].toArray()));
+	protected void addRelations(Map<IRule, IRelation<ITuple>> source, Map<IRule, IRelation<ITuple>> target) {
+		for (IRule head: source.keySet())
+			target.get(head).addAll(Arrays.asList(source.get(head).toArray()));
 		
 	}
 	
