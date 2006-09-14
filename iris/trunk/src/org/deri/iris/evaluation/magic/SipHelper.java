@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.evaluation.common.Adornment;
@@ -41,15 +42,15 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 
 /**
  * <p>
- * Helpermethods to interact with sips.
+ * Helpermethods to do various tasks related to sips and adornments.
  * </p>
  * <p>
- * $Id: SipHelper.java,v 1.2 2006-09-06 07:46:07 richardpoettler Exp $
+ * $Id: SipHelper.java,v 1.3 2006-09-14 07:56:55 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-09-06 07:46:07 $
+ * @version $Revision: 1.3 $
+ * @date $Date: 2006-09-14 07:56:55 $
  */
 public class SipHelper {
 
@@ -77,7 +78,7 @@ public class SipHelper {
 					"At the moment only heads with length 1 are allowed");
 		}
 
-		final SIPImpl copy = r.getSIP().defensifeCopy();
+		final SIPImpl copy = r.getSIP().defensifeCopy(r, r.getSIP().getQuery());
 		// exchanging all occurences of unadorned literals in the sip through
 		// the adorned ones in the head
 		for (final ILiteral l : r.getHeadLiterals()) {
@@ -119,7 +120,7 @@ public class SipHelper {
 	 *             if the adornment contains something else than BOUND's and
 	 *             FREE's
 	 */
-	public static IQuery createQueryForLiteral(final ILiteral l) {
+	public static IQuery getQueryForLiteral(final ILiteral l) {
 		if (l == null) {
 			throw new NullPointerException("The literal must not be null");
 		}
@@ -174,5 +175,40 @@ public class SipHelper {
 		}
 		return BASIC.createQuery(BASIC.createLiteral(l.isPositive(), p, BASIC
 				.createTuple(queryTerms)));
+	}
+
+	/**
+	 * <p>Creates a adorned rule out of an undadorned one.</p>
+	 * <p>NOTE: Maybe this got to become a constructor of the adorned rule.</p>
+	 * 
+	 * @param r
+	 *            for which to create the adorned rule
+	 * @return the adorned rule
+	 * @throws NullPointerException
+	 *             if the rule is null
+	 * @throws IllegalArgumentException
+	 *             if the length of the head is unequal to 1
+	 */
+	public static AdornedRule getAdornedRule(final IRule r) {
+		if (r instanceof AdornedRule) {
+			return (AdornedRule) r;
+		}
+		if (r == null) {
+			throw new NullPointerException("The rule must not´ be null");
+		}
+		if (r.getHeadLenght() != 1) {
+			throw new IllegalArgumentException(
+					"The head must have a length of 1");
+		}
+
+		final ILiteral headLiteral = r.getHeadLiteral(0);
+
+		if (!(headLiteral.getPredicate() instanceof AdornedPredicate)) {
+			throw new IllegalArgumentException(
+					"The predicate of the head must be adorned");
+		}
+
+		return new AdornedRule(r, new SIPImpl(r,
+				getQueryForLiteral(headLiteral)));
 	}
 }
