@@ -527,20 +527,20 @@ public class DepthFirstAdapter extends AnalysisAdapter
         outAConstantTerm(node);
     }
 
-    public void inABuiltin(ABuiltin node)
+    public void inAEqvarBuiltin(AEqvarBuiltin node)
     {
         defaultIn(node);
     }
 
-    public void outABuiltin(ABuiltin node)
+    public void outAEqvarBuiltin(AEqvarBuiltin node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseABuiltin(ABuiltin node)
+    public void caseAEqvarBuiltin(AEqvarBuiltin node)
     {
-        inABuiltin(node);
+        inAEqvarBuiltin(node);
         if(node.getFirst() != null)
         {
             node.getFirst().apply(this);
@@ -553,23 +553,52 @@ public class DepthFirstAdapter extends AnalysisAdapter
         {
             node.getSecond().apply(this);
         }
-        outABuiltin(node);
+        outAEqvarBuiltin(node);
     }
 
-    public void inAIdbuiltBuiltin(AIdbuiltBuiltin node)
+    public void inANeqvarBuiltin(ANeqvarBuiltin node)
     {
         defaultIn(node);
     }
 
-    public void outAIdbuiltBuiltin(AIdbuiltBuiltin node)
+    public void outANeqvarBuiltin(ANeqvarBuiltin node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseAIdbuiltBuiltin(AIdbuiltBuiltin node)
+    public void caseANeqvarBuiltin(ANeqvarBuiltin node)
     {
-        inAIdbuiltBuiltin(node);
+        inANeqvarBuiltin(node);
+        if(node.getFirst() != null)
+        {
+            node.getFirst().apply(this);
+        }
+        if(node.getTNeq() != null)
+        {
+            node.getTNeq().apply(this);
+        }
+        if(node.getSecond() != null)
+        {
+            node.getSecond().apply(this);
+        }
+        outANeqvarBuiltin(node);
+    }
+
+    public void inAEqidBuiltin(AEqidBuiltin node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAEqidBuiltin(AEqidBuiltin node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAEqidBuiltin(AEqidBuiltin node)
+    {
+        inAEqidBuiltin(node);
         if(node.getTVariable() != null)
         {
             node.getTVariable().apply(this);
@@ -582,6 +611,35 @@ public class DepthFirstAdapter extends AnalysisAdapter
         {
             node.getTId().apply(this);
         }
-        outAIdbuiltBuiltin(node);
+        outAEqidBuiltin(node);
+    }
+
+    public void inANeqidBuiltin(ANeqidBuiltin node)
+    {
+        defaultIn(node);
+    }
+
+    public void outANeqidBuiltin(ANeqidBuiltin node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseANeqidBuiltin(ANeqidBuiltin node)
+    {
+        inANeqidBuiltin(node);
+        if(node.getTVariable() != null)
+        {
+            node.getTVariable().apply(this);
+        }
+        if(node.getTNeq() != null)
+        {
+            node.getTNeq().apply(this);
+        }
+        if(node.getTId() != null)
+        {
+            node.getTId().apply(this);
+        }
+        outANeqidBuiltin(node);
     }
 }

@@ -32,8 +32,10 @@ public interface Analysis extends Switch
     void caseAFunctionTerm(AFunctionTerm node);
     void caseAVarTerm(AVarTerm node);
     void caseAConstantTerm(AConstantTerm node);
-    void caseABuiltin(ABuiltin node);
-    void caseAIdbuiltBuiltin(AIdbuiltBuiltin node);
+    void caseAEqvarBuiltin(AEqvarBuiltin node);
+    void caseANeqvarBuiltin(ANeqvarBuiltin node);
+    void caseAEqidBuiltin(AEqidBuiltin node);
+    void caseANeqidBuiltin(ANeqidBuiltin node);
 
     void caseTTBlank(TTBlank node);
     void caseTTComment(TTComment node);
@@ -49,5 +51,6 @@ public interface Analysis extends Switch
     void caseTTId(TTId node);
     void caseTTConst(TTConst node);
     void caseTTEq(TTEq node);
+    void caseTTNeq(TTNeq node);
     void caseEOF(EOF node);
 }

@@ -127,7 +127,6 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
 			}
 			addRelations(AP, P);
 		}
-		return P;
-		
+		return P;		
 	}
 }

@@ -169,12 +169,22 @@ public class AnalysisAdapter implements Analysis
         defaultCase(node);
     }
 
-    public void caseABuiltin(ABuiltin node)
+    public void caseAEqvarBuiltin(AEqvarBuiltin node)
     {
         defaultCase(node);
     }
 
-    public void caseAIdbuiltBuiltin(AIdbuiltBuiltin node)
+    public void caseANeqvarBuiltin(ANeqvarBuiltin node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseAEqidBuiltin(AEqidBuiltin node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseANeqidBuiltin(ANeqidBuiltin node)
     {
         defaultCase(node);
     }
@@ -245,6 +255,11 @@ public class AnalysisAdapter implements Analysis
     }
 
     public void caseTTEq(TTEq node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseTTNeq(TTNeq node)
     {
         defaultCase(node);
     }

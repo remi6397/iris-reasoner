@@ -5,26 +5,26 @@ package org.deri.iris.parser.node;
 import org.deri.iris.parser.analysis.*;
 
 @SuppressWarnings("nls")
-public final class ABuiltin extends PBuiltin
+public final class ANeqvarBuiltin extends PBuiltin
 {
     private TTVariable _first_;
-    private TTEq _tEq_;
+    private TTNeq _tNeq_;
     private TTVariable _second_;
 
-    public ABuiltin()
+    public ANeqvarBuiltin()
     {
         // Constructor
     }
 
-    public ABuiltin(
+    public ANeqvarBuiltin(
         @SuppressWarnings("hiding") TTVariable _first_,
-        @SuppressWarnings("hiding") TTEq _tEq_,
+        @SuppressWarnings("hiding") TTNeq _tNeq_,
         @SuppressWarnings("hiding") TTVariable _second_)
     {
         // Constructor
         setFirst(_first_);
 
-        setTEq(_tEq_);
+        setTNeq(_tNeq_);
 
         setSecond(_second_);
 
@@ -33,15 +33,15 @@ public final class ABuiltin extends PBuiltin
     @Override
     public Object clone()
     {
-        return new ABuiltin(
+        return new ANeqvarBuiltin(
             cloneNode(this._first_),
-            cloneNode(this._tEq_),
+            cloneNode(this._tNeq_),
             cloneNode(this._second_));
     }
 
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseABuiltin(this);
+        ((Analysis) sw).caseANeqvarBuiltin(this);
     }
 
     public TTVariable getFirst()
@@ -69,16 +69,16 @@ public final class ABuiltin extends PBuiltin
         this._first_ = node;
     }
 
-    public TTEq getTEq()
+    public TTNeq getTNeq()
     {
-        return this._tEq_;
+        return this._tNeq_;
     }
 
-    public void setTEq(TTEq node)
+    public void setTNeq(TTNeq node)
     {
-        if(this._tEq_ != null)
+        if(this._tNeq_ != null)
         {
-            this._tEq_.parent(null);
+            this._tNeq_.parent(null);
         }
 
         if(node != null)
@@ -91,7 +91,7 @@ public final class ABuiltin extends PBuiltin
             node.parent(this);
         }
 
-        this._tEq_ = node;
+        this._tNeq_ = node;
     }
 
     public TTVariable getSecond()
@@ -124,7 +124,7 @@ public final class ABuiltin extends PBuiltin
     {
         return ""
             + toString(this._first_)
-            + toString(this._tEq_)
+            + toString(this._tNeq_)
             + toString(this._second_);
     }
 
@@ -138,9 +138,9 @@ public final class ABuiltin extends PBuiltin
             return;
         }
 
-        if(this._tEq_ == child)
+        if(this._tNeq_ == child)
         {
-            this._tEq_ = null;
+            this._tNeq_ = null;
             return;
         }
 
@@ -163,9 +163,9 @@ public final class ABuiltin extends PBuiltin
             return;
         }
 
-        if(this._tEq_ == oldChild)
+        if(this._tNeq_ == oldChild)
         {
-            setTEq((TTEq) newChild);
+            setTNeq((TTNeq) newChild);
             return;
         }
 

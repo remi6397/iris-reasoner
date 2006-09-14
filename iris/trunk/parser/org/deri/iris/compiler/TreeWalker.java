@@ -47,7 +47,7 @@ import org.deri.iris.api.builtins.*;
  *
  * @author Francisco Garcia
  *
- * @version $Revision: 1.6 $ $Date: 2006-09-08 14:04:34 $
+ * @version $Revision: 1.7 $ $Date: 2006-09-14 12:58:11 $
  */
 public class TreeWalker extends DepthFirstAdapter {
     
@@ -130,7 +130,7 @@ public class TreeWalker extends DepthFirstAdapter {
     	((ILiteral)literals.lastElement()).setPositive(false);
     }
     
-    public void outABuiltin(ABuiltin _b)
+    public void outAEqvarBuiltin(AEqvarBuiltin _b)
     {
     	//TODO (builtins not implemented yet)
     	// 1.- Create the built-in element
@@ -143,17 +143,43 @@ public class TreeWalker extends DepthFirstAdapter {
     	//literals.add(l);
     }
     
-    public void outAIdbuiltBuiltin(AIdbuiltBuiltin _ib)
+    public void outANeqvarBuiltin(ANeqvarBuiltin _b)
     {
     	//TODO (builtins not implemented yet)
     	// 1.- Create the built-in element
     	//IBuiltInAtom b;
-    	//_ib.getTVariable().getText().trim();
-    	//_ib.getTId().getText().trim();
+    	//_b.getFirst().getText().trim();
+    	//_b.getSecond().getText().trim();
+    	
     	// 2.- Insert in the literals vector
     	//ILiteral l = Factory.BASIC.createLiteral(true,b);
     	//literals.add(l);
-   	
+    }
+ 
+    public void outAEqidBuiltin(AEqidBuiltin _b)
+    {
+    	//TODO (builtins not implemented yet)
+    	// 1.- Create the built-in element
+    	//IBuiltInAtom b;
+    	//_b.getFirst().getText().trim();
+    	//_b.getSecond().getText().trim();
+    	
+    	// 2.- Insert in the literals vector
+    	//ILiteral l = Factory.BASIC.createLiteral(true,b);
+    	//literals.add(l);
+    }
+ 
+    public void outANeqidBuiltin(ANeqidBuiltin _b)
+    {
+    	//TODO (builtins not implemented yet)
+    	// 1.- Create the built-in element
+    	//IBuiltInAtom b;
+    	//_b.getFirst().getText().trim();
+    	//_b.getSecond().getText().trim();
+    	
+    	// 2.- Insert in the literals vector
+    	//ILiteral l = Factory.BASIC.createLiteral(true,b);
+    	//literals.add(l);
     }
     
     public void outAPredicate(APredicate _p)

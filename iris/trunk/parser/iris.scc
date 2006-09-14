@@ -43,6 +43,8 @@ Tokens
     t_id = letter+ | quoted_id;
     t_const = quoted_id;
     t_eq = '=';
+    t_neq = '!=';
+
     
 
 /************************************************************
@@ -89,5 +91,7 @@ Productions
                    {var} t_variable |
                    {constant} t_id; // constant
                    
-    builtin 	 =	[first]:t_variable t_eq [second]:t_variable |
-    				{idbuilt} t_variable t_eq t_id;
+    builtin 	 =	{eqvar} [first]:t_variable t_eq [second]:t_variable |
+    				{neqvar} [first]:t_variable t_neq [second]:t_variable |
+    				{eqid} t_variable t_eq t_id |
+    				{neqid} t_variable t_neq t_id;

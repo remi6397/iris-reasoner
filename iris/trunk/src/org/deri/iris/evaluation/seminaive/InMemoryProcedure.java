@@ -64,12 +64,7 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 	 * @return new tuples discovered for the rule evaluated
 	 */
 	public IRelation<ITuple> eval_incr(ITree pi, IEDB EDB, Map<IRule, IRelation<ITuple>>  P, Map<IRule, IRelation<ITuple>>  AQ) {
-		// TODO Set parameters
-		// R1,..., Rk & pi = body;
-		// Q1,...,Qm; = Q		
-		//TODO Get the results 
-		//Pbody.addAll(evaluator.evaluate());
-		return null;
+		return evaluate(pi, EDB, AQ);
 	}
 
 	private IRelation<ITuple> evaluate(ITree node, IEDB EDB, Map<IRule, IRelation<ITuple>> IDB){

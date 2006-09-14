@@ -104,8 +104,9 @@ public class Rule2Relation {
 	 * Algorithm 3.1
 	 * @param r Rule Body
 	 * @return A tree with the relational algebra operations for the input rule
-	 */private ITree evalRule(org.deri.iris.api.basics.IRule r, int headArity)
-	{
+	 */
+	 private ITree evalRule(org.deri.iris.api.basics.IRule r, int headArity)
+	 {
 		Map<ITerm, ILiteral> variables = new java.util.Hashtable<ITerm, ILiteral>();
 		List<ILiteral> builtins = new java.util.LinkedList<ILiteral>();
 		
@@ -177,7 +178,7 @@ public class Rule2Relation {
 
 							// TODO. Check whether the variable appeared before in this literal
 							// and, if so, add condition $k = $l in the "patternTerms way"
-							// How can it be expressed?
+							// How can it be expressed? DARKO IS STUDYING IT
 						} else {
 							patternTerms.add(null);
 							// Store the literal referencing this variable
@@ -256,6 +257,7 @@ public class Rule2Relation {
 			}
 			
 			// C. Natural join of all the things generated (E)
+			// TODO. This is not a natural join but a join...and the variables should be found in the 'variables' 
 			globalJoin.addComponent(temporalResult); 
 		}
 		// In case there is only one term there is no need for joining

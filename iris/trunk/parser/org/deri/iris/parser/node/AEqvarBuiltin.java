@@ -5,55 +5,55 @@ package org.deri.iris.parser.node;
 import org.deri.iris.parser.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AIdbuiltBuiltin extends PBuiltin
+public final class AEqvarBuiltin extends PBuiltin
 {
-    private TTVariable _tVariable_;
+    private TTVariable _first_;
     private TTEq _tEq_;
-    private TTId _tId_;
+    private TTVariable _second_;
 
-    public AIdbuiltBuiltin()
+    public AEqvarBuiltin()
     {
         // Constructor
     }
 
-    public AIdbuiltBuiltin(
-        @SuppressWarnings("hiding") TTVariable _tVariable_,
+    public AEqvarBuiltin(
+        @SuppressWarnings("hiding") TTVariable _first_,
         @SuppressWarnings("hiding") TTEq _tEq_,
-        @SuppressWarnings("hiding") TTId _tId_)
+        @SuppressWarnings("hiding") TTVariable _second_)
     {
         // Constructor
-        setTVariable(_tVariable_);
+        setFirst(_first_);
 
         setTEq(_tEq_);
 
-        setTId(_tId_);
+        setSecond(_second_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new AIdbuiltBuiltin(
-            cloneNode(this._tVariable_),
+        return new AEqvarBuiltin(
+            cloneNode(this._first_),
             cloneNode(this._tEq_),
-            cloneNode(this._tId_));
+            cloneNode(this._second_));
     }
 
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAIdbuiltBuiltin(this);
+        ((Analysis) sw).caseAEqvarBuiltin(this);
     }
 
-    public TTVariable getTVariable()
+    public TTVariable getFirst()
     {
-        return this._tVariable_;
+        return this._first_;
     }
 
-    public void setTVariable(TTVariable node)
+    public void setFirst(TTVariable node)
     {
-        if(this._tVariable_ != null)
+        if(this._first_ != null)
         {
-            this._tVariable_.parent(null);
+            this._first_.parent(null);
         }
 
         if(node != null)
@@ -66,7 +66,7 @@ public final class AIdbuiltBuiltin extends PBuiltin
             node.parent(this);
         }
 
-        this._tVariable_ = node;
+        this._first_ = node;
     }
 
     public TTEq getTEq()
@@ -94,16 +94,16 @@ public final class AIdbuiltBuiltin extends PBuiltin
         this._tEq_ = node;
     }
 
-    public TTId getTId()
+    public TTVariable getSecond()
     {
-        return this._tId_;
+        return this._second_;
     }
 
-    public void setTId(TTId node)
+    public void setSecond(TTVariable node)
     {
-        if(this._tId_ != null)
+        if(this._second_ != null)
         {
-            this._tId_.parent(null);
+            this._second_.parent(null);
         }
 
         if(node != null)
@@ -116,25 +116,25 @@ public final class AIdbuiltBuiltin extends PBuiltin
             node.parent(this);
         }
 
-        this._tId_ = node;
+        this._second_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._tVariable_)
+            + toString(this._first_)
             + toString(this._tEq_)
-            + toString(this._tId_);
+            + toString(this._second_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._tVariable_ == child)
+        if(this._first_ == child)
         {
-            this._tVariable_ = null;
+            this._first_ = null;
             return;
         }
 
@@ -144,9 +144,9 @@ public final class AIdbuiltBuiltin extends PBuiltin
             return;
         }
 
-        if(this._tId_ == child)
+        if(this._second_ == child)
         {
-            this._tId_ = null;
+            this._second_ = null;
             return;
         }
 
@@ -157,9 +157,9 @@ public final class AIdbuiltBuiltin extends PBuiltin
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._tVariable_ == oldChild)
+        if(this._first_ == oldChild)
         {
-            setTVariable((TTVariable) newChild);
+            setFirst((TTVariable) newChild);
             return;
         }
 
@@ -169,9 +169,9 @@ public final class AIdbuiltBuiltin extends PBuiltin
             return;
         }
 
-        if(this._tId_ == oldChild)
+        if(this._second_ == oldChild)
         {
-            setTId((TTId) newChild);
+            setSecond((TTVariable) newChild);
             return;
         }
 
