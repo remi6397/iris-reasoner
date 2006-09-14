@@ -246,19 +246,22 @@ public final class MagicSetImpl {
 			// multible arcs entering this literal
 			final Set<IRule> rules = new HashSet<IRule>(
 					enteringEdges.size() + 1);
+			// creating the labeled rules
 			int counter = 1;
 			for (final LabeledDirectedEdge<Set<IVariable>> e : enteringEdges) {
 				rules.add(createLabeledRule(e, r, counter++));
 			}
+			// computing the body for the magic rule
 			final Set<ILiteral> bodyLiterals = new HashSet<ILiteral>(rules
 					.size());
 			for (final IRule rule : rules) {
 				bodyLiterals.add(rule.getHeadLiteral(0));
 			}
-			rules.add(BASIC.createRule(BASIC.createHead(l), BASIC
+			rules.add(BASIC.createRule(BASIC.createHead(createMagicLiteral(l)), BASIC
 					.createBody(new ArrayList<ILiteral>(bodyLiterals))));
 			return rules;
 		} else {
+			// TODO: maybe return an empty set
 			throw new IllegalArgumentException(
 					"There are no arcs entering this literal"
 							+ ", so no magics can be created");
@@ -487,7 +490,7 @@ public final class MagicSetImpl {
 	 *             if the signature of the adorned predicate doesn't match the
 	 *             signature of the literal predicate
 	 */
-	private static List<ITerm> getBounds(final ILiteral l) {
+	static List<ITerm> getBounds(final ILiteral l) {
 		if (l == null) {
 			throw new NullPointerException("The literal must not be null");
 		}
