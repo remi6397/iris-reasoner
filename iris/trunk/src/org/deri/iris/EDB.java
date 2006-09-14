@@ -261,22 +261,18 @@ public class EDB implements IEDB{
 	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
 	 * 		so this method is thread-save.
 	 */
-	public Set<IAtom> getFacts(IPredicate p) {
-		return Collections.unmodifiableSet(creatAtomSetfor(p, facts.get(p)));
+	public IRelation getFacts(final IPredicate p){
+		return facts.get(p);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.deri.iris.api.IEDB#getFacts()
 	 * Note: 
 	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
 	 * 		so this method is thread-save.
 	 */
-	public Set<IAtom> getFacts() {
-		Set<IAtom> atoms = new HashSet<IAtom>();
-		for (IPredicate p : facts.keySet()) {
-			atoms.addAll(creatAtomSetfor(p, facts.get(p)));
-		}
-		return Collections.unmodifiableSet(atoms);
+	public Map<IPredicate, IRelation<ITuple>> getFacts(){
+		return this.facts;
 	}
 	
 	/* (non-Javadoc)
@@ -304,35 +300,6 @@ public class EDB implements IEDB{
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Creates a set of atoms out of a set of tuples and a given predicate
-	 * 
-	 * @param p
-	 *            for which to create the atoms
-	 * @param t
-	 *            the tupleset forwhich to create the atoms
-	 * @return the generated set
-	 * @throws NullPointerException
-	 *             if the predicate of the set are null
-	 */
-	private Set<IAtom> creatAtomSetfor(final IPredicate p,
-			Collection<ITuple> tuple) {
-		if ((p == null) || (tuple == null)) {
-			throw new NullPointerException();
-		}
-		Set<IAtom> atoms = new HashSet<IAtom>();
-		WRITE.lock();
-		try {
-			for (ITuple t : tuple) {
-				atoms.add(BASIC.createAtom(p, 
-							BASIC.createTuple(t.getTerms())));
-			}
-		} finally {
-			WRITE.unlock();
-		}
-		return atoms;
 	}
 	
 	/********************************/
