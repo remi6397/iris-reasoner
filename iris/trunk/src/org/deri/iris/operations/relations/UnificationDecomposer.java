@@ -34,9 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.terms.IConstantTerm;
 import org.deri.iris.api.terms.IConstructedTerm;
-import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
@@ -87,7 +85,6 @@ public class UnificationDecomposer {
 		
 	}
 	
-//  change to private:
 	public CFholder decompose(){
 		MultiequationSystem multiequationSystem = null;
 		List<CFholder> cfList = new ArrayList<CFholder>();
