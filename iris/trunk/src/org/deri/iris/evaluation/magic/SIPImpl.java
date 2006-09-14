@@ -55,12 +55,12 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.9 2006-09-06 07:43:26 richardpoettler Exp $
+ * $Id: SIPImpl.java,v 1.10 2006-09-14 07:54:52 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.9 $
- * @date $Date: 2006-09-06 07:43:26 $
+ * @version $Revision: 1.10 $
+ * @date $Date: 2006-09-14 07:54:52 $
  */
 public final class SIPImpl {
 	// TODO: implement hashCode and equals
@@ -525,6 +525,22 @@ public final class SIPImpl {
 				source, target)).getLabel());
 		return vars;
 	}
+	
+	/**
+	 * Returns the rule associated with this sip.
+	 * @return the rule
+	 */
+	public IRule getRule() {
+		return rule;
+	}
+	
+	/**
+	 * Returns the query associated with this sip
+	 * @return the query
+	 */
+	public IQuery getQuery() {
+		return query;
+	}
 
 	/**
 	 * Returns a simple string representation of this graph. <b>The subject of
@@ -696,6 +712,22 @@ public final class SIPImpl {
 			}
 		}
 		return roots;
+	}
+
+	/**
+	 * Determines the leafes of this graph. A leafe is a Literal (vertex) with no
+	 * outfgoing arcs.
+	 * 
+	 * @return the set of literals with no outfgoing arcs
+	 */
+	public Set<ILiteral> getLeafVertices() {
+		final Set<ILiteral> leafes = new HashSet<ILiteral>();
+		for (final Object o : sipGraph.vertexSet()) {
+			if (GraphHelper.successorListOf(sipGraph, o).size() == 0) {
+				leafes.add((ILiteral) o);
+			}
+		}
+		return leafes;
 	}
 
 	/**
