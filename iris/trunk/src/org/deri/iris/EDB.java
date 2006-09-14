@@ -25,10 +25,8 @@
  */
 package org.deri.iris;
 
-import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.RELATION;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;

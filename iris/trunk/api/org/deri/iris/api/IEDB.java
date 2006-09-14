@@ -26,6 +26,7 @@
 package org.deri.iris.api;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.basics.IAtom;
@@ -33,8 +34,8 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.exception.DataNotFoundException;
 
 /**
  * Interface of an EDB - Extensional DataBase used to promote modularity 
@@ -117,20 +118,19 @@ public interface IEDB {
 	public int getNumberOfFacts(final IPredicate p, final Set<ITuple> filter);
 
 	/**
-	 * returns all facts of a predicate
+	 * returns all facts of a predicate p
 	 * 
-	 * @param predicate
-	 *            p
-	 * @return an set for the facts of p
+	 * @param predicate p
+	 * @return relation of predicate p
 	 */
-	public Set<IAtom> getFacts(final IPredicate p);
+	public IRelation getFacts(final IPredicate p);
 
 	/**
-	 * returns all facts from the Knowledge Base
+	 * returns the knowledge base
 	 * 
-	 * @return an set for the facts
+	 * @return map of all facts from the Knowledge Base
 	 */
-	public Set<IAtom> getFacts();
+	public Map<IPredicate, IRelation<ITuple>> getFacts();
 
 	/**
 	 * is the edb empty, i.e. does it contain no facts
@@ -210,7 +210,7 @@ public interface IEDB {
 	/**
      * Returns subsequently all queries.<br>
      */
-    public Iterator queryIterator();
+    public Iterator<IQuery> queryIterator();
 
 	/** Deletes a query q from the Ruleset */
 	public boolean removeQuery(final IQuery q);
