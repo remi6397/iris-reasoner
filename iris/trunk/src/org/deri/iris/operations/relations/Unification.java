@@ -103,8 +103,13 @@ public class Unification implements IUnification{
 		this.tuple1 = arg1.getTuple();
 	}
 
-	public List<Multiequation> unify() {
-		return unifyTerms(this.tuple0.getTerm(0), this.tuple1.getTerm(0));
+	public List<List> unify() {
+		List<List> result = new ArrayList<List>();
+		for(int i=0; i<this.tuple0.getTerms().size(); i++){
+			result.add(
+					unifyTerms(this.tuple0.getTerm(i), this.tuple1.getTerm(i)));
+		}
+		return result;
 	}
 	
 	private List<Multiequation> unifyTerms(ITerm t0, ITerm t1) {
@@ -136,8 +141,7 @@ public class Unification implements IUnification{
 		return ms.getSolved();
 	}
 	
-	//  change to private:
-	public MultiequationSystem createInitialMultiequationSystem(ITerm t0, ITerm t1){
+	private MultiequationSystem createInitialMultiequationSystem(ITerm t0, ITerm t1){
 		MultiequationSystem multiequationSystem = null;
 		Multiequation me = null; 
 		Set<ITerm> s = null;
