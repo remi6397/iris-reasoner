@@ -45,12 +45,12 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
  * Helpermethods to do various tasks related to sips and adornments.
  * </p>
  * <p>
- * $Id: SipHelper.java,v 1.3 2006-09-14 07:56:55 richardpoettler Exp $
+ * $Id: SipHelper.java,v 1.4 2006-09-15 08:51:24 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.3 $
- * @date $Date: 2006-09-14 07:56:55 $
+ * @version $Revision: 1.4 $
+ * @date $Date: 2006-09-15 08:51:24 $
  */
 public class SipHelper {
 
@@ -63,7 +63,7 @@ public class SipHelper {
 	}
 
 	/**
-	 * Retrieces the adorned version of a sip of a rule
+	 * Retrieces the adorned version of a sip of a rule.
 	 * 
 	 * @param r
 	 *            the rule for which to retrieve the adorned sip

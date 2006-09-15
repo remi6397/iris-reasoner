@@ -55,12 +55,12 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.10 2006-09-14 07:54:52 richardpoettler Exp $
+ * $Id: SIPImpl.java,v 1.11 2006-09-15 08:51:24 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.10 $
- * @date $Date: 2006-09-14 07:54:52 $
+ * @version $Revision: 1.11 $
+ * @date $Date: 2006-09-15 08:51:24 $
  */
 public final class SIPImpl {
 	// TODO: implement hashCode and equals
@@ -188,7 +188,6 @@ public final class SIPImpl {
 	 *            the literal the variables are passed to
 	 * @param passedTo
 	 *            the variables whitch are passed
-	 * @return the edge
 	 * @throws NullPointerException
 	 *             if the source, target or set of variables is null
 	 */
@@ -535,7 +534,7 @@ public final class SIPImpl {
 	}
 	
 	/**
-	 * Returns the query associated with this sip
+	 * Returns the query associated with this sip.
 	 * @return the query
 	 */
 	public IQuery getQuery() {
