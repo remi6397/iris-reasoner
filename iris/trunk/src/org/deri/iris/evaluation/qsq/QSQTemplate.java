@@ -33,12 +33,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.evaluation.common.IAdornedPredicate;
+import org.deri.iris.api.evaluation.common.IAdornedProgram;
+import org.deri.iris.api.evaluation.common.IAdornedRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.evaluation.common.AdornedProgram;
 import org.deri.iris.evaluation.common.Adornment;
-import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
-import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 
 /**
  * 
@@ -51,7 +51,7 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
  */
 public class QSQTemplate {
 	
-	private AdornedProgram adornedProgram;
+	private IAdornedProgram adornedProgram;
 	
 	private Set<QSQRule> qsqRules;
 	
@@ -66,28 +66,28 @@ public class QSQTemplate {
 	List<IVariable> variables_n = null;
 	
 	
-	QSQTemplate(final AdornedProgram ap){
+	QSQTemplate(final IAdornedProgram ap){
 		if (ap == null) {
 			throw new IllegalArgumentException(
 					"Input argument must not be null");
 		}
 		this.adornedProgram = ap;
-		this.qsqRules = new HashSet();
+		this.qsqRules = new HashSet<QSQRule>();
 	}
 	
 	/**
 	 * @return Returns the qsqRules (QSQ Template).
 	 */
 	public Set<QSQRule> getQSQTemplate() {
-		Iterator<AdornedRule> i = this.adornedProgram.getAdornedRules().iterator();
+		Iterator<IAdornedRule> i = this.adornedProgram.getAdornedRules().iterator();
 		QSQRule qsqRule = null;
-		AdornedRule adornedRule = null;
+		IAdornedRule adornedRule = null;
 		LinkedList<SupplementaryRelation> supplementaryRelations = null;
 		int j = 0;
 		while(i.hasNext()){
 			supplementaryRelations 
 							= new LinkedList<SupplementaryRelation>();
-			adornedRule = (AdornedRule)i.next();
+			adornedRule = (IAdornedRule)i.next();
 			supplementaryRelations = createSupplementaryRelations(j, adornedRule);
 			qsqRule = new QSQRule(adornedRule, supplementaryRelations);
 			this.qsqRules.add(qsqRule);
@@ -97,7 +97,7 @@ public class QSQTemplate {
 	}
 	
 	private LinkedList<SupplementaryRelation> createSupplementaryRelations(
-			int superscript, AdornedRule ar){
+			int superscript, IAdornedRule ar){
 		
 		LinkedList<SupplementaryRelation> supplementaryRelations 
 						= new LinkedList<SupplementaryRelation>();
@@ -124,11 +124,11 @@ public class QSQTemplate {
 		this.variables_0 = new ArrayList<IVariable>();
 		this.variables_n = new ArrayList<IVariable>();
 		SupplementaryRelation supplementaryRelation = null;
-		AdornedPredicate predicate = null;
+		IAdornedPredicate predicate = null;
 		ITerm term = null;
 		
-		if(h.getPredicate()instanceof AdornedPredicate)
-			predicate = (AdornedPredicate)h.getPredicate();
+		if(h.getPredicate()instanceof IAdornedPredicate)
+			predicate = (IAdornedPredicate)h.getPredicate();
 		Adornment[] adornments = predicate.getAdornment();
 		
 		for(int i=0; i<adornments.length; i++){

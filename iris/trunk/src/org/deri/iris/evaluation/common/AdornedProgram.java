@@ -37,6 +37,10 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.evaluation.common.IAdornedPredicate;
+import org.deri.iris.api.evaluation.common.IAdornedProgram;
+import org.deri.iris.api.evaluation.common.IAdornedRule;
+import org.deri.iris.api.evaluation.magic.ISip;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.magic.SIPImpl;
@@ -47,14 +51,14 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.13 2006-09-12 12:50:33 richardpoettler Exp $
+ * $Id: AdornedProgram.java,v 1.14 2006-09-18 07:52:12 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.13 $
- * @date $Date: 2006-09-12 12:50:33 $
+ * @version $Revision: 1.14 $
+ * @date $Date: 2006-09-18 07:52:12 $
  */
-public class AdornedProgram {
+public class AdornedProgram implements IAdornedProgram {
 
 	// TODO: make a smaller empty-constant-term
 	private static final ITerm EMPTY_CONSTANT_TERM = TERM.createConstant(TERM
@@ -64,10 +68,10 @@ public class AdornedProgram {
 	private final Set<IPredicate> deriveredPredicates = new HashSet<IPredicate>();
 
 	/** Set of all adorned predicates */
-	private final Set<AdornedPredicate> adornedPredicates = new HashSet<AdornedPredicate>();
+	private final Set<IAdornedPredicate> adornedPredicates = new HashSet<IAdornedPredicate>();
 
 	/** Set of all adorned rules */
-	private final Set<AdornedRule> adornedRules = new HashSet<AdornedRule>();
+	private final Set<IAdornedRule> adornedRules = new HashSet<IAdornedRule>();
 
 	/** Set of all normal rules */
 	private final Set<IRule> rules;
@@ -138,7 +142,7 @@ public class AdornedProgram {
 				// same signature
 				if (ap.hasSameSignature(ph)) {
 					// creating a sip for the actual rule and the ap
-					SIPImpl sip = new SIPImpl(r, createQueryForAP(ap, lh));
+					ISip sip = new SIPImpl(r, createQueryForAP(ap, lh));
 					AdornedRule ra = new AdornedRule(r, sip);
 					ra.replaceHeadLiteral(lh, ap);
 					adornedRules.add(ra);
@@ -162,20 +166,18 @@ public class AdornedProgram {
 	 * subject of this representation is to change.</b>
 	 * </p>
 	 * <p>
-	 * The return of this method will look something like:
+	 * The return of this method will look something like: all adorned rules
+	 * with one line for each rule, blank line, all normal rules with one line
+	 * for each rule, blank line, the query.
 	 * </p>
-	 * &lt;list of all adorned rules separated by newlines&gt;</br><code>newline</code></br>&lt;list
-	 * of all rules separated by newlines&gt;</br><code>newline</code></br>&lt;the
-	 * query&gt;
 	 * 
 	 * @return the string representation
 	 */
 	public String toString() {
 		final String NEWLINE = System.getProperty("line.separator");
 		StringBuilder buffer = new StringBuilder();
-		for (AdornedRule r : adornedRules) {
+		for (IAdornedRule r : adornedRules) {
 			buffer.append(r).append(NEWLINE);
-//			buffer.append("\t").append(r.getSIP().toString().replaceAll(NEWLINE, NEWLINE + "\t")).append(NEWLINE);
 		}
 		buffer.append(NEWLINE);
 		for (IRule r : rules) {
@@ -209,25 +211,15 @@ public class AdornedProgram {
 				&& rules.containsAll(ap.rules);
 	}
 
-	/**
-	 * Return a set of all adorned rules.
-	 * 
-	 * @return the set of adorned rules
-	 */
-	public Set<AdornedRule> getAdornedRules() {
+	public Set<IAdornedRule> getAdornedRules() {
 		return Collections.unmodifiableSet(adornedRules);
 	}
-
+	
 	public Set<IRule> getNormalRules() {
 		return Collections.unmodifiableSet(rules);
 	}
 
-	/**
-	 * Returns a set of all adorned predicates of this program.
-	 * 
-	 * @return the set of adorned predicates
-	 */
-	public Set<AdornedPredicate> getAdornedPredicates() {
+	public Set<IAdornedPredicate> getAdornedPredicates() {
 		return Collections.unmodifiableSet(adornedPredicates);
 	}
 
@@ -258,7 +250,7 @@ public class AdornedProgram {
 	 *             if the rule, or the literal are null
 	 */
 	private AdornedPredicate processLiteral(final ILiteral l,
-			final AdornedRule r) {
+			final IAdornedRule r) {
 		if ((l == null) || (r == null)) {
 			throw new NullPointerException(
 					"The literal and rule must not be null");
@@ -315,15 +307,15 @@ public class AdornedProgram {
 		int iCounter = 0;
 		for (Adornment a : ap.getAdornment()) {
 			switch (a) {
-			case BOUND:
-				terms[iCounter] = EMPTY_CONSTANT_TERM;
-				break;
-			case FREE:
-				terms[iCounter] = hl.getTuple().getTerm(iCounter);
-				break;
-			default:
-				throw new IllegalArgumentException(
-						"Only BOUND and FREE are allowed as adornments");
+				case BOUND:
+					terms[iCounter] = EMPTY_CONSTANT_TERM;
+					break;
+				case FREE:
+					terms[iCounter] = hl.getTuple().getTerm(iCounter);
+					break;
+				default:
+					throw new IllegalArgumentException(
+							"Only BOUND and FREE are allowed as adornments");
 			}
 			iCounter++;
 		}
@@ -336,7 +328,7 @@ public class AdornedProgram {
 	 * 
 	 * @author richi
 	 */
-	public static class AdornedPredicate implements IPredicate, AdornedElement {
+	public static class AdornedPredicate implements IAdornedPredicate {
 		/** The predicate which should be adorned */
 		private final IPredicate p;
 
@@ -471,16 +463,6 @@ public class AdornedProgram {
 			}
 		}
 
-		/**
-		 * Determines whether a predicate has the same sinature as this
-		 * predicate. Same signature means same arity and predicate symbol.
-		 * 
-		 * @param pred
-		 *            the other predicate to compare to
-		 * @return true if they got the same signature
-		 * @throws NullPointerException
-		 *             if pred is null
-		 */
 		public boolean hasSameSignature(final IPredicate pred) {
 			if (pred == null) {
 				throw new NullPointerException("The predicate must not be null");
@@ -490,11 +472,6 @@ public class AdornedProgram {
 							.equals(p.getPredicateSymbol()));
 		}
 
-		/**
-		 * Returns this as an undadorned predicate.
-		 * 
-		 * @return the undadorned predicate
-		 */
 		public IPredicate getUnadornedPredicate() {
 			return p;
 		}
@@ -591,14 +568,14 @@ public class AdornedProgram {
 	 * 
 	 * @author richi
 	 */
-	public static class AdornedRule implements IRule {
+	public static class AdornedRule implements IAdornedRule {
 		// TODO: implement hashCode and equals
 
 		/** The inner rule represented by this object */
 		private IRule rule;
 
 		/** The sip for this rule */
-		private final SIPImpl sip;
+		private final ISip sip;
 
 		/**
 		 * Constructs a new adorned rule.
@@ -610,7 +587,7 @@ public class AdornedProgram {
 		 * @throws NullPointerException
 		 *             if the rule or the sip is null
 		 */
-		public AdornedRule(final IRule r, final SIPImpl s) {
+		public AdornedRule(final IRule r, final ISip s) {
 			// checking arguments
 			if ((r == null) || (s == null)) {
 				throw new NullPointerException(
@@ -623,32 +600,10 @@ public class AdornedProgram {
 			sip = s;
 		}
 
-		/**
-		 * Retruns the sip associated with this rule.
-		 * 
-		 * @return the sip
-		 */
-		public SIPImpl getSIP() {
+		public ISip getSIP() {
 			return sip;
 		}
 
-		/**
-		 * Replaces the predicate of a given literal in the head. <b>This method
-		 * is slow</b>, because it copies the head and the body for each
-		 * invokation.
-		 * 
-		 * @param l
-		 *            the literal of which to replace the predicate
-		 * @param p
-		 *            the new predicate.
-		 * @throws NullPointerException
-		 *             if the literal or the predicate are null.
-		 * @throws IllegalArgumentException
-		 *             if the arity of the predicate of the literal and the new
-		 *             predicate doesn't match
-		 * @throws IllegalArgumentException
-		 *             if the literal couldn't be found in the head
-		 */
 		public void replaceHeadLiteral(final ILiteral l, final IPredicate p) {
 			if ((l == null) || (p == null)) {
 				throw new NullPointerException(
@@ -675,23 +630,6 @@ public class AdornedProgram {
 					.createBody(rule.getBodyLiterals()));
 		}
 
-		/**
-		 * Replaces the predicate of a given literal in the body. <b>This method
-		 * is slow</b>, because it copies the head and the body for each
-		 * invokation.
-		 * 
-		 * @param l
-		 *            the literal of which to replace the predicate
-		 * @param p
-		 *            the new predicate.
-		 * @throws NullPointerException
-		 *             if the literal or the predicate are null.
-		 * @throws IllegalArgumentException
-		 *             if the arity of the predicate of the literal and the new
-		 *             predicate doesn't match
-		 * @throws IllegalArgumentException
-		 *             if the literal couldn't be found in the body
-		 */
 		public void replaceBodyLiteral(final ILiteral l, final IPredicate p) {
 			if ((l == null) || (p == null)) {
 				throw new NullPointerException(

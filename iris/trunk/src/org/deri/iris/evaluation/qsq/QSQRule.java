@@ -26,9 +26,8 @@
 package org.deri.iris.evaluation.qsq;
 
 import java.util.LinkedList;
-import java.util.Set;
 
-import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
+import org.deri.iris.api.evaluation.common.IAdornedRule;
 
 /**
  * 
@@ -40,11 +39,11 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
  */
 public class QSQRule {
 	
-	private AdornedRule adornedRule;
+	private IAdornedRule adornedRule;
 	
 	private LinkedList<SupplementaryRelation> supplementaryRelations;
 
-	public QSQRule(AdornedRule ar, LinkedList<SupplementaryRelation> sr) {
+	public QSQRule(IAdornedRule ar, LinkedList<SupplementaryRelation> sr) {
 		if ((1 + ar.getBodyLiterals().size()) !=
 				sr.size()) {
 			throw new IllegalArgumentException(
@@ -59,7 +58,7 @@ public class QSQRule {
 	/**
 	 * @return Returns the rule.
 	 */
-	public AdornedRule getAdornedRule() {
+	public IAdornedRule getAdornedRule() {
 		return adornedRule;
 	}
 

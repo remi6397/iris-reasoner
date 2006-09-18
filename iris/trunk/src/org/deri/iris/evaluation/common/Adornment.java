@@ -27,9 +27,9 @@ package org.deri.iris.evaluation.common;
 
 /**
  * <p>Represents a state of an adornment.</p>
- * <p>$Id: Adornment.java,v 1.2 2006-08-23 09:27:09 richardpoettler Exp $</p>
+ * <p>$Id: Adornment.java,v 1.3 2006-09-18 07:52:12 richardpoettler Exp $</p>
  * @author richi
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public enum Adornment {
 	BOUND("b"), FREE("f");
@@ -40,6 +40,10 @@ public enum Adornment {
 		this.representation = representation;
 	}
 	
+	/**
+	 * Returns a string representation of this adornment.
+	 * @return b for BOUND and f for FREE
+	 */
 	public String toString() {
 		return representation;
 	}
