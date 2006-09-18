@@ -57,7 +57,7 @@ public class DateTerm implements IDateTerm, Cloneable {
 			dt.cal = (Calendar) cal.clone();
 			return cal;
 		} catch (CloneNotSupportedException e) {
-			assert true : "Will never happen";
+			assert false : "Object is always cloneable";
 		}
 		return false;
 	}

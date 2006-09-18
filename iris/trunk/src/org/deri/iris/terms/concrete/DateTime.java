@@ -71,7 +71,7 @@ public class DateTime implements IDateTime, Cloneable {
 			dt.cal = (Calendar) cal.clone();
 			return dt;
 		} catch (CloneNotSupportedException e) {
-			assert true : "Can not happen";
+			assert false : "Object is always cloneable";
 		}
 		return null;
 	}

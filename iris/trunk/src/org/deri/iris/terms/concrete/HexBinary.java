@@ -55,7 +55,7 @@ public class HexBinary implements IHexBinary, Cloneable {
 		try {
 			return super.clone();
 		} catch (CloneNotSupportedException e) {
-			assert true : "Can not happen";
+			assert false : "Object is always cloneable";
 		}
 		return null;
 	}

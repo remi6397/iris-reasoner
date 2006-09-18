@@ -126,7 +126,7 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 			}
 			return ct;
 		} catch (CloneNotSupportedException e) {
-			assert true : "Will never happen";
+			assert false : "Object is always cloneable";
 		}
 		return null;
 	}

@@ -51,7 +51,7 @@ public class GMonthDay implements IGMonthDay, Cloneable {
 			clone.cal = (Calendar) cal.clone();
 			return clone;
 		} catch (CloneNotSupportedException e) {
-			assert true : "Calendar is cloneable";
+			assert false : "Object is always cloneable";
 		}
 		return null;
 		// return new GMonthDay(cal);

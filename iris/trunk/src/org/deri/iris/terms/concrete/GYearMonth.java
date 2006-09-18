@@ -51,7 +51,7 @@ public class GYearMonth implements IGYearMonth, Cloneable {
 			gm.cal = (Calendar) cal.clone();
 			return gm;
 		} catch (CloneNotSupportedException e) {
-			assert true : "Can not happen";
+			assert false : "Object is always cloneable";
 		}
 		return null;
 	}

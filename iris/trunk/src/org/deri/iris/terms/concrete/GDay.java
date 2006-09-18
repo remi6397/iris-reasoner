@@ -52,7 +52,7 @@ public class GDay implements IGDay, Cloneable {
 			gi.cal = (Calendar)cal.clone();
 			return gi;
 		} catch (CloneNotSupportedException e) {
-			assert true : "Can not happen";
+			assert false : "Object is always cloneable";
 		}
 		return null;
 	}

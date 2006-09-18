@@ -162,7 +162,7 @@ public class SqName implements ISqName, Cloneable {
 			sq.namespace = (Iri) ((Iri) namespace).clone();
 			return sq;
 		} catch (CloneNotSupportedException e) {
-			assert true : "Will never happen";
+			assert false : "Object is always cloneable";
 		}
 		return null;
 	}

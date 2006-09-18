@@ -80,7 +80,7 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 		try {
 			return super.clone();
 		} catch (CloneNotSupportedException e) {
-			assert true : "Can never happen";
+			assert false : "Object is always cloneable";
 		}
 		return null;
 	}

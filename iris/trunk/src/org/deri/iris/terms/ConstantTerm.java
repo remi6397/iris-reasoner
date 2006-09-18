@@ -78,7 +78,7 @@ public class ConstantTerm implements IConstantTerm<ITerm>, Cloneable {
 			c.value = (ITerm) value.clone();
 			return c;
 		} catch (CloneNotSupportedException e) {
-			assert true : "Will never happen";
+			assert false : "Object is always cloneable";
 		}
 		return null;
 	}

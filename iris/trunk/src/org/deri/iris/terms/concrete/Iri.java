@@ -75,7 +75,7 @@ public class Iri implements IIri, Cloneable {
 			i.uri = new URI(uri.toString());
 			return i;
 		} catch (CloneNotSupportedException e) {
-			assert true : "Can not happen";
+			assert false : "Object is always cloneable";
 		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException(e);
 		}
