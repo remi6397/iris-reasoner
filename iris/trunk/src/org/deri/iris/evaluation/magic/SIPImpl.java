@@ -41,6 +41,7 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.evaluation.magic.ISip;
 import org.deri.iris.api.terms.IConstantTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
@@ -55,25 +56,20 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.11 2006-09-15 08:51:24 richardpoettler Exp $
+ * $Id: SIPImpl.java,v 1.12 2006-09-18 07:52:35 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.11 $
- * @date $Date: 2006-09-15 08:51:24 $
+ * @version $Revision: 1.12 $
+ * @date $Date: 2006-09-18 07:52:35 $
  */
-public final class SIPImpl {
+public final class SIPImpl implements ISip {
 	// TODO: implement hashCode and equals
 
 	/**
 	 * Comparator to compare literals according to their position in the sips.
-	 * If you want to use this comparator with adorned literals use the
-	 * SipHelper.getAdornedSip(AdornedRule) method to get the sip for adorned
-	 * literals, otherwise it wont work as expected.
-	 * 
-	 * @see SipHelper#getAdornedSip(org.deri.iris.evaluation.common.AdornedProgram.AdornedRule)
 	 */
-	public final Comparator<ILiteral> LITERAL_COMP = new LiteralComparator();
+	private final Comparator<ILiteral> LITERAL_COMP = new LiteralComparator();
 
 	/** The graph on which the variables are padded along. */
 	private DirectedGraph sipGraph = new SimpleDirectedGraph();
@@ -171,26 +167,6 @@ public final class SIPImpl {
 		// FIXME: add unconnected literals
 	}
 
-	/**
-	 * <p>
-	 * Updates the sip. If it doesn't contains an edge from the source whitch
-	 * passes the given variables to the target the specific edge will be added.
-	 * If it contains such an edge, the variables in passedTo will be added to
-	 * the passed variables.
-	 * </p>
-	 * <p>
-	 * <b>ATTENTION: There's no error checking whether the sip is still valid.</b>
-	 * </p>
-	 * 
-	 * @param source
-	 *            the source literal
-	 * @param target
-	 *            the literal the variables are passed to
-	 * @param passedTo
-	 *            the variables whitch are passed
-	 * @throws NullPointerException
-	 *             if the source, target or set of variables is null
-	 */
 	public void updateSip(final ILiteral source, final ILiteral target,
 			final Set<IVariable> passedTo) {
 		if ((source == null) || (target == null) || (passedTo == null)) {
@@ -259,15 +235,6 @@ public final class SIPImpl {
 		return next.keySet();
 	}
 
-	/**
-	 * Determines all variables, wich are passed to this literal.
-	 * 
-	 * @param l
-	 *            the literal for which to determine the variables
-	 * @return the set of variables
-	 * @throws NullPointerException
-	 *             if the literal is null
-	 */
 	public Set<IVariable> getBoundVariables(final ILiteral l) {
 		if (l == null) {
 			throw new NullPointerException();
@@ -398,15 +365,6 @@ public final class SIPImpl {
 				&& (p1.getArity() == p2.getArity());
 	}
 
-	/**
-	 * Searches for literals on which the submitted literal depends.
-	 * 
-	 * @param l
-	 *            the literal for which to search for dependencies
-	 * @return the set of literal on which the submitted literal depends
-	 * @throws NullPointerException
-	 *             if the literal is null
-	 */
 	public Set<ILiteral> getDepends(final ILiteral l) {
 		final Set<ILiteral> dependencies = new HashSet<ILiteral>();
 		final Set<ILiteral> todoDependencies = new HashSet<ILiteral>();
@@ -428,15 +386,6 @@ public final class SIPImpl {
 		return dependencies;
 	}
 
-	/**
-	 * Searches for edges entering this literal.
-	 * 
-	 * @param l
-	 *            the literal for which to search for entering edges
-	 * @return set of edges entering this literal
-	 * @throws NullPointerException
-	 *             if the literal is null
-	 */
 	public Set<LabeledDirectedEdge<Set<IVariable>>> getEdgesEnteringLiteral(
 			final ILiteral l) {
 		if (l == null) {
@@ -452,15 +401,6 @@ public final class SIPImpl {
 		return edges;
 	}
 
-	/**
-	 * Searches for edges leaving this literal.
-	 * 
-	 * @param l
-	 *            the literal for which to search for entering edges
-	 * @return set of edges entering this literal
-	 * @throws NullPointerException
-	 *             if the literal is null
-	 */
 	public Set<LabeledDirectedEdge<Set<IVariable>>> getEdgesLeavingLiteral(
 			final ILiteral l) {
 		if (l == null) {
@@ -476,18 +416,6 @@ public final class SIPImpl {
 		return edges;
 	}
 
-	/**
-	 * Determines the set of variables passed to one literal by one specific
-	 * edge.
-	 * 
-	 * @param e
-	 *            edge which passes the variables
-	 * @return the set of variables
-	 * @throws NullPointerException
-	 *             if the edge is null
-	 * @throws IllegalArgumentException
-	 *             if one of the vertices of the edge isn't a literal
-	 */
 	public Set<IVariable> variablesPassedByEdge(final Edge e) {
 		if (e == null) {
 			throw new NullPointerException("The edge must not be null");
@@ -501,18 +429,6 @@ public final class SIPImpl {
 				.getTarget());
 	}
 
-	/**
-	 * Determines the set of variables passed to one literal by one specific
-	 * edge.
-	 * 
-	 * @param source
-	 *            the source of the edge
-	 * @param target
-	 *            the target of the edge
-	 * @return the set of variables
-	 * @throws NullPointerException
-	 *             if one of the literal is null
-	 */
 	public Set<IVariable> variablesPassedByLiteral(final ILiteral source,
 			final ILiteral target) {
 		if ((source == null) || (target == null)) {
@@ -525,18 +441,10 @@ public final class SIPImpl {
 		return vars;
 	}
 	
-	/**
-	 * Returns the rule associated with this sip.
-	 * @return the rule
-	 */
 	public IRule getRule() {
 		return rule;
 	}
 	
-	/**
-	 * Returns the query associated with this sip.
-	 * @return the query
-	 */
 	public IQuery getQuery() {
 		return query;
 	}
@@ -557,40 +465,10 @@ public final class SIPImpl {
 		return buffer.toString();
 	}
 
-	/**
-	 * <p>
-	 * Creates a copy of this sip.
-	 * </p>
-	 * <p>
-	 * Nothing will be cloned except the graph.
-	 * </p>
-	 * 
-	 * @return the copy
-	 * @throws NullPointerException
-	 *             if the rule of the query are null
-	 */
-	public SIPImpl defensifeCopy() {
+	public ISip defensifeCopy() {
 		return defensifeCopy(rule, query);
 	}
 
-	/**
-	 * <p>
-	 * Creates a copy of this sip. There will be no check whether the rule
-	 * matches to teh sip, or not, so inconsistency checks and repair work must
-	 * be done by the user of this method.
-	 * </p>
-	 * <p>
-	 * Nothing will be cloned except the graph.
-	 * </p>
-	 * 
-	 * @param r
-	 *            the new rule for the copy
-	 * @param q
-	 *            the query for the copy
-	 * @return the copy
-	 * @throws NullPointerException
-	 *             if the rule of the query are null
-	 */
 	public SIPImpl defensifeCopy(final IRule r, final IQuery q) {
 		if ((r == null) || (q == null)) {
 			throw new NullPointerException(
@@ -605,22 +483,6 @@ public final class SIPImpl {
 		return copy;
 	}
 
-	/**
-	 * <p>
-	 * Exchanges a literal in the sip. All the edges entering and leaving the
-	 * original vertex will now enter of leave the new one.
-	 * </p>
-	 * <p>
-	 * <b>ATTENTION: There's no error checking whether the sip is still valid.</b>
-	 * </p>
-	 * 
-	 * @param from
-	 *            the old literal
-	 * @param to
-	 *            the new literal
-	 * @throws NullPointerException
-	 *             if one of the literals is null
-	 */
 	public void exchangeLiteral(final ILiteral from, final ILiteral to) {
 		if ((from == null) || (to == null)) {
 			throw new NullPointerException("The literals must not be null");
@@ -637,19 +499,6 @@ public final class SIPImpl {
 		sipGraph.removeVertex(from);
 	}
 
-	/**
-	 * <p>
-	 * Removes a edge from the sip graph.
-	 * </p>
-	 * <p>
-	 * <b>ATTENTION: There's no error checking whether the sip is still valid.</b>
-	 * </p>
-	 * 
-	 * @param e
-	 *            the edge to remove
-	 * @throws NullPointerException
-	 *             if the edge is null
-	 */
 	public void removeEdge(final LabeledDirectedEdge<Set<IVariable>> e) {
 		if (e == null) {
 			throw new NullPointerException("The edge must not be null");
@@ -657,21 +506,6 @@ public final class SIPImpl {
 		sipGraph.removeEdge(e);
 	}
 
-	/**
-	 * <p>
-	 * Removes the edge with the given source and target from the sip graph.
-	 * </p>
-	 * <p>
-	 * <b>ATTENTION: There's no error checking whether the sip is still valid.</b>
-	 * </p>
-	 * 
-	 * @param source
-	 *            the source literal
-	 * @param target
-	 *            the target literal
-	 * @throws NullPointerException
-	 *             if one of the literals is null
-	 */
 	public void removeEdge(final ILiteral source, final ILiteral target) {
 		if ((source == null) || (target == null)) {
 			throw new NullPointerException(
@@ -681,15 +515,6 @@ public final class SIPImpl {
 				source, target));
 	}
 
-	/**
-	 * Determines whether the sip constains a specific literal.
-	 * 
-	 * @param l
-	 *            the literal for which to search for
-	 * @return whether or not the literal is in the sip
-	 * @throws NullPointerException
-	 *             if the literal is null
-	 */
 	public boolean containsVertex(final ILiteral l) {
 		if (l == null) {
 			throw new NullPointerException("The literal must not be null");
@@ -697,12 +522,6 @@ public final class SIPImpl {
 		return sipGraph.containsVertex(l);
 	}
 
-	/**
-	 * Determines the roots of this graph. A root is a Literal (vertex) with no
-	 * entering arcs.
-	 * 
-	 * @return the set of literals with no entering arcs
-	 */
 	public Set<ILiteral> getRootVertices() {
 		final Set<ILiteral> roots = new HashSet<ILiteral>();
 		for (final Object o : sipGraph.vertexSet()) {
@@ -713,12 +532,6 @@ public final class SIPImpl {
 		return roots;
 	}
 
-	/**
-	 * Determines the leafes of this graph. A leafe is a Literal (vertex) with no
-	 * outfgoing arcs.
-	 * 
-	 * @return the set of literals with no outfgoing arcs
-	 */
 	public Set<ILiteral> getLeafVertices() {
 		final Set<ILiteral> leafes = new HashSet<ILiteral>();
 		for (final Object o : sipGraph.vertexSet()) {
@@ -727,6 +540,10 @@ public final class SIPImpl {
 			}
 		}
 		return leafes;
+	}
+	
+	public Comparator<ILiteral>getLiteralComparator() {
+		return LITERAL_COMP;
 	}
 
 	/**

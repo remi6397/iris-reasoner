@@ -35,9 +35,12 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.evaluation.common.IAdornedPredicate;
+import org.deri.iris.api.evaluation.common.IAdornedProgram;
+import org.deri.iris.api.evaluation.common.IAdornedRule;
+import org.deri.iris.api.evaluation.magic.ISip;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.evaluation.common.AdornedProgram;
 import org.deri.iris.evaluation.common.Adornment;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
@@ -65,13 +68,13 @@ public final class MagicSetImpl {
 	static final String MAGIC_LABEL_PREFIX = "label_";
 
 	/** Cache for all adorned sips. */
-	private final Map<AdornedRule, SIPImpl> adornedSipCache = new HashMap<AdornedRule, SIPImpl>();
+	private final Map<IAdornedRule, ISip> adornedSipCache = new HashMap<IAdornedRule, ISip>();
 
 	/** Holds all magic rules. */
 	private Set<IRule> magicRules = new HashSet<IRule>();
 
 	/** Holds all rewritten rules. */
-	private Set<AdornedRule> rewrittenRules = new HashSet<AdornedRule>();
+	private Set<IAdornedRule> rewrittenRules = new HashSet<IAdornedRule>();
 
 	/** The seed for this magic set. */
 	private IQuery seed;
@@ -86,14 +89,14 @@ public final class MagicSetImpl {
 	 * @throws IllegalArgumentException
 	 *             if one of the rule got a head with length unequal 1
 	 */
-	public MagicSetImpl(final AdornedProgram program) {
+	public MagicSetImpl(final IAdornedProgram program) {
 		if (program == null) {
 			throw new NullPointerException("The program must not be null");
 		}
 
 		// TODO: maybe a defensive copy should be made
 
-		for (AdornedRule r : program.getAdornedRules()) {
+		for (IAdornedRule r : program.getAdornedRules()) {
 			if (r.getHeadLenght() != 1) {
 				throw new IllegalArgumentException("At the moment only heads "
 						+ "with length of 1 are allowed");
@@ -125,7 +128,7 @@ public final class MagicSetImpl {
 	 * @throws IllegalArgumentException
 	 *             if the length of the head is unequal to 1
 	 */
-	private AdornedRule getRewrittenRule(final AdornedRule r) {
+	private IAdornedRule getRewrittenRule(final IAdornedRule r) {
 		if (r == null) {
 			throw new NullPointerException("The rule must not be null");
 		}
@@ -138,7 +141,7 @@ public final class MagicSetImpl {
 
 		// computing the sorted body
 		final List<ILiteral> temp = new ArrayList<ILiteral>(r.getBodyLiterals());
-		Collections.sort(temp, getAdornedSip(r).LITERAL_COMP);
+		Collections.sort(temp, getAdornedSip(r).getLiteralComparator());
 		final List<ILiteral> sortedBody = Collections.unmodifiableList(temp);
 
 		// computing the rewritten body
@@ -147,7 +150,7 @@ public final class MagicSetImpl {
 		rewrittenBody.add(0, magicL);
 
 		// modifying the sip
-		final SIPImpl adornedSip = getAdornedSip(r).defensifeCopy();
+		final ISip adornedSip = getAdornedSip(r).defensifeCopy();
 		final Set<IVariable> boundVars = new HashSet<IVariable>();
 		for (ITerm t : getBounds(headL)) {
 			if (!(t instanceof IVariable)) {
@@ -199,7 +202,7 @@ public final class MagicSetImpl {
 
 		final ILiteral queryLiteral = q.getQueryLiteral(0);
 		final ILiteral adornedLiteral = BASIC.createLiteral(queryLiteral
-				.isPositive(), new AdornedPredicate(queryLiteral), queryLiteral
+				.isPositive(), (IAdornedPredicate)new AdornedPredicate(queryLiteral), queryLiteral
 				.getTuple());
 
 		return BASIC.createQuery(createMagicLiteral(adornedLiteral));
@@ -222,7 +225,7 @@ public final class MagicSetImpl {
 	 * @throws IllegalArgumentException
 	 *             if the length of the head is unequal to 1
 	 */
-	private Set<IRule> generateRules(final ILiteral l, final AdornedRule r) {
+	private Set<IRule> generateRules(final ILiteral l, final IAdornedRule r) {
 		if ((l == null) || (r == null)) {
 			throw new NullPointerException(
 					"The rule and the literal must not be null");
@@ -283,7 +286,7 @@ public final class MagicSetImpl {
 	 * @throws IllegalArgumentException
 	 *             if the length of the head of the rule is unequal 1
 	 */
-	private IRule createMagicRule(final ILiteral l, final AdornedRule rule) {
+	private IRule createMagicRule(final ILiteral l, final IAdornedRule rule) {
 		if ((l == null) || (rule == null)) {
 			throw new NullPointerException(
 					"The rule and the literal must not be null");
@@ -303,10 +306,10 @@ public final class MagicSetImpl {
 		final IHead head = BASIC.createHead(createMagicLiteral(l));
 
 		// create the body of the rule
-		SIPImpl adornedSip = getAdornedSip(rule);
+		ISip adornedSip = getAdornedSip(rule);
 		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(adornedSip
 				.getDepends(l));
-		Collections.sort(bodyLiterals, adornedSip.LITERAL_COMP);
+		Collections.sort(bodyLiterals, adornedSip.getLiteralComparator());
 
 		// correct the literals -> make adorned literals -> magic literals
 		for (int counter = 0, size = bodyLiterals.size(); counter < size; counter++) {
@@ -344,7 +347,7 @@ public final class MagicSetImpl {
 	 *             if the headlength of the rule is unequal to 1
 	 */
 	private IRule createLabeledRule(
-			final LabeledDirectedEdge<Set<IVariable>> e, final AdornedRule r,
+			final LabeledDirectedEdge<Set<IVariable>> e, final IAdornedRule r,
 			final int index) {
 		if ((e == null) || (r == null)) {
 			throw new NullPointerException(
@@ -381,11 +384,11 @@ public final class MagicSetImpl {
 				index));
 
 		// create body of the rule
-		final SIPImpl adornedSip = getAdornedSip(r);
+		final ISip adornedSip = getAdornedSip(r);
 		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(adornedSip
 				.getDepends((ILiteral) sourceLiteral));
 		bodyLiterals.add(sourceLiteral);
-		Collections.sort(bodyLiterals, adornedSip.LITERAL_COMP);
+		Collections.sort(bodyLiterals, adornedSip.getLiteralComparator());
 
 		// correct the literals -> make adorned literals -> magic literals
 		for (int counter = 0, size = bodyLiterals.size(); counter < size; counter++) {
@@ -546,8 +549,8 @@ public final class MagicSetImpl {
 	 *            for which to retrieve the sip
 	 * @return the sip
 	 */
-	private SIPImpl getAdornedSip(final AdornedRule r) {
-		SIPImpl sip = null;
+	private ISip getAdornedSip(final IAdornedRule r) {
+		ISip sip = null;
 		if ((sip = adornedSipCache.get(r)) == null) {
 			sip = SipHelper.getAdornedSip(r);
 			adornedSipCache.put(r, sip);
@@ -569,7 +572,7 @@ public final class MagicSetImpl {
 	 * 
 	 * @return the unmodifiable set of rules
 	 */
-	public Set<AdornedRule> getRewrittenRules() {
+	public Set<IAdornedRule> getRewrittenRules() {
 		return Collections.unmodifiableSet(rewrittenRules);
 	}
 

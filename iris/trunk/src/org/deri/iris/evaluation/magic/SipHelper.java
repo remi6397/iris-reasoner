@@ -35,6 +35,9 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.evaluation.common.IAdornedPredicate;
+import org.deri.iris.api.evaluation.common.IAdornedRule;
+import org.deri.iris.api.evaluation.magic.ISip;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.evaluation.common.Adornment;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
@@ -45,12 +48,12 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
  * Helpermethods to do various tasks related to sips and adornments.
  * </p>
  * <p>
- * $Id: SipHelper.java,v 1.4 2006-09-15 08:51:24 richardpoettler Exp $
+ * $Id: SipHelper.java,v 1.5 2006-09-18 07:52:35 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.4 $
- * @date $Date: 2006-09-15 08:51:24 $
+ * @version $Revision: 1.5 $
+ * @date $Date: 2006-09-18 07:52:35 $
  */
 public class SipHelper {
 
@@ -69,7 +72,7 @@ public class SipHelper {
 	 *            the rule for which to retrieve the adorned sip
 	 * @return the adorned sip
 	 */
-	public static SIPImpl getAdornedSip(final AdornedRule r) {
+	public static ISip getAdornedSip(final IAdornedRule r) {
 		if (r == null) {
 			throw new NullPointerException("The rule must not be null");
 		}
@@ -78,12 +81,12 @@ public class SipHelper {
 					"At the moment only heads with length 1 are allowed");
 		}
 
-		final SIPImpl copy = r.getSIP().defensifeCopy(r, r.getSIP().getQuery());
+		final ISip copy = r.getSIP().defensifeCopy(r, r.getSIP().getQuery());
 		// exchanging all occurences of unadorned literals in the sip through
 		// the adorned ones in the head
 		for (final ILiteral l : r.getHeadLiterals()) {
 			if (l.getPredicate() instanceof AdornedPredicate) {
-				final AdornedPredicate p = (AdornedPredicate) l.getPredicate();
+				final IAdornedPredicate p = (IAdornedPredicate) l.getPredicate();
 				final ILiteral unadornedLiteral = BASIC.createLiteral(l
 						.isPositive(), p.getUnadornedPredicate(), l.getTuple());
 				while (copy.containsVertex(unadornedLiteral)) {
@@ -95,7 +98,7 @@ public class SipHelper {
 		// the adorned ones in the body
 		for (final ILiteral l : r.getBodyLiterals()) {
 			if (l.getPredicate() instanceof AdornedPredicate) {
-				final AdornedPredicate p = (AdornedPredicate) l.getPredicate();
+				final IAdornedPredicate p = (IAdornedPredicate) l.getPredicate();
 				final ILiteral unadornedLiteral = BASIC.createLiteral(l
 						.isPositive(), p.getUnadornedPredicate(), l.getTuple());
 				while (copy.containsVertex(unadornedLiteral)) {
@@ -189,9 +192,9 @@ public class SipHelper {
 	 * @throws IllegalArgumentException
 	 *             if the length of the head is unequal to 1
 	 */
-	public static AdornedRule getAdornedRule(final IRule r) {
-		if (r instanceof AdornedRule) {
-			return (AdornedRule) r;
+	public static IAdornedRule getAdornedRule(final IRule r) {
+		if (r instanceof IAdornedRule) {
+			return (IAdornedRule) r;
 		}
 		if (r == null) {
 			throw new NullPointerException("The rule must not´ be null");

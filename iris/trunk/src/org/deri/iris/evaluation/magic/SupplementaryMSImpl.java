@@ -38,10 +38,10 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.evaluation.common.IAdornedRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
-import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 
 /**
  * <p>
@@ -49,12 +49,12 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
  * from Beeri's paper &quot;The Power Of Magic&quot;.
  * </p>
  * <p>
- * $Id: SupplementaryMSImpl.java,v 1.1 2006-09-14 08:05:10 richardpoettler Exp $
+ * $Id: SupplementaryMSImpl.java,v 1.2 2006-09-18 07:52:35 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-09-14 08:05:10 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-09-18 07:52:35 $
  */
 public class SupplementaryMSImpl {
 
@@ -65,7 +65,7 @@ public class SupplementaryMSImpl {
 	private List<List<IRule>> supMagicRules = new ArrayList<List<IRule>>();
 
 	/** Contains all eht substituted rewriteten rules. */
-	private List<AdornedRule> rewrittenRules = new ArrayList<AdornedRule>();
+	private List<IAdornedRule> rewrittenRules = new ArrayList<IAdornedRule>();
 
 	/** Contains all the substituted magic rules. */
 	private List<IRule> magicRules = new ArrayList<IRule>();
@@ -89,14 +89,14 @@ public class SupplementaryMSImpl {
 		magicRules.addAll(ms.getMagicRules());
 
 		int ruleCounter = 1;
-		for (final AdornedRule r : ms.getRewrittenRules()) {
+		for (final IAdornedRule r : ms.getRewrittenRules()) {
 			final List<IRule> supRules = new ArrayList<IRule>(
 					r.getBodyLenght() - 2);
 			supMagicRules.add(supRules);
 
 			final List<ILiteral> sortedBody = new ArrayList<ILiteral>(r
 					.getBodyLiterals());
-			Collections.sort(sortedBody, r.getSIP().LITERAL_COMP);
+			Collections.sort(sortedBody, r.getSIP().getLiteralComparator());
 
 			// generating the sup magic rules
 			int maxLiteral = 0;
@@ -292,7 +292,7 @@ public class SupplementaryMSImpl {
 	 * @throws NullPointerException
 	 *             if the rule or the sortedbody is <code>null</code>
 	 */
-	private AdornedRule modifyRewrittenRule(final AdornedRule r,
+	private IAdornedRule modifyRewrittenRule(final IAdornedRule r,
 			final List<ILiteral> sortedBody, final int ruleIndex) {
 		if ((r == null) || (sortedBody == null)) {
 			throw new NullPointerException(
@@ -352,7 +352,7 @@ public class SupplementaryMSImpl {
 	 * @throws IllegalArgumentException
 	 *             if the ruleIndex is smalller than 1
 	 */
-	private IRule createSupMRule(final AdornedRule r,
+	private IRule createSupMRule(final IAdornedRule r,
 			final List<ILiteral> sortedBody, final int literalIndex,
 			final int ruleIndex) {
 		if ((r == null) || (sortedBody == null)) {
@@ -431,7 +431,7 @@ public class SupplementaryMSImpl {
 	 *             if the index is smaller than 2
 	 */
 	private static Set<IVariable> getNotDiscardedVars(final int index,
-			final AdornedRule r, final List<ILiteral> sortedBody) {
+			final IAdornedRule r, final List<ILiteral> sortedBody) {
 		if (index < 2) {
 			throw new IllegalArgumentException(
 					"The literalIndex must be at least 2, but was " + index);
@@ -502,7 +502,7 @@ public class SupplementaryMSImpl {
 	 * 
 	 * @return the rewritten rules
 	 */
-	public List<AdornedRule> getRewrittenRules() {
+	public List<IAdornedRule> getRewrittenRules() {
 		return Collections.unmodifiableList(rewrittenRules);
 	}
 
@@ -543,7 +543,7 @@ public class SupplementaryMSImpl {
 			}
 		}
 		buffer.append(NEwLINE);
-		for (final AdornedRule r : rewrittenRules) {
+		for (final IAdornedRule r : rewrittenRules) {
 			buffer.append(r).append(NEwLINE);
 		}
 		buffer.append(NEwLINE);
