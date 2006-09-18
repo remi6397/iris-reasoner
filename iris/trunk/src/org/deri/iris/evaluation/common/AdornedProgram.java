@@ -51,12 +51,12 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.14 2006-09-18 07:52:12 richardpoettler Exp $
+ * $Id: AdornedProgram.java,v 1.15 2006-09-18 08:08:50 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.14 $
- * @date $Date: 2006-09-18 07:52:12 $
+ * @version $Revision: 1.15 $
+ * @date $Date: 2006-09-18 08:08:50 $
  */
 public class AdornedProgram implements IAdornedProgram {
 
@@ -214,7 +214,7 @@ public class AdornedProgram implements IAdornedProgram {
 	public Set<IAdornedRule> getAdornedRules() {
 		return Collections.unmodifiableSet(adornedRules);
 	}
-	
+
 	public Set<IRule> getNormalRules() {
 		return Collections.unmodifiableSet(rules);
 	}
@@ -561,12 +561,17 @@ public class AdornedProgram implements IAdornedProgram {
 	 * Simple representation of an adorned rule. The only difference to an
 	 * odinary rule is, that it has a sip attached, and that you can exchange
 	 * literals.
-	 * <p>
+	 * </p>
 	 * <b>ATTENTION: the replaceHeadLiterla and replaceBodyLiteral are slow,
 	 * because they copy the head and body for each invocation.</b>
 	 * </p>
+	 * <p>
+	 * Id
+	 * </p>
 	 * 
 	 * @author richi
+	 * @version $Revision: 1.15 $
+	 * @date $Date: 2006-09-18 08:08:50 $
 	 */
 	public static class AdornedRule implements IAdornedRule {
 		// TODO: implement hashCode and equals

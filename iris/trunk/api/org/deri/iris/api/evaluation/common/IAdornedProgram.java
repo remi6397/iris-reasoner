@@ -37,12 +37,12 @@ import org.deri.iris.api.basics.IRule;
  * it.
  * </p>
  * <p>
- * $Id: IAdornedProgram.java,v 1.1 2006-09-18 07:51:16 richardpoettler Exp $
+ * $Id: IAdornedProgram.java,v 1.2 2006-09-18 08:08:50 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-09-18 07:51:16 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-09-18 08:08:50 $
  */
 public interface IAdornedProgram {
 
@@ -54,9 +54,9 @@ public interface IAdornedProgram {
 	public abstract Set<IAdornedRule> getAdornedRules();
 
 	/**
-	 * Returns the original rules for which the adorned rules where created
+	 * Returns the original rules for which the adorned rules where created.
 	 * 
-	 * @return
+	 * @return the set of rules from which this adorned program was created
 	 */
 	public abstract Set<IRule> getNormalRules();
 

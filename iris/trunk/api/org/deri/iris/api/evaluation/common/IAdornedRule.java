@@ -31,8 +31,17 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.evaluation.magic.ISip;
 
 /**
+ * <p>
+ * An adorned rule. The only difference to an odinary rule is, that it has a sip
+ * attached, and that you can exchange literals.
+ * </p>
+ * <p>
+ * $Id: IAdornedRule.java,v 1.2 2006-09-18 08:08:50 richardpoettler Exp $
+ * </p>
+ * 
  * @author richi
- *
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-09-18 08:08:50 $
  */
 public interface IAdornedRule extends IRule {
 
@@ -44,9 +53,8 @@ public interface IAdornedRule extends IRule {
 	public abstract ISip getSIP();
 
 	/**
-	 * Replaces the predicate of a given literal in the head. <b>This method
-	 * is slow</b>, because it copies the head and the body for each
-	 * invokation.
+	 * Replaces the predicate of a given literal in the head. <b>This method is
+	 * slow</b>, because it copies the head and the body for each invokation.
 	 * 
 	 * @param l
 	 *            the literal of which to replace the predicate
@@ -63,9 +71,8 @@ public interface IAdornedRule extends IRule {
 	public abstract void replaceHeadLiteral(final ILiteral l, final IPredicate p);
 
 	/**
-	 * Replaces the predicate of a given literal in the body. <b>This method
-	 * is slow</b>, because it copies the head and the body for each
-	 * invokation.
+	 * Replaces the predicate of a given literal in the body. <b>This method is
+	 * slow</b>, because it copies the head and the body for each invokation.
 	 * 
 	 * @param l
 	 *            the literal of which to replace the predicate

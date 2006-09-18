@@ -37,8 +37,17 @@ import org.deri.iris.evaluation.magic.SipHelper;
 import org.deri.iris.graph.LabeledDirectedEdge;
 
 /**
- * @author richi
+ * <p>
+ * A SIP (Sideway Information Passing) to determine which variable of which
+ * literal was passed/bound by which literal.
+ * </p>
+ * <p>
+ * $Id: ISip.java,v 1.2 2006-09-18 08:08:50 richardpoettler Exp $
+ * </p>
  * 
+ * @author richi
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-09-18 08:08:50 $
  */
 public interface ISip {
 
