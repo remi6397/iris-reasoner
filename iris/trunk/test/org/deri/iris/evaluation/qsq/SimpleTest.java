@@ -38,6 +38,7 @@ import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.evaluation.common.IAdornedProgram;
 import org.deri.iris.evaluation.common.AdornedProgram;
 
 /**
@@ -45,7 +46,7 @@ import org.deri.iris.evaluation.common.AdornedProgram;
  * @date   02.08.2006 14:37:59
  */
 public class SimpleTest {
-	static AdornedProgram program = null;
+	static IAdornedProgram program = null;
 	static QSQTemplate qsqTemplate = null;
 	
 	
