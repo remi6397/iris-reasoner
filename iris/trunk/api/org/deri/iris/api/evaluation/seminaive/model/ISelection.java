@@ -34,5 +34,6 @@ import org.deri.iris.api.basics.ITuple;
  *
  */
 public interface ISelection extends ITree{
+	public int getArity();
 	public ITuple getPattern();
 }

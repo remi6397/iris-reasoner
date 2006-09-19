@@ -24,8 +24,16 @@
  * MA  02110-1301, USA.
  */package org.deri.iris.evaluation.seminaive.model;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.deri.iris.api.evaluation.seminaive.model.Component;
 import org.deri.iris.api.evaluation.seminaive.model.ISelection;
+import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.terms.Variable;
 
 /**
  * 
@@ -34,8 +42,10 @@ import org.deri.iris.api.basics.ITuple;
  *
  */
 public class SelectionDescription extends Composite implements ISelection{
+
 	private ITuple pattern = null;
-	
+	private List<String> variables = new LinkedList<String>();
+
 	SelectionDescription(ITuple pattern) {
 		if (pattern == null) {
 			throw new IllegalArgumentException("All constructor " +
@@ -44,14 +54,65 @@ public class SelectionDescription extends Composite implements ISelection{
 		this.pattern = pattern;
 	}
 	
+	public int getArity() {
+		return variables.size();
+	}
+
 	public ITuple getPattern() {
 		return pattern;
+	}
+
+	public void addVariable(String v){
+		variables.add(v);
+	}
+	public void addVariable(IVariable v)
+	{
+		addVariable(((Variable)v).getName());
+	}
+	
+	public void addVariables(List<String> lv){
+		for (String v: lv)
+			addVariable(v);		
+	}
+	
+	public List<String> getVariables(){
+		return variables;
+	}
+	
+	public void addAllVariables(List<IVariable> lv){
+		for (IVariable v: lv)
+			addVariable(((Variable)v).getName());
+		
+	}
+	
+	public void addAllVariables(Set<IVariable> lv){
+		for (IVariable v: lv)
+			addVariable(((Variable)v).getName());				
+	}
+	public boolean hasVariable(String v){
+		return variables.contains(v);
+	}
+	
+	public boolean addComponent(Component c)
+	{
+		ITree t = (ITree)c;
+		if (variables.size() == 0)
+			addVariables(t.getVariables());
+		return super.addComponent(t);
 	}
 	
 	public String toString()
 	{
 		StringBuilder buffer = new StringBuilder();
-		buffer.append("SELECTION[");
+		buffer.append("SELECTION");
+		buffer.append("{");
+		for (int i = 0; i < this.variables.size(); i++) {
+			buffer.append(this.variables.get(i).toString());
+			buffer.append(", ");
+		}
+		buffer.delete(buffer.length() - 2, buffer.length());
+		buffer.append("}");
+		buffer.append("[");
 		buffer.append(pattern);
 		buffer.append("]\n(");
 		buffer.append(this.getChildren().get(0).toString());

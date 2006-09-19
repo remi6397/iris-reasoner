@@ -25,8 +25,14 @@
  */
 package org.deri.iris.evaluation.seminaive.model;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import org.deri.iris.api.evaluation.seminaive.model.IJoin;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.operations.relations.JoinCondition;
+import org.deri.iris.terms.Variable;
 
 /**
  * 
@@ -35,8 +41,10 @@ import org.deri.iris.operations.relations.JoinCondition;
  *
  */
 public class JoinDescription extends Composite implements IJoin{
+
 	private int[] indexes = null;
 	private JoinCondition condition = null;
+	private List<String> variables = new LinkedList<String>();
 	
 	JoinDescription(int[] indexes, JoinCondition condition) {
 		if (indexes == null || condition == null) {
@@ -48,6 +56,11 @@ public class JoinDescription extends Composite implements IJoin{
 		this.indexes = indexes;
 	}
 
+	public int getArity() {
+		return variables.size();
+	}
+
+
 	public int[] getIndexes() {
 		return indexes;
 	}
@@ -56,9 +69,47 @@ public class JoinDescription extends Composite implements IJoin{
 		return condition;
 	}
 	
+	public void addVariable(String v){
+		variables.add(v);
+	}
+	public void addVariable(IVariable v)
+	{
+		addVariable(((Variable)v).getName());
+	}
+	
+	public void addVariables(List<String> lv){
+		for (String v: lv)
+			addVariable(v);		
+	}
+	
+	public List<String> getVariables(){
+		return variables;
+	}
+	
+	public void addAllVariables(List<IVariable> lv){
+		for (IVariable v: lv)
+			addVariable(((Variable)v).getName());
+		
+	}
+	
+	public void addAllVariables(Set<IVariable> lv){
+		for (IVariable v: lv)
+			addVariable(((Variable)v).getName());				
+	}
+	public boolean hasVariable(String v){
+		return variables.contains(v);
+	}
+
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("JOIN");
+		buffer.append("{");
+		for (int i = 0; i < this.variables.size(); i++) {
+			buffer.append(this.variables.get(i).toString());
+			buffer.append(", ");
+		}
+		buffer.delete(buffer.length() - 2, buffer.length());
+		buffer.append("}");
 		buffer.append(condition);
 		buffer.append("[");
 		for(int i = 0; i < indexes.length; i++)

@@ -44,6 +44,7 @@ import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.factory.IBasicFactory;
 import org.deri.iris.api.terms.ITerm;
 
+import org.deri.iris.basics.seminaive.EqualityLiteral;
 /**
  * @author Darko Anicic, DERI Innsbruck
  * @date 22.02.2006 16:03:34
@@ -98,6 +99,15 @@ public class BasicFactory implements IBasicFactory {
 			ITuple tuple) {
 		return createLiteral(positive, createAtom(p, tuple));
 	}
+	
+	public ILiteral createEqualityLiteral(String predicate,ITuple tuple) {
+		return new EqualityLiteral(predicate, tuple);
+	}
+	
+	public ILiteral createEqualityLiteral(boolean positive, String predicate, ITuple tuple) {
+		return new EqualityLiteral(positive, predicate, tuple);
+	}
+
 
 	public ITuple createMinimalTuple(ITerm... terms) {
 		return createMinimalTuple(Arrays.asList(terms));

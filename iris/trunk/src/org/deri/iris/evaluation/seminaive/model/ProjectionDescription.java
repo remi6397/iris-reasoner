@@ -25,7 +25,15 @@
  */
 package org.deri.iris.evaluation.seminaive.model;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.deri.iris.api.evaluation.seminaive.model.Component;
 import org.deri.iris.api.evaluation.seminaive.model.IProjection;
+import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.terms.Variable;
 
 /**
  * 
@@ -34,8 +42,10 @@ import org.deri.iris.api.evaluation.seminaive.model.IProjection;
  *
  */
 public class ProjectionDescription extends Composite implements IProjection{
+
 	private int[] indexes = null;
-	
+	private List<String> variables = new LinkedList<String>();
+
 	ProjectionDescription(int[] indexes) {
 		if (indexes == null) {
 			throw new IllegalArgumentException("All constructor " +
@@ -45,13 +55,81 @@ public class ProjectionDescription extends Composite implements IProjection{
 		this.indexes = indexes;
 	}
 
+	public int getArity() {
+		return variables.size();
+	}
+
 	public int[] getIndexes() {
 		return indexes;
 	}
 	
+	public void addVariable(String v){
+		variables.add(v);
+		checkIndexes();
+	}
+	public void addVariable(IVariable v)
+	{
+		addVariable(((Variable)v).getName());
+	}
+	
+	public void addVariables(List<String> lv){
+		for (String v: lv)
+			addVariable(v);		
+	}
+	
+	public List<String> getVariables(){
+		return variables;
+	}
+	
+	public void addAllVariables(List<IVariable> lv){
+		for (IVariable v: lv)
+			addVariable(((Variable)v).getName());
+	}
+	
+	public void addAllVariables(Set<IVariable> lv){
+		for (IVariable v: lv)
+			addVariable(((Variable)v).getName());		
+	}
+	
+	public boolean hasVariable(String v){
+		return variables.contains(v);
+	}
+	
+	public boolean addComponent(Component c)
+	{
+		boolean result = super.addComponent(c);
+		checkIndexes();
+		return result;
+	}
+
+	
+	private void checkIndexes(){
+		if ((variables.size() > 0) && (!this.getChildren().isEmpty())) {			
+			ITree t = (ITree)this.getChildren().get(0);
+			indexes = new int[t.getArity()];
+			for (int i = 0; i < indexes.length; i++)
+				indexes[i] = -1;
+			for (String v: variables)
+			{
+				int j = t.getVariables().indexOf(v);
+				if (j != -1)
+					indexes[j] = 0;
+			}
+		}
+	}
+	
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		buffer.append("PROJECTION [");
+		buffer.append("PROJECTION");
+		buffer.append("{");
+		for (int i = 0; i < this.variables.size(); i++) {
+			buffer.append(this.variables.get(i).toString());
+			buffer.append(", ");
+		}
+		buffer.delete(buffer.length() - 2, buffer.length());
+		buffer.append("}");
+
+		buffer.append(" [");
 		for(int i = 0; i < indexes.length; i++)
 		{
 			buffer.append(indexes[i]);

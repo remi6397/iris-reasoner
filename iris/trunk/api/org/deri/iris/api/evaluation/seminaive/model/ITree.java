@@ -25,6 +25,11 @@
  */
 package org.deri.iris.api.evaluation.seminaive.model;
 
+import java.util.List;
+import java.util.Set;
+import org.deri.iris.api.terms.IVariable;
+
+
 /**
  * 
  * @author Paco Garcia, University of Murcia
@@ -32,5 +37,12 @@ package org.deri.iris.api.evaluation.seminaive.model;
  *
  */
 public interface ITree extends Component{
-
+	public void addVariable(String v);
+	public void addVariable(IVariable v);
+	public List<String> getVariables();
+	public boolean hasVariable(String v);
+	public void addAllVariables(List<IVariable> lv);
+	public void addVariables(List<String> lv);
+	public void addAllVariables(Set<IVariable> lv);
+	public int getArity();
 }

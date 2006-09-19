@@ -33,10 +33,11 @@ import org.deri.iris.api.evaluation.seminaive.model.*;
 import org.deri.iris.exception.DataModelException;
 import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.basics.IPredicate;
 
 import java.util.Map;
 import java.util.Arrays;
-
+import java.util.LinkedList;
 
 /**
  * 
@@ -46,9 +47,9 @@ import java.util.Arrays;
 public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	protected IEvaluationProcedure method;
 	protected IEDB EDB;
-	protected Map<IRule, ITree> IDB;
+	protected Map<IPredicate, ITree> IDB;
 	
-	GeneralSeminaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<IRule, ITree> IDB) {
+	GeneralSeminaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<IPredicate, ITree> IDB) {
 		this.method = e;
 		this.EDB = EDB;
 		this.IDB = IDB;
@@ -62,8 +63,8 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param Q set of temporal backup relations
 	 * @return True if there are no new tuples in any relation in P; false otherwise
 	 */
-	protected boolean compare(Map<IRule, IRelation<ITuple>> P, Map<IRule, IRelation<ITuple>> Q){		
-		for (IRule head : P.keySet())
+	protected boolean compare(Map<IPredicate, IRelation<ITuple>> P, Map<IPredicate, IRelation<ITuple>> Q){		
+		for (IPredicate head : P.keySet())
 		{
 			if (!Q.get(head).containsAll(Arrays.asList(P.get(head).toArray())))
 				return false;
@@ -75,8 +76,8 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param r set of relations
 	 * @return True if all the relations are empty; false otherwise
 	 */
-	protected boolean isEmpty(Map<IRule, IRelation<ITuple>> r){		
-		for (IRule head: r.keySet())
+	protected boolean isEmpty(Map<IPredicate, IRelation<ITuple>> r){		
+		for (IPredicate head: r.keySet())
 			if (!r.get(head).isEmpty())
 				return false;
 		return true;
@@ -87,12 +88,12 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param source Set of source relations
 	 * @param target Set of target relations
 	 */
-	protected void copyRelations(Map<IRule, IRelation<ITuple>> source, Map<IRule, IRelation<ITuple>> target) {
-		for (IRule head: source.keySet()){
+	protected void copyRelations(Map<IPredicate, IRelation<ITuple>> source, Map<IPredicate, IRelation<ITuple>> target) {
+		for (IPredicate head: source.keySet()){
 			// 1st. Empty target
 			target.get(head).clear();
 			// 2nd. Copy all
-			target.get(head).addAll(Arrays.asList(source.get(head).toArray()));
+			target.get(head).addAll(new LinkedList( Arrays.asList(source.get(head).toArray())));
 		}
 	}
 	
@@ -101,9 +102,9 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param source Set of source relations
 	 * @param target Set of target relations
 	 */
-	protected void addRelations(Map<IRule, IRelation<ITuple>> source, Map<IRule, IRelation<ITuple>> target) {
-		for (IRule head: source.keySet())
-			target.get(head).addAll(Arrays.asList(source.get(head).toArray()));
+	protected void addRelations(Map<IPredicate, IRelation<ITuple>> source, Map<IPredicate, IRelation<ITuple>> target) {
+		for (IPredicate head: source.keySet())
+			target.get(head).addAll(new LinkedList(Arrays.asList(source.get(head).toArray())));
 		
 	}
 	

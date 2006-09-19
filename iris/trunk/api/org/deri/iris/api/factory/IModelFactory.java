@@ -20,4 +20,6 @@ public interface IModelFactory {
 	public IDifference createDifference();
 	public IUnion createUnion();
 	public IRule createRule(String relationName, int relationArity);
+	public IRule createUnaryRule(String relationName, int relationArity, String value);
+	public ITree createTree(String relationName);	
 }

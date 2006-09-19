@@ -33,6 +33,7 @@ import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.evaluation.seminaive.model.*;
 import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.operations.relations.*;
 import org.deri.iris.api.IEDB;
 
@@ -50,7 +51,7 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 	 * @param Q Tuples already discovered
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation<ITuple> eval(ITree pi, IEDB EDB, Map<IRule, IRelation<ITuple>> IDB) {
+	public IRelation<ITuple> eval(ITree pi, IEDB EDB, Map<IPredicate, IRelation<ITuple>> IDB) {
 		return evaluate(pi, EDB, IDB);
 	}
 	 
@@ -63,13 +64,14 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 	 * @param AQ Tuples discovered during the last iteration
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation<ITuple> eval_incr(ITree pi, IEDB EDB, Map<IRule, IRelation<ITuple>>  P, Map<IRule, IRelation<ITuple>>  AQ) {
+	public IRelation<ITuple> eval_incr(ITree pi, IEDB EDB, Map<IPredicate, IRelation<ITuple>>  P, Map<IPredicate, IRelation<ITuple>>  AQ) {
 		return evaluate(pi, EDB, AQ);
 	}
 
-	private IRelation<ITuple> evaluate(ITree node, IEDB EDB, Map<IRule, IRelation<ITuple>> IDB){
+	private IRelation<ITuple> evaluate(ITree node, IEDB EDB, Map<IPredicate, IRelation<ITuple>> IDB){
 		if (node instanceof DifferenceDescription){
-			
+			DifferenceDescription d = (DifferenceDescription)node;
+			return null;
 		}else if (node instanceof JoinDescription){
 			JoinDescription j = (JoinDescription)node;
 			org.deri.iris.api.operations.relation.IJoin join = 
@@ -81,7 +83,7 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 		}else if (node instanceof NaturalJoinDescription){
 			NaturalJoinDescription nj = (NaturalJoinDescription)node;
 			// TODO. Cartesian product
-			
+			return null;
 		}else if (node instanceof ProjectionDescription){
 			ProjectionDescription p = (ProjectionDescription)node;
 			org.deri.iris.api.operations.relation.IProjection projection =
@@ -103,6 +105,7 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 							p.getArity() == r.getArity())
 						return EDB.getFacts(p);
 				}
+				return null;
 			}			
 		}else if (node instanceof SelectionDescription){
 			SelectionDescription s = (SelectionDescription)node;
@@ -114,9 +117,9 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 		}else if (node instanceof UnionDescription){
 			UnionDescription u = (UnionDescription)node;
 			//TODO. Union
-		}
-			
-		
+			return null;
+		} else
+			return null;
 	}
 
 }

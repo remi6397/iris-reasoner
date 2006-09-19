@@ -35,6 +35,7 @@ import org.deri.iris.operations.relations.JoinCondition;
  */
 public interface IJoin extends ITree{
 
+	public int getArity();
 	public int[] getIndexes();
 	public JoinCondition getCondition();
 }

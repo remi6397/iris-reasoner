@@ -25,7 +25,13 @@
  */
 package org.deri.iris.evaluation.seminaive.model;
 
+import org.deri.iris.api.evaluation.seminaive.model.IRule;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.terms.Variable;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * Contains the head of a rule
@@ -35,11 +41,10 @@ import org.deri.iris.api.evaluation.seminaive.model.ITree;
  */
 public class Tree extends Composite implements ITree{
 	private String name;
-	private int arity;
+	private List<String> variables = new LinkedList<String>();
 	
-	Tree(String name, int arity) {
+	Tree(String name) {
 		this.name = name;
-		this.arity = arity;
 	}
 	
 	public String getName() {
@@ -47,18 +52,61 @@ public class Tree extends Composite implements ITree{
 	}
 	
 	public int getArity() {
-		return arity;
+		return variables.size();
 	}
 	
+	public void addVariable(String v){
+		variables.add(v);
+	}
+	public void addVariable(IVariable v)
+	{
+		addVariable(((Variable)v).getName());
+	}
+	
+	public void addVariables(List<String> lv){
+		for (String v: lv)
+			addVariable(v);		
+	}
+	
+	public List<String> getVariables(){
+		return variables;
+	}
+	
+	public void addAllVariables(List<IVariable> lv){
+		for (IVariable v: lv)
+			addVariable(((Variable)v).getName());
+		
+	}
+	
+	public void addAllVariables(Set<IVariable> lv){
+		for (IVariable v: lv)
+			addVariable(((Variable)v).getName());				
+	}
+	public boolean hasVariable(String v){
+		return variables.contains(v);
+	}
+	
+	public boolean equals(final Object o) {
+		if (!(o instanceof Tree)) return false;
+		Tree t = (Tree)o;
+		return (this.name.equalsIgnoreCase(t.getName()) &&
+				this.getArity() == t.getArity());
+	}
 	
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		buffer.append("RELATION['");
+		buffer.append("HEAD['");
 		buffer.append(name);
 		buffer.append("', ");
-		buffer.append(arity);
-		buffer.append("] --> \n");
-		buffer.append(this.getChildren().get(0).toString());
+		buffer.append(getArity());
+		buffer.append("]");
+		buffer.append("{");
+		for (int i = 0; i < this.variables.size(); i++) {
+			buffer.append(this.variables.get(i).toString());
+			buffer.append(", ");
+		}
+		buffer.delete(buffer.length() - 2, buffer.length());
+		buffer.append("}");
 		return buffer.toString();
 	}	
 }

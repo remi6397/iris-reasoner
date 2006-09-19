@@ -59,6 +59,9 @@ public interface IBasicFactory {
 	public ILiteral createLiteral(boolean isPositive, IPredicate predicate,
 			ITuple tuple);
 
+	public ILiteral createEqualityLiteral(final String predicate,final ITuple tuple);
+	public ILiteral createEqualityLiteral(final boolean positive, final String predicate,final ITuple tuple);
+	
 	public ITuple createMinimalTuple(ITerm... terms);
 	public ITuple createMinimalTuple(List<ITerm> terms);
 	

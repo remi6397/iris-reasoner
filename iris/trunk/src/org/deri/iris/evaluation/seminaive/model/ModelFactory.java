@@ -69,6 +69,14 @@ public class ModelFactory implements IModelFactory {
 	public IRule createRule(String relationName, int relationArity) {
 		return new RuleDescription(relationName, relationArity);
 	}
+	
+	public IRule createUnaryRule(String relationName, int relationArity, String value) {
+		return new UnaryRuleDescription(relationName, relationArity, value);
+	}
+
+	public ITree createTree(String relationName) {
+		return new Tree(relationName);
+	}
 
 	
 }

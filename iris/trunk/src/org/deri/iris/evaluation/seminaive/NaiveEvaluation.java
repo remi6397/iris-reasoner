@@ -33,6 +33,7 @@ import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.api.evaluation.seminaive.model.*;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.basics.IPredicate;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -64,7 +65,7 @@ import java.util.Arrays;
  */
 public class NaiveEvaluation extends GeneralSeminaiveEvaluation{
 
-	NaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<IRule, ITree> IDB) {
+	NaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<IPredicate, ITree> IDB) {
 		super(e, EDB, IDB);
 	}
 	
@@ -73,10 +74,10 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation{
 		 * Input: IDB --> pi = ITree; Relevants Rs for each IDB are the leaves
 		 * of the ITree
 		 */
-		Map<IRule, IRelation<ITuple>> P = new HashMap<IRule, IRelation<ITuple>>();
-		Map<IRule, IRelation<ITuple>> Q = new HashMap<IRule, IRelation<ITuple>>();
+		Map<IPredicate, IRelation<ITuple>> P = new HashMap<IPredicate, IRelation<ITuple>>();
+		Map<IPredicate, IRelation<ITuple>> Q = new HashMap<IPredicate, IRelation<ITuple>>();
 		
-		for (IRule head: IDB.keySet())
+		for (IPredicate head: IDB.keySet())
 		{
 			int arity = head.getArity();
 			P.put(head, new Relation(arity));
@@ -84,7 +85,7 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation{
 		}
 		
 		// 1st iteration
-		for (IRule head: IDB.keySet())
+		for (IPredicate head: IDB.keySet())
 		{
 			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 			P.put(head, method.eval(IDB.get(head), EDB, Q));
@@ -93,7 +94,7 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation{
 		for (; !compare(P, Q);) {
 			addRelations(P, Q);
 
-			for (IRule head: IDB.keySet())
+			for (IPredicate head: IDB.keySet())
 			{
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 				P.put(head, method.eval(IDB.get(head), EDB, Q));

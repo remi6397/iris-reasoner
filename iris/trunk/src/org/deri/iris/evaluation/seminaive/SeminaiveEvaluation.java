@@ -33,7 +33,7 @@ import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.api.evaluation.seminaive.model.*;
 import org.deri.iris.api.basics.ITuple;
-
+import org.deri.iris.api.basics.IPredicate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
@@ -70,7 +70,7 @@ import java.util.Arrays;
  */
 public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
 
-	SeminaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<IRule, ITree> IDB) {
+	SeminaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<IPredicate, ITree> IDB) {
 		super(e, EDB, IDB);
 	}
 
@@ -79,11 +79,11 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
 		 * Input: IDB --> pi = ITree; Relevants Rs for each IDB are the leaves
 		 * of the ITree
 		 */
-		Map<IRule, IRelation<ITuple>> P = new HashMap<IRule, IRelation<ITuple>>();
-		Map<IRule, IRelation<ITuple>> AP = new HashMap<IRule, IRelation<ITuple>>();
-		Map<IRule, IRelation<ITuple>> AQ = new HashMap<IRule, IRelation<ITuple>>();
+		Map<IPredicate, IRelation<ITuple>> P = new HashMap<IPredicate, IRelation<ITuple>>();
+		Map<IPredicate, IRelation<ITuple>> AP = new HashMap<IPredicate, IRelation<ITuple>>();
+		Map<IPredicate, IRelation<ITuple>> AQ = new HashMap<IPredicate, IRelation<ITuple>>();
 
-		for (IRule head: IDB.keySet())
+		for (IPredicate head: IDB.keySet())
 		{
 			int arity = head.getArity();
 			P.put(head, new Relation(arity));
@@ -97,7 +97,7 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
 		 *    Pi := APi;
 		 * end;
 		 */
-		for (IRule head: IDB.keySet())
+		for (IPredicate head: IDB.keySet())
 		{
 			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 			AP.put(head, method.eval(IDB.get(head), EDB, AQ));
@@ -119,7 +119,7 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
 		 */		
 		for (; !isEmpty(AP);) {
 			copyRelations(AP, AQ);
-			for (IRule head: IDB.keySet())
+			for (IPredicate head: IDB.keySet())
 			{
 				// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
 				AP.put(head, method.eval_incr(IDB.get(head), EDB, P, AQ));
