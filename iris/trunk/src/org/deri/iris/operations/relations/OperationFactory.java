@@ -98,6 +98,14 @@ public class OperationFactory implements IRelationFactory{
 		return new Selection(relation, pattern);
 	}
 
+	public ISelection createSelectionOperator(IRelation relation, int[] indexes) {
+		return new Selection(relation, indexes);
+	}
+	
+	public ISelection createSelectionOperator(IRelation relation, ITuple pattern, int[] indexes) {
+		return new Selection(relation, pattern, indexes);
+	}
+	
 	public IUnification createUnificationOperator(ITuple arg0, ITuple arg1) {
 		return new Unification(arg0, arg1);
 	}
