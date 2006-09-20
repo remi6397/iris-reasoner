@@ -33,13 +33,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.evaluation.common.IAdornedProgram;
 import org.deri.iris.api.evaluation.common.IAdornedRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.evaluation.common.AdornedProgram;
 import org.deri.iris.evaluation.common.Adornment;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
-import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 
 /**
  * 
@@ -52,7 +51,7 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
  */
 public class QSQTemplate {
 	
-	private AdornedProgram adornedProgram;
+	private IAdornedProgram adornedProgram;
 	
 	private Set<QSQRule> qsqRules;
 	
@@ -67,7 +66,7 @@ public class QSQTemplate {
 	List<IVariable> variables_n = null;
 	
 	
-	QSQTemplate(final AdornedProgram ap){
+	QSQTemplate(final IAdornedProgram ap){
 		if (ap == null) {
 			throw new IllegalArgumentException(
 					"Input argument must not be null");
@@ -82,13 +81,13 @@ public class QSQTemplate {
 	public Set<QSQRule> getQSQTemplate() {
 		Iterator<IAdornedRule> i = this.adornedProgram.getAdornedRules().iterator();
 		QSQRule qsqRule = null;
-		AdornedRule adornedRule = null;
+		IAdornedRule adornedRule = null;
 		LinkedList<SupplementaryRelation> supplementaryRelations = null;
 		int j = 0;
 		while(i.hasNext()){
 			supplementaryRelations 
 							= new LinkedList<SupplementaryRelation>();
-			adornedRule = (AdornedRule)i.next();
+			adornedRule = (IAdornedRule)i.next();
 			supplementaryRelations = createSupplementaryRelations(j, adornedRule);
 			qsqRule = new QSQRule(adornedRule, supplementaryRelations);
 			this.qsqRules.add(qsqRule);
@@ -98,7 +97,7 @@ public class QSQTemplate {
 	}
 	
 	private LinkedList<SupplementaryRelation> createSupplementaryRelations(
-			int superscript, AdornedRule ar){
+			int superscript, IAdornedRule ar){
 		
 		LinkedList<SupplementaryRelation> supplementaryRelations 
 						= new LinkedList<SupplementaryRelation>();
