@@ -128,7 +128,46 @@ public interface IRelationFactory {
 	
 	public IProjection createProjectionOperator(IRelation relation, int[] pattern);
 	
+	
+	/**
+	 * Create a selection operator that does selection with the following rule:
+	 * For provided pattern p = createTuple("d", "a", null), 
+	 * the operator will select those tuples from relation r, 
+	 * which have term "d" at the 0th position and term "a" at the 1st position.
+	 * 
+	 * @param Relation to be selected
+	 * @param Pattern Pattern that defines the selection condition 
+	 * @return Relataion containing selected elements
+	 */
 	public ISelection createSelectionOperator(IRelation relation, ITuple pattern);
+	
+	/**
+	 * Create a selection operator that does selection with the following rule:
+	 * For provided indexes i = int[]{1, 1, -1, 2, 2}, the operator will select 
+	 * those tuples from relation r, which have equal terms at the 0th and 1st 
+	 * position and equal terms at the 3rd and 4th position.
+	 * 
+	 * @param Relation relation to be selected
+	 * @param Indexes Indexes that define the selection condition 
+	 * @return Relataion containing selected elements
+	 */
+	public ISelection createSelectionOperator(IRelation relation, int[] indexes);
+	
+	/**
+	 * Create a selection operator that does selection with the following rule:
+	 * For provided pattern p = createTuple("d", "a", null, null, null, null) 
+	 * and indexes i = int[]{-1, -1, 1, 1, 2, 2}, 
+	 * the operator will select those tuples from relation r, 
+	 * which have term "d" at the 0th position and term "a" at the 1st position,
+	 * as well as equal terms at the 3th and 4th position and equal terms at 
+	 * the 4th and 5th position.
+	 * 
+	 * @param Relation relation to be selected
+	 * @param Pattern Pattern that defines the selection condition 
+	 * @param Indexes Indexes that define the selection condition 
+	 * @return Relataion containing selected elements
+	 */
+	public ISelection createSelectionOperator(IRelation relation, ITuple pattern, int[] indexes);
 	
 	public IUnification createUnificationOperator(final ITuple arg0, final ITuple arg1);
 	
