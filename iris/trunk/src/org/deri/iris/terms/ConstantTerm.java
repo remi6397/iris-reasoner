@@ -99,8 +99,7 @@ public class ConstantTerm implements IConstantTerm<ITerm>, Cloneable {
 	}
 
 	public IConstantTerm getMinValue() {
-		// or return value.getMinValue() ?
-		return null;
+		return new ConstantTerm(this.value.getMinValue());
 	}
 
 	public void setValue(ITerm t) {
