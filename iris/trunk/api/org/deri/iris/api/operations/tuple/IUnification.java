@@ -27,10 +27,6 @@ package org.deri.iris.api.operations.tuple;
 
 import java.util.List;
 
-import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.operations.relations.Multiequation;
-import org.deri.iris.operations.relations.MultiequationSystem;
-
 /**
  *
  * Interface of a unification operation used to promote modularity 
@@ -47,12 +43,9 @@ import org.deri.iris.operations.relations.MultiequationSystem;
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:54:09
  *
- * @version $Revision: 1.6 $ $Date: 2006-09-12 07:36:26 $
+ * @version $Revision: 1.7 $ $Date: 2006-09-20 13:16:49 $
  */
 public interface IUnification {
 
-	public List<Multiequation> unify();
-
-	public MultiequationSystem createInitialMultiequationSystem(ITerm term0, ITerm term1);
-	
+	public List<List> unify();
 }
