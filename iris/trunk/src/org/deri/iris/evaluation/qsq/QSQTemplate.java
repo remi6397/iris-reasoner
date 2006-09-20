@@ -33,12 +33,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.api.evaluation.common.IAdornedPredicate;
-import org.deri.iris.api.evaluation.common.IAdornedProgram;
 import org.deri.iris.api.evaluation.common.IAdornedRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.evaluation.common.AdornedProgram;
 import org.deri.iris.evaluation.common.Adornment;
+import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
+import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 
 /**
  * 
@@ -51,7 +52,7 @@ import org.deri.iris.evaluation.common.Adornment;
  */
 public class QSQTemplate {
 	
-	private IAdornedProgram adornedProgram;
+	private AdornedProgram adornedProgram;
 	
 	private Set<QSQRule> qsqRules;
 	
@@ -66,13 +67,13 @@ public class QSQTemplate {
 	List<IVariable> variables_n = null;
 	
 	
-	QSQTemplate(final IAdornedProgram ap){
+	QSQTemplate(final AdornedProgram ap){
 		if (ap == null) {
 			throw new IllegalArgumentException(
 					"Input argument must not be null");
 		}
 		this.adornedProgram = ap;
-		this.qsqRules = new HashSet<QSQRule>();
+		this.qsqRules = new HashSet();
 	}
 	
 	/**
@@ -81,13 +82,13 @@ public class QSQTemplate {
 	public Set<QSQRule> getQSQTemplate() {
 		Iterator<IAdornedRule> i = this.adornedProgram.getAdornedRules().iterator();
 		QSQRule qsqRule = null;
-		IAdornedRule adornedRule = null;
+		AdornedRule adornedRule = null;
 		LinkedList<SupplementaryRelation> supplementaryRelations = null;
 		int j = 0;
 		while(i.hasNext()){
 			supplementaryRelations 
 							= new LinkedList<SupplementaryRelation>();
-			adornedRule = (IAdornedRule)i.next();
+			adornedRule = (AdornedRule)i.next();
 			supplementaryRelations = createSupplementaryRelations(j, adornedRule);
 			qsqRule = new QSQRule(adornedRule, supplementaryRelations);
 			this.qsqRules.add(qsqRule);
@@ -97,7 +98,7 @@ public class QSQTemplate {
 	}
 	
 	private LinkedList<SupplementaryRelation> createSupplementaryRelations(
-			int superscript, IAdornedRule ar){
+			int superscript, AdornedRule ar){
 		
 		LinkedList<SupplementaryRelation> supplementaryRelations 
 						= new LinkedList<SupplementaryRelation>();
@@ -124,11 +125,11 @@ public class QSQTemplate {
 		this.variables_0 = new ArrayList<IVariable>();
 		this.variables_n = new ArrayList<IVariable>();
 		SupplementaryRelation supplementaryRelation = null;
-		IAdornedPredicate predicate = null;
+		AdornedPredicate predicate = null;
 		ITerm term = null;
 		
-		if(h.getPredicate()instanceof IAdornedPredicate)
-			predicate = (IAdornedPredicate)h.getPredicate();
+		if(h.getPredicate()instanceof AdornedPredicate)
+			predicate = (AdornedPredicate)h.getPredicate();
 		Adornment[] adornments = predicate.getAdornment();
 		
 		for(int i=0; i<adornments.length; i++){
@@ -152,51 +153,6 @@ public class QSQTemplate {
 						superscript, subscript, variables_n));
 		return supplementaryRelations;
 	}
-	
-	/*private LinkedList<SupplementaryRelation> getSupplementaryRelations(
-			int superscript, List<ILiteral> body){
-		
-		LinkedList<SupplementaryRelation> supplementaryRelations 
-						= new LinkedList<SupplementaryRelation>();
-		List<IVariable> variables_before = null;
-		List<IVariable> variables_after = null;
-		List<IVariable> variables = null;
-		ILiteral literal = null;
-		List<IVariable> terms = null;
-		
-		for(int i=0; i<body.size()-1; i++){
-			variables_before = new ArrayList<IVariable>();
-			variables_before.addAll(variables_0);
-			variables_after = new ArrayList<IVariable>();
-			variables_after.addAll(variables_n);
-			
-			for(int j=0; j<i+1; j++){
-				literal = body.get(j);
-				terms = literal.getTuple().getTerms();
-				for(ITerm term : terms){
-					if(term instanceof IVariable && !variables_before.contains(term))
-						variables_before.add((IVariable)term);
-				}
-			}
-			for(int j=i+1; j<body.size(); j++){
-				literal = body.get(j);
-				terms = literal.getTuple().getTerms();
-				for(ITerm term : terms){
-					if(term instanceof IVariable && !variables_after.contains(term))
-						variables_after.add((IVariable)term);
-				}
-			}
-			variables = new ArrayList<IVariable>();
-			for(IVariable variable : variables_after){
-				if(variable != null && variables_before.contains(variable)){
-					variables.add(variable);
-				}
-			}
-			supplementaryRelations.add(
-					new SupplementaryRelation(superscript, i+1, variables));
-		}
-		return supplementaryRelations;
-	}*/
 
 	/**
 	 * maybe slightly more efficient implementation of the above method 

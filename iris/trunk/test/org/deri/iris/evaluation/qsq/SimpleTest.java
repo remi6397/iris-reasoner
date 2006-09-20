@@ -38,7 +38,6 @@ import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.evaluation.common.IAdornedProgram;
 import org.deri.iris.evaluation.common.AdornedProgram;
 
 /**
@@ -46,7 +45,7 @@ import org.deri.iris.evaluation.common.AdornedProgram;
  * @date   02.08.2006 14:37:59
  */
 public class SimpleTest {
-	static IAdornedProgram program = null;
+	static AdornedProgram program = null;
 	static QSQTemplate qsqTemplate = null;
 	
 	
@@ -58,14 +57,19 @@ public class SimpleTest {
 	private static void test(){
 		qsqTemplate = new QSQTemplate(program);
 		qsqTemplate.getQSQTemplate();
+		
+		System.out.println();
+		System.out.println("*** QSQTemplate: ******");
 		System.out.println(qsqTemplate);
 	}
 	
 	private static void setAdornedProgram(){
-		System.out.println("*** TEST 2 ******");
+		System.out.println("*** TEST 1 ******");
 		
 		Set<IRule> rules = new HashSet<IRule>();
 
+		// first rule: 
+		// rsg(X, Y) <- flat(X, Y);
 		// computing head: first rule
 		ILiteral lh = BASIC.createLiteral(true, 
 				BASIC.createPredicate("rsg", 2),
@@ -83,6 +87,8 @@ public class SimpleTest {
 
 		rules.add(BASIC.createRule(head, body));
 
+		// second rule: 
+		// rsg(X, Y) <- up(X, X1), rsg(Y1, X1), down(Y1, Y);
 		// computing head: second rule
 		lh = BASIC.createLiteral(true, 
 				BASIC.createPredicate("rsg", 2), 
@@ -112,6 +118,8 @@ public class SimpleTest {
 
 		rules.add(BASIC.createRule(head, body));
 
+		// query:
+		// query(Y) <- rsg(a, Y);
 		IQuery query = BASIC.createQuery(
 							BASIC.createLiteral(true, 
 									BASIC.createPredicate("rsg", 2), 

@@ -25,9 +25,12 @@
  */
 package org.deri.iris.evaluation.qsq;
 
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
-import org.deri.iris.api.evaluation.common.IAdornedRule;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 
 /**
  * 
@@ -39,11 +42,15 @@ import org.deri.iris.api.evaluation.common.IAdornedRule;
  */
 public class QSQRule {
 	
-	private IAdornedRule adornedRule;
+	private AdornedRule adornedRule;
 	
 	private LinkedList<SupplementaryRelation> supplementaryRelations;
 
-	public QSQRule(IAdornedRule ar, LinkedList<SupplementaryRelation> sr) {
+	private Set<ITuple> input = null;
+	
+	private Set<ITuple> output = null;
+	
+	public QSQRule(AdornedRule ar, LinkedList<SupplementaryRelation> sr) {
 		if ((1 + ar.getBodyLiterals().size()) !=
 				sr.size()) {
 			throw new IllegalArgumentException(
@@ -53,12 +60,14 @@ public class QSQRule {
 		}
 		this.adornedRule = ar;
 		this.supplementaryRelations = sr;
+		this.input = new HashSet<ITuple>();
+		this.output = new HashSet<ITuple>();
 	}
 
 	/**
 	 * @return Returns the rule.
 	 */
-	public IAdornedRule getAdornedRule() {
+	public AdornedRule getAdornedRule() {
 		return adornedRule;
 	}
 
@@ -74,6 +83,20 @@ public class QSQRule {
 	 */
 	public LinkedList<SupplementaryRelation> getSupplementaryRelations() {
 		return supplementaryRelations;
+	}
+
+	/**
+	 * @return Returns the input.
+	 */
+	public Set<ITuple> getInput() {
+		return input;
+	}
+
+	/**
+	 * @return Returns the output.
+	 */
+	public Set<ITuple> getOutput() {
+		return output;
 	}
 	
 }
