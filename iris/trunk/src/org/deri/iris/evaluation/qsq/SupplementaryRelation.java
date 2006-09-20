@@ -27,7 +27,6 @@ package org.deri.iris.evaluation.qsq;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.storage.Relation;
@@ -42,6 +41,9 @@ public class SupplementaryRelation extends Relation{
 	
 	private int subscript;
 	
+	/**
+	 * List of variables of the supplementary relation
+	 */
 	private List<IVariable> variables;
 	
 	
