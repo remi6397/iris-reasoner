@@ -26,18 +26,17 @@
 
 package org.deri.iris.operations.relations;
 
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.SortedSet;
+import java.util.Map;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.basics.MinimalTuple;
-import org.deri.iris.operations.tuple.IndexComparator;
 import org.deri.iris.operations.tuple.SelectionComparator;
+import org.deri.iris.operations.tuple.SelectionFullComparator;
 import org.deri.iris.storage.Relation;
 
 /**
@@ -53,84 +52,132 @@ import org.deri.iris.storage.Relation;
  */
 public class Selection implements ISelection{
 	private IRelation relation = null;
-	private IRelation selectionRelation = null;
 	private ITuple pattern = null;
-	private IndexComparator indexComparator = null;
-	private SelectionComparator selectionComparator = null;
+	private int[] indexes = null;
 	
 	Selection(IRelation relation, ITuple pattern){
 		if (relation == null || pattern == null) {
-			throw new IllegalArgumentException("All construcotr " +
+			throw new IllegalArgumentException("All constructor " +
 					"parameters must not be specified (non null values");
+		}
+		if (relation.size() == 0) {
+			throw new IllegalArgumentException("Cannot do selection on " +
+					"an empty realtion!");
 		}
 		this.relation = relation;
 		this.pattern = pattern;
-		selectionRelation = 
-			new Relation(((ITuple)relation.first()).getArity());
+	}
+	
+	Selection(IRelation relation, int[] indexes){
+		if (relation == null || indexes == null) {
+			throw new IllegalArgumentException("All constructor " +
+					"parameters must not be specified (non null values");
+		}
+		if (relation.size() == 0) {
+			throw new IllegalArgumentException("Cannot do selection on " +
+					"an empty realtion!");
+		}
+		this.relation = relation;
+		this.indexes = indexes;
+	}
+	
+	Selection(IRelation relation, ITuple pattern, int[] indexes){
+		if (relation == null || pattern == null || indexes == null) {
+			throw new IllegalArgumentException("All constructor " +
+					"parameters must not be specified (non null values");
+		}
+		if (relation.size() == 0) {
+			throw new IllegalArgumentException("Cannot do selection on " +
+					"an empty realtion!");
+		}
+		this.relation = relation;
+		this.pattern = pattern;
+		this.indexes = indexes;
 	}
 	
 	public IRelation select() {
+		if(pattern != null && indexes == null)
+			return select0();
+		if(pattern == null && indexes != null)
+			return select1();
+		else
+			return select2();
+	}
+	
+	public IRelation select0() {
 		// Sort relation on tupples defined by the pattern
 		int[] indexes = this.getIndexes(this.pattern);
-		this.indexComparator = new IndexComparator(indexes);
-		IRelation rel = new Relation(this.indexComparator);
+		SelectionFullComparator comparator = new SelectionFullComparator(indexes);
+		IRelation rel = new Relation(comparator);
+		
+		rel.add(pattern);
 		rel.addAll(this.relation);
-		this.relation = rel;
+		if(! isValid(pattern)) 
+			rel.remove(pattern);
 		
-		ITuple transformedTuple = this.getMinimalTupleValue(pattern, indexes);
-		SortedSet set = relation.tailSet(transformedTuple);
-		
-		Iterator<ITuple> iterator = set.iterator();
-		ITuple tuple;
-		selectionComparator = new SelectionComparator(indexes);
-		while(iterator.hasNext()){
-			tuple = iterator.next();
-			if(selectionComparator.compare(tuple, transformedTuple) == 0){
-				while(tuple != null){
-					if(!(tuple instanceof MinimalTuple)){
-						selectionRelation.add(tuple);
-					}
-					tuple = tuple.getDuplicate();
-				}
-			}else{
-				return selectionRelation;
-			}	
-		}
-		return selectionRelation;
+		return rel;
 	}
-
-	private int[]getIndexes(ITuple pattern){
+	
+	public IRelation select1() {
+		// Sort relation on tupples defined by the indexes
+		SelectionComparator comparator = new SelectionComparator(this.indexes);
+		IRelation rel = new Relation(comparator);
+		IRelation relTrash = new Relation(comparator);
+		
+		Iterator i = this.relation.iterator();
+		ITuple t = null;
+		while(i.hasNext()){
+			t = (ITuple)i.next();
+			if(comparator.getQuota() != comparator.checkTerms(t))
+				relTrash.add(t);
+			else
+				break;
+		}
+		this.relation.removeAll(relTrash);
+		rel.addAll(this.relation);
+		
+		return rel;
+	}
+	
+	public IRelation select2() {
+		this.relation = select1();
+		IRelation rel = select0();
+		
+		return rel;
+	}
+	
+	private int[] getIndexes(ITuple pattern){
+		Map<ITerm, Integer> termSet = new HashMap<ITerm, Integer>();
 		int[] indexes = new int[pattern.getArity()];
 		List<ITerm> terms = pattern.getTerms();
-		Iterator<ITerm> i = terms.iterator();
-		int j=0;
-		ITerm term;
-		while(i.hasNext()){
-			term = i.next();
-			if(term.getValue() == null)
+		int i = 0;
+		ITerm t = null;
+		
+		for(int j=0; j<terms.size(); j++){
+			t = terms.get(j);
+			if(t != null){
+				if(t.getValue() != null){
+					if(termSet.containsKey(t))
+						indexes[j] = termSet.get(t);
+					else{
+						termSet.put(t, ++i);
+						indexes[j] = i;
+					}
+				}else
+					indexes[j] = -1;
+			}else
 				indexes[j] = -1;
-			else
-				indexes[j] = j;
-			j++;
 		}
 		return indexes;
 	}
 	
-	// Correct it! (create a helper class and merge this method with one used in the Join)
-	private ITuple getMinimalTupleValue(ITuple tuple, int[] indexes){
-		ITerm[] terms = new ITerm[tuple.getArity()];
-		List<ITerm> termList = new LinkedList();
-		for(int i=0; i<indexes.length; i++){
-			if(indexes[i] != -1)
-				terms[i] = tuple.getTerm(indexes[i]);
-		}		
-		for(int j=0; j<indexes.length; j++){
-			if(terms[j] == null)
-				terms[j] = tuple.getTerm(j).getMinValue();
+	private boolean isValid(ITuple tup){
+		List<ITerm> terms = tup.getTerms();
+		for(ITerm t : terms){
+			if(t == null || t.getValue() == null)
+				return false;
 		}
-		for(int i=0; i<tuple.getArity(); i++)
-			termList.add(terms[i]);
-		
-		return new MinimalTuple(termList);
+		return true;
 	}
+	
 }

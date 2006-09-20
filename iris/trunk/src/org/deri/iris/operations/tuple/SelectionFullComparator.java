@@ -31,16 +31,16 @@ import org.deri.iris.api.basics.ITuple;
 /**
  * Implementation of the Comparator interface meant to be 
  * used for creating an index tree. This tree is sorted based on some 
- * particular indexe/s. For instance if indexes are <1, 2, 1, 2> we want
+ * particular indexe/s. For instance if indezes are <1, 2, 1, 2> we want
  * to group those tuples which have first and third term equal and second 
  * and fourth term equal. Thus for these indexes if:
  * 
  * t0 = <a, b, a, b>
  * t1 = <a, a, c, d>
  * 
- * after compareing t0 and t1, it will be returned 0. This (returned value = 0)
- * causes that t1 will not be stored in the tree at all, as it does not 
- * satisfies the condition (first and third term equal and second 
+ * after compareing t0 and t1, it will be returned 0 and t1 will not be
+ * stored in the tree at all, as it does not satisfies the condition (
+ * first and third term equal and second 
  * and fourth term equal). While for tuples:
  * 
  * t0 = <a, b, a, b>
@@ -50,6 +50,11 @@ import org.deri.iris.api.basics.ITuple;
  * in ascending order using compareTo method (and both tuples will be stored 
  * in the tree).
  * 
+ * SelectionFullComparator handls also tuples which may have null values for 
+ * their terms, e.g.
+ * 
+ * t0 = <a, null, b, null>
+ * 
  * Also see:
  * (non-Javadoc)
  * @see org.deri.iris.operations.tuple.BasicComparator#compare(org.deri.iris.api.basics.ITuple, org.deri.iris.api.basics.ITuple)
@@ -57,87 +62,114 @@ import org.deri.iris.api.basics.ITuple;
  * @author Darko Anicic, DERI Innsbruck
  * @date   31.05.2006 14:20:06
  */
-public class SelectionComparator extends BasicComparator{
+/*public class SelectionFullComparator extends SelectionComparator{
 
-	public SelectionComparator(final int[] sortIndexes) {
+	public SelectionFullComparator(final int[] sortIndexes) {
 		super(sortIndexes);
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public int compare(ITuple t0, ITuple t1){
 		if (t0.getArity() != t1.getArity()) {
 			throw new IllegalArgumentException(
 					"Couldn't compare due to different arity of tuples.");
 		} 
+		int comp = 0;
 		int quota = getQuota();
 		
 		if(quota != checkTerms(t0)) return 0;
 		
 		if(quota != checkTerms(t1)) return 0;
 		
-		return checkTuples(t0, t1);
+		if(checkTuples(t0, t1)==0)
+			return 0;
+		
+		for(int i=0; i<this.getSortIndexes().length; i++){
+			if(t0.getTerm(i) == null){
+				if(t1.getTerm(i) != null) return -1;
+			}else{
+				if(t0.getTerm(i).getValue() == null &&
+						t1.getTerm(i).getValue() != null)
+						return -1;
+			}
+			
+			if(t1.getTerm(i) == null){
+				if(t0.getTerm(i) != null) return 1;
+			}else{
+				if(t1.getTerm(i).getValue() == null &&
+						t0.getTerm(i).getValue() != null)
+						return 1;
+			}
+		
+			if(t0.getTerm(i) != null &&
+					t1.getTerm(i) != null)
+			if(t0.getTerm(i).getValue() != null &&
+					t1.getTerm(i).getValue() != null){
+				
+				comp = t1.getTerm(i).compareTo(t0.getTerm(i));
+			}
+			if(comp != 0) return comp; 
+		}
+		return 0;
 	}
-	
-	public int getQuota(){
-		int quota = 0;
+}*/
+
+public class SelectionFullComparator extends SelectionComparator{
+
+	public SelectionFullComparator(final int[] sortIndexes) {
+		super(sortIndexes);
+	}
+
+	@SuppressWarnings("unchecked")
+	public int compare(ITuple t0, ITuple t1){
+		if (t0.getArity() != t1.getArity()) {
+			throw new IllegalArgumentException(
+					"Couldn't compare due to different arity of tuples.");
+		} 
+		int quota = getQuota();
+		int comp = 0;
+		
+		if(quota != checkTerms(t0)) return 0;
+		
+		if(quota != checkTerms(t1)) return 0;
+		
 		for(int i=0; i<this.getSortIndexes().length; i++){
 			if(this.getSortIndexes()[i] >= 0){
-				for(int j=i+1; j<this.getSortIndexes().length; j++){
+				for(int j=0; j<this.getSortIndexes().length; j++){
 					if(this.getSortIndexes()[i] == this.getSortIndexes()[j])
-					quota++;
+					if(! t0.getTerm(i).getValue().equals(t1.getTerm(j).getValue())) 	
+						return 0;
 				}
 			}
 		}
-		return quota;
-	}
-	
-	/**
-	 * For:
-	 * 
-	 * indexes = <1, 2, 1, 2>
-	 * 
-	 * checks wheter it is, for instance, a case:
-	 * 
-	 * t = <a, b, a, b>
-	 * 
-	 * @param t tuple which terms need to be compared
-	 * @return number of terms that are equal
-	 */
-	public int checkTerms(ITuple t){
-		int comp0 = 0;
+		
 		for(int i=0; i<this.getSortIndexes().length; i++){
-			if(this.getSortIndexes()[i] >= 0){
-				for(int j=i+1; j<this.getSortIndexes().length; j++){
-					if(this.getSortIndexes()[i] == this.getSortIndexes()[j])
-					if(t.getTerm(i).getValue().equals(t.getTerm(j).getValue())) 
-						comp0++;
-				}
+			if(t0.getTerm(i) == null){
+				if(t1.getTerm(i) != null) return -1;
+			}else{
+				if(t0.getTerm(i).getValue() == null &&
+						t1.getTerm(i).getValue() != null)
+						return -1;
 			}
+			
+			if(t1.getTerm(i) == null){
+				if(t0.getTerm(i) != null) return 1;
+			}else{
+				if(t1.getTerm(i).getValue() == null &&
+						t0.getTerm(i).getValue() != null)
+						return 1;
+			}
+		
+			if(t0.getTerm(i) != null &&
+					t1.getTerm(i) != null)
+			if(t0.getTerm(i).getValue() != null &&
+					t1.getTerm(i).getValue() != null){
+				
+				comp = t1.getTerm(i).compareTo(t0.getTerm(i));
+			}
+			if(comp != 0) return comp; 
 		}
-		return comp0;
-	}
-	
-	/**
-	 * For:
-	 * 
-	 * indexes = <1, 2, -1, -1>
-	 * 
-	 * checks wheter it is, for instance, a case:
-	 * 
-	 * t0 = <a, b, c, d>
-	 * t0 = <a, b, e, f>
-	 * 
-	 * @param t0 tuple to be compared
-	 * @param t1 tuple to be compared
-	 * @return a negative integer, zero, or a positive integer as this object
-     *		is less than, equal to, or greater than the specified object.
-	 */
-	public int checkTuples(ITuple t0, ITuple t1){
-		int comp0 = 0;
-		for(int i=0; i<this.getSortIndexes().length; i++){
-			comp0 = t1.getTerm(i).compareTo(t0.getTerm(i));
-			if(comp0 != 0) return comp0; 
-		}
-		return comp0;
+		return 0;
 	}
 }
 
