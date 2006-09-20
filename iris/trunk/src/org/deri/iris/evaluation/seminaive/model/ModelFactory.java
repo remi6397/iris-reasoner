@@ -48,6 +48,14 @@ public class ModelFactory implements IModelFactory {
 		return new SelectionDescription(pattern);
 	}
 	
+	public ISelection createSelection(ITuple pattern, int[] indexes) {
+		return new SelectionDescription(pattern, indexes);
+	}
+	
+	public ISelection createSelection(int[] indexes) {
+		return new SelectionDescription(indexes);		
+	}
+	
 	public IProjection createProjection(int[] indexes) {
 		return new ProjectionDescription(indexes);
 	}
@@ -70,8 +78,8 @@ public class ModelFactory implements IModelFactory {
 		return new RuleDescription(relationName, relationArity);
 	}
 	
-	public IRule createUnaryRule(String relationName, int relationArity, String value) {
-		return new UnaryRuleDescription(relationName, relationArity, value);
+	public IRule createUnaryRule(String value) {
+		return new UnaryRuleDescription(value);
 	}
 
 	public ITree createTree(String relationName) {

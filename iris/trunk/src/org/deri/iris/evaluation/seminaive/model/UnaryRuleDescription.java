@@ -40,14 +40,12 @@ import org.deri.iris.terms.Variable;
  *
  */
 public class UnaryRuleDescription extends Leaf implements IRule{
-	private String name;
-	private int arity;
+	private String name = createUniqueName();
+	private int arity = 1;
 	private String value;
 	private List<String> variables = new LinkedList<String>();
 	
-	UnaryRuleDescription(String name, int arity, String value) {
-		this.name = name;
-		this.arity = arity;
+	UnaryRuleDescription(String value) {
 		this.value = value;
 	}
 	
@@ -99,16 +97,16 @@ public class UnaryRuleDescription extends Leaf implements IRule{
 		return (this.name.equalsIgnoreCase(((IRule)o).getName()) &&
 				this.arity == ((IRule)o).getArity());
 	}
-	
+
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("UNARY_RELATION['");
 		buffer.append(name);
 		buffer.append("', ");
 		buffer.append(arity);
-		buffer.append(", '");
+		buffer.append(", ");
 		buffer.append(value);
-		buffer.append("']");
+		buffer.append("]");
 		buffer.append("{");
 		for (int i = 0; i < this.variables.size(); i++) {
 			buffer.append(this.variables.get(i).toString());
@@ -117,5 +115,10 @@ public class UnaryRuleDescription extends Leaf implements IRule{
 		buffer.delete(buffer.length() - 2, buffer.length());
 		buffer.append("}");
 		return buffer.toString();
+	}
+	
+	private String createUniqueName(){
+		java.util.Random r = new java.util.Random();
+		return "D" + r.nextInt();
 	}
 }

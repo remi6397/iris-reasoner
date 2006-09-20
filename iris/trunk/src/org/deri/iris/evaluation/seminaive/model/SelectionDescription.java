@@ -44,6 +44,7 @@ import org.deri.iris.terms.Variable;
 public class SelectionDescription extends Composite implements ISelection{
 
 	private ITuple pattern = null;
+	private int[] indexes = null;
 	private List<String> variables = new LinkedList<String>();
 
 	SelectionDescription(ITuple pattern) {
@@ -53,6 +54,24 @@ public class SelectionDescription extends Composite implements ISelection{
 		}
 		this.pattern = pattern;
 	}
+	
+	SelectionDescription(int[] indexes) {
+		if (indexes == null) {
+			throw new IllegalArgumentException("All constructor " +
+					"parameters must not be specified (non null values");
+		}
+		this.indexes = indexes;
+	}
+
+	SelectionDescription(ITuple pattern, int[] indexes) {
+		if (pattern == null && indexes == null) {
+			throw new IllegalArgumentException("All constructor " +
+					"parameters must not be specified (non null values");
+		}
+		this.pattern = pattern;
+		this.indexes = indexes;
+	}
+
 	
 	public int getArity() {
 		return variables.size();
@@ -112,9 +131,21 @@ public class SelectionDescription extends Composite implements ISelection{
 		}
 		buffer.delete(buffer.length() - 2, buffer.length());
 		buffer.append("}");
-		buffer.append("[");
-		buffer.append(pattern);
-		buffer.append("]\n(");
+		if (pattern != null) {
+			buffer.append("[");
+			buffer.append(pattern);
+			buffer.append("]");
+		} 
+		if (indexes != null) {
+			buffer.append("[");
+			for (int i = 0; i < indexes.length; i++){
+				buffer.append(indexes[i]);
+				buffer.append(", ");
+			}
+			buffer.delete(buffer.length() - 2, buffer.length());
+			buffer.append("]");
+		}
+		buffer.append("\n(");
 		buffer.append(this.getChildren().get(0).toString());
 		buffer.append(")");
 		return buffer.toString();

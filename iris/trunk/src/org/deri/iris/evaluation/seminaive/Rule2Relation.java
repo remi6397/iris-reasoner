@@ -131,20 +131,19 @@ public class Rule2Relation {
 		for (ILiteral l: literals)
 		{
 			ITree temporalResult ;
-			// Preliminary. Check whether it is an ordinary subgoal or one of the type X = a.
-			if (! (l instanceof EqualityLiteral)) 
-			{
+			if (! (l instanceof EqualityLiteral)) {
+				// A. Ordinary subgoals
 				temporalResult = evalLiteral(l, head, variables);
-			} else { // Equality literal
-				equalityLiterals.add((EqualityLiteral)l);
+			} else {
+				// B. Not ordinary subgoals
 				temporalResult = evalEqualityLiteral(l, head, variables, equalityLiterals);
 			}
 			
 			// C. Natural join of all the things generated (E)
-			if (temporalResult != null)
+			if (temporalResult != null) {
 				if (!temporalResult.equals(head))
 					globalJoin.addComponent(temporalResult); 
-			else
+			} else
 				return null; // this rule has no sense
 		}
 		
@@ -152,18 +151,18 @@ public class Rule2Relation {
 		if (globalJoin.getChildren().size() == 1)
 			globalJoin = (ITree)globalJoin.getChildren().get(0);
 		
-		// TODO. D. EVAL-RULE(r, R1,...,Rn) = SELECTION_F(E)
+		// D. EVAL-RULE(r, R1,...,Rn) = SELECTION_F(E)
 		// F conjunction of built-in subgoals appearing.
 		if (!equalityLiterals.isEmpty())
 		{
-			// TODO. Depends on the equalityLiterals implementation
-			/*
-			ITuple pattern = BasicFactory.getInstance().createTuple();
-			ISelection selection = ModelFactory.FACTORY.createSelection(pattern);
-		    selection.addComponent(globalJoin);
-		    result = selection;
-		    */
-			result = globalJoin;
+			int[] selectionIndex = new int[globalJoin.getArity()];
+			List<ITerm> selectionPattern = new ArrayList<ITerm>();
+			for (int i = 0; i < globalJoin.getArity(); i++)
+				selectionPattern.add(null);
+			getSelectionIndexes(equalityLiterals, selectionPattern, selectionIndex, globalJoin);
+			ISelection s = ModelFactory.FACTORY.createSelection(Factory.BASIC.createTuple(selectionPattern), selectionIndex);
+			s.addComponent(globalJoin);
+			result = s;
 		} else
 			result = globalJoin;
 		
@@ -194,7 +193,6 @@ public class Rule2Relation {
 		 org.deri.iris.api.evaluation.seminaive.model.IRule leaf = ModelFactory.FACTORY.createRule(
 				 l.getPredicate().getPredicateSymbol(),
 				 l.getPredicate().getArity());
-		 leaf.addAllVariables(l.getTuple().getVariables());
 		 
 		 /*
 		  * 2. SELECTION_Fi(Ri)
@@ -212,13 +210,14 @@ public class Rule2Relation {
 		 int[] projectionIndex = new int[arity];
 		 int[] joinIndex = new int[arity];
 		 
-		 boolean noFi = getIndexes(terms, selectionPattern, selectionIndex, projectionIndex, projectionVariables, joinIndex, variables, l, head);
+		 boolean noFi = getIndexes(terms, selectionPattern, selectionIndex, projectionIndex, 
+				 projectionVariables, joinIndex, variables, l, head, leaf);
 		 
 		 
 		 if (!noFi)
 		 {
 			 // 2.2. SELECTION
-			 ISelection s = ModelFactory.FACTORY.createSelection(BasicFactory.getInstance().createTuple(selectionPattern));
+			 ISelection s = ModelFactory.FACTORY.createSelection(Factory.BASIC.createTuple(selectionPattern));
 			 s.addComponent(leaf);
 			 // 3. PROJECTION_Vi(SELECTION_Fi(Ri))
 			 // 3.1 Vi - already done in 2.1			
@@ -281,7 +280,7 @@ public class Rule2Relation {
 						 else 
 							 elvariables.add(createVariable(variables.keySet()));
 					 }
-					 ITree elleaf = ModelFactory.FACTORY.createRule(
+					 IRule elleaf = ModelFactory.FACTORY.createRule(
 							 l.getPredicate().getPredicateSymbol(), 
 							 l.getPredicate().getArity());
 					 elleaf.addAllVariables(elvariables);
@@ -303,23 +302,42 @@ public class Rule2Relation {
 			 
 		 } else if(t1 instanceof org.deri.iris.terms.StringTerm && t2 instanceof org.deri.iris.terms.StringTerm) {
 			 // t1 & t2 are strings
-			 if (!t1.equals(t2))
-				 return null; // 'b' = 'c' --> false -- invalidate the rule
-			 else 
-				 return head; // 'a' ='a' --> true -- do not include any term
+			 if (!t1.equals(t2)) {
+				 if (el.isPositive())
+					 return null; // 'b' = 'c' --> false -- invalidate the rule
+				 else
+					 return head;
+			 } else {
+				 if (el.isPositive())
+					 return head; // 'a' ='a' --> true -- do not include any term
+				 else
+					 return null;
+			 }
 			 
 		 } else {
 			 // one is variable and the other string (e.g. ?X='a')
 			 // ?X = 'a' needed for global selection
 			 equalityLiterals.add((EqualityLiteral)el);
-
-			 if (t1 instanceof org.deri.iris.terms.StringTerm) {
-				 ITerm tt = t1;
-				 t1 = t2; // t1 = ?X
-				 t2 = tt; // t2 = 'a'
+			 if (el.isPositive()) {
+				 if (t1 instanceof org.deri.iris.terms.StringTerm) {
+					 ITerm tt = t1;
+					 t1 = t2; // t1 = ?X
+					 t2 = tt; // t2 = 'a'
+				 }
+				 if (variables.containsKey(t1)) {
+					 return head; // The variable is within ordinary predicates -- do not include any term
+				 }
+				 // Create the unary relation
+				 IRule ur = ModelFactory.FACTORY.createUnaryRule(((org.deri.iris.terms.StringTerm)t2).getValue());
+				 ur.addVariable((IVariable)t1);
+				 return ur;
+			 } else {
+				 // ?X != 'a'
+				 // TODO Ask Stijn
+				 return null;
 			 }
-			 // TODO			 
-			 return null;
+			 
+
 		 }
 	 }
 	 
@@ -331,7 +349,8 @@ public class Rule2Relation {
 			 int[] joinIndex, 
 			 Map<IVariable, List<ILiteral>> variables, 
 			 ILiteral l,
-			 ITree head){
+			 ITree head, 
+			 org.deri.iris.api.evaluation.seminaive.model.IRule leaf){
 		
 		 initializeIndex(selectionIndex);
 		 initializeIndex(projectionIndex);
@@ -345,6 +364,7 @@ public class Rule2Relation {
 				 projectionIndex[i] = -1;
 				 selectionPattern.add(t);
 				 selectionIndex[i] = -1;
+				 leaf.addVariable(createString(leaf.getVariables()));
 				 noFi = false;
 			 } else if (t instanceof org.deri.iris.terms.ConstructedTerm) {
 				 /*
@@ -353,13 +373,16 @@ public class Rule2Relation {
 				 projectionIndex[i] = -1;
 				 selectionPattern.add(null);
 				 selectionIndex[i] = -1;
+				 leaf.addVariable(createString(leaf.getVariables()));
 			 } else if (t instanceof org.deri.iris.terms.StringTerm) {
 				 projectionIndex[i] = -1;
 				 selectionPattern.add(t);
 				 selectionIndex[i] = -1;
+				 leaf.addVariable(createString(leaf.getVariables()));
 				 noFi = false;
 			 } else if (t instanceof org.deri.iris.terms.Variable) {
 				 IVariable v = (IVariable)t;
+				 leaf.addVariable(v);
 				 projectionIndex[i] = 0;
 				 projectionVariables.add(v);
 				 selectionPattern.add(null);
@@ -393,6 +416,52 @@ public class Rule2Relation {
 		 return noFi; 
 	 }
 
+	 private void getSelectionIndexes(
+			 List<EqualityLiteral> equalityLiterals, 
+			 List<ITerm> selectionPattern, 
+			 int[] selectionIndex, 
+			 ITree globalJoin) {
+		 
+		 /*
+		  * Possibilities:
+		  * 	?X = ?Y
+		  * 	?X != ?Y
+		  * 	?X = 'a'
+		  * 	?X != 'a'
+		  */
+		 int indexPoint = 1;
+		 int negativeIndexPoint = -1;
+		 for (EqualityLiteral el: equalityLiterals) {
+			 ITerm t1 = el.getTuple().getTerm(0);
+			 ITerm t2 = el.getTuple().getTerm(1);
+			 
+			 if (t1 instanceof org.deri.iris.terms.Variable && t2 instanceof org.deri.iris.terms.Variable) {
+				 if (el.isPositive()) { // ?X = ?Y --> indexes of X and Y have the same number
+					 selectionIndex[globalJoin.getVariables().indexOf(((org.deri.iris.terms.Variable)t1).getValue())] = indexPoint;
+					 selectionIndex[globalJoin.getVariables().indexOf(((org.deri.iris.terms.Variable)t2).getValue())] = indexPoint;
+					 indexPoint++;
+				 }else { // ?X != ?Y
+					 selectionIndex[globalJoin.getVariables().indexOf(((org.deri.iris.terms.Variable)t1).getValue())] = negativeIndexPoint;
+					 selectionIndex[globalJoin.getVariables().indexOf(((org.deri.iris.terms.Variable)t2).getValue())] = negativeIndexPoint;
+					 negativeIndexPoint--;					 
+				 } 
+			 } else { 
+
+				 if (t1 instanceof org.deri.iris.terms.StringTerm){
+					 ITerm tt = t1;
+					 t1 = t2; // t1 = ?X
+					 t2 = tt; // t2 = 'a'
+				 }
+				 if (el.isPositive()) { // ?X = 'a'
+					 int i = globalJoin.getVariables().indexOf(((org.deri.iris.terms.Variable)t1).getValue());
+					 selectionPattern.remove(i);
+					 selectionPattern.add(i, t2);
+				 }else { //?X != 'a'
+					 // TODO.
+				 }			
+			 }
+		 }
+	 }
 	 
 	 private void initializeIndex(int[] i)
 	 {
@@ -412,4 +481,13 @@ public class Rule2Relation {
 				 }
 		 return v;
 	 }
+	 
+	 private String createString(List<String> sl) {
+		 java.util.Random r = new java.util.Random();
+		 String s;
+		 while (sl.contains(s="?TV" + r.nextInt()));
+		 return s;
+	 }
+	 
+	 
 }

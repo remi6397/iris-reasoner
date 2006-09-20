@@ -15,11 +15,13 @@ public interface IModelFactory {
 
 	public IProjection createProjection(int[] indexes);
 	public ISelection createSelection(ITuple pattern);
+	public ISelection createSelection(ITuple pattern, int[] indexes);
+	public ISelection createSelection(int[] indexes);
 	public IJoin createJoin(int[] indexes, JoinCondition condition);
 	public INaturalJoin createNaturalJoin();
 	public IDifference createDifference();
 	public IUnion createUnion();
 	public IRule createRule(String relationName, int relationArity);
-	public IRule createUnaryRule(String relationName, int relationArity, String value);
+	public IRule createUnaryRule(String value);
 	public ITree createTree(String relationName);	
 }
