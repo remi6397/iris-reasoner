@@ -26,34 +26,99 @@
 package org.deri.iris.api.factory;
 
 import org.deri.iris.api.builtins.IBuiltInAtom;
-import org.deri.iris.api.terms.INumericTerm;
-import org.deri.iris.api.terms.IStringTerm;
+import org.deri.iris.api.terms.ITerm;
 
 /**
+ * <p>
+ * Defines methods for a builtin factory.
+ * </p>
+ * <p>
+ * $Id: IBuiltInsFactory.java,v 1.3 2006-09-21 08:57:31 richardpoettler Exp $
+ * </p>
+ * 
  * @author Darko Anicic, DERI Innsbruck
- * @date   17.03.2006 11:55:35
+ * @author richi
+ * @date 17.03.2006 11:55:35
+ * @version $Revision: 1.3 $
  */
 public interface IBuiltInsFactory {
 
-	// public IBuiltinFunction createBuiltinFunction(IAtom atom);
-	
-	public IBuiltInAtom numericEqual(INumericTerm x, INumericTerm y);
-	
-	public IBuiltInAtom numericInequal(INumericTerm x, INumericTerm y);
-	
-	public IBuiltInAtom numericGreaterThan(INumericTerm x, INumericTerm y);
-	
-	public IBuiltInAtom numericLessThan(INumericTerm x, INumericTerm y);
-	
-	public IBuiltInAtom stringEqual(IStringTerm x, IStringTerm y);
-	
-	public IBuiltInAtom stringInequal(IStringTerm x, IStringTerm y);
-	
-	public IBuiltInAtom numericAdd(INumericTerm z, INumericTerm x, INumericTerm y);
-	
-	public IBuiltInAtom numericSubtract(INumericTerm z, INumericTerm x, INumericTerm y);
-	
-	public IBuiltInAtom numericMultiply(INumericTerm z, INumericTerm x, INumericTerm y);
-	
-	public IBuiltInAtom numericDivide(INumericTerm z, INumericTerm x, INumericTerm y);
+	/**
+	 * Creates an equal builtin.
+	 * 
+	 * @param t0
+	 *            the first term
+	 * @param t1
+	 *            the second term
+	 * @return the builtin
+	 * @throws NullPointerException
+	 *             if any of the terms is <code>null</code>
+	 */
+	public abstract IBuiltInAtom createEqual(final ITerm t0, final ITerm t1);
+
+	/**
+	 * Creates an unequal builtin.
+	 * 
+	 * @param t0
+	 *            the first term
+	 * @param t1
+	 *            the second term
+	 * @return the builtin
+	 * @throws NullPointerException
+	 *             if any of the terms is <code>null</code>
+	 */
+	public abstract IBuiltInAtom createUnequal(final ITerm t0, final ITerm t1);
+
+	/**
+	 * Creates a less builtin.
+	 * 
+	 * @param t0
+	 *            the first term
+	 * @param t1
+	 *            the second term
+	 * @return the builtin
+	 * @throws NullPointerException
+	 *             if any of the terms is <code>null</code>
+	 */
+	public abstract IBuiltInAtom createLess(final ITerm t0, final ITerm t1);
+
+	/**
+	 * Creates an less-equal builtin.
+	 * 
+	 * @param t0
+	 *            the first term
+	 * @param t1
+	 *            the second term
+	 * @return the builtin
+	 * @throws NullPointerException
+	 *             if any of the terms is <code>null</code>
+	 */
+	public abstract IBuiltInAtom createLessEqual(final ITerm t0, final ITerm t1);
+
+	/**
+	 * Creates a greater builtin.
+	 * 
+	 * @param t0
+	 *            the first term
+	 * @param t1
+	 *            the second term
+	 * @return the builtin
+	 * @throws NullPointerException
+	 *             if any of the terms is <code>null</code>
+	 */
+	public abstract IBuiltInAtom createGreater(final ITerm t0, final ITerm t1);
+
+	/**
+	 * Creates a greater-equal builtin.
+	 * 
+	 * @param t0
+	 *            the first term
+	 * @param t1
+	 *            the second term
+	 * @return the builtin
+	 * @throws NullPointerException
+	 *             if any of the terms is <code>null</code>
+	 */
+	public abstract IBuiltInAtom createGreaterEqual(final ITerm t0,
+			final ITerm t1);
 }
