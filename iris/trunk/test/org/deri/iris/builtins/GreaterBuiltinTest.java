@@ -33,30 +33,42 @@ import junit.framework.TestSuite;
 
 /**
  * <p>
- * Tests for the equals builtin.
+ * Tests for the greater builtin.
  * </p>
  * <p>
- * $Id: EqualBuiltinTest.java,v 1.2 2006-09-21 09:02:11 richardpoettler Exp $
+ * $Id: GreaterBuiltinTest.java,v 1.1 2006-09-21 09:02:11 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.1 $
  * @date $Date: 2006-09-21 09:02:11 $
  */
-public class EqualBuiltinTest extends TestCase {
+public class GreaterBuiltinTest extends TestCase {
 
 	public static Test suite() {
-		return new TestSuite(EqualBuiltinTest.class, EqualBuiltinTest.class.getSimpleName());
+		return new TestSuite(GreaterBuiltinTest.class, GreaterBuiltinTest.class
+				.getSimpleName());
 	}
 
 	public void testEvaluation() {
-		assertTrue("5 should be equal to 5", (new EqualBuiltin(CONCRETE
+		assertFalse("5 shouldn't be greater than 5", (new GreaterBuiltin(CONCRETE
 				.createInteger(5), CONCRETE.createInteger(5))).evaluate());
-		assertTrue("5 should not be equal to 5.0", (new EqualBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createDouble(5d))).evaluate());
-		assertFalse("5 shouldn't be equal to 2", (new EqualBuiltin(CONCRETE
-				.createInteger(2), CONCRETE.createInteger(5))).evaluate());
-		assertFalse("5 should be equal to a", (new EqualBuiltin(CONCRETE
-				.createInteger(5), TERM.createString("a"))).evaluate());
+		assertFalse("5 shouldn't be greater than 5.0", (new GreaterBuiltin(
+				CONCRETE.createInteger(5), CONCRETE.createDouble(5d)))
+				.evaluate());
+
+		assertFalse("2 shouldn't be greater than 5.0", (new GreaterBuiltin(CONCRETE
+				.createInteger(2), CONCRETE.createDouble(5d))).evaluate());
+		assertTrue("5 should be greater than 2", (new GreaterBuiltin(CONCRETE
+				.createInteger(5), CONCRETE.createInteger(2))).evaluate());
+
+		assertFalse("a shouldn't be greater than b", (new GreaterBuiltin(TERM
+				.createString("a"), TERM.createString("b"))).evaluate());
+		assertFalse("a shouldn't be greater to a", (new GreaterBuiltin(TERM
+				.createString("a"), TERM.createString("a"))).evaluate());
+
+		assertFalse("5 less a should be false -> not evaluable",
+				(new GreaterBuiltin(CONCRETE.createInteger(5), TERM
+						.createString("a"))).evaluate());
 	}
 }

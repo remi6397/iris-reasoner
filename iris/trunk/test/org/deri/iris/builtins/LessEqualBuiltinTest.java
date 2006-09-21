@@ -33,30 +33,44 @@ import junit.framework.TestSuite;
 
 /**
  * <p>
- * Tests for the equals builtin.
+ * Tests for the less equal builtin.
  * </p>
  * <p>
- * $Id: EqualBuiltinTest.java,v 1.2 2006-09-21 09:02:11 richardpoettler Exp $
+ * $Id: LessEqualBuiltinTest.java,v 1.1 2006-09-21 09:02:11 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.1 $
  * @date $Date: 2006-09-21 09:02:11 $
  */
-public class EqualBuiltinTest extends TestCase {
+public class LessEqualBuiltinTest extends TestCase {
 
 	public static Test suite() {
-		return new TestSuite(EqualBuiltinTest.class, EqualBuiltinTest.class.getSimpleName());
+		return new TestSuite(LessEqualBuiltinTest.class,
+				LessEqualBuiltinTest.class.getSimpleName());
 	}
 
 	public void testEvaluation() {
-		assertTrue("5 should be equal to 5", (new EqualBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createInteger(5))).evaluate());
-		assertTrue("5 should not be equal to 5.0", (new EqualBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createDouble(5d))).evaluate());
-		assertFalse("5 shouldn't be equal to 2", (new EqualBuiltin(CONCRETE
-				.createInteger(2), CONCRETE.createInteger(5))).evaluate());
-		assertFalse("5 should be equal to a", (new EqualBuiltin(CONCRETE
-				.createInteger(5), TERM.createString("a"))).evaluate());
+		assertTrue("5 should be less-equal to 5", (new LessEqualBuiltin(
+				CONCRETE.createInteger(5), CONCRETE.createInteger(5)))
+				.evaluate());
+		assertTrue("5 should be less-equal to 5.0", (new LessEqualBuiltin(
+				CONCRETE.createInteger(5), CONCRETE.createDouble(5d)))
+				.evaluate());
+
+		assertTrue("2 should be less than 5.0", (new LessEqualBuiltin(CONCRETE
+				.createInteger(2), CONCRETE.createDouble(5d))).evaluate());
+		assertFalse("5 shouldn't be less than 2", (new LessEqualBuiltin(
+				CONCRETE.createInteger(5), CONCRETE.createInteger(2)))
+				.evaluate());
+
+		assertTrue("a should be less than b", (new LessEqualBuiltin(TERM
+				.createString("a"), TERM.createString("b"))).evaluate());
+		assertTrue("a should be less-equal to a", (new LessEqualBuiltin(TERM
+				.createString("a"), TERM.createString("a"))).evaluate());
+
+		assertFalse("5 less a should be false -> not evaluable",
+				(new LessEqualBuiltin(CONCRETE.createInteger(5), TERM
+						.createString("a"))).evaluate());
 	}
 }

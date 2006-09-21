@@ -33,30 +33,30 @@ import junit.framework.TestSuite;
 
 /**
  * <p>
- * Tests for the equals builtin.
+ * Tests for the unequals builtin.
  * </p>
  * <p>
- * $Id: EqualBuiltinTest.java,v 1.2 2006-09-21 09:02:11 richardpoettler Exp $
+ * $Id: UnequalBuiltinTest.java,v 1.1 2006-09-21 09:02:11 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.1 $
  * @date $Date: 2006-09-21 09:02:11 $
  */
-public class EqualBuiltinTest extends TestCase {
+public class UnequalBuiltinTest extends TestCase {
 
 	public static Test suite() {
-		return new TestSuite(EqualBuiltinTest.class, EqualBuiltinTest.class.getSimpleName());
+		return new TestSuite(UnequalBuiltinTest.class, UnequalBuiltinTest.class.getSimpleName());
 	}
 
 	public void testEvaluation() {
-		assertTrue("5 should be equal to 5", (new EqualBuiltin(CONCRETE
+		assertFalse("5 shouldn't be unequal to 5", (new UnEqualBuiltin(CONCRETE
 				.createInteger(5), CONCRETE.createInteger(5))).evaluate());
-		assertTrue("5 should not be equal to 5.0", (new EqualBuiltin(CONCRETE
+		assertFalse("5 shouldn't be unequal to 5.0", (new UnEqualBuiltin(CONCRETE
 				.createInteger(5), CONCRETE.createDouble(5d))).evaluate());
-		assertFalse("5 shouldn't be equal to 2", (new EqualBuiltin(CONCRETE
+		assertTrue("5 should be unequal to 2", (new UnEqualBuiltin(CONCRETE
 				.createInteger(2), CONCRETE.createInteger(5))).evaluate());
-		assertFalse("5 should be equal to a", (new EqualBuiltin(CONCRETE
+		assertTrue("5 should be unequal to a", (new UnEqualBuiltin(CONCRETE
 				.createInteger(5), TERM.createString("a"))).evaluate());
 	}
 }
