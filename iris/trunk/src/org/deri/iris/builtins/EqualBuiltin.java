@@ -32,20 +32,20 @@ import org.deri.iris.factory.Factory;
 
 /**
  * <p>
- * Builting to compare two terms
+ * Builtin to compare two terms for equality.
  * </p>
  * <p>
- * $Id: EqualBuiltin.java,v 1.1 2006-09-20 08:22:06 richardpoettler Exp $
+ * $Id: EqualBuiltin.java,v 1.2 2006-09-21 08:59:41 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @date $Date: 2006-09-20 08:22:06 $
- * @version $Revision: 1.1 $
+ * @date $Date: 2006-09-21 08:59:41 $
+ * @version $Revision: 1.2 $
  */
 public class EqualBuiltin extends AbstractBuiltin {
 
-	/** The predicate defining this builtin */
-	public static final IPredicate PREDICATE = Factory.BASIC.createPredicate(
+	/** The predicate defining this builtin. */
+	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate(
 			"EQUAL", 2);
 
 	/**
@@ -74,29 +74,11 @@ public class EqualBuiltin extends AbstractBuiltin {
 		if (isEvaluable()) {
 			if ((getTerm(0) instanceof INumericTerm)
 					&& (getTerm(1) instanceof INumericTerm)) {
-				return compareNumbers((Number) getTerm(0).getValue(),
-						(Number) getTerm(1).getValue());
+				return BuiltinHelper.numbersEqual((INumericTerm) getTerm(0),
+						(INumericTerm) getTerm(1));
 			}
 			return getTerm(0).equals(getTerm(1));
 		}
 		return false;
-	}
-
-	/**
-	 * Compares two numbers by casting them to doubles and then comparing them.
-	 * 
-	 * @param n0
-	 *            the first number
-	 * @param n1
-	 *            the second number
-	 * @return whether the numbers are equal
-	 * @throws NullPointerException
-	 *             if one of the numbers is null
-	 */
-	private boolean compareNumbers(final Number n0, final Number n1) {
-		if ((n0 == null) || (n1 == null)) {
-			throw new NullPointerException("The numbers must not be null");
-		}
-		return (new Double(n0.doubleValue())).equals(n1.doubleValue());
 	}
 }
