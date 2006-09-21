@@ -45,12 +45,12 @@ import org.deri.iris.factory.Factory;
  * documentation for it's default behaviour.
  * </p>
  * <p>
- * $Id
+ * $Id: AbstractBuiltin.java,v 1.2 2006-09-21 08:58:16 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-09-20 08:21:45 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-09-21 08:58:16 $
  */
 public abstract class AbstractBuiltin implements IBuiltInAtom {
 
@@ -150,6 +150,7 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 	 * @throws IndexOutOfBoundsException
 	 *             if i is to small, or too big (bigger or equals to the arity
 	 *             of the atom)
+	 * @see #setTerm(int, ITerm)
 	 */
 	protected ITerm getTerm(final int i) {
 		if ((i < 0) || (i >= getTermsLength())) {
@@ -160,7 +161,21 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 		return a.getTuple().getTerm(i);
 	}
 
+	/**
+	 * Sets the term at the given position.
+	 * @param i the position of the term (starts at 0)
+	 * @param t the term
+	 * @throws IndexOutOfBoundsException
+	 *             if i is to small, or too big (bigger or equals to the arity
+	 *             of the atom)
+	 * @see #getTerm(int)
+	 */
 	protected void setTerm(final int i, final ITerm t) {
+		if ((i < 0) || (i >= getTermsLength())) {
+			throw new IndexOutOfBoundsException(
+					"The index must be between 0 and " + getTermsLength()
+							+ ", but was " + i);
+		}
 		a.getTuple().setTerm(i, t);
 	}
 
