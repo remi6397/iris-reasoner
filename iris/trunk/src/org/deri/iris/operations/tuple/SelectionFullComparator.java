@@ -62,58 +62,6 @@ import org.deri.iris.api.basics.ITuple;
  * @author Darko Anicic, DERI Innsbruck
  * @date   31.05.2006 14:20:06
  */
-/*public class SelectionFullComparator extends SelectionComparator{
-
-	public SelectionFullComparator(final int[] sortIndexes) {
-		super(sortIndexes);
-	}
-
-	@SuppressWarnings("unchecked")
-	public int compare(ITuple t0, ITuple t1){
-		if (t0.getArity() != t1.getArity()) {
-			throw new IllegalArgumentException(
-					"Couldn't compare due to different arity of tuples.");
-		} 
-		int comp = 0;
-		int quota = getQuota();
-		
-		if(quota != checkTerms(t0)) return 0;
-		
-		if(quota != checkTerms(t1)) return 0;
-		
-		if(checkTuples(t0, t1)==0)
-			return 0;
-		
-		for(int i=0; i<this.getSortIndexes().length; i++){
-			if(t0.getTerm(i) == null){
-				if(t1.getTerm(i) != null) return -1;
-			}else{
-				if(t0.getTerm(i).getValue() == null &&
-						t1.getTerm(i).getValue() != null)
-						return -1;
-			}
-			
-			if(t1.getTerm(i) == null){
-				if(t0.getTerm(i) != null) return 1;
-			}else{
-				if(t1.getTerm(i).getValue() == null &&
-						t0.getTerm(i).getValue() != null)
-						return 1;
-			}
-		
-			if(t0.getTerm(i) != null &&
-					t1.getTerm(i) != null)
-			if(t0.getTerm(i).getValue() != null &&
-					t1.getTerm(i).getValue() != null){
-				
-				comp = t1.getTerm(i).compareTo(t0.getTerm(i));
-			}
-			if(comp != 0) return comp; 
-		}
-		return 0;
-	}
-}*/
-
 public class SelectionFullComparator extends SelectionComparator{
 
 	public SelectionFullComparator(final int[] sortIndexes) {
@@ -134,11 +82,16 @@ public class SelectionFullComparator extends SelectionComparator{
 		if(quota != checkTerms(t1)) return 0;
 		
 		for(int i=0; i<this.getSortIndexes().length; i++){
-			if(this.getSortIndexes()[i] >= 0){
+			if(this.getSortIndexes()[i] != 0){
 				for(int j=0; j<this.getSortIndexes().length; j++){
 					if(this.getSortIndexes()[i] == this.getSortIndexes()[j])
-					if(! t0.getTerm(i).getValue().equals(t1.getTerm(j).getValue())) 	
-						return 0;
+						if(this.getSortIndexes()[j] > 0){
+							if(! t0.getTerm(i).getValue().equals(t1.getTerm(j).getValue())) 	
+								return 0;
+						}else{
+							if(t0.getTerm(i).getValue().equals(t1.getTerm(j).getValue())) 	
+								return 0;
+						}
 				}
 			}
 		}

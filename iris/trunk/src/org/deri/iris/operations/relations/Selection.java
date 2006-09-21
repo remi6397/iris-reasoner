@@ -27,9 +27,11 @@
 package org.deri.iris.operations.relations;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.ISelection;
@@ -122,7 +124,7 @@ public class Selection implements ISelection{
 		// Sort relation on tupples defined by the indexes
 		SelectionComparator comparator = new SelectionComparator(this.indexes);
 		IRelation rel = new Relation(comparator);
-		IRelation relTrash = new Relation(comparator);
+		Set<ITuple> relTrash = new HashSet<ITuple>();
 		
 		Iterator i = this.relation.iterator();
 		ITuple t = null;
@@ -164,9 +166,9 @@ public class Selection implements ISelection{
 						indexes[j] = i;
 					}
 				}else
-					indexes[j] = -1;
+					indexes[j] = 0;
 			}else
-				indexes[j] = -1;
+				indexes[j] = 0;
 		}
 		return indexes;
 	}

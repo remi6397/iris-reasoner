@@ -80,10 +80,10 @@ public class SelectionComparator extends BasicComparator{
 	public int getQuota(){
 		int quota = 0;
 		for(int i=0; i<this.getSortIndexes().length; i++){
-			if(this.getSortIndexes()[i] >= 0){
+			if(this.getSortIndexes()[i] != 0){
 				for(int j=i+1; j<this.getSortIndexes().length; j++){
 					if(this.getSortIndexes()[i] == this.getSortIndexes()[j])
-					quota++;
+						quota++;
 				}
 			}
 		}
@@ -93,11 +93,14 @@ public class SelectionComparator extends BasicComparator{
 	/**
 	 * For:
 	 * 
-	 * indexes = <1, 2, 1, 2>
+	 * indexes = <1, 2, 1, 2, -1, -1>
 	 * 
 	 * checks wheter it is, for instance, a case:
 	 * 
-	 * t = <a, b, a, b>
+	 * t = <a, b, a, b, c, d>
+	 * 
+	 * (1st and 3rd terms are the same ones as well as
+	 * 2nd and 4th ones, while 5th and 6th are different). 
 	 * 
 	 * @param t tuple which terms need to be compared
 	 * @return number of terms that are equal
@@ -105,11 +108,17 @@ public class SelectionComparator extends BasicComparator{
 	public int checkTerms(ITuple t){
 		int comp0 = 0;
 		for(int i=0; i<this.getSortIndexes().length; i++){
-			if(this.getSortIndexes()[i] >= 0){
+			if(this.getSortIndexes()[i] != 0){
 				for(int j=i+1; j<this.getSortIndexes().length; j++){
 					if(this.getSortIndexes()[i] == this.getSortIndexes()[j])
-					if(t.getTerm(i).getValue().equals(t.getTerm(j).getValue())) 
-						comp0++;
+						if(this.getSortIndexes()[j] > 0){
+							if(t.getTerm(i).getValue().equals(t.getTerm(j).getValue())) 
+								comp0++;
+						}else{
+							if(! t.getTerm(i).getValue().equals(t.getTerm(j).getValue())) 
+								comp0++;
+						}
+					
 				}
 			}
 		}
@@ -117,14 +126,8 @@ public class SelectionComparator extends BasicComparator{
 	}
 	
 	/**
-	 * For:
-	 * 
-	 * indexes = <1, 2, -1, -1>
-	 * 
-	 * checks wheter it is, for instance, a case:
-	 * 
-	 * t0 = <a, b, c, d>
-	 * t0 = <a, b, e, f>
+	 * Ensures the ascending order in cases wehere both tuplese satisfy the 
+	 * condition,(both tuples will be stored in the tree).
 	 * 
 	 * @param t0 tuple to be compared
 	 * @param t1 tuple to be compared
@@ -135,7 +138,8 @@ public class SelectionComparator extends BasicComparator{
 		int comp0 = 0;
 		for(int i=0; i<this.getSortIndexes().length; i++){
 			comp0 = t1.getTerm(i).compareTo(t0.getTerm(i));
-			if(comp0 != 0) return comp0; 
+			if(comp0 != 0) 
+				return comp0; 
 		}
 		return comp0;
 	}
