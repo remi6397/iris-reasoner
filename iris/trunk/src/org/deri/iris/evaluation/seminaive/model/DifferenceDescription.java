@@ -46,7 +46,10 @@ public class DifferenceDescription extends Composite implements IDifference{
 	DifferenceDescription() {
 	}
 	
-	
+	public String getName() {
+		return "difference";
+	}
+
 	public int getArity() {
 		return variables.size();
 	}

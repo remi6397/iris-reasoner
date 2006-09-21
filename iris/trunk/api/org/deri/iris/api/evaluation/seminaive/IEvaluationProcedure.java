@@ -49,7 +49,7 @@ import org.deri.iris.api.evaluation.seminaive.model.ITree;
 	 * @param IDB Tuples already discovered
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation<ITuple> eval(ITree pi, IEDB EDB, Map<IPredicate, IRelation<ITuple>> IDB);
+	public IRelation<ITuple> eval(ITree pi, IEDB EDB, Map<ITree, IRelation<ITuple>> IDB);
 	 
 	 
 	/**
@@ -60,5 +60,5 @@ import org.deri.iris.api.evaluation.seminaive.model.ITree;
 	 * @param AQ Tuples discovered during the last iteration
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation<ITuple> eval_incr(ITree pi, IEDB EDB, Map<IPredicate, IRelation<ITuple>>  P, Map<IPredicate, IRelation<ITuple>>  AQ);
+	public IRelation<ITuple> eval_incr(ITree pi, IEDB EDB, Map<ITree, IRelation<ITuple>>  P, Map<ITree, IRelation<ITuple>>  AQ);
 }

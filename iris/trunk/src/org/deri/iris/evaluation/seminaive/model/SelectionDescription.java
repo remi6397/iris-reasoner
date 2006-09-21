@@ -73,6 +73,11 @@ public class SelectionDescription extends Composite implements ISelection{
 	}
 
 	
+	
+	public String getName() {
+		return "selection";
+	}
+
 	public int getArity() {
 		return variables.size();
 	}

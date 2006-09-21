@@ -45,4 +45,5 @@ public interface ITree extends Component{
 	public void addVariables(List<String> lv);
 	public void addAllVariables(Set<IVariable> lv);
 	public int getArity();
+	public String getName();
 }

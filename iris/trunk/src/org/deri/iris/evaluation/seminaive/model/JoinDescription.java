@@ -56,6 +56,11 @@ public class JoinDescription extends Composite implements IJoin{
 		this.indexes = indexes;
 	}
 
+	
+	public String getName() {
+		return "join";
+	}
+
 	public int getArity() {
 		return variables.size();
 	}

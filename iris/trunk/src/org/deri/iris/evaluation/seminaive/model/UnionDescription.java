@@ -48,6 +48,11 @@ public class UnionDescription extends Composite implements IUnion{
 	UnionDescription() {
 	}
 
+	
+	public String getName() {
+		return "union";
+	}
+
 	public int getArity() {
 		return variables.size();
 	}

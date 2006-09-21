@@ -87,8 +87,8 @@ public class Tree extends Composite implements ITree{
 	}
 	
 	public boolean equals(final Object o) {
-		if (!(o instanceof Tree)) return false;
-		Tree t = (Tree)o;
+		if (!(o instanceof ITree)) return false;
+		ITree t = (ITree)o;
 		return (this.name.equalsIgnoreCase(t.getName()) &&
 				this.getArity() == t.getArity());
 	}

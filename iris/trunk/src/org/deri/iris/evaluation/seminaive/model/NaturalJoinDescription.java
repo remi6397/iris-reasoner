@@ -17,6 +17,11 @@ public class NaturalJoinDescription  extends Composite implements INaturalJoin{
 	NaturalJoinDescription() {
 	}
 
+	
+	public String getName() {
+		return "natural join";
+	}
+
 	public int getArity() {
 		return variables.size();
 	}

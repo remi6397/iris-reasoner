@@ -47,9 +47,9 @@ import java.util.LinkedList;
 public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	protected IEvaluationProcedure method;
 	protected IEDB EDB;
-	protected Map<IPredicate, ITree> IDB;
+	protected Map<ITree, ITree> IDB;
 	
-	GeneralSeminaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<IPredicate, ITree> IDB) {
+	GeneralSeminaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<ITree, ITree> IDB) {
 		this.method = e;
 		this.EDB = EDB;
 		this.IDB = IDB;
@@ -63,8 +63,8 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param Q set of temporal backup relations
 	 * @return True if there are no new tuples in any relation in P; false otherwise
 	 */
-	protected boolean compare(Map<IPredicate, IRelation<ITuple>> P, Map<IPredicate, IRelation<ITuple>> Q){		
-		for (IPredicate head : P.keySet())
+	protected boolean compare(Map<ITree, IRelation<ITuple>> P, Map<ITree, IRelation<ITuple>> Q){		
+		for (ITree head : P.keySet())
 		{
 			if (!Q.get(head).containsAll(Arrays.asList(P.get(head).toArray())))
 				return false;
@@ -76,8 +76,8 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param r set of relations
 	 * @return True if all the relations are empty; false otherwise
 	 */
-	protected boolean isEmpty(Map<IPredicate, IRelation<ITuple>> r){		
-		for (IPredicate head: r.keySet())
+	protected boolean isEmpty(Map<ITree, IRelation<ITuple>> r){		
+		for (ITree head: r.keySet())
 			if (!r.get(head).isEmpty())
 				return false;
 		return true;
@@ -88,8 +88,8 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param source Set of source relations
 	 * @param target Set of target relations
 	 */
-	protected void copyRelations(Map<IPredicate, IRelation<ITuple>> source, Map<IPredicate, IRelation<ITuple>> target) {
-		for (IPredicate head: source.keySet()){
+	protected void copyRelations(Map<ITree, IRelation<ITuple>> source, Map<ITree, IRelation<ITuple>> target) {
+		for (ITree head: source.keySet()){
 			// 1st. Empty target
 			target.get(head).clear();
 			// 2nd. Copy all
@@ -102,8 +102,8 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param source Set of source relations
 	 * @param target Set of target relations
 	 */
-	protected void addRelations(Map<IPredicate, IRelation<ITuple>> source, Map<IPredicate, IRelation<ITuple>> target) {
-		for (IPredicate head: source.keySet())
+	protected void addRelations(Map<ITree, IRelation<ITuple>> source, Map<ITree, IRelation<ITuple>> target) {
+		for (ITree head: source.keySet())
 			target.get(head).addAll(new LinkedList(Arrays.asList(source.get(head).toArray())));
 		
 	}

@@ -55,6 +55,11 @@ public class ProjectionDescription extends Composite implements IProjection{
 		this.indexes = indexes;
 	}
 
+	
+	public String getName() {
+		return "projection";
+	}
+
 	public int getArity() {
 		return variables.size();
 	}
