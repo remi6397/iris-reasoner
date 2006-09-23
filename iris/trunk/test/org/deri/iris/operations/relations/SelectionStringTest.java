@@ -53,7 +53,6 @@ public class SelectionStringTest extends TestCase {
 	static IRelation<ITuple> relation = null;
 	
 	public static Test suite() {
-		setRelation();
 		return new TestSuite(SelectionStringTest.class, SelectionStringTest.class.getSimpleName());
 	}
 
@@ -79,6 +78,7 @@ public class SelectionStringTest extends TestCase {
 	protected static void runSelection_0(final ITuple p, 
 			final Collection<ITuple> e) {
 		
+		setRelation();
 		ISelection selectionOperator 
 			= RELATION.createSelectionOperator(relation, p);
 			
@@ -96,6 +96,7 @@ public class SelectionStringTest extends TestCase {
 	protected static void runSelection_1(final int[] indexes, 
 			final Collection<ITuple> e) {
 			
+		setRelation();
 		ISelection selectionOperator 
 			= RELATION.createSelectionOperator(relation, indexes);
 			
@@ -113,6 +114,7 @@ public class SelectionStringTest extends TestCase {
 	protected static void runSelection_2(final ITuple p, final int[] indexes, 
 			final Collection<ITuple> e) {
 			
+		setRelation();
 		ISelection selectionOperator 
 			= RELATION.createSelectionOperator(relation, p, indexes);
 			
@@ -156,7 +158,7 @@ public class SelectionStringTest extends TestCase {
 		e.add(MiscHelper.createTuple("a", "b", "a", "b"));
 		e.add(MiscHelper.createTuple("d", "d", "d", "d"));
 		
-		runSelection_1(new int[]{1, -1, 1, -1}, e);
+		runSelection_1(new int[]{1, 0, 1, 0}, e);
 	}
 	
 	public void testSelect_1212_1() {
@@ -176,13 +178,25 @@ public class SelectionStringTest extends TestCase {
 		runSelection_1(new int[]{1, 1, 1, 1}, e);
 	}
 	
-	public void testSelect_a1n1_2() {
+	/**
+	 * m1 - minus 1
+	 * p1 - plus 1
+	 */
+	public void testSelect_m1p1p1m1_1() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(MiscHelper.createTuple("a", "b", "b", "c"));
+		e.add(MiscHelper.createTuple("a", "d", "d", "f"));
+		
+		runSelection_1(new int[]{-1, 1, 1, -1}, e);
+	}
+	
+	public void testSelect_a101_2() {
 		final List<ITuple> e = new ArrayList<ITuple>();
 		e.add(MiscHelper.createTuple("a", "a", "a", "a"));
 		e.add(MiscHelper.createTuple("a", "b", "a", "b"));
 		
 		runSelection_2(MiscHelper.createTuple("a", null, null, null),
-				new int[]{-1, 1, -1, 1}, e);
+				new int[]{0, 1, 0, 1}, e);
 	}
 	
 	public void testSelect_d111_2() {
@@ -190,7 +204,7 @@ public class SelectionStringTest extends TestCase {
 		e.add(MiscHelper.createTuple("d", "d", "d", "d"));
 		
 		runSelection_2(MiscHelper.createTuple("d", null, null, null),
-				new int[]{-1, 1, 1, 1}, e);
+				new int[]{0, 1, 1, 1}, e);
 	}
 	
 	/**

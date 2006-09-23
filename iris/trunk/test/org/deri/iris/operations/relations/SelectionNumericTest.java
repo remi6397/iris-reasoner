@@ -53,7 +53,6 @@ public class SelectionNumericTest extends TestCase {
 	static IRelation<ITuple> relation = null;
 	
 	public static Test suite() {
-		setNumRelation();
 		return new TestSuite(SelectionNumericTest.class, SelectionNumericTest.class.getSimpleName());
 	}
 	
@@ -87,6 +86,7 @@ public class SelectionNumericTest extends TestCase {
 	protected static void runSelection_0(final ITuple p, 
 			final Collection<ITuple> e) {
 		
+		setNumRelation();
 		ISelection selectionOperator 
 			= RELATION.createSelectionOperator(relation, p);
 			
@@ -104,6 +104,7 @@ public class SelectionNumericTest extends TestCase {
 	protected static void runSelection_1(final int[] indexes, 
 			final Collection<ITuple> e) {
 			
+		setNumRelation();
 		ISelection selectionOperator 
 			= RELATION.createSelectionOperator(relation, indexes);
 			
@@ -121,6 +122,7 @@ public class SelectionNumericTest extends TestCase {
 	protected static void runSelection_2(final ITuple p, final int[] indexes, 
 			final Collection<ITuple> e) {
 			
+		setNumRelation();
 		ISelection selectionOperator 
 			= RELATION.createSelectionOperator(relation, p, indexes);
 			
@@ -159,17 +161,15 @@ public class SelectionNumericTest extends TestCase {
 		runSelection_0(MiscHelper.createTuple(
 				CONCRETE.createDecimal(1.3),
 				CONCRETE.createDecimal(2.3),
-				CONCRETE.createDecimal(3.3),
-				CONCRETE.createDecimal(4.3)), e);
-		
-		runSelection_0(MiscHelper.createTuple(
-				CONCRETE.createDecimal(1.3),
-				CONCRETE.createDecimal(2.3),
 				CONCRETE.createDecimal(3.3), 
 				CONCRETE.createDecimal(4.3)), e);
 	}
 	
-	public void testSelect_nn11_1() {
+	/**
+	 * First and second tuple have to be different and
+	 * third and fourth have to be the same ones.
+	 */
+	public void testSelect_m1m1p1p1_1() {
 		final List<ITuple> e = new ArrayList<ITuple>();
 		e.add(MiscHelper.createTuple(
 				CONCRETE.createDecimal(1.3),
@@ -185,6 +185,11 @@ public class SelectionNumericTest extends TestCase {
 		runSelection_1(new int[]{-1, -1, 1, 1}, e);
 	}
 	
+	/**
+	 * First tuple has to have value: 1.3 and
+	 * first and second tuple have to be different and
+	 * third and fourth have to be the same ones.
+	 */
 	public void testSelect_1nnn_nn11_1() {
 		final List<ITuple> e = new ArrayList<ITuple>();
 		e.add(MiscHelper.createTuple(
