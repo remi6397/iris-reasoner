@@ -57,15 +57,12 @@ public class IndexComparator extends BasicComparator{
 	 * @see org.deri.iris.operations.tuple.BasicComparator#compare(org.deri.iris.api.basics.ITuple, org.deri.iris.api.basics.ITuple)
 	 */
 	public int compare(ITuple t0, ITuple t1){
-		if (t0.getArity() != t1.getArity()) {
-			throw new IllegalArgumentException(
-					"Couldn't compare due to different arity of tuples.");
-		} 
 		int comparison = 0;
 		int forEachRelevantIndex = 0;
 		int forEachIndex = 0;
 		int equal = 0;
 		for(int i=0; i<this.getSortIndexes().length; i++){
+			if(t0.getArity()>i && t1.getArity()>i){
 			comparison = t0.getTerm(i).compareTo(t1.getTerm(i));
 			if(comparison == 0) forEachIndex++;
 			if(this.getSortIndexes()[i] != -1){
@@ -78,6 +75,8 @@ public class IndexComparator extends BasicComparator{
 					equal++;
 				}
 			}
+			}else 
+				break;
 		}
 		/* 
 		 * Tuples t0 and t1 are duplicates if they have identical terms  
