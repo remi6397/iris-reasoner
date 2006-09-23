@@ -33,6 +33,7 @@ import org.deri.iris.api.operations.relation.IIntersection;
 import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.operations.relation.IProjection;
 import org.deri.iris.api.operations.relation.ISelection;
+import org.deri.iris.api.operations.relation.IUnion;
 import org.deri.iris.api.operations.tuple.IUnification;
 import org.deri.iris.api.storage.IRelation;
 
@@ -127,5 +128,9 @@ public class OperationFactory implements IRelationFactory{
 
 	public static IRelationFactory getInstance() {
 		return FACTORY;
+	}
+
+	public IUnion createUnionOperator(IRelation... args) {
+		return new Union(args);
 	}
 }
