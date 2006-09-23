@@ -44,7 +44,7 @@ import org.deri.iris.storage.Relation;
 
 /**
  * Implementation of the sort-merge join operation. 
- * Reference: Join Processing in Relational Databases, PRITI MISHRA and 
+ * Reference: JoinSimpleExtended Processing in Relational Databases, PRITI MISHRA and 
  * MARGARET H. EICH
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -99,9 +99,9 @@ public class JoinSimple implements IJoin{
 	
 	@SuppressWarnings("unchecked")
 	public IRelation join() {
-		if (((ITuple)relation0.first()).getArity() != ((ITuple)relation1.first()).getArity()) {
+		/*if (((ITuple)relation0.first()).getArity() != ((ITuple)relation1.first()).getArity()) {
 			throw new IllegalArgumentException("Couldn't join due to different arity of tuples.");
-		} 
+		}*/ 
 		Iterator<ITuple> iterator;
 		ITuple tuple;
 		boolean order = false;
