@@ -111,6 +111,7 @@ public interface IRelationFactory {
 	 */
 	public IJoin createJoinSimpleOperator(IRelation arg0, 
 			IRelation arg1, int[] indexes, JoinCondition condition);
+	
 	/**
 	 * @param arg0
 	 * @param arg1
@@ -125,6 +126,20 @@ public interface IRelationFactory {
 	public IJoin createJoinSimpleOperator(IRelation arg0, 
 			IRelation arg1, int[] indexes, JoinCondition condition,
 			int[] projectIndexes);
+	
+	public IJoin createJoinSimpleExtendedOperator(IRelation arg0, IRelation arg1, 
+			int[] indexes);
+	
+	public IJoin createJoinSimpleExtendedOperator(IRelation arg0, 
+			IRelation arg1, int[] indexes, JoinCondition condition);
+	
+	public IJoin createJoinSimpleExtendedOperator(IRelation arg0, 
+			IRelation arg1, int[] indexes, JoinCondition condition,
+			int[] projectIndexes);
+	
+	// Correct it!
+	public IJoin createJoinNewSimpleOperator(IRelation arg0, 
+			IRelation arg1, int[] indexes, JoinCondition condition);
 	
 	public IProjection createProjectionOperator(IRelation relation, int[] pattern);
 	
