@@ -70,22 +70,33 @@ public class OperationFactory implements IRelationFactory{
 	public IJoin createJoinOperator(IRelation arg0, 
 			IRelation arg1, int[] indexes, JoinCondition condition, 
 			int[] projectIndexes) {
-		
 		return new Join(arg0, arg1, indexes, condition, projectIndexes);
 	}
 	public IJoin createJoinSimpleOperator(IRelation arg0, IRelation arg1, 
 			int[] indexes) {
-		return new Join(arg0, arg1, indexes);
+		return new JoinSimple(arg0, arg1, indexes);
 	}
 	public IJoin createJoinSimpleOperator(IRelation arg0, IRelation arg1,
 			int[] indexes, JoinCondition condition) {
-		return new Join(arg0, arg1, indexes, condition);
+		return new JoinSimple(arg0, arg1, indexes, condition);
 	}
 	public IJoin createJoinSimpleOperator(IRelation arg0, 
 			IRelation arg1, int[] indexes, JoinCondition condition, 
 			int[] projectIndexes) {
 		
 		return null;
+	}
+	public IJoin createJoinSimpleExtendedOperator(IRelation arg0, IRelation arg1, int[] indexes) {
+		return new JoinSimpleExtended(arg0, arg1, indexes);
+	}
+	public IJoin createJoinSimpleExtendedOperator(IRelation arg0, IRelation arg1, int[] indexes, JoinCondition condition) {
+		return new JoinSimpleExtended(arg0, arg1, indexes, condition);
+	}
+	public IJoin createJoinSimpleExtendedOperator(IRelation arg0, IRelation arg1, int[] indexes, JoinCondition condition, int[] projectIndexes) {
+		return new JoinSimpleExtended(arg0, arg1, indexes, condition, projectIndexes);
+	}
+	public IJoin createJoinNewSimpleOperator(IRelation arg0, IRelation arg1, int[] indexes, JoinCondition condition) {
+		return new NewJoin(arg0, arg1, indexes, condition);
 	}
 	
 	public IProjection createProjectionOperator(IRelation relation, 
