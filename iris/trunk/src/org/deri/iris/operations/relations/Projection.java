@@ -59,7 +59,7 @@ import org.deri.iris.storage.Relation;
  * placed on the 1th position (tuple [a,b,c] would be transformed 
  * to [c,a]).
  * 
- * Note: The implementation of IJoin (Join) using projectIndexes 
+ * Note: The implementation of IJoin (Join and JoinSimpleExtended) using projectIndexes 
  * can handle projection operation too! Use this option in cases where 
  * the join operation is needed following with the projection operation 
  * just after the join operation.
