@@ -32,6 +32,7 @@ import org.deri.iris.api.operations.relation.IIntersection;
 import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.operations.relation.IProjection;
 import org.deri.iris.api.operations.relation.ISelection;
+import org.deri.iris.api.operations.relation.IUnion;
 import org.deri.iris.api.operations.tuple.IUnification;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.operations.relations.JoinCondition;
@@ -188,4 +189,5 @@ public interface IRelationFactory {
 	
 	public IUnification createUnificationOperator(final IAtom arg0, final IAtom arg1);
 	
+	public IUnion createUnionOperator(final IRelation... args);
 }
