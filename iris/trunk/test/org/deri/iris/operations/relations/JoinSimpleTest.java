@@ -1,3 +1,28 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
+ * 
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
 package org.deri.iris.operations.relations;
 
 import static org.deri.iris.factory.Factory.RELATION;
@@ -40,6 +65,7 @@ public class JoinSimpleTest extends TestCase {
 	protected static void runJoin(final int[] i, final Collection<ITuple> e) {
 		IRelation<ITuple> relation0 = new Relation(3);
 		IRelation<ITuple> relation1 = new Relation(3);
+		//IRelation<ITuple> relation1 = new Relation(4);
 
 		relation0.add(MiscHelper.createTuple("a", "b", "c"));
 		relation0.add(MiscHelper.createTuple("a", "b", "b"));
@@ -50,6 +76,10 @@ public class JoinSimpleTest extends TestCase {
 		relation1.add(MiscHelper.createTuple("c", "b", "b"));
 		relation1.add(MiscHelper.createTuple("c", "b", "a"));
 		relation1.add(MiscHelper.createTuple("a", "b", "c"));
+		
+		/*relation1.add(MiscHelper.createTuple("c", "b", "b", "x"));
+		relation1.add(MiscHelper.createTuple("c", "b", "a", "x"));
+		relation1.add(MiscHelper.createTuple("a", "b", "c", "x"));*/
 
 		// test join operation with no duplicates handling
 		IJoin joinSimpleOperator = RELATION.createJoinSimpleOperator(
@@ -63,7 +93,9 @@ public class JoinSimpleTest extends TestCase {
 		e.add(MiscHelper.createTuple("a", "b", "c", "c", "b", "b"));
 		e.add(MiscHelper.createTuple("a", "b", "c", "c", "b", "a"));
 		e.add(MiscHelper.createTuple("h", "g", "a", "a", "b", "c"));
-		runJoin(new int[] { -1, -1, 0 }, e);
+		
+		runJoin(new int[] { -1, -1, 0}, e);
+		//runJoin(new int[] { -1, -1, 0, -1}, e);
 	}
 
 	public void testJoin_210() {
