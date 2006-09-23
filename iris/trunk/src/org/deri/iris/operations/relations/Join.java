@@ -23,380 +23,236 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.deri.iris.operations.relations;
 
-import static org.deri.iris.factory.Factory.BASIC;
-
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.SortedSet;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.basics.MinimalTuple;
 import org.deri.iris.operations.tuple.BasicComparator;
 import org.deri.iris.operations.tuple.Concatenation;
 import org.deri.iris.operations.tuple.IndexComparator;
-import org.deri.iris.operations.tuple.JoinComparator;
 import org.deri.iris.storage.Relation;
 
 /**
- * Implementation of the sort-merge join operation handling duplicates. 
- * Duplicate tuples are those tuples that have identical terms on 
- * positions defined by sort indexes.  Reference: Join Processing in 
- * Relational Databases, PRITI MISHRA and MARGARET H. EICH
+ * Implementation of the sort-merge join operation handling duplicates.
+ * Duplicate tuples are those tuples that have identical terms on positions
+ * defined by sort indexes. Reference: JoinSimpleExtended Processing in Relational Databases,
+ * PRITI MISHRA and MARGARET H. EICH
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @date   24.05.2006 09:26:43
+ * @date 21.09.2006 11:55:43
  */
 public class Join implements IJoin{
+
 	private IRelation relation0 = null;
+
 	private IRelation relation1 = null;
+
 	private IRelation joinRelation = null;
+
 	private BasicComparator comparator = null;
+
 	private int[] indexes = null;
+
 	private int[] projectIndexes = null;
+
 	private JoinCondition condition = null;
-	
-	Join(IRelation arg0, IRelation arg1, int[] indexes){
+
+	Join(IRelation arg0, IRelation arg1, int[] indexes) {
 		if (arg0 == null || arg1 == null || indexes == null) {
-			throw new IllegalArgumentException("Input parameters must not be null");
+			throw new IllegalArgumentException(
+					"Input parameters must not be null");
 		}
-		constructJoinOperator(arg0, arg1, indexes);
-		this.condition = JoinCondition.EQUALS; 
+		int[] i = null;
+		int[] j = null;
+		this.indexes = indexes;
+		i = this.transformIndexes0(this.indexes);
+		j = this.transformIndexes1(this.indexes);
+		if(! checkIndexes(i, ((ITuple)arg0.first()).getArity()))
+			throw new IllegalArgumentException("Indexes are not specified" +
+					" correctly.");
+		if(! checkIndexes(j, ((ITuple)arg1.first()).getArity()))
+			throw new IllegalArgumentException("Indexes are not specified" +
+					" correctly.");
+		
+		setJoinOperator(arg0, i, arg1, j);
+		this.condition = JoinCondition.EQUALS;
 	}
-	
-	Join(IRelation arg0, IRelation arg1, int[] indexes, 
-			JoinCondition condition){
-		if (arg0 == null || arg1 == null || 
-				indexes == null || condition == null) {
-			throw new IllegalArgumentException("All construcotr " +
-			"parameters must not be specified (non null values");
+
+	Join(IRelation arg0, IRelation arg1, int[] indexes,
+			JoinCondition condition) {
+		if (arg0 == null || arg1 == null || indexes == null
+				|| condition == null) {
+			throw new IllegalArgumentException("All constructor "
+					+ "parameters must not be specified (non null values");
 		}
-		constructJoinOperator(arg0, arg1, indexes);
-		this.condition = condition; 
+		int[] i = null;
+		int[] j = null;
+		this.indexes = indexes;
+		i = this.transformIndexes0(this.indexes);
+		j = this.transformIndexes1(this.indexes);
+		if(! checkIndexes(i, ((ITuple)arg0.first()).getArity()))
+			throw new IllegalArgumentException("Indexes are not specified" +
+					" correctly.");
+		if(! checkIndexes(j, ((ITuple)arg1.first()).getArity()))
+			throw new IllegalArgumentException("Indexes are not specified" +
+					" correctly.");
+		
+		setJoinOperator(arg0, i, arg1, j);
+		this.condition = condition;
 	}
-	
+
 	/**
 	 * @param arg0
 	 * @param arg1
 	 * @param indexes
 	 * @param condition
 	 * @param projectIndexes
-	 * 						define indexes which the projection operation
-	 * 						will be applied on. For example, if set of 
-	 * 						tuples of arity 3 needs to be projected on 
-	 * 						the first and last term, the projectIndexes 
-	 * 						will look like: [1, -1, 1]. -1 means that terms
-	 * 						with that index will be omitted. Note that an 
-	 * 						equivalent array for the project indexes could 
-	 * 						be also: [0, -1, 2], in which case the array 
-	 * 						values represent the term indexes in a tuple.  
-	 * 						If not specified join tuples will be simple 
-	 * 						merged.
+	 *            define indexes which the projection operation will be applied
+	 *            on. For example, if set of tuples of arity 3 needs to be
+	 *            projected on the first and last term, the projectIndexes will
+	 *            look like: [1, -1, 1]. -1 means that terms with that index
+	 *            will be omitted. Note that an equivalent array for the project
+	 *            indexes could be also: [0, -1, 2], in which case the array
+	 *            values represent the term indexes in a tuple. If not specified
+	 *            join tuples will be simple merged.
 	 */
-	Join(IRelation arg0, IRelation arg1, int[] indexes, 
-			JoinCondition condition, int[] projectIndexes){
-		if (arg0 == null || arg1 == null || 
-				indexes == null || condition == null) {
-			throw new IllegalArgumentException("Construcotr " +
-			"parameters are not specified correctly");
+	Join(IRelation arg0, IRelation arg1, int[] indexes,
+			JoinCondition condition, int[] projectIndexes) {
+		if (arg0 == null || arg1 == null || indexes == null
+				|| condition == null) {
+			throw new IllegalArgumentException("Constructor "
+					+ "parameters are not specified correctly");
 		}
+		int[] i = null;
+		int[] j = null;
+		this.indexes = indexes;
+		i = this.transformIndexes0(this.indexes);
+		j = this.transformIndexes1(this.indexes);
+		if(! checkIndexes(i, ((ITuple)arg0.first()).getArity()))
+			throw new IllegalArgumentException("Indexes are not specified" +
+					" correctly.");
+		if(! checkIndexes(j, ((ITuple)arg1.first()).getArity()))
+			throw new IllegalArgumentException("Indexes are not specified" +
+					" correctly.");
+		
 		this.projectIndexes = projectIndexes;
-		constructJoinOperator(arg0, arg1, indexes);
-		this.condition = condition; 
+		setJoinOperator(arg0, i, arg1, j);
+		this.condition = condition;
 	}
-	
-	private void constructJoinOperator(IRelation arg0, IRelation arg1, int[] indexes){
+
+	private void setJoinOperator(IRelation arg0, int[] inds0, IRelation arg1, int[] inds1) {
 		this.relation0 = arg0;
 		this.relation1 = arg1;
-		this.indexes = indexes;
 		
 		// Sort arg0 on those tupples defined by sort indexes
-		this.comparator = new IndexComparator(this.transformIndexes0(indexes));
+		this.comparator = new IndexComparator(inds0);
 		IRelation rel0 = new Relation(comparator);
 		rel0.addAll(this.relation0);
 		this.relation0 = rel0;
 		
 		// Sort arg1 on those tupples defined by sort indexes
-		this.comparator = new IndexComparator(this.transformIndexes1(indexes));
+		this.comparator = new IndexComparator(inds1);
 		IRelation rel1 = new Relation(comparator);
 		rel1.addAll(this.relation1);
 		this.relation1 = rel1;
+		
 		/*
-		 * If not specified join tuples will be simple merged.
+		 * If project indexes are not specified, join tuples will be simple
+		 * merged.
 		 */
-		if(this.projectIndexes == null){
-			this.projectIndexes = this.transformIndexes0(
-					new int[this.indexes.length*2]);
+		if (this.projectIndexes == null) {
+			this.projectIndexes = this
+			.transformIndexes0(new int[((ITuple)this.relation0.first()).getArity() + 
+			                           ((ITuple)this.relation1.first()).getArity()]);
 		}
 		this.joinRelation = new Relation(this.getRelationArity());
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public IRelation join() {
-		if (((ITuple)relation0.first()).getArity() != ((ITuple)relation1.first()).getArity()) {
-			throw new IllegalArgumentException("Couldn't join due to different arity of tuples.");
-		} 
-		Iterator<ITuple> iterator;
-		ITuple tuple;
-		boolean order = false;
-		if(this.relation0.size() < this.relation1.size()){
-			order = true;
-			iterator = this.relation0.iterator();
-			while(iterator.hasNext()){
-				tuple = iterator.next();
-				joinRelation.addAll(selectAndJoin(tuple, order));
+		Concatenation concatenator = new Concatenation();
+		Iterator<ITuple> it0, it1;
+		ITuple t1, t0, concatenatedTuple, copyTuple0 = null, copyTuple1 = null, copyTuple2 = null;
+		int comp = 0;
+		
+		it0 = this.relation0.iterator();
+		it1 = this.relation1.iterator();
+		t1 = it1.next();
+		
+		while(it0.hasNext()){
+			t0 = (ITuple) it0.next();
+			while((comp = checkJointness(t0, t1)) >= 0){
+				if(comp == 0){
+					copyTuple1 = t1;
+					copyTuple2 = copyTuple1;
+					while(t0 != null){
+						while(copyTuple1 != null){
+							concatenatedTuple = concatenator.concatenate(
+									t0, copyTuple1, this.projectIndexes);
+							
+							this.joinRelation.add(concatenatedTuple);
+							copyTuple1 = copyTuple1.getDuplicate();
+						}
+						t0 = t0.getDuplicate();
+						if(t0 != null) copyTuple1 = copyTuple2;
+					}
+				}
+				if(comp > 0){
+					if(it1.hasNext()){
+						t1 = (ITuple) it1.next();
+					}	
+					else
+						t1 = null;
+				}
+				if(t1 == null)
+					break;
 			}
-		}else{
-			iterator = this.relation1.iterator();
-			while(iterator.hasNext()){
-				tuple = iterator.next();
-				joinRelation.addAll(selectAndJoin(tuple, order));
-			}
+			if(t1 == null)
+				break;
 		}
 		return joinRelation;
 	}
 	
 	/**
-	 * Select portion of the tree that is relevant for ongoing join operation
-	 * regarding the tuple and perform the join operation using a helper
-	 * method checkAndJoin0 or checkAndJoin1 (depending whether 
-	 * relations0/relations1 is an outer/inner relation or vise versa).
+	 * Transforms indexes according to the following examples: 
+	 * [-1,-1, 0] to [-1,-1, 2]; 
+	 * [-1, 1, 0] to [-1, 1, 2];
+	 * [ 2, 1, 0] to [ 0, 1, 2].
 	 * 
-	 * @param tuple
-	 * @param order
-	 * @return
-	 */
-	private IRelation selectAndJoin(ITuple tuple, boolean order){
-		if(relation1.first() == null) return null;
-		//IRelation joinElements = new Relation(((ITuple)relation1.first()).getArity()*2);
-		IRelation joinElements = new Relation(this.getRelationArity());
-		
-		SortedSet subSet = null;
-		ITuple transformedTuple;
-		if(order){
-			transformedTuple = this.getMinimalTupleValue1(tuple, indexes);
-			subSet = relation1.tailSet(transformedTuple);
-			
-			return checkAndJoin1(tuple, subSet);
-		}else{
-			transformedTuple = this.getMinimalTupleValue0(tuple, indexes);
-			subSet = relation0.tailSet(transformedTuple);
-			
-			return checkAndJoin0(tuple, subSet);
-		}
-	}
-	
-	/**
-	 * Check which tuples from the selected portion of the tree (relation0) satisfies
-	 * the join condition and concatenate them with the tuple.
-	 * 
-	 * @param tuple
-	 * @param subSet
-	 * @return
-	 */
-	private IRelation checkAndJoin0(ITuple tuple, SortedSet subSet){
-		//IRelation joinElements = new Relation(((ITuple)relation1.first()).getArity()*2);
-		IRelation joinElements = new Relation(this.getRelationArity());
-		
-		Concatenation concatenator = new Concatenation();
-		ITuple tmpTuple, copyTuple, copyTmpTuple, concatenatedTuple = null;
-		Iterator<ITuple> iterator = subSet.iterator(); 
-		JoinComparator comparator = new JoinComparator(this.indexes);
-		boolean checkNext = true;
-		int comparison = 0;
-		
-		while(checkNext && iterator.hasNext()){
-			tmpTuple = iterator.next();
-			copyTuple = tuple;
-			copyTmpTuple = tmpTuple;
-			comparison = comparator.compare(copyTmpTuple, copyTuple);
-			
-			switch(isConditionSatisfied(comparison)){
-				case 0:
-					// create joinTuple = tuple + tmpTuple
-					while(copyTuple != null){	
-						while(copyTmpTuple != null){
-							if(!(copyTmpTuple instanceof MinimalTuple)){
-								concatenatedTuple = concatenator.concatenate(
-										copyTmpTuple, copyTuple, this.projectIndexes);
-								joinElements.add(concatenatedTuple);
-							}
-							copyTmpTuple = copyTmpTuple.getDuplicate();
-						}
-						copyTuple = copyTuple.getDuplicate();
-						copyTmpTuple = tmpTuple;
-					}
-					break;
-				default:
-					checkNext = false;
-				break;
-			}
-		}
-		
-		return joinElements;
-	}
-	
-	/**
-	 * Check which tuples from the selected portion of the tree (relation1) satisfies
-	 * the join condition and concatenate them with the tuple.
-	 * 
-	 * @param tuple
-	 * @param subSet
-	 * @return
-	 */
-	private IRelation checkAndJoin1(ITuple tuple, SortedSet subSet){
-		//IRelation joinElements = new Relation(((ITuple)relation1.first()).getArity()*2);
-		IRelation joinElements = new Relation(this.getRelationArity());
-		
-		Concatenation concatenator = new Concatenation();
-		ITuple tmpTuple, copyTuple, copyTmpTuple, concatenatedTuple = null;
-		Iterator<ITuple> iterator = subSet.iterator(); 
-		JoinComparator comparator = new JoinComparator(this.indexes);
-		boolean checkNext = true;
-		int comparison = 0;
-		
-		while(checkNext && iterator.hasNext()){
-			tmpTuple = iterator.next();
-			copyTuple = tuple;
-			copyTmpTuple = tmpTuple;
-			comparison = comparator.compare(copyTuple, copyTmpTuple);
-			
-			switch(isConditionSatisfied(comparison)){
-				case 0:
-					// create joinTuple = tuple + tmpTuple
-					while(copyTuple != null){
-						while(copyTmpTuple != null){
-							if(!(copyTmpTuple instanceof MinimalTuple)){
-								concatenatedTuple = concatenator.concatenate(
-										copyTuple, copyTmpTuple, this.projectIndexes);
-								joinElements.add(concatenatedTuple);
-							}
-							copyTmpTuple = copyTmpTuple.getDuplicate();
-						}
-						copyTuple = copyTuple.getDuplicate();
-						copyTmpTuple = tmpTuple;
-					}
-					break;
-				default:
-					checkNext = false;
-				break;
-			}
-		}
-		
-		return joinElements;
-	}
-	
-	/**
-	 * if boolean order = true then 
-	 * isConditionSatisfied = 
-	 *  0	    means join condition is satisfied for the two compared tupels
-	 *  -1 or 1	means join condition is not satisfied for the two compared tupels
-	 *  
-	 * @param comparison
-	 * @return
-	 */
-	private int isConditionSatisfied(int comparison){
-		switch (condition){
-			case EQUALS:
-				if(comparison == 0) return 0;
-				if(comparison < 0) return -1;
-				break;
-			case NOT_EQUAL:
-				if(comparison != 0) return 0;
-				//if(comparison < 0)return -1;
-				break;
-			case LESS_THAN:
-				if(comparison < 0) return 0;
-				if(comparison > 0) return -1;
-				break;
-			case GREATER_THAN:
-				if(comparison > 0) return 0;
-				if(comparison < 0) return -1;
-				break;
-			case LESS_OR_EQUAL:
-				if(comparison < 0 || comparison == 0) return 0;
-				if(comparison > 0) return -1;
-				break;
-			case GREATER_OR_EQUAL:
-				if(comparison > 0 || comparison == 0) return 0;
-				if(comparison < 0) return -1;
-				break;
-		}
-		return 1;
-	}
-	
-	/**
-	 * Transforms indexes according to the following examples:
-		[-1,-1, 0] to [-1,-1, 2]
-		[-1, 1, 0] to [-1, 1, 2]
-		[ 2, 1, 0] to [ 0, 1, 2]
-		
 	 * @param indexes
 	 * @return transformed indexes
 	 */
-	private int[] transformIndexes0(int[] indexes){
-		int[] tranformedIndexes = new int [indexes.length];
-		for(int i=0; i<indexes.length; i++){
-			if(indexes[i] != -1)tranformedIndexes[i]= i;
-			else tranformedIndexes[i] = -1;
+	private int[] transformIndexes0(int[] indexes) {
+		int[] tranformedIndexes = new int[indexes.length];
+		for (int i = 0; i < indexes.length; i++) {
+			if (indexes[i] != -1)
+				tranformedIndexes[i] = i;
+			else
+				tranformedIndexes[i] = -1;
 		}
 		return tranformedIndexes;
 	}
-	
-	/**
-	 * Transforms indexes according to the following examples:
-		[-1,-1, 0] to [0,-1,-1]
-		[-1, 1, 0] to [0, 1,-1]
-		[ 2, 1, 0] to [0, 1, 2]
 
+	/**
+	 * Transforms indexes according to the following examples: [-1,-1, 0] to
+	 * [0,-1,-1] [-1, 1, 0] to [0, 1,-1] [ 2, 1, 0] to [0, 1, 2]
+	 * 
 	 * @param indexes
 	 * @return transformed indexes
 	 */
-	private int[] transformIndexes1(int[] indexes){
-		int[] tranformedIndexes = new int [indexes.length];
-		for(int i=0; i<indexes.length; i++){
+	private int[] transformIndexes1(int[] indexes) {
+		int[] tranformedIndexes = new int[indexes.length];
+		for (int i = 0; i < indexes.length; i++) {
 			tranformedIndexes[i] = -1;
 		}
-		for(int i=0; i<indexes.length; i++){
-			if(indexes[i] != -1){
-				tranformedIndexes[indexes[i]]=indexes[i];
+		for (int i = 0; i < indexes.length; i++) {
+			if (indexes[i] != -1) {
+				tranformedIndexes[indexes[i]] = indexes[i];
 			}
 		}
 		return tranformedIndexes;
-	}
-	
-	private ITuple getMinimalTupleValue0(ITuple tuple, int[] indexes){
-		ITerm[] terms = new ITerm[tuple.getArity()];
-		List<ITerm> termList = new LinkedList();
-		for(int i=0; i<indexes.length; i++){
-			if(indexes[i] != -1)
-				terms[i] = tuple.getTerm(indexes[i]);
-		}		
-		for(int j=0; j<indexes.length; j++){
-			if(terms[j] == null)
-				terms[j] = tuple.getTerm(j).getMinValue();
-		}
-		return BASIC.createMinimalTuple(terms);
-	}
-	
-	private ITuple getMinimalTupleValue1(ITuple tuple, int[] indexes){
-		ITerm[] terms = new ITerm[tuple.getArity()];
-		List<ITerm> termList = new LinkedList();
-		for(int i=0; i<indexes.length; i++){
-			if(indexes[i] != -1)
-				terms[indexes[i]] = tuple.getTerm(i);
-		}		
-		for(int j=0; j<indexes.length; j++){
-			if(terms[j] == null)
-				terms[j] = tuple.getTerm(j).getMinValue();
-		}
-		return BASIC.createMinimalTuple(terms);
 	}
 	
 	private int getRelationArity(){
@@ -406,5 +262,40 @@ public class Join implements IJoin{
 		}
 		return j;
 	}
-}
 
+	/**
+	 * @param inds indexes
+	 * @param a arity
+	 * @return true for consistant indexes (each index is 
+	 * 	not bigger than the relation arity), otherwise false
+	 */
+	private boolean checkIndexes(int[] inds, int a){
+		int j=0;
+		for(int i=0; i<inds.length; i++){
+			if(inds[i]+1 > a) return false;
+		}
+		return true;
+	}
+	
+	private int checkJointness(ITuple t0, ITuple t1){
+		int[] indexes = this.indexes;
+		int comp = 0;
+		
+		if(t0 != null && t1 != null){
+			for(int i=0; i<indexes.length; i++){
+				if(indexes[i] != -1){
+					comp = t0.getTerm(i).compareTo(t1.getTerm(indexes[i]));
+					if(comp != 0) 	
+						return comp;
+				}
+			}
+			return 0;
+		}
+		if(t0 != null && t1 == null)
+			return 1;
+		if(t0 == null && t1 != null)
+			return -1;
+		
+		return 0;
+	}
+}
