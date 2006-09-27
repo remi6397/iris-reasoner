@@ -27,14 +27,23 @@ package org.deri.iris.terms.concrete;
 
 import org.deri.iris.ObjectTest;
 import org.deri.iris.TermTest;
+import org.deri.iris.factory.Factory;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * @author richi
+ * <p>
+ * Tests the functionality of the <code>FloatTerm</code>.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
  * 
+ * @author richi
+ * @version $Revision$
+ * @date $Date$
  */
 public class IntegerTest extends TestCase {
 
@@ -53,8 +62,8 @@ public class IntegerTest extends TestCase {
 		IntegerTerm basic = new IntegerTerm(BASIC);
 		IntegerTerm changed = new IntegerTerm(MORE);
 		changed.setValue(BASIC);
-		assertEquals("object not initialized correctly", Integer.valueOf(BASIC), basic
-				.getValue());
+		assertEquals("object not initialized correctly",
+				Integer.valueOf(BASIC), basic.getValue());
 		assertEquals("setValue(..) doesn't work correctly", basic, changed);
 	}
 
@@ -76,8 +85,40 @@ public class IntegerTest extends TestCase {
 		ObjectTest.runTestHashCode(new IntegerTerm(BASIC), new IntegerTerm(
 				BASIC));
 	}
-	
+
 	public void testGetMinValue() {
 		TermTest.runTestGetMinValue(new IntegerTerm(Integer.MIN_VALUE + 1));
+	}
+
+	public void testAdd() {
+		assertEquals("The sum of 5 and -2 should be 3", new IntegerTerm(3),
+				(new IntegerTerm(5)).add(Factory.CONCRETE.createInteger(-2)));
+		assertEquals("The sum of 2 and 7.5 should be 9", new IntegerTerm(9),
+				(new IntegerTerm(2)).add(Factory.CONCRETE.createDouble(7.5)));
+	}
+
+	public void testSubtract() {
+		assertEquals("The difference of 5 and -2 should be 7", new IntegerTerm(
+				7), (new IntegerTerm(5)).subtract(Factory.CONCRETE
+				.createInteger(-2)));
+		assertEquals("The difference of 2 and 7.5 should be -5",
+				new IntegerTerm(-5), (new IntegerTerm(2))
+						.subtract(Factory.CONCRETE.createDouble(7.5)));
+	}
+
+	public void testMultiply() {
+		assertEquals("The product of 5 and -2 should be -10", new IntegerTerm(
+				-10), (new IntegerTerm(5)).multiply(Factory.CONCRETE
+				.createInteger(-2)));
+		assertEquals("The product of 2 and 7.5 should be 14", new IntegerTerm(
+				14), (new IntegerTerm(2)).multiply(Factory.CONCRETE
+				.createDouble(7.5)));
+	}
+
+	public void testDivide() {
+		assertEquals("The quotient of 5 and -2 should be -2", new IntegerTerm(
+				-2), (new IntegerTerm(5)).divide(new IntegerTerm(-2)));
+		assertEquals("The quotient of 5 and 2 should be 2", new IntegerTerm(2),
+				(new IntegerTerm(5)).divide(new IntegerTerm(2)));
 	}
 }

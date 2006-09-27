@@ -31,6 +31,7 @@ import junit.framework.TestSuite;
 
 import org.deri.iris.terms.concrete.Base64BinaryTest;
 import org.deri.iris.terms.concrete.BooleanTest;
+import org.deri.iris.terms.concrete.DateTest;
 import org.deri.iris.terms.concrete.DateTimeTest;
 import org.deri.iris.terms.concrete.DecimalTest;
 import org.deri.iris.terms.concrete.DoubleTest;
@@ -69,6 +70,7 @@ public class AllDatatypesTest extends TestCase {
 		suite.addTest(VariableTest.suite());
 		suite.addTest(ConstantTermTest.suite());
 		suite.addTest(ConstructedTermTest.suite());
+		suite.addTest(DateTest.suite());
 		return suite;
 	}
 }

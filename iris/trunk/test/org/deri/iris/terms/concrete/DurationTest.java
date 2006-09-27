@@ -58,8 +58,7 @@ public class DurationTest extends TestCase {
 		assertEquals("Something wrong with getMinute", 56, dt.getMinute());
 		assertEquals("Something wrong with getSecond", 00, dt.getSecond());
 
-		DateTime dt0 = new DateTime(2005, Calendar.MARCH, 10, 13, 56,
-				0, 1, 0);
+		DateTime dt0 = new DateTime(2005, Calendar.MARCH, 10, 13, 56, 0, 1, 0);
 		assertEquals("Something wrong with setting or equals", dt, dt0);
 		dt0 = new DateTime(CALENDAR);
 		assertEquals("Something wrong with setting or equals", dt, dt0);
@@ -67,15 +66,14 @@ public class DurationTest extends TestCase {
 
 	public void testEquals() {
 		ObjectTest.runTestEquals(new Duration(2000, 1, 1, 12, 01, 00),
-				new Duration(2000, 1, 1, 12, 01, 00), new Duration(
-						2000, 1, 1, 12, 02, 00));
+				new Duration(2000, 1, 1, 12, 01, 00), new Duration(2000, 1, 1,
+						12, 02, 00));
 	}
 
 	public void testCompareTo() {
 		ObjectTest.runTestCompareTo(new Duration(2000, 1, 1, 11, 01, 00),
-				new Duration(2000, 1, 1, 11, 01, 00), new Duration(
-						2000, 1, 1, 11, 02, 00), new Duration(2000, 1, 1,
-						11, 03, 00));
+				new Duration(2000, 1, 1, 11, 01, 00), new Duration(2000, 1, 1,
+						11, 02, 00), new Duration(2000, 1, 1, 11, 03, 00));
 	}
 
 	public void testClone() {
@@ -83,16 +81,97 @@ public class DurationTest extends TestCase {
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Duration(CALENDAR),
-				new Duration(CALENDAR));
+		ObjectTest.runTestHashCode(new Duration(CALENDAR), new Duration(
+				CALENDAR));
 	}
 
 	public static Test suite() {
 		return new TestSuite(DurationTest.class, DurationTest.class
 				.getSimpleName());
 	}
-	
+
 	public void testGetMinValue() {
 		TermTest.runTestGetMinValue(new Duration(0, 0, 0, 0, 0, 1));
+	}
+
+	public void testAdd() {
+		assertEquals(
+				"The sum of dur(2005 1 9 10:58:59) and 1 Feb 1 1:1:1 must be "
+						+ "dur(2006 2 10 12:00:00)", new Duration(2006, 2, 10,
+						12, 00, 00), (new Duration(2005, 1, 9, 10, 58, 59))
+						.add(new DateTime(1, Calendar.FEBRUARY, 1, 1, 1, 1)));
+		assertEquals("The sum of dur(2005 1 9 10:58:59) and "
+				+ "duration(1year 1month 1day 1:1:1) must be "
+				+ "dur(2006 2 10 12:00:00)", new Duration(2006, 2, 10, 12, 00,
+				00), (new Duration(2005, 1, 9, 10, 58, 59)).add(new Duration(1,
+				1, 1, 1, 1, 1)));
+		assertEquals("The sum of dur(2005 1 9 12:00:00) and 1 Feb 1 must be "
+				+ "dur(2006 2 10 12:00:00)", new Duration(2006, 2, 10, 12, 00,
+				00), (new Duration(2005, 1, 9, 12, 00, 00)).add(new DateTerm(1,
+				1, 1)));
+		assertEquals("The sum of dur(2005 2 9 12:00:00) and 1 year must be "
+				+ "dur(2006 2 10 12:00:00)", new Duration(2006, 2, 10, 12, 00,
+				00), (new Duration(2005, 2, 10, 12, 00, 00)).add(new GYear(1)));
+		assertEquals("The sum of dur(2006 1 10 12:00:00) and 1 month must be "
+				+ "dur(2006 2 10 12:00:00)", new Duration(2006, 2, 10, 12, 00,
+				00), (new Duration(2006, 1, 10, 12, 00, 00)).add(new GMonth(1)));
+		assertEquals("The sum of dur(2006 2 9 12:00:00) and 1 day must be "
+				+ "dur(2006 2 10 12:00:00)", new Duration(2006, 2, 10, 12, 00,
+				00), (new Duration(2006, 2, 9, 12, 00, 00)).add(new GDay(1)));
+		assertEquals(
+				"The sum of dur(2005 1 10 12:00:00) and 1 year and 1 month must be "
+						+ "dur(2006 2 10 12:00:00)", new Duration(2006, 2, 10,
+						12, 00, 00), (new Duration(2005, 1, 10, 12, 00, 00))
+						.add(new GYearMonth(1, 1)));
+		assertEquals(
+				"The sum of dur(2006 1 9 12:00:00) and 1 month and 1 day must be "
+						+ "dur(2006 2 10 12:00:00)", new Duration(2006, 2, 10,
+						12, 00, 00), (new Duration(2006, 1, 9, 12, 00, 00))
+						.add(new GMonthDay(1, 1)));
+	}
+
+	public void testSubtract() {
+		assertEquals(
+				"The difference of dur(2006 2 10 12:00:00) and 1 1 1 1:1:1 must be "
+						+ "dur(2005 1 9 10:58:59)", new Duration(2005, 1, 9,
+						10, 58, 59),
+				(new Duration(2006, 2, 10, 12, 00, 00)).subtract(new DateTime(
+						1, Calendar.FEBRUARY, 1, 1, 1, 1)));
+		assertEquals("The difference of dur(2006 2 10 12:00:00) and "
+				+ "dur(1year 1month 1day 1:1:1) must be "
+				+ "dur(2005 1 9 10:58:59)",
+				new Duration(2005, 1, 9, 10, 58, 59), (new Duration(2006, 2,
+						10, 12, 00, 00))
+						.subtract(new Duration(1, 1, 1, 1, 1, 1)));
+		assertEquals(
+				"The difference of dur(2006 2 10 12:00:00) and 1 1 1 must be "
+						+ "dur(2005 1 9 12:00:00)", new Duration(2005, 1, 9,
+						12, 00, 00), (new Duration(2006, 2, 10, 12, 00, 00))
+						.subtract(new DateTerm(1, 1, 1)));
+		assertEquals(
+				"The difference of dur(2006 2 10 12:00:00) and 1 year must be "
+						+ "dur(2005 2 9 12:00:00)", new Duration(2005, 2, 10,
+						12, 00, 00), (new Duration(2006, 2, 10, 12, 00, 00))
+						.subtract(new GYear(1)));
+		assertEquals(
+				"The difference of dur(2006 2 10 12:00:00) and 1 month must be "
+						+ "dur(2006 1 10 12:00:00)", new Duration(2006, 1, 10,
+						12, 00, 00), (new Duration(2006, 2, 10, 12, 00, 00))
+						.subtract(new GMonth(1)));
+		assertEquals(
+				"The difference of dur(2006 2 10 12:00:00) and 1 day must be "
+						+ "dur(2006 2 9 12:00:00)", new Duration(2006, 2, 9,
+						12, 00, 00), (new Duration(2006, 2, 10, 12, 00, 00))
+						.subtract(new GDay(1)));
+		assertEquals(
+				"The difference of dur(2006 2 10 12:00:00) and 1 year and 1 month must be "
+						+ "dur(2005 1 10 12:00:00)", new Duration(2005, 1, 10,
+						12, 00, 00), (new Duration(2006, 2, 10, 12, 00, 00))
+						.subtract(new GYearMonth(1, 1)));
+		assertEquals(
+				"The difference of dur(2006 2 10 12:00:00) and 1 month and 1 day must be "
+						+ "dur(2006 1 9 12:00:00)", new Duration(2006, 1, 9,
+						12, 00, 00), (new Duration(2006, 2, 10, 12, 00, 00))
+						.subtract(new GMonthDay(1, 1)));
 	}
 }

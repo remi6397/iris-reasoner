@@ -27,14 +27,23 @@ package org.deri.iris.terms.concrete;
 
 import org.deri.iris.ObjectTest;
 import org.deri.iris.TermTest;
+import org.deri.iris.factory.Factory;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * @author richi
+ * <p>
+ * Tests the functionality of the <code>DecimalTerm</code>.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
  * 
+ * @author richi
+ * @version $Revision$
+ * @date $Date$
  */
 public class DecimalTest extends TestCase {
 
@@ -76,8 +85,43 @@ public class DecimalTest extends TestCase {
 		ObjectTest.runTestHashCode(new DecimalTerm(BASIC), new DecimalTerm(
 				BASIC));
 	}
-	
+
 	public void testGetMinValue() {
 		TermTest.runTestGetMinValue(new DecimalTerm(Double.MIN_VALUE + 0.0001));
+	}
+
+	public void testAdd() {
+		assertEquals("The sum of 5 and -2 should be 3", new DecimalTerm(3),
+				(new DecimalTerm(5)).add(Factory.CONCRETE.createInteger(-2)));
+		assertEquals("The sum of 2.5 and 7.5 should be 10",
+				new DecimalTerm(10), (new DecimalTerm(2.5))
+						.add(new DecimalTerm(7.5)));
+	}
+
+	public void testSubtract() {
+		assertEquals("The difference of 5 and -2 should be 7", new DecimalTerm(
+				7), (new DecimalTerm(5)).subtract(Factory.CONCRETE
+				.createInteger(-2)));
+		assertEquals("The difference of 2.5 and 7.5 should be -5",
+				new DecimalTerm(-5), (new DecimalTerm(2.5))
+						.subtract(new DecimalTerm(7.5)));
+	}
+
+	public void testMultiply() {
+		assertEquals("The product of 5 and -2 should be -10", new DecimalTerm(
+				-10), (new DecimalTerm(5)).multiply(Factory.CONCRETE
+				.createInteger(-2)));
+		assertEquals("The product of 2.5 and 7.5 should be 18.75",
+				new DecimalTerm(18.75), (new DecimalTerm(2.5))
+						.multiply(new DecimalTerm(7.5)));
+	}
+
+	public void testDivide() {
+		assertEquals("The quotient of 5 and -2 should be -2.5",
+				new DecimalTerm(-2.5), (new DecimalTerm(5))
+						.divide(Factory.CONCRETE.createInteger(-2)));
+		assertEquals("The quotient of 5 and 2 should be 2.5", new DecimalTerm(
+				2.5), (new DecimalTerm(5)).divide(Factory.CONCRETE
+				.createInteger(2)));
 	}
 }

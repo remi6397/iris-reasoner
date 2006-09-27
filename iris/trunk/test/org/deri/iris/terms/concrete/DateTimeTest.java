@@ -58,25 +58,23 @@ public class DateTimeTest extends TestCase {
 		assertEquals("Something wrong with getMinute", 56, dt.getMinute());
 		assertEquals("Something wrong with getSecond", 00, dt.getSecond());
 
-		DateTime dt0 = new DateTime(2005, Calendar.MARCH, 10, 13, 56,
-				0, 1, 0);
+		DateTime dt0 = new DateTime(2005, Calendar.MARCH, 10, 13, 56, 0, 1, 0);
 		assertEquals("Something wrong with setting or equals", dt, dt0);
 		dt0 = new DateTime(CALENDAR);
 		assertEquals("Something wrong with setting or equals", dt, dt0);
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(
-				new DateTime(2000, 1, 1, 12, 01, 00, 1, 0),
-				new DateTime(2000, 1, 1, 12, 01, 00, 1, 0),
-				new DateTime(2000, 1, 1, 12, 02, 00, 1, 0));
+		ObjectTest.runTestEquals(new DateTime(2000, 1, 1, 12, 01, 00, 1, 0),
+				new DateTime(2000, 1, 1, 12, 01, 00, 1, 0), new DateTime(2000,
+						1, 1, 12, 02, 00, 1, 0));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new DateTime(2000, 1, 1, 12, 01, 00, 1,
-				0), new DateTime(2000, 1, 1, 11, 01, 00, 0, 0),
-				new DateTime(2000, 1, 1, 11, 02, 00, 0, 0),
-				new DateTime(2000, 1, 1, 11, 03, 00, 0, 0));
+		ObjectTest.runTestCompareTo(new DateTime(2000, 1, 1, 12, 01, 00, 1, 0),
+				new DateTime(2000, 1, 1, 11, 01, 00, 0, 0), new DateTime(2000,
+						1, 1, 11, 02, 00, 0, 0), new DateTime(2000, 1, 1, 11,
+						03, 00, 0, 0));
 	}
 
 	public void testClone() {
@@ -84,16 +82,106 @@ public class DateTimeTest extends TestCase {
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new DateTime(CALENDAR),
-				new DateTime(CALENDAR));
+		ObjectTest.runTestHashCode(new DateTime(CALENDAR), new DateTime(
+				CALENDAR));
 	}
 
 	public static Test suite() {
 		return new TestSuite(DateTimeTest.class, DateTimeTest.class
 				.getSimpleName());
 	}
-	
+
 	public void testGetMinValue() {
 		TermTest.runTestGetMinValue(new DateTime(0, 0, 0, 0, 0, 1));
+	}
+
+	public void testAdd() {
+		assertEquals(
+				"The sum of 2005 Feb 9 10:58:59 and 1 Feb 1 1:1:1 must be "
+						+ "2006 March 10 12:00:00", new DateTime(2006,
+						Calendar.MARCH, 10, 12, 00, 00), (new DateTime(2005,
+						Calendar.FEBRUARY, 9, 10, 58, 59)).add(new DateTime(1,
+						Calendar.FEBRUARY, 1, 1, 1, 1)));
+		assertEquals("The sum of 2005 Feb 9 10:58:59 and "
+				+ "duration(1year 1month 1day 1:1:1) must be "
+				+ "2006 March 10 12:00:00", new DateTime(2006, Calendar.MARCH,
+				10, 12, 00, 00), (new DateTime(2005, Calendar.FEBRUARY, 9, 10,
+				58, 59)).add(new Duration(1, 1, 1, 1, 1, 1)));
+		assertEquals("The sum of 2005 Feb 9 12:00:00 and 1 Feb 1 must be "
+				+ "2006 March 10 12:00:00", new DateTime(2006, Calendar.MARCH,
+				10, 12, 00, 00), (new DateTime(2005, Calendar.FEBRUARY, 9, 12,
+				00, 00)).add(new DateTerm(1, Calendar.FEBRUARY, 1)));
+		assertEquals("The sum of 2005 March 9 12:00:00 and 1 year must be "
+				+ "2006 March 10 12:00:00", new DateTime(2006, Calendar.MARCH,
+				10, 12, 00, 00), (new DateTime(2005, Calendar.MARCH, 10, 12,
+				00, 00)).add(new GYear(1)));
+		assertEquals("The sum of 2006 Feb 10 12:00:00 and 1 month must be "
+				+ "2006 March 10 12:00:00", new DateTime(2006, Calendar.MARCH,
+				10, 12, 00, 00), (new DateTime(2006, Calendar.FEBRUARY, 10, 12,
+				00, 00)).add(new GMonth(1)));
+		assertEquals("The sum of 2006 March 9 12:00:00 and 1 day must be "
+				+ "2006 March 10 12:00:00", new DateTime(2006, Calendar.MARCH,
+				10, 12, 00, 00), (new DateTime(2006, Calendar.MARCH, 9, 12, 00,
+				00)).add(new GDay(1)));
+		assertEquals(
+				"The sum of 2005 Feb 10 12:00:00 and 1 year and 1 month must be "
+						+ "2006 March 10 12:00:00", new DateTime(2006,
+						Calendar.MARCH, 10, 12, 00, 00), (new DateTime(2005,
+						Calendar.FEBRUARY, 10, 12, 00, 00)).add(new GYearMonth(
+						1, 1)));
+		assertEquals(
+				"The sum of 2006 Feb 9 12:00:00 and 1 month and 1 day must be "
+						+ "2006 March 10 12:00:00", new DateTime(2006,
+						Calendar.MARCH, 10, 12, 00, 00), (new DateTime(2006,
+						Calendar.FEBRUARY, 9, 12, 00, 00)).add(new GMonthDay(1,
+						1)));
+	}
+
+	public void testSubtract() {
+		assertEquals(
+				"The difference of 2006 March 10 12:00:00 and 1 Feb 1 1:1:1 must be "
+						+ "2005 Feb 9 10:58:59", new DateTime(2005,
+						Calendar.FEBRUARY, 9, 10, 58, 59), (new DateTime(2006,
+						Calendar.MARCH, 10, 12, 00, 00)).subtract(new DateTime(
+						1, Calendar.FEBRUARY, 1, 1, 1, 1)));
+		assertEquals("The difference of 2006 March 10 12:00:00 and "
+				+ "duration(1year 1month 1day 1:1:1) must be "
+				+ "2005 Feb 9 10:58:59", new DateTime(2005, Calendar.FEBRUARY,
+				9, 10, 58, 59), (new DateTime(2006, Calendar.MARCH, 10, 12, 00,
+				00)).subtract(new Duration(1, 1, 1, 1, 1, 1)));
+		assertEquals(
+				"The difference of 2006 March 10 12:00:00 and 1 Feb 1 must be "
+						+ "2005 Feb 9 12:00:00", new DateTime(2005,
+						Calendar.FEBRUARY, 9, 12, 00, 00), (new DateTime(2006,
+						Calendar.MARCH, 10, 12, 00, 00)).subtract(new DateTerm(
+						1, Calendar.FEBRUARY, 1)));
+		assertEquals(
+				"The difference of 2006 March 10 12:00:00 and 1 year must be "
+						+ "2005 March 9 12:00:00", new DateTime(2005,
+						Calendar.MARCH, 10, 12, 00, 00), (new DateTime(2006,
+						Calendar.MARCH, 10, 12, 00, 00)).subtract(new GYear(1)));
+		assertEquals(
+				"The difference of 2006 March 10 12:00:00 and 1 month must be "
+						+ "2006 Feb 10 12:00:00", new DateTime(2006,
+						Calendar.FEBRUARY, 10, 12, 00, 00), (new DateTime(2006,
+						Calendar.MARCH, 10, 12, 00, 00))
+						.subtract(new GMonth(1)));
+		assertEquals(
+				"The difference of 2006 March 10 12:00:00 and 1 day must be "
+						+ "2006 March 9 12:00:00", new DateTime(2006,
+						Calendar.MARCH, 9, 12, 00, 00), (new DateTime(2006,
+						Calendar.MARCH, 10, 12, 00, 00)).subtract(new GDay(1)));
+		assertEquals(
+				"The difference of 2006 March 10 12:00:00 and 1 year and 1 month must be "
+						+ "2005 Feb 10 12:00:00", new DateTime(2005,
+						Calendar.FEBRUARY, 10, 12, 00, 00), (new DateTime(2006,
+						Calendar.MARCH, 10, 12, 00, 00))
+						.subtract(new GYearMonth(1, 1)));
+		assertEquals(
+				"The difference of 2006 March 10 12:00:00 and 1 month and 1 day must be "
+						+ "2006 Feb 9 12:00:00", new DateTime(2006,
+						Calendar.FEBRUARY, 9, 12, 00, 00), (new DateTime(2006,
+						Calendar.MARCH, 10, 12, 00, 00))
+						.subtract(new GMonthDay(1, 1)));
 	}
 }

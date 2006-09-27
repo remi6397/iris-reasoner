@@ -88,4 +88,51 @@ public class GMonthTest extends TestCase {
 	public void testGetMinValue() {
 		TermTest.runTestGetMinValue(new GMonth(1));
 	}
+	
+	public void testAdd() {
+		assertEquals("The sum of 9months and 1 Feb 1 1:1:1 must be 10months",
+				new GMonth(10), (new GMonth(9)).add(new DateTime(1,
+						Calendar.FEBRUARY, 1, 1, 1, 1)));
+		assertEquals("The sum of 9months and "
+				+ "duration(1year 1month 1day 1:1:1) must be 10months", new GMonth(
+				10), (new GMonth(9)).add(new Duration(1, 1, 1, 1, 1, 1)));
+		assertEquals("The sum of 9months and 1 Feb 1 must be 10months",
+				new GMonth(10), (new GMonth(9)).add(new DateTerm(1,
+						Calendar.FEBRUARY, 1)));
+		assertEquals("The sum of 10months and 1 year must be 10months",
+				new GMonth(10), (new GMonth(10)).add(new GYear(1)));
+		assertEquals("The sum of 9months and 1 month must be 10months", new GMonth(
+				10), (new GMonth(9)).add(new GMonth(1)));
+		assertEquals("The sum of 10months and 1 day must be 10months", new GMonth(10),
+				(new GMonth(10)).add(new GDay(1)));
+		assertEquals("The sum of 9months and 1 year and 1 month must be 10months",
+				new GMonth(10), (new GMonth(9)).add(new GYearMonth(1, 1)));
+		assertEquals("The sum of 9months and 1 month and 1 day must be 10months",
+				new GMonth(10), (new GMonth(9)).add(new GMonthDay(1, 1)));
+	}
+
+	public void testSubtract() {
+		assertEquals("The difference of 10months and 1 Feb 1 1:1:1 must be "
+				+ "9months", new GMonth(9), (new GMonth(10)).subtract(new DateTime(1,
+				Calendar.FEBRUARY, 1, 1, 1, 1)));
+		assertEquals("The difference of 10months and "
+				+ "duration(1year 1month 1day 1:1:1) must be 9months",
+				new GMonth(9), (new GMonth(10)).subtract(new Duration(1, 1, 1, 1,
+						1, 1)));
+		assertEquals("The difference of 10months and 1 Feb 1 must be 9months",
+				new GMonth(9), (new GMonth(10)).subtract(new DateTerm(1,
+						Calendar.FEBRUARY, 1)));
+		assertEquals("The difference of 9months and 1 year must be " + "9months",
+				new GMonth(9), (new GMonth(9)).subtract(new GYear(1)));
+		assertEquals("The difference of 10months and 1 month must be 9months",
+				new GMonth(9), (new GMonth(10)).subtract(new GMonth(1)));
+		assertEquals("The difference of 9months and 1 day must be 9months",
+				new GMonth(9), (new GMonth(9)).subtract(new GDay(1)));
+		assertEquals("The difference of 10months and 1 year and 1 month must be "
+				+ "9months", new GMonth(9), (new GMonth(10)).subtract(new GYearMonth(
+				1, 1)));
+		assertEquals("The difference of 10months and 1 month and 1 day must be "
+				+ "9months", new GMonth(9), (new GMonth(10)).subtract(new GMonthDay(
+				1, 1)));
+	}
 }

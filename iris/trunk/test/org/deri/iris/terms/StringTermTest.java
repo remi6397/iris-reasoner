@@ -25,16 +25,25 @@
  */
 package org.deri.iris.terms;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.deri.iris.ObjectTest;
+import org.deri.iris.TermTest;
+import org.deri.iris.factory.Factory;
+
 /**
- * @author richi
+ * <p>
+ * Tests the functionality of the <code>StringTerm</code>.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
  * 
+ * @author richi
+ * @version $Revision$
+ * @date $Date$
  */
 public class StringTermTest extends TestCase {
 
@@ -73,8 +82,29 @@ public class StringTermTest extends TestCase {
 				new StringTerm(BASIC), new StringTerm(MORE), new StringTerm(
 						MORE1));
 	}
-	
+
 	public void testGetMinValue() {
 		TermTest.runTestGetMinValue(new StringTerm("a"));
+	}
+
+	public void testAdd() {
+		assertEquals("The sum of 'ab' and 12 should be 'ab12'", new StringTerm(
+				"ab12"), (new StringTerm("ab").add(Factory.CONCRETE
+				.createInteger(12))));
+		assertEquals("The sum of 'ab' and 'cd' should be 'abcd'",
+				new StringTerm("abcd"), (new StringTerm("ab"))
+						.add(new StringTerm("cd")));
+	}
+
+	public void testMultiply() {
+		assertEquals("The product of 'abc' and 3 should be 'abcabcabc'",
+				new StringTerm("abcabcabc"), (new StringTerm("abc"))
+						.multiply(Factory.CONCRETE.createInteger(3)));
+	}
+
+	public void testSubtract() {
+		assertEquals("'abcdef' minus 2 should be 'abcd'",
+				new StringTerm("abcd"), (new StringTerm("abcdef"))
+						.subtract(Factory.CONCRETE.createInteger(2)));
 	}
 }
