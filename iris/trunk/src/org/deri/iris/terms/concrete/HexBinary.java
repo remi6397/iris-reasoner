@@ -28,6 +28,7 @@ package org.deri.iris.terms.concrete;
 
 import java.util.regex.Pattern;
 
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IHexBinary;
 
 /**
@@ -106,5 +107,49 @@ public class HexBinary implements IHexBinary, Cloneable {
 
 	public IHexBinary getMinValue() {
 		return new HexBinary("00");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IHexBinary add(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IHexBinary divide(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IHexBinary multiply(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IHexBinary subtract(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
 	}
 }

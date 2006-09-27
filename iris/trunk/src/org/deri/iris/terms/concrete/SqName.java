@@ -26,6 +26,7 @@
 
 package org.deri.iris.terms.concrete;
 
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IIri;
 import org.deri.iris.api.terms.concrete.ISqName;
 
@@ -213,5 +214,49 @@ public class SqName implements ISqName, Cloneable {
 
 	public ISqName getMinValue() {
 		return new SqName("#0");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public ISqName add(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public ISqName divide(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public ISqName multiply(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public ISqName subtract(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
 	}
 }

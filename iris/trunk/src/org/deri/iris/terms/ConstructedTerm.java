@@ -222,4 +222,47 @@ public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Clon
 		return variables;
 	}
 
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IConstructedTerm add(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IConstructedTerm divide(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IConstructedTerm multiply(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IConstructedTerm subtract(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
 }

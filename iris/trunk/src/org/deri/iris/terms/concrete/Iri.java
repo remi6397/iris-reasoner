@@ -29,6 +29,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IIri;
 
 /**
@@ -156,5 +157,49 @@ public class Iri implements IIri, Cloneable {
 
 	public IIri getMinValue() {
 		return new Iri("");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IIri add(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IIri divide(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IIri multiply(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IIri subtract(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
 	}
 }

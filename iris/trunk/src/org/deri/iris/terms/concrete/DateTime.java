@@ -32,7 +32,15 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.concrete.IDateTerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
+import org.deri.iris.api.terms.concrete.IDuration;
+import org.deri.iris.api.terms.concrete.IGDay;
+import org.deri.iris.api.terms.concrete.IGMonth;
+import org.deri.iris.api.terms.concrete.IGMonthDay;
+import org.deri.iris.api.terms.concrete.IGYear;
+import org.deri.iris.api.terms.concrete.IGYearMonth;
 
 public class DateTime implements IDateTime, Cloneable {
 
@@ -135,10 +143,8 @@ public class DateTime implements IDateTime, Cloneable {
 	}
 
 	public String toString() {
-		return getClass().getName() + "[year=" + getYear() + ";month="
-				+ getMonth() + ";date=" + getDay() + ";hour=" + getHour()
-				+ ";minute=" + getMinute() + ";second=" + getMinute()
-				+ ";timezone=" + cal.getTimeZone() + "]";
+		return getYear() + "." + getMonth() + "." + getDay() + " " + getHour()
+				+ ":" + getMinute() + ":" + getSecond();
 	}
 
 	protected static int getTimeZoneHour(final TimeZone tz) {
@@ -188,5 +194,149 @@ public class DateTime implements IDateTime, Cloneable {
 			throw new IllegalArgumentException("The value must not be null");
 		}
 		cal = t;
+	}
+
+	/**
+	 * Constructs a term which migth represent the sum of <code>this</code>
+	 * and the other term. The submitted term must be a term which represents a
+	 * date.
+	 * 
+	 * @param t
+	 *            the other summand
+	 * @return the sum of both terms
+	 * @throws NullPointerException
+	 *             if the term is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the term isn't a <code>DateTerm</code>
+	 */
+	public IDateTime add(final ITerm t) {
+		if (t == null) {
+			throw new NullPointerException("The term must not be null");
+		}
+		if (t instanceof IDateTerm) {
+			final IDateTerm d = (IDateTerm) t;
+			return new DateTime(getYear() + d.getYear(), getMonth()
+					+ d.getMonth(), getDay() + d.getDay(), getHour(),
+					getMinute(), getSecond());
+		} else if (t instanceof IDateTime) {
+			final IDateTime d = (IDateTime) t;
+			return new DateTime(getYear() + d.getYear(), getMonth()
+					+ d.getMonth(), getDay() + d.getDay(), getHour()
+					+ d.getHour(), getMinute() + d.getMinute(), getSecond()
+					+ d.getMinute());
+		} else if (t instanceof IDuration) {
+			final IDuration d = (IDuration) t;
+			return new DateTime(getYear() + d.getYear(), getMonth()
+					+ d.getMonth(), getDay() + d.getDay(), getHour()
+					+ d.getHour(), getMinute() + d.getMinute(), getSecond()
+					+ d.getSecond());
+		} else if (t instanceof IGDay) {
+			final IGDay d = (IGDay) t;
+			return new DateTime(getYear(), getMonth(), getDay() + d.getDay(),
+					getHour(), getMinute(), getSecond());
+		} else if (t instanceof IGMonth) {
+			final IGMonth d = (IGMonth) t;
+			return new DateTime(getYear(), getMonth() + d.getMonth(), getDay(),
+					getHour(), getMinute(), getSecond());
+		} else if (t instanceof IGYear) {
+			final IGYear d = (IGYear) t;
+			return new DateTime(getYear() + d.getYear(), getMonth(), getDay(),
+					getHour(), getMinute(), getSecond());
+		} else if (t instanceof IGMonthDay) {
+			final IGMonthDay d = (IGMonthDay) t;
+			return new DateTime(getYear(), getMonth() + d.getMonth(), getDay()
+					+ d.getDay(), getHour(), getMinute(), getSecond());
+		} else if (t instanceof IGYearMonth) {
+			final IGYearMonth d = (IGYearMonth) t;
+			return new DateTime(getYear() + d.getYear(), getMonth()
+					+ d.getMonth(), getDay(), getHour(), getMinute(),
+					getSecond());
+		}
+		throw new IllegalArgumentException(
+				"Can perform this task only with date like terms, but was "
+						+ t.getClass());
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IDateTime divide(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IDateTime multiply(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * Constructs a term which migth represent the difference of
+	 * <code>this</code> and the other term. The submitted term must be a term
+	 * which represents a date.
+	 * 
+	 * @param t
+	 *            the subtrahend
+	 * @return the difference of both terms
+	 * @throws NullPointerException
+	 *             if the term is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the term isn't a <code>DateTerm</code>
+	 */
+	public IDateTime subtract(final ITerm t) {
+		if (t == null) {
+			throw new NullPointerException("The term must not be null");
+		}
+		if (t instanceof IDateTerm) {
+			final IDateTerm d = (IDateTerm) t;
+			return new DateTime(getYear() - d.getYear(), getMonth()
+					- d.getMonth(), getDay() - d.getDay(), getHour(),
+					getMinute(), getSecond());
+		} else if (t instanceof IDateTime) {
+			final IDateTime d = (IDateTime) t;
+			return new DateTime(getYear() - d.getYear(), getMonth()
+					- d.getMonth(), getDay() - d.getDay(), getHour()
+					- d.getHour(), getMinute() - d.getMonth(), getSecond()
+					- d.getSecond());
+		} else if (t instanceof IDuration) {
+			final IDuration d = (IDuration) t;
+			return new DateTime(getYear() - d.getYear(), getMonth()
+					- d.getMonth(), getDay() - d.getDay(), getHour()
+					- d.getHour(), getMinute() - d.getMinute(), getSecond()
+					- d.getSecond());
+		} else if (t instanceof IGDay) {
+			final IGDay d = (IGDay) t;
+			return new DateTime(getYear(), getMonth(), getDay() - d.getDay(),
+					getHour(), getMinute(), getSecond());
+		} else if (t instanceof IGMonth) {
+			final IGMonth d = (IGMonth) t;
+			return new DateTime(getYear(), getMonth() - d.getMonth(), getDay(),
+					getHour(), getMinute(), getSecond());
+		} else if (t instanceof IGYear) {
+			final IGYear d = (IGYear) t;
+			return new DateTime(getYear() - d.getYear(), getMonth(), getDay(),
+					getHour(), getMinute(), getSecond());
+		} else if (t instanceof IGMonthDay) {
+			final IGMonthDay d = (IGMonthDay) t;
+			return new DateTime(getYear(), getMonth() - d.getMonth(), getDay()
+					- d.getDay(), getHour(), getMinute(), getSecond());
+		} else if (t instanceof IGYearMonth) {
+			final IGYearMonth d = (IGYearMonth) t;
+			return new DateTime(getYear() - d.getYear(), getMonth()
+					- d.getMonth(), getDay(), getHour(), getMinute(),
+					getSecond());
+		}
+		throw new IllegalArgumentException(
+				"Can perform this task only with date like terms, but was "
+						+ t.getClass());
 	}
 }

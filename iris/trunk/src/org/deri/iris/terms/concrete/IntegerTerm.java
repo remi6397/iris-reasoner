@@ -26,16 +26,15 @@
 
 package org.deri.iris.terms.concrete;
 
+import org.deri.iris.api.terms.INumericTerm;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
-import org.deri.iris.basics.Tuple;
 
 /**
  * 
  * imple of integer
  * 
- * Created on 26.04.2006
- * Committed by $Author$
- * $Source$,
+ * Created on 26.04.2006 Committed by $Author$ $Source$,
  * 
  * @author Holger Lausen
  * 
@@ -43,7 +42,7 @@ import org.deri.iris.basics.Tuple;
  */
 public class IntegerTerm implements IIntegerTerm, Cloneable {
 	/** integer to represent this datatype */
-	private int i; 
+	private int i;
 
 	IntegerTerm(int z) {
 		setValue(z);
@@ -68,14 +67,14 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 		return true;
 	}
 
-	public int compareTo(IntegerTerm o) {
+	public int compareTo(IIntegerTerm o) {
 		return Integer.valueOf(i).compareTo(o.getValue());
 	}
-	
+
 	public int hashCode() {
 		return i;
 	}
-	
+
 	public Object clone() {
 		try {
 			return super.clone();
@@ -84,7 +83,7 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 		}
 		return null;
 	}
-	
+
 	public boolean equals(final Object o) {
 		if (!(o instanceof IntegerTerm)) {
 			return false;
@@ -92,7 +91,7 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 		IntegerTerm it = (IntegerTerm) o;
 		return i == it.i;
 	}
-	
+
 	/**
 	 * Simply returns the String representation of the holded int.
 	 * 
@@ -104,5 +103,104 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 
 	public IntegerTerm getMinValue() {
 		return new IntegerTerm(Integer.MIN_VALUE);
+	}
+
+	/**
+	 * Creates the sum of the two terms.
+	 * 
+	 * @param t
+	 *            the other summand
+	 * @return a new term representing the sum
+	 * @throws NullPointerException
+	 *             if the term is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the term isn't a <code>INumeericTerm</code>
+	 */
+	public IntegerTerm add(final ITerm t) {
+		if (t == null) {
+			throw new NullPointerException("The term must not be null");
+		}
+		if (t instanceof INumericTerm) {
+			return new IntegerTerm(i + TermHelper.getInt((INumericTerm) t));
+		}
+		throw new IllegalArgumentException(
+				"Can perform this task only with INumericTerm's, but was "
+						+ t.getClass());
+	}
+
+	/**
+	 * Creates the quotient of the two terms.
+	 * 
+	 * @param t
+	 *            the divisor
+	 * @return a new term representing the quotient
+	 * @throws NullPointerException
+	 *             if the term is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the term isn't a <code>INumeericTerm</code>
+	 * @throws IllegalArgumentException
+	 *             if the divisor is 0
+	 */
+	public IntegerTerm divide(final ITerm t) {
+		if (t == null) {
+			throw new NullPointerException("The term must not be null");
+		}
+		if (t instanceof INumericTerm) {
+			final int i = TermHelper.getInt((INumericTerm) t);
+			if (i == 0) {
+				throw new IllegalArgumentException(
+						"A division by 0 is not allowed, but was " + t);
+			}
+			return new IntegerTerm(this.i / i);
+		}
+		throw new IllegalArgumentException(
+				"Can perform this task only with INumericTerm's, but was "
+						+ t.getClass());
+	}
+
+	/**
+	 * Creates the product of the two terms.
+	 * 
+	 * @param t
+	 *            the other factor
+	 * @return a new term representing the product
+	 * @throws NullPointerException
+	 *             if the term is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the term isn't a <code>INumeericTerm</code>
+	 */
+	public IntegerTerm multiply(final ITerm t) {
+		if (t == null) {
+			throw new NullPointerException("The term must not be null");
+		}
+		if (t instanceof INumericTerm) {
+			return new IntegerTerm(i * TermHelper.getInt((INumericTerm) t));
+		}
+		throw new IllegalArgumentException(
+				"Can perform this task only with INumericTerm's, but was "
+						+ t.getClass());
+	}
+
+	/**
+	 * Creates the difference of the two terms.
+	 * 
+	 * @param t
+	 *            the subtrahend
+	 * @return a new term representing the difference
+	 * @throws NullPointerException
+	 *             if the term is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the term isn't a <code>INumeericTerm</code>
+	 */
+	public IntegerTerm subtract(final ITerm t) {
+		if (t == null) {
+			throw new NullPointerException("The term must not be null");
+		}
+		if (t instanceof INumericTerm) {
+			return new IntegerTerm(i - TermHelper.getInt((INumericTerm) t));
+		}
+		throw new IllegalArgumentException(
+				"Can perform this task only with INumericTerm's, but was "
+						+ t.getClass());
 	}
 }

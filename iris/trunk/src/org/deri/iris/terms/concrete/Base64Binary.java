@@ -28,6 +28,7 @@ package org.deri.iris.terms.concrete;
 
 import java.util.regex.Pattern;
 
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IBase64Binary;
 
 /**
@@ -108,5 +109,49 @@ public class Base64Binary implements IBase64Binary, Cloneable {
 
 	public IBase64Binary getMinValue() {
 		return new Base64Binary("");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IBase64Binary add(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IBase64Binary divide(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IBase64Binary multiply(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public IBase64Binary subtract(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
 	}
 }

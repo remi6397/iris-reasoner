@@ -29,7 +29,13 @@ import org.deri.iris.api.terms.IConstantTerm;
 import org.deri.iris.api.terms.ITerm;
 
 /**
- * <br/><br/>$Id$
+ * <p>
+ * Represents a constant.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * 
  * @author richi
  * @version $Revision$
  * @date $Date$
@@ -104,5 +110,49 @@ public class ConstantTerm implements IConstantTerm<ITerm>, Cloneable {
 
 	public void setValue(ITerm t) {
 		this.value = t;
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public ITerm add(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public ITerm divide(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public ITerm multiply(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
+	}
+
+	/**
+	 * <b>This operation is not supported by this term.</b>
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             this operation is not supported
+	 */
+	public ITerm subtract(final ITerm t) {
+		throw new UnsupportedOperationException(
+				"Can't perform this operation on that term");
 	}
 }
