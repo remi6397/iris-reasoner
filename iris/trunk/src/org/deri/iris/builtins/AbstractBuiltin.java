@@ -45,12 +45,12 @@ import org.deri.iris.factory.Factory;
  * documentation for it's default behaviour.
  * </p>
  * <p>
- * $Id: AbstractBuiltin.java,v 1.2 2006-09-21 08:58:16 richardpoettler Exp $
+ * $Id: AbstractBuiltin.java,v 1.3 2006-09-28 11:30:11 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-09-21 08:58:16 $
+ * @version $Revision: 1.3 $
+ * @date $Date: 2006-09-28 11:30:11 $
  */
 public abstract class AbstractBuiltin implements IBuiltInAtom {
 
@@ -67,29 +67,72 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 	 * @param t
 	 *            the terms defining the values and variables for this builtin
 	 * @throws NullPointerException
-	 *             if the perdicate or the terms is null
+	 *             if the perdicate or the terms is {@code null}
 	 * @throws NullPointerException
-	 *             if the terms contain null
+	 *             if the terms contain {@code null}
 	 * @throws IllegalArgumentException
 	 *             if the length of the terms and the arity of the perdicate
 	 *             doesn't match
 	 */
 	protected AbstractBuiltin(final IPredicate p, final ITerm... t) {
+		this(p, t.length, t);
+	}
+
+	/**
+	 * <p>
+	 * Constructs the builtin. More precisely it constructs the inner atom. The
+	 * number of terms submitted to this constructor must match the arity of the
+	 * predicate.
+	 * </p>
+	 * <p>
+	 * The necessary field is used to define the minimal amount of initially
+	 * submitted terms to successfully evaluate the builtin. An example usage
+	 * could be a term which computes a result and stores it in an additional
+	 * field, which doesn't need to be submitted while the construction of the
+	 * term (e.g. add(x, y, z) computes x + y and stores the result in z, but
+	 * only x and y need to be submitted for the construction).
+	 * </p>
+	 * 
+	 * @param p
+	 *            the special predicate for this builtin
+	 * @param necessary
+	 *            the amount of necessary terms for this builtin
+	 * @param t
+	 *            the terms defining the values and variables for this builtin
+	 * @throws NullPointerException
+	 *             if the perdicate or the terms is {@code null}
+	 * @throws NullPointerException
+	 *             if the terms contain {@code null}
+	 * @throws IllegalArgumentException
+	 *             if the length of the terms and the arity of the perdicate
+	 *             doesn't match
+	 */
+	protected AbstractBuiltin(final IPredicate p, final int necessary,
+			final ITerm... t) {
 		if ((p == null) || (t == null)) {
 			throw new NullPointerException(
 					"The predicate and the terms must not be null");
 		}
 		if (Arrays.asList(t).contains(null)) {
-			throw new NullPointerException(
-					"The terms must not contain null");
+			throw new NullPointerException("The terms must not contain null");
 		}
-		if (t.length != p.getArity()) {
+		if (necessary > p.getArity()) {
+			throw new IllegalArgumentException("The amount of necessary ("
+					+ necessary + ") terms must not be bigger "
+					+ "than the arity of the predicate (" + p.getArity() + ")");
+		}
+		if ((necessary >= 0) && (t.length < necessary)) {
+			throw new IllegalArgumentException("There where " + necessary
+					+ " terms required, but only " + t.length + " terms given");
+		} else if ((necessary < 0) && (t.length != p.getArity())) {
 			throw new IllegalArgumentException(
 					"The length of the terms and the arity of the perdicate "
 							+ "must match. Was " + p.getArity() + " but was "
 							+ t.length);
 		}
-		this.a = Factory.BASIC.createAtom(p, Factory.BASIC.createTuple(t));
+		final ITuple tup = Factory.BASIC.createTuple(p.getArity());
+		tup.setTerms(Arrays.asList(t));
+		this.a = Factory.BASIC.createAtom(p, tup);
 	}
 
 	public abstract boolean evaluate();
@@ -163,8 +206,11 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 
 	/**
 	 * Sets the term at the given position.
-	 * @param i the position of the term (starts at 0)
-	 * @param t the term
+	 * 
+	 * @param i
+	 *            the position of the term (starts at 0)
+	 * @param t
+	 *            the term
 	 * @throws IndexOutOfBoundsException
 	 *             if i is to small, or too big (bigger or equals to the arity
 	 *             of the atom)
