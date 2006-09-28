@@ -53,7 +53,7 @@ public class Tuple implements ITuple<ITuple>{
 	/**
 	 * Tuples t0 and t1 are duplicates if they have identical terms  
 	 * for each sort index. Used in operations on relations 
-	 * (e.g. for tuple sorting – IndexComparator) to increase the 
+	 * (e.g. for tuple sorting ï¿½ IndexComparator) to increase the 
 	 * efficiency of the operations.
 	 */
 	private ITuple duplicate = null;
@@ -95,7 +95,7 @@ public class Tuple implements ITuple<ITuple>{
 	}
 	
 	public int getArity() {
-		return this.terms.size();
+		return arity;
 	}
 
 	public ITerm getTerm(int arg) {
@@ -219,7 +219,9 @@ public class Tuple implements ITuple<ITuple>{
 			return false;
 		}
 		Tuple tuple = (Tuple) o;
-		if((this.terms.size() - tuple.getTerms().size()) != 0) return false;
+		if(terms.size() != tuple.terms.size()) {
+			return false;
+		}
 		ITerm t0, t1;
 		for(int i=0; i<tuple.getTerms().size(); i++){
 			t0 = this.terms.get(i);
