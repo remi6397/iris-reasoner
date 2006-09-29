@@ -46,7 +46,7 @@ public interface ITerm<Type extends ITerm, Type0> extends Comparable<Type> {
 	/**
 	 * <p>
 	 * Computes the sum of the actual term and the given one. None of the both
-	 * paticipating terms should be changed.
+	 * participating terms should be changed.
 	 * </p>
 	 * <p>
 	 * <b>This operation throws an Illegal argument exception, if the operation
@@ -57,7 +57,7 @@ public interface ITerm<Type extends ITerm, Type0> extends Comparable<Type> {
 	 * </p>
 	 * 
 	 * @param t
-	 *            the summand of the operation
+	 *            addend, a term that will be added
 	 * @return the computed result
 	 * @throws NullPointerException
 	 *             if the therm is <code>null</code>
