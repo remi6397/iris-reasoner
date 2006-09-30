@@ -50,14 +50,26 @@ import org.deri.iris.storage.Relation;
  * stored in the relation) will not be considered during the projection 
  * operation.
  * For example, if the pattern array takes the following values:
- * [1, -1, 0] 
+ * [2, -1, 0] 
  * than the projection will be performed on 0th and 2nd 
  * (as we have values different from -1 on 0th and 2nd index of the array)
- * arguments of each tuple in the relation. The result will be relation
- * where each tuple is of arity two where each term on the 2nd position
- * is placed on the 0th position and each term on the 0nd position is
- * placed on the 1th position (tuple [a,b,c] would be transformed 
- * to [c,a]).
+ * arguments of each tuple in the relation. 
+ * 
+ * The result will be a relation where each tuple has arity two.
+ * Each tuple in the relation is created so that:
+ * 	
+ * 	term with index 0 will be replaced at the position 2;
+ * 	term with index 1 will be ignored (due to -1 index vale);
+ * 	term with index 2 will be replaced at the position 0;
+ * 
+ * For instance for a tuple:
+ * <a, b, c>
+ * and projection indexes:
+ * <2, -1, 0>
+ * we would get a tuple:
+ * <c, null, a>.
+ * As we do not need null values (supposed to be ignored), we will finally get:
+ * <c, a>.
  * 
  * Note: The implementation of IJoin (Join and JoinSimpleExtended) using projectIndexes 
  * can handle projection operation too! Use this option in cases where 
@@ -70,6 +82,7 @@ import org.deri.iris.storage.Relation;
 public class Projection implements IProjection{
 	private IRelation relation = null;
 	private int[] indexes = null;
+	private int arity = 0;
 	private IRelation projectionRelation = null;
 	private BasicComparator comparator = null;
 	
@@ -90,11 +103,18 @@ public class Projection implements IProjection{
 		}
 		this.relation = relation;
 		this.indexes = pattern;
-		projectionRelation = new Relation(this.getRelationArity());
+		this.arity = this.getRelationArity();
+		projectionRelation = new Relation(this.arity);
 	}
 
 	public IRelation project() {
-		// Sort relation on those tupples defined by indexes
+		/**
+		 * Sort relation on those tupples defined by indexes.
+		 * This will create duplicate nodes for equivalent tuples (those
+		 * that have equal terms on project indexes). Thus the 
+		 * computation of the projectTuple method will be done only on 
+		 * non equivalent tuples. 
+		 */
 		this.comparator = new IndexComparator(this.transformIndexes());
 		IRelation rel = new Relation(comparator);
 		rel.addAll(this.relation);
