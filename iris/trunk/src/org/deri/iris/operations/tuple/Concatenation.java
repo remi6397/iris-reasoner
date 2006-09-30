@@ -25,11 +25,15 @@
  */
 package org.deri.iris.operations.tuple;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.tuple.IConcatenation;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -37,7 +41,7 @@ import org.deri.iris.factory.Factory;
  * @date   26.05.2006 11:59:38
  */
 public class Concatenation implements IConcatenation{
-
+	
 	/* (non-Javadoc)
 	 * @see org.deri.iris.api.operations.tuple.IConcatenation#concatenate(org.deri.iris.api.basics.ITuple, org.deri.iris.api.basics.ITuple)
 	 */
@@ -51,7 +55,7 @@ public class Concatenation implements IConcatenation{
 	}
 
 	/* 
-	 * Projection at the level of tuple.
+	 * Projection
 	 * 
 	 * (non-Javadoc)
 	 * @see org.deri.iris.api.operations.tuple.IConcatenation#concatenate(org.deri.iris.api.basics.ITuple, org.deri.iris.api.basics.ITuple, int[])
@@ -59,17 +63,17 @@ public class Concatenation implements IConcatenation{
 	public ITuple concatenate(ITuple arg0, ITuple arg1, 
 			int[] projectIndexes) {
 		
-		if(projectIndexes == null)return concatenate(arg0, arg1);
-		List tupleList = new LinkedList();
+		ITerm[] terms = new ITerm[projectIndexes.length];
+		List<ITerm> termList = new ArrayList<ITerm>();
+		ITuple t = concatenate(arg0, arg1);
 		for(int i=0; i<projectIndexes.length; i++){
-			if(projectIndexes[i] != -1){
-				if(i < arg0.getArity())
-					tupleList.add(arg0.getTerm(i));
-				else
-					tupleList.add(arg1.getTerm(i-arg0.getArity()));
-			}
+			if(projectIndexes[i] != -1)
+				terms[projectIndexes[i]] = t.getTerm(i);
+		}	
+		for(int j=0; j<projectIndexes.length; j++){
+			if(terms[j] != null)
+				termList.add(terms[j]);
 		}
-		return Factory.BASIC.createTuple(tupleList);
+		return BASIC.createTuple(termList);
 	}
-
 }
