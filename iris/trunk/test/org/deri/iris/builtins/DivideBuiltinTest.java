@@ -35,12 +35,12 @@ import junit.framework.TestSuite;
  * Tests for the {@code DivideBuiltin}.
  * </p>
  * <p>
- * $Id: DivideBuiltinTest.java,v 1.1 2006-09-28 11:30:50 richardpoettler Exp $
+ * $Id: DivideBuiltinTest.java,v 1.2 2006-09-30 06:48:03 darko Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-09-28 11:30:50 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-09-30 06:48:03 $
  */
 public class DivideBuiltinTest extends TestCase {
 
@@ -53,7 +53,7 @@ public class DivideBuiltinTest extends TestCase {
 		DivideBuiltin a = new DivideBuiltin(CONCRETE.createInteger(6), CONCRETE
 				.createInteger(2));
 		a.evaluate();
-		assertEquals("6 / 2 should be 6", CONCRETE.createInteger(3), a
+		assertEquals("6 / 2 should be 3", CONCRETE.createInteger(3), a
 				.getTerm(2));
 	}
 }
