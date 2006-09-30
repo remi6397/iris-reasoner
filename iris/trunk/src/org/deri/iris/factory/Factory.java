@@ -25,20 +25,22 @@
  */
 package org.deri.iris.factory;
 
+import org.deri.iris.ProgramFactory;
 import org.deri.iris.api.factory.IBasicFactory;
 import org.deri.iris.api.factory.IBuiltInsFactory;
 import org.deri.iris.api.factory.IConcreteFactory;
 import org.deri.iris.api.factory.IGraphFactory;
-import org.deri.iris.api.factory.IRelationFactory;
-import org.deri.iris.api.factory.ITermFactory;
 import org.deri.iris.api.factory.IProgramFactory;
+import org.deri.iris.api.factory.IRelationOperationsFactory;
+import org.deri.iris.api.factory.ITermFactory;
+import org.deri.iris.api.factory.ITupleOperationsFactory;
 import org.deri.iris.basics.BasicFactory;
 import org.deri.iris.builtins.BuiltinsFactory;
 import org.deri.iris.graph.GraphFactory;
-import org.deri.iris.operations.relations.OperationFactory;
+import org.deri.iris.operations.relations.RelationOperationsFactory;
+import org.deri.iris.operations.tuple.TupleOperationsFactory;
 import org.deri.iris.terms.TermFactory;
 import org.deri.iris.terms.concrete.ConcreteFactory;
-import org.deri.iris.ProgramFactory;
 
 /**
  * @author richi
@@ -49,7 +51,8 @@ public class Factory {
 	public static final ITermFactory TERM = TermFactory.getInstance();
 	public static final IConcreteFactory CONCRETE = ConcreteFactory.getInstance();
 	public static final IGraphFactory GRAPH = GraphFactory.getInstance();
-	public static final IRelationFactory RELATION = OperationFactory.getInstance();
+	public static final IRelationOperationsFactory RELATION_OPERATION = RelationOperationsFactory.getInstance();
+	public static final ITupleOperationsFactory TUPLE_OPERATION = TupleOperationsFactory.getInstance();
 	public static final IProgramFactory PROGRAM = ProgramFactory.getInstance();
 	public static final IBuiltInsFactory BUILTIN = BuiltinsFactory.getInstance();
 }
