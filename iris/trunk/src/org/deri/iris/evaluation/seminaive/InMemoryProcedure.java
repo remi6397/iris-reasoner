@@ -79,7 +79,7 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 		}else if (node instanceof JoinDescription){
 			JoinDescription j = (JoinDescription)node;
 			org.deri.iris.api.operations.relation.IJoin join = 
-				Factory.RELATION.createJoinOperator(
+				Factory.RELATION_OPERATION.createJoinOperator(
 						evaluate((ITree)j.getChildren().get(0), EDB, IDB), 
 						evaluate((ITree)j.getChildren().get(1), EDB, IDB),
 						j.getIndexes(), j.getCondition() );
@@ -100,7 +100,7 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 			if (joinVariables.size() < child1.getVariables().size() + child2.getVariables().size()) {
 				// Join
 				org.deri.iris.api.operations.relation.IJoin join = 
-					Factory.RELATION.createJoinOperator(
+					Factory.RELATION_OPERATION.createJoinOperator(
 						evaluate(child1, EDB, IDB), 
 						evaluate(child2, EDB, IDB),
 						joinIndexes);
@@ -118,7 +118,7 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 		}else if (node instanceof ProjectionDescription){
 			ProjectionDescription p = (ProjectionDescription)node;
 			org.deri.iris.api.operations.relation.IProjection projection =
-				Factory.RELATION.createProjectionOperator(
+				Factory.RELATION_OPERATION.createProjectionOperator(
 						evaluate((ITree)p.getChildren().get(0), EDB, IDB),
 						p.getIndexes());
 			return projection.project();
@@ -141,7 +141,7 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 		}else if (node instanceof SelectionDescription){
 			SelectionDescription s = (SelectionDescription)node;
 			org.deri.iris.api.operations.relation.ISelection selection =
-				Factory.RELATION.createSelectionOperator(
+				Factory.RELATION_OPERATION.createSelectionOperator(
 						evaluate((ITree)s.getChildren().get(0), EDB, IDB),
 						s.getPattern());
 			return selection.select();			
@@ -166,7 +166,7 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 		if (joinVariables.size() < child1Variables.size() + child2.getVariables().size()) {
 			// Join
 			org.deri.iris.api.operations.relation.IJoin join = 
-				Factory.RELATION.createJoinOperator(
+				Factory.RELATION_OPERATION.createJoinOperator(
 					child1, 
 					evaluate(child2, EDB, IDB),
 					joinIndexes);

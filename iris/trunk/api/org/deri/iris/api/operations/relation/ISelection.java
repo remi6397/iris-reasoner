@@ -39,13 +39,13 @@ import org.deri.iris.api.storage.IRelation;
  * engines.
  *
  * Note: Implementation of the selection operation assumes an implementation
- * of this interface and an implementation of the IRelationFactory interface
+ * of this interface and an implementation of the IRelationOperationsFactory interface
  * (createSelectionOperator method/s).
  * 
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:18:20
  *
- * @version $Revision: 1.6 $ $Date: 2006-09-23 19:12:23 $
+ * @version $Revision: 1.7 $ $Date: 2006-09-30 15:52:35 $
  */
 public interface ISelection {
 	

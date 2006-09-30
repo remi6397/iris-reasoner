@@ -34,12 +34,12 @@ import org.deri.iris.api.storage.IRelation;
  * 
  * Note: Implementation of the IJoin interface assumes an 
  * implementation of this interface itself and an implementation of 
- * the IRelationFactory interface (createJoinOperator methods).
+ * the IRelationOperationsFactory interface (createJoinOperator methods).
  * 
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:09:02
  *
- * @version $Revision: 1.7 $ $Date: 2006-07-27 12:42:26 $
+ * @version $Revision: 1.8 $ $Date: 2006-09-30 15:52:35 $
  * @param <JoinCondition>
  */
 public interface IJoin {

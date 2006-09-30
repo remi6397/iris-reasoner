@@ -25,7 +25,7 @@
  */
 package org.deri.iris;
 
-import static org.deri.iris.factory.Factory.RELATION;
+import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -247,7 +247,7 @@ public class EDB implements IEDB{
 	public int getNumberOfFacts(IPredicate p, Set<ITuple> filter) {
 		int result = 0;
 		for (ITuple t : filter) {
-			result += RELATION.createSelectionOperator(facts.get(p), t)
+			result += RELATION_OPERATION.createSelectionOperator(facts.get(p), t)
 					.select().size();
 		}
 		return result;

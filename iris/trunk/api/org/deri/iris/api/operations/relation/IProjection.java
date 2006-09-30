@@ -39,7 +39,7 @@ import org.deri.iris.api.storage.IRelation;
  * 
  * Note: Implementation of the IProjection interface assumes an 
  * implementation of this interface itself and an implementation of 
- * the IRelationFactory interface (createProjectionOperator method-s).
+ * the IRelationOperationsFactory interface (createProjectionOperator method-s).
  *  
  * @author Darko Anicic, DERI Innsbruck
  * @date   23.06.2006 17:19:58

@@ -41,7 +41,7 @@ import org.deri.iris.operations.relations.JoinCondition;
  * @author Darko Anicic, DERI Innsbruck
  * @date   26.06.2006 14:26:39
  */
-public interface IRelationFactory {
+public interface IRelationOperationsFactory {
 	
 	public IDifference createDifferenceOperator(IRelation arg0, IRelation arg1);
 	
@@ -184,10 +184,6 @@ public interface IRelationFactory {
 	 * @return Relataion containing selected elements
 	 */
 	public ISelection createSelectionOperator(IRelation relation, ITuple pattern, int[] indexes);
-	
-	public IUnification createUnificationOperator(final ITuple arg0, final ITuple arg1);
-	
-	public IUnification createUnificationOperator(final IAtom arg0, final IAtom arg1);
 	
 	public IUnion createUnionOperator(final IRelation... args);
 }
