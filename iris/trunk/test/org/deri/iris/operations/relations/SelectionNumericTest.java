@@ -27,7 +27,7 @@
 package org.deri.iris.operations.relations;
 
 import static org.deri.iris.factory.Factory.CONCRETE;
-import static org.deri.iris.factory.Factory.RELATION;
+import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -81,14 +81,14 @@ public class SelectionNumericTest extends TestCase {
 	 * 
 	 * Also see:
 	 * (non-Javadoc)
-	 * @see org.deri.iris.api.factory.IRelationFactory#createSelectionOperator(IRelation relation, ITuple pattern)
+	 * @see org.deri.iris.api.factory.IRelationOperationsFactory#createSelectionOperator(IRelation relation, ITuple pattern)
 	 */
 	protected static void runSelection_0(final ITuple p, 
 			final Collection<ITuple> e) {
 		
 		setNumRelation();
 		ISelection selectionOperator 
-			= RELATION.createSelectionOperator(relation, p);
+			= RELATION_OPERATION.createSelectionOperator(relation, p);
 			
 		IRelation result = selectionOperator.select();
 		assertResults(result, e);
@@ -99,14 +99,14 @@ public class SelectionNumericTest extends TestCase {
 	 * 
 	 * Also see:
 	 * (non-Javadoc)
-	 * @see org.deri.iris.api.factory.IRelationFactory#createSelectionOperator(IRelation relation, int[] indexes)
+	 * @see org.deri.iris.api.factory.IRelationOperationsFactory#createSelectionOperator(IRelation relation, int[] indexes)
 	 */
 	protected static void runSelection_1(final int[] indexes, 
 			final Collection<ITuple> e) {
 			
 		setNumRelation();
 		ISelection selectionOperator 
-			= RELATION.createSelectionOperator(relation, indexes);
+			= RELATION_OPERATION.createSelectionOperator(relation, indexes);
 			
 		IRelation result = selectionOperator.select();
 		assertResults(result, e);
@@ -117,14 +117,14 @@ public class SelectionNumericTest extends TestCase {
 	 * 
 	 * Also see:
 	 * (non-Javadoc)
-	 * @see org.deri.iris.api.factory.IRelationFactory#createSelectionOperator(IRelation relation, ITuple pattern, int[] indexes)
+	 * @see org.deri.iris.api.factory.IRelationOperationsFactory#createSelectionOperator(IRelation relation, ITuple pattern, int[] indexes)
 	 */
 	protected static void runSelection_2(final ITuple p, final int[] indexes, 
 			final Collection<ITuple> e) {
 			
 		setNumRelation();
 		ISelection selectionOperator 
-			= RELATION.createSelectionOperator(relation, p, indexes);
+			= RELATION_OPERATION.createSelectionOperator(relation, p, indexes);
 			
 		IRelation result = selectionOperator.select();
 		assertResults(result, e);

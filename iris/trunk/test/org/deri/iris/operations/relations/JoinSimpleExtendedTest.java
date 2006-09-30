@@ -25,7 +25,7 @@
  */
 package org.deri.iris.operations.relations;
 
-import static org.deri.iris.factory.Factory.RELATION;
+import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,7 +80,7 @@ public class JoinSimpleExtendedTest extends TestCase {
 		relation1.add(MiscHelper.createTuple("a", "b", "c"));
 
 		// test join operation handling duplicates
-		joinOperator = RELATION.createJoinOperator(
+		joinOperator = RELATION_OPERATION.createJoinOperator(
 				relation0, relation1, i, JoinCondition.EQUALS);
 		result = joinOperator.join();
 		assertResults(result, e);
@@ -111,7 +111,7 @@ public class JoinSimpleExtendedTest extends TestCase {
 		relation1.add(MiscHelper.createTuple("a", "b", "c"));
 
 		// test join operation handling duplicates
-		joinOperator = RELATION.createJoinOperator(
+		joinOperator = RELATION_OPERATION.createJoinOperator(
 				relation0, relation1, i, 
 					JoinCondition.EQUALS, projectIndexes);
 		result = joinOperator.join();

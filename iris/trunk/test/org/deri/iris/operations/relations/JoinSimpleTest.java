@@ -25,7 +25,7 @@
  */
 package org.deri.iris.operations.relations;
 
-import static org.deri.iris.factory.Factory.RELATION;
+import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,7 +82,7 @@ public class JoinSimpleTest extends TestCase {
 		relation1.add(MiscHelper.createTuple("a", "b", "c", "x"));*/
 
 		// test join operation with no duplicates handling
-		IJoin joinSimpleOperator = RELATION.createJoinSimpleOperator(
+		IJoin joinSimpleOperator = RELATION_OPERATION.createJoinSimpleOperator(
 				relation0, relation1, i, JoinCondition.EQUALS);
 		IRelation result = joinSimpleOperator.join();
 		assertResults(result, e);

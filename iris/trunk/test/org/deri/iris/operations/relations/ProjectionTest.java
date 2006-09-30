@@ -26,7 +26,7 @@
 
 package org.deri.iris.operations.relations;
 
-import static org.deri.iris.factory.Factory.RELATION;
+import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,7 +76,7 @@ public class ProjectionTest extends TestCase {
 		relation.add(MiscHelper.createTuple("a", "d", "c"));
 		
 		// test the projection operation handling duplicates
-		IProjection projectionOperator = RELATION.createProjectionOperator(
+		IProjection projectionOperator = RELATION_OPERATION.createProjectionOperator(
 				relation, p);
 		IRelation result = projectionOperator.project();
 		assertResults(result, e);
@@ -103,7 +103,7 @@ public class ProjectionTest extends TestCase {
 	
 	/**
 	 * This test is equivalent to the testProjection_npn.
-	 * In both test we have a value different of -1 in 
+	 * In both test we have a value different than -1 in 
 	 * the second index. Thus the projection operation will
 	 * be performed on the arguments with the index 1 in 
 	 * both cases.

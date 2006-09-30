@@ -25,7 +25,7 @@
  */
 package org.deri.iris.operations.relations;
 
-import static org.deri.iris.factory.Factory.RELATION;
+import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -105,7 +105,7 @@ public class UnionTest extends TestCase {
 		relation2.add(MiscHelper.createTuple("f", "b", "a"));
 		relation2.add(MiscHelper.createTuple("v", "b", "c"));
 		
-		IUnion unionOperator = RELATION.createUnionOperator(
+		IUnion unionOperator = RELATION_OPERATION.createUnionOperator(
 				relation0, relation1, relation2);
 		IRelation result = unionOperator.union();
 		assertResults(result, e);

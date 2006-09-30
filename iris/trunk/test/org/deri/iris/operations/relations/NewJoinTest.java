@@ -43,30 +43,36 @@ import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.storage.Relation;
 
 /**
- * NOTE: Currently only EQUAL comparison operator (equal join) is supported!
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date 21.09.2006 12:11:43
  */
-public class JoinTest extends TestCase {
+/**
+ * @author darani
+ * @date 23.09.2006
+ * 
+ */
+public class NewJoinTest extends TestCase {
 
 	public static Test suite() {
-		return new TestSuite(JoinTest.class, JoinTest.class.getSimpleName());
+		return new TestSuite(NewJoinTest.class, NewJoinTest.class.getSimpleName());
 	}
 
 	/**
 	 * Joins two relations (no duplicates handling) and then checks the 
 	 * result against the submitted Collection of tuples. 
 	 * 
-	 * @param i indexes on which to join (see documentation for
-	 *          IJoin.join(..) for the computation of this array)
-	 * @param e collection of expected tuples
+	 * @param i
+	 *            the indexes on which to join (see documentation for
+	 *            IJoin.join(..) for the computation of this array)
+	 * @param e
+	 *            the Collection of expected tuples
 	 */
 	protected static void runJoin(final int[] i, final Collection<ITuple> e) {
 		IRelation<ITuple> relation0 = new Relation(3);
 		IRelation<ITuple> relation1 = new Relation(4);
 
-		// relation0: add tuples
+		
 		relation0.add(MiscHelper.createTuple("a", "b", "b"));
 		relation0.add(MiscHelper.createTuple("a", "b", "d"));
 		relation0.add(MiscHelper.createTuple("e", "e", "e"));
@@ -79,7 +85,6 @@ public class JoinTest extends TestCase {
 		relation0.add(MiscHelper.createTuple("x", "x", "x"));
 		
 		
-		// relation1: add tuples
 		relation1.add(MiscHelper.createTuple("c", "b", "b", "x"));
 		relation1.add(MiscHelper.createTuple("f", "b", "a", "x"));
 		
@@ -92,38 +97,12 @@ public class JoinTest extends TestCase {
 		relation1.add(MiscHelper.createTuple("x", "x", "x", "x"));
 		relation1.add(MiscHelper.createTuple("x", "e", "x", "x"));
 		
-		
-		IJoin joinOperator = RELATION_OPERATION.createJoinOperator(
+		IJoin joinSimpleOperator = RELATION_OPERATION.createJoinNewSimpleOperator(
 				relation0, relation1, i, JoinCondition.EQUALS);
-		IRelation result = joinOperator.join();
+		IRelation result = joinSimpleOperator.join();
 		assertResults(result, e);
 	}
 
-	/**
-	 * @param i  indexes on which to join (see documentation for
-	 *           IJoin.join(..) for the computation of this array)
-	 * @param pi project indexes
-	 * @param e  collection of expected tuples
-	 */
-	protected static void runJoinWithProjection(final int[] i, final int[] pi, final Collection<ITuple> e) {
-		IRelation<ITuple> relation0 = new Relation(3);
-		IRelation<ITuple> relation1 = new Relation(4);
-
-		// relation0: add tuples
-		relation0.add(MiscHelper.createTuple("a", "b", "b"));
-		relation0.add(MiscHelper.createTuple("a", "b", "d"));
-		
-		// relation1: add tuples
-		relation1.add(MiscHelper.createTuple("c", "b", "b", "x"));
-		relation1.add(MiscHelper.createTuple("f", "b", "a", "x"));
-		
-		IJoin joinOperator = RELATION_OPERATION.createJoinOperator(
-				relation0, relation1,
-				i, JoinCondition.EQUALS, pi);
-		IRelation result = joinOperator.join();
-		assertResults(result, e);
-	}
-	
 	/**
 	 * This is an example of inconsistent indexes. Namely 3rd column 
 	 * of relation1 cannot be joined with 3rd column of relation0 
@@ -191,19 +170,6 @@ public class JoinTest extends TestCase {
 		e.add(MiscHelper.createTuple("e", "e", "e", "x", "e", "x", "x"));
 		
 		runJoin(new int[] { 1, 1, 1, -1}, e);
-	}
-	
-	/**
-	 * JoinSimpleExtended:
-	 * 1st column of relation1 with 0th column of relation0 and
-	 * 1st column of relation1 with 1st column of relation0 and
-	 * 1st column of relation1 with 2nd column of relation0.
-	 */
-	public void testJoinWithProjection_m1p1p2m1() {
-		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("x", "b", "a"));
-		
-		runJoinWithProjection(new int[] { -1, 1, 2, -1}, new int[]{2, -1, 1, -1, -1, -1, 0}, e);
 	}
 	
 	/**

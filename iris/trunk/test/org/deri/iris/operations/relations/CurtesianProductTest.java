@@ -1,6 +1,6 @@
 package org.deri.iris.operations.relations;
 
-import static org.deri.iris.factory.Factory.RELATION;
+import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +48,7 @@ public class CurtesianProductTest extends TestCase {
 		
 		
 		
-		IJoin joinOperator = RELATION.createJoinOperator(
+		IJoin joinOperator = RELATION_OPERATION.createJoinOperator(
 				relation0, relation1, i, JoinCondition.EQUALS);
 		IRelation result = joinOperator.join();
 		assertResults(result, e);
