@@ -65,15 +65,22 @@ public class Join implements IJoin{
 			throw new IllegalArgumentException(
 					"Input parameters must not be null");
 		}
+		if (arg0.size()==0 || arg1.size() == 0) {
+			throw new IllegalArgumentException(
+					"Input relations must not be empty, " +
+					"otherwise the join relation is empty (null)");
+		}
 		int[] i = null;
 		int[] j = null;
+		int a = ((ITuple)arg0.first()).getArity();
 		this.indexes = indexes;
-		i = this.transformIndexes0(this.indexes);
-		j = this.transformIndexes1(this.indexes);
-		if(! checkIndexes(i, ((ITuple)arg0.first()).getArity()))
+		i = this.transformIndexes0(a, this.indexes);
+		if(! checkIndexes(i, a))
 			throw new IllegalArgumentException("Indexes are not specified" +
 					" correctly.");
-		if(! checkIndexes(j, ((ITuple)arg1.first()).getArity()))
+		a = ((ITuple)arg1.first()).getArity();
+		j = this.transformIndexes1(a, this.indexes);
+		if(! checkIndexes(j, a))
 			throw new IllegalArgumentException("Indexes are not specified" +
 					" correctly.");
 		
@@ -88,15 +95,22 @@ public class Join implements IJoin{
 			throw new IllegalArgumentException("All constructor "
 					+ "parameters must not be specified (non null values");
 		}
+		if (arg0.size()==0 || arg1.size() == 0) {
+			throw new IllegalArgumentException(
+					"Input relations must not be empty, " +
+					"otherwise the join relation is empty (null)");
+		}
 		int[] i = null;
 		int[] j = null;
+		int a = ((ITuple)arg0.first()).getArity();
 		this.indexes = indexes;
-		i = this.transformIndexes0(this.indexes);
-		j = this.transformIndexes1(this.indexes);
-		if(! checkIndexes(i, ((ITuple)arg0.first()).getArity()))
+		i = this.transformIndexes0(a, this.indexes);
+		if(! checkIndexes(i, a))
 			throw new IllegalArgumentException("Indexes are not specified" +
 					" correctly.");
-		if(! checkIndexes(j, ((ITuple)arg1.first()).getArity()))
+		a = ((ITuple)arg1.first()).getArity();
+		j = this.transformIndexes1(a, this.indexes);
+		if(! checkIndexes(j, a))
 			throw new IllegalArgumentException("Indexes are not specified" +
 					" correctly.");
 		
@@ -113,11 +127,15 @@ public class Join implements IJoin{
 	 *            define indexes which the projection operation will be applied
 	 *            on. For example, if set of tuples of arity 3 needs to be
 	 *            projected on the first and last term, the projectIndexes will
-	 *            look like: [1, -1, 1]. -1 means that terms with that index
-	 *            will be omitted. Note that an equivalent array for the project
-	 *            indexes could be also: [0, -1, 2], in which case the array
-	 *            values represent the term indexes in a tuple. If not specified
-	 *            join tuples will be simple merged.
+	 *            look like: [0, -1, 1]. -1 means that terms with that index
+	 *            will be omitted. Note that for an array of the projection 
+	 *            indexes [1, -1, 0] we would also have the projection on the 
+	 *            first and last term, but in this case the term which was 
+	 *            initially last one (3rd  one, index 0) would be placed on the 
+	 *            first position, one which was initially first one would be 
+	 *            placed on the second position (index 1), and the middle one 
+	 *            (index -1) would be omitted.
+	 *            If not specified join tuples will be simple merged.
 	 */
 	Join(IRelation arg0, IRelation arg1, int[] indexes,
 			JoinCondition condition, int[] projectIndexes) {
@@ -126,15 +144,22 @@ public class Join implements IJoin{
 			throw new IllegalArgumentException("Constructor "
 					+ "parameters are not specified correctly");
 		}
+		if (arg0.size()==0 || arg1.size() == 0) {
+			throw new IllegalArgumentException(
+					"Input relations must not be empty, " +
+					"otherwise the join relation is empty (null)");
+		}
 		int[] i = null;
 		int[] j = null;
+		int a = ((ITuple)arg0.first()).getArity();
 		this.indexes = indexes;
-		i = this.transformIndexes0(this.indexes);
-		j = this.transformIndexes1(this.indexes);
-		if(! checkIndexes(i, ((ITuple)arg0.first()).getArity()))
+		i = this.transformIndexes0(a, this.indexes);
+		if(! checkIndexes(i, a))
 			throw new IllegalArgumentException("Indexes are not specified" +
 					" correctly.");
-		if(! checkIndexes(j, ((ITuple)arg1.first()).getArity()))
+		a = ((ITuple)arg1.first()).getArity();
+		j = this.transformIndexes1(a, this.indexes);
+		if(! checkIndexes(j, a))
 			throw new IllegalArgumentException("Indexes are not specified" +
 					" correctly.");
 		
@@ -163,10 +188,10 @@ public class Join implements IJoin{
 		 * If project indexes are not specified, join tuples will be simple
 		 * merged.
 		 */
+		int a = ((ITuple)this.relation0.first()).getArity()+
+		((ITuple)this.relation1.first()).getArity();
 		if (this.projectIndexes == null) {
-			this.projectIndexes = this
-			.transformIndexes0(new int[((ITuple)this.relation0.first()).getArity() + 
-			                           ((ITuple)this.relation1.first()).getArity()]);
+			this.projectIndexes = this.transformIndexes0(a, new int[a]);
 		}
 		this.joinRelation = new Relation(this.getRelationArity());
 	}
@@ -214,40 +239,42 @@ public class Join implements IJoin{
 		}
 		return joinRelation;
 	}
-	
+
 	/**
 	 * Transforms indexes according to the following examples: 
 	 * [-1,-1, 0] to [-1,-1, 2]; 
 	 * [-1, 1, 0] to [-1, 1, 2];
 	 * [ 2, 1, 0] to [ 0, 1, 2].
 	 * 
-	 * @param indexes
-	 * @return transformed indexes
+	 * @param a    relation arity
+	 * @param inds join indexes
+	 * @return     transformed join indexes
 	 */
-	private int[] transformIndexes0(int[] indexes) {
-		int[] tranformedIndexes = new int[indexes.length];
-		for (int i = 0; i < indexes.length; i++) {
-			if (indexes[i] != -1)
+	private int[] transformIndexes0(int a, int[] inds) {
+		int[] tranformedIndexes = new int[a];
+		for (int i = 0; i < a; i++) {
+			if (inds[i] != -1)
 				tranformedIndexes[i] = i;
 			else
 				tranformedIndexes[i] = -1;
 		}
 		return tranformedIndexes;
 	}
-
+	
 	/**
 	 * Transforms indexes according to the following examples: [-1,-1, 0] to
 	 * [0,-1,-1] [-1, 1, 0] to [0, 1,-1] [ 2, 1, 0] to [0, 1, 2]
 	 * 
-	 * @param indexes
-	 * @return transformed indexes
+	 * @param a    relation arity
+	 * @param inds join indexes
+	 * @return     transformed join indexes
 	 */
-	private int[] transformIndexes1(int[] indexes) {
-		int[] tranformedIndexes = new int[indexes.length];
-		for (int i = 0; i < indexes.length; i++) {
+	private int[] transformIndexes1(int a, int[] inds) {
+		int[] tranformedIndexes = new int[a];
+		for (int i = 0; i < a; i++) {
 			tranformedIndexes[i] = -1;
 		}
-		for (int i = 0; i < indexes.length; i++) {
+		for (int i = 0; i < a; i++) {
 			if (indexes[i] != -1) {
 				tranformedIndexes[indexes[i]] = indexes[i];
 			}
@@ -264,9 +291,9 @@ public class Join implements IJoin{
 	}
 
 	/**
-	 * @param inds indexes
+	 * @param inds join indexes
 	 * @param a arity
-	 * @return true for consistant indexes (each index is 
+	 * @return true for consistant join indexes (each index is 
 	 * 	not bigger than the relation arity), otherwise false
 	 */
 	private boolean checkIndexes(int[] inds, int a){
@@ -280,22 +307,27 @@ public class Join implements IJoin{
 	private int checkJointness(ITuple t0, ITuple t1){
 		int[] indexes = this.indexes;
 		int comp = 0;
+		boolean cont = false;
 		
-		if(t0 != null && t1 != null){
-			for(int i=0; i<indexes.length; i++){
-				if(indexes[i] != -1){
-					comp = t0.getTerm(i).compareTo(t1.getTerm(indexes[i]));
-					if(comp != 0) 	
-						return comp;
-				}
-			}
-			return 0;
+		for(int i=0; i<indexes.length; i++){
+			if(indexes[i] != -1) cont = true;
 		}
-		if(t0 != null && t1 == null)
-			return 1;
-		if(t0 == null && t1 != null)
-			return -1;
-		
-		return 0;
+		if(cont){
+			if(t0 != null && t1 != null){
+				for(int i=0; i<indexes.length; i++){
+					if(indexes[i] != -1){
+						comp = t0.getTerm(i).compareTo(t1.getTerm(indexes[i]));
+						if(comp != 0) 	
+							return comp;
+					}
+				}
+				return 0;
+			}
+			if(t0 != null && t1 == null)
+				return 1;
+			if(t0 == null && t1 != null)
+				return -1;
+		}
+		return -1;
 	}
 }
