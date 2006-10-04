@@ -56,12 +56,12 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.12 2006-09-18 07:52:35 richardpoettler Exp $
+ * $Id: SIPImpl.java,v 1.13 2006-10-04 09:44:21 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.12 $
- * @date $Date: 2006-09-18 07:52:35 $
+ * @version $Revision: 1.13 $
+ * @date $Date: 2006-10-04 09:44:21 $
  */
 public final class SIPImpl implements ISip {
 	// TODO: implement hashCode and equals
@@ -157,8 +157,10 @@ public final class SIPImpl implements ISip {
 			Collections.sort(literalsTodo, passingOrder);
 			final ILiteral l = literalsTodo.remove(0);
 
-			final Map<ILiteral, Set<IVariable>> toAdd = getNextByFree(l,
+			final Map<ILiteral, Set<IVariable>> toAdd = getNextByRule(l,
 					assumedKnown);
+			// final Map<ILiteral, Set<IVariable>> toAdd = getNextByFree(l,
+			// assumedKnown);
 			for (ILiteral connected : toAdd.keySet()) {
 				updateSip(l, connected, toAdd.get(connected));
 				literalsTodo.add(connected);
@@ -228,7 +230,8 @@ public final class SIPImpl implements ISip {
 			throw new NullPointerException(
 					"The literal and the bounds must not be null");
 		}
-		Map<ILiteral, Set<IVariable>> next = getNextByBounds(l, bound);
+		Map<ILiteral, Set<IVariable>> next = getNextByRule(l, bound);
+		// Map<ILiteral, Set<IVariable>> next = getNextByBounds(l, bound);
 		for (final ILiteral lit : next.keySet()) {
 			updateSip(l, lit, next.get(lit));
 		}
@@ -343,6 +346,40 @@ public final class SIPImpl implements ISip {
 	}
 
 	/**
+	 * This simply acts like the stupid default sip. It takes simply the next
+	 * literal in the rule. <b>If there are two literals equal to the given one
+	 * in the rule body it will always return the element one after the first
+	 * occurence of the given literal.</b>
+	 * 
+	 * @param l
+	 *            for which to search for connected literals
+	 * @param initiallyKnown
+	 *            the set of known varibles of this literal
+	 * @return the map of the connected literals and the variables which are
+	 *         passed to it
+	 * @throws NullPointerException
+	 *             if the literal or the set is {@code null}
+	 */
+	private Map<ILiteral, Set<IVariable>> getNextByRule(final ILiteral l,
+			final Set<IVariable> initiallyKnown) {
+		if (l == null) {
+			throw new NullPointerException("The literal must not be null");
+		}
+		final Set<IVariable> vars = new HashSet<IVariable>(initiallyKnown);
+		vars.addAll(l.getTuple().getVariables());
+		if (l.equals(rule.getHeadLiteral(0))) {
+			return Collections.singletonMap(rule.getBodyLiteral(0), vars);
+		}
+		final int newPos = rule.getBodyLiterals().indexOf(l) + 1;
+		if (newPos >= rule.getBodyLenght()) {
+			return Collections.EMPTY_MAP;
+		}
+		// FIXME: if two equal literals are in the body -> infinite loop
+		return Collections.singletonMap(rule.getBodyLiterals().get(newPos),
+				vars);
+	}
+
+	/**
 	 * Checks whether two predicates have the same signature. Same signature
 	 * means equal predicate symbol and arity.
 	 * 
@@ -440,11 +477,11 @@ public final class SIPImpl implements ISip {
 				source, target)).getLabel());
 		return vars;
 	}
-	
+
 	public IRule getRule() {
 		return rule;
 	}
-	
+
 	public IQuery getQuery() {
 		return query;
 	}
@@ -541,8 +578,8 @@ public final class SIPImpl implements ISip {
 		}
 		return leafes;
 	}
-	
-	public Comparator<ILiteral>getLiteralComparator() {
+
+	public Comparator<ILiteral> getLiteralComparator() {
 		return LITERAL_COMP;
 	}
 
