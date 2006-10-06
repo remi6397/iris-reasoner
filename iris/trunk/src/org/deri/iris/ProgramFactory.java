@@ -25,11 +25,20 @@
  */
 package org.deri.iris;
 
-import org.deri.iris.api.factory.IProgramFactory;
+import java.util.Map;
+import java.util.Set;
+
 import org.deri.iris.api.IEDB;
+import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.factory.IProgramFactory;
+import org.deri.iris.api.storage.IRelation;
 
 /**
  * @author Francisco Garcia
+ * @author Darko Anicic, DERI Innsbruck
  *
  */
 public class ProgramFactory implements IProgramFactory {
@@ -38,14 +47,17 @@ public class ProgramFactory implements IProgramFactory {
 	private ProgramFactory() {
 		// this is a singelton
 	}
-	
-	public IEDB createEDB()
-	{
-		return new EDB();
-	}
 
 	public static IProgramFactory getInstance() {
 		return FACTORY;
+	}
+
+	public IEDB createEDB() {
+		return new EDB();
+	}
+	
+	public IEDB createEDB(Map<IPredicate, IRelation<ITuple>> f, Set<IRule> r, Set<IQuery> q) {
+		return new EDB(f, r, q);
 	}
 
 }
