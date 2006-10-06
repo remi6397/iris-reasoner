@@ -25,11 +25,24 @@
  */
 package org.deri.iris.api.factory;
 
-import org.deri.iris.api.*;
+import java.util.Map;
+import java.util.Set;
+
+import org.deri.iris.api.IEDB;
+import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.storage.IRelation;
 /**
  * @author Francisco Garcia
  *
  */
 public interface IProgramFactory {
+	
 	public IEDB createEDB();
+	
+	public IEDB createEDB(final Map<IPredicate, IRelation<ITuple>> f, 
+			final Set<IRule> r, final Set<IQuery> q);
+	
 }
