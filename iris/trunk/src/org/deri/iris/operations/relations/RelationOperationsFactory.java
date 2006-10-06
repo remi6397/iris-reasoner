@@ -53,7 +53,7 @@ public class RelationOperationsFactory implements IRelationOperationsFactory{
 	public IDifference createDifferenceOperator(IRelation arg0, 
 			IRelation arg1) {
 		
-		return null;
+		return new Difference(arg0, arg1);
 	}
 
 	public IIntersection createIntersectionOperator(IRelation arg0, 
