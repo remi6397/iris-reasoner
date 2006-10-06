@@ -53,7 +53,11 @@ public class BasicComparator implements Comparator<ITuple> {
 	}
 
 	/**
-	 * Comparator defined by sort indexes
+	 * Comparator defined by sort indexes.
+	 * 
+	 * Note: The length of the sortIndexes needs to be equal to
+	 * the arity of tuples that will be compared using 
+	 * the comparator.
 	 * 
 	 * @param sortIndexes
 	 */
@@ -86,7 +90,13 @@ public class BasicComparator implements Comparator<ITuple> {
 	@SuppressWarnings("unchecked")
 	public int compare(ITuple t0, ITuple t1){
 		if (t0.getArity() != t1.getArity()) {
-			throw new IllegalArgumentException("Couldn't compare due to different arity of tuples.");
+			throw new IllegalArgumentException(
+					"Couldn't compare due to different arity of tuples.");
+		}
+		if (t0.getArity() != this.getSortIndexes().length) {
+			throw new IllegalArgumentException(
+					"The length of sort indexe array does not match " +
+					"the arity of the compared tuples.");
 		} 
 		int comparison = 0;
 		if(Arrays.equals(this.getSortIndexes(), null)) 

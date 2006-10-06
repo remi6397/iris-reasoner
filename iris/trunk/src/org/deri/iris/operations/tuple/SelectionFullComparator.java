@@ -74,6 +74,11 @@ public class SelectionFullComparator extends SelectionComparator{
 			throw new IllegalArgumentException(
 					"Couldn't compare due to different arity of tuples.");
 		} 
+		if (t0.getArity() != this.getSortIndexes().length) {
+			throw new IllegalArgumentException(
+					"The length of sort indexe array does not match " +
+					"the arity of the compared tuples.");
+		}
 		int quota = getQuota();
 		int comp = 0;
 		

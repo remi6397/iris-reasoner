@@ -29,7 +29,7 @@ package org.deri.iris.operations.tuple;
 import org.deri.iris.api.basics.ITuple;
 
 /**
- * This implementation does not defines a compare method that is used 
+ * This implementation does not define a compare method that is used 
  * for comparing two tuples in the join operation.
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -42,11 +42,11 @@ public class JoinComparator extends BasicComparator{
 	}
 	
 	/**
-	 * Compares its two arguments for order. Comparison is based on 
+	 * Comparison is based on 
 	 * the sort indexes. Returns a negative integer, zero, or a positive
 	 * integer as the first argument is less than, equal to, or greater 
 	 * than the second.
-	 * joinCompare is a compare method used for comparing two tuples in
+	 * JoinComparator provides a compare method used for comparing two tuples in
 	 * the Join operation.
 	 * 
 	 * @param t0
@@ -59,6 +59,15 @@ public class JoinComparator extends BasicComparator{
 	 * 			   than the second.
 	 */
 	public int compare(ITuple t0, ITuple t1) {
+		if (t0.getArity() != t1.getArity()) {
+			throw new IllegalArgumentException(
+					"Couldn't compare due to different arity of tuples.");
+		}
+		if (t0.getArity() != this.getSortIndexes().length) {
+			throw new IllegalArgumentException(
+					"The length of sort indexe array does not match " +
+					"the arity of the compared tuples.");
+		}
 		int comparison = 0;
 		for(int i=0; i<this.getSortIndexes().length; i++){
 			if(this.getSortIndexes()[i] != -1){

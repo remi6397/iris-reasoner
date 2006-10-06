@@ -57,6 +57,15 @@ public class IndexComparator extends BasicComparator{
 	 * @see org.deri.iris.operations.tuple.BasicComparator#compare(org.deri.iris.api.basics.ITuple, org.deri.iris.api.basics.ITuple)
 	 */
 	public int compare(ITuple t0, ITuple t1){
+		if (t0.getArity() != t1.getArity()) {
+			throw new IllegalArgumentException(
+					"Couldn't compare due to different arity of tuples.");
+		}
+		if (t0.getArity() != this.getSortIndexes().length) {
+			throw new IllegalArgumentException(
+					"The length of sort indexe array does not match " +
+					"the arity of the compared tuples.");
+		}
 		int comparison = 0;
 		int forEachRelevantIndex = 0;
 		int forEachIndex = 0;
@@ -78,16 +87,36 @@ public class IndexComparator extends BasicComparator{
 			}else 
 				break;
 		}
-		/* 
-		 * Tuples t0 and t1 are duplicates if they have identical terms  
-		 * for each sort index.
-		 */
-		if(forEachRelevantIndex == equal && !(t0 instanceof MinimalTuple) &&
-				!(t1 instanceof MinimalTuple)){
-			ITuple tmp = t1.getDuplicate();
-			t0.setDuplicate(tmp);
-			t1.setDuplicate(t0);
+		if(compareAsc()){
+			for(int i=0; i<this.getSortIndexes().length; i++){
+				comparison = t0.getTerm(i).compareTo(t1.getTerm(i));
+				if(comparison != 0){
+					return comparison;
+				}
+			}
+			return 0;
+		}else{
+			/* 
+			 * Tuples t0 and t1 are duplicates if they have identical terms  
+			 * for each sort index.
+			 */
+			if(forEachRelevantIndex == equal && !(t0 instanceof MinimalTuple) &&
+					!(t1 instanceof MinimalTuple)){
+				ITuple tmp = t1.getDuplicate();
+				t0.setDuplicate(tmp);
+				t1.setDuplicate(t0);
+			}
+			return 0;
 		}
-		return 0;
+	}
+	
+	/**
+	 * @return true if comparing shoud be in ascending or
+	 */
+	private boolean compareAsc(){
+		for(int i=0; i<this.getSortIndexes().length; i++)
+			if(this.getSortIndexes()[i] != -1) return false;
+		
+		return true;
 	}
 }
