@@ -99,19 +99,17 @@ public class EDB implements IEDB{
 	 * @param q
 	 * 			a set of queries to be added into the EDB.
 	 */
-	EDB(final Set<IAtom> f, final Set<IRule> r, final Set<IQuery> q) {
+	EDB(final Map<IPredicate, IRelation<ITuple>> f, final Set<IRule> r, final Set<IQuery> q) {
 		if ((f == null) || (r == null) || (q == null)) {
 			throw new IllegalArgumentException("Input parameters must not be null");
 		}
 		WRITE.lock();
-			for (IAtom a : f) {
-				addFact(a);
-			}
+			this.facts = f;
 			this.rules = r;
 			this.queries = q;
 		WRITE.unlock();
 	}
-
+	
 	/** ***************************** */
 	/* methods for the EDB */
 	/* (handling facts)    */
