@@ -60,8 +60,16 @@ public class Join implements IJoin{
 
 	private JoinCondition condition = null;
 
-	Join(IRelation arg0, IRelation arg1, int[] indexes) {
-		if (arg0 == null || arg1 == null || indexes == null) {
+	/**
+	 * If true make Cartesian product (a special
+	 * case of join operation), otherwise join
+	 * regularly
+	 */
+	private boolean isCartesian = false;
+
+	
+	Join(IRelation arg0, IRelation arg1, int[] inds) {
+		if (arg0 == null || arg1 == null || inds == null) {
 			throw new IllegalArgumentException(
 					"Input parameters must not be null");
 		}
@@ -70,27 +78,14 @@ public class Join implements IJoin{
 					"Input relations must not be empty, " +
 					"otherwise the join relation is empty (null)");
 		}
-		int[] i = null;
-		int[] j = null;
-		int a = ((ITuple)arg0.first()).getArity();
-		this.indexes = indexes;
-		i = this.transformIndexes0(a, this.indexes);
-		if(! checkIndexes(i, a))
-			throw new IllegalArgumentException("Indexes are not specified" +
-					" correctly.");
-		a = ((ITuple)arg1.first()).getArity();
-		j = this.transformIndexes1(a, this.indexes);
-		if(! checkIndexes(j, a))
-			throw new IllegalArgumentException("Indexes are not specified" +
-					" correctly.");
-		
-		setJoinOperator(arg0, i, arg1, j);
+		this.indexes = inds;
+		setJoinOperator(arg0, arg1);
 		this.condition = JoinCondition.EQUALS;
 	}
 
-	Join(IRelation arg0, IRelation arg1, int[] indexes,
+	Join(IRelation arg0, IRelation arg1, int[] inds,
 			JoinCondition condition) {
-		if (arg0 == null || arg1 == null || indexes == null
+		if (arg0 == null || arg1 == null || inds == null
 				|| condition == null) {
 			throw new IllegalArgumentException("All constructor "
 					+ "parameters must not be specified (non null values");
@@ -100,28 +95,15 @@ public class Join implements IJoin{
 					"Input relations must not be empty, " +
 					"otherwise the join relation is empty (null)");
 		}
-		int[] i = null;
-		int[] j = null;
-		int a = ((ITuple)arg0.first()).getArity();
-		this.indexes = indexes;
-		i = this.transformIndexes0(a, this.indexes);
-		if(! checkIndexes(i, a))
-			throw new IllegalArgumentException("Indexes are not specified" +
-					" correctly.");
-		a = ((ITuple)arg1.first()).getArity();
-		j = this.transformIndexes1(a, this.indexes);
-		if(! checkIndexes(j, a))
-			throw new IllegalArgumentException("Indexes are not specified" +
-					" correctly.");
-		
-		setJoinOperator(arg0, i, arg1, j);
+		this.indexes = inds;
+		setJoinOperator(arg0, arg1);
 		this.condition = condition;
 	}
 
 	/**
 	 * @param arg0
 	 * @param arg1
-	 * @param indexes
+	 * @param inds
 	 * @param condition
 	 * @param projectIndexes
 	 *            define indexes which the projection operation will be applied
@@ -137,9 +119,9 @@ public class Join implements IJoin{
 	 *            (index -1) would be omitted.
 	 *            If not specified join tuples will be simple merged.
 	 */
-	Join(IRelation arg0, IRelation arg1, int[] indexes,
+	Join(IRelation arg0, IRelation arg1, int[] inds,
 			JoinCondition condition, int[] projectIndexes) {
-		if (arg0 == null || arg1 == null || indexes == null
+		if (arg0 == null || arg1 == null || inds == null
 				|| condition == null) {
 			throw new IllegalArgumentException("Constructor "
 					+ "parameters are not specified correctly");
@@ -149,46 +131,49 @@ public class Join implements IJoin{
 					"Input relations must not be empty, " +
 					"otherwise the join relation is empty (null)");
 		}
-		int[] i = null;
-		int[] j = null;
-		int a = ((ITuple)arg0.first()).getArity();
-		this.indexes = indexes;
-		i = this.transformIndexes0(a, this.indexes);
-		if(! checkIndexes(i, a))
-			throw new IllegalArgumentException("Indexes are not specified" +
-					" correctly.");
-		a = ((ITuple)arg1.first()).getArity();
-		j = this.transformIndexes1(a, this.indexes);
-		if(! checkIndexes(j, a))
-			throw new IllegalArgumentException("Indexes are not specified" +
-					" correctly.");
-		
+		this.indexes = inds;
 		this.projectIndexes = projectIndexes;
-		setJoinOperator(arg0, i, arg1, j);
+		setJoinOperator(arg0, arg1);
 		this.condition = condition;
 	}
 
-	private void setJoinOperator(IRelation arg0, int[] inds0, IRelation arg1, int[] inds1) {
+	private void setJoinOperator(IRelation arg0, IRelation arg1) {
 		this.relation0 = arg0;
 		this.relation1 = arg1;
 		
-		// Sort arg0 on those tupples defined by sort indexes
-		this.comparator = new IndexComparator(inds0);
-		IRelation rel0 = new Relation(comparator);
-		rel0.addAll(this.relation0);
-		this.relation0 = rel0;
+		int[] inds0 = null;
+		int[] inds1 = null;
+		int a = ((ITuple)arg0.first()).getArity();
+		inds0 = this.transformIndexes0(a, this.indexes);
+		if(! checkIndexes(inds0, a))
+			throw new IllegalArgumentException("Indexes are not specified" +
+					" correctly.");
+		a = ((ITuple)arg1.first()).getArity();
+		inds1 = this.transformIndexes1(a, this.indexes);
+		if(! checkIndexes(inds1, a))
+			throw new IllegalArgumentException("Indexes are not specified" +
+					" correctly.");
 		
-		// Sort arg1 on those tupples defined by sort indexes
-		this.comparator = new IndexComparator(inds1);
-		IRelation rel1 = new Relation(comparator);
-		rel1.addAll(this.relation1);
-		this.relation1 = rel1;
+		this.isCartesian = checkCartesian();
+		if(! this.isCartesian){
+			// Sort arg0 on those tupples defined by sort indexes
+			this.comparator = new IndexComparator(inds0);
+			IRelation rel0 = new Relation(comparator);
+			rel0.addAll(this.relation0);
+			this.relation0 = rel0;
+			
+			// Sort arg1 on those tupples defined by sort indexes
+			this.comparator = new IndexComparator(inds1);
+			IRelation rel1 = new Relation(comparator);
+			rel1.addAll(this.relation1);
+			this.relation1 = rel1;
+		}
 		
 		/*
 		 * If project indexes are not specified, join tuples will be simple
 		 * merged.
 		 */
-		int a = ((ITuple)this.relation0.first()).getArity()+
+		a = ((ITuple)this.relation0.first()).getArity()+
 		((ITuple)this.relation1.first()).getArity();
 		if (this.projectIndexes == null) {
 			this.projectIndexes = this.transformIndexes0(a, new int[a]);
@@ -197,6 +182,19 @@ public class Join implements IJoin{
 	}
 
 	public IRelation join() {
+		/**
+		 * If true make Cartesian product (a special
+		 * case of join operation), otherwise join
+		 * regularly
+		 */
+		if(this.isCartesian){
+			return joinCartesian();
+		}
+		/**
+		 * the sort-merge join operation:
+		 * (JoinSimpleExtended Processing in Relational Databases, 
+		 * PRITI MISHRA and MARGARET H. EICH)
+		 */
 		Concatenation concatenator = new Concatenation();
 		Iterator<ITuple> it0, it1;
 		ITuple t1, t0, concatenatedTuple, copyTuple0 = null, copyTuple1 = null, copyTuple2 = null;
@@ -240,6 +238,38 @@ public class Join implements IJoin{
 		return joinRelation;
 	}
 
+	public IRelation joinCartesian() {
+		Concatenation concatenator = new Concatenation();
+		Iterator<ITuple> it0, it1;
+		ITuple t1, t0, concatenatedTuple, copyTuple0 = null, copyTuple1 = null, copyTuple2 = null;
+		int comp = 0;
+		
+		it0 = this.relation0.iterator();
+		
+		while(it0.hasNext()){
+			t0 = (ITuple) it0.next();
+			it1 = this.relation1.iterator();
+			while(it1.hasNext()){
+				t1 = it1.next();
+				copyTuple0 = t0;
+				copyTuple1 = t1;
+				while(t0 != null){
+					while(t1 != null){
+						concatenatedTuple = concatenator.concatenate(
+								t0, t1, this.projectIndexes);
+						
+						this.joinRelation.add(concatenatedTuple);
+						t1 = t1.getDuplicate();
+					}
+					t0 = t0.getDuplicate();
+					t1 = copyTuple1;
+				}
+				t0 = copyTuple0;
+			}
+		}
+		return joinRelation;
+	}
+	
 	/**
 	 * Transforms indexes according to the following examples: 
 	 * [-1,-1, 0] to [-1,-1, 2]; 
@@ -309,25 +339,35 @@ public class Join implements IJoin{
 		int comp = 0;
 		boolean cont = false;
 		
-		for(int i=0; i<indexes.length; i++){
-			if(indexes[i] != -1) cont = true;
-		}
-		if(cont){
-			if(t0 != null && t1 != null){
-				for(int i=0; i<indexes.length; i++){
-					if(indexes[i] != -1){
-						comp = t0.getTerm(i).compareTo(t1.getTerm(indexes[i]));
-						if(comp != 0) 	
-							return comp;
-					}
+		if(t0 != null && t1 != null){
+			for(int i=0; i<indexes.length; i++){
+				if(indexes[i] != -1){
+					comp = t0.getTerm(i).compareTo(t1.getTerm(indexes[i]));
+					if(comp != 0) 	
+						return comp;
 				}
-				return 0;
 			}
-			if(t0 != null && t1 == null)
-				return 1;
-			if(t0 == null && t1 != null)
-				return -1;
+			return 0;
 		}
-		return -1;
+		if(t0 != null && t1 == null)
+			return 1;
+		if(t0 == null && t1 != null)
+			return -1;
+		
+		return 0;
+	}
+	
+	/**
+	 * Checks whether join indexes are Cartesian indexes
+	 * 
+	 * @return true if Cartesian Product will be applied,
+	 * 		   as a special case of join operation, 
+	 * 	       otherwise false
+	 */
+	private boolean checkCartesian(){
+		for(int i=0; i<this.indexes.length; i++){
+			if(indexes[i] != -1) return false;
+		}
+		return true;
 	}
 }
