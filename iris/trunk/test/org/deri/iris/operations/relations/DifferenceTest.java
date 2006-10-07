@@ -126,10 +126,29 @@ public class DifferenceTest extends TestCase {
 		runDifference(rel0, rel1, e);
 	}
 
-	public void testDifference_null() {
+	public void testDifference_paramsnull() {
 		try {
 			IDifference differenceOperator = RELATION_OPERATION.createDifferenceOperator(
 				null, null);
+			fail ("should have raised an java.lang.IllegalArgumentException");
+		} catch(java.lang.IllegalArgumentException e)  {}
+	}
+
+	public void testDifference_aritydoesnotmatch() {
+		IRelation<ITuple> rel0 = new Relation(3);
+		IRelation<ITuple> rel1 = new Relation(4);
+		
+		// relation0: add tuples
+		rel0.add(MiscHelper.createTuple("a", "b", "c"));
+		rel0.add(MiscHelper.createTuple("a", "a", "a"));
+		rel0.add(MiscHelper.createTuple("a", "c", "b"));
+		
+		// relation1: add tuples
+		rel1.add(MiscHelper.createTuple("a", "a", "a", "a"));
+
+		try {
+			IDifference differenceOperator = RELATION_OPERATION.createDifferenceOperator(
+				rel0, rel1);
 			fail ("should have raised an java.lang.IllegalArgumentException");
 		} catch(java.lang.IllegalArgumentException e)  {}
 	}
