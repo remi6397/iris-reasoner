@@ -111,7 +111,7 @@ public class DifferenceTest extends TestCase {
 	}
 
 	public void testDifference_zero() {
-	
+		
 		final IRelation<ITuple> rel0 = new Relation(3);
 		final IRelation<ITuple> rel1 = new Relation(3);
 
@@ -120,6 +120,51 @@ public class DifferenceTest extends TestCase {
 		
 		// relation1: add tuples
 		rel1.add(MiscHelper.createTuple("a", "b", "c"));
+
+		final List<ITuple> e = new ArrayList<ITuple>();
+
+		runDifference(rel0, rel1, e);
+	}
+
+	public void testDifference_emptyrel0() {
+	
+		final IRelation<ITuple> rel0 = new Relation(3);
+		final IRelation<ITuple> rel1 = new Relation(3);
+
+		// relation0: add tuples
+		
+		// relation1: add tuples
+		rel1.add(MiscHelper.createTuple("a", "b", "c"));
+
+		final List<ITuple> e = new ArrayList<ITuple>();
+
+		runDifference(rel0, rel1, e);
+	}
+
+	public void testDifference_emptyrel1() {
+		
+		final IRelation<ITuple> rel0 = new Relation(3);
+		final IRelation<ITuple> rel1 = new Relation(3);
+
+		// relation0: add tuples
+		rel0.add(MiscHelper.createTuple("a", "b", "c"));
+		
+		// relation1: add tuples
+
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(MiscHelper.createTuple("a", "b", "c"));
+
+		runDifference(rel0, rel1, e);
+	}
+
+	public void testDifference_emptyrels() {
+		
+		final IRelation<ITuple> rel0 = new Relation(3);
+		final IRelation<ITuple> rel1 = new Relation(3);
+
+		// relation0: add tuples
+		
+		// relation1: add tuples
 
 		final List<ITuple> e = new ArrayList<ITuple>();
 
