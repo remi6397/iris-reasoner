@@ -47,9 +47,11 @@ public class Difference implements IDifference{
 					"Input parameter must not be null");
 		}
 
-		if (((ITuple)arg0.first()).getArity() != ((ITuple)arg1.first()).getArity()) {
-			throw new IllegalArgumentException(
-					"Arity of input parameter do not match: " + ((ITuple)arg0.first()).getArity() + " != " + ((ITuple)arg1.first()).getArity());
+		if (!arg0.isEmpty() && !arg1.isEmpty()) {
+			if (((ITuple)arg0.first()).getArity() != ((ITuple)arg1.first()).getArity()) {
+				throw new IllegalArgumentException(
+						"Arity of input parameter do not match: " + ((ITuple)arg0.first()).getArity() + " != " + ((ITuple)arg1.first()).getArity());
+			}
 		}
 		
 		this.rel0 = arg0;
