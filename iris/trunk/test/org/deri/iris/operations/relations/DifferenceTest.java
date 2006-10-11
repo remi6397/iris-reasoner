@@ -73,6 +73,10 @@ public class DifferenceTest extends TestCase {
 		assertResults(result, e);
 	}
 	
+	/**
+	 * simplest situation: 2 relations with same arity ... result ok!?
+	 *
+	 */
 	public void testDifference() {
 		final IRelation<ITuple> rel0 = new Relation(3);
 		final IRelation<ITuple> rel1 = new Relation(3);
@@ -92,7 +96,11 @@ public class DifferenceTest extends TestCase {
 		runDifference(rel0, rel1, e);
 	}
 
-	public void testDifference_duplet() {
+	/**
+	 * are duplets handled correctly!?
+	 *
+	 */
+	public void testDifference_duplet0() {
 		final IRelation<ITuple> rel0 = new Relation(3);
 		final IRelation<ITuple> rel1 = new Relation(3);
 		
@@ -109,7 +117,28 @@ public class DifferenceTest extends TestCase {
 
 		runDifference(rel0, rel1, e);
 	}
+	public void testDifference_duplet1() {
+		final IRelation<ITuple> rel0 = new Relation(3);
+		final IRelation<ITuple> rel1 = new Relation(3);
+		
+		// relation0: add tuples
+		rel0.add(MiscHelper.createTuple("a", "b", "c"));
+		rel0.add(MiscHelper.createTuple("a", "a", "a"));
+		
+		// relation1: add tuples
+		rel1.add(MiscHelper.createTuple("a", "a", "a"));
+		rel1.add(MiscHelper.createTuple("a", "a", "a"));
 
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(MiscHelper.createTuple("a", "b", "c"));
+
+		runDifference(rel0, rel1, e);
+	}
+
+	/**
+	 * empty result
+	 *
+	 */
 	public void testDifference_zero() {
 		
 		final IRelation<ITuple> rel0 = new Relation(3);
@@ -126,6 +155,10 @@ public class DifferenceTest extends TestCase {
 		runDifference(rel0, rel1, e);
 	}
 
+	/**
+	 * first parameter relations is empty
+	 *
+	 */
 	public void testDifference_emptyrel0() {
 	
 		final IRelation<ITuple> rel0 = new Relation(3);
@@ -141,6 +174,10 @@ public class DifferenceTest extends TestCase {
 		runDifference(rel0, rel1, e);
 	}
 
+	/**
+	 * second parameter relations is empty
+	 *
+	 */
 	public void testDifference_emptyrel1() {
 		
 		final IRelation<ITuple> rel0 = new Relation(3);
@@ -157,6 +194,10 @@ public class DifferenceTest extends TestCase {
 		runDifference(rel0, rel1, e);
 	}
 
+	/**
+	 * both parameter relations are empty
+	 *
+	 */
 	public void testDifference_emptyrels() {
 		
 		final IRelation<ITuple> rel0 = new Relation(3);
@@ -171,6 +212,10 @@ public class DifferenceTest extends TestCase {
 		runDifference(rel0, rel1, e);
 	}
 
+	/**
+	 * both parameter are the null-value -> should raise an IllegalArgumentException
+	 *
+	 */
 	public void testDifference_paramsnull() {
 		try {
 			IDifference differenceOperator = RELATION_OPERATION.createDifferenceOperator(
@@ -179,7 +224,11 @@ public class DifferenceTest extends TestCase {
 		} catch(java.lang.IllegalArgumentException e)  {}
 	}
 
-	public void testDifference_aritydoesnotmatch() {
+	/**
+	 * parameter have different arity -> should raise an IllegalArgumentException
+	 *
+	 */
+	public void testDifference_aritydoesnotmatch0() {
 		IRelation<ITuple> rel0 = new Relation(3);
 		IRelation<ITuple> rel1 = new Relation(4);
 		
@@ -190,6 +239,24 @@ public class DifferenceTest extends TestCase {
 		
 		// relation1: add tuples
 		rel1.add(MiscHelper.createTuple("a", "a", "a", "a"));
+
+		try {
+			IDifference differenceOperator = RELATION_OPERATION.createDifferenceOperator(
+				rel0, rel1);
+			fail ("should have raised an java.lang.IllegalArgumentException");
+		} catch(java.lang.IllegalArgumentException e)  {}
+	}
+	public void testDifference_aritydoesnotmatch1() {
+		IRelation<ITuple> rel0 = new Relation(4);
+		IRelation<ITuple> rel1 = new Relation(3);
+		
+		// relation0: add tuples
+		rel0.add(MiscHelper.createTuple("a", "b", "c", "d"));
+		rel0.add(MiscHelper.createTuple("a", "a", "a", "a"));
+		rel0.add(MiscHelper.createTuple("a", "c", "b", "d"));
+		
+		// relation1: add tuples
+		rel1.add(MiscHelper.createTuple("a", "a", "a"));
 
 		try {
 			IDifference differenceOperator = RELATION_OPERATION.createDifferenceOperator(
