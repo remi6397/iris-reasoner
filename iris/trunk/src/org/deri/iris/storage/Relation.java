@@ -74,7 +74,7 @@ public class Relation implements IRelation<ITuple> {
 	public Relation(int arity) {
 		WRITE.lock();
 		this.comparator = new BasicComparator(arity);
-		this.elements = new TreeSet<ITuple>(comparator);
+		this.elements = new TreeSet<ITuple>(this.comparator);
 		this.arity = arity;
 		WRITE.unlock();
 	}
@@ -86,7 +86,7 @@ public class Relation implements IRelation<ITuple> {
 	 */
 	public Relation(IComparator comp) {
 		WRITE.lock();
-		this.comparator = comparator;
+		this.comparator = comp;
 		this.elements = new TreeSet<ITuple>(comparator);
 		this.arity = comp.getArity();
 		WRITE.unlock();
@@ -119,7 +119,7 @@ public class Relation implements IRelation<ITuple> {
 	public Comparator<? super ITuple> comparator() {
 		READ.lock();
 		try {
-			return comparator;
+			return this.comparator;
 		} finally {
 			READ.unlock();
 		}
