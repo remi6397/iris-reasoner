@@ -29,8 +29,8 @@ import java.util.Iterator;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IJoin;
+import org.deri.iris.api.operations.tuple.IComparator;
 import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.operations.tuple.BasicComparator;
 import org.deri.iris.operations.tuple.Concatenation;
 import org.deri.iris.operations.tuple.IndexComparator;
 import org.deri.iris.storage.Relation;
@@ -52,7 +52,7 @@ public class Join implements IJoin{
 
 	private IRelation joinRelation = null;
 
-	private BasicComparator comparator = null;
+	private IComparator comparator = null;
 
 	private int[] indexes = null;
 
@@ -73,13 +73,9 @@ public class Join implements IJoin{
 			throw new IllegalArgumentException(
 					"Input parameters must not be null");
 		}
-		if (arg0.size()==0 || arg1.size() == 0) {
-			throw new IllegalArgumentException(
-					"Input relations must not be empty, " +
-					"otherwise the join relation is empty (null)");
-		}
+		this.relation0 = arg0;
+		this.relation1 = arg1;
 		this.indexes = inds;
-		setJoinOperator(arg0, arg1);
 		this.condition = JoinCondition.EQUALS;
 	}
 
@@ -90,13 +86,9 @@ public class Join implements IJoin{
 			throw new IllegalArgumentException("All constructor "
 					+ "parameters must not be specified (non null values");
 		}
-		if (arg0.size()==0 || arg1.size() == 0) {
-			throw new IllegalArgumentException(
-					"Input relations must not be empty, " +
-					"otherwise the join relation is empty (null)");
-		}
+		this.relation0 = arg0;
+		this.relation1 = arg1;
 		this.indexes = inds;
-		setJoinOperator(arg0, arg1);
 		this.condition = condition;
 	}
 
@@ -126,31 +118,22 @@ public class Join implements IJoin{
 			throw new IllegalArgumentException("Constructor "
 					+ "parameters are not specified correctly");
 		}
-		if (arg0.size()==0 || arg1.size() == 0) {
-			throw new IllegalArgumentException(
-					"Input relations must not be empty, " +
-					"otherwise the join relation is empty (null)");
-		}
+		this.relation0 = arg0;
+		this.relation1 = arg1;
 		this.indexes = inds;
 		this.projectIndexes = projectIndexes;
-		setJoinOperator(arg0, arg1);
 		this.condition = condition;
 	}
 
-	private void setJoinOperator(IRelation arg0, IRelation arg1) {
-		this.relation0 = arg0;
-		this.relation1 = arg1;
-		
+	private void setJoinOperator() {
 		int[] inds0 = null;
 		int[] inds1 = null;
-		int a = ((ITuple)arg0.first()).getArity();
-		inds0 = this.transformIndexes0(a, this.indexes);
-		if(! checkIndexes(inds0, a))
+		inds0 = this.transformIndexes0(this.relation0.getArity(), this.indexes);
+		if(! checkIndexes(inds0, this.relation0.getArity()))
 			throw new IllegalArgumentException("Indexes are not specified" +
 					" correctly.");
-		a = ((ITuple)arg1.first()).getArity();
-		inds1 = this.transformIndexes1(a, this.indexes);
-		if(! checkIndexes(inds1, a))
+		inds1 = this.transformIndexes1(this.relation1.getArity(), this.indexes);
+		if(! checkIndexes(inds1, this.relation1.getArity()))
 			throw new IllegalArgumentException("Indexes are not specified" +
 					" correctly.");
 		
@@ -158,23 +141,28 @@ public class Join implements IJoin{
 		if(! this.isCartesian){
 			// Sort arg0 on those tupples defined by sort indexes
 			this.comparator = new IndexComparator(inds0);
-			IRelation rel0 = new Relation(comparator);
+			IRelation rel0 = new Relation(this.comparator);
+			
+			// Clean the first tuple
+			((ITuple)this.relation0.first()).setDuplicate(null);
 			rel0.addAll(this.relation0);
 			this.relation0 = rel0;
 			
 			// Sort arg1 on those tupples defined by sort indexes
 			this.comparator = new IndexComparator(inds1);
-			IRelation rel1 = new Relation(comparator);
+			IRelation rel1 = new Relation(this.comparator);
+			
+			// Clean the first tuple
+			((ITuple)this.relation1.first()).setDuplicate(null);
 			rel1.addAll(this.relation1);
 			this.relation1 = rel1;
 		}
 		
 		/*
-		 * If project indexes are not specified, join tuples will be simple
-		 * merged.
+		 * If project indexes are not specified, 
+		 * joined tuples will be simple merged.
 		 */
-		a = ((ITuple)this.relation0.first()).getArity()+
-		((ITuple)this.relation1.first()).getArity();
+		int a = this.relation0.getArity() + this.relation1.getArity();
 		if (this.projectIndexes == null) {
 			this.projectIndexes = this.transformIndexes0(a, new int[a]);
 		}
@@ -182,6 +170,15 @@ public class Join implements IJoin{
 	}
 
 	public IRelation join() {
+		/**
+		 * Return an empty join relation for empty input relation/s.
+		
+		 */
+		if (this.relation0.size()==0 || relation1.size() == 0) {
+			return new Relation(this.getRelationArity());
+		}
+		setJoinOperator();
+		
 		/**
 		 * If true make Cartesian product (a special
 		 * case of join operation), otherwise join
@@ -248,9 +245,13 @@ public class Join implements IJoin{
 		
 		while(it0.hasNext()){
 			t0 = (ITuple) it0.next();
+			
+			// Clean the first tuple
+			t0.setDuplicate(null);
 			it1 = this.relation1.iterator();
 			while(it1.hasNext()){
 				t1 = it1.next();
+				t1.setDuplicate(null);
 				copyTuple0 = t0;
 				copyTuple1 = t1;
 				while(t0 != null){
