@@ -308,4 +308,9 @@ public class SortAgainRelation implements IRelation<ITuple> {
 			READ.unlock();
 		}
 	}
+
+	public int getArity() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

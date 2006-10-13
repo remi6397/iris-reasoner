@@ -137,4 +137,9 @@ public class RelationAVL implements IRelation<ITuple>{
 		
 	}
 
+	public int getArity() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

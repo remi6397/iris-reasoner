@@ -27,18 +27,21 @@
 package org.deri.iris.operations.tuple;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.operations.tuple.IComparator;
 
 /**
  * @author Darko Anicic, DERI Innsbruck
  * @date   31.05.2006 15:10:34
  */
-public class BasicComparator implements Comparator<ITuple> {
+public class BasicComparator implements IComparator {
 
 	private int[] sortIndexes;
 
+	private int arity;
+	
+	
 	public BasicComparator() {
 	}
 	
@@ -50,6 +53,7 @@ public class BasicComparator implements Comparator<ITuple> {
 	 */
 	public BasicComparator(int arity) {
 		this.sortIndexes = this.getDefaultSortIndexes(arity);
+		this.arity = arity;
 	}
 
 	/**
@@ -59,10 +63,11 @@ public class BasicComparator implements Comparator<ITuple> {
 	 * the arity of tuples that will be compared using 
 	 * the comparator.
 	 * 
-	 * @param sortIndexes
+	 * @param si are sort indexes for the comparison.
 	 */
-	public BasicComparator(final int[] sortIndexes) {
-		this.sortIndexes = sortIndexes;
+	public BasicComparator(final int[] si) {
+		this.sortIndexes = si;
+		this.arity = si.length;
 	}
 
 	/**
@@ -143,5 +148,9 @@ public class BasicComparator implements Comparator<ITuple> {
 			indexes[i] = i;
 		}
 		return indexes;
+	}
+
+	public int getArity() {
+		return this.arity;
 	}
 }

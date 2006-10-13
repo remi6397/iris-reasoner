@@ -55,6 +55,8 @@ public class Relation implements IRelation<ITuple> {
 	/** The SortedSet containing all the elements */
 	private SortedSet<ITuple> elements;
 
+	private int arity;
+
 	/** The Lock to make this set threadsafe */
 	private final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
 
@@ -72,7 +74,7 @@ public class Relation implements IRelation<ITuple> {
 		WRITE.lock();
 		this.comparator = new BasicComparator(arity);
 		this.elements = new TreeSet<ITuple>(comparator);
-		
+		this.arity = arity;
 		WRITE.unlock();
 	}
 
@@ -274,5 +276,9 @@ public class Relation implements IRelation<ITuple> {
 		} finally {
 			READ.unlock();
 		}
+	}
+
+	public int getArity() {
+		return this.arity;
 	}
 }
