@@ -25,7 +25,6 @@
  */
 package org.deri.iris.operations.tuple;
 
-import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
@@ -33,8 +32,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.terms.IConstantTerm;
 import org.deri.iris.api.terms.IConstructedTerm;
+import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
@@ -94,19 +94,19 @@ public class UnificationDecomposer {
 		cf = checkVariables(term0, term1);
 		
 		if(cf == null){
-			IPredicate predicate = head(term0, term1);
-			if(predicate.getPredicateSymbol() != null){
-				// term is a constant (arity=0)
-				if(predicate.getArity() == 0){
+			CTdesc ct = head(term0, term1);
+			if(ct != null && ct.getSymbol() != null){
+				// if term is a constant (arity=0)
+				if(ct.getArity() == 0){
 					return new CFholder(
-							TERM.createString(predicate.getPredicateSymbol()), 
+							TERM.createString(ct.getSymbol()), 
 							null);
 				}else{
 					IConstructedTerm ct0 = (IConstructedTerm) term0;
 					IConstructedTerm ct1 = (IConstructedTerm) term1;
 					
 					// terms are not constants (arity is not 0)
-					for(int i=0; i<predicate.getArity(); i++){
+					for(int i=0; i<ct.getArity(); i++){
 						cfTemp = subDecompose(((List<ITerm>)ct0.getValue()).get(i),
 								((List<ITerm>)ct1.getValue()).get(i));
 						
@@ -116,7 +116,7 @@ public class UnificationDecomposer {
 						else return null;
 					}
 					return createMultiequationSystem(
-							predicate.getPredicateSymbol(), cfList);
+							ct.getSymbol(), cfList);
 				}
 			}
 			// failure: there is no common part for term0 & term1.
@@ -134,16 +134,16 @@ public class UnificationDecomposer {
 		cf = checkVariables(term0, term1);
 		
 		if(cf == null){
-			IPredicate predicate = head(term0, term1);
-			if(predicate.getPredicateSymbol() != null){
-				// term is a constant (arity=0)
-				if(predicate.getArity() == 0){
+			CTdesc ct = head(term0, term1);
+			if(ct != null && ct.getSymbol() != null){
+				// if term is a constant (arity=0)
+				if(ct.getArity() == 0){
 					return new CFholder(
-							TERM.createString(predicate.getPredicateSymbol()), 
+							TERM.createString(ct.getSymbol()), 
 							null);
 				}else{
 					// terms are not constants (arity is not 0)
-					for(int i=0; i<predicate.getArity(); i++){
+					for(int i=0; i<ct.getArity(); i++){
 						IConstructedTerm ct0 = (IConstructedTerm) term0;
 						IConstructedTerm ct1 = (IConstructedTerm) term1;
 						cfTemp = subDecompose(((List<ITerm>)ct0.getValue()).get(i),
@@ -154,7 +154,7 @@ public class UnificationDecomposer {
 						else return null;
 					}
 					return createMultiequationSystem(
-							predicate.getPredicateSymbol(), cfList);
+							ct.getSymbol(), cfList);
 				}
 			}
 			// failure: there is no common part for term0 & term1.
@@ -197,29 +197,43 @@ public class UnificationDecomposer {
 		return vars;
 	}
 	
-	private IPredicate head(ITerm term0, ITerm term1) {
-		if (!(term0 instanceof IVariable) && 
-				!(term0 instanceof IConstructedTerm)) {
-			return BASIC.createPredicate(term0.toString(), 0);
+	/**
+	 * @param t0	non variable term
+	 * @param t1	non variable term
+	 * @return		Returns (CTdesc object) the root function symbol
+	 * 				of t0 and t1 and its arity, or null if it does not exist.
+	 */
+	private CTdesc head(ITerm t0, ITerm t1) {
+		if (t0 instanceof IVariable || t1 instanceof IVariable) {
+			throw new IllegalArgumentException("Input tuples must not be variables");
 		}
-		if (!(term1 instanceof IVariable) && 
-				!(term1 instanceof IConstructedTerm)) {	
-			return BASIC.createPredicate(term1.toString(), 0);
+		if (t0 instanceof IStringTerm || 
+				t0 instanceof IConstantTerm) {
+				if (t1 instanceof IStringTerm || 
+						t1 instanceof IConstantTerm){
+						if(! t0.equals(t1)) return null;
+				}
+			return new CTdesc(t0.toString(), 0);
 		}
-		if (term0 instanceof IConstructedTerm
-				&& term0 instanceof IConstructedTerm) {
+		if (t1 instanceof IStringTerm || 
+				t1 instanceof IConstantTerm){
+				
+			return new CTdesc(t1.toString(), 0);
+		}
+		if (t0 instanceof IConstructedTerm
+				&& t0 instanceof IConstructedTerm) {
 
-			IConstructedTerm ct0 = (IConstructedTerm) term0;
-			IConstructedTerm ct1 = (IConstructedTerm) term1;
+			IConstructedTerm ct0 = (IConstructedTerm) t0;
+			IConstructedTerm ct1 = (IConstructedTerm) t1;
 			if (!ct0.getFunctionSymbol().equals(ct1.getFunctionSymbol()))
 				return null;
 			else
-				return BASIC.createPredicate(ct0.getFunctionSymbol(), ct0
-						.getArity());
+				return new CTdesc(ct0.getFunctionSymbol(), ct0.getArity());
 		}
 		return null;
 	}
 
+	
 	private CFholder createMultiequationSystem(String ps, List<CFholder> cfList){
 		List commonList = new ArrayList<IVariable>(cfList.size());
 		List<CFholder> cfl = cfList;
@@ -306,6 +320,61 @@ public class UnificationDecomposer {
 				buffer.append("null");
 			buffer.append(">");
 			return buffer.toString();
+		}
+	}
+	
+	/**
+	 * This is a ConstructedTerm descriptor
+	 * 
+	 * @author Darko Anicic, DERI Innsbruck
+	 * @date 16.10.2006 18:40:03
+	 * 
+	 */
+	public class CTdesc{
+		
+		/**
+		 * Function symbol
+		 */
+		private String symbol = "";
+		
+		private int arity = 0;
+		
+		
+		public CTdesc(final String s, final int a){
+			this.symbol = s;
+			this.arity = a;
+		}
+		
+		/**
+		 * @return Returns the symbol.
+		 */
+		public String getSymbol() {
+			return symbol;
+		}
+
+		/**
+		 * @param symbol The symbol to set.
+		 */
+		public void setSymbol(String symbol) {
+			this.symbol = symbol;
+		}
+
+		/**
+		 * @return Returns the arity.
+		 */
+		public int getArity() {
+			return arity;
+		}
+		
+		/**
+		 * @param arity The arity to set.
+		 */
+		public void setArity(int arity) {
+			this.arity = arity;
+		}
+		
+		public String toString() {
+			return this.symbol + "_" + this.arity;
 		}
 	}
 }
