@@ -103,8 +103,8 @@ public class Unification implements IUnification{
 		this.tuple1 = arg1.getTuple();
 	}
 
-	public List<List> unify() {
-		List<List> result = new ArrayList<List>();
+	public List<List<Multiequation>> unify() {
+		List<List<Multiequation>> result = new ArrayList<List<Multiequation>>();
 		for(int i=0; i<this.tuple0.getTerms().size(); i++){
 			result.add(
 					unifyTerms(this.tuple0.getTerm(i), this.tuple1.getTerm(i)));
@@ -132,7 +132,7 @@ public class Unification implements IUnification{
 				cf = decomposer.decompose();
 				
 				// failure: clash
-				if(cf.getCommon() == null) return null;
+				if(cf == null || cf.getCommon() == null) return null;
 				ms = compactify(
 						reduce(m, cf, ms));
 				ms.setOccurrences();

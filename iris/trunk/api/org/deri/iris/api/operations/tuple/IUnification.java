@@ -27,6 +27,8 @@ package org.deri.iris.api.operations.tuple;
 
 import java.util.List;
 
+import org.deri.iris.operations.tuple.Multiequation;
+
 /**
  *
  * Interface of a unification operation used to promote modularity 
@@ -43,9 +45,9 @@ import java.util.List;
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:54:09
  *
- * @version $Revision: 1.7 $ $Date: 2006-09-20 13:16:49 $
+ * @version $Revision: 1.8 $ $Date: 2006-10-16 17:26:40 $
  */
 public interface IUnification {
 
-	public List<List> unify();
+	public List<List<Multiequation>> unify();
 }
