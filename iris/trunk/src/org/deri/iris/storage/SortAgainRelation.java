@@ -48,7 +48,7 @@ import org.deri.iris.api.storage.IRelation;
  */
 public class SortAgainRelation implements IRelation<ITuple> {
 
-	private static class BasicComparator implements Comparator<ITuple> {
+	private class BasicComparator implements Comparator<ITuple> {
 
 		private int indexField;
 
@@ -57,6 +57,11 @@ public class SortAgainRelation implements IRelation<ITuple> {
 		}
 
 		public BasicComparator(final int indexField) {
+			if (indexField >= arity) {
+				throw new IllegalArgumentException("The sortindex ("
+						+ indexField + ") is >= the arity of the relation ("
+						+ arity + ")");
+			}
 			this.indexField = indexField;
 		}
 
@@ -70,6 +75,11 @@ public class SortAgainRelation implements IRelation<ITuple> {
 		}
 
 		protected void setIndexField(final int indexField) {
+			if (indexField >= arity) {
+				throw new IllegalArgumentException("The sortindex ("
+						+ indexField + ") is >= the arity of the relation ("
+						+ arity + ")");
+			}
 			this.indexField = indexField;
 		}
 	}
@@ -80,6 +90,9 @@ public class SortAgainRelation implements IRelation<ITuple> {
 	/** The SortedSet containing all the elements */
 	private SortedSet<ITuple> elements;
 
+	/** The arity of this relation */
+	private final int arity;
+
 	/** The Lock to make this set threadsafe */
 	private final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
 
@@ -89,14 +102,24 @@ public class SortAgainRelation implements IRelation<ITuple> {
 	/** The write lock */
 	private final Lock WRITE = LOCK.writeLock();
 
-	public SortAgainRelation() {
+	public SortAgainRelation(final int arity) {
+		if (arity < 1) {
+			throw new IllegalArgumentException(
+					"The arity must be bigger than 0, but was " + arity);
+		}
 		WRITE.lock();
 		comparator = new BasicComparator();
 		elements = new TreeSet<ITuple>(comparator);
+		this.arity = arity;
 		WRITE.unlock();
 	}
 
 	public boolean add(ITuple o) {
+		if (o.getArity() != arity) {
+			throw new IllegalArgumentException(
+					"The tuple must have an arity of " + arity + " but was "
+							+ o.getArity());
+		}
 		WRITE.lock();
 		try {
 			return elements.add(o);
@@ -106,12 +129,16 @@ public class SortAgainRelation implements IRelation<ITuple> {
 	}
 
 	public boolean addAll(Collection<? extends ITuple> c) {
-		WRITE.lock();
-		try {
-			return elements.addAll(c);
-		} finally {
-			WRITE.unlock();
+		if (c == null) {
+			throw new NullPointerException("The collection must not be null");
 		}
+		boolean changed = false;
+		for (final ITuple t : c) {
+			if (add(t)) {
+				changed = true;
+			}
+		}
+		return changed;
 	}
 
 	public void clear() {
@@ -310,7 +337,6 @@ public class SortAgainRelation implements IRelation<ITuple> {
 	}
 
 	public int getArity() {
-		// TODO Auto-generated method stub
-		return 0;
+		return arity;
 	}
 }
