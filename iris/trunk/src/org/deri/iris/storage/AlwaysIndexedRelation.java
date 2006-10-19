@@ -843,7 +843,6 @@ public class AlwaysIndexedRelation implements IRelation<ITuple> {
 	}
 
 	public int getArity() {
-		// TODO Auto-generated method stub
-		return 0;
+		return arity;
 	}
 }
