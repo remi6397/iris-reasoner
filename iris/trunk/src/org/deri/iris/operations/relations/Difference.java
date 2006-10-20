@@ -32,8 +32,8 @@ import org.deri.iris.api.storage.IRelation;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic
- * @date $Date $
- * @version $Id: Difference.java,v 1.4 2006-10-20 06:53:38 adi Exp $
+ * @date $Date: 2006-10-20 06:54:02 $
+ * @version $Id: Difference.java,v 1.5 2006-10-20 06:54:02 adi Exp $
  * 
  */
 public class Difference implements IDifference{
