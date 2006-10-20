@@ -45,7 +45,8 @@ import org.deri.iris.storage.Relation;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic, DERI Innsbruck
- * @date 06.10.2006
+ * @date $Date: 2006-10-20 06:52:58 $
+ * @version $Id: DifferenceTest.java,v 1.5 2006-10-20 06:52:58 adi Exp $
  */
 public class DifferenceTest extends TestCase {
 
@@ -97,7 +98,7 @@ public class DifferenceTest extends TestCase {
 	}
 
 	/**
-	 * are duplets handled correctly!?
+	 * are duplets in the parameter relations handled correctly!?
 	 *
 	 */
 	public void testDifference_duplet0() {
@@ -136,7 +137,7 @@ public class DifferenceTest extends TestCase {
 	}
 
 	/**
-	 * empty result
+	 * is an empty result ok!?
 	 *
 	 */
 	public void testDifference_zero() {

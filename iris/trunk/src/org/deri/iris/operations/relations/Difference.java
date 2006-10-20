@@ -32,7 +32,8 @@ import org.deri.iris.api.storage.IRelation;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic
- * @date 06.10.2006
+ * @date $Date $
+ * @version $Id: Difference.java,v 1.4 2006-10-20 06:53:38 adi Exp $
  * 
  */
 public class Difference implements IDifference{
@@ -40,6 +41,14 @@ public class Difference implements IDifference{
 	private IRelation<ITuple> rel0 = null;
 	private IRelation<ITuple> rel1 = null;	
 	
+	/**
+	 * computes the difference between 2 relations
+	 * they have to be !null and from the same arity otherwise an 
+	 * IllegalArgumentException will be thrown.
+	 * 
+	 * @param arg0
+	 * @param arg1
+	 */
 	Difference(IRelation arg0, IRelation arg1) {
 
 		if ((arg0 == null) || (arg1 == null)) {
