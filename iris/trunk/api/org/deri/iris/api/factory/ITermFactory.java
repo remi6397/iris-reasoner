@@ -27,7 +27,6 @@ package org.deri.iris.api.factory;
 
 import java.util.Collection;
 
-import org.deri.iris.api.terms.IConstantTerm;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
@@ -38,8 +37,6 @@ import org.deri.iris.api.terms.IVariable;
  */
 public interface ITermFactory {
 
-	public IConstantTerm createConstant(ITerm arg);
-	
 	public IConstructedTerm createConstruct(final String name,
 			Collection<ITerm> terms);
 	public IConstructedTerm createConstruct(final String name, ITerm... terms);

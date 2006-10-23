@@ -154,7 +154,6 @@ public final class MagicSetImpl {
 		final Set<IVariable> boundVars = new HashSet<IVariable>();
 		for (ITerm t : getBounds(headL)) {
 			if (!(t instanceof IVariable)) {
-				// TODO: what to do when it is a constant?
 				// TODO: add this exception to the javadoc
 				throw new IllegalArgumentException(
 						"All bounds of the head must be variables");

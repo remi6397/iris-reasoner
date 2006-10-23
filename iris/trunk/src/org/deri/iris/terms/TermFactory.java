@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.deri.iris.api.factory.ITermFactory;
-import org.deri.iris.api.terms.IConstantTerm;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
@@ -47,10 +46,6 @@ public class TermFactory implements ITermFactory {
 		// this is a singelton
 	}
 	
-	public IConstantTerm createConstant(ITerm arg) {
-		return new ConstantTerm(arg);
-	}
-
 	public IConstructedTerm createConstruct(String name, Collection<ITerm> terms) {
 		return new ConstructedTerm(name, terms);
 	}

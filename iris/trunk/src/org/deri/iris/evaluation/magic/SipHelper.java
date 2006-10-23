@@ -48,18 +48,17 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
  * Helpermethods to do various tasks related to sips and adornments.
  * </p>
  * <p>
- * $Id: SipHelper.java,v 1.5 2006-09-18 07:52:35 richardpoettler Exp $
+ * $Id: SipHelper.java,v 1.6 2006-10-23 06:54:49 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.5 $
- * @date $Date: 2006-09-18 07:52:35 $
+ * @version $Revision: 1.6 $
+ * @date $Date: 2006-10-23 06:54:49 $
  */
 public class SipHelper {
 
 	/** A small dummy constant */
-	private static final ITerm MINIMAL_CONST_TERM = TERM.createConstant(TERM
-			.createString(""));
+	private static final ITerm MINIMAL_CONST_TERM = TERM.createString("");
 
 	private SipHelper() {
 		// prevent subclassing

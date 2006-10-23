@@ -51,18 +51,17 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.15 2006-09-18 08:08:50 richardpoettler Exp $
+ * $Id: AdornedProgram.java,v 1.16 2006-10-23 06:53:37 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.15 $
- * @date $Date: 2006-09-18 08:08:50 $
+ * @version $Revision: 1.16 $
+ * @date $Date: 2006-10-23 06:53:37 $
  */
 public class AdornedProgram implements IAdornedProgram {
 
 	// TODO: make a smaller empty-constant-term
-	private static final ITerm EMPTY_CONSTANT_TERM = TERM.createConstant(TERM
-			.createString(""));
+	private static final ITerm EMPTY_CONSTANT_TERM = TERM.createString("");
 
 	/** Set of all derived predicates */
 	private final Set<IPredicate> deriveredPredicates = new HashSet<IPredicate>();
@@ -570,8 +569,8 @@ public class AdornedProgram implements IAdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.15 $
-	 * @date $Date: 2006-09-18 08:08:50 $
+	 * @version $Revision: 1.16 $
+	 * @date $Date: 2006-10-23 06:53:37 $
 	 */
 	public static class AdornedRule implements IAdornedRule {
 		// TODO: implement hashCode and equals

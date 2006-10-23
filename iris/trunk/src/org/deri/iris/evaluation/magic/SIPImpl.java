@@ -42,7 +42,6 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.evaluation.magic.ISip;
-import org.deri.iris.api.terms.IConstantTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.graph.LabeledDirectedEdge;
@@ -56,12 +55,12 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.13 2006-10-04 09:44:21 richardpoettler Exp $
+ * $Id: SIPImpl.java,v 1.14 2006-10-23 06:54:49 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.13 $
- * @date $Date: 2006-10-04 09:44:21 $
+ * @version $Revision: 1.14 $
+ * @date $Date: 2006-10-23 06:54:49 $
  */
 public final class SIPImpl implements ISip {
 	// TODO: implement hashCode and equals
@@ -142,8 +141,7 @@ public final class SIPImpl implements ISip {
 			final ITerm headT = headTerms.next();
 			final ITerm queryT = queryTerms.next();
 			// FIXME: be aware of constructed terms
-			if ((queryT instanceof IConstantTerm)
-					&& (headT instanceof IVariable)) {
+			if (queryT.isGround() && !headT.isGround()) {
 				assumedKnown.add((IVariable) headT);
 			}
 		}
