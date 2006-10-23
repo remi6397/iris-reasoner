@@ -46,7 +46,7 @@ import org.deri.iris.api.storage.IRelation;
  * @author richi
  * 
  */
-public class SortAgainRelation implements IRelation<ITuple> {
+public class SortAgainRelation implements IRelation {
 
 	private class BasicComparator implements Comparator<ITuple> {
 

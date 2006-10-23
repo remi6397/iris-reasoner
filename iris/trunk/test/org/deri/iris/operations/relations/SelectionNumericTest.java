@@ -50,7 +50,7 @@ import org.deri.iris.storage.Relation;
  * @date   20.09.2006 11:30:30
  */
 public class SelectionNumericTest extends TestCase {
-	static IRelation<ITuple> relation = null;
+	static IRelation relation = null;
 	
 	public static Test suite() {
 		return new TestSuite(SelectionNumericTest.class, SelectionNumericTest.class.getSimpleName());
@@ -221,7 +221,7 @@ public class SelectionNumericTest extends TestCase {
 	 * @param e
 	 *            the Collection containing all expected tuples
 	 */
-	protected static void assertResults(final IRelation<ITuple> r,
+	protected static void assertResults(final IRelation r,
 			final Collection<ITuple> e) {
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", e.size(), r.size());

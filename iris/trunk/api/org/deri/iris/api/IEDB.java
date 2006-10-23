@@ -130,7 +130,7 @@ public interface IEDB {
 	 * 
 	 * @return map of all facts from the Knowledge Base
 	 */
-	public Map<IPredicate, IRelation<ITuple>> getFacts();
+	public Map<IPredicate, IRelation> getFacts();
 
 	/**
 	 * is the edb empty, i.e. does it contain no facts

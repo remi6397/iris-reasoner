@@ -65,7 +65,7 @@ public class ProjectionTest extends TestCase {
 	 */
 	protected static void runProjection(
 			final int[] p, final Collection<ITuple> e) {
-		IRelation<ITuple> relation = new Relation(3);
+		IRelation relation = new Relation(3);
 	
 		relation.add(MiscHelper.createTuple("a", "a", "a"));
 		relation.add(MiscHelper.createTuple("a", "b", "a"));
@@ -175,7 +175,7 @@ public class ProjectionTest extends TestCase {
 	 * @param e
 	 *            the Collection containing all expected tuples
 	 */
-	protected static void assertResults(final IRelation<ITuple> r,
+	protected static void assertResults(final IRelation r,
 			final Collection<ITuple> e) {
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", e.size(), r.size());

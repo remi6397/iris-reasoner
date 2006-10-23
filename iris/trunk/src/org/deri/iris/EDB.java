@@ -59,7 +59,7 @@ import org.deri.iris.terms.ConstructedTerm;
  */
 public class EDB implements IEDB{
 
-	private Map<IPredicate, IRelation<ITuple>> facts = new HashMap<IPredicate, IRelation<ITuple>>();
+	private Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
 	
 	private Set<IQuery> queries;
 	
@@ -99,7 +99,7 @@ public class EDB implements IEDB{
 	 * @param q
 	 * 			a set of queries to be added into the EDB.
 	 */
-	EDB(final Map<IPredicate, IRelation<ITuple>> f, final Set<IRule> r, final Set<IQuery> q) {
+	EDB(final Map<IPredicate, IRelation> f, final Set<IRule> r, final Set<IQuery> q) {
 		if ((f == null) || (r == null) || (q == null)) {
 			throw new IllegalArgumentException("Input parameters must not be null");
 		}
@@ -127,7 +127,7 @@ public class EDB implements IEDB{
 					a.toString() + " needs to be a ground atom (it is not a fact).");
 		}
 		IPredicate p = a.getPredicate();
-		IRelation<ITuple> rel = facts.get(p);
+		IRelation rel = facts.get(p);
 		if (rel == null) {
 			rel = new Relation(p.getArity());
 			this.facts.put(p, rel);
@@ -267,7 +267,7 @@ public class EDB implements IEDB{
 	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
 	 * 		so this method is thread-save.
 	 */
-	public Map<IPredicate, IRelation<ITuple>> getFacts(){
+	public Map<IPredicate, IRelation> getFacts(){
 		return this.facts;
 	}
 	
@@ -410,7 +410,7 @@ public class EDB implements IEDB{
 		}
 	}
 
-	public Iterator queryIterator() throws DataNotFoundException {
+	public Iterator<IQuery> queryIterator() throws DataNotFoundException {
 		READ.lock();
 		try {
 			return this.queries.iterator();

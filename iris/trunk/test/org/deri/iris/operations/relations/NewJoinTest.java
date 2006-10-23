@@ -69,8 +69,8 @@ public class NewJoinTest extends TestCase {
 	 *            the Collection of expected tuples
 	 */
 	protected static void runJoin(final int[] i, final Collection<ITuple> e) {
-		IRelation<ITuple> relation0 = new Relation(3);
-		IRelation<ITuple> relation1 = new Relation(4);
+		IRelation relation0 = new Relation(3);
+		IRelation relation1 = new Relation(4);
 
 		
 		relation0.add(MiscHelper.createTuple("a", "b", "b"));
@@ -182,7 +182,7 @@ public class NewJoinTest extends TestCase {
 	 * @param e
 	 *            the Collection containing all expected tuples
 	 */
-	protected static void assertResults(final IRelation<ITuple> r,
+	protected static void assertResults(final IRelation r,
 			final Collection<ITuple> e) {
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", e.size(), r.size());

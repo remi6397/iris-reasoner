@@ -64,7 +64,7 @@ import org.deri.iris.api.terms.ITerm;
  * @author richi
  * 
  */
-public class AlwaysIndexedRelation implements IRelation<ITuple> {
+public class AlwaysIndexedRelation implements IRelation {
 
 	/**
 	 * The initial amount of columns for this relation. Will be used to specify

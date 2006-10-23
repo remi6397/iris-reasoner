@@ -32,14 +32,14 @@ import org.deri.iris.api.storage.IRelation;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic
- * @date $Date: 2006-10-20 06:54:02 $
- * @version $Id: Difference.java,v 1.5 2006-10-20 06:54:02 adi Exp $
+ * @date $Date: 2006-10-23 07:20:35 $
+ * @version $Id: Difference.java,v 1.6 2006-10-23 07:20:35 richardpoettler Exp $
  * 
  */
 public class Difference implements IDifference{
 
-	private IRelation<ITuple> rel0 = null;
-	private IRelation<ITuple> rel1 = null;	
+	private IRelation rel0 = null;
+	private IRelation rel1 = null;	
 	
 	/**
 	 * computes the difference between 2 relations
@@ -69,7 +69,7 @@ public class Difference implements IDifference{
 	
 	public IRelation difference() {
 	
-		IRelation<ITuple> differenceRel = this.rel0;
+		IRelation differenceRel = this.rel0;
 		differenceRel.removeAll(this.rel1);
 
  		return differenceRel;

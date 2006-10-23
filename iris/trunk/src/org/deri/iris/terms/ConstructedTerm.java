@@ -41,7 +41,7 @@ import org.deri.iris.api.terms.IVariable;
  * @author Darko Anicic, DERI Innsbruck
  * 
  */
-public class ConstructedTerm implements IConstructedTerm<IConstructedTerm>, Cloneable {
+public class ConstructedTerm implements IConstructedTerm, Cloneable {
 
 	/**
 	 * A constructed term consist of a list of terms, where these terms 

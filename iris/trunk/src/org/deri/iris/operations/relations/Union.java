@@ -32,7 +32,6 @@ import java.util.List;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IUnion;
 import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.storage.Relation;
 
 /**
@@ -44,7 +43,7 @@ public class Union implements IUnion{
 
 	private List<IRelation> rels = null;
 	
-	private IRelation<ITuple> unionRel = null;
+	private IRelation unionRel = null;
 	
 	
 	Union(IRelation... args) {

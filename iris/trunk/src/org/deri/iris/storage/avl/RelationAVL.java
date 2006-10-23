@@ -40,7 +40,7 @@ import org.deri.iris.api.storage.IRelation;
  * @author Darko Anicic, DERI Innsbruck
  * @date   23.06.2006 17:44:48
  */
-public class RelationAVL implements IRelation<ITuple>{
+public class RelationAVL implements IRelation{
 
 	public Comparator<? super ITuple> comparator() {
 		

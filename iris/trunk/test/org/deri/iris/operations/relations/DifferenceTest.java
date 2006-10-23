@@ -45,8 +45,8 @@ import org.deri.iris.storage.Relation;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic, DERI Innsbruck
- * @date $Date: 2006-10-20 06:52:58 $
- * @version $Id: DifferenceTest.java,v 1.5 2006-10-20 06:52:58 adi Exp $
+ * @date $Date: 2006-10-23 07:23:59 $
+ * @version $Id: DifferenceTest.java,v 1.6 2006-10-23 07:23:59 richardpoettler Exp $
  */
 public class DifferenceTest extends TestCase {
 
@@ -66,7 +66,7 @@ public class DifferenceTest extends TestCase {
 	 * @param e
 	 *            the Collection of expected tuples
 	 */
-	protected static void runDifference(final IRelation<ITuple> relation0, final IRelation<ITuple> relation1, final Collection<ITuple> e) {
+	protected static void runDifference(final IRelation relation0, final IRelation relation1, final Collection<ITuple> e) {
 
 		IDifference differenceOperator = RELATION_OPERATION.createDifferenceOperator(
 				relation0, relation1);
@@ -79,8 +79,8 @@ public class DifferenceTest extends TestCase {
 	 *
 	 */
 	public void testDifference() {
-		final IRelation<ITuple> rel0 = new Relation(3);
-		final IRelation<ITuple> rel1 = new Relation(3);
+		final IRelation rel0 = new Relation(3);
+		final IRelation rel1 = new Relation(3);
 		
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c"));
@@ -102,8 +102,8 @@ public class DifferenceTest extends TestCase {
 	 *
 	 */
 	public void testDifference_duplet0() {
-		final IRelation<ITuple> rel0 = new Relation(3);
-		final IRelation<ITuple> rel1 = new Relation(3);
+		final IRelation rel0 = new Relation(3);
+		final IRelation rel1 = new Relation(3);
 		
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c"));
@@ -119,8 +119,8 @@ public class DifferenceTest extends TestCase {
 		runDifference(rel0, rel1, e);
 	}
 	public void testDifference_duplet1() {
-		final IRelation<ITuple> rel0 = new Relation(3);
-		final IRelation<ITuple> rel1 = new Relation(3);
+		final IRelation rel0 = new Relation(3);
+		final IRelation rel1 = new Relation(3);
 		
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c"));
@@ -142,8 +142,8 @@ public class DifferenceTest extends TestCase {
 	 */
 	public void testDifference_zero() {
 		
-		final IRelation<ITuple> rel0 = new Relation(3);
-		final IRelation<ITuple> rel1 = new Relation(3);
+		final IRelation rel0 = new Relation(3);
+		final IRelation rel1 = new Relation(3);
 
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c"));
@@ -162,8 +162,8 @@ public class DifferenceTest extends TestCase {
 	 */
 	public void testDifference_emptyrel0() {
 	
-		final IRelation<ITuple> rel0 = new Relation(3);
-		final IRelation<ITuple> rel1 = new Relation(3);
+		final IRelation rel0 = new Relation(3);
+		final IRelation rel1 = new Relation(3);
 
 		// relation0: add tuples
 		
@@ -181,8 +181,8 @@ public class DifferenceTest extends TestCase {
 	 */
 	public void testDifference_emptyrel1() {
 		
-		final IRelation<ITuple> rel0 = new Relation(3);
-		final IRelation<ITuple> rel1 = new Relation(3);
+		final IRelation rel0 = new Relation(3);
+		final IRelation rel1 = new Relation(3);
 
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c"));
@@ -201,8 +201,8 @@ public class DifferenceTest extends TestCase {
 	 */
 	public void testDifference_emptyrels() {
 		
-		final IRelation<ITuple> rel0 = new Relation(3);
-		final IRelation<ITuple> rel1 = new Relation(3);
+		final IRelation rel0 = new Relation(3);
+		final IRelation rel1 = new Relation(3);
 
 		// relation0: add tuples
 		
@@ -230,8 +230,8 @@ public class DifferenceTest extends TestCase {
 	 *
 	 */
 	public void testDifference_aritydoesnotmatch0() {
-		IRelation<ITuple> rel0 = new Relation(3);
-		IRelation<ITuple> rel1 = new Relation(4);
+		IRelation rel0 = new Relation(3);
+		IRelation rel1 = new Relation(4);
 		
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c"));
@@ -248,8 +248,8 @@ public class DifferenceTest extends TestCase {
 		} catch(java.lang.IllegalArgumentException e)  {}
 	}
 	public void testDifference_aritydoesnotmatch1() {
-		IRelation<ITuple> rel0 = new Relation(4);
-		IRelation<ITuple> rel1 = new Relation(3);
+		IRelation rel0 = new Relation(4);
+		IRelation rel1 = new Relation(3);
 		
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c", "d"));
@@ -276,7 +276,7 @@ public class DifferenceTest extends TestCase {
 	 * @param e
 	 *            the Collection containing all expected tuples
 	 */
-	protected static void assertResults(final IRelation<ITuple> r,
+	protected static void assertResults(final IRelation r,
 			final Collection<ITuple> e) {
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", e.size(), r.size());

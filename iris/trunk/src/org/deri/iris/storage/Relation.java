@@ -48,7 +48,7 @@ import org.deri.iris.operations.tuple.BasicComparator;
  * @author Darko Anicic, DERI Innsbruck
  * 
  */
-public class Relation implements IRelation<ITuple> {
+public class Relation implements IRelation {
 
 	/** The Comparator to compare all tuples to each other */
 	private Comparator comparator;

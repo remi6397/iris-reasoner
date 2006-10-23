@@ -32,7 +32,6 @@ import org.deri.iris.api.IEDB;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.factory.IProgramFactory;
 import org.deri.iris.api.storage.IRelation;
 
@@ -56,7 +55,7 @@ public class ProgramFactory implements IProgramFactory {
 		return new EDB();
 	}
 	
-	public IEDB createEDB(Map<IPredicate, IRelation<ITuple>> f, Set<IRule> r, Set<IQuery> q) {
+	public IEDB createEDB(Map<IPredicate, IRelation> f, Set<IRule> r, Set<IQuery> q) {
 		return new EDB(f, r, q);
 	}
 

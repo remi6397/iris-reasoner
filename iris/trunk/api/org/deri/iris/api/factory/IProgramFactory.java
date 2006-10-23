@@ -32,7 +32,6 @@ import org.deri.iris.api.IEDB;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
 /**
  * @author Francisco Garcia
@@ -42,7 +41,7 @@ public interface IProgramFactory {
 	
 	public IEDB createEDB();
 	
-	public IEDB createEDB(final Map<IPredicate, IRelation<ITuple>> f, 
+	public IEDB createEDB(final Map<IPredicate, IRelation> f, 
 			final Set<IRule> r, final Set<IQuery> q);
 	
 }
