@@ -25,20 +25,15 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
-import org.deri.iris.api.evaluation.IEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.storage.Relation;
 import org.deri.iris.api.IEDB;
+import org.deri.iris.exception.DataModelException;
 import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
-import org.deri.iris.api.evaluation.seminaive.model.*;
-import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.basics.IPredicate;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Arrays;
-
 
 /**
  * Algorithm 3.3: Evaluation of Datalog Equations
@@ -69,7 +64,7 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation{
 		super(e, EDB, IDB);
 	}
 	
-	public boolean evaluate() throws DataModelException {
+	public Map<ITree, IRelation> evaluate() throws DataModelException {
 		/*
 		 * Input: IDB --> pi = ITree; Relevants Rs for each IDB are the leaves
 		 * of the ITree

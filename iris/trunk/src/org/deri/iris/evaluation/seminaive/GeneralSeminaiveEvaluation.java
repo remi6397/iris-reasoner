@@ -27,13 +27,10 @@ package org.deri.iris.evaluation.seminaive;
 
 import org.deri.iris.api.evaluation.IEvaluator;
 import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.storage.Relation;
 import org.deri.iris.api.IEDB;
-import org.deri.iris.api.evaluation.seminaive.model.*;
 import org.deri.iris.exception.DataModelException;
 import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
-import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.evaluation.seminaive.model.ITree;
 
 import java.util.Map;
 import java.util.Arrays;
@@ -55,7 +52,7 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 		this.IDB = IDB;
 	}
 	
-	public abstract IRelation[] evaluate() throws DataModelException;
+	public abstract Map<ITree, IRelation> evaluate() throws DataModelException;
 	
 	/**
 	 * 

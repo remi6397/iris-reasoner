@@ -26,14 +26,10 @@
 package org.deri.iris.evaluation.seminaive;
 
 import org.deri.iris.api.IEDB;
-import org.deri.iris.api.evaluation.IEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.storage.Relation;
 import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
-import org.deri.iris.api.evaluation.seminaive.model.*;
-import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.basics.IPredicate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
@@ -70,20 +66,20 @@ import java.util.Arrays;
  */
 public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
 
-	SeminaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<IPredicate, ITree> IDB) {
+	SeminaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<ITree, ITree> IDB) {
 		super(e, EDB, IDB);
 	}
 
-	public IRelation[] evaluate() {
+	public Map<ITree, IRelation> evaluate() {
 		/*
 		 * Input: IDB --> pi = ITree; Relevants Rs for each IDB are the leaves
 		 * of the ITree
 		 */
-		Map<IPredicate, IRelation> P = new HashMap<IPredicate, IRelation>();
-		Map<IPredicate, IRelation> AP = new HashMap<IPredicate, IRelation>();
-		Map<IPredicate, IRelation> AQ = new HashMap<IPredicate, IRelation>();
+		Map<ITree, IRelation> P = new HashMap<ITree, IRelation>();
+		Map<ITree, IRelation> AP = new HashMap<ITree, IRelation>();
+		Map<ITree, IRelation> AQ = new HashMap<ITree, IRelation>();
 
-		for (IPredicate head: IDB.keySet())
+		for (ITree head: IDB.keySet())
 		{
 			int arity = head.getArity();
 			P.put(head, new Relation(arity));
@@ -97,7 +93,7 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
 		 *    Pi := APi;
 		 * end;
 		 */
-		for (IPredicate head: IDB.keySet())
+		for (ITree head: IDB.keySet())
 		{
 			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 			AP.put(head, method.eval(IDB.get(head), EDB, AQ));
@@ -119,7 +115,7 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
 		 */		
 		for (; !isEmpty(AP);) {
 			copyRelations(AP, AQ);
-			for (IPredicate head: IDB.keySet())
+			for (ITree head: IDB.keySet())
 			{
 				// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
 				AP.put(head, method.eval_incr(IDB.get(head), EDB, P, AQ));
