@@ -52,7 +52,7 @@ public class SimpleTest {
 	
 	public static void main(final String[] args) {
 		setAdornedProgram();
-		test();
+//		test();
 	}
 	
 	private static void test(){
@@ -107,8 +107,10 @@ public class SimpleTest {
 		bodyLiterals.add(BASIC.createLiteral(true, 
 							BASIC.createPredicate("rsg",2), 
 							BASIC.createTuple(
-									TERM.createVariable("Y1"), 
-									TERM.createVariable("X1"))));
+//									TERM.createVariable("X1"), 
+//									TERM.createVariable("Y1"))));
+		TERM.createVariable("Y1"), 
+		TERM.createVariable("X1"))));
 		bodyLiterals.add(BASIC.createLiteral(true, 
 							BASIC.createPredicate("down", 2), 
 							BASIC.createTuple(
@@ -122,12 +124,18 @@ public class SimpleTest {
 		// query:
 		// query(Y) <- rsg(a, Y);
 		IQuery query = BASIC.createQuery(
-							BASIC.createLiteral(true, 
-									BASIC.createPredicate("rsg", 2), 
-									BASIC.createTuple(
-											TERM.createConstant(
-													TERM.createString("a")), 
-													TERM.createVariable("Y"))));
+				BASIC.createLiteral(true, 
+						BASIC.createPredicate("rsg", 2), 
+						BASIC.createTuple(
+										TERM.createString("a"), 
+										TERM.createVariable("Y"))));
+//		IQuery query = BASIC.createQuery(
+//				BASIC.createLiteral(true, 
+//						BASIC.createPredicate("rsg", 2), 
+//						BASIC.createTuple(
+//								TERM.createConstant(
+//										TERM.createString("a")), 
+//										TERM.createVariable("Y"))));
 
 		System.out.println("*** input: ******");
 		for (IRule r : rules) {

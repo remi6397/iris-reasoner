@@ -38,6 +38,7 @@ import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.evaluation.common.IAdornedProgram;
 import org.deri.iris.evaluation.common.AdornedProgram;
 
 /**
@@ -115,9 +116,8 @@ public class SimpleTest {
 				BASIC.createLiteral(true, 
 						BASIC.createPredicate("sg", 2), 
 						BASIC.createTuple(
-								TERM.createConstant(
-										TERM.createString("john")), 
-										TERM.createVariable("X"))));
+									TERM.createString("john"), 
+									TERM.createVariable("X"))));
 
 		System.out.println("*** input: ******");
 		for (IRule r : rules) {
@@ -127,7 +127,7 @@ public class SimpleTest {
 		System.out.println();
 
 		System.out.println("*** output: ******");
-		AdornedProgram program = new AdornedProgram(rules, query);
+		IAdornedProgram program = new AdornedProgram(rules, query);
 		System.out.println(program);
 	}
 	
@@ -186,9 +186,8 @@ public class SimpleTest {
 							BASIC.createLiteral(true, 
 									BASIC.createPredicate("rsg", 2), 
 									BASIC.createTuple(
-											TERM.createConstant(
-													TERM.createString("a")), 
-													TERM.createVariable("Y"))));
+												TERM.createString("a"), 
+												TERM.createVariable("Y"))));
 
 		System.out.println("*** input: ******");
 		for (IRule r : rules) {
@@ -198,7 +197,7 @@ public class SimpleTest {
 		System.out.println();
 
 		System.out.println("*** output: ******");
-		AdornedProgram program = new AdornedProgram(rules, query);
+		IAdornedProgram program = new AdornedProgram(rules, query);
 		System.out.println(program);
 	}
 }
