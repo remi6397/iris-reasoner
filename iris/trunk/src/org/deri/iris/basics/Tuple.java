@@ -44,7 +44,7 @@ import org.deri.iris.api.terms.IVariable;
  * 
  * Revision 1.1  21.07.2006 12:01:56  Darko Anicic, DERI Innsbruck
  */
-public class Tuple implements ITuple<ITuple>{
+public class Tuple implements ITuple{
 
 	private final int arity;
 	
@@ -183,7 +183,6 @@ public class Tuple implements ITuple<ITuple>{
 		return this.duplicate;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public int compareTo(ITuple t) {
 		if (t == null) {
 			throw new IllegalArgumentException("Cannot compare with null");
@@ -200,15 +199,8 @@ public class Tuple implements ITuple<ITuple>{
 		return this.terms.size() - t.getTerms().size();
 	}
 
-	@SuppressWarnings("unchecked")
 	public int hashCode() {
-		int result = 17;
-		for (ITerm t : terms) {
-			if (t != null) {
-				result = result * 37 + t.hashCode();
-			}
-		}
-		return result;
+		return terms.hashCode();
 	}
 	
 	public boolean equals(final Object o) {
@@ -236,10 +228,10 @@ public class Tuple implements ITuple<ITuple>{
 	}
 
 	public Set<IVariable> getVariables() {
-		Set variables = new HashSet<ITerm>();
+		Set<IVariable> variables = new HashSet<IVariable>();
 		for(ITerm term : this.terms){
 			if(term instanceof IVariable)
-				variables.add(term);
+				variables.add((IVariable)term);
 			if(term instanceof IConstructedTerm)
 				variables.addAll(getVariables((IConstructedTerm)term));
 				
@@ -248,11 +240,10 @@ public class Tuple implements ITuple<ITuple>{
 	}
 	
 	private Set<IVariable> getVariables(IConstructedTerm t) {
-		Set variables = new HashSet<ITerm>();
-		List<IConstructedTerm> termList = (List<IConstructedTerm>)t.getValue();
-		for(ITerm term : termList){
+		Set<IVariable> variables = new HashSet<IVariable>();
+		for(ITerm term : t.getValue()){
 			if(term instanceof IVariable)
-				variables.add(term);
+				variables.add((IVariable)term);
 			if(term instanceof IConstructedTerm)
 				variables.addAll(getVariables((IConstructedTerm)term));
 		}

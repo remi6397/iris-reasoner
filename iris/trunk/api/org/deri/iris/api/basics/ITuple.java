@@ -37,7 +37,7 @@ import org.deri.iris.api.terms.IVariable;
 * @date   07.12.2005 08:45:24
 */
 
-public interface ITuple<Type extends ITuple> extends Comparable<Type>{
+public interface ITuple extends Comparable<ITuple>{
 
 	public int getArity();
 	
@@ -91,7 +91,7 @@ public interface ITuple<Type extends ITuple> extends Comparable<Type>{
 	/**
 	 * Tuples t0 and t1 are duplicates if they have identical terms  
 	 * for each sort index. Used in operations on relations 
-	 * (e.g. for tuple sorting – IndexComparator) to increase the 
+	 * (e.g. for tuple sorting ï¿½ IndexComparator) to increase the 
 	 * efficiency of the operations.
 	 * 
 	 * @param duplicate
