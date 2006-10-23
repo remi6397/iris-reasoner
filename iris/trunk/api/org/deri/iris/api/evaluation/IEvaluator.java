@@ -25,13 +25,9 @@
  */
 package org.deri.iris.api.evaluation;
 
-import org.deri.iris.api.evaluation.seminaive.model.ITree;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.exception.DataModelException;
-import org.deri.iris.storage.Relation;
 
 import java.util.Map;
 
@@ -44,7 +40,7 @@ import java.util.Map;
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   27.07.2006 16:04:43
- * @version $Id: IEvaluator.java,v 1.4 2006-10-23 08:41:54 adi Exp $
+ * @version $Id: IEvaluator.java,v 1.5 2006-10-23 09:09:21 adi Exp $
  */
 public interface IEvaluator {
 	
