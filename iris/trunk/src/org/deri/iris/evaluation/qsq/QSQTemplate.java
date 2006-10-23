@@ -171,7 +171,7 @@ public class QSQTemplate {
 		List<IVariable> variables_before = null;
 		List<IVariable> variables = null;
 		ILiteral literal = null;
-		List<IVariable> terms = null;
+		List<ITerm> terms = null;
 		
 		for(int i=0; i<body.size()-1; i++){
 			variables_before = new ArrayList<IVariable>();
