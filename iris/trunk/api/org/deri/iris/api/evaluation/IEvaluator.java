@@ -44,7 +44,7 @@ import java.util.Map;
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   27.07.2006 16:04:43
- * @version $Id: IEvaluator.java,v 1.3 2006-10-23 08:06:13 adi Exp $
+ * @version $Id: IEvaluator.java,v 1.4 2006-10-23 08:41:54 adi Exp $
  */
 public interface IEvaluator {
 	
@@ -57,11 +57,8 @@ public interface IEvaluator {
 	 * until answers have been derived.<br>
 	 * Returns true if the evaluation has terminated, otherwise false is returned.
 	 * All answers up to now are returned by "Result" or "Substitution".
-	 * 
-	 * adi .:. temp change .:. returns set of the least fix point solution
-	 * 
 	 */
-	public Map<ITree, IRelation<ITuple>> evaluate() throws DataModelException;
+	public Map<ITree, IRelation> evaluate() throws DataModelException;
  
 }
  
