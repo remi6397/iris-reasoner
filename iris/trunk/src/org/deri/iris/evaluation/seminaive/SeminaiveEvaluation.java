@@ -74,14 +74,14 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
 		super(e, EDB, IDB);
 	}
 
-	public IRelation<ITuple>[] evaluate() {
+	public IRelation[] evaluate() {
 		/*
 		 * Input: IDB --> pi = ITree; Relevants Rs for each IDB are the leaves
 		 * of the ITree
 		 */
-		Map<IPredicate, IRelation<ITuple>> P = new HashMap<IPredicate, IRelation<ITuple>>();
-		Map<IPredicate, IRelation<ITuple>> AP = new HashMap<IPredicate, IRelation<ITuple>>();
-		Map<IPredicate, IRelation<ITuple>> AQ = new HashMap<IPredicate, IRelation<ITuple>>();
+		Map<IPredicate, IRelation> P = new HashMap<IPredicate, IRelation>();
+		Map<IPredicate, IRelation> AP = new HashMap<IPredicate, IRelation>();
+		Map<IPredicate, IRelation> AQ = new HashMap<IPredicate, IRelation>();
 
 		for (IPredicate head: IDB.keySet())
 		{

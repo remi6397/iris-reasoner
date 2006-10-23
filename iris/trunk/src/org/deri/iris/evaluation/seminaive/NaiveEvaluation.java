@@ -74,8 +74,8 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation{
 		 * Input: IDB --> pi = ITree; Relevants Rs for each IDB are the leaves
 		 * of the ITree
 		 */
-		Map<ITree, IRelation<ITuple>> P = new HashMap<ITree, IRelation<ITuple>>();
-		Map<ITree, IRelation<ITuple>> Q = new HashMap<ITree, IRelation<ITuple>>();
+		Map<ITree, IRelation> P = new HashMap<ITree, IRelation>();
+		Map<ITree, IRelation> Q = new HashMap<ITree, IRelation>();
 		
 		for (ITree head: IDB.keySet())
 		{

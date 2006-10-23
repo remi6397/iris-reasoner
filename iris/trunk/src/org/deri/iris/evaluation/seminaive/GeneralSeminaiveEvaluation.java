@@ -55,7 +55,7 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 		this.IDB = IDB;
 	}
 	
-	public abstract IRelation<ITuple>[] evaluate() throws DataModelException;
+	public abstract IRelation[] evaluate() throws DataModelException;
 	
 	/**
 	 * 
@@ -63,7 +63,7 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param Q set of temporal backup relations
 	 * @return True if there are no new tuples in any relation in P; false otherwise
 	 */
-	protected boolean compare(Map<ITree, IRelation<ITuple>> P, Map<ITree, IRelation<ITuple>> Q){		
+	protected boolean compare(Map<ITree, IRelation> P, Map<ITree, IRelation> Q){		
 		for (ITree head : P.keySet())
 		{
 			if (!Q.get(head).containsAll(Arrays.asList(P.get(head).toArray())))
@@ -76,7 +76,7 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param r set of relations
 	 * @return True if all the relations are empty; false otherwise
 	 */
-	protected boolean isEmpty(Map<ITree, IRelation<ITuple>> r){		
+	protected boolean isEmpty(Map<ITree, IRelation> r){		
 		for (ITree head: r.keySet())
 			if (!r.get(head).isEmpty())
 				return false;
@@ -88,7 +88,7 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param source Set of source relations
 	 * @param target Set of target relations
 	 */
-	protected void copyRelations(Map<ITree, IRelation<ITuple>> source, Map<ITree, IRelation<ITuple>> target) {
+	protected void copyRelations(Map<ITree, IRelation> source, Map<ITree, IRelation> target) {
 		for (ITree head: source.keySet()){
 			// 1st. Empty target
 			target.get(head).clear();
@@ -102,7 +102,7 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
 	 * @param source Set of source relations
 	 * @param target Set of target relations
 	 */
-	protected void addRelations(Map<ITree, IRelation<ITuple>> source, Map<ITree, IRelation<ITuple>> target) {
+	protected void addRelations(Map<ITree, IRelation> source, Map<ITree, IRelation> target) {
 		for (ITree head: source.keySet())
 			target.get(head).addAll(new LinkedList(Arrays.asList(source.get(head).toArray())));
 		

@@ -54,7 +54,7 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 	 * @param Q Tuples already discovered
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation<ITuple> eval(ITree pi, IEDB EDB, Map<ITree, IRelation<ITuple>> IDB) {
+	public IRelation eval(ITree pi, IEDB EDB, Map<ITree, IRelation> IDB) {
 		return evaluate(pi, EDB, IDB);
 	}
 	 
@@ -67,11 +67,11 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 	 * @param AQ Tuples discovered during the last iteration
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation<ITuple> eval_incr(ITree pi, IEDB EDB, Map<ITree, IRelation<ITuple>>  P, Map<ITree, IRelation<ITuple>>  AQ) {
+	public IRelation eval_incr(ITree pi, IEDB EDB, Map<ITree, IRelation>  P, Map<ITree, IRelation>  AQ) {
 		return evaluate(pi, EDB, AQ);
 	}
 
-	private IRelation<ITuple> evaluate(ITree node, IEDB EDB, Map<ITree, IRelation<ITuple>> IDB){
+	private IRelation evaluate(ITree node, IEDB EDB, Map<ITree, IRelation> IDB){
 		if (node instanceof DifferenceDescription){
 			DifferenceDescription d = (DifferenceDescription)node;
 			// TODO. We do not use difference operations yet
@@ -90,7 +90,7 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 			if (njChildren.size() == 1) { // No join needed
 				return evaluate((ITree)njChildren.get(0), EDB, IDB);
 			}
-			IRelation<ITuple> result;
+			IRelation result;
 			// Check whether we need cartesian product (no common variables) or join operation
 			ITree child1 = (ITree)njChildren.get(0);
 			ITree child2 = (ITree)njChildren.get(1);
@@ -153,12 +153,12 @@ public class InMemoryProcedure implements IEvaluationProcedure{
 			return null;
 	}
 	
-	private IRelation<ITuple> doJoin(
-			IRelation<ITuple> child1, 
+	private IRelation doJoin(
+			IRelation child1, 
 			List<String> child1Variables, 
 			ITree child2, 
 			IEDB EDB, 
-			Map<ITree, IRelation<ITuple>> IDB) {
+			Map<ITree, IRelation> IDB) {
 		
 		List<String> joinVariables = getJoinVariables(child1Variables, child2.getVariables());
 		int[] joinIndexes = getJoinIndexes(child1Variables, child2.getVariables());
