@@ -30,7 +30,17 @@ import java.lang.reflect.InvocationTargetException;
 import junit.framework.Assert;
 
 /**
+ * <p>
+ * Contains various tests for methods common to many classes. The results will
+ * be checked with junit asserts.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * 
  * @author richi
+ * @version $Revision$
+ * @date $Date$
  * 
  */
 public final class ObjectTest {
@@ -39,16 +49,44 @@ public final class ObjectTest {
 		// prevent sublassing
 	}
 
+	/**
+	 * Tests the <code>equals</code> method.
+	 * 
+	 * @param e0
+	 *            a simple test object
+	 * @param e1
+	 *            test object which must be equal to e0
+	 * @param ue0
+	 *            test object which must be unequal to e0
+	 * @throws NullPointerException
+	 *             if any of the objects is <code>null</code>
+	 */
 	public static void runTestEquals(final Object e0, final Object e1,
 			final Object ue0) {
+		if ((e0 == null) || (e1 == null) || (ue0 == null)) {
+			throw new NullPointerException("The objects must not be null");
+		}
+
 		Assert.assertEquals("A object must be equal to itself", e0, e0);
 		Assert.assertEquals("The objects are equal", e0, e1);
 		Assert.assertEquals("The objects are equal", e1, e0);
 		Assert.assertFalse("The objects are unequal", e0.equals(ue0));
-		Assert.assertFalse("The object is unequal to null", e0.equals(null));
+		Assert.assertFalse("The object must be unequal to null", e0
+				.equals(null));
 	}
 
+	/**
+	 * Tests the <code>clone</code> method.
+	 * 
+	 * @param o
+	 *            the object which to try to clone
+	 * @throws NullPointerException
+	 *             if the object is <code>null</code>
+	 */
 	public static void runTestClone(final Object o) {
+		if (o == null) {
+			throw new NullPointerException("The object must not be null");
+		}
 		Assert.assertNotSame("Clone must not return the same object reference",
 				o, runClone(o));
 		Assert.assertEquals("Cloned objects must have the same classes", o
@@ -56,9 +94,31 @@ public final class ObjectTest {
 		Assert.assertEquals("Cloned objects must be equal", o, runClone(o));
 	}
 
+	/**
+	 * Tests the <code>compareTo</code> method defined by the
+	 * <code>Comparable</code> interface.
+	 * 
+	 * @param <T>
+	 *            the type must extend <code>Comparable</code>
+	 * @param basic
+	 *            the basic value
+	 * @param equal
+	 *            a value which is equal to the basic one
+	 * @param more
+	 *            a value which is bigger than the basic one
+	 * @param evenMore
+	 *            a vale which is bigger than more
+	 * @throws NullPointerException
+	 *             if any of the objects is <code>null</code>
+	 * @see Comparable
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Comparable> void runTestCompareTo(final T basic,
 			final T equal, final T more, final T evenMore) {
+		if ((basic == null) || (equal == null) || (more == null)
+				|| (evenMore == null)) {
+			throw new NullPointerException("The objects must not be null");
+		}
 		Assert.assertTrue("Something wrong with compareTo (" + basic
 				+ " should be smaller than " + more + ")", basic
 				.compareTo(more) < 0);
@@ -84,9 +144,28 @@ public final class ObjectTest {
 				.compareTo(basic) > 0);
 	}
 
+	/**
+	 * Tests the <code>compareTo</code> method defined by the
+	 * <code>Comparable</code> interface.
+	 * 
+	 * @param <T>
+	 *            the type must extend <code>Comparable</code>
+	 * @param basic
+	 *            the basic value
+	 * @param equal
+	 *            a value which is equal to the basic one
+	 * @param more
+	 *            a value which is bigger than the basic one
+	 * @throws NullPointerException
+	 *             if any of the objects is <code>null</code>
+	 * @see Comparable
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Comparable> void runTestCompareTo(final T basic,
 			final T equal, final T more) {
+		if ((basic == null) || (equal == null) || (more == null)) {
+			throw new NullPointerException("The objects must not be null");
+		}
 		Assert.assertTrue("Something wrong with compareTo", basic
 				.compareTo(more) < 0);
 
@@ -110,8 +189,13 @@ public final class ObjectTest {
 	 * @param o
 	 *            the object to clone
 	 * @return the clone
+	 * @throws NullPointerException
+	 *             if the given object is <code>null</code>
 	 */
 	private static Object runClone(final Object o) {
+		if (o == null) {
+			throw new NullPointerException("The object must not be null");
+		}
 		Object clone = null;
 		try {
 			clone = o.getClass().getMethod("clone", (Class[]) null).invoke(o,
