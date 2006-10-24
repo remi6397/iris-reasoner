@@ -46,6 +46,8 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.graph.LabeledDirectedEdge;
 
+// FIXME: most Set<IVariable> should be Set<ITerm> and contain !isGround() terms
+
 /**
  * <p>
  * A SIP Implementation according to the &quot;The Power of Magic&quot; paper.
@@ -55,12 +57,12 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.14 2006-10-23 06:54:49 richardpoettler Exp $
+ * $Id: SIPImpl.java,v 1.15 2006-10-24 10:12:16 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.14 $
- * @date $Date: 2006-10-23 06:54:49 $
+ * @version $Revision: 1.15 $
+ * @date $Date: 2006-10-24 10:12:16 $
  */
 public final class SIPImpl implements ISip {
 	// TODO: implement hashCode and equals
@@ -140,8 +142,8 @@ public final class SIPImpl implements ISip {
 				.hasNext());) {
 			final ITerm headT = headTerms.next();
 			final ITerm queryT = queryTerms.next();
-			// FIXME: be aware of constructed terms
 			if (queryT.isGround() && !headT.isGround()) {
+				// FIXME: this might not always be a variable
 				assumedKnown.add((IVariable) headT);
 			}
 		}
@@ -157,9 +159,8 @@ public final class SIPImpl implements ISip {
 
 			final Map<ILiteral, Set<IVariable>> toAdd = getNextByRule(l,
 					assumedKnown);
-			// final Map<ILiteral, Set<IVariable>> toAdd = getNextByFree(l,
-			// assumedKnown);
 			for (ILiteral connected : toAdd.keySet()) {
+				assumedKnown.addAll(toAdd.get(connected));
 				updateSip(l, connected, toAdd.get(connected));
 				literalsTodo.add(connected);
 			}
@@ -167,6 +168,14 @@ public final class SIPImpl implements ISip {
 		// FIXME: add unconnected literals
 	}
 
+	/**
+	 * Updates the sip. Adds a edge with the given source, target and given
+	 * label to the sip. If a edge with the given source and target already
+	 * exists, the label will be updated.
+	 * 
+	 * @throws NullPointerException
+	 *             if the source, target or passedTo is {@code null}
+	 */
 	public void updateSip(final ILiteral source, final ILiteral target,
 			final Set<IVariable> passedTo) {
 		if ((source == null) || (target == null) || (passedTo == null)) {
@@ -228,10 +237,11 @@ public final class SIPImpl implements ISip {
 			throw new NullPointerException(
 					"The literal and the bounds must not be null");
 		}
-		Map<ILiteral, Set<IVariable>> next = getNextByRule(l, bound);
-		// Map<ILiteral, Set<IVariable>> next = getNextByBounds(l, bound);
+		final Map<ILiteral, Set<IVariable>> next = getNextByRule(l, bound);
 		for (final ILiteral lit : next.keySet()) {
-			updateSip(l, lit, next.get(lit));
+			final Set<IVariable> vars = new HashSet<IVariable>(next.get(lit));
+			vars.retainAll(bound);
+			updateSip(l, lit, vars);
 		}
 		return next.keySet();
 	}
@@ -579,6 +589,15 @@ public final class SIPImpl implements ISip {
 
 	public Comparator<ILiteral> getLiteralComparator() {
 		return LITERAL_COMP;
+	}
+
+	/**
+	 * Returns a unmodifiable set of all edges of the sip.
+	 * 
+	 * @return the set of edges.
+	 */
+	public Set<LabeledDirectedEdge<Set<IVariable>>> getEdges() {
+		return Collections.unmodifiableSet(sipGraph.edgeSet());
 	}
 
 	/**
