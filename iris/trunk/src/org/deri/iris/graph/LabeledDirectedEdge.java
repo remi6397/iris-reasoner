@@ -27,18 +27,23 @@ package org.deri.iris.graph;
 
 import org._3pq.jgrapht.edge.DirectedEdge;
 
-// TODO: implement LabeledElement (it doesn't support generics -> do it in jgraphT v0.7)
+// TODO: implement LabeledElement (it doesn't support generics -> do it in
+// jgraphT v0.7)
 
 /**
- * This class represents a simple implementation of a labeled edge.<br/><br/>
+ * <p>
+ * This class represents a simple implementation of a labeled edge.
+ * </p>
+ * <p>
  * <b>NOTE: do not use this class outside of this project! We don't know whether
  * to keep this class in the api!</b>
- * 
- * <br/><br/>$Id$
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
  * 
  * @author richi
  * @version $Revision$
- * 
  */
 public class LabeledDirectedEdge<Type> extends DirectedEdge {
 
@@ -81,7 +86,7 @@ public class LabeledDirectedEdge<Type> extends DirectedEdge {
 	 * @param label
 	 *            the label to set
 	 */
-	public void setLabel(Type label) {
+	private void setLabel(Type label) {
 		this.label = label;
 	}
 
@@ -119,10 +124,22 @@ public class LabeledDirectedEdge<Type> extends DirectedEdge {
 						.doubleToLongBits(le.getWeight()));
 	}
 
+	public int hashCode() {
+		int res = 17;
+		res = res * 37 + getSource().hashCode();
+		res = res * 37 + getTarget().hashCode();
+		res = res * 37 + label.hashCode();
+		res = res * 37 + Double.valueOf(getWeight()).hashCode();
+		return res;
+	}
+
 	/**
+	 * <p>
 	 * Returns a simple string representation of this labeled directed edge.
-	 * <br/><b>The subject of the stringrepresentation is to change.</b> <br/>An
-	 * example String could be: <code>source->(label)->target<code>.
+	 * <b>The subject of the stringrepresentation is to change.</b>
+	 * </p>
+	 * <p>
+	 * An example String could be: <code>source->(label)->target<code>.</p>
 	 */
 	public String toString() {
 		return getSource() + " ->( " + label + " )-> " + getTarget();
