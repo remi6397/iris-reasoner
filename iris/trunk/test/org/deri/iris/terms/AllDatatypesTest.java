@@ -68,7 +68,6 @@ public class AllDatatypesTest extends TestCase {
 		suite.addTest(DecimalTest.suite());
 		suite.addTest(DoubleTest.suite());
 		suite.addTest(VariableTest.suite());
-		suite.addTest(ConstantTermTest.suite());
 		suite.addTest(ConstructedTermTest.suite());
 		suite.addTest(DateTest.suite());
 		return suite;
