@@ -359,7 +359,7 @@ public class Rule2Relation {
 		 boolean noFi = true;
 		 for (ITerm t : terms)
 		 {
-			 if (t instanceof org.deri.iris.terms.ConstantTerm)
+			 if (t.isGround()) // is t a constant term?
 			 {
 				 projectionIndex[i] = -1;
 				 selectionPattern.add(t);
