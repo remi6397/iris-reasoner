@@ -27,7 +27,6 @@ package org.deri.iris.api.evaluation.common;
 
 import java.util.Set;
 
-import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 
@@ -37,12 +36,12 @@ import org.deri.iris.api.basics.IRule;
  * it.
  * </p>
  * <p>
- * $Id: IAdornedProgram.java,v 1.2 2006-09-18 08:08:50 richardpoettler Exp $
+ * $Id: IAdornedProgram.java,v 1.3 2006-11-02 07:45:17 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-09-18 08:08:50 $
+ * @version $Revision: 1.3 $
+ * @date $Date: 2006-11-02 07:45:17 $
  */
 public interface IAdornedProgram {
 
@@ -66,13 +65,6 @@ public interface IAdornedProgram {
 	 * @return the set of adorned predicates
 	 */
 	public abstract Set<IAdornedPredicate> getAdornedPredicates();
-
-	/**
-	 * Returns all predicates which might be derived.
-	 * 
-	 * @return the derived predicates
-	 */
-	public abstract Set<IPredicate> getDerivedPredicates();
 
 	/**
 	 * Returns the query for this program.
