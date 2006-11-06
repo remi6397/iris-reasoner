@@ -27,6 +27,7 @@
 package org.deri.iris.operations.relations;
 
 import static org.deri.iris.factory.Factory.RELATION_OPERATION;
+import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,10 +42,34 @@ import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.basics.seminaive.NonEqualityTerm;
 import org.deri.iris.storage.Relation;
 
-
 /**
+ * For a tuple t:
+ * t = MiscHelper.createTuple(
+ * 				RELATION_OPERATION.createNonEquality("a"), 
+ * 				TERM.createString("d"), 
+ * 				null, 
+ * 				RELATION_OPERATION.createNonEquality("d"),
+ * 				null, 
+ * 				null)
+ * 
+ * and an array arr:
+ * 
+ * arr = new int[]{1, 1, 0, 0, -1, -1}
+ * 			
+ * we are creating a selection condition which select:
+ * 
+ * tuples which do not have term "a"
+ * at its first position and term "d" at fourth
+ * position, but have term "d" at the second position.
+ * 
+ * Also the array arr forces the first and second terms 
+ * to be equal and fifth and sixth terms to be equal,
+ * while there is no such a condition on third and fourth
+ * terms (0).
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   31.05.2006 11:34:30
  */
@@ -151,6 +176,25 @@ public class SelectionStringTest extends TestCase {
 		runSelection_0(MiscHelper.createTuple("a", "d", "d", "f"), e);
 	}
 	
+	/**
+	 * Select tuples which do not have term "a"
+	 * at its first position and term "d" at fourth
+	 * position but have term "d" at the second position.
+	 */
+	public void testSelect_notEqAndEq_0() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(MiscHelper.createTuple("d", "d", "a", "e"));
+		e.add(MiscHelper.createTuple("d", "d", "d", "d"));
+		
+		runSelection_0(MiscHelper.createTuple(
+				new NonEqualityTerm(
+						TERM.createString("a")), 
+				TERM.createString("d"), 
+				null, 
+				new NonEqualityTerm(
+						TERM.createString("a"))), e);
+	}
+	
 	public void testSelect_1n1n_1() {
 		final List<ITuple> e = new ArrayList<ITuple>();
 		e.add(MiscHelper.createTuple("a", "a", "a", "a"));
@@ -178,8 +222,8 @@ public class SelectionStringTest extends TestCase {
 	}
 	
 	/**
-	 * m1 - minus 1
-	 * p1 - plus 1
+	 * m1 - minus 1: first and fourth term need to be different  
+	 * p1 - plus 1:  second and third term need to be the same (equal)
 	 */
 	public void testSelect_m1p1p1m1_1() {
 		final List<ITuple> e = new ArrayList<ITuple>();
@@ -187,6 +231,16 @@ public class SelectionStringTest extends TestCase {
 		e.add(MiscHelper.createTuple("a", "d", "d", "f"));
 		
 		runSelection_1(new int[]{-1, 1, 1, -1}, e);
+	}
+	
+	public void testSelect_m1m1m2m2_1() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(MiscHelper.createTuple("x", "y", "z", "w"));
+		e.add(MiscHelper.createTuple("a", "b", "b", "c"));
+		e.add(MiscHelper.createTuple("a", "d", "d", "f"));
+		e.add(MiscHelper.createTuple("a", "b", "a", "b"));
+		
+		runSelection_1(new int[]{-1, -1, -2, -2}, e);
 	}
 	
 	public void testSelect_a101_2() {
@@ -204,6 +258,26 @@ public class SelectionStringTest extends TestCase {
 		
 		runSelection_2(MiscHelper.createTuple("d", null, null, null),
 				new int[]{0, 1, 1, 1}, e);
+	}
+	
+	/**
+	 * Select tuples which do not have term "a"
+	 * at its first position and term "d" at fourth
+	 * position but have term "d" at the second position.
+	 * Also the first and second terms must be equal.
+	 */
+	public void testSelect_complex_0() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(MiscHelper.createTuple("d", "d", "a", "e"));
+		
+		runSelection_2(MiscHelper.createTuple(
+				new NonEqualityTerm(
+						TERM.createString("a")), 
+				TERM.createString("d"), 
+				null, 
+				new NonEqualityTerm(
+						TERM.createString("d"))),
+				new int[]{1, 1, 0, 0}, e);
 	}
 	
 	/**
