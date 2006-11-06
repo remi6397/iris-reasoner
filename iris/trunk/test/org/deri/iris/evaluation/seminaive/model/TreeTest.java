@@ -33,9 +33,8 @@ import junit.framework.TestSuite;
 
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
- * @author Darko Anicic, DERI Innsbruck
- * @date $Date: 2006-11-02 12:50:55 $
- * @version $Id: TreeTest.java,v 1.1 2006-11-02 12:50:55 adi Exp $
+ * @date $Date: 2006-11-06 09:29:34 $
+ * @version $Id: TreeTest.java,v 1.2 2006-11-06 09:29:34 adi Exp $
  */
 public class TreeTest extends TestCase {
 
@@ -84,7 +83,7 @@ public class TreeTest extends TestCase {
 		assertEquals(tree.getVariables(), variableList);
 
 	}
-	public void testhasVaribale() {
+	public void testhasVariable() {
 
 		assertTrue(tree.hasVariable("x2"));
 
