@@ -70,7 +70,7 @@ public class SelectionComparator extends BasicComparator{
 		} 
 		if (t0.getArity() != this.getSortIndexes().length) {
 			throw new IllegalArgumentException(
-					"The length of sort indexe array does not match " +
+					"The length of sort index array does not match " +
 					"the arity of the compared tuples.");
 		}
 		int quota = getQuota();
