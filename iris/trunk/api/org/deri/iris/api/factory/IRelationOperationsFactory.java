@@ -25,7 +25,6 @@
  */
 package org.deri.iris.api.factory;
 
-import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IDifference;
 import org.deri.iris.api.operations.relation.IIntersection;
@@ -33,7 +32,6 @@ import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.operations.relation.IProjection;
 import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.operations.relation.IUnion;
-import org.deri.iris.api.operations.tuple.IUnification;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.operations.relations.JoinCondition;
 
@@ -50,13 +48,13 @@ public interface IRelationOperationsFactory {
 	/**
 	 * Creates an equijoin (default) operator.
 	 * 
-	 * @param arg0
-	 * @param arg1
-	 * @param indexes
+	 * @param arg0  the first relation to be joined
+	 * @param arg1  the second relation to be joined
+	 * @param inds  join indexes
 	 * @return
 	 */
 	public IJoin createJoinOperator(IRelation arg0, IRelation arg1, 
-			int[] indexes);
+			int[] inds);
 	/**
 	 * Creates a general join operator where one of the following 
 	 * conditions: =, !=, <, >, <=, >= must hold.
@@ -138,12 +136,13 @@ public interface IRelationOperationsFactory {
 			IRelation arg1, int[] indexes, JoinCondition condition,
 			int[] projectIndexes);
 	
-	// Correct it!
+	// TODO: Join Operator needs to handles the functionality of 
+	//       this operator too, thus this operator should be removed 
+	//       in the future
 	public IJoin createJoinNewSimpleOperator(IRelation arg0, 
 			IRelation arg1, int[] indexes, JoinCondition condition);
 	
 	public IProjection createProjectionOperator(IRelation relation, int[] pattern);
-	
 	
 	/**
 	 * Create a selection operator that does selection with the following rule:
