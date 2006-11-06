@@ -30,6 +30,7 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.tuple.IConcatenation;
 import org.deri.iris.api.operations.tuple.IMatching;
 import org.deri.iris.api.operations.tuple.IUnification;
+import org.deri.iris.api.terms.ITerm;
 
 
 /**
@@ -43,7 +44,7 @@ public interface ITupleOperationsFactory {
 	 * @param arg1 tuple to be Concatenated
 	 * @return     concatenated tuple
 	 */
-	public IConcatenation createConcatenationOperator(ITuple arg0, ITuple arg1);
+	public IConcatenation createConcatenationOperator(final ITuple arg0, final ITuple arg1);
 	
 	/**
 	 * @param arg0 tuple to be Concatenated
@@ -52,12 +53,14 @@ public interface ITupleOperationsFactory {
 	 * @return     concatenated tuple
 	 */
 	public IConcatenation createConcatenationOperator(
-			ITuple arg0, ITuple arg1, int[] pi);
+			final ITuple arg0, final ITuple arg1, final int[] pi);
 
-	public IMatching createMatchingOperator(ITuple arg0, ITuple arg1);
+	public IMatching createMatchingOperator(final ITuple arg0, final ITuple arg1);
 	
 	public IUnification createUnificationOperator(final ITuple arg0, final ITuple arg1);
 	
 	public IUnification createUnificationOperator(final IAtom arg0, final IAtom arg1);
+
+	public IUnification createUnificationOperator(final ITerm term0, final ITerm term1);
 	
 }
