@@ -66,9 +66,9 @@ import org.deri.iris.storage.Relation;
  * position, but have term "d" at the second position.
  * 
  * Also the array arr forces the first and second terms 
- * to be equal and fifth and sixth terms to be equal,
- * while there is no such a condition on third and fourth
- * terms (0).
+ * to be equal and fifth and sixth terms not to be equal,
+ * while there is no eqality condition on third and fourth
+ * terms (0 means: ignore a position on which 0 is placed).
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   31.05.2006 11:34:30
@@ -91,7 +91,6 @@ public class SelectionStringTest extends TestCase {
 		relation.add(MiscHelper.createTuple("d", "d", "a", "e"));
 		relation.add(MiscHelper.createTuple("a", "d", "d", "f"));
 	}
-	
 	/**
 	 * Checks out createSelectionOperator(IRelation relation, ITuple pattern);
 	 * 
