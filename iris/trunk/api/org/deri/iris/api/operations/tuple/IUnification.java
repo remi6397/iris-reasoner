@@ -25,9 +25,7 @@
  */
 package org.deri.iris.api.operations.tuple;
 
-import java.util.List;
-
-import org.deri.iris.operations.tuple.Multiequation;
+import org.deri.iris.operations.tuple.Unification.UnificationResult;
 
 /**
  *
@@ -45,9 +43,9 @@ import org.deri.iris.operations.tuple.Multiequation;
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:54:09
  *
- * @version $Revision: 1.8 $ $Date: 2006-10-16 17:26:40 $
+ * @version $Revision: 1.9 $ $Date: 2006-11-06 10:49:27 $
  */
 public interface IUnification {
 
-	public List<List<Multiequation>> unify();
+	public UnificationResult unify();
 }
