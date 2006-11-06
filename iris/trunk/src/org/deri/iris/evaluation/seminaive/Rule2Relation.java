@@ -25,16 +25,26 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.basics.seminaive.EqualityLiteral;
-import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.api.evaluation.seminaive.model.IProjection;
+import org.deri.iris.api.evaluation.seminaive.model.IRule;
+import org.deri.iris.api.evaluation.seminaive.model.ISelection;
+import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.basics.BasicFactory;
+import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.basics.seminaive.EqualityLiteral;
 import org.deri.iris.evaluation.seminaive.model.ModelFactory;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.api.evaluation.seminaive.model.*;
+import org.deri.iris.terms.Variable;
 
 
 /**
@@ -51,11 +61,14 @@ public class Rule2Relation {
 	
 	/**
 	 * Transform a set of rules into relational algebra operations 
-	 * @param rule Collection that contains the rules in the program (PRECONDITION: the rules are ordered according to the dependences within the program)
-	 * @return An structure that contains the predicates head of the rules and the algebra operations for these rules
+	 * @param rule Collection that contains the rules in the program 
+	 * 			(PRECONDITION: the rules are ordered according to the 
+	 * 			dependences within the program)
+	 * @return An structure that contains the predicates head of the 
+	 * 			rules and the algebra operations for these rules
 	 */
-	public Map<ITree, ITree> eval(final Collection<org.deri.iris.api.basics.IRule> rules)
-	{		
+	public Map<ITree, ITree> eval(
+			final Collection<org.deri.iris.api.basics.IRule> rules){		
 		
 		for (org.deri.iris.api.basics.IRule r: rules) {
 			ITree head = (ITree)ModelFactory.FACTORY.createTree(
@@ -67,8 +80,7 @@ public class Rule2Relation {
 			if (body != null) {
 				// Check whether there is a rule with the same head predicate; if so, the bodies must be united
 				ITree oldHead;
-				if ((oldHead = containsKey(results.keySet(), head))!= null)
-				{
+				if ((oldHead = containsKey(results.keySet(), head))!= null){
 					// UNION
 					// The relations should be union-compatible:
 					//  (a) Same number of fields.
@@ -113,8 +125,10 @@ public class Rule2Relation {
 	 */
 	 private ITree evalRule(org.deri.iris.api.basics.IRule r, ITree head)
 	 {
-		Map<IVariable, List<ILiteral>> variables = new java.util.Hashtable<IVariable, List<ILiteral>>();
-		List<EqualityLiteral> equalityLiterals = new java.util.LinkedList<EqualityLiteral>();
+		Map<IVariable, List<ILiteral>> variables = 
+			new java.util.Hashtable<IVariable, List<ILiteral>>();
+		List<EqualityLiteral> equalityLiterals = 
+			new java.util.LinkedList<EqualityLiteral>();
 
 		
 		/* 
@@ -128,8 +142,7 @@ public class Rule2Relation {
 		ITree globalJoin = ModelFactory.FACTORY.createNaturalJoin();
 		
 		List<ILiteral> literals = r.getBodyLiterals();
-		for (ILiteral l: literals)
-		{
+		for (ILiteral l: literals){
 			ITree temporalResult ;
 			if (! (l instanceof EqualityLiteral)) {
 				// A. Ordinary subgoals
@@ -153,8 +166,7 @@ public class Rule2Relation {
 		
 		// D. EVAL-RULE(r, R1,...,Rn) = SELECTION_F(E)
 		// F conjunction of built-in subgoals appearing.
-		if (!equalityLiterals.isEmpty())
-		{
+		if (!equalityLiterals.isEmpty()){
 			int[] selectionIndex = new int[globalJoin.getArity()];
 			List<ITerm> selectionPattern = new ArrayList<ITerm>();
 			for (int i = 0; i < globalJoin.getArity(); i++)
@@ -163,7 +175,7 @@ public class Rule2Relation {
 			ISelection s = ModelFactory.FACTORY.createSelection(Factory.BASIC.createTuple(selectionPattern), selectionIndex);
 			s.addComponent(globalJoin);
 			result = s;
-		} else
+		}else
 			result = globalJoin;
 		
 		int[] globalProjectionIndex = new int[head.getArity()];
@@ -190,7 +202,8 @@ public class Rule2Relation {
 		  */
 			
 		 // 1. Ri
-		 org.deri.iris.api.evaluation.seminaive.model.IRule leaf = ModelFactory.FACTORY.createRule(
+		 org.deri.iris.api.evaluation.seminaive.model.IRule leaf = 
+			 ModelFactory.FACTORY.createRule(
 				 l.getPredicate().getPredicateSymbol(),
 				 l.getPredicate().getArity());
 		 
@@ -198,9 +211,11 @@ public class Rule2Relation {
 		  * 2. SELECTION_Fi(Ri)
 		  * Fi: -patternTerms-
 		  *  (a) If position k of Si has a constant a, then Fi has the term $k = a
-		  *  (b) If positions k and l of Si both contain the same variable, then Fi has the term $k = $l
+		  *  (b) If positions k and l of Si both contain the same variable, 
+		  *  	 then Fi has the term $k = $l
 		  * Vi: -int[]-
-		  *  Set of components including, for each valriable X that appears among the arguments of Si, exactly one component where X appears.
+		  *  Set of components including, for each valriable X that appears among 
+		  *  the arguments of Si, exactly one component where X appears.
 		  */
 		 int arity = l.getPredicate().getArity();
 		 List<ITerm> terms = l.getAtom().getTuple().getTerms();
@@ -213,11 +228,10 @@ public class Rule2Relation {
 		 boolean noFi = getIndexes(terms, selectionPattern, selectionIndex, projectionIndex, 
 				 projectionVariables, joinIndex, variables, l, head, leaf);
 		 
-		 
-		 if (!noFi)
-		 {
+		 if (!noFi){
 			 // 2.2. SELECTION
-			 ISelection s = ModelFactory.FACTORY.createSelection(Factory.BASIC.createTuple(selectionPattern));
+			 ISelection s = ModelFactory.FACTORY.createSelection(
+					 Factory.BASIC.createTuple(selectionPattern));
 			 s.addComponent(leaf);
 			 // 3. PROJECTION_Vi(SELECTION_Fi(Ri))
 			 // 3.1 Vi - already done in 2.1			
@@ -226,8 +240,7 @@ public class Rule2Relation {
 			 p.addAllVariables(projectionVariables);
 			 p.addComponent(s);
 			 result = p;
-		 } else
-		 {
+		 }else{
 			 /*
 			  * As a special case, if Si is such that there are no terms in Fi, e.g., Si = p(X,Y), 
 			  * then take Fi to be the identically true condition, so Qi = Ri
@@ -245,7 +258,8 @@ public class Rule2Relation {
 	  * @param variables Set of variables found in this rule
 	  * @return The algebraic expression for this literal
 	  */
-	 private ITree evalEqualityLiteral (ILiteral el, ITree head, Map<IVariable, List<ILiteral>> variables, List<EqualityLiteral> equalityLiterals){
+	 private ITree evalEqualityLiteral (ILiteral el, ITree head, Map<IVariable, 
+			 List<ILiteral>> variables, List<EqualityLiteral> equalityLiterals){
 		 
 		 /*B. Variable X not among ordinary subgoal (eg. 'U = a' or 'U = W')
 		  *
@@ -259,7 +273,7 @@ public class Rule2Relation {
 		 ITerm t1 = el.getTuple().getTerm(0);
 		 ITerm t2 = el.getTuple().getTerm(1);
 		 
-		 if (t1 instanceof org.deri.iris.terms.Variable && t2 instanceof org.deri.iris.terms.Variable) {
+		 if (t1 instanceof Variable && t2 instanceof Variable) {
 			 // t1 & t2 are variables
 			 if (!t1.equals(t2)) {
 				 if (el.isPositive()) {
@@ -352,43 +366,42 @@ public class Rule2Relation {
 			 ITree head, 
 			 org.deri.iris.api.evaluation.seminaive.model.IRule leaf){
 		
-		 initializeIndex(selectionIndex);
-		 initializeIndex(projectionIndex);
-		 initializeIndex(joinIndex);
+		 initSelectionIndex(selectionIndex);
+		 initIndex(projectionIndex);
+		 initIndex(joinIndex);
 		 int i = 0;
 		 boolean noFi = true;
-		 for (ITerm t : terms)
-		 {
-			 if (t.isGround()) // is t a constant term?
-			 {
+		 for (ITerm t : terms){
+			 // is t a constant term?
+			 if (t.isGround()){
 				 projectionIndex[i] = -1;
 				 selectionPattern.add(t);
 				 selectionIndex[i] = -1;
 				 leaf.addVariable(createString(leaf.getVariables()));
 				 noFi = false;
-			 } else if (t instanceof org.deri.iris.terms.ConstructedTerm) {
+			 }else if(t instanceof org.deri.iris.terms.ConstructedTerm){
 				 /*
-				  * TODO recursitivy - Not allowed in datalog expressions
+				  * TODO recursivity - Not allowed in datalog expressions
 				  */
 				 projectionIndex[i] = -1;
 				 selectionPattern.add(null);
 				 selectionIndex[i] = -1;
 				 leaf.addVariable(createString(leaf.getVariables()));
-			 } else if (t instanceof org.deri.iris.terms.StringTerm) {
+			 }else if(t instanceof org.deri.iris.terms.StringTerm){
 				 projectionIndex[i] = -1;
 				 selectionPattern.add(t);
 				 selectionIndex[i] = -1;
 				 leaf.addVariable(createString(leaf.getVariables()));
 				 noFi = false;
-			 } else if (t instanceof org.deri.iris.terms.Variable) {
+			 }else if(t instanceof org.deri.iris.terms.Variable){
 				 IVariable v = (IVariable)t;
 				 leaf.addVariable(v);
 				 projectionIndex[i] = 0;
 				 projectionVariables.add(v);
 				 selectionPattern.add(null);
-				 if (variables.containsKey(v)) {
+				 if(variables.containsKey(v)){
 					 List<ILiteral> literalList = variables.get(v);
-					 for (ILiteral literal: literalList) {
+					 for (ILiteral literal: literalList){
 						 if (literal.equals(l)){
 							 // Positions k and l of Si both contain the same variable,
 							 // then Fi has the term $k = $l.
@@ -397,12 +410,12 @@ public class Rule2Relation {
 							 // TODO. Check whether the variable appeared before in this literal
 							 // and, if so, add condition $k = $l in the "patternTerms way"
 							 // How can it be expressed? DARKO IS STUDYING IT
-						 } else {
+						 }else{
 							 // A Join between these two literals should be created
 							 joinIndex[i] = literal.getAtom().getTuple().getTerms().indexOf(v);
 						 }
 					 }							
-				 } else {					 
+				 }else{					 
 					 // Store the literal referencing this variable
 					 List<ILiteral> literalList = new LinkedList<ILiteral>();
 					 literalList.add(l);
@@ -411,8 +424,6 @@ public class Rule2Relation {
 			 }
 			 i++;
 		 }
-
-		 
 		 return noFi; 
 	 }
 
@@ -463,12 +474,16 @@ public class Rule2Relation {
 		 }
 	 }
 	 
-	 private void initializeIndex(int[] i)
-	 {
+	 private void initIndex(int[] i){
 		 for (int j = 0; j < i.length; j++)
 			 i[j] = -1;
 	 }
 
+	 private void initSelectionIndex(int[] i){
+		 for (int j = 0; j < i.length; j++)
+			 i[j] = j;
+	 }
+	 
 	 private IVariable createVariable(Set<IVariable> variables) {
 		 IVariable v = null;
 		 char[] c = {'a','a','a'};

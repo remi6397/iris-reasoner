@@ -42,7 +42,11 @@ public abstract class Composite implements Component{
 		return components;
 	}
 	
-	public boolean addComponent(Component c) { return components.add(c); } 
+	public boolean addComponent(Component c){
+		return components.add(c); 
+	} 
 	
-	public boolean removeComponent(Component c) { return components.remove(c); }
+	public boolean removeComponent(Component c){ 
+		return components.remove(c); 
+	}
 }
