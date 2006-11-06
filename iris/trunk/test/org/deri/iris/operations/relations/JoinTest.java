@@ -58,8 +58,9 @@ public class JoinTest extends TestCase {
 	 * Joins two relations (no duplicates handling) and then checks the 
 	 * result against the submitted Collection of tuples. 
 	 * 
-	 * @param i indexes on which to join (see documentation for
-	 *          IJoin.join(..) for the computation of this array)
+	 * @param i indexes which join will be based on (see documentation for
+	 *          IRelationOperationsFactory.createJoinOperator 
+	 *          for the computation of this array)
 	 * @param e collection of expected tuples
 	 */
 	protected static void runJoin(final int[] i, final Collection<ITuple> e) {
@@ -92,7 +93,6 @@ public class JoinTest extends TestCase {
 		relation1.add(MiscHelper.createTuple("x", "x", "x", "x"));
 		relation1.add(MiscHelper.createTuple("x", "e", "x", "x"));
 		
-		
 		IJoin joinOperator = RELATION_OPERATION.createJoinOperator(
 				relation0, relation1, i, JoinCondition.EQUALS);
 		IRelation result = joinOperator.join();
@@ -101,7 +101,8 @@ public class JoinTest extends TestCase {
 
 	/**
 	 * @param i  indexes on which to join (see documentation for
-	 *           IJoin.join(..) for the computation of this array)
+	 *           IRelationOperationsFactory.createJoinOperator
+	 *           for the computation of this array)
 	 * @param pi project indexes
 	 * @param e  collection of expected tuples
 	 */

@@ -83,8 +83,8 @@ public class ProjectionTest extends TestCase {
 	}
 
 	/**
-	 * Projection on the tuple arguments in the first column 
-	 * (those with index 0th).
+	 * Projection on the first atribute (column)-
+	 * (terms with 0th index in a tuple).
 	 */
 	public void testProjection_pnn() {
 		final List<ITuple> e = new ArrayList<ITuple>();
