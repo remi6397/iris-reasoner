@@ -41,12 +41,12 @@ import org.deri.iris.evaluation.seminaive.MiscOps;
  * Tests the methods in the MiscOps class.
  * </p>
  * <p>
- * $Id: MiscOpsTest.java,v 1.1 2006-11-02 11:00:03 richardpoettler Exp $
+ * $Id: MiscOpsTest.java,v 1.2 2006-11-06 11:19:45 darko Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-11-02 11:00:03 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-11-06 11:19:45 $
  */
 public class MiscOpsTest extends TestCase {
 
@@ -57,6 +57,15 @@ public class MiscOpsTest extends TestCase {
 
 	/**
 	 * Tests the rectify method.
+	 * 
+	 * Input:
+	 * p(a, X, Y) :- r(X, Y)
+	 * p(X, Y, X) :- r(Y, X)
+	 * 
+	 * Output:
+	 * p(r_0, r_1, r_2) :- r(r_1, r_2), EQUAL(r_0, a)
+	 * p(r_0, r_1, r_2) :- r(r_1, r_0), EQUAL(r_2, r_0)
+	 * 
 	 */
 	public void testRectrify() {
 		final ILiteral hl = BASIC.createLiteral(true, BASIC.createPredicate(
@@ -69,7 +78,7 @@ public class MiscOpsTest extends TestCase {
 				"r_1", "r_2"), BASIC.createLiteral(true, BUILTIN.createEqual(
 				TERM.createVariable("r_0"), TERM.createString("a")))));
 		assertEquals(rec0, MiscOps.rectify(r0));
-
+		
 		final IRule r1 = BASIC
 				.createRule(
 						BASIC.createHead(createLiteral("p", "X", "Y", "X")),
