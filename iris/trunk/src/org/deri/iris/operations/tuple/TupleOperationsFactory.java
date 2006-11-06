@@ -6,6 +6,7 @@ import org.deri.iris.api.factory.ITupleOperationsFactory;
 import org.deri.iris.api.operations.tuple.IConcatenation;
 import org.deri.iris.api.operations.tuple.IMatching;
 import org.deri.iris.api.operations.tuple.IUnification;
+import org.deri.iris.api.terms.ITerm;
 
 public class TupleOperationsFactory implements ITupleOperationsFactory{
 
@@ -19,26 +20,30 @@ public class TupleOperationsFactory implements ITupleOperationsFactory{
 		return FACTORY;
 	}
 	
-	public IConcatenation createConcatenationOperator(ITuple arg0, ITuple arg1) {
+	public IConcatenation createConcatenationOperator(final ITuple arg0, final ITuple arg1) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public IConcatenation createConcatenationOperator(ITuple arg0, ITuple arg1, int[] pi) {
+	public IConcatenation createConcatenationOperator(final ITuple arg0, final ITuple arg1, final int[] pi) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public IMatching createMatchingOperator(ITuple arg0, ITuple arg1) {
+	public IMatching createMatchingOperator(final ITuple arg0, final ITuple arg1) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	public IUnification createUnificationOperator(ITuple arg0, ITuple arg1) {
+	public IUnification createUnificationOperator(final ITuple arg0, final ITuple arg1) {
 		return new Unification(arg0, arg1);
 	}
 
-	public IUnification createUnificationOperator(IAtom arg0, IAtom arg1) {
+	public IUnification createUnificationOperator(final IAtom arg0, final IAtom arg1) {
+		return new Unification(arg0, arg1);
+	}
+	
+	public IUnification createUnificationOperator(final ITerm arg0, final ITerm arg1) {
 		return new Unification(arg0, arg1);
 	}
 }
