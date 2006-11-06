@@ -35,18 +35,23 @@ import org.deri.iris.storage.Relation;
  * @author Darko Anicic, DERI Innsbruck
  * @date   28.07.2006 09:01:46
  */
-public class SupplementaryRelation extends Relation{
+public class SupplementaryRelation extends Relation implements Cloneable{
 	
 	private int superscript;
 	
 	private int subscript;
 	
 	/**
+	 * true if this particular supplementary relation
+	 * has already been considered during the evaluation
+	 */
+	private boolean handled = false;
+	
+	/**
 	 * List of variables of the supplementary relation
 	 */
 	private List<IVariable> variables;
-	
-	
+		
 	SupplementaryRelation(
 			final int sup, final int sub, final List<IVariable> v) {
 		
@@ -56,7 +61,6 @@ public class SupplementaryRelation extends Relation{
 		this.variables = v;
 	}
 
-
 	/**
 	 * @return Returns the subscript.
 	 */
@@ -64,14 +68,12 @@ public class SupplementaryRelation extends Relation{
 		return subscript;
 	}
 
-
 	/**
 	 * @return Returns the superscript.
 	 */
 	public int getSuperscript() {
 		return superscript;
 	}
-
 
 	/**
 	 * @return Returns the variables.
@@ -89,5 +91,32 @@ public class SupplementaryRelation extends Relation{
 		}
 		relation = relation.substring(0, relation.length() - 2);
 		relation = relation + "]";
-		return relation;	}
+		return relation;	
+	}
+
+	/**
+	 * @return Returns the handled.
+	 */
+	public boolean isHandled() {
+		return handled;
+	}
+
+	/**
+	 * Sets the handled to true.
+	 */
+	public void setHandled() {
+		this.handled = true;
+	}
+	
+	/**
+	 * Creates a copy of the structure (superscript, subscript, variables) 
+	 * of the entire supplementary relation, but the handled will have 
+	 * the default value.
+	 * 
+	 * @return Returns copy of the entire supplementary relation
+	 */
+	public SupplementaryRelation clone(){
+		return new SupplementaryRelation
+				(this.superscript, this.subscript, this.variables);
+    }
 }

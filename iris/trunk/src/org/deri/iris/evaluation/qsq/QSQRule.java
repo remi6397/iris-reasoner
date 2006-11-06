@@ -25,13 +25,13 @@
  */
 package org.deri.iris.evaluation.qsq;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.common.IAdornedRule;
-import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
+import org.deri.iris.evaluation.common.Adornment;
+import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 
 /**
  * 
@@ -42,16 +42,14 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
  * @date   28.07.2006 12:51:07
  */
 public class QSQRule {
+	/**
+	 * adorned rule
+	 */
+	private IAdornedRule adRule;
 	
-	private IAdornedRule adornedRule;
-	
-	private LinkedList<SupplementaryRelation> supplementaryRelations;
+	private List<SupplementaryRelation> supRels;
 
-	private Set<ITuple> input = null;
-	
-	private Set<ITuple> output = null;
-	
-	public QSQRule(IAdornedRule ar, LinkedList<SupplementaryRelation> sr) {
+	public QSQRule(final IAdornedRule ar, final List<SupplementaryRelation> sr) {
 		if ((1 + ar.getBodyLiterals().size()) !=
 				sr.size()) {
 			throw new IllegalArgumentException(
@@ -59,45 +57,94 @@ public class QSQRule {
 					"relations contains: " + sr.size() + " instead of " +
 					1 + ar.getBodyLiterals().size());
 		}
-		this.adornedRule = ar;
-		this.supplementaryRelations = sr;
-		this.input = new HashSet<ITuple>();
-		this.output = new HashSet<ITuple>();
+		this.adRule = ar;
+		this.supRels = sr;	
 	}
 
 	/**
 	 * @return Returns the rule.
 	 */
 	public IAdornedRule getAdornedRule() {
-		return adornedRule;
+		return adRule;
 	}
 
 	/**
-	 * @param ar The rule to set.
+	 * @return list of supplementary relations for the entire rule
 	 */
-	/*public void setRule(IAdornedRule ar) {
-		this.adornedRule = ar;
-	}*/
-
-	/**
-	 * @return Returns the supplementaryRelations.
-	 */
-	public LinkedList<SupplementaryRelation> getSupplementaryRelations() {
-		return supplementaryRelations;
+	public List<SupplementaryRelation> getSupRels() {
+		return supRels;
 	}
 
 	/**
-	 * @return Returns the input.
+	 * @return Returns copz of the supplementary relation list 
+	 * 	       (copy means that the structure of a supplementary 
+	 * 		   relation will remain the same but none of its properties
+	 * 		   will be set to any non default value).
 	 */
-	public Set<ITuple> getInput() {
-		return input;
+	public List<SupplementaryRelation> cloneSupRels() {
+		List<SupplementaryRelation> rels = new ArrayList();
+		for(SupplementaryRelation sr : this.supRels){
+			rels.add(sr.clone());
+		}
+		return rels;
 	}
 
 	/**
-	 * @return Returns the output.
+	 * @param fromSR starting supplementary relation
+	 * @return       Returns first sub sequential supplementary relation after fromSR,
+	 *  		     or null if sr is the last one (meant for retriveing a 
+	 *  			 supplementary relation whose subscript is j).
 	 */
-	public Set<ITuple> getOutput() {
-		return output;
+	public SupplementaryRelation getSup_1(SupplementaryRelation fromSR) {
+		int i = this.supRels.indexOf(fromSR);
+		if(i == -1) 
+			return null;
+		if(i+1<this.supRels.size())
+			return this.supRels.get(i+1);
+		else
+			return null;
+	}
+	
+	/**
+	 * @param fromSR starting supplementary relation
+	 * @return		 true if the iteration has more elements after fromSR
+	 */
+	public boolean hasNext(SupplementaryRelation fromSR) {
+		int i = this.supRels.lastIndexOf(fromSR);
+		if(i == -1) 
+			 throw new NoSuchElementException(fromSR.toString() + 
+					" doesn't exist in the list of supplementary relations");
+		
+		if(i+1 == this.supRels.size())
+			return false;
+		else
+			return true;
+	}
+	
+	/**
+	 * @return Returns supplementary relation that currently
+	 * 		   represents sup_0 (supplementary relation whose 
+	 * 		   subscript is j-1).
+	 */
+	public SupplementaryRelation getSup_0() {
+		for(SupplementaryRelation sr : this.supRels){
+			if(! sr.isHandled() && this.hasNext(sr)) return sr;
+		}
+		return null;
+	}
+	
+	/**
+	 * @param ap adorned predicate
+	 * @return   relation's arity
+	 */
+	public int getInputArity(AdornedPredicate ap){
+		int arity = 0;
+		Adornment[] ads = ap.getAdornment();
+		for(int i=0; i<ads.length; i++){
+			if(ads[i] == Adornment.BOUND)
+				arity++;
+		}
+		return arity;
 	}
 	
 }
