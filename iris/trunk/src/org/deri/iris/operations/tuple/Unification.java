@@ -36,14 +36,15 @@ import java.util.Set;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.tuple.IUnification;
+import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.operations.tuple.UnificationDecomposer.CFholder;
 
 /**
  * In its essence, the unification problem in first-order logic can be expressed as
- * follows: Given two terms containing some variables, find, if it exists, the simplest
- * substitution (i.e., an assignment of some term to every variable) which makes the
+ * follows: given two terms containing some variables, find, if it exists, the simplest
+ * substitution (e.g., an assignment of some term to every variable) which makes the
  * two terms equal. The resulting substitution is called the most general unifier and
  * is unique up to variable renaming.
  * 
@@ -70,13 +71,24 @@ import org.deri.iris.operations.tuple.UnificationDecomposer.CFholder;
  */
 public class Unification implements IUnification{
 
-	private ITuple tuple0 = null;
-	
-	private ITuple tuple1 = null;
-	
 	private UnificationDecomposer decomposer = null;
 	
-	private IVariable initialVariable = TERM.createVariable("initialVariable");
+	public final static IVariable INIT_VAR_CONSTANT = TERM.createVariable("initVar");
+	
+	/**
+	 * This unification algorithm has been implemented so that it 
+	 * actually performs the unification on two terms. If two 
+	 * tuples are given to be unified, then two constructed terms 
+	 * will be created out of these two tuples, and the unification
+	 * will again be performed on two terms (constructed terms). 
+	 * initFunc is a function symbol used to create two auxiliary 
+	 * constructed terms when it is needed.  
+	 */
+	public final static String INIT_FUNC_CONSTANT = "initFunc";
+	
+	private IConstructedTerm ct0 = null;
+
+	private IConstructedTerm ct1 = null;
 	
 
 	Unification(final ITuple arg0, final ITuple arg1) {
@@ -87,8 +99,8 @@ public class Unification implements IUnification{
 			throw new IllegalArgumentException("Unification not possible " +
 					"due to different arities of input parameters");
 		}
-		this.tuple0 = arg0;
-		this.tuple1 = arg1;
+		this.ct0 = TERM.createConstruct(INIT_FUNC_CONSTANT, arg0.getTerms());
+		this.ct1 = TERM.createConstruct(INIT_FUNC_CONSTANT, arg1.getTerms());
 	}
 
 	Unification(final IAtom arg0, final IAtom arg1) {
@@ -99,22 +111,34 @@ public class Unification implements IUnification{
 			throw new IllegalArgumentException("Unification not possible " +
 					"due to different arities of input parameters");
 		}
-		this.tuple0 = arg0.getTuple();
-		this.tuple1 = arg1.getTuple();
+		this.ct0 = TERM.createConstruct(INIT_FUNC_CONSTANT, arg0.getTuple().getTerms());
+		this.ct1 = TERM.createConstruct(INIT_FUNC_CONSTANT, arg1.getTuple().getTerms());
 	}
 
-	public List<List<Multiequation>> unify() {
-		List<List<Multiequation>> result = new ArrayList<List<Multiequation>>();
-		for(int i=0; i<this.tuple0.getTerms().size(); i++){
-			result.add(
-					unifyTerms(this.tuple0.getTerm(i), this.tuple1.getTerm(i)));
+	Unification(final ITerm arg0, final ITerm arg1) {
+		if (arg0 == null || arg1 == null) {
+			throw new IllegalArgumentException("Input parameters must not be null");
 		}
-		return result;
+		this.ct0 = TERM.createConstruct(INIT_FUNC_CONSTANT, arg0);
+		this.ct1 = TERM.createConstruct(INIT_FUNC_CONSTANT, arg1);
+	}
+	
+	public UnificationResult unify() {
+		UnificationResult result = null;
+		List<Multiequation> meList = unifyTerms(this.ct0, this.ct1);
+		
+		if(meList != null){
+			// Remove the auxiliary function symbol (INIT_FUNC_CONSTANT) from the meList
+			IConstructedTerm ct = (IConstructedTerm)meList.get(0).getM().get(0);
+			meList.remove(0);
+			
+			result = new UnificationResult(ct.getParameters(), meList);
+		}
+		return  result;
 	}
 	
 	private List<Multiequation> unifyTerms(ITerm t0, ITerm t1) {
-		MultiequationSystem ms = 
-			createInitialMultiequationSystem(t0, t1);
+		MultiequationSystem ms = createInitMeSystem(t0, t1);
 		Multiequation m = null;
 		CFholder cf = null;
 		
@@ -123,25 +147,35 @@ public class Unification implements IUnification{
 			
 			// failure: cycle
 			if(m.getN() != 0) return null;
-			if(m.getM() == null || m.getM().size() == 0){
+			if(m.getM() == null || m.getM().size() < 2){
 				ms.getUnsolved().remove(m);
+				ms.getSolved().add(m);
 			}else{
 				decomposer = new UnificationDecomposer(m);
 				
 				// compute C(M) and F(M):
-				cf = decomposer.decompose();
+				cf = decomposer.decompose(m.getM().get(0), m.getM().get(1));
 				
 				// failure: clash
 				if(cf == null || cf.getCommon() == null) return null;
 				ms = compactify(
 						reduce(m, cf, ms));
 				ms.setOccurrences();
+				
+				List<ITerm> c = new ArrayList<ITerm>();
+				c.add(cf.getCommon());
+				ms.getSolved().add(new Multiequation(m.getS(), c));
 			}
 		}
 		return ms.getSolved();
 	}
 	
-	private MultiequationSystem createInitialMultiequationSystem(ITerm t0, ITerm t1){
+	/**
+	 * @param t0	Term to be unified
+	 * @param t1	Term to be unified
+	 * @return		Returns an initial multiequation system
+	 */
+	private MultiequationSystem createInitMeSystem(ITerm t0, ITerm t1){
 		MultiequationSystem multiequationSystem = null;
 		Multiequation me = null; 
 		Set<ITerm> s = null;
@@ -152,7 +186,7 @@ public class Unification implements IUnification{
 		List<Multiequation> unsolved = new ArrayList<Multiequation>();
 		
 		s = new HashSet<ITerm>();
-		s.add(initialVariable);
+		s.add(INIT_VAR_CONSTANT);
 		m = new ArrayList<ITerm>();
 		m.add(t0);
 		m.add(t1);
@@ -200,16 +234,10 @@ public class Unification implements IUnification{
 			solved = new ArrayList<Multiequation>();
 		
 		// Z - {S = M}
-		//ms1.getUnsolved().remove(m);
 		unsolved.remove(m);
 		
 		// "add" {S = (C)} (Immediately added to the solved part)
 		// "add operation" represents union
-		List<ITerm> c = new ArrayList<ITerm>();
-		c.add(cf.getCommon());
-		solved.add(new Multiequation(m.getS(), c));
-		
-		// "add" F
 		if(cf.getFrontier() != null)
 			unsolved.addAll(cf.getFrontier());
 		
@@ -276,5 +304,84 @@ public class Unification implements IUnification{
 			me0.getM().remove(null);
 		
 		return me0;
+	}
+	
+	/**
+	 * This is a container class for a unification result. 
+	 * If two terms are unify-able, result of the unification is 
+	 * a non-empty head (the root term, such as a common function 
+	 * symbol) and possible empty list of multiequations. 
+	 * For instance, after the unification of the following terms:
+	 * 
+	 * f(x1, g(x2, x3), x2, b)
+	 * f(g(h(a, x5), x2), x1, h(a, x4), x4)
+	 * 
+	 * we will have:
+	 * f[x1, x1, x2, x4]
+	 * in the head, as it is a common function symbol for unifying 
+	 * terms, and we will have in the tail: 
+	 * 
+	 * [0]{x1} = ([g[x2, x3]]), 
+	 * [0]{x2, x3} = ([h[a, x4]]), 
+	 * [0]{x4, x5} = ([b])].
+	 * 
+	 * Note that in the process of unification of two atoms or 
+	 * tuples whose arity is greater than 1, we will get a head 
+	 * that is a list. Size of this list is equal to the arity of 
+	 * atoms/tuples that are being unified.
+	 * 
+	 * @author Darko Anicic, DERI Innsbruck
+	 * @date 03.11.2006 12:14:03
+	 * 
+	 */
+	public class UnificationResult{
+		
+		private List<ITerm> head = null;
+		
+		private List<Multiequation> tail = null;
+
+		public UnificationResult(final List<ITerm> h, 
+				final List<Multiequation> t){
+			
+			if (h == null || t == null) {
+				throw new IllegalArgumentException("Input parameters must not be null!");
+			}
+			this.head = h;
+			this.tail = t;
+		}
+		
+		/**
+		 * @return Returns the head.
+		 */
+		public List<ITerm> getHeads() {
+			return head;
+		}
+
+		/**
+		 * @return Returns the tail.
+		 */
+		public List<Multiequation> getTails() {
+			return tail;
+		}		
+		
+		public String toString() {
+			StringBuilder buffer = new StringBuilder();
+			buffer.append("head: ");
+			buffer.append("[");
+			for (ITerm t : this.head) {
+				buffer.append(t);
+				buffer.append(", ");
+			}
+			buffer.delete(buffer.length() - 2, buffer.length());
+			buffer.append("]");
+			buffer.append(" tail: ");
+			buffer.append("[");
+			for (Multiequation me : this.tail) {
+				buffer.append(me);
+				buffer.append(", ");
+			}
+			buffer.append("]");
+			return buffer.toString();
+		}
 	}
 }

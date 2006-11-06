@@ -32,7 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.deri.iris.api.terms.IConstantTerm;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
@@ -42,9 +41,9 @@ import org.deri.iris.api.terms.IVariable;
  * This class is used for calculating a common and frontier part of a set 
  * of two terms.
  * The common part of a multiset of terms M is a term which, intuitively, 
- * is obtained by superimposing all terms of M and by taking the part
- * which is common to all of them starting from the root. For instance, 
- * given the multiset of terms:
+ * is obtained by superimposing all terms of M, and by taking the part
+ * which is common to all of them starting from the root. 
+ * For instance, given the multiset of terms:
  * 
  * (f(xl, g(a, f(x5, b))), f(h(c), g(x2, f(b, x5))), f(h(x4), g(x6, x3)))
  * 
@@ -85,7 +84,7 @@ public class UnificationDecomposer {
 		
 	}
 	
-	public CFholder decompose(){
+	public CFholder decompose(ITerm term0, ITerm term1){
 		MultiequationSystem multiequationSystem = null;
 		List<CFholder> cfList = new ArrayList<CFholder>();
 		CFholder cf = null;
@@ -107,47 +106,10 @@ public class UnificationDecomposer {
 					
 					// terms are not constants (arity is not 0)
 					for(int i=0; i<ct.getArity(); i++){
-						cfTemp = subDecompose(((List<ITerm>)ct0.getValue()).get(i),
+						cfTemp = decompose(
+								((List<ITerm>)ct0.getValue()).get(i),
 								((List<ITerm>)ct1.getValue()).get(i));
 						
-						if(cfTemp != null)
-							cfList.add(cfTemp);
-						// failure: inside recursive call of subDecompose
-						else return null;
-					}
-					return createMultiequationSystem(
-							ct.getSymbol(), cfList);
-				}
-			}
-			// failure: there is no common part for term0 & term1.
-			else return null;	
-		}else{
-			return cf;
-		}
-	}
-	
-	private CFholder subDecompose(ITerm term0, ITerm term1){
-		CFholder cfTemp = null;
-		List<CFholder> cfList = new ArrayList<CFholder>();
-		CFholder cf = null;
-		
-		cf = checkVariables(term0, term1);
-		
-		if(cf == null){
-			CTdesc ct = head(term0, term1);
-			if(ct != null && ct.getSymbol() != null){
-				// if term is a constant (arity=0)
-				if(ct.getArity() == 0){
-					return new CFholder(
-							TERM.createString(ct.getSymbol()), 
-							null);
-				}else{
-					// terms are not constants (arity is not 0)
-					for(int i=0; i<ct.getArity(); i++){
-						IConstructedTerm ct0 = (IConstructedTerm) term0;
-						IConstructedTerm ct1 = (IConstructedTerm) term1;
-						cfTemp = subDecompose(((List<ITerm>)ct0.getValue()).get(i),
-								((List<ITerm>)ct1.getValue()).get(i));
 						if(cfTemp != null)
 							cfList.add(cfTemp);
 						// failure: inside recursive call of subDecompose
@@ -200,23 +162,20 @@ public class UnificationDecomposer {
 	/**
 	 * @param t0	non variable term
 	 * @param t1	non variable term
-	 * @return		Returns (CTdesc object) the root function symbol
+	 * @return		Returns (CTdesc object) the root term (e.g. function symbol)
 	 * 				of t0 and t1 and its arity, or null if it does not exist.
 	 */
 	private CTdesc head(ITerm t0, ITerm t1) {
 		if (t0 instanceof IVariable || t1 instanceof IVariable) {
 			throw new IllegalArgumentException("Input tuples must not be variables");
 		}
-		if (t0 instanceof IStringTerm || 
-				t0 instanceof IConstantTerm) {
-				if (t1 instanceof IStringTerm || 
-						t1 instanceof IConstantTerm){
+		if (t0 instanceof IStringTerm) {
+				if (t1 instanceof IStringTerm){
 						if(! t0.equals(t1)) return null;
 				}
 			return new CTdesc(t0.toString(), 0);
 		}
-		if (t1 instanceof IStringTerm || 
-				t1 instanceof IConstantTerm){
+		if (t1 instanceof IStringTerm){
 				
 			return new CTdesc(t1.toString(), 0);
 		}
@@ -234,6 +193,13 @@ public class UnificationDecomposer {
 	}
 
 	
+	/**
+	 * @param ps		The root function symbol
+	 * @param cfList	List of sub CF holders made during recursive 
+	 * 					call of decompose method
+	 * @return			Returns a multiequation system, 
+	 * 					a pair <common, frontier>
+	 */
 	private CFholder createMultiequationSystem(String ps, List<CFholder> cfList){
 		List commonList = new ArrayList<IVariable>(cfList.size());
 		List<CFholder> cfl = cfList;
@@ -243,39 +209,40 @@ public class UnificationDecomposer {
 		for(CFholder cf : cfl){
 			commonList.add(cf.common);
 		}
-		List<ITerm> temp = null;
-		CFholder cf1 = null;
-		CFholder cf2 = null;
-		
-		for(int i=0; i<cfl.size(); i++){
-			cf1 = cfl.get(i);
-			temp = new ArrayList<ITerm>();
-			for(int j=i+1; j<cfl.size(); j++){
-				cf2 = cfl.get(j);
-				if(contains(cf2.frontier.get(0).getS(), cf1.frontier) ){
-						
-					temp.addAll(cf2.frontier.get(0).getM());
-					cfl.remove(cf2);
-				}
-			}
-			if(cf1.frontier != null){
-				temp.addAll(cf1.frontier.get(0).getM());
-				frontier.add(new Multiequation(cf1.frontier.get(0).getS(), temp));
-			}
-		}
+		frontier = getFrontier(cfList);
 		common = TERM.createConstruct(ps, commonList);
+		
 		return new CFholder(common, frontier);
 	}
 	
-	private boolean contains(Set<ITerm> terms, List<Multiequation> frontier){
-		if(frontier != null){
-			for(Multiequation me : frontier){
-				if(me.getS().containsAll(terms) && 
-						me.getS().size()==terms.size())
-					return true;
+	private List<Multiequation> getFrontier(List<CFholder> cfl){
+		List<Multiequation> frontier = new ArrayList<Multiequation>();
+		List<ITerm> temp = null;
+		CFholder cf1 = null;
+		Multiequation me1 = null;
+		boolean added = false;
+		
+		//frontier.add(cfl.get(0).frontier.get(0));
+		for(int i=0; i<cfl.size(); i++){
+			cf1 = cfl.get(i);
+			temp = new ArrayList<ITerm>();
+			if(cf1.frontier != null){	
+				for(int k=0; k<cf1.frontier.size(); k++){
+					added = false;
+					me1 = cf1.frontier.get(k);
+					for(Multiequation me : frontier){
+						if(me.getS().containsAll(me1.getS())
+								&& me.getS().size()==me1.getS().size()){
+							
+							me.getM().addAll(me1.getM());
+							added = true;
+						}
+					}
+					if(!added) frontier.add(me1);
+				}
 			}
 		}
-		return false;
+		return frontier;
 	}
 	
 	/**
@@ -365,6 +332,7 @@ public class UnificationDecomposer {
 		public int getArity() {
 			return arity;
 		}
+		
 		
 		/**
 		 * @param arity The arity to set.
