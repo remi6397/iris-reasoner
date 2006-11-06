@@ -63,8 +63,9 @@ public class Union implements IUnion{
 		this.rels = new ArrayList<IRelation>();
 		this.unionRel = new Relation(3);
 		for(IRelation r : args){
+			// Get non-empty relations from the input relation list
 			if(r != null && r.size()>0){
-				arity = ((ITuple)r.first()).getArity();
+				arity = r.getArity();
 				if(arity == prevArity || start == 0){
 					this.rels.add(r);
 					start++;
