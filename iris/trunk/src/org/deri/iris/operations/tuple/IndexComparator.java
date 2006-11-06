@@ -102,9 +102,11 @@ public class IndexComparator extends BasicComparator{
 			 */
 			if(forEachRelevantIndex == equal && !(t0 instanceof MinimalTuple) &&
 					!(t1 instanceof MinimalTuple)){
-				ITuple tmp = t1.getDuplicate();
-				t0.setDuplicate(tmp);
-				t1.setDuplicate(t0);
+				if(! contains(t0, t1)){
+					ITuple tmp = t1.getDuplicate();
+					t0.setDuplicate(tmp);
+					t1.setDuplicate(t0);
+				}
 			}
 			return 0;
 		}
@@ -118,5 +120,18 @@ public class IndexComparator extends BasicComparator{
 			if(this.getSortIndexes()[i] != -1) return false;
 		
 		return true;
+	}
+	
+	/**
+	 * @param t0 tuple to be added as a duplicate to t1
+	 * @param t1 tuple
+	 * @return   true if t1 already contains t0
+	 */
+	private boolean contains(ITuple t0, ITuple t1){
+		while(t1 != null){
+			if(t0.equals(t1)) return true;
+			t1 = t1.getDuplicate();
+		}
+		return false;
 	}
 }
