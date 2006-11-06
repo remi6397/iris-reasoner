@@ -26,6 +26,9 @@
 
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,9 +40,11 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.basics.seminaive.NonEqualityTerm;
 import org.deri.iris.operations.tuple.SelectionComparator;
 import org.deri.iris.operations.tuple.SelectionFullComparator;
 import org.deri.iris.storage.Relation;
+
 
 /**
  * Implementation of the ISelection interface
@@ -55,6 +60,8 @@ import org.deri.iris.storage.Relation;
 public class Selection implements ISelection{
 	private IRelation relation = null;
 	private ITuple pattern = null;
+	private ITuple equalityTuple = null;
+	private ITuple nonEqualityTuple = null;
 	private int[] indexes = null;
 	
 	Selection(IRelation relation, ITuple pattern){
@@ -98,28 +105,54 @@ public class Selection implements ISelection{
 	}
 	
 	public IRelation select() {
-		if(pattern != null && indexes == null)
+		if(this.pattern != null) processPattern();
+		
+		/*	Possibilities:
+		  * 
+		  * 	?X  = 'a', ?Y  = 'b', ...
+		  * 	?X != ?Y,  ?Z  = ?W, ...
+		  * 	?X != ?Y,  ?Z  = ?W, ?X  = 'a', ?Y  = 'b', ...
+		  * 	?X != 'a', ?Y  = 'b', ...
+		  * 	?X != ?Y,  ?Z  = ?W, ?X != 'a', ?Y  = 'b'
+		  * 
+		  */ 
+		if(equalityTuple != null && nonEqualityTuple == null && indexes == null)
 			return select0();
-		if(pattern == null && indexes != null)
+		if(equalityTuple == null && nonEqualityTuple == null && indexes != null)
 			return select1();
-		else
+		if(equalityTuple != null && nonEqualityTuple == null && indexes != null)
 			return select2();
+		if(equalityTuple != null && nonEqualityTuple != null && indexes == null)
+			return select3();
+		if(equalityTuple != null && nonEqualityTuple != null && indexes != null)
+			return select4();
+		return null;
 	}
 	
+	/**
+	 * Case: ?X  = 'a', ?Y  = 'b'
+	 *
+	 * @return Selected tuples based on a given condition
+	 */
 	public IRelation select0() {
 		// Sort relation on tupples defined by the pattern
-		int[] indexes = this.getIndexes(this.pattern);
+		int[] indexes = this.getIndexes(this.equalityTuple);
 		SelectionFullComparator comparator = new SelectionFullComparator(indexes);
 		IRelation rel = new Relation(comparator);
 		
-		rel.add(pattern);
+		rel.add(this.equalityTuple);
 		rel.addAll(this.relation);
-		if(! isValid(pattern)) 
-			rel.remove(pattern);
+		if(! isValid(this.equalityTuple)) 
+			rel.remove(this.equalityTuple);
 		
 		return rel;
 	}
 	
+	/**
+	 * Case: ?X != ?Y,  ?Z  = ?W
+	 *
+	 * @return Selected tuples based on a given condition
+	 */
 	public IRelation select1() {
 		// Sort relation on tupples defined by the indexes
 		SelectionComparator comparator = new SelectionComparator(this.indexes);
@@ -141,9 +174,70 @@ public class Selection implements ISelection{
 		return rel;
 	}
 	
+	/**
+	 * Case: ?X != ?Y,  ?Z  = ?W, ?X  = 'a', ?Y  = 'b'
+	 *
+	 * @return Selected tuples based on a given condition
+	 */
 	public IRelation select2() {
 		this.relation = select1();
 		IRelation rel = select0();
+		
+		return rel;
+	}
+	
+	/**
+	 * Case: ?X != 'a', ?Y  = 'b'
+	 * 
+	 * TODO: select3() is expencive operation - try
+	 * to implement it more efficiently!
+	 *  
+	 * Namely selection0() is called as many times as
+	 * a condition pattern contains non equality terms.
+	 *
+	 * @return Selected tuples based on a given condition
+	 */
+	public IRelation select3() {
+		this.relation = select0();
+		ITuple tup = null;
+		IRelation rel = new Relation(this.relation.getArity());
+		List<ITerm> l = this.nonEqualityTuple.getTerms();
+		ITerm t = null;
+		
+		for(int i=0; i<l.size(); i++){
+			t = l.get(i);
+			if(t != null){
+				tup = nextTuple(i, this.relation.getArity(), t);
+				rel = select0(tup, this.relation);
+				this.relation.removeAll(rel);
+			}
+		}
+		
+		return this.relation;
+	}
+	
+	public IRelation select0(ITuple eqTuple, IRelation r) {
+		// Sort relation on tupples defined by the pattern
+		int[] indexes = this.getIndexes(eqTuple);
+		SelectionFullComparator comparator = new SelectionFullComparator(indexes);
+		IRelation rel = new Relation(comparator);
+		
+		rel.add(eqTuple);
+		rel.addAll(r);
+		if(! isValid(eqTuple)) 
+			rel.remove(eqTuple);
+		
+		return rel;
+	}
+	
+	/**
+	 * Case: ?X != ?Y,  ?Z  = ?W, ?X != 'a', ?Y  = 'b'
+	 *
+	 * @return Selected tuples based on a given condition
+	 */
+	public IRelation select4() {
+		this.relation = select1();
+		IRelation rel = select3();
 		
 		return rel;
 	}
@@ -181,5 +275,49 @@ public class Selection implements ISelection{
 		}
 		return true;
 	}
+
+	private void processPattern(){
+		List<ITerm> terms = this.pattern.getTerms();
+		List<ITerm> eqTerms = new ArrayList<ITerm>();
+		List<ITerm> neqTerms = new ArrayList<ITerm>();
+		boolean equalTermExist = false;
+		boolean nonEqualTermExist = false;
+		
+		for(ITerm t : terms){
+			if(t instanceof NonEqualityTerm){
+				neqTerms.add(t);
+				eqTerms.add(null);
+				if(t != null && t.getValue() != null)
+					nonEqualTermExist = true;
+			}else{
+				neqTerms.add(null);
+				eqTerms.add(t);
+				if(t != null && t.getValue() != null)
+					equalTermExist = true;
+			}
+		}
+		if(equalTermExist)
+			this.equalityTuple = BASIC.createTuple(eqTerms);
+		else
+			this.equalityTuple = null;
+		
+		if(nonEqualTermExist)
+			this.nonEqualityTuple = BASIC.createTuple(neqTerms);
+		else
+			this.nonEqualityTuple = null;
+	}
 	
+	private ITuple nextTuple(final int i, final int a, final ITerm t){
+		List<ITerm> terms = new ArrayList<ITerm>(a);
+		NonEqualityTerm t0 = (NonEqualityTerm)t;
+		ITerm t1 = t0.getTerm();
+		
+		for(int j=0; j<a; j++){
+			if(j != i)
+				terms.add(null);
+			else
+				terms.add(i, t1);
+		}
+		return BASIC.createTuple(terms);
+	}
 }
