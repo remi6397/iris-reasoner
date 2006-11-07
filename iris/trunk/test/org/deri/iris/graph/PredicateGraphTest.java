@@ -26,8 +26,13 @@
 package org.deri.iris.graph;
 
 import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.TERM;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.Test;
@@ -38,41 +43,57 @@ import org._3pq.jgrapht.Edge;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.basics.ITuple;
 
 /**
  * @author richi
  * 
  */
 public class PredicateGraphTest extends TestCase {
-	private static final IPredicate a = BASIC.createPredicate("a", 0);
 
-	private static final IPredicate b = BASIC.createPredicate("b", 0);
+	/** The cyceled predicate graph. */
+	private PredicateGraph pg0;
 
-	private static final IPredicate c = BASIC.createPredicate("c", 0);
+	/** The cyceled rules. */
+	private Set<IRule> r0 = new HashSet<IRule>();
 
-	private static final IPredicate d = BASIC.createPredicate("d", 0);
+	/** The unrecursive predicate graph. */
+	private PredicateGraph pg1;
 
-	private static final IPredicate e = BASIC.createPredicate("e", 0);
+	/** The unrecursive rules. */
+	private Set<IRule> r1 = new HashSet<IRule>();
 
-	private static final ILiteral pa = BASIC.createLiteral(true, a);
+	private static final ITuple t = BASIC.createTuple(TERM.createVariable("X"));
 
-	private static final ILiteral pb = BASIC.createLiteral(true, b);
+	private static final IPredicate a = BASIC.createPredicate("a", 1);
 
-	private static final ILiteral pc = BASIC.createLiteral(true, c);
+	private static final IPredicate b = BASIC.createPredicate("b", 1);
 
-	private static final ILiteral pd = BASIC.createLiteral(true, d);
+	private static final IPredicate c = BASIC.createPredicate("c", 1);
 
-	private static final ILiteral pe = BASIC.createLiteral(true, e);
+	private static final IPredicate d = BASIC.createPredicate("d", 1);
 
-	private static final ILiteral na = BASIC.createLiteral(false, a);
+	private static final IPredicate e = BASIC.createPredicate("e", 1);
 
-	private static final ILiteral nb = BASIC.createLiteral(false, b);
+	private static final ILiteral pa = BASIC.createLiteral(true, a, t);
 
-	private static final ILiteral nc = BASIC.createLiteral(false, c);
+	private static final ILiteral pb = BASIC.createLiteral(true, b, t);
 
-	private static final ILiteral nd = BASIC.createLiteral(false, d);
+	private static final ILiteral pc = BASIC.createLiteral(true, c, t);
 
-	private static final ILiteral ne = BASIC.createLiteral(false, e);
+	private static final ILiteral pd = BASIC.createLiteral(true, d, t);
+
+	private static final ILiteral pe = BASIC.createLiteral(true, e, t);
+
+	private static final ILiteral na = BASIC.createLiteral(false, a, t);
+
+	private static final ILiteral nb = BASIC.createLiteral(false, b, t);
+
+	private static final ILiteral nc = BASIC.createLiteral(false, c, t);
+
+	private static final ILiteral nd = BASIC.createLiteral(false, d, t);
+
+	private static final ILiteral ne = BASIC.createLiteral(false, e, t);
 
 	public static Test suite() {
 		return new TestSuite(PredicateGraphTest.class, PredicateGraphTest.class
@@ -80,101 +101,89 @@ public class PredicateGraphTest extends TestCase {
 	}
 
 	public void testDetectCycles() {
-		final PredicateGraph pg = constructGraph_1();
-		assertTrue("There are cycles in the graph", pg.detectCycles());
+		assertTrue("There are cycles in the graph", pg0.detectCycles());
 	}
 
 	public void testCountNegativesForCycle() {
-		final PredicateGraph pg = constructGraph_1();
-		assertEquals("The negative edges aren't calculated correctly", 1, pg
+		assertEquals("The negative edges aren't calculated correctly", 1, pg0
 				.countNegativesForCycle());
 	}
 
 	public void testFindVertexesForCycle() {
-		final PredicateGraph pg = constructGraph_1();
 		final Set<IPredicate> reference = new HashSet<IPredicate>();
 		reference.add(a);
 		reference.add(c);
 		reference.add(d);
 		reference.add(e);
-		final Set testing = pg.findVertexesForCycle();
+		final Set testing = pg0.findVertexesForCycle();
 
-		assertEquals("The count of the returned vertexes "
-				+ "and the reference set must be equal", reference.size(),
-				testing.size());
-		assertTrue(
-				"The returned set must contain all elements of the referneces",
-				testing.containsAll(reference));
+		assertEquals("The predicate sets must be equal", reference, testing);
 	}
 
 	public void testFindEdgesForCycle() {
-		final PredicateGraph pg = constructGraph_1();
-		final Set<Edge> reference = new HashSet<Edge>();
-		reference.add(new LabeledDirectedEdge(a, c, false));
-		reference.add(new LabeledDirectedEdge(c, d, true));
-		reference.add(new LabeledDirectedEdge(d, e, true));
-		reference.add(new LabeledDirectedEdge(e, a, true));
-		final Set<Edge> testing = pg.findEdgesForCycle();
+		final Set<LabeledDirectedEdge<Boolean>> reference = new HashSet<LabeledDirectedEdge<Boolean>>();
+		reference.add(new LabeledDirectedEdge<Boolean>(a, c, false));
+		reference.add(new LabeledDirectedEdge<Boolean>(c, d, true));
+		reference.add(new LabeledDirectedEdge<Boolean>(d, e, true));
+		reference.add(new LabeledDirectedEdge<Boolean>(e, a, true));
+		final Set<Edge> testing = pg0.findEdgesForCycle();
 
-		assertEquals("The count of the returned vertexes "
-				+ "and the reference set must be equal", reference.size(),
-				testing.size());
-		assertTrue(
-				"The returned set must contain all elements of the referneces",
-				containsAllOnEquals(testing, reference));
+		assertEquals("The edge sets must be equal", reference, testing);
 	}
 
-	private static PredicateGraph constructGraph_1() {
-		PredicateGraph pg = new PredicateGraph();
+	public void testGetDepends() {
+		final Set<IPredicate> for_b = new HashSet<IPredicate>();
+		for_b.add(c);
+		for_b.add(e);
+		final Set<IPredicate> for_d = new HashSet<IPredicate>();
+		for_d.addAll(for_b);
+		for_d.add(b);
 
-		// constructing the rules
-		IRule ra = BASIC.createRule(BASIC.createHead(pa), BASIC.createBody(pe));
-		IRule rb = BASIC.createRule(BASIC.createHead(pb), BASIC.createBody(pa,
-				nc));
-		IRule rc = BASIC.createRule(BASIC.createHead(pc), BASIC.createBody(na));
-		IRule rd = BASIC.createRule(BASIC.createHead(pd), BASIC.createBody(pc,
-				ne));
-		IRule re = BASIC.createRule(BASIC.createHead(pe), BASIC.createBody(pd,
-				nc));
-
-		// adding the rules to the graph
-		pg.addRule(ra);
-		pg.addRule(rb);
-		pg.addRule(rc);
-		pg.addRule(rd);
-		pg.addRule(re);
-
-		return pg;
+		assertEquals("Something wrong with the depends calculation", for_b, pg1
+				.getDepends(b));
+		assertEquals("Something wrong with the depends calculation", for_d, pg1
+				.getDepends(d));
 	}
 
-	/**
-	 * Stupid workarround, because the ***** from jgrapht haven't implemented
-	 * the hashCode method and are using HashSets/HashMaps.</br>This method
-	 * simply determines whether every element in s0 is contained int s1 using
-	 * the equals method.
-	 * 
-	 * @param s0
-	 *            the source set from where to take the elements
-	 * @param s1
-	 *            the set where to search for the elements
-	 * @return true if all elements of s0 are contained in s1
-	 */
-	private static boolean containsAllOnEquals(final Set s0, final Set s1) {
-		if (s1.size() < s0.size()) {
-			return false;
-		}
-		for (Object o0 : s0) {
-			boolean found = false;
-			for (Object o1 : s1) {
-				if (o0.equals(o1)) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
-				return false;
-			}
-		}
-		return true;
+	public void testPredicateComparator() {
+		final List<IPredicate> reference = new ArrayList<IPredicate>(Arrays
+				.asList(new IPredicate[] { e, c, b, d, a }));
+		final List<IPredicate> testing = new ArrayList<IPredicate>(Arrays
+				.asList(new IPredicate[] { a, b, c, d, e }));
+		Collections.sort(testing, pg1.getPredicateComparator());
+		
+		assertEquals("The sort order isn't correct", reference, testing);
+	}
+
+	public void setUp() {
+		// the cyceled predicate graph
+		// a(X) :- e(X)
+		r0.add(BASIC.createRule(BASIC.createHead(pa), BASIC.createBody(pe)));
+		// b(X) :- a(X), -c(X)
+		r0
+				.add(BASIC.createRule(BASIC.createHead(pb), BASIC.createBody(
+						pa, nc)));
+		// c(X) :- -a(X)
+		r0.add(BASIC.createRule(BASIC.createHead(pc), BASIC.createBody(na)));
+		// d(X) :- c(X)
+		r0.add(BASIC.createRule(BASIC.createHead(pd), BASIC.createBody(pc)));
+		// e(X) :- d(X)
+		r0.add(BASIC.createRule(BASIC.createHead(pe), BASIC.createBody(pd)));
+
+		pg0 = new PredicateGraph();
+		pg0.addRule(r0);
+
+		// the unrecursive predicate graph
+		// a(X) :- b(X), c(X), d(X)
+		r1.add(BASIC.createRule(BASIC.createHead(pa), BASIC.createBody(pb, pc, pd)));
+		// b(X) :- c(X)
+		r1.add(BASIC.createRule(BASIC.createHead(pb), BASIC.createBody(pc)));
+		// c(X) :- e(X)
+		r1.add(BASIC.createRule(BASIC.createHead(pc), BASIC.createBody(pe)));
+		// d(X) :- b(X)
+		r1.add(BASIC.createRule(BASIC.createHead(pd), BASIC.createBody(pb)));
+
+		pg1 = new PredicateGraph();
+		pg1.addRule(r1);
 	}
 }
