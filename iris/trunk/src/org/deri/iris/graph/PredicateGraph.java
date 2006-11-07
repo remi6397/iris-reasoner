@@ -93,22 +93,14 @@ public class PredicateGraph implements IPredicateGraph {
 			g.addVertex(hp);
 
 			for (final ILiteral l : rule.getBodyLiterals()) {
-				boolean doubled = false;
 				final IPredicate p = l.getPredicate();
 				final Edge e = new LabeledDirectedEdge<Boolean>(p, hp, l
 						.isPositive());
 
 				g.addVertex(p);
 
-				// determining, whether an equal edge is already in the graph
-				// TODO: use the contains(Object) method
-				for (final Object edge : g.getAllEdges(p, hp)) {
-					if (e.equals(edge)) {
-						doubled = true;
-						break;
-					}
-				}
-				if (!doubled) { // if there is no such edge, add the new one
+				// if there is no such edge, add the new one
+				if (!g.edgeSet().contains(e)) {
 					g.addEdge(e);
 				}
 			}
