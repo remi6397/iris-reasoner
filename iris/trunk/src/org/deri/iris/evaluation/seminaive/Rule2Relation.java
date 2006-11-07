@@ -26,6 +26,7 @@
 package org.deri.iris.evaluation.seminaive;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -46,7 +47,6 @@ import org.deri.iris.evaluation.seminaive.model.ModelFactory;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.terms.Variable;
 
-
 /**
  * Implementation of Algorithm 3.1: Computing the Relation for a Rule Body, 
  * Using Relational Algebra Operations.
@@ -57,6 +57,13 @@ import org.deri.iris.terms.Variable;
  *
  */
 public class Rule2Relation {
+	
+	/** prefix for the variables */
+	private static final String VAR_PREFIX = "?X_";
+	
+	/** counter for an arbitrarly chosen variable*/
+	private static int varCounter = 0;
+	 
 	private Map<ITree, ITree> results = new Hashtable<ITree, ITree>();
 	
 	/**
@@ -129,15 +136,17 @@ public class Rule2Relation {
 			new java.util.Hashtable<IVariable, List<ILiteral>>();
 		List<EqualityLiteral> equalityLiterals = 
 			new java.util.LinkedList<EqualityLiteral>();
-
+		List<EqualityLiteral> equalityVarsLiterals = 
+			new java.util.LinkedList<EqualityLiteral>();
 		
-		/* 
-		 * Algorithm 3.1: Computing the relation for a Rule Body, Using relational Algebra Operation
+		/** 
+		 * Algorithm 3.1: 
+		 * Computing the relation for a Rule Body, 
+		 * using relational Algebra Operation
 		 * Chapter 3. Logic as a data model. 
 		 * INPUT: Body of rule r = S1,...,Sn with variables X1,...,Xm;
 		 * Si = pi(Ai1,..., Aiki) where pi <--> Ri & Ai = variable|constant
 		 */
-		
 		ITree result;
 		ITree globalJoin = ModelFactory.FACTORY.createNaturalJoin();
 		
@@ -160,29 +169,47 @@ public class Rule2Relation {
 				return null; // this rule has no sense
 		}
 		
-		// In case there is only one term there is no need for joining
+		// In case there is only one relation there is no need for joining
 		if (globalJoin.getChildren().size() == 1)
 			globalJoin = (ITree)globalJoin.getChildren().get(0);
 		
+		// TODO: Check if NATURAL_JOIN is CARTESIAN_PRODUCT
+		
 		// D. EVAL-RULE(r, R1,...,Rn) = SELECTION_F(E)
 		// F conjunction of built-in subgoals appearing.
-		if (!equalityLiterals.isEmpty()){
+		
+		//if (!equalityLiterals.isEmpty()){
+		equalityVarsLiterals = getVarsEqLiterals(equalityLiterals);
+		if (!equalityVarsLiterals.isEmpty()){
 			int[] selectionIndex = new int[globalJoin.getArity()];
 			List<ITerm> selectionPattern = new ArrayList<ITerm>();
 			for (int i = 0; i < globalJoin.getArity(); i++)
 				selectionPattern.add(null);
-			getSelectionIndexes(equalityLiterals, selectionPattern, selectionIndex, globalJoin);
-			ISelection s = ModelFactory.FACTORY.createSelection(Factory.BASIC.createTuple(selectionPattern), selectionIndex);
+			
+			//getSelectionIndexes(equalityLiterals, selectionPattern,
+			getSelectionIndexes(equalityVarsLiterals, selectionPattern,
+					selectionIndex, globalJoin);
+			ISelection s = ModelFactory.FACTORY.createSelection(
+					Factory.BASIC.createTuple(selectionPattern), 
+					selectionIndex);
 			s.addComponent(globalJoin);
 			result = s;
-		}else
+		}else{
 			result = globalJoin;
-		
-		int[] globalProjectionIndex = new int[head.getArity()];
-		IProjection globalProjection = ModelFactory.FACTORY.createProjection(globalProjectionIndex);
-		globalProjection.addVariables(head.getVariables());
-		globalProjection.addComponent(result);
-		return globalProjection;
+		}
+		if(! Arrays.equals(
+				head.getVariables().toArray(), 
+				globalJoin.getVariables().toArray())){
+			
+			int[] globalProjectionIndex = new int[head.getArity()];
+			IProjection globalProjection = 
+				ModelFactory.FACTORY.createProjection(globalProjectionIndex);
+			globalProjection.addVariables(head.getVariables());
+			globalProjection.addComponent(result);
+			return globalProjection;
+		}else{
+			return result;
+		}
 	}
 	 
 	 /**
@@ -279,28 +306,44 @@ public class Rule2Relation {
 				 if (el.isPositive()) {
 					 equalityLiterals.add((EqualityLiteral)el);
 					 // ?X = ?Y --> Dx = PROJECTIONj(Ri) (Si(...,?Y, ...))
-					 if (variables.containsKey(t2)) {
+					 if(variables.containsKey(t2)){
 						 ITerm tt = t1;
 						 t1 = t2; // t1 = ?X
 						 t2 = tt; // t2 = ?Y
 					 }
-					 
 					 ILiteral l = variables.get(t1).get(0);
 					 List<IVariable> elvariables = new LinkedList<IVariable>();
 					 List<ITerm> literalTerms = l.getTuple().getTerms();
-					 for(ITerm t: literalTerms) {
+					 int[] pInds = new int[literalTerms.size()];
+					 int j = 0, k = 0;
+					 
+					 /*for(ITerm t: literalTerms) {
 						 if (t.equals(t1))
 							 elvariables.add((IVariable)t2);
 						 else 
 							 elvariables.add(createVariable(variables.keySet()));
+					 }*/
+					 for(ITerm t: literalTerms) {
+						 if (t.equals(t1)){
+							elvariables.add((IVariable)t2);
+							pInds[j++] = k++;
+						 }else{ 
+							elvariables.add(createVariable());
+							pInds[j++] = -1; 
+						 }
 					 }
 					 IRule elleaf = ModelFactory.FACTORY.createRule(
 							 l.getPredicate().getPredicateSymbol(), 
 							 l.getPredicate().getArity());
 					 elleaf.addAllVariables(elvariables);
 					 
-					 IProjection elprojection = ModelFactory.FACTORY.createProjection(new int[1]);
+					 /*IProjection elprojection = ModelFactory.FACTORY.createProjection(new int[1]);
 					 elprojection.addVariable((IVariable)t2);
+					 */
+					 IProjection elprojection = 
+						 ModelFactory.FACTORY.createProjection(pInds);
+					 elprojection.addVariable((IVariable)t2);
+					 
 					 elprojection.addComponent(elleaf);
 					 return elprojection;
 				 } else {
@@ -312,8 +355,6 @@ public class Rule2Relation {
 				 return head; // ?X = ?X --> true -- do not include any term
 			 } else
 				 return null; // ?X != ?X --> false -- invalidate the rule
-			 
-			 
 		 } else if(t1 instanceof org.deri.iris.terms.StringTerm && t2 instanceof org.deri.iris.terms.StringTerm) {
 			 // t1 & t2 are strings
 			 if (!t1.equals(t2)) {
@@ -327,7 +368,6 @@ public class Rule2Relation {
 				 else
 					 return null;
 			 }
-			 
 		 } else {
 			 // one is variable and the other string (e.g. ?X='a')
 			 // ?X = 'a' needed for global selection
@@ -372,26 +412,22 @@ public class Rule2Relation {
 		 int i = 0;
 		 boolean noFi = true;
 		 for (ITerm t : terms){
-			 // is t a constant term?
-			 if (t.isGround()){
-				 projectionIndex[i] = -1;
-				 selectionPattern.add(t);
-				 selectionIndex[i] = -1;
-				 leaf.addVariable(createString(leaf.getVariables()));
-				 noFi = false;
-			 }else if(t instanceof org.deri.iris.terms.ConstructedTerm){
+			 if(t instanceof org.deri.iris.terms.ConstructedTerm){
 				 /*
+				  * 
 				  * TODO recursivity - Not allowed in datalog expressions
 				  */
 				 projectionIndex[i] = -1;
 				 selectionPattern.add(null);
 				 selectionIndex[i] = -1;
-				 leaf.addVariable(createString(leaf.getVariables()));
+				 //leaf.addVariable(createString(leaf.getVariables()));
+				 leaf.addVariable(createVariable());
 			 }else if(t instanceof org.deri.iris.terms.StringTerm){
 				 projectionIndex[i] = -1;
 				 selectionPattern.add(t);
-				 selectionIndex[i] = -1;
-				 leaf.addVariable(createString(leaf.getVariables()));
+				 selectionIndex[i] = 0;
+				 //leaf.addVariable(createString(leaf.getVariables()));
+				 leaf.addVariable(createVariable());
 				 noFi = false;
 			 }else if(t instanceof org.deri.iris.terms.Variable){
 				 IVariable v = (IVariable)t;
@@ -484,7 +520,7 @@ public class Rule2Relation {
 			 i[j] = j;
 	 }
 	 
-	 private IVariable createVariable(Set<IVariable> variables) {
+	 /*private IVariable createVariable(Set<IVariable> variables) {
 		 IVariable v = null;
 		 char[] c = {'a','a','a'};
 		 for (; c[0] <= 'z'; c[0]++)
@@ -495,14 +531,41 @@ public class Rule2Relation {
 						 return v;
 				 }
 		 return v;
+	 }*/
+	 private IVariable createVariable(){
+		 IVariable v = Factory.TERM.createVariable(VAR_PREFIX + varCounter++);
+		 return v;
 	 }
 	 
 	 private String createString(List<String> sl) {
 		 java.util.Random r = new java.util.Random();
 		 String s;
-		 while (sl.contains(s="?TV" + r.nextInt()));
+		 while (sl.contains(s="?T_" + r.nextInt()));
 		 return s;
 	 }
+	 /*private String createString(){
+		 *//** TODO: Check whether constCounter needs to be static field*//*
+		 int constCounter = 0;
+		 String s = CONST_PREFIX + constCounter++;
+		 return s;
+	 }*/
 	 
-	 
+	 /**
+	 * @param eqL Equality literals
+	 * @return	  All equality literals which have only variables as terms
+	 */
+	private List<EqualityLiteral> getVarsEqLiterals(final List<EqualityLiteral> eqL) {
+		List<EqualityLiteral> ngL = new ArrayList<EqualityLiteral>();
+		ngL.addAll(eqL);
+		
+		for(EqualityLiteral l : eqL){
+			for(ITerm t : l.getTuple().getTerms()){
+				if(t.isGround()){
+					ngL.remove(l);
+					break;
+				}
+			}
+		}
+		return ngL;
+	 }
 }

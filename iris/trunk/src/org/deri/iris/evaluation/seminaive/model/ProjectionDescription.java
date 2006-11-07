@@ -102,7 +102,7 @@ public class ProjectionDescription extends Composite implements IProjection{
 	
 	public boolean addComponent(Component c)
 	{
-		ITree t = (ITree)c;
+		/*ITree t = (ITree)c;
 		if (variables.size() == 0)
 			addVariables(t.getVariables());
 		else {
@@ -110,7 +110,7 @@ public class ProjectionDescription extends Composite implements IProjection{
 			for (String v: vl)
 				if (!variables.contains(v))
 					addVariable(v);
-		}
+		}*/
 		boolean result = super.addComponent(c);
 		checkIndexes();
 		return result;
@@ -121,13 +121,13 @@ public class ProjectionDescription extends Composite implements IProjection{
 		if ((variables.size() > 0) && (!this.getChildren().isEmpty())) {			
 			ITree t = (ITree)this.getChildren().get(0);
 			indexes = new int[t.getArity()];
+			int k = 0;
 			for (int i = 0; i < indexes.length; i++)
 				indexes[i] = -1;
-			for (String v: variables)
-			{
+			for (String v: variables){
 				int j = t.getVariables().indexOf(v);
 				if (j != -1)
-					indexes[j] = 0;
+					indexes[j] = k++;
 			}
 		}
 	}
