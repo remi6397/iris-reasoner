@@ -48,10 +48,10 @@ import org.deri.iris.storage.Relation;
 /**
  * For a tuple t:
  * t = MiscHelper.createTuple(
- * 				RELATION_OPERATION.createNonEquality("a"), 
+ * 				new NonEqualityTerm("a"), 
  * 				TERM.createString("d"), 
  * 				null, 
- * 				RELATION_OPERATION.createNonEquality("d"),
+ * 				new NonEqualityTerm("d"),
  * 				null, 
  * 				null)
  * 
