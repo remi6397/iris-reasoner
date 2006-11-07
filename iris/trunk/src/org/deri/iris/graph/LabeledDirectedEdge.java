@@ -47,7 +47,7 @@ import org._3pq.jgrapht.edge.DirectedEdge;
  */
 public class LabeledDirectedEdge<Type> extends DirectedEdge {
 
-	/** label of this edge */
+	/** Label of this edge. */
 	private Type label = null;
 
 	private static final long serialVersionUID = -3260958362372872661L;
@@ -91,7 +91,7 @@ public class LabeledDirectedEdge<Type> extends DirectedEdge {
 	}
 
 	/**
-	 * Returns the actual label of the edge
+	 * Returns the actual label of the edge.
 	 * 
 	 * @return the label
 	 */
@@ -100,7 +100,7 @@ public class LabeledDirectedEdge<Type> extends DirectedEdge {
 	}
 
 	/**
-	 * Returns whether there is actually a label set
+	 * Returns whether there is actually a label set.
 	 * 
 	 * @return true if the label is not null, otherwise false
 	 */
@@ -139,7 +139,9 @@ public class LabeledDirectedEdge<Type> extends DirectedEdge {
 	 * <b>The subject of the stringrepresentation is to change.</b>
 	 * </p>
 	 * <p>
-	 * An example String could be: <code>source->(label)->target<code>.</p>
+	 * An example String could be: <code>source->(label)->target</code>.</p>
+	 * 
+	 * @return the string representation
 	 */
 	public String toString() {
 		return getSource() + " ->( " + label + " )-> " + getTarget();
