@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.deri.iris.api.IEDB;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
@@ -49,12 +50,13 @@ import org.deri.iris.api.terms.IVariable;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.1 2006-11-02 10:16:50 richardpoettler Exp $
+ * $Id: MiscOps.java,v 1.2 2006-11-08 13:31:55 graham Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-11-02 10:16:50 $
+ * @author graham
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-11-08 13:31:55 $
  */
 public class MiscOps {
 
@@ -178,5 +180,56 @@ public class MiscOps {
 			}
 			i++;
 		}
+	}
+
+	public static boolean stratify(final IEDB e) {
+		int max = 1;
+		int total = e.getPredicates().size();
+		Collection<IRule> rules = e.getRules();
+		boolean change = true;
+		for (IRule r : rules) {
+			for (ILiteral l : r.getBodyLiterals()) {
+				l.getPredicate().setStratum(1);
+			}
+			for (ILiteral l : r.getHeadLiterals()) {
+				l.getPredicate().setStratum(1);
+			}
+		}
+		while ((total >= max) && change) {
+			change = false;
+			for (IRule r : rules) {
+				for (ILiteral hl : r.getHeadLiterals()) {
+					for (ILiteral bl : r.getBodyLiterals()) {
+						if (!bl.isPositive()) {
+							int current = bl.getPredicate().getStratum();
+							if (current >= hl.getPredicate()
+									.getStratum()) {
+								hl.getPredicate()
+										.setStratum(current + 1);
+								max = (max >= current + 1) 
+										? max
+										: current + 1;
+								change = true;
+							}
+						} else {
+							int greater = (hl.getPredicate()
+									.getStratum() >= bl.getPredicate()
+									.getStratum()) ? hl.getPredicate()
+									.getStratum() : bl.getPredicate()
+									.getStratum();
+							if (hl.getPredicate().getStratum() < greater) {
+								hl.getPredicate().setStratum(greater);
+								change = true;
+							}
+							max = (max >= greater) ? max
+									: greater;
+						}
+					}
+				}
+			}
+		}
+		if (total >= max)
+			return true;
+		return false;
 	}
 }
