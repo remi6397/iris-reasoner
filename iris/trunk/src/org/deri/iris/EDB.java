@@ -223,7 +223,21 @@ public class EDB implements IEDB{
 	}
 	
 	public Set<IPredicate> getPredicates() {
-		return Collections.unmodifiableSet(facts.keySet());
+		Set<IPredicate> predicates = new HashSet<IPredicate>();
+		for (IRule r : this.rules) {
+			for(ILiteral l : r.getBodyLiterals()) {
+				predicates.add(l.getPredicate());
+			}
+			predicates.add(r.getHeadLiteral(0).getPredicate());
+		}
+		for (IQuery q : this.queries) {
+			for(ILiteral l : q.getQueryLiterals()) {
+				predicates.add(l.getPredicate());
+			}
+		}
+		predicates.addAll(facts.keySet());
+		
+		return Collections.unmodifiableSet(predicates);
 	}
 
 	/* (non-Javadoc)
