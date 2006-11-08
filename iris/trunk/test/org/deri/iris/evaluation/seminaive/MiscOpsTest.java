@@ -29,10 +29,20 @@ import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.TERM;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.deri.iris.EDB;
+import org.deri.iris.api.basics.IBody;
+import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.evaluation.seminaive.MiscOps;
 
@@ -41,12 +51,12 @@ import org.deri.iris.evaluation.seminaive.MiscOps;
  * Tests the methods in the MiscOps class.
  * </p>
  * <p>
- * $Id: MiscOpsTest.java,v 1.2 2006-11-06 11:19:45 darko Exp $
+ * $Id: MiscOpsTest.java,v 1.3 2006-11-08 13:02:54 graham Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-11-06 11:19:45 $
+ * @version $Revision: 1.3 $
+ * @date $Date: 2006-11-08 13:02:54 $
  */
 public class MiscOpsTest extends TestCase {
 
@@ -88,5 +98,126 @@ public class MiscOpsTest extends TestCase {
 				"r_1", "r_0"), BASIC.createLiteral(true, BUILTIN.createEqual(
 				TERM.createVariable("r_2"), TERM.createVariable("r_0")))));
 		assertEquals(rec1, MiscOps.rectify(r1));
+	}
+	
+	public void testStratification() {
+		
+		IPredicate p = BASIC.createPredicate("p", 1);
+		IPredicate q = BASIC.createPredicate("q", 1);
+		IPredicate r = BASIC.createPredicate("r", 1);
+		IPredicate s = BASIC.createPredicate("s", 1);
+		
+		Set<IRule> rules = new HashSet<IRule>();
+		
+		// ******First rule:  p(x) :- r(x)
+		// Computing head
+		ILiteral lh = BASIC.createLiteral(true, p, BASIC.createTuple(
+							TERM.createVariable("X")));
+		IHead h = BASIC.createHead(lh);
+		
+		// Computing body
+		ILiteral lb = BASIC.createLiteral(true, r, BASIC.createTuple(
+								TERM.createVariable("X")));
+		IBody b = BASIC.createBody(lb);
+
+		rules.add(BASIC.createRule(h, b));
+
+		// *****Second rule: p(x) :- p(x)
+		// Computing head
+		lh = BASIC.createLiteral(true, p, BASIC.createTuple(
+							TERM.createVariable("X")));
+		h = BASIC.createHead(lh);
+		
+		// Computing body
+		lb = BASIC.createLiteral(true, p, BASIC.createTuple(
+						TERM.createVariable("X")));
+		b = BASIC.createBody(lb);
+
+		rules.add(BASIC.createRule(h, b));
+
+		// *****Third rule: q(x) :- s(x), ~p(x)
+		//Computing head
+		lh = BASIC.createLiteral(true, q, BASIC.createTuple(
+							TERM.createVariable("X")));
+		h = BASIC.createHead(lh);
+		
+		// Computing body
+		List<ILiteral> bl = new ArrayList<ILiteral>();
+		bl.add(BASIC.createLiteral(true, s, BASIC.createTuple(
+									TERM.createVariable("X"))));
+		bl.add(BASIC.createLiteral(false, p, BASIC.createTuple(
+						TERM.createVariable("X"))));
+		
+		b = BASIC.createBody(bl);
+
+		rules.add(BASIC.createRule(h, b));
+		
+		//System.out.println("****** input: ******");
+		// for (IRule _r : rules) {
+		// System.out.println(_r);
+		// }
+		
+		EDB e = new EDB();		
+		for (IRule _r : rules) {
+			e.addRule(_r);
+		}
+	
+		assertEquals(true, MiscOps.stratify(e));
+		//System.out.println("****** output: ******");
+		//System.out.println("Is stratified? " + MiscOps.stratify(e));
+		
+		rules = new HashSet<IRule>();
+		
+		p = BASIC.createPredicate("p", 1);
+		q = BASIC.createPredicate("q", 1);
+		r = BASIC.createPredicate("r", 1);
+		
+		// ******First rule:  p(x) :- r(x), ~q(x)
+		// Computing head
+		lh = BASIC.createLiteral(true, p, BASIC.createTuple(
+							TERM.createVariable("X")));
+		h = BASIC.createHead(lh);
+		
+		// Computing body
+		bl = new ArrayList<ILiteral>();
+		bl.add(BASIC.createLiteral(true, r, BASIC.createTuple(
+									TERM.createVariable("X"))));
+		bl.add(BASIC.createLiteral(false, q, BASIC.createTuple(
+						TERM.createVariable("X"))));
+		
+		b = BASIC.createBody(bl);
+
+		rules.add(BASIC.createRule(h, b));
+		
+		// ******Second rule:  q(x) :- r(x), ~p(x)
+		// Computing head
+		lh = BASIC.createLiteral(true, q, BASIC.createTuple(
+							TERM.createVariable("X")));
+		h = BASIC.createHead(lh);
+		
+		// Computing body
+		bl = new ArrayList<ILiteral>();
+		bl.add(BASIC.createLiteral(true, r, BASIC.createTuple(
+									TERM.createVariable("X"))));
+		bl.add(BASIC.createLiteral(false, p, BASIC.createTuple(
+						TERM.createVariable("X"))));
+		
+		b = BASIC.createBody(bl);
+
+		rules.add(BASIC.createRule(h, b));
+		
+		// System.out.println("****** input: ******");
+		// for (IRule _r : rules) {
+		// System.out.println(_r);
+		// }
+		
+		e = new EDB();
+		for (IRule _r : rules) {
+			e.addRule(_r);
+		}
+		
+		// System.out.println("****** output: ******");
+		// System.out.println("Is stratified? " + MiscOps.stratify(e));
+		assertEquals(false, MiscOps.stratify(e));
 	}
 }
