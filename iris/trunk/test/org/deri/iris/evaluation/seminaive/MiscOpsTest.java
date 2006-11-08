@@ -27,6 +27,7 @@ package org.deri.iris.evaluation.seminaive;
 
 import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.PROGRAM;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.TERM;
 
@@ -38,7 +39,8 @@ import java.util.Set;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.EDB;
+
+import org.deri.iris.api.IEDB;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
@@ -51,12 +53,12 @@ import org.deri.iris.evaluation.seminaive.MiscOps;
  * Tests the methods in the MiscOps class.
  * </p>
  * <p>
- * $Id: MiscOpsTest.java,v 1.3 2006-11-08 13:02:54 graham Exp $
+ * $Id: MiscOpsTest.java,v 1.4 2006-11-08 13:27:53 graham Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.3 $
- * @date $Date: 2006-11-08 13:02:54 $
+ * @version $Revision: 1.4 $
+ * @date $Date: 2006-11-08 13:27:53 $
  */
 public class MiscOpsTest extends TestCase {
 
@@ -156,8 +158,7 @@ public class MiscOpsTest extends TestCase {
 		// for (IRule _r : rules) {
 		// System.out.println(_r);
 		// }
-		
-		EDB e = new EDB();		
+		IEDB e = PROGRAM.createEDB(); 	
 		for (IRule _r : rules) {
 			e.addRule(_r);
 		}
@@ -211,7 +212,7 @@ public class MiscOpsTest extends TestCase {
 		// System.out.println(_r);
 		// }
 		
-		e = new EDB();
+		e = PROGRAM.createEDB(); 
 		for (IRule _r : rules) {
 			e.addRule(_r);
 		}
