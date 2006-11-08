@@ -53,12 +53,12 @@ import org.deri.iris.evaluation.seminaive.MiscOps;
  * Tests the methods in the MiscOps class.
  * </p>
  * <p>
- * $Id: MiscOpsTest.java,v 1.4 2006-11-08 13:27:53 graham Exp $
+ * $Id: MiscOpsTest.java,v 1.5 2006-11-08 17:33:17 graham Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.4 $
- * @date $Date: 2006-11-08 13:27:53 $
+ * @version $Revision: 1.5 $
+ * @date $Date: 2006-11-08 17:33:17 $
  */
 public class MiscOpsTest extends TestCase {
 
@@ -102,7 +102,7 @@ public class MiscOpsTest extends TestCase {
 		assertEquals(rec1, MiscOps.rectify(r1));
 	}
 	
-	public void testStratification() {
+	public void testStratify() {
 		
 		IPredicate p = BASIC.createPredicate("p", 1);
 		IPredicate q = BASIC.createPredicate("q", 1);
