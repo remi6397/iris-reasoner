@@ -26,7 +26,7 @@
 package org.deri.iris.basics;
 
 import static org.deri.iris.factory.Factory.GRAPH;
-
+import static org.deri.iris.factory.Factory.PROGRAM;
 import java.util.Arrays;
 import java.util.List;
 
@@ -114,7 +114,8 @@ public class BasicFactory implements IBasicFactory {
 	}
 	
 	public IPredicate createPredicate(String symbol, int arity) {
-		return new Predicate(symbol, arity);
+		IPredicate p = new Predicate(symbol, arity);
+		return PROGRAM.createEDB().registerPredicate(p);
 	}
 
 	public IQuery createQuery(ILiteral... literals) {

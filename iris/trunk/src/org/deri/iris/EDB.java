@@ -64,7 +64,7 @@ public class EDB implements IEDB{
 	private Set<IQuery> queries;
 	
 	private Set<IRule> rules;
-	
+	 
 	/** The Lock to make this set threadsafe */
 	private final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
 
@@ -127,6 +127,7 @@ public class EDB implements IEDB{
 					a.toString() + " needs to be a ground atom (it is not a fact).");
 		}
 		IPredicate p = a.getPredicate();
+		p = registerPredicate(p);
 		IRelation rel = facts.get(p);
 		if (rel == null) {
 			rel = new Relation(p.getArity());
@@ -222,22 +223,21 @@ public class EDB implements IEDB{
 		return (getNumberOfFacts(p, filter) > 0);
 	}
 	
+	public IPredicate registerPredicate(IPredicate p){
+		if(getPredicates().contains(p)){
+			for (IPredicate _p : facts.keySet()) {
+				if (_p.equals(p))
+				{
+					return _p;
+				}
+			}
+		}
+		facts.put(p, new Relation (p.getArity()));
+		return p;
+	}
+	
 	public Set<IPredicate> getPredicates() {
-		Set<IPredicate> predicates = new HashSet<IPredicate>();
-		for (IRule r : this.rules) {
-			for(ILiteral l : r.getBodyLiterals()) {
-				predicates.add(l.getPredicate());
-			}
-			predicates.add(r.getHeadLiteral(0).getPredicate());
-		}
-		for (IQuery q : this.queries) {
-			for(ILiteral l : q.getQueryLiterals()) {
-				predicates.add(l.getPredicate());
-			}
-		}
-		predicates.addAll(facts.keySet());
-		
-		return Collections.unmodifiableSet(predicates);
+		return Collections.unmodifiableSet(facts.keySet());
 	}
 
 	/* (non-Javadoc)

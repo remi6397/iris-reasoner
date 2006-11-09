@@ -42,6 +42,7 @@ import org.deri.iris.api.storage.IRelation;
  */
 public class ProgramFactory implements IProgramFactory {
 	private static final IProgramFactory FACTORY = new ProgramFactory();
+	private static final IEDB EDB = new EDB();
 	
 	private ProgramFactory() {
 		// this is a singelton
@@ -52,7 +53,7 @@ public class ProgramFactory implements IProgramFactory {
 	}
 
 	public IEDB createEDB() {
-		return new EDB();
+		return EDB;
 	}
 	
 	public IEDB createEDB(Map<IPredicate, IRelation> f, Set<IRule> r, Set<IQuery> q) {

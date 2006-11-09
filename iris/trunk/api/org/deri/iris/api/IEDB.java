@@ -102,6 +102,14 @@ public interface IEDB {
 	 * @return Set of all predicates
 	 */
 	public Set<IPredicate> getPredicates();
+	
+	/**
+	 * Register predicates (checks that predicate doesn't already exist in EDB)
+	 * 
+	 * @return registered predicate
+	 */
+	public IPredicate registerPredicate(final IPredicate p);
+	
 
 	public int getNumberOfFacts(final IPredicate predicate);
 
