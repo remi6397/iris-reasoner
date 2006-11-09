@@ -26,15 +26,36 @@
 	</target>
 
 	<target name="javac" description="compiles all the class files" depends="init,prepareclasses,preparesablecc">
-		<javac srcdir="${dir.api}:${dir.src}:${dir.sablecc.src}" classpathref="defaultcp" destdir="${dir.classes}">
+		<javac srcdir="${dir.api}:${dir.src}" classpathref="defaultcp" destdir="${dir.classes}">
 			<include name="**/*.java" />
 		</javac>
 	</target>
 
-	<target name="sablecc" description="creates the parser" depends="init,preparesablecc">
+	<target name="parser" description="creates the parser jar" depends="init,jar,preparesablecc">
+		<!-- delete the old files for a clean setup -->
+		<delete dir="${dir.sablecc.src}"/>
+		<!-- generate the parser classes -->
 		<sablecc src="${dir.sablecc.grammar}" outputdirectory="${dir.sablecc.src}">
 			<include name="*.scc" />
 		</sablecc>
+		<!-- copy the remaining java sources -->
+		<copy todir="${dir.sablecc.src}">
+			<fileset dir="${dir.sablecc.grammar}">
+				<include name="**/*.java"/>
+			</fileset>
+		</copy>
+		<!-- compile the classes -->
+		<javac srcdir="${dir.sablecc.src}" classpat="${file.jar.main}" destdir="${dir.sablecc.src}">
+			<include name="**/*.java" />
+		</javac>
+		<!-- delete the java files -->
+		<delete>
+			<fileset dir="${dir.sablecc.src}">
+				<include name="**/*.java"/>
+			</fileset>
+		</delete>
+		<!-- generate the jar file -->
+		<jar basedir="${dir.sablecc.src}" destfile="${file.jar.parser}" index="true" />
 	</target>
 
 	<target name="javadoc" description="generates the javadoc" depends="init,preparejavadoc">
@@ -64,7 +85,7 @@
 	</target>
 
 	<target name="jar" description="creates the jar file" depends="init,javac,preparejar">
-		<jar basedir="${dir.classes}" destfile="${dir.jar}/${file.jar.main}" index="true" />
+		<jar basedir="${dir.classes}" destfile="${file.jar.main}" index="true" />
 	</target>
 
 	<target name="delclasses" description="deletes only the class files" depends="init">

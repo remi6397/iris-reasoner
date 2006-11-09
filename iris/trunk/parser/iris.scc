@@ -24,6 +24,19 @@ Helpers
     delim = ''';
     quoted_content = [ all - delim ] || '\' ''';
     quoted_id = delim quoted_content+ delim;
+    
+    // builtin symbols
+    eq = '=';
+    ne = '!' eq;
+    add = '+';
+    sub = '-';
+    mul = '*';
+    div = '/';
+    lt = '<';
+    le = lt eq;
+    gt = '>';
+    ge = gt eq;
+    
 
 /************************************************************
  * Tokens                                                   *
@@ -42,8 +55,12 @@ Tokens
     t_query = '?-';
     t_id = letter+ | quoted_id;
     t_const = quoted_id;
-    t_eq = '=';
-    t_neq = '!=';
+    
+    // builtin symbols
+    t_bin_op = eq | ne | lt | le | gt | ge; // binary operators
+    t_ter_op = add | sub | mul | div; // ternary operators
+    t_eq = eq;
+                   
 
     
 
@@ -91,7 +108,6 @@ Productions
                    {var} t_variable |
                    {constant} t_id; // constant
                    
-    builtin 	 =	{eqvar} [first]:t_variable t_eq [second]:t_variable |
-    				{neqvar} [first]:t_variable t_neq [second]:t_variable |
-    				{eqid} t_variable t_eq t_id |
-    				{neqid} t_variable t_neq t_id;
+    builtin =		{binary}[first]:term t_bin_op [second]:term |
+    				{ternary}[first]:term t_ter_op [second]:term t_eq [third]:term;
+    				
