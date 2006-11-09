@@ -31,9 +31,11 @@
 		</javac>
 	</target>
 
-	<target name="parser" description="creates the parser jar" depends="init,jar,preparesablecc">
+	<target name="parser" description="creates the parser jar" depends="init,jar">
 		<!-- delete the old files for a clean setup -->
 		<delete dir="${dir.sablecc.src}"/>
+		<!-- creates the sablecc directory again -->
+		<antcall target="preparesablecc"/>
 		<!-- generate the parser classes -->
 		<sablecc src="${dir.sablecc.grammar}" outputdirectory="${dir.sablecc.src}">
 			<include name="*.scc" />
