@@ -43,7 +43,7 @@
 			</fileset>
 		</copy>
 		<!-- compile the classes -->
-		<javac srcdir="${dir.sablecc.src}" classpat="${file.jar.main}" destdir="${dir.sablecc.src}">
+		<javac srcdir="${dir.sablecc.src}" classpath="${file.jar.main}" destdir="${dir.sablecc.src}">
 			<include name="**/*.java" />
 		</javac>
 		<!-- delete the java files -->
