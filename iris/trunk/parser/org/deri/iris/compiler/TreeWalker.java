@@ -49,7 +49,7 @@ import org.deri.iris.factory.*;
  *
  * @author Francisco Garcia
  *
- * @version $Revision: 1.9 $ $Date: 2006-11-09 08:42:28 $
+ * @version $Revision: 1.10 $ $Date: 2006-11-09 09:11:57 $
  */
 public class TreeWalker extends DepthFirstAdapter {
     
@@ -147,7 +147,7 @@ public class TreeWalker extends DepthFirstAdapter {
     	} else if (op.equals("<=")) {
     		literals.add(BASIC.createLiteral(true, BUILTIN.createLessEqual(f, s)));
     	} else if (op.equals("!=")) {
-    		literals.add(BASIC.createLiteral(false, BUILTIN.createEqual(f, s)));
+    		literals.add(BASIC.createLiteral(true, BUILTIN.createUnequal(f, s)));
     	} else {
     		throw new IllegalArgumentException("Couldn't handle the operator " + op);
     	}
