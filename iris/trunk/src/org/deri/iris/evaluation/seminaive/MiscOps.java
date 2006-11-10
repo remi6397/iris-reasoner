@@ -50,18 +50,18 @@ import org.deri.iris.api.terms.IVariable;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.2 2006-11-08 13:31:55 graham Exp $
+ * $Id: MiscOps.java,v 1.3 2006-11-10 08:15:42 richardpoettler Exp $
  * </p>
  * 
  * @author richi
  * @author graham
- * @version $Revision: 1.2 $
- * @date $Date: 2006-11-08 13:31:55 $
+ * @version $Revision: 1.3 $
+ * @date $Date: 2006-11-10 08:15:42 $
  */
 public class MiscOps {
 
 	/** prefix for the variables in rectified rules. */
-	private static final String VAR_PREFIX = "r_";
+	private static final String VAR_PREFIX = "?X_";
 
 	private MiscOps() {
 		// prevent subclassing
