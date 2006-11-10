@@ -28,6 +28,7 @@ package org.deri.iris.evaluation.seminaive.model;
 
 import org.deri.iris.api.evaluation.seminaive.model.*;
 import org.deri.iris.api.factory.IModelFactory;
+import org.deri.iris.api.factory.IRelationOperationsFactory;
 import org.deri.iris.operations.relations.JoinCondition;
 import org.deri.iris.api.basics.ITuple;
 
@@ -42,6 +43,10 @@ public class ModelFactory implements IModelFactory {
 	
 	private ModelFactory() {
 		// This is a singleton
+	}
+	
+	public static IModelFactory getInstance() {
+		return FACTORY;
 	}
 	
 	public ISelection createSelection(ITuple pattern) {
