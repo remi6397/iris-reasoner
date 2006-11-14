@@ -47,6 +47,7 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.graph.LabeledDirectedEdge;
 
 // FIXME: most Set<IVariable> should be Set<ITerm> and contain !isGround() terms
+// FIXME: what if the vertices aren't connected?
 
 /**
  * <p>
@@ -57,12 +58,12 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.15 2006-10-24 10:12:16 richardpoettler Exp $
+ * $Id: SIPImpl.java,v 1.16 2006-11-14 17:10:41 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.15 $
- * @date $Date: 2006-10-24 10:12:16 $
+ * @version $Revision: 1.16 $
+ * @date $Date: 2006-11-14 17:10:41 $
  */
 public final class SIPImpl implements ISip {
 	// TODO: implement hashCode and equals
@@ -143,7 +144,8 @@ public final class SIPImpl implements ISip {
 			final ITerm headT = headTerms.next();
 			final ITerm queryT = queryTerms.next();
 			if (queryT.isGround() && !headT.isGround()) {
-				// FIXME: this might not always be a variable
+				// FIXME: this might not always be a variable, use
+				// getVariables()
 				assumedKnown.add((IVariable) headT);
 			}
 		}
@@ -282,6 +284,7 @@ public final class SIPImpl implements ISip {
 	private Map<ILiteral, Set<IVariable>> getNextByBounds(final ILiteral l,
 			final Set<IVariable> known) {
 		// FIXME: update the sip if literal is already in the sip
+		// FIXME: builtins are handeled as ordinary literals
 		if ((l == null) || (known == null)) {
 			throw new NullPointerException(
 					"The literal or the set of bounds must not be null");
@@ -325,6 +328,7 @@ public final class SIPImpl implements ISip {
 	 */
 	private Map<ILiteral, Set<IVariable>> getNextByFree(final ILiteral l,
 			final Set<IVariable> initiallyKnown) {
+		// FIXME: builtins are handeled as ordinary literals
 		if ((l == null) || (initiallyKnown == null)) {
 			throw new NullPointerException("The literal must not be null");
 		}
@@ -378,13 +382,22 @@ public final class SIPImpl implements ISip {
 		if (l.equals(rule.getHeadLiteral(0))) {
 			return Collections.singletonMap(rule.getBodyLiteral(0), vars);
 		}
-		final int newPos = rule.getBodyLiterals().indexOf(l) + 1;
-		if (newPos >= rule.getBodyLenght()) {
+
+		// get the next literal -> ignore builtins
+		// FIXME: if two equal literals are in the body -> infinite loop
+		int newPos = rule.getBodyLiterals().indexOf(l) + 1;
+		final int rLength = rule.getBodyLenght();
+		if (newPos >= rLength) {
 			return Collections.EMPTY_MAP;
 		}
-		// FIXME: if two equal literals are in the body -> infinite loop
-		return Collections.singletonMap(rule.getBodyLiterals().get(newPos),
-				vars);
+		ILiteral lit;
+		for (lit = rule.getBodyLiteral(newPos); lit.getPredicate().isBuiltIn(); lit = rule
+				.getBodyLiteral(newPos++)) {
+			if (newPos >= rLength) {
+				return Collections.EMPTY_MAP;
+			}
+		}
+		return Collections.singletonMap(lit, vars);
 	}
 
 	/**
@@ -598,6 +611,27 @@ public final class SIPImpl implements ISip {
 	 */
 	public Set<LabeledDirectedEdge<Set<IVariable>>> getEdges() {
 		return Collections.unmodifiableSet(sipGraph.edgeSet());
+	}
+
+	public boolean equals(final Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof SIPImpl)) {
+			return false;
+		}
+		final SIPImpl s = (SIPImpl) o;
+		return query.equals(s.query) && rule.equals(s.rule)
+				&& (sipGraph.edgeSet().size() == s.sipGraph.edgeSet().size())
+				&& sipGraph.edgeSet().containsAll(s.sipGraph.edgeSet());
+	}
+
+	public int hashCode() {
+		int res = 17;
+		res = res * 37 + rule.hashCode();
+		res = res * 37 + query.hashCode();
+		res = res * 37 + sipGraph.edgeSet().hashCode();
+		return res;
 	}
 
 	/**
