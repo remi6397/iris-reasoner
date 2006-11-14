@@ -36,17 +36,17 @@ import org.deri.iris.factory.Factory;
  * equal.
  * </p>
  * <p>
- * $Id: GreaterEqualBuiltin.java,v 1.1 2006-09-21 09:00:56 richardpoettler Exp $
+ * $Id: GreaterEqualBuiltin.java,v 1.2 2006-11-14 17:21:15 adi Exp $
  * </p>
  * 
  * @author richi
- * @date $Date: 2006-09-21 09:00:56 $
- * @version $Revision: 1.1 $
+ * @date $Date: 2006-11-14 17:21:15 $
+ * @version $Revision: 1.2 $
  */
 public class GreaterEqualBuiltin extends AbstractBuiltin {
 
 	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate(
+	private static final IPredicate PREDICATE = Factory.BASIC.createBuiltinPredicate(
 			"GREATER_EQUAL", 2);
 
 	/**

@@ -35,17 +35,17 @@ import org.deri.iris.factory.Factory;
  * Builtin to compare two terms and determine which one is bigger.
  * </p>
  * <p>
- * $Id: LessBuiltin.java,v 1.1 2006-09-21 09:00:56 richardpoettler Exp $
+ * $Id: LessBuiltin.java,v 1.2 2006-11-14 17:21:15 adi Exp $
  * </p>
  * 
  * @author richi
- * @date $Date: 2006-09-21 09:00:56 $
- * @version $Revision: 1.1 $
+ * @date $Date: 2006-11-14 17:21:15 $
+ * @version $Revision: 1.2 $
  */
 public class LessBuiltin extends AbstractBuiltin {
 
 	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate(
+	private static final IPredicate PREDICATE = Factory.BASIC.createBuiltinPredicate(
 			"LESS", 2);
 
 	/**
