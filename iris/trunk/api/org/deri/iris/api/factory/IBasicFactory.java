@@ -66,6 +66,7 @@ public interface IBasicFactory {
 	public ITuple createMinimalTuple(List<ITerm> terms);
 	
 	public IPredicate createPredicate(String symbol, int arity);
+	public IPredicate createBuiltinPredicate(String symbol, int arity);
 	
 	public IQuery createQuery(ILiteral... literals);
 	public IQuery createQuery(List<ILiteral> literals);
