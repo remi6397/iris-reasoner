@@ -73,9 +73,9 @@ public class BasicComparator implements IComparator {
 	/**
 	 * Compares its two arguments for order. Comparison is based on 
 	 * the sort indexes. Returns a negative integer, zero, or a positive
-	 * integer as the first argument is less than, equal to, or greater 
-	 * than the second. If two tuples are equal comparing them on 
-	 * the sort indexes then compare them in an ascending order.
+	 * integer if the first argument is less than, equal to, or greater 
+	 * than the second. If two tuples are equal, comparing them on 
+	 * the sort indexes, then compare them in an ascending order.
 	 * This method is used whenever a new tuple is added to a tree or 
 	 * an index tree.
 	 * 
