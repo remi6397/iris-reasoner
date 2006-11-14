@@ -74,7 +74,7 @@ public class JoinTest extends TestCase {
 		relation0.add(MiscHelper.createTuple("h", "h", "h"));
 		relation0.add(MiscHelper.createTuple("h", "g", "h"));
 		
-		relation0.add(MiscHelper.createTuple("a", "b", "i"));
+		relation0.add(MiscHelper.createTuple("a", "b", "i")); // Duplicate!
 		relation0.add(MiscHelper.createTuple("a", "b", "i"));
 		relation0.add(MiscHelper.createTuple("f", "g", "k"));
 		relation0.add(MiscHelper.createTuple("x", "x", "x"));
@@ -95,6 +95,7 @@ public class JoinTest extends TestCase {
 		
 		IJoin joinOperator = RELATION_OPERATION.createJoinOperator(
 				relation0, relation1, i, JoinCondition.EQUALS);
+		
 		IRelation result = joinOperator.join();
 		assertResults(result, e);
 	}
@@ -195,10 +196,11 @@ public class JoinTest extends TestCase {
 	}
 	
 	/**
-	 * JoinSimpleExtended:
-	 * 1st column of relation1 with 0th column of relation0 and
+	 * join on:
 	 * 1st column of relation1 with 1st column of relation0 and
-	 * 1st column of relation1 with 2nd column of relation0.
+	 * 2nd column of relation1 with 2nd column of relation0.
+	 * project on:
+	 * 7th and 2nd and 1st column (in this order) 
 	 */
 	public void testJoinWithProjection_m1p1p2m1() {
 		final List<ITuple> e = new ArrayList<ITuple>();
