@@ -38,14 +38,14 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.basics.MinimalTuple;
 import org.deri.iris.operations.tuple.BasicComparator;
 import org.deri.iris.operations.tuple.Concatenation;
-import org.deri.iris.operations.tuple.IndexComparator;
 import org.deri.iris.operations.tuple.JoinComparator;
+import org.deri.iris.operations.tuple.SimpleIndexComparator;
 import org.deri.iris.storage.Relation;
 
 /**
  * Implementation of the sort-merge join operation. 
- * Reference: JoinSimpleExtended Processing in Relational Databases, PRITI MISHRA and 
- * MARGARET H. EICH
+ * Reference: JoinSimpleExtended Processing in Relational Databases, 
+ * PRITI MISHRA and MARGARET H. EICH
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   24.05.2006 09:26:43
@@ -85,13 +85,13 @@ public class JoinSimple implements IJoin{
 		this.joinRelation = new Relation(this.indexes.length*2);
 		
 		// Sort arg0 on those tupples defined by sort indexes
-		this.comparator = new IndexComparator(this.indexTransformer0(indexes));
+		this.comparator = new SimpleIndexComparator(this.indexTransformer0(indexes));
 		IRelation rel0 = new Relation(comparator);
 		rel0.addAll(this.relation0);
 		this.relation0 = rel0;
 		
 		// Sort arg1 on those tupples defined by sort indexes
-		this.comparator = new IndexComparator(this.indexTransformer1(indexes));
+		this.comparator = new SimpleIndexComparator(this.indexTransformer1(indexes));
 		IRelation rel1 = new Relation(comparator);
 		rel1.addAll(this.relation1);
 		this.relation1 = rel1;
