@@ -56,86 +56,155 @@ public class JoinSimpleTest extends TestCase {
 	 * Joins two relations (no duplicates handling) and then checks the 
 	 * result against the submitted Collection of tuples. 
 	 * 
-	 * @param i
-	 *            the indexes on which to join (see documentation for
-	 *            IJoin.join(..) for the computation of this array)
-	 * @param e
-	 *            the Collection of expected tuples
+	 * @param i indexes which join will be based on (see documentation for
+	 *          IRelationOperationsFactory.createJoinOperator 
+	 *          for the computation of this array)
+	 * @param e collection of expected tuples
 	 */
 	protected static void runJoin(final int[] i, final Collection<ITuple> e) {
 		IRelation relation0 = new Relation(3);
-		IRelation relation1 = new Relation(3);
-		//IRelation<ITuple> relation1 = new Relation(4);
+		IRelation relation1 = new Relation(4);
 
-		relation0.add(MiscHelper.createTuple("a", "b", "c"));
+		// relation0: add tuples
 		relation0.add(MiscHelper.createTuple("a", "b", "b"));
-		relation0.add(MiscHelper.createTuple("f", "g", "h"));
-		relation0.add(MiscHelper.createTuple("h", "g", "f"));
-		relation0.add(MiscHelper.createTuple("h", "g", "a"));
-
-		relation1.add(MiscHelper.createTuple("c", "b", "b"));
-		relation1.add(MiscHelper.createTuple("c", "b", "a"));
-		relation1.add(MiscHelper.createTuple("a", "b", "c"));
+		relation0.add(MiscHelper.createTuple("a", "b", "d"));
+		relation0.add(MiscHelper.createTuple("e", "e", "e"));
+		relation0.add(MiscHelper.createTuple("h", "h", "h"));
+		relation0.add(MiscHelper.createTuple("h", "g", "h"));
 		
-		/*relation1.add(MiscHelper.createTuple("c", "b", "b", "x"));
-		relation1.add(MiscHelper.createTuple("c", "b", "a", "x"));
-		relation1.add(MiscHelper.createTuple("a", "b", "c", "x"));*/
+		relation0.add(MiscHelper.createTuple("a", "b", "i")); // Duplicate!
+		relation0.add(MiscHelper.createTuple("a", "b", "i"));
+		relation0.add(MiscHelper.createTuple("f", "g", "k"));
+		relation0.add(MiscHelper.createTuple("x", "x", "x"));
+		
+		
+		// relation1: add tuples
+		relation1.add(MiscHelper.createTuple("c", "b", "b", "x"));
+		relation1.add(MiscHelper.createTuple("f", "b", "a", "x"));
+		
+		relation1.add(MiscHelper.createTuple("e", "b", "b", "x"));
+		relation1.add(MiscHelper.createTuple("h", "a", "a", "a"));
+		relation1.add(MiscHelper.createTuple("h", "a", "a", "b"));
 
-		// test join operation with no duplicates handling
-		IJoin joinSimpleOperator = RELATION_OPERATION.createJoinSimpleOperator(
+		relation1.add(MiscHelper.createTuple("j", "b", "b", "x"));
+		relation1.add(MiscHelper.createTuple("l", "b", "a", "x"));
+		relation1.add(MiscHelper.createTuple("x", "x", "x", "x"));
+		relation1.add(MiscHelper.createTuple("x", "e", "x", "x"));
+		
+		IJoin joinOperator = RELATION_OPERATION.createJoinSimpleOperator(
 				relation0, relation1, i, JoinCondition.EQUALS);
-		IRelation result = joinSimpleOperator.join();
+		
+		IRelation result = joinOperator.join();
 		assertResults(result, e);
 	}
 
-	public void testJoin_m1m10() {
-		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a", "b", "c", "c", "b", "b"));
-		e.add(MiscHelper.createTuple("a", "b", "c", "c", "b", "a"));
-		e.add(MiscHelper.createTuple("h", "g", "a", "a", "b", "c"));
+	/**
+	 * @param i  indexes on which to join (see documentation for
+	 *           IRelationOperationsFactory.createJoinOperator
+	 *           for the computation of this array)
+	 * @param pi project indexes
+	 * @param e  collection of expected tuples
+	 */
+	protected static void runJoinWithProjection(final int[] i, final int[] pi, final Collection<ITuple> e) {
+		IRelation relation0 = new Relation(3);
+		IRelation relation1 = new Relation(4);
+
+		// relation0: add tuples
+		relation0.add(MiscHelper.createTuple("a", "b", "b"));
+		relation0.add(MiscHelper.createTuple("a", "b", "d"));
 		
-		runJoin(new int[] { -1, -1, 0}, e);
-		//runJoin(new int[] { -1, -1, 0, -1}, e);
+		// relation1: add tuples
+		relation1.add(MiscHelper.createTuple("c", "b", "b", "x"));
+		relation1.add(MiscHelper.createTuple("f", "b", "a", "x"));
+		
+		IJoin joinOperator = RELATION_OPERATION.createJoinOperator(
+				relation0, relation1,
+				i, JoinCondition.EQUALS, pi);
+		IRelation result = joinOperator.join();
+		assertResults(result, e);
+	}
+	
+	/**
+	 * This is an example of inconsistent indexes. Namely 3rd column 
+	 * of relation1 cannot be joined with 3rd column of relation0 
+	 * (relation0 has arity 3 which means column: 0th, 1st and 2nd,
+	 * so 3rd column does not exist)!   
+	 * 
+	 * int[] { 0, 1, -1, 3}
+	 * 
+	 */
+	
+	/**
+	 * JoinSimpleExtended:
+	 * 0th column of relation1 with 2nd column of relation0.
+	 */
+	public void testJoin_m1m10m1() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(MiscHelper.createTuple("e", "e", "e", "e", "b", "b", "x"));
+		e.add(MiscHelper.createTuple("h", "h", "h", "h", "a", "a", "a"));
+		e.add(MiscHelper.createTuple("h", "h", "h", "h", "a", "a", "b"));
+		e.add(MiscHelper.createTuple("h", "g", "h", "h", "a", "a", "a"));
+		e.add(MiscHelper.createTuple("h", "g", "h", "h", "a", "a", "b"));
+		e.add(MiscHelper.createTuple("x", "x", "x", "x", "x", "x", "x"));
+		e.add(MiscHelper.createTuple("x", "x", "x", "x", "e", "x", "x"));
+		
+		runJoin(new int[] { -1, -1, 0, -1}, e);
 	}
 
-	public void testJoin_210() {
+	/**
+	 * JoinSimpleExtended:
+	 * 1st column of relation1 with 0th column of relation0 and
+	 * 3rd column of relation1 with 1st column of relation0.
+	 */
+	public void testJoin_p1p3m1m1() {
 		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a", "b", "c", "c", "b", "a"));
-		runJoin(new int[] { 2, 1, 0 }, e);
-	}
-	
-	public void testJoin_m12m1() {
-		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a", "b", "c", "c", "b", "b"));
-		e.add(MiscHelper.createTuple("a", "b", "b", "c", "b", "b"));
-		runJoin(new int[] { -1, 2, -1 }, e);
-	}
-	
-	public void testJoin_m1m1m1() {
-		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a", "b", "c", "c", "b", "b"));
-		e.add(MiscHelper.createTuple("a", "b", "c", "c", "b", "a"));
-		e.add(MiscHelper.createTuple("a", "b", "c", "a", "b", "c"));
-		e.add(MiscHelper.createTuple("a", "b", "b", "c", "b", "b"));
-		e.add(MiscHelper.createTuple("a", "b", "b", "c", "b", "a"));
-		e.add(MiscHelper.createTuple("a", "b", "b", "a", "b", "c"));
+		e.add(MiscHelper.createTuple("a", "b", "b", "h", "a", "a", "b"));
+		e.add(MiscHelper.createTuple("a", "b", "i", "h", "a", "a", "b"));
+		e.add(MiscHelper.createTuple("a", "b", "d", "h", "a", "a", "b"));
+		e.add(MiscHelper.createTuple("x", "x", "x", "x", "x", "x", "x"));
 		
-		e.add(MiscHelper.createTuple("f", "g", "h", "c", "b", "b"));
-		e.add(MiscHelper.createTuple("f", "g", "h", "c", "b", "a"));
-		e.add(MiscHelper.createTuple("f", "g", "h", "a", "b", "c"));
-		e.add(MiscHelper.createTuple("h", "g", "f", "c", "b", "b"));
-		e.add(MiscHelper.createTuple("h", "g", "f", "c", "b", "a"));
-		e.add(MiscHelper.createTuple("h", "g", "f", "a", "b", "c"));
-		e.add(MiscHelper.createTuple("h", "g", "a", "c", "b", "b"));
-		e.add(MiscHelper.createTuple("h", "g", "a", "c", "b", "a"));
-		e.add(MiscHelper.createTuple("h", "g", "a", "a", "b", "c"));
-		// -1, -1, -1 means join all with all
-		runJoin(new int[] { -1, -1, -1 }, e);
+		runJoin(new int[] { 1, 3, -1, -1}, e);
 	}
 	
-	public void testJoin_111() {
+	/**
+	 * JoinSimpleExtended:
+	 * 0th column of relation1 with 0th column of relation0 and
+	 * 1st column of relation1 with 1st column of relation0 and
+	 * 2nd column of relation1 with 2nd column of relation0.
+	 */
+	public void testJoin_012m1() {
 		final List<ITuple> e = new ArrayList<ITuple>();
-		runJoin(new int[] { 1, 1, 1 }, e);
+		e.add(MiscHelper.createTuple("x", "x", "x", "x", "x", "x", "x"));
+		
+		runJoin(new int[] { 0, 1, 2, -1}, e);
+	}
+	
+	/**
+	 * JoinSimpleExtended:
+	 * 1st column of relation1 with 0th column of relation0 and
+	 * 1st column of relation1 with 1st column of relation0 and
+	 * 1st column of relation1 with 2nd column of relation0.
+	 */
+	public void testJoin_p1p1p1m1() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(MiscHelper.createTuple("x", "x", "x", "x", "x", "x", "x"));
+		e.add(MiscHelper.createTuple("e", "e", "e", "x", "e", "x", "x"));
+		
+		runJoin(new int[] { 1, 1, 1, -1}, e);
+	}
+	
+	/**
+	 * join on:
+	 * 1st column of relation1 with 1st column of relation0 and
+	 * 2nd column of relation1 with 2nd column of relation0.
+	 * project on:
+	 * 7th and 2nd and 1st column (in this order) 
+	 */
+	public void testJoinWithProjection_m1p1p2m1() {
+		final List<ITuple> e = new ArrayList<ITuple>();
+		e.add(MiscHelper.createTuple("x", "b", "a"));
+		
+		runJoinWithProjection(new int[] { -1, 1, 2, -1}, new int[]{2, -1, 1, -1, -1, -1, 0}, e);
 	}
 	
 	/**
