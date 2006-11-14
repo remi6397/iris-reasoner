@@ -50,6 +50,12 @@ public class Predicate implements IPredicate, Cloneable {
 		this.arity = arity;
 	}
 
+	Predicate(final String symbol, final int arity, boolean isBuiltin) {
+		this.symbol = symbol;
+		this.builtin = isBuiltin;
+		this.arity = arity;
+	}
+
 	/**
 	 * In this implementation the change of the symbol is not supported
 	 * @throws UnsupportedOperationException because it should be immutable
