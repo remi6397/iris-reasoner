@@ -30,6 +30,8 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.basics.MinimalTuple;
 
 /**
+ * TODO: There is a bug in hendling duplicates! Correct it!
+ * 
  * Implementation of the Comparator interface meant to be 
  * used for creating an index tree. 
  * This implementation handles duplicate tuples. Duplicate tuples
@@ -100,13 +102,10 @@ public class IndexComparator extends BasicComparator{
 			 * Tuples t0 and t1 are duplicates if they have identical terms  
 			 * for each sort index.
 			 */
-			if(forEachRelevantIndex == equal && !(t0 instanceof MinimalTuple) &&
-					!(t1 instanceof MinimalTuple)){
-				if(! contains(t0, t1)){
-					ITuple tmp = t1.getDuplicate();
-					t0.setDuplicate(tmp);
-					t1.setDuplicate(t0);
-				}
+			if(! contains(t0, t1)){
+				ITuple tmp = t1.getDuplicate();
+				t0.setDuplicate(tmp);
+				t1.setDuplicate(t0);
 			}
 			return 0;
 		}
