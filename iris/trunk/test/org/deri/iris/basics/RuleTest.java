@@ -26,6 +26,7 @@
 package org.deri.iris.basics;
 
 import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
@@ -37,6 +38,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTest;
+import org.deri.iris.api.basics.IBody;
+import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 
 /**
@@ -46,11 +49,14 @@ import org.deri.iris.api.basics.ILiteral;
  */
 public class RuleTest extends TestCase {
 
-	private static final Head HEAD;
+	private Head HEAD;
 
-	private static final Body BODY;
+	private Body BODY;
 
-	static {
+	/**
+	 * setup for Rule2Relation tests
+	 */
+	public void setUp() {
 		List<ILiteral> tempLiterals = new ArrayList<ILiteral>();
 
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
@@ -105,4 +111,81 @@ public class RuleTest extends TestCase {
 	public void testHashCode() {
 		ObjectTest.runTestHashCode(new Rule(HEAD, BODY), new Rule(HEAD, BODY));
 	}
+
+	/*
+	 * check safness of the rule already used in this test
+	 */
+	public void testSafenessfromGivenRule() {
+		assertTrue(BASIC.createRule(HEAD, BODY).isSafe());
+	}
+
+	/*
+	 * check safness of another rule
+	 * s(x, y) :- p(x, z), s(y, z)
+	 * 
+	 * expected result: true.
+	 */
+	
+	public void testSafenessfromOwnRule() {
+		
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
+		literals.add(literal);
+
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("Y"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+		
+		assertTrue(BASIC.createRule(head, body).isSafe());
+	}
+
+	public void testSafenessBuiltin_Greater() {
+		
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+
+		// biggerthan(X, Y) :- X > Y -> not safe
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("biggerthan", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		literal = BASIC.createLiteral(true, BUILTIN.createGreater(TERM.createVariable("X"), TERM.createVariable("Y")));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+		
+		assertTrue(!BASIC.createRule(head, body).isSafe());
+	}
+
+	public void testSafenessBuiltin_Equal() {
+		
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		// euqala(X, Y) :- X = Y, X = a -> safe 
+		
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createVariable("Y")));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue(BASIC.createRule(head, body).isSafe());	
+	}
+
+	
 }
