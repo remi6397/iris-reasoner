@@ -27,12 +27,17 @@ package org.deri.iris.basics;
 
 import static org.deri.iris.factory.Factory.GRAPH;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
 /**
@@ -52,9 +57,63 @@ public class Rule implements IRule {
 		this.body = body;
 	}
 
+	/**
+	 * checks the safeness of the datalog rule:
+	 * @see ,,logic as a datamodel'' chapter 3 page 104
+	 * 
+	 * @return true if the rule is safe
+	 */
+	
 	public boolean isSafe() {
-		// TODO Auto-generated method stub
-		return false;
+		Map<IVariable, Boolean> varsLimited = new HashMap<IVariable, Boolean>();
+
+		for (IVariable var : this.head.getHeadVariables()) {
+			varsLimited.put(var, Boolean.FALSE);
+		}
+		System.out.println(this + "\n\n" + varsLimited);
+
+		// get all literals of the body
+		List<ILiteral> tmpLiterals = new ArrayList<ILiteral>(), literals = this.body.getBodyLiterals();
+		// remove all ordinary(non-builtin) not-negated predicates and mark their variables as limited
+		Iterator it = literals.iterator();
+		while (it.hasNext()) {
+			ILiteral lit = (ILiteral) it.next();
+			System.out.println("focus: "  + lit + " is builtin: " + lit.getPredicate().isBuiltIn());
+			if (!lit.getPredicate().isBuiltIn() && lit.isPositive() && !lit.isGround())
+				for(ITerm litTerm : lit.getTuple().getTerms()) {
+					if (!litTerm.isGround()) {
+						varsLimited.put((IVariable)litTerm, Boolean.TRUE);
+					}
+				}
+			else
+				tmpLiterals.add(lit);
+		}
+
+		System.out.println("lit list meta: "  + tmpLiterals);
+						
+		// handle negated literals and builtin predicates
+		it = literals.iterator();
+		while (it.hasNext()) {
+			ILiteral lit = (ILiteral) it.next();
+			System.out.println("lit: "  + lit + " - " + lit.getPredicate().getPredicateSymbol());
+			if(lit.getPredicate().isBuiltIn()) {
+				if(lit.getPredicate().getPredicateSymbol() != "EQUAL")
+					return false;
+
+				System.out.println("in"); // todo: handle equality-builtin
+				
+			}
+		}
+
+		// todo: handle negated literals
+		
+		// final check if all variables are limited
+		for (IVariable var : varsLimited.keySet())
+		{
+			if (!varsLimited.get(var))
+				return false;
+		}
+		return true;
 	}
 
 	public boolean isRectified() {
