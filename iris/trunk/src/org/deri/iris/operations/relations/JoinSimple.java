@@ -342,21 +342,21 @@ public class JoinSimple implements IJoin{
 				break;
 			case NOT_EQUAL:
 				if(comparison != 0) return 0;
-				else return -1;
+				else return 1;
 			case LESS_THAN:
 				if(comparison < 0) return 0;
-				if(comparison > 0) return -1;
+				if(comparison >= 0) return 1;
 				break;
 			case GREATER_THAN:
 				if(comparison > 0) return 0;
-				if(comparison < 0) return -1;
+				if(comparison <= 0) return -1;
 				break;
 			case LESS_OR_EQUAL:
-				if(comparison < 0 || comparison == 0) return 0;
-				if(comparison > 0) return -1;
+				if(comparison <= 0) return 0;
+				if(comparison > 0) return 1;
 				break;
 			case GREATER_OR_EQUAL:
-				if(comparison > 0 || comparison == 0) return 0;
+				if(comparison >= 0) return 0;
 				if(comparison < 0) return -1;
 				break;
 		}
