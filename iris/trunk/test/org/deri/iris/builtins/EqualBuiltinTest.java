@@ -36,12 +36,12 @@ import junit.framework.TestSuite;
  * Tests for the equals builtin.
  * </p>
  * <p>
- * $Id: EqualBuiltinTest.java,v 1.2 2006-09-21 09:02:11 richardpoettler Exp $
+ * $Id: EqualBuiltinTest.java,v 1.3 2006-11-14 17:24:43 adi Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-09-21 09:02:11 $
+ * @version $Revision: 1.3 $
+ * @date $Date: 2006-11-14 17:24:43 $
  */
 public class EqualBuiltinTest extends TestCase {
 
@@ -58,5 +58,10 @@ public class EqualBuiltinTest extends TestCase {
 				.createInteger(2), CONCRETE.createInteger(5))).evaluate());
 		assertFalse("5 should be equal to a", (new EqualBuiltin(CONCRETE
 				.createInteger(5), TERM.createString("a"))).evaluate());
+	}
+	
+	public void test_isBuiltin() {
+		assertTrue("buitin predicates should be identifiable as builtins", (new EqualBuiltin(CONCRETE
+				.createInteger(5), CONCRETE.createInteger(5)).getPredicate().isBuiltIn()));
 	}
 }
