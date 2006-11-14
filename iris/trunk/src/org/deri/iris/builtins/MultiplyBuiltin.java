@@ -38,17 +38,17 @@ import org.deri.iris.factory.Factory;
  * Builtin to compute the difference of two terms.
  * </p>
  * <p>
- * $Id: MultiplyBuiltin.java,v 1.1 2006-09-28 11:30:50 richardpoettler Exp $
+ * $Id: MultiplyBuiltin.java,v 1.2 2006-11-14 17:21:15 adi Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-09-28 11:30:50 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-11-14 17:21:15 $
  */
 public class MultiplyBuiltin extends AbstractBuiltin {
 
 	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate(
+	private static final IPredicate PREDICATE = Factory.BASIC.createBuiltinPredicate(
 			"MULTIPLY", 3);
 
 	/**

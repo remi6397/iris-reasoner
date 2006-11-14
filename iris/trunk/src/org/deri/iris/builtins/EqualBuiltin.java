@@ -35,17 +35,17 @@ import org.deri.iris.factory.Factory;
  * Builtin to compare two terms for equality.
  * </p>
  * <p>
- * $Id: EqualBuiltin.java,v 1.2 2006-09-21 08:59:41 richardpoettler Exp $
+ * $Id: EqualBuiltin.java,v 1.3 2006-11-14 17:21:15 adi Exp $
  * </p>
  * 
  * @author richi
- * @date $Date: 2006-09-21 08:59:41 $
- * @version $Revision: 1.2 $
+ * @date $Date: 2006-11-14 17:21:15 $
+ * @version $Revision: 1.3 $
  */
 public class EqualBuiltin extends AbstractBuiltin {
 
 	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate(
+	private static final IPredicate PREDICATE = Factory.BASIC.createBuiltinPredicate(
 			"EQUAL", 2);
 
 	/**
