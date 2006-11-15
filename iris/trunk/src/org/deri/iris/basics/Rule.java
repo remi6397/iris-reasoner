@@ -65,21 +65,23 @@ public class Rule implements IRule {
 	 */
 	
 	public boolean isSafe() {
-		Map<IVariable, Boolean> varsLimited = new HashMap<IVariable, Boolean>();
 
+		// initialize variable set with all header vars marked as not limited
+		Map<IVariable, Boolean> varsLimited = new HashMap<IVariable, Boolean>();
 		for (IVariable var : this.head.getHeadVariables()) {
 			varsLimited.put(var, Boolean.FALSE);
 		}
-		System.out.println(this + "\n\n" + varsLimited);
 
 		// get all literals of the body
 		List<ILiteral> tmpLiterals = new ArrayList<ILiteral>(), literals = this.body.getBodyLiterals();
+
 		// remove all ordinary(non-builtin) not-negated predicates and mark their variables as limited
 		Iterator it = literals.iterator();
 		while (it.hasNext()) {
 			ILiteral lit = (ILiteral) it.next();
-			System.out.println("focus: "  + lit + " is builtin: " + lit.getPredicate().isBuiltIn());
-			if (!lit.getPredicate().isBuiltIn() && lit.isPositive() && !lit.isGround())
+			//if (!lit.getPredicate().isBuiltIn() && lit.isPositive() && !lit.isGround())
+			// negation of ordinary predicates does not concern us at this stage
+			if (!lit.getPredicate().isBuiltIn() &&  !lit.isGround())
 				for(ITerm litTerm : lit.getTuple().getTerms()) {
 					if (!litTerm.isGround()) {
 						varsLimited.put((IVariable)litTerm, Boolean.TRUE);
@@ -89,23 +91,49 @@ public class Rule implements IRule {
 				tmpLiterals.add(lit);
 		}
 
-		System.out.println("lit list meta: "  + tmpLiterals);
-						
-		// handle negated literals and builtin predicates
-		it = literals.iterator();
-		while (it.hasNext()) {
-			ILiteral lit = (ILiteral) it.next();
-			System.out.println("lit: "  + lit + " - " + lit.getPredicate().getPredicateSymbol());
-			if(lit.getPredicate().isBuiltIn()) {
-				if(lit.getPredicate().getPredicateSymbol() != "EQUAL")
-					return false;
+		// handle builtin predicates
+		System.out.println("lit list: "  + tmpLiterals + "\nso far: " + varsLimited + "\n");
+		boolean somethingChanged = true;
+		while(somethingChanged) {
+			somethingChanged = false;
+			it = tmpLiterals.iterator();
+			while (it.hasNext()) {
+				ILiteral lit = (ILiteral) it.next();
+				System.out.println("lit: "  + lit);
+				if(lit.getPredicate().isBuiltIn()) {
+					if(lit.getPredicate().getPredicateSymbol() != "EQUAL")
+						return false;
 
-				System.out.println("in"); // todo: handle equality-builtin
-				
+					int i = 0;
+					for(ITerm litTerm : lit.getTuple().getTerms()) {
+						ITerm otherTerm = lit.getTuple().getTerm((i+1) % 2);
+						// already in limitedVar set!?
+						if (!litTerm.isGround() && !varsLimited.containsKey(litTerm)) {
+							System.out.println("nuu var " + litTerm);
+							varsLimited.put((IVariable)litTerm, Boolean.FALSE);
+						}
+						if (!otherTerm.isGround() && !varsLimited.containsKey(otherTerm)) {
+							System.out.println("nuu var " + otherTerm);
+							varsLimited.put((IVariable)otherTerm, Boolean.FALSE);
+						}
+						
+						System.out.println("given: " + i + " " + lit + " - " + litTerm + " - " + litTerm.isGround() + " " + varsLimited.get(litTerm));
+						if ((litTerm.isGround() || varsLimited.get(litTerm)) && lit.isPositive()) {
+							System.out.println("found: " + i + " " + lit + " - " + litTerm + " -> " + otherTerm);
+							if (!otherTerm.isGround())
+								if (!varsLimited.get(otherTerm)) {
+									varsLimited.put((IVariable)otherTerm, Boolean.TRUE);
+									somethingChanged = true;
+								}
+						}
+						i++;
+					}
+					System.out.println("." + varsLimited + " ? " + somethingChanged);
+				}
 			}
 		}
 
-		// todo: handle negated literals
+		// todo: handle negated (builtin?) literals!?
 		
 		// final check if all variables are limited
 		for (IVariable var : varsLimited.keySet())
