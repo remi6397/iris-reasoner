@@ -98,7 +98,7 @@ public class RuleTest extends TestCase {
 	public static Test suite() {
 		return new TestSuite(RuleTest.class, RuleTest.class.getSimpleName());
 	}
-
+	
 	public void testEquals() {
 		ObjectTest.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
 				new Rule(null, BODY));
@@ -120,14 +120,12 @@ public class RuleTest extends TestCase {
 	}
 
 	/*
-	 * check safness of another rule
-	 * s(x, y) :- p(x, z), s(y, z)
-	 * 
-	 * expected result: true.
+	 * check safness of various rules
 	 */
 	
 	public void testSafenessfromOwnRule() {
 		
+		// s(x, y) :- p(x, z), s(y, z)
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 2));
@@ -153,9 +151,9 @@ public class RuleTest extends TestCase {
 
 	public void testSafenessBuiltin_Greater() {
 		
+		// biggerthan(X, Y) :- X > Y -> not safe
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 
-		// biggerthan(X, Y) :- X > Y -> not safe
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("biggerthan", 2));
 		literal.getTuple().setTerm(0, TERM.createVariable("X"));
 		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
@@ -172,20 +170,326 @@ public class RuleTest extends TestCase {
 
 	public void testSafenessBuiltin_Equal() {
 		
-		List<ILiteral> literals = new ArrayList<ILiteral>();
 		// euqala(X, Y) :- X = Y, X = a -> safe 
+		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
 		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createVariable("Y")));
 		literals.add(literal);
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		literals.add(literal);
 		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
 		literals.add(literal);
 		IBody body = BASIC.createBody(literals);
 
 		assertTrue(BASIC.createRule(head, body).isSafe());	
 	}
+	public void testSafenessBuiltin_Equal2() {
+		
+		// euqala(X, Y) :- X = Y, U = W, V = W, V = Y, X = a -> safe 
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
 
-	
+		literals.clear();
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("W")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("V"), TERM.createVariable("W")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("V"), TERM.createVariable("Y")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue(BASIC.createRule(head, body).isSafe());	
+	}
+	public void testSafenessBuiltin_Equal2b() {
+		
+		// euqala(X, Y) :- X = Y, U = W, b = W, X = Y, X = a -> safe 
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("W")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createString("b"), TERM.createVariable("W")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createVariable("Y")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue(BASIC.createRule(head, body).isSafe());	
+	}
+	public void testSafenessBuiltin_Equal3() {
+		
+		// euqala(X, Y) :- X = Y, U = W, V = W, X = a -> not safe 
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("W")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("V"), TERM.createVariable("W")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue(!BASIC.createRule(head, body).isSafe());	
+	}
+	public void testSafenessBuiltin_Equal3b() {
+		
+		// euqala(X, Y) :- X = Y, U = W, V = W, b = Y, X = a -> not safe 
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("W")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("V"), TERM.createVariable("W")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createString("b"), TERM.createVariable("Y")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue(!BASIC.createRule(head, body).isSafe());	
+	}
+	public void testSafenessBuiltin_containsGreater() {
+		
+		// euqala(X, Y) :- X = Y, X = a -> safe 
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("V"), TERM.createVariable("Y")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createGreater(TERM.createVariable("V"), TERM.createVariable("Y")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue(!BASIC.createRule(head, body).isSafe());	
+	}	
+	public void testSafeness_allTogether() {
+		
+		// m(X, Y, U, V) :- p(W, Z), q(X, Z), r(L, K), X = Y, U = V, W = U -> safe 
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literal.getTuple().setTerm(1, TERM.createVariable("U"));
+		literal.getTuple().setTerm(1, TERM.createVariable("V"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("W"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("q", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("L"));
+		literal.getTuple().setTerm(1, TERM.createVariable("K"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("V")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("W"), TERM.createVariable("U")));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue(BASIC.createRule(head, body).isSafe());	
+	}
+	public void testSafeness_negatedOrdinaryPredicate() {
+		
+		// m(X, Y, U, V) :- p(W, Z), q(X, Z), !r(L, K), X = Y, U = V, W = U -> safe 
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literal.getTuple().setTerm(1, TERM.createVariable("U"));
+		literal.getTuple().setTerm(1, TERM.createVariable("V"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("W"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("q", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(false, BASIC.createPredicate("r", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("L"));
+		literal.getTuple().setTerm(1, TERM.createVariable("K"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("V")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("W"), TERM.createVariable("U")));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue(BASIC.createRule(head, body).isSafe());	
+	}
+	public void testSafeness_negatedBuiltin() {
+		
+		// m(X, Y, U, V) :- p(W, Z), q(X, Z), r(L, K), X = Y, !U = V, W = U -> not safe 
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literal.getTuple().setTerm(1, TERM.createVariable("U"));
+		literal.getTuple().setTerm(1, TERM.createVariable("V"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("W"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("q", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("L"));
+		literal.getTuple().setTerm(1, TERM.createVariable("K"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(false, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("V")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("W"), TERM.createVariable("U")));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue(!BASIC.createRule(head, body).isSafe());	
+	}
+	public void testSafeness_withNegation() {
+		
+		// m(X, Y, U, V) :- p(W, Z), q(X, Z), !r(L, K), X = Y, !U = V, W = U -> not safe 
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literal.getTuple().setTerm(1, TERM.createVariable("U"));
+		literal.getTuple().setTerm(1, TERM.createVariable("V"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("W"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("q", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(false, BASIC.createPredicate("r", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("L"));
+		literal.getTuple().setTerm(1, TERM.createVariable("K"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(false, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("V")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("W"), TERM.createVariable("U")));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue(!BASIC.createRule(head, body).isSafe());	
+	}
+	public void testSafeness_withNegation_tilt() {
+		
+		// m(X, Y, U, V) :- p(W, Z), q(X, Z), !r(L, K), X = Y, !U != V, W = U -> safe 
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literal.getTuple().setTerm(1, TERM.createVariable("U"));
+		literal.getTuple().setTerm(1, TERM.createVariable("V"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("W"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("q", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(false, BASIC.createPredicate("r", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("L"));
+		literal.getTuple().setTerm(1, TERM.createVariable("K"));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(false, BUILTIN.createUnequal(TERM.createVariable("U"), TERM.createVariable("V")));
+		literals.add(literal);
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("W"), TERM.createVariable("U")));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue(BASIC.createRule(head, body).isSafe());	
+	}
 }
