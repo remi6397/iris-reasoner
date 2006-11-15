@@ -49,7 +49,7 @@ import org.deri.iris.factory.*;
  *
  * @author Francisco Garcia
  *
- * @version $Revision: 1.10 $ $Date: 2006-11-09 09:11:57 $
+ * @version $Revision: 1.11 $ $Date: 2006-11-15 09:03:48 $
  */
 public class TreeWalker extends DepthFirstAdapter {
     
@@ -133,7 +133,7 @@ public class TreeWalker extends DepthFirstAdapter {
     }
     
     public void outABinaryBuiltin(final ABinaryBuiltin b) {
-    	final String op = b.getTBinOp().getText();
+    	final String op = b.getTBinOp().getText().trim();
     	final ITerm f = createTerm(b.getFirst());
     	final ITerm s = createTerm(b.getSecond());
     	if (op.equals("=")) {
@@ -157,6 +157,11 @@ public class TreeWalker extends DepthFirstAdapter {
     	throw new UnsupportedOperationException("Ternary builtins cant be created at the moment");
     }
     
+	
+	public void outABuiltinLiteral(final ABuiltinLiteral l) {
+		terms = new ArrayList<ITerm>();
+	}
+
     public ITerm createTerm(final PTerm t) {
     	if (t instanceof AVarTerm) {
     		return TERM.createVariable(t.toString().trim());
