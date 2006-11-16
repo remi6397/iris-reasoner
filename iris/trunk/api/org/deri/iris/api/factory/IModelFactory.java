@@ -18,7 +18,8 @@ public interface IModelFactory {
 	public ISelection createSelection(ITuple pattern, int[] indexes);
 	public ISelection createSelection(int[] indexes);
 	public IJoin createJoin(int[] indexes, JoinCondition condition);
-	public INaturalJoin createNaturalJoin();
+	public IJoin createJoin(int[] i, JoinCondition c, int[] pi);
+	public IJoin createJoin(IJoin j, int[] pi);
 	public IDifference createDifference();
 	public IUnion createUnion();
 	public IRule createRule(String relationName, int relationArity);
