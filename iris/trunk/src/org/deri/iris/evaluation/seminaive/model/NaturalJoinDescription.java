@@ -58,6 +58,19 @@ public class NaturalJoinDescription  extends Composite implements INaturalJoin{
 			addVariable(((Variable)v).getName());				
 	}
 	
+	/*public boolean addComponent(Component c)
+	{
+		ITree t = (ITree)c;
+		if (variables.size() == 0)
+			addVariables(t.getVariables());
+		else {
+			List<String> vl = t.getVariables();
+			for (String v: vl)
+				if (!variables.contains(v))
+					addVariable(v);
+		}
+		return super.addComponent(t);
+	}*/
 	public boolean addComponent(Component c)
 	{
 		ITree t = (ITree)c;
@@ -71,7 +84,7 @@ public class NaturalJoinDescription  extends Composite implements INaturalJoin{
 		}
 		return super.addComponent(t);
 	}
-
+	
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("NATURAL_JOIN");

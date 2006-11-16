@@ -68,9 +68,15 @@ public class ModelFactory implements IModelFactory {
 	public IJoin createJoin(int[] indexes, JoinCondition condition) {
 		return new JoinDescription(indexes, condition);
 	}
-	public INaturalJoin createNaturalJoin() {
-		return new NaturalJoinDescription();
+	public IJoin createJoin(int[] i, JoinCondition c, int[] pi) {
+		return new JoinDescription(i, c, pi);
 	}
+	public IJoin createJoin(IJoin j, int[] pi) {
+		JoinDescription jd = (JoinDescription)j;
+		jd.setProjectIndexes(pi);
+		return jd;
+	}
+	
 	public IDifference createDifference() {
 		return new DifferenceDescription();
 	}
@@ -90,6 +96,4 @@ public class ModelFactory implements IModelFactory {
 	public ITree createTree(String relationName) {
 		return new Tree(relationName);
 	}
-
-	
 }
