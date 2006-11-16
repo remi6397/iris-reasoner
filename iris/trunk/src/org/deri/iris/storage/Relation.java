@@ -39,7 +39,6 @@ import org.deri.iris.api.operations.tuple.IComparator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.operations.tuple.BasicComparator;
 
-
 /**
  * This is a simple Relation implementation based on a TreeSet, so no dublicates
  * are allowed.<br/><br/><b>This implementaion is thread-save.</b>
@@ -68,8 +67,8 @@ public class Relation implements IRelation {
 	private final Lock WRITE = LOCK.writeLock();
 
 	/**
-	 * @param arity
-	 * 				- arity of tuples to be stored in the relation.
+	 * @param arity -
+	 *            arity of tuples to be stored in the relation.
 	 */
 	public Relation(int arity) {
 		WRITE.lock();
@@ -80,9 +79,8 @@ public class Relation implements IRelation {
 	}
 
 	/**
-	 * @param comp
-	 * 					 -	Comparator that defines tuple ordering 
-	 * 						in the relation.
+	 * @param comp -
+	 *            Comparator that defines tuple ordering in the relation.
 	 */
 	public Relation(IComparator comp) {
 		WRITE.lock();
@@ -91,7 +89,7 @@ public class Relation implements IRelation {
 		this.arity = comp.getArity();
 		WRITE.unlock();
 	}
-	
+
 	public boolean add(ITuple o) {
 		WRITE.lock();
 		try {
@@ -229,7 +227,7 @@ public class Relation implements IRelation {
 			READ.unlock();
 		}
 	}
-	
+
 	/**
 	 * @param fromElement -
 	 *            low endpoint (inclusive) of the subSet.
@@ -282,5 +280,14 @@ public class Relation implements IRelation {
 
 	public int getArity() {
 		return this.arity;
+	}
+
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			assert false : "Object is always cloneable";
+		}
+		return null;
 	}
 }
