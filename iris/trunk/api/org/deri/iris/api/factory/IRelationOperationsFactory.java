@@ -25,6 +25,8 @@
  */
 package org.deri.iris.api.factory;
 
+import java.util.List;
+
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IDifference;
 import org.deri.iris.api.operations.relation.IIntersection;
@@ -136,6 +138,12 @@ public interface IRelationOperationsFactory {
 			IRelation arg1, int[] indexes, JoinCondition condition,
 			int[] projectIndexes);
 	
+	// TODO: Join Operator needs to handles the functionality of 
+	//       this operator too, thus this operator should be removed 
+	//       in the future
+	public IJoin createJoinNewSimpleOperator(IRelation arg0, 
+			IRelation arg1, int[] indexes, JoinCondition condition);
+	
 	public IProjection createProjectionOperator(IRelation relation, int[] pattern);
 	
 	/**
@@ -156,7 +164,7 @@ public interface IRelationOperationsFactory {
 	 * those tuples from relation r, which have equal terms at the 0th and 1st 
 	 * position and equal terms at the 3rd and 4th position.
 	 * 
-	 * @param Relation relation to be selected
+	 * @param Relation which selection will be performed on
 	 * @param Indexes Indexes that define the selection condition 
 	 * @return Relataion containing selected elements
 	 */
@@ -164,19 +172,26 @@ public interface IRelationOperationsFactory {
 	
 	/**
 	 * Create a selection operator that does selection with the following rule:
-	 * For provided pattern p = createTuple("d", "a", null, null, null, null) 
+	 * For provided pattern eq = createTuple("d", "a", null, null, null, null) 
 	 * and indexes i = int[]{-1, -1, 1, 1, 2, 2}, 
 	 * the operator will select those tuples from relation r, 
 	 * which have term "d" at the 0th position and term "a" at the 1st position,
 	 * as well as equal terms at the 3th and 4th position and equal terms at 
 	 * the 4th and 5th position.
+	 * Providing a pattern neq = createTuple("d", "a", null, null, null, null), 
+	 * the operator will select those tuples from relation r, 
+	 * which does not have term "d" at the 0th position and term "a" at the 1st position,
 	 * 
-	 * @param Relation relation to be selected
-	 * @param Pattern Pattern that defines the selection condition 
-	 * @param Indexes Indexes that define the selection condition 
-	 * @return Relataion containing selected elements
+	 * @param r		Relation which selection will be performed on
+	 * @param eq	Pattern that defines the selection equality condition 
+	 * @param neq	Pattern that defines the selection unequality condition 
+	 * @param inds	Indexes Indexes that define the selection variables condition 
+	 * @return		Relataion containing selected elements
 	 */
-	public ISelection createSelectionOperator(IRelation relation, ITuple pattern, int[] indexes);
+	public ISelection createSelectionOperator(IRelation r, ITuple eq, ITuple neq, int[] inds);
+	public ISelection createSelectionOperator(IRelation r, ITuple eq, int[] inds);
+	
 	
 	public IUnion createUnionOperator(final IRelation... args);
+	public IUnion createUnionOperator(final List<IRelation> arg);
 }
