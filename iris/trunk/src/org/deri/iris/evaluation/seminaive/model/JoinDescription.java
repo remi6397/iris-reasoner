@@ -29,7 +29,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.deri.iris.api.evaluation.seminaive.model.Component;
 import org.deri.iris.api.evaluation.seminaive.model.IJoin;
+import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.operations.relations.JoinCondition;
 import org.deri.iris.terms.Variable;
@@ -37,72 +39,97 @@ import org.deri.iris.terms.Variable;
 /**
  * 
  * @author Paco Garcia, University of Murcia 
+ * @author Darko Anicic, DERI Innsbruck
+ * 
  * @date 01-sep-2006
  *
  */
 public class JoinDescription extends Composite implements IJoin{
 
-	private int[] indexes = null;
 	private JoinCondition condition = null;
+	
+	private int[] indexes = null;
+	
+	private int[] projectIndexes = null;
+	
 	private List<String> variables = new LinkedList<String>();
 	
-	JoinDescription(int[] indexes, JoinCondition condition) {
-		if (indexes == null || condition == null) {
+	JoinDescription(int[] i, JoinCondition c) {
+		if (i == null || c == null) {
 			throw new IllegalArgumentException("All constructor " +
 				"parameters must not be specified (non null values");
 		}
-
-		this.condition = condition;
-		this.indexes = indexes;
+		this.condition = c;
+		this.indexes = i;
 	}
 
+	JoinDescription(int[] i, JoinCondition c, int[] pi) {
+		if (i == null || c == null || pi == null) {
+			throw new IllegalArgumentException("All constructor " +
+				"parameters must not be specified (non null values");
+		}
+		this.condition = c;
+		this.indexes = i;
+		this.projectIndexes = pi;
+	}
 	
 	public String getName() {
 		return "join";
 	}
 
 	public int getArity() {
-		return variables.size();
+		return this.variables.size();
 	}
 
-
 	public int[] getIndexes() {
-		return indexes;
+		return this.indexes;
+	}
+	
+	public int[] getProjectIndexes() {
+		return this.projectIndexes;
+	}
+	
+	protected void setProjectIndexes(int[] pi) {
+		this.projectIndexes = pi;
 	}
 	
 	public JoinCondition getCondition() {
-		return condition;
+		return this.condition;
 	}
 	
 	public void addVariable(String v){
 		variables.add(v);
 	}
-	public void addVariable(IVariable v)
-	{
+	public void addVariable(IVariable v){
 		addVariable(((Variable)v).getName());
 	}
 	
 	public void addVariables(List<String> lv){
-		for (String v: lv)
-			addVariable(v);		
+		this.variables.addAll(lv);	
 	}
 	
 	public List<String> getVariables(){
-		return variables;
+		return this.variables;
 	}
 	
 	public void addAllVariables(List<IVariable> lv){
 		for (IVariable v: lv)
 			addVariable(((Variable)v).getName());
-		
+	}
+	
+	public boolean addComponent(Component c){
+		ITree t = (ITree)c;
+		addVariables(t.getVariables());
+		return super.addComponent(t);
 	}
 	
 	public void addAllVariables(Set<IVariable> lv){
 		for (IVariable v: lv)
 			addVariable(((Variable)v).getName());				
 	}
+	
 	public boolean hasVariable(String v){
-		return variables.contains(v);
+		return this.variables.contains(v);
 	}
 
 	public String toString() {
@@ -115,14 +142,21 @@ public class JoinDescription extends Composite implements IJoin{
 		}
 		buffer.delete(buffer.length() - 2, buffer.length());
 		buffer.append("}");
-		buffer.append(condition);
+		buffer.append(this.condition);
 		buffer.append("[");
-		for(int i = 0; i < indexes.length; i++)
-		{
+		for(int i = 0; i < this.indexes.length; i++){
 			buffer.append(indexes[i]);
 			buffer.append(", ");
 		}
 		buffer.delete(buffer.length() - 2, buffer.length());
+		if(this.projectIndexes != null){
+			buffer.append("][");
+			for(int i = 0; i < this.projectIndexes.length; i++){
+				buffer.append(this.projectIndexes[i]);
+				buffer.append(", ");
+			}
+			buffer.delete(buffer.length() - 2, buffer.length());
+		}
 		buffer.append("]\n{(");
 		buffer.append(this.getChildren().get(0).toString());
 		buffer.append("),(");
