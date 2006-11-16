@@ -119,10 +119,6 @@ public class RelationOperationsFactory implements IRelationOperationsFactory{
 	public ISelection createSelectionOperator(IRelation relation, ITuple pattern, int[] indexes) {
 		return new Selection(relation, pattern, indexes);
 	}
-	
-	public ISelection createSelectionOperator(IRelation r, ITuple eq, ITuple neq, int[] inds) {
-		return new Selection(r, eq, neq, inds);
-	}
 
 	public IUnion createUnionOperator(IRelation... args) {
 		return new Union(args);
