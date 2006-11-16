@@ -30,14 +30,15 @@ import org.deri.iris.api.basics.ITuple;
  * @author Darko Anicic
  * @date  11.04.2006 @time  14:55:12
  *
- * @version $Revision: 1.6 $ $Date: 2006-10-23 07:20:37 $
+ * @version $Revision: 1.7 $ $Date: 2006-11-16 11:22:20 $
  */
 
-public interface IRelation extends SortedSet<ITuple>{
+public interface IRelation extends SortedSet<ITuple>, Cloneable{
 	
 	/**
-	 * @return Returns arity of tuples contained in this relation.
+	 * @return Arity of tuples contained in this relation.
 	 */
 	public int getArity();
+
 }
 
