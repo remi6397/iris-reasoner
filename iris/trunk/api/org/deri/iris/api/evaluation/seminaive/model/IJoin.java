@@ -37,5 +37,6 @@ public interface IJoin extends ITree{
 
 	public int getArity();
 	public int[] getIndexes();
+	public int[] getProjectIndexes();
 	public JoinCondition getCondition();
 }
