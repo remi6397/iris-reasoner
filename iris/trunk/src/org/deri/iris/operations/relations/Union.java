@@ -26,10 +26,8 @@
 package org.deri.iris.operations.relations;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IUnion;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.storage.Relation;
@@ -39,49 +37,66 @@ import org.deri.iris.storage.Relation;
  * @date 23.09.2006
  * 
  */
-public class Union implements IUnion{
+public class Union implements IUnion {
 
 	private List<IRelation> rels = null;
-	
+
 	private IRelation unionRel = null;
-	
-	
-	Union(IRelation... args) {
-		if (args == null) {
+
+	Union(List<IRelation> arg) {
+		if (arg == null) {
 			throw new IllegalArgumentException(
 					"Input parameter must not be null");
 		}
-		if((Arrays.asList(args)).size() == 0)
-			if (args == null) {
-				throw new IllegalArgumentException(
-						"All input parameters must not be null");
-			}
-		
 		int arity = 0;
 		int prevArity = 0;
 		int start = 0;
 		this.rels = new ArrayList<IRelation>();
-		this.unionRel = new Relation(3);
-		for(IRelation r : args){
+		for (IRelation r : arg) {
 			// Get non-empty relations from the input relation list
-			if(r != null && r.size()>0){
+			if (r != null && r.size() > 0) {
 				arity = r.getArity();
-				if(arity == prevArity || start == 0){
+				if (arity == prevArity || start == 0) {
 					this.rels.add(r);
 					start++;
-				}
-				else
+				} else
 					throw new IllegalArgumentException(
-					"Cannot do union due to different arities");
-				
+							"Cannot do union due to different arities");
+
 				prevArity = arity;
 			}
 		}
 		this.unionRel = new Relation(arity);
 	}
-	
+
+	Union(IRelation... args) {
+		if (args == null) {
+			throw new IllegalArgumentException(
+					"Input parameter must not be null");
+		}
+		int arity = 0;
+		int prevArity = 0;
+		int start = 0;
+		this.rels = new ArrayList<IRelation>();
+		for (IRelation r : args) {
+			// Get non-empty relations from the input relation list
+			if (r != null && r.size() > 0) {
+				arity = r.getArity();
+				if (arity == prevArity || start == 0) {
+					this.rels.add(r);
+					start++;
+				} else
+					throw new IllegalArgumentException(
+							"Cannot do union due to different arities");
+
+				prevArity = arity;
+			}
+		}
+		this.unionRel = new Relation(arity);
+	}
+
 	public IRelation union() {
-		for(IRelation r : this.rels){
+		for (IRelation r : this.rels) {
 			this.unionRel.addAll(r);
 		}
 		return this.unionRel;
