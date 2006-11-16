@@ -85,7 +85,7 @@ public class NonEqualityTerm implements ITerm{
 	}
 	
 	public String toString() {
-		return this.term.toString();
+		return "!" + this.term.toString();
 	}
 	
 	public ITerm getTerm() {
