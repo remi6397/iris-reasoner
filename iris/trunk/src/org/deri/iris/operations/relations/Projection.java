@@ -40,66 +40,59 @@ import org.deri.iris.operations.tuple.IndexComparator;
 import org.deri.iris.storage.Relation;
 
 /**
- * The implementation of IProjection interface meant to be used for 
- * doing projection on a relation (tree) as well as for the tuple 
- * reordering in a relation.
+ * The implementation of IProjection interface meant to be used for doing
+ * projection on a relation (tree) as well as for the tuple reordering in a
+ * relation.
  * 
- * The projection is defined by a pattern. The pattern is an array with 
- * its length equals to the relation’s arity. If the array contains -1 on
- * a certain position, a term with that position in a tuple (that is 
- * stored in the relation) will not be considered during the projection 
- * operation.
- * For example, if the pattern array takes the following values:
- * [2, -1, 0] 
- * than the projection will be performed on 0th and 2nd 
- * (as we have values different from -1 on 0th and 2nd index of the array)
- * arguments of each tuple in the relation. 
+ * The projection is defined by a pattern. The pattern is an array with its
+ * length equals to the relation’s arity. If the array contains -1 on a certain
+ * position, a term with that position in a tuple (that is stored in the
+ * relation) will not be considered during the projection operation. For
+ * example, if the pattern array takes the following values: [2, -1, 0] than the
+ * projection will be performed on 0th and 2nd (as we have values different from
+ * -1 on 0th and 2nd index of the array) arguments of each tuple in the
+ * relation.
  * 
- * The result will be a relation where each tuple has arity two.
- * Each tuple in the relation is created so that:
- * 	
- * 	term with index 0 will be replaced at the position 2;
- * 	term with index 1 will be ignored (due to -1 index vale);
- * 	term with index 2 will be replaced at the position 0;
+ * The result will be a relation where each tuple has arity two. Each tuple in
+ * the relation is created so that:
  * 
- * For instance for a tuple:
- * <a, b, c>
- * and projection indexes:
- * <2, -1, 0>
- * we would get a tuple:
- * <c, null, a>.
- * As we do not need null values (supposed to be ignored), we will finally get:
- * <c, a>.
+ * term with index 0 will be replaced at the position 2; term with index 1 will
+ * be ignored (due to -1 index vale); term with index 2 will be replaced at the
+ * position 0;
  * 
- * Note: The implementation of IJoin (Join and JoinSimpleExtended) using projectIndexes 
- * can handle projection operation too! Use this option in cases where 
- * the join operation is needed following with the projection operation 
+ * For instance for a tuple: <a, b, c> and projection indexes: <2, -1, 0> we
+ * would get a tuple: <c, null, a>. As we do not need null values (supposed to
+ * be ignored), we will finally get: <c, a>.
+ * 
+ * Note: The implementation of IJoin (Join and JoinSimpleExtended) using
+ * projectIndexes can handle projection operation too! Use this option in cases
+ * where the join operation is needed following with the projection operation
  * just after the join operation.
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @date   30.05.2006 10:44:38
+ * @date 30.05.2006 10:44:38
  */
-public class Projection implements IProjection{
+public class Projection implements IProjection {
 	private IRelation relation = null;
+
 	private int[] indexes = null;
+
 	private int arity = 0;
+
 	private IRelation projectionRelation = null;
+
 	private BasicComparator comparator = null;
-	
+
 	/**
 	 * @param relation
 	 * @param pattern
-	 * 					define indexes which the projection operation
-	 * 					will be applied on.
+	 *            define indexes which the projection operation will be applied
+	 *            on.
 	 */
-	Projection(final IRelation relation, final int[] pattern){
+	Projection(final IRelation relation, final int[] pattern) {
 		if (relation == null || pattern == null) {
-			throw new IllegalArgumentException("All construcotr " +
-					"parameters must not be specified (non null values");
-		}
-		if (relation.size() == 0) {
-			throw new IllegalArgumentException("The projection operation " +
-					"cannot be performed on an empty relation!");
+			throw new IllegalArgumentException("All construcotr "
+					+ "parameters must not be specified (non null values");
 		}
 		this.relation = relation;
 		this.indexes = pattern;
@@ -108,65 +101,67 @@ public class Projection implements IProjection{
 	}
 
 	public IRelation project() {
+		if (this.relation.size() == 0)
+			return this.relation;
 		/**
-		 * Sort relation on those tupples defined by indexes.
-		 * This will create duplicate nodes for equivalent tuples (those
-		 * that have equal terms on project indexes). Thus the 
-		 * computation of the projectTuple method will be done only on 
-		 * non equivalent tuples. 
+		 * Sort relation on those tupples defined by indexes. This will create
+		 * duplicate nodes for equivalent tuples (those that have equal terms on
+		 * project indexes). Thus the computation of the projectTuple method
+		 * will be done only on non equivalent tuples.
 		 */
 		this.comparator = new IndexComparator(this.transformIndexes());
 		IRelation rel = new Relation(comparator);
 		rel.addAll(this.relation);
 		this.relation = rel;
-		
+
 		Iterator iterator = this.relation.iterator();
 		ITuple tuple;
-		
-		while(iterator.hasNext()){
-			tuple = (ITuple)iterator.next();
+
+		while (iterator.hasNext()) {
+			tuple = (ITuple) iterator.next();
 			tuple = projectTuple(tuple);
 			projectionRelation.add(tuple);
 		}
-		
+
 		return this.projectionRelation;
 	}
-	
-	private int getRelationArity(){
-		int j=0;
-		for(int i=0; i<this.indexes.length; i++){
-			if(this.indexes[i] != -1)j++;
+
+	private int getRelationArity() {
+		int j = 0;
+		for (int i = 0; i < this.indexes.length; i++) {
+			if (this.indexes[i] != -1)
+				j++;
 		}
 		return j;
 	}
-	
-	/**
-	 * Transforms indexes according to the following examples:
-		[ 0, -1, -1] to [ 0, -1, -1]
-		[-1,  0, -1] to [-1,  1, -1]
-		[-1, -1,  0] to [-1, -1,  2]
-		[ 1, -1,  0] to [ 0, -1,  2]
 
+	/**
+	 * Transforms indexes according to the following examples: [ 0, -1, -1] to [
+	 * 0, -1, -1] [-1, 0, -1] to [-1, 1, -1] [-1, -1, 0] to [-1, -1, 2] [ 1, -1,
+	 * 0] to [ 0, -1, 2]
+	 * 
 	 * @return transformed indexes
 	 */
-	private int[] transformIndexes(){
-		int[] tranformedIndexes = new int [indexes.length];
-		for(int i=0; i<indexes.length; i++){
-			if(indexes[i] != -1)tranformedIndexes[i]= i;
-			else tranformedIndexes[i] = -1;
+	private int[] transformIndexes() {
+		int[] tranformedIndexes = new int[indexes.length];
+		for (int i = 0; i < indexes.length; i++) {
+			if (indexes[i] != -1)
+				tranformedIndexes[i] = i;
+			else
+				tranformedIndexes[i] = -1;
 		}
 		return tranformedIndexes;
 	}
-	
-	private ITuple projectTuple(ITuple tuple){
+
+	private ITuple projectTuple(ITuple tuple) {
 		ITerm[] terms = new ITerm[tuple.getArity()];
 		List<ITerm> termList = new ArrayList<ITerm>(this.getRelationArity());
-		for(int i=0; i<indexes.length; i++){
-			if(indexes[i] != -1)
+		for (int i = 0; i < indexes.length; i++) {
+			if (indexes[i] != -1)
 				terms[indexes[i]] = tuple.getTerm(i);
-		}	
-		for(int j=0; j<indexes.length; j++){
-			if(terms[j] != null)
+		}
+		for (int j = 0; j < indexes.length; j++) {
+			if (terms[j] != null)
 				termList.add(terms[j]);
 		}
 		return BASIC.createTuple(termList);
