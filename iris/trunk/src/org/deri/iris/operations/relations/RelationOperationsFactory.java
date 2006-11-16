@@ -25,6 +25,8 @@
  */
 package org.deri.iris.operations.relations;
 
+import java.util.List;
+
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.factory.IRelationOperationsFactory;
 import org.deri.iris.api.operations.relation.IDifference;
@@ -84,10 +86,8 @@ public class RelationOperationsFactory implements IRelationOperationsFactory{
 		return new JoinSimple(arg0, arg1, indexes, condition);
 	}
 	public IJoin createJoinSimpleOperator(IRelation arg0, 
-			IRelation arg1, int[] indexes, JoinCondition condition, 
-			int[] projectIndexes) {
-		
-		return null;
+			IRelation arg1, int[] i, JoinCondition c, int[] pi) {
+		return new JoinSimple(arg0, arg1, i, c, pi);
 	}
 	public IJoin createJoinSimpleExtendedOperator(IRelation arg0, IRelation arg1, int[] indexes) {
 		return new JoinSimpleExtended(arg0, arg1, indexes);
@@ -97,6 +97,9 @@ public class RelationOperationsFactory implements IRelationOperationsFactory{
 	}
 	public IJoin createJoinSimpleExtendedOperator(IRelation arg0, IRelation arg1, int[] indexes, JoinCondition condition, int[] projectIndexes) {
 		return new JoinSimpleExtended(arg0, arg1, indexes, condition, projectIndexes);
+	}
+	public IJoin createJoinNewSimpleOperator(IRelation arg0, IRelation arg1, int[] indexes, JoinCondition condition) {
+		return new NewJoin(arg0, arg1, indexes, condition);
 	}
 	
 	public IProjection createProjectionOperator(IRelation relation, 
@@ -116,8 +119,16 @@ public class RelationOperationsFactory implements IRelationOperationsFactory{
 	public ISelection createSelectionOperator(IRelation relation, ITuple pattern, int[] indexes) {
 		return new Selection(relation, pattern, indexes);
 	}
+	
+	public ISelection createSelectionOperator(IRelation r, ITuple eq, ITuple neq, int[] inds) {
+		return new Selection(r, eq, neq, inds);
+	}
 
 	public IUnion createUnionOperator(IRelation... args) {
 		return new Union(args);
+	}
+	
+	public IUnion createUnionOperator(final List<IRelation> arg){
+		return new Union(arg);
 	}
 }
