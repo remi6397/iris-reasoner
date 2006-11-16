@@ -71,6 +71,8 @@ public interface IEDB {
 	 * @return has fact been added
 	 */
 	public boolean addFacts(final Set<IAtom> facts);
+	
+	public boolean addFacts(final IPredicate p, final IRelation r);
 
 	/** Removes a fact from the knowledge database */
 	public boolean removeFact(final IAtom fact);
