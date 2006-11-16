@@ -40,6 +40,13 @@ import org.deri.iris.terms.Variable;
  *
  */
 public class UnaryRuleDescription extends Leaf implements IRule{
+	
+	/** prefix for a unary relation */
+	private static final String UNARY_REL_PREFIX = "D_";
+
+	/** counter for an arbitrarly chosen unary relation */
+	private static int UNARY_REL_COUNTER = 0;
+	
 	private String name = createUniqueName();
 	private int arity = 1;
 	private String value;
@@ -118,7 +125,6 @@ public class UnaryRuleDescription extends Leaf implements IRule{
 	}
 	
 	private String createUniqueName(){
-		java.util.Random r = new java.util.Random();
-		return "D" + r.nextInt();
+		return UNARY_REL_PREFIX + UNARY_REL_COUNTER++;
 	}
 }
