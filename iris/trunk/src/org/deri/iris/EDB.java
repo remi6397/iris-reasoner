@@ -133,7 +133,7 @@ public class EDB implements IEDB{
 			rel = new Relation(p.getArity());
 			this.facts.put(p, rel);
 		}
-		return rel.add(a.getTuple());
+		return this.facts.get(p).add(a.getTuple());
 	}
 
 	/* (non-Javadoc)
@@ -143,13 +143,32 @@ public class EDB implements IEDB{
 	 * 		so this method is thread-save.
 	 */
 	public boolean addFacts(Set<IAtom> facts) {
-		boolean bReturn = false;
+		boolean added = false;
+		
 		for (IAtom f : facts) {
-			if (addFact(f)) {
-				bReturn = true;
+			added = added || addFact(f);
+		}
+		return added;
+	}
+	
+	public boolean addFacts(IPredicate p, IRelation r) {
+		IPredicate pr = registerPredicate(p);
+		Iterator<ITuple> it = r.iterator();
+		ITuple t = null;
+		boolean added = false, a = false;
+		
+		while(it.hasNext()){
+			t = it.next();
+			if(t.isGround()){
+				a = this.facts.get(pr).add(t);
+				added = added || a;
+			}
+			else{
+				throw new IllegalArgumentException("The input realtion " + 
+						"is not a ground relation.");
 			}
 		}
-		return bReturn;
+		return added;
 	}
 
 	/* (non-Javadoc)
@@ -445,5 +464,4 @@ public class EDB implements IEDB{
 			WRITE.unlock();
 		}
 	}
-
 }
