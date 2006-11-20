@@ -24,6 +24,7 @@
 package org.deri.iris.evaluation.magic;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -44,6 +45,7 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.evaluation.magic.ISip;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.factory.Factory;
 import org.deri.iris.graph.LabeledDirectedEdge;
 
 // FIXME: most Set<IVariable> should be Set<ITerm> and contain !isGround() terms
@@ -58,16 +60,14 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.16 2006-11-14 17:10:41 richardpoettler Exp $
+ * $Id: SIPImpl.java,v 1.17 2006-11-20 09:57:49 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.16 $
- * @date $Date: 2006-11-14 17:10:41 $
+ * @version $Revision: 1.17 $
+ * @date $Date: 2006-11-20 09:57:49 $
  */
 public final class SIPImpl implements ISip {
-	// TODO: implement hashCode and equals
-
 	/**
 	 * Comparator to compare literals according to their position in the sips.
 	 */
@@ -112,7 +112,7 @@ public final class SIPImpl implements ISip {
 			throw new IllegalArgumentException(
 					"At the moment only queries with length 1 are allowed");
 		}
-		// TODO: maybe make defendive copies
+		// TODO: maybe make defensive copies
 		rule = r;
 		query = q;
 
@@ -149,6 +149,9 @@ public final class SIPImpl implements ISip {
 				assumedKnown.add((IVariable) headT);
 			}
 		}
+		
+		// ensure that a save rule will result in a save sip
+		rule = orderLiterals(rule, assumedKnown);
 
 		// constructing the sip
 		final List<ILiteral> literalsTodo = new ArrayList<ILiteral>();
@@ -161,7 +164,7 @@ public final class SIPImpl implements ISip {
 
 			final Map<ILiteral, Set<IVariable>> toAdd = getNextByRule(l,
 					assumedKnown);
-			for (ILiteral connected : toAdd.keySet()) {
+			for (final ILiteral connected : toAdd.keySet()) {
 				assumedKnown.addAll(toAdd.get(connected));
 				updateSip(l, connected, toAdd.get(connected));
 				literalsTodo.add(connected);
@@ -632,6 +635,52 @@ public final class SIPImpl implements ISip {
 		res = res * 37 + query.hashCode();
 		res = res * 37 + sipGraph.edgeSet().hashCode();
 		return res;
+	}
+
+	/**
+	 * Orders the literals of the rule so that a save rule won't produce an
+	 * unsave sip. <b>At the moment only negative literals are handeled, but not
+	 * builtis.</b>
+	 * 
+	 * @param r
+	 *            the rule for which to sort the literals
+	 * @param known
+	 *            the variables which are known in the head
+	 * @throws NullPointerException
+	 *             if the rule is {@code null}
+	 * @throws NullPointerException
+	 *             if the known collection is or contains {@code null}
+	 */
+	static IRule orderLiterals(final IRule r,
+			final Collection<IVariable> known) {
+		// TODO: handle builtins!
+		if (r == null) {
+			throw new NullPointerException("The rule must not be null");
+		}
+		if ((known == null) || known.contains(null)) {
+			throw new NullPointerException(
+					"The known set must not be, or contain null");
+		}
+
+		final List<ILiteral> body = new ArrayList<ILiteral>(r.getBodyLiterals());
+		final Set<IVariable> bound = new HashSet<IVariable>(known);
+		for (int i = 0, max = body.size(); i < max; i++) {
+			final ILiteral l = body.get(i);
+			if (!l.isPositive()) {
+				// check whether every var appears in a former literal
+				if (!bound.containsAll(l.getTuple().getVariables())) {
+					// if a variable can't be found -> put literal at the end
+					body.add(body.size() - 1, body.remove(i));
+					i--;
+				} else { // consider the vars as already bound
+					bound.addAll(l.getTuple().getVariables());
+				}
+			} else { // consider the vars as already bound
+				bound.addAll(l.getTuple().getVariables());
+			}
+		}
+		return Factory.BASIC.createRule(Factory.BASIC.createHead(r
+				.getHeadLiterals()), Factory.BASIC.createBody(body));
 	}
 
 	/**
