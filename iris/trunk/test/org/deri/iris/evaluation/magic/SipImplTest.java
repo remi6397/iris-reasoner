@@ -25,14 +25,15 @@
  */
 package org.deri.iris.evaluation.magic;
 
+import static org.deri.iris.MiscHelper.createLiteral;
+import static org.deri.iris.MiscHelper.createVarList;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
+import static org.deri.iris.factory.Factory.BUILTIN;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import junit.framework.Test;
@@ -42,8 +43,8 @@ import junit.framework.TestSuite;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.factory.Factory;
 import org.deri.iris.graph.LabeledDirectedEdge;
 
 /**
@@ -51,12 +52,12 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * Runns various test on the sip.
  * </p>
  * <p>
- * $Id: SipImplTest.java,v 1.1 2006-10-24 10:28:48 richardpoettler Exp $
+ * $Id: SipImplTest.java,v 1.2 2006-11-20 09:57:49 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-10-24 10:28:48 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-11-20 09:57:49 $
  */
 public class SipImplTest extends TestCase {
 
@@ -66,32 +67,53 @@ public class SipImplTest extends TestCase {
 	/** The second sip to test */
 	private static SIPImpl sip1;
 
+	/** The sip with an builtin predicate */
+	private static SIPImpl sipBuiltin;
+
 	public static Test suite() {
 		return new TestSuite(SipImplTest.class, SipImplTest.class
 				.getSimpleName());
 	}
 
 	public void setUp() {
+		// sg(X, Y) :- up(X, Z1), sg(Z1, Z2), flat(Z2, Z3), sg(Z3, Z4), down(Z4,
+		// Y)
 		final IRule r = BASIC.createRule(BASIC.createHead(createLiteral("sg",
 				"X", "Y")), BASIC.createBody(createLiteral("up", "X", "Z1"),
 				createLiteral("sg", "Z1", "Z2"), createLiteral("flat", "Z2",
 						"Z3"), createLiteral("sg", "Z3", "Z4"), createLiteral(
 						"down", "Z4", "Y")));
+		// sg(john, X)
 		final IQuery q = BASIC.createQuery(BASIC.createLiteral(true, BASIC
 				.createPredicate("sg", 2), BASIC.createTuple(TERM
 				.createString("john"), TERM.createVariable("X"))));
 
 		sip = new SIPImpl(r, q);
-		
+
+		// rsg(X, Y) :- up(X, X1), rsg(Y1, X1), down(Y1, Y)
 		final IRule r1 = BASIC.createRule(BASIC.createHead(createLiteral("rsg",
 				"X", "Y")), BASIC.createBody(createLiteral("up", "X", "X1"),
 				createLiteral("rsg", "Y1", "X1"), createLiteral("down", "Y1",
 						"Y")));
+		// rsg(a, X)
 		final IQuery q1 = BASIC.createQuery(BASIC.createLiteral(true, BASIC
 				.createPredicate("rsg", 2), BASIC.createTuple(TERM
 				.createString("a"), TERM.createVariable("Y"))));
 
 		sip1 = new SIPImpl(r1, q1);
+
+		// rsg(X, Y) :- up(X, X1), rsg(Y1, X1), Y1 = Y
+		final IRule r2 = BASIC.createRule(BASIC.createHead(createLiteral("rsg",
+				"X", "Y")), BASIC.createBody(createLiteral("up", "X", "X1"),
+				createLiteral("rsg", "Y1", "X1"), BASIC.createLiteral(true,
+						BUILTIN.createEqual(TERM.createVariable("Y1"), TERM
+								.createVariable("Y")))));
+		// rsg(a, X)
+		final IQuery q2 = BASIC.createQuery(BASIC.createLiteral(true, BASIC
+				.createPredicate("rsg", 2), BASIC.createTuple(TERM
+				.createString("a"), TERM.createVariable("Y"))));
+
+		sipBuiltin = new SIPImpl(r2, q2);
 	}
 
 	/**
@@ -114,15 +136,14 @@ public class SipImplTest extends TestCase {
 				.getEdges().size());
 		assertTrue("The sip must contain all given edges", e.containsAll(sip
 				.getEdges()));
-		
-		
+
 		final Set<LabeledDirectedEdge<Set<IVariable>>> e1 = new HashSet<LabeledDirectedEdge<Set<IVariable>>>();
 		e1.add(createEdge(createLiteral("rsg", "X", "Y"), createLiteral("up",
 				"X", "X1"), createVarList("X")));
 		e1.add(createEdge(createLiteral("up", "X", "X1"), createLiteral("rsg",
 				"Y1", "X1"), createVarList("X", "X1")));
-		e1.add(createEdge(createLiteral("rsg", "Y1", "X1"), createLiteral("down",
-				"Y1", "Y"), createVarList("X", "X1", "Y1")));
+		e1.add(createEdge(createLiteral("rsg", "Y1", "X1"), createLiteral(
+				"down", "Y1", "Y"), createVarList("X", "X1", "Y1")));
 
 		assertEquals("The number of edges doesn't match", e1.size(), sip1
 				.getEdges().size());
@@ -130,61 +151,43 @@ public class SipImplTest extends TestCase {
 				.getEdges()));
 	}
 
-	/**
-	 * Creates a positive literal out of a predicate name and a set of variable
-	 * strings.
-	 * 
-	 * @param pred
-	 *            the predicate name
-	 * @param vars
-	 *            the variable names
-	 * @return the constructed literal
-	 * @throws NullPointerException
-	 *             if the predicate name or the set of variable names is
-	 *             {@code null}
-	 * @throws NullPointerException
-	 *             if the set of variable names contains {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the name of the predicate is 0 characters long
-	 */
-	private static ILiteral createLiteral(final String pred,
-			final String... vars) {
-		if ((pred == null) || (vars == null)) {
-			throw new NullPointerException(
-					"The predicate and the vars must not be null");
-		}
-		if (pred.length() <= 0) {
-			throw new IllegalArgumentException(
-					"The predicate name must be longer than 0 chars");
-		}
-		if (Arrays.asList(vars).contains(null)) {
-			throw new NullPointerException("The vars must not contain null");
-		}
+	public void testBuiltinSip() {
+		// builtins are at the moment not handeled correctly
+		final Set<LabeledDirectedEdge<Set<IVariable>>> e2 = new HashSet<LabeledDirectedEdge<Set<IVariable>>>();
+		e2.add(createEdge(createLiteral("rsg", "X", "Y"), createLiteral("up",
+				"X", "X1"), createVarList("X")));
+		e2.add(createEdge(createLiteral("up", "X", "X1"), createLiteral("rsg",
+				"Y1", "X1"), createVarList("X", "X1")));
+		e2.add(createEdge(createLiteral("rsg", "Y1", "X1"), createLiteral(
+				"down", "Y1", "Y"), createVarList("X", "X1", "Y1")));
 
-		return BASIC.createLiteral(true, BASIC.createPredicate(pred,
-				vars.length), BASIC.createTuple(new ArrayList<ITerm>(
-				createVarList(vars))));
+		assertEquals("The number of edges doesn't match", e2.size(), sipBuiltin
+				.getEdges().size());
+		assertTrue("The sip must contain all given edges", e2
+				.containsAll(sipBuiltin.getEdges()));
 	}
 
-	/**
-	 * Creates a list of IVariables out of a list of strings.
-	 * 
-	 * @param vars
-	 *            the variable names
-	 * @return the list of correspoinding variables
-	 * @throws NullPointerException
-	 *             if the vars is null, or contains null
-	 */
-	private static List<IVariable> createVarList(final String... vars) {
-		if ((vars == null) || Arrays.asList(vars).contains(null)) {
-			throw new NullPointerException(
-					"The vars must not be null and must not contain null");
-		}
-		final List<IVariable> v = new ArrayList<IVariable>(vars.length);
-		for (final String var : vars) {
-			v.add(TERM.createVariable(var));
-		}
-		return v;
+	public void testLiteralOrder() {
+		// a(X, Y) :- not b(X, Y1), c(Y1, X1), d(X1, Y)
+		// a(john, Y)
+		final ILiteral not_b = createLiteral("b", "X", "Y1");
+		not_b.setPositive(false);
+		final IRule r0 = BASIC.createRule(BASIC.createHead(createLiteral("a",
+				"X", "Y")), BASIC.createBody(not_b, createLiteral("c", "Y1",
+				"X1"), createLiteral("d", "X1", "Y")));
+		final IRule r0_ref = BASIC.createRule(BASIC.createHead(createLiteral(
+				"a", "X", "Y")), BASIC.createBody(
+				createLiteral("c", "Y1", "X1"), createLiteral("d", "X1", "Y"),
+				not_b));
+		assertEquals("The sorting order isn't correct", r0_ref, SIPImpl.orderLiterals(r0, Collections
+				.singleton(TERM.createVariable("X"))));
+		// a(X, Y) :- b(X, Y1), Y1 > X1, d(X1, Y)
+		// a(john, Y)
+		// final ILiteral eq = BASIC.createLiteral(true, BUILTIN.createGreater(
+		// TERM.createVariable("X1"), TERM.createVariable("Y1")));
+		// final IRule r1 = BASIC.createRule(BASIC.createHead(createLiteral("a",
+		// "X", "Y")), BASIC.createBody(createLiteral("b", "X", "Y1"), eq,
+		// createLiteral("d", "X1", "Y")));
 	}
 
 	/**
