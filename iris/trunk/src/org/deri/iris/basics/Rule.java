@@ -59,7 +59,7 @@ public class Rule implements IRule {
 
 	/**
 	 * checks the safeness of the datalog rule:
-	 * @see ,,logic as a datamodel'' chapter 3 page 104
+	 * @see ullman: ,,logic as a datamodel'' chapter 3 page 104
 	 * 
 	 * @return true if the rule is safe
 	 */
@@ -79,9 +79,7 @@ public class Rule implements IRule {
 		Iterator it = literals.iterator();
 		while (it.hasNext()) {
 			ILiteral lit = (ILiteral) it.next();
-			//if (!lit.getPredicate().isBuiltIn() && lit.isPositive() && !lit.isGround())
-			// negation of ordinary predicates does not concern us at this stage
-			if (!lit.getPredicate().isBuiltIn() &&  !lit.isGround())
+			if (!lit.getPredicate().isBuiltIn() && lit.isPositive() && !lit.isGround())
 				for(ITerm litTerm : lit.getTuple().getTerms()) {
 					if (!litTerm.isGround()) {
 						varsLimited.put((IVariable)litTerm, Boolean.TRUE);
@@ -98,28 +96,27 @@ public class Rule implements IRule {
 			somethingChanged = false;
 			it = tmpLiterals.iterator();
 			while (it.hasNext()) {
+				boolean negNEBuiltin = false;
+			
 				ILiteral lit = (ILiteral) it.next();
-				System.out.println("lit: "  + lit);
-				if(lit.getPredicate().isBuiltIn()) {
-					if(lit.getPredicate().getPredicateSymbol() != "EQUAL")
-						return false;
 
+				if(lit.getPredicate().isBuiltIn()) {
+					if(lit.getPredicate().getPredicateSymbol() == "UNEQUAL" && !lit.isPositive())
+						negNEBuiltin = true; // NE builtin case: !( % != %)
+
+					if(lit.getPredicate().getPredicateSymbol() != "EQUAL" && !negNEBuiltin)
+						return false;
+					
 					int i = 0;
 					for(ITerm litTerm : lit.getTuple().getTerms()) {
 						ITerm otherTerm = lit.getTuple().getTerm((i+1) % 2);
 						// already in limitedVar set!?
-						if (!litTerm.isGround() && !varsLimited.containsKey(litTerm)) {
-							System.out.println("nuu var " + litTerm);
+						if (!litTerm.isGround() && !varsLimited.containsKey(litTerm))
 							varsLimited.put((IVariable)litTerm, Boolean.FALSE);
-						}
-						if (!otherTerm.isGround() && !varsLimited.containsKey(otherTerm)) {
-							System.out.println("nuu var " + otherTerm);
+						if (!otherTerm.isGround() && !varsLimited.containsKey(otherTerm))
 							varsLimited.put((IVariable)otherTerm, Boolean.FALSE);
-						}
 						
-						System.out.println("given: " + i + " " + lit + " - " + litTerm + " - " + litTerm.isGround() + " " + varsLimited.get(litTerm));
-						if ((litTerm.isGround() || varsLimited.get(litTerm)) && lit.isPositive()) {
-							System.out.println("found: " + i + " " + lit + " - " + litTerm + " -> " + otherTerm);
+						if ((litTerm.isGround() || varsLimited.get(litTerm)) && (lit.isPositive() || negNEBuiltin)) {
 							if (!otherTerm.isGround())
 								if (!varsLimited.get(otherTerm)) {
 									varsLimited.put((IVariable)otherTerm, Boolean.TRUE);
@@ -128,12 +125,9 @@ public class Rule implements IRule {
 						}
 						i++;
 					}
-					System.out.println("." + varsLimited + " ? " + somethingChanged);
 				}
 			}
 		}
-
-		// todo: handle negated (builtin?) literals!?
 		
 		// final check if all variables are limited
 		for (IVariable var : varsLimited.keySet())
