@@ -51,12 +51,12 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.16 2006-10-23 06:53:37 richardpoettler Exp $
+ * $Id: AdornedProgram.java,v 1.17 2006-11-23 12:45:05 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.16 $
- * @date $Date: 2006-10-23 06:53:37 $
+ * @version $Revision: 1.17 $
+ * @date $Date: 2006-11-23 12:45:05 $
  */
 public class AdornedProgram implements IAdornedProgram {
 
@@ -130,24 +130,24 @@ public class AdornedProgram implements IAdornedProgram {
 
 		// iterating through all predicates in the todolist
 		while (!predicatesToProcess.isEmpty()) {
-			AdornedPredicate ap = predicatesToProcess.iterator().next();
+			final AdornedPredicate ap = predicatesToProcess.iterator().next();
 			predicatesToProcess.remove(ap);
 
-			for (IRule r : rules) {
-				ILiteral lh = r.getHeadLiteral(0);
-				IPredicate ph = lh.getPredicate();
+			for (final IRule r : rules) {
+				final ILiteral lh = r.getHeadLiteral(0);
+				final IPredicate ph = lh.getPredicate();
 
 				// if the headliteral and the adorned predicate have the
 				// same signature
 				if (ap.hasSameSignature(ph)) {
 					// creating a sip for the actual rule and the ap
-					ISip sip = new SIPImpl(r, createQueryForAP(ap, lh));
-					AdornedRule ra = new AdornedRule(r, sip);
+					final ISip sip = new SIPImpl(r, createQueryForAP(ap, lh));
+					final AdornedRule ra = new AdornedRule(r, sip);
 					ra.replaceHeadLiteral(lh, ap);
 					adornedRules.add(ra);
 
 					// iterating through all bodyliterals of the
-					for (ILiteral l : r.getBodyLiterals()) {
+					for (final ILiteral l : r.getBodyLiterals()) {
 						final AdornedPredicate newAP = processLiteral(l, ra);
 						// adding the adorned predicate to the sets
 						if ((newAP != null) && (adornedPredicates.add(newAP))) {
@@ -204,10 +204,10 @@ public class AdornedProgram implements IAdornedProgram {
 			return false;
 		}
 		AdornedProgram ap = (AdornedProgram) o;
-		// TODO: only the submitted query and rules are compared, because all
-		// other member variables should then be the same
-		return query.equals(ap.query) && (rules.size() == ap.rules.size())
-				&& rules.containsAll(ap.rules);
+		// only the submitted query and rules are compared, because all
+		// other member variables should then be the same, because the're
+		// computed out of them
+		return query.equals(ap.query) && rules.equals(ap.rules);
 	}
 
 	public Set<IAdornedRule> getAdornedRules() {
@@ -220,10 +220,6 @@ public class AdornedProgram implements IAdornedProgram {
 
 	public Set<IAdornedPredicate> getAdornedPredicates() {
 		return Collections.unmodifiableSet(adornedPredicates);
-	}
-
-	public Set<IPredicate> getDerivedPredicates() {
-		return Collections.unmodifiableSet(deriveredPredicates);
 	}
 
 	public IQuery getQuery() {
@@ -569,12 +565,10 @@ public class AdornedProgram implements IAdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.16 $
-	 * @date $Date: 2006-10-23 06:53:37 $
+	 * @version $Revision: 1.17 $
+	 * @date $Date: 2006-11-23 12:45:05 $
 	 */
 	public static class AdornedRule implements IAdornedRule {
-		// TODO: implement hashCode and equals
-
 		/** The inner rule represented by this object */
 		private IRule rule;
 
@@ -597,11 +591,10 @@ public class AdornedProgram implements IAdornedProgram {
 				throw new NullPointerException(
 						"The rule and the sip must not be null");
 			}
-			// TODO: a defensive copy should be made
 			rule = BASIC.createRule(BASIC.createHead(new ArrayList<ILiteral>(r
 					.getHeadLiterals())), BASIC
 					.createBody(new ArrayList<ILiteral>(r.getBodyLiterals())));
-			sip = s;
+			sip = s.defensifeCopy();
 		}
 
 		public ISip getSIP() {
@@ -662,6 +655,24 @@ public class AdornedProgram implements IAdornedProgram {
 
 		public String toString() {
 			return rule.toString();
+		}
+
+		public boolean equals(final Object o) {
+			if (o == this) {
+				return true;
+			}
+			if (!(o instanceof AdornedRule)) {
+				return false;
+			}
+			AdornedRule r = (AdornedRule) o;
+			return rule.equals(r.rule) && sip.equals(r.sip);
+		}
+
+		public int hashCode() {
+			int res = 17;
+			res = res * 37 + rule.hashCode();
+			res = res * 37 + sip.hashCode();
+			return res;
 		}
 
 		public boolean isBuiltIn() {
