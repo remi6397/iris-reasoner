@@ -43,12 +43,12 @@ import junit.framework.TestSuite;
 
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
- * @date $Date: 2006-11-06 10:39:57 $
- * @version $Id: SelectionDescriptionTest.java,v 1.1 2006-11-06 10:39:57 adi Exp $
+ * @date $Date: 2006-11-23 10:54:28 $
+ * @version $Id: SelectionDescriptionTest.java,v 1.2 2006-11-23 10:54:28 adi Exp $
  */
 public class SelectionDescriptionTest extends TestCase {
 
-	private SelectionDescription SelectionDescr1, SelectionDescr2;
+	private SelectionDescription SelectionDescr1, SelectionDescr1b, SelectionDescr1c, SelectionDescr2;
 	private ITuple tup;
 	private ArrayList variableList;
 	
@@ -66,13 +66,22 @@ public class SelectionDescriptionTest extends TestCase {
 				TERM.createString("x3"));
 
 		int[] index = new int[] {1, 0, 1}; 
+		int[] index2 = new int[] {1, 1, 0}; 
 		
-		SelectionDescr1 = new SelectionDescription(tup);
+		SelectionDescr1 = new SelectionDescription(tup, index);
 		SelectionDescr1.addVariable("x1");
 		SelectionDescr1.addVariable("x2");
 		SelectionDescr1.addVariable("x3");
+		SelectionDescr1b = new SelectionDescription(tup, index);
+		SelectionDescr1b.addVariable("x1");
+		SelectionDescr1b.addVariable("x2");
+		SelectionDescr1b.addVariable("x3");
+		SelectionDescr1c = new SelectionDescription(tup, index);
+		SelectionDescr1c.addVariable("x1");
+		SelectionDescr1c.addVariable("x2");
+		SelectionDescr1c.addVariable("x3");
 
-		SelectionDescr2 = new SelectionDescription(tup, index);
+		SelectionDescr2 = new SelectionDescription(tup, index2);
 
 		variableList = new ArrayList<String>();
 		variableList.add("x1");
@@ -115,6 +124,39 @@ public class SelectionDescriptionTest extends TestCase {
 		assertTrue(SelectionDescr.addComponent(tree));
 		assertEquals(SelectionDescr.getVariables(), variableList);
 	}
+	
+	/*
+	 * equality
+	 */
+	public void testEquality_reflexiv() {
+		assertTrue(SelectionDescr1.equals(SelectionDescr1));		
+	}
+	public void testEquality_symetric() {
+		assertTrue(SelectionDescr1.equals(SelectionDescr1b));
+		assertTrue(SelectionDescr1b.equals(SelectionDescr1));
+	}
+	public void testEquality_transitiv() {
+		assertTrue(SelectionDescr1b.equals(SelectionDescr1c));
+		assertTrue(SelectionDescr1.equals(SelectionDescr1c));
+	}
+	public void testEquality_consitence() {
+		assertTrue(!SelectionDescr1.equals(SelectionDescr2));
+		assertTrue(!SelectionDescr1.equals(null));
+	}
+	public void testEquality_all2gether() {
+		// ref
+		assertTrue(SelectionDescr1.equals(SelectionDescr1));
+		// sym
+		assertTrue(SelectionDescr1.equals(SelectionDescr1b));
+		assertTrue(SelectionDescr1b.equals(SelectionDescr1));
+		// trans
+		assertTrue(SelectionDescr1b.equals(SelectionDescr1c));
+		assertTrue(SelectionDescr1.equals(SelectionDescr1c));
+		// cons
+		assertTrue(!SelectionDescr1.equals(SelectionDescr2));
+		assertTrue(!SelectionDescr1.equals(null));
+	}
+
 	/**
 	 * if at least one of the parameters are the null-value
 	 * -> should raise an IllegalArgumentException

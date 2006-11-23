@@ -33,12 +33,12 @@ import junit.framework.TestSuite;
 
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
- * @date $Date: 2006-11-06 10:39:57 $
- * @version $Id: RuleDescriptionTest.java,v 1.1 2006-11-06 10:39:57 adi Exp $
+ * @date $Date: 2006-11-23 10:54:28 $
+ * @version $Id: RuleDescriptionTest.java,v 1.2 2006-11-23 10:54:28 adi Exp $
  */
 public class RuleDescriptionTest extends TestCase {
 
-	private RuleDescription RuleDescription, RuleDescription2;
+	private RuleDescription RuleDescription, RuleDescr1, RuleDescr1b, RuleDescr1c, RuleDescr2;
 	private ArrayList variableList;
 	
 	public static Test suite() {
@@ -53,11 +53,22 @@ public class RuleDescriptionTest extends TestCase {
 		RuleDescription.addVariable("x1");
 		RuleDescription.addVariable("x2");
 		RuleDescription.addVariable("x3");
+		RuleDescr1 = new RuleDescription("TestRuleDescription", 3);
+		RuleDescr1.addVariable("x1");
+		RuleDescr1.addVariable("x2");
+		RuleDescr1.addVariable("x3");
+		RuleDescr1b = new RuleDescription("TestRuleDescription", 3);
+		RuleDescr1b.addVariable("x1");
+		RuleDescr1b.addVariable("x2");
+		RuleDescr1b.addVariable("x3");
+		RuleDescr1c = new RuleDescription("TestRuleDescription", 3);
+		RuleDescr1c.addVariable("x1");
+		RuleDescr1c.addVariable("x2");
+		RuleDescr1c.addVariable("x3");
 
-		RuleDescription2 = new RuleDescription("TestRuleDescription", 3);
-		RuleDescription2.addVariable("x1");
-		RuleDescription2.addVariable("x2");
-		RuleDescription2.addVariable("x3");
+		RuleDescr2 = new RuleDescription("OtherRuleDescription", 2);
+		RuleDescr2.addVariable("x1");
+		RuleDescr2.addVariable("x2");
 
 		variableList = new ArrayList<String>();
 		variableList.add("x1");
@@ -88,9 +99,35 @@ public class RuleDescriptionTest extends TestCase {
 		assertTrue(RuleDescription.hasVariable("x2"));
 
 	}
-	public void testEquality() {
-
-		assertTrue(RuleDescription.equals(RuleDescription2));
+	/*
+	 * equality
+	 */
+	public void testEquality_reflexiv() {
+		assertTrue(RuleDescr1.equals(RuleDescr1));		
 	}
-
+	public void testEquality_symetric() {
+		assertTrue(RuleDescr1.equals(RuleDescr1b));
+		assertTrue(RuleDescr1b.equals(RuleDescr1));
+	}
+	public void testEquality_transitiv() {
+		assertTrue(RuleDescr1b.equals(RuleDescr1c));
+		assertTrue(RuleDescr1.equals(RuleDescr1c));
+	}
+	public void testEquality_consitence() {
+		assertTrue(!RuleDescr1.equals(RuleDescr2));
+		assertTrue(!RuleDescr1.equals(null));
+	}
+	public void testEquality_all2gether() {
+		// ref
+		assertTrue(RuleDescr1.equals(RuleDescr1));
+		// sym
+		assertTrue(RuleDescr1.equals(RuleDescr1b));
+		assertTrue(RuleDescr1b.equals(RuleDescr1));
+		// trans
+		assertTrue(RuleDescr1b.equals(RuleDescr1c));
+		assertTrue(RuleDescr1.equals(RuleDescr1c));
+		// cons
+		assertTrue(!RuleDescr1.equals(RuleDescr2));
+		assertTrue(!RuleDescr1.equals(null));
+	}
 }

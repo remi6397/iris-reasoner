@@ -33,12 +33,12 @@ import junit.framework.TestSuite;
 
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
- * @date $Date: 2006-11-06 09:30:10 $
- * @version $Id: DifferenceDescriptionTest.java,v 1.1 2006-11-06 09:30:10 adi Exp $
+ * @date $Date: 2006-11-23 10:54:28 $
+ * @version $Id: DifferenceDescriptionTest.java,v 1.2 2006-11-23 10:54:28 adi Exp $
  */
 public class DifferenceDescriptionTest extends TestCase {
 
-	private DifferenceDescription differenceDescr1, differenceDescr2;
+	private DifferenceDescription differenceDescr1, differenceDescr1b, differenceDescr1c, differenceDescr2;
 	private ArrayList variableList;
 	
 	public static Test suite() {
@@ -53,11 +53,18 @@ public class DifferenceDescriptionTest extends TestCase {
 		differenceDescr1.addVariable("x1");
 		differenceDescr1.addVariable("x2");
 		differenceDescr1.addVariable("x3");
+		differenceDescr1b = new DifferenceDescription();
+		differenceDescr1b.addVariable("x1");
+		differenceDescr1b.addVariable("x2");
+		differenceDescr1b.addVariable("x3");
+		differenceDescr1c = new DifferenceDescription();
+		differenceDescr1c.addVariable("x1");
+		differenceDescr1c.addVariable("x2");
+		differenceDescr1c.addVariable("x3");
 
 		differenceDescr2 = new DifferenceDescription();
 		differenceDescr2.addVariable("x1");
 		differenceDescr2.addVariable("x2");
-		differenceDescr2.addVariable("x3");
 
 		variableList = new ArrayList<String>();
 		variableList.add("x1");
@@ -85,9 +92,37 @@ public class DifferenceDescriptionTest extends TestCase {
 
 		assertTrue(differenceDescr1.hasVariable("x2"));
 	}
-/*	public void testEquality() {
 
-		assertTrue(differenceDescr1.equals(differenceDescr2));
+	/*
+	 * equality
+	 */
+	public void testEquality_reflexiv() {
+		assertTrue(differenceDescr1.equals(differenceDescr1));		
 	}
-*/
+	public void testEquality_symetric() {
+		assertTrue(differenceDescr1.equals(differenceDescr1b));
+		assertTrue(differenceDescr1b.equals(differenceDescr1));
+	}
+	public void testEquality_transitiv() {
+		assertTrue(differenceDescr1b.equals(differenceDescr1c));
+		assertTrue(differenceDescr1.equals(differenceDescr1c));
+	}
+	public void testEquality_consitence() {
+		assertTrue(!differenceDescr1.equals(differenceDescr2));
+		assertTrue(!differenceDescr1.equals(null));
+	}
+	public void testEquality_all2gether() {
+		// ref
+		assertTrue(differenceDescr1.equals(differenceDescr1));
+		// sym
+		assertTrue(differenceDescr1.equals(differenceDescr1b));
+		assertTrue(differenceDescr1b.equals(differenceDescr1));
+		// trans
+		assertTrue(differenceDescr1b.equals(differenceDescr1c));
+		assertTrue(differenceDescr1.equals(differenceDescr1c));
+		// cons
+		assertTrue(!differenceDescr1.equals(differenceDescr2));
+		assertTrue(!differenceDescr1.equals(null));
+	}
+
 }
