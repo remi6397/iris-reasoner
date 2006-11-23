@@ -33,12 +33,12 @@ import junit.framework.TestSuite;
 
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
- * @date $Date: 2006-11-06 09:30:10 $
- * @version $Id: ProjectionDescriptionTest.java,v 1.1 2006-11-06 09:30:10 adi Exp $
+ * @date $Date: 2006-11-23 10:54:28 $
+ * @version $Id: ProjectionDescriptionTest.java,v 1.2 2006-11-23 10:54:28 adi Exp $
  */
 public class ProjectionDescriptionTest extends TestCase {
 
-	private ProjectionDescription ProjectionDescr1, ProjectionDescr2;
+	private ProjectionDescription ProjectionDescr1,ProjectionDescr1b,ProjectionDescr1c, ProjectionDescr2;
 	private ArrayList variableList;
 	
 	public static Test suite() {
@@ -54,6 +54,14 @@ public class ProjectionDescriptionTest extends TestCase {
 		ProjectionDescr1.addVariable("x1");
 		ProjectionDescr1.addVariable("x2");
 		ProjectionDescr1.addVariable("x3");
+		ProjectionDescr1b = new ProjectionDescription(index);
+		ProjectionDescr1b.addVariable("x1");
+		ProjectionDescr1b.addVariable("x2");
+		ProjectionDescr1b.addVariable("x3");
+		ProjectionDescr1c = new ProjectionDescription(index);
+		ProjectionDescr1c.addVariable("x1");
+		ProjectionDescr1c.addVariable("x2");
+		ProjectionDescr1c.addVariable("x3");
 
 		variableList = new ArrayList<String>();
 		variableList.add("x1");
@@ -87,7 +95,7 @@ public class ProjectionDescriptionTest extends TestCase {
 			assertEquals(ProjectionDescr1.getIndexes()[i], index[i]);
 		//assertTrue(ProjectionDescr1.getIndexes().equals(index));
 	}
-	public void testaddComponent() {
+/*	public void testaddComponent() {
 		int[] index = new int[] {1, 0, 1}; 		
 		ProjectionDescription ProjectionDescr = new ProjectionDescription(index);
 		Tree tree = new Tree("head"); 
@@ -98,6 +106,41 @@ public class ProjectionDescriptionTest extends TestCase {
 		assertTrue(ProjectionDescr.addComponent(tree));
 		assertEquals(ProjectionDescr.getVariables(), variableList);
 	}
+*/
+	/*
+	 * equality
+	 */
+
+	public void testEquality_reflexiv() {
+		assertTrue(ProjectionDescr1.equals(ProjectionDescr1));		
+	}
+	public void testEquality_symetric() {
+		assertTrue(ProjectionDescr1.equals(ProjectionDescr1b));
+		assertTrue(ProjectionDescr1b.equals(ProjectionDescr1));
+	}
+	public void testEquality_transitiv() {
+		assertTrue(ProjectionDescr1b.equals(ProjectionDescr1c));
+		assertTrue(ProjectionDescr1.equals(ProjectionDescr1c));
+	}
+	public void testEquality_consitence() {
+		assertTrue(!ProjectionDescr1.equals(ProjectionDescr2));
+		assertTrue(!ProjectionDescr1.equals(null));
+	}
+	public void testEquality_all2gether() {
+		// ref
+		assertTrue(ProjectionDescr1.equals(ProjectionDescr1));
+		// sym
+		assertTrue(ProjectionDescr1.equals(ProjectionDescr1b));
+		assertTrue(ProjectionDescr1b.equals(ProjectionDescr1));
+		// trans
+		assertTrue(ProjectionDescr1b.equals(ProjectionDescr1c));
+		assertTrue(ProjectionDescr1.equals(ProjectionDescr1c));
+		// cons
+		assertTrue(!ProjectionDescr1.equals(ProjectionDescr2));
+		assertTrue(!ProjectionDescr1.equals(null));
+	}
+
+	
 	public void testDifference_paramsnull() {
 		try {
 			ProjectionDescription ProjectionDescr = new ProjectionDescription(null);

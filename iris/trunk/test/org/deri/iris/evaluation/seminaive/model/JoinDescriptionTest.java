@@ -35,12 +35,12 @@ import org.deri.iris.operations.relations.JoinCondition;
 
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
- * @date $Date: 2006-11-06 09:30:10 $
- * @version $Id: JoinDescriptionTest.java,v 1.1 2006-11-06 09:30:10 adi Exp $
+ * @date $Date: 2006-11-23 10:54:28 $
+ * @version $Id: JoinDescriptionTest.java,v 1.2 2006-11-23 10:54:28 adi Exp $
  */
 public class JoinDescriptionTest extends TestCase {
 
-	private JoinDescription JoinDescr1, JoinDescr2;
+	private JoinDescription JoinDescr1, JoinDescr1b, JoinDescr1c, JoinDescr2;
 	private ArrayList variableList;
 	
 	public static Test suite() {
@@ -56,6 +56,15 @@ public class JoinDescriptionTest extends TestCase {
 		JoinDescr1.addVariable("x1");
 		JoinDescr1.addVariable("x2");
 		JoinDescr1.addVariable("x3");
+		// 4 euqality check
+		JoinDescr1b = new JoinDescription(index, JoinCondition.EQUALS);
+		JoinDescr1b.addVariable("x1");
+		JoinDescr1b.addVariable("x2");
+		JoinDescr1b.addVariable("x3");
+		JoinDescr1c = new JoinDescription(index, JoinCondition.EQUALS);
+		JoinDescr1c.addVariable("x1");
+		JoinDescr1c.addVariable("x2");
+		JoinDescr1c.addVariable("x3");
 
 		JoinDescr2 = new JoinDescription(index, JoinCondition.GREATER_OR_EQUAL);
 		JoinDescr2.addVariable("x1");
@@ -98,11 +107,49 @@ public class JoinDescriptionTest extends TestCase {
 
 		assertTrue(JoinDescr1.hasVariable("x2"));
 	}
-/*	public void testEquality() {
+	public void testaddComponent() {
+		int[] index = new int[] {1, 0, 1}; 		
+		JoinDescription JoinDescr = new JoinDescription(index, JoinCondition.EQUALS);
+		Tree tree = new Tree("head"); 
+		tree.addVariable("x1");
+		tree.addVariable("x2");
+		tree.addVariable("x3");
 
-		assertTrue(JoinDescr1.equals(JoinDescr2));
+		assertTrue(JoinDescr.addComponent(tree));
+		assertEquals(JoinDescr.getVariables(), variableList);
 	}
-*/
+
+	/*
+	 * equality
+	 */
+	public void testEquality_reflexiv() {
+		assertTrue(JoinDescr1.equals(JoinDescr1));		
+	}
+	public void testEquality_symetric() {
+		assertTrue(JoinDescr1.equals(JoinDescr1b));
+		assertTrue(JoinDescr1b.equals(JoinDescr1));
+	}
+	public void testEquality_transitiv() {
+		assertTrue(JoinDescr1b.equals(JoinDescr1c));
+		assertTrue(JoinDescr1.equals(JoinDescr1c));
+	}
+	public void testEquality_consitence() {
+		assertTrue(!JoinDescr1.equals(JoinDescr2));
+		assertTrue(!JoinDescr1.equals(null));
+	}
+	public void testEquality_all2gether() {
+		// ref
+		assertTrue(JoinDescr1.equals(JoinDescr1));
+		// sym
+		assertTrue(JoinDescr1.equals(JoinDescr1b));
+		assertTrue(JoinDescr1b.equals(JoinDescr1));
+		// trans
+		assertTrue(JoinDescr1b.equals(JoinDescr1c));
+		assertTrue(JoinDescr1.equals(JoinDescr1c));
+		// cons
+		assertTrue(!JoinDescr1.equals(JoinDescr2));
+		assertTrue(!JoinDescr1.equals(null));
+	}
 	
 	/**
 	 * if at least one of the parameters are the null-value
