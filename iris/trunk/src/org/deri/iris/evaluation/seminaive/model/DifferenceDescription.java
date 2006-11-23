@@ -37,7 +37,9 @@ import org.deri.iris.terms.Variable;
  * 
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
- *
+ * 
+ * @date $Date$
+ * @id $Id$
  */
 public class DifferenceDescription extends Composite implements IDifference{
 
@@ -84,6 +86,20 @@ public class DifferenceDescription extends Composite implements IDifference{
 	
 	public boolean hasVariable(String v){
 		return variables.contains(v);
+	}
+
+	public boolean equals(final Object o) {
+		if (!(o instanceof DifferenceDescription)) 
+			return false;
+		DifferenceDescription dd = (DifferenceDescription)o;
+
+		if (this.getVariables().size() != dd.getVariables().size())
+			return false;
+		for (int i = 0; i < this.getVariables().size(); i++)
+			if(!(this.getVariables().get(i)).equals(dd.getVariables().get(i)))
+				return false;
+	
+		return super.equals(dd);
 	}
 
 	public String toString() {

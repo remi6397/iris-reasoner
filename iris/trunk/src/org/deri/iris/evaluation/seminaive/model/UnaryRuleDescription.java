@@ -38,6 +38,8 @@ import org.deri.iris.terms.Variable;
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  *
+ * @date $Date$
+ * @id $Id$ 
  */
 public class UnaryRuleDescription extends Leaf implements IRule{
 	
@@ -99,12 +101,23 @@ public class UnaryRuleDescription extends Leaf implements IRule{
 		for (IVariable v: lv)
 			addVariable(((Variable)v).getName());				
 	}
-	public boolean equals(final Object o) {
-		if (!(o instanceof RuleDescription)) return false;
-		return (this.name.equalsIgnoreCase(((IRule)o).getName()) &&
-				this.arity == ((IRule)o).getArity());
-	}
 
+	public boolean equals(final Object o) {
+		if (!(o instanceof UnaryRuleDescription)) 
+			return false;
+		UnaryRuleDescription rd = (UnaryRuleDescription)o;
+
+		if (this.getValue() != rd.getValue())
+			return false;
+		if (this.getVariables().size() != rd.getVariables().size())
+			return false;
+		for (int i = 0; i < this.getVariables().size(); i++)
+			if(!(this.getVariables().get(i)).equals(rd.getVariables().get(i)))
+				return false;
+		
+		return super.equals(rd);
+	}
+	
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("UNARY_RELATION['");
