@@ -40,6 +40,8 @@ import org.deri.iris.terms.Variable;
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  *
+ * @date $Date$
+ * @id $Id$ 
  */
 public class ProjectionDescription extends Composite implements IProjection{
 
@@ -115,7 +117,6 @@ public class ProjectionDescription extends Composite implements IProjection{
 		checkIndexes();
 		return result;
 	}
-
 	
 	private void checkIndexes(){
 		if ((variables.size() > 0) && (!this.getChildren().isEmpty())) {			
@@ -130,6 +131,25 @@ public class ProjectionDescription extends Composite implements IProjection{
 					indexes[j] = k++;
 			}
 		}
+	}
+	
+	public boolean equals(final Object o) {
+		if (!(o instanceof ProjectionDescription)) 
+			return false;
+		ProjectionDescription pd = (ProjectionDescription)o;
+
+		if (this.getIndexes().length != pd.getIndexes().length)
+			return false;
+		for (int i = 0; i < this.getIndexes().length; i++)
+			if(this.getIndexes()[i] != pd.getIndexes()[i])
+				return false;
+		if (this.getVariables().size() != pd.getVariables().size())
+			return false;
+		for (int i = 0; i < this.getVariables().size(); i++)
+			if(!(this.getVariables().get(i)).equals(pd.getVariables().get(i)))
+				return false;
+	
+		return super.equals(pd);
 	}
 	
 	public String toString() {

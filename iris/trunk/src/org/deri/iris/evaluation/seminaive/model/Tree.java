@@ -35,9 +35,11 @@ import java.util.Set;
 
 /**
  * Contains the head of a rule
- * @author Paco García, University of Murcia
+ * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  *
+ * @date $Date$
+ * @id $Id$ 
  */
 public class Tree extends Composite implements ITree{
 	private String name;
@@ -87,10 +89,19 @@ public class Tree extends Composite implements ITree{
 	}
 	
 	public boolean equals(final Object o) {
-		if (!(o instanceof ITree)) return false;
-		ITree t = (ITree)o;
-		return (this.name.equalsIgnoreCase(t.getName()) &&
-				this.getArity() == t.getArity());
+		if (!(o instanceof Tree)) 
+			return false;
+		Tree td = (Tree)o;
+
+		if (this.getName() != td.getName())
+			return false;
+		if (this.getVariables().size() != td.getVariables().size())
+			return false;
+		for (int i = 0; i < this.getVariables().size(); i++)
+			if(!(this.getVariables().get(i)).equals(td.getVariables().get(i)))
+				return false;
+		
+		return super.equals(td);
 	}
 	
 	public String toString() {

@@ -43,6 +43,8 @@ import org.deri.iris.terms.Variable;
  * 
  * @date 01-sep-2006
  *
+ * @date $Date$
+ * @id $Id$ 
  */
 public class JoinDescription extends Composite implements IJoin{
 
@@ -132,6 +134,31 @@ public class JoinDescription extends Composite implements IJoin{
 		return this.variables.contains(v);
 	}
 
+	public boolean equals(final Object o) {
+		if (!(o instanceof JoinDescription)) 
+			return false;
+		JoinDescription sd = (JoinDescription)o;
+
+		if (this.getArity() != sd.getArity())
+			return false;
+		if (this.getIndexes() != sd.getIndexes())
+			return false;
+		if (this.getCondition() != sd.getCondition())
+			return false;
+		if (this.getIndexes().length != sd.getIndexes().length)
+			return false;
+		for (int i = 0; i < this.getIndexes().length; i++)
+			if(this.getIndexes()[i] != sd.getIndexes()[i])
+				return false;
+		if (this.getVariables().size() != sd.getVariables().size())
+			return false;
+		for (int i = 0; i < this.getVariables().size(); i++)
+			if(!(this.getVariables().get(i)).equals(sd.getVariables().get(i)))
+				return false;
+	
+		return super.equals(sd);
+	}
+	
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("JOIN");

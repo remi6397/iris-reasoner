@@ -34,6 +34,8 @@ import org.deri.iris.api.evaluation.seminaive.model.Component;
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  *
+ * @date $Date: 2006-11-23 10:49:01 $
+ * @id $Id: Leaf.java,v 1.4 2006-11-23 10:49:01 adi Exp $ 
  */
 public abstract class Leaf implements Component{
 	
@@ -47,5 +49,9 @@ public abstract class Leaf implements Component{
 	
 	public boolean removeComponent(Component c){ 
 		return false; 
+	}
+	
+	public boolean equals(final Object o) {
+		return true;
 	}
 }

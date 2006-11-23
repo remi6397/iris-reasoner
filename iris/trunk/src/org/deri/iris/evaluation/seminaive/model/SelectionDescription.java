@@ -40,6 +40,8 @@ import org.deri.iris.terms.Variable;
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  *
+ * @date $Date$
+ * @id $Id$ 
  */
 public class SelectionDescription extends Composite implements ISelection{
 
@@ -80,6 +82,10 @@ public class SelectionDescription extends Composite implements ISelection{
 
 	public int getArity() {
 		return variables.size();
+	}
+
+	public int[] getIndexes() {
+		return indexes;
 	}
 
 	public ITuple getPattern() {
@@ -125,6 +131,29 @@ public class SelectionDescription extends Composite implements ISelection{
 		return super.addComponent(t);
 	}
 	
+	public boolean equals(final Object o) {
+		if (!(o instanceof SelectionDescription)) 
+			return false;
+		SelectionDescription sd = (SelectionDescription)o;
+
+		if (this.getArity() != sd.getArity())
+			return false;
+		if (this.getPattern() != sd.getPattern())
+			return false;
+		if (this.getIndexes().length != sd.getIndexes().length)
+			return false;
+		for (int i = 0; i < this.getIndexes().length; i++)
+			if(this.getIndexes()[i] != sd.getIndexes()[i])
+				return false;
+		if (this.getVariables().size() != sd.getVariables().size())
+			return false;
+		for (int i = 0; i < this.getVariables().size(); i++)
+			if(!(this.getVariables().get(i)).equals(sd.getVariables().get(i)))
+				return false;
+	
+		return super.equals(sd);
+	}
+
 	public String toString()
 	{
 		StringBuilder buffer = new StringBuilder();
@@ -151,7 +180,7 @@ public class SelectionDescription extends Composite implements ISelection{
 			buffer.append("]");
 		}
 		buffer.append("\n(");
-		buffer.append(this.getChildren().get(0).toString());
+		//buffer.append(this.getChildren().get(0).toString());
 		buffer.append(")");
 		return buffer.toString();
 	}

@@ -32,6 +32,8 @@ import java.util.*;
  * 
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
+ * @date $Date: 2006-11-23 10:49:01 $
+ * @id $Id: Composite.java,v 1.4 2006-11-23 10:49:01 adi Exp $
  *
  */
 public abstract class Composite implements Component{
@@ -48,5 +50,23 @@ public abstract class Composite implements Component{
 	
 	public boolean removeComponent(Component c){ 
 		return components.remove(c); 
+	}
+	
+	public boolean equals(final Object o) {
+
+		if (!(o instanceof Composite)) 
+			return false;
+		Composite co = (Composite)o;
+		
+		if (co == null)
+			return false;
+		if(components.size() != co.getChildren().size())
+			return false;
+
+		for (int i = 0; i < components.size(); i++)
+			if(!((Composite)components.get(i)).equals((Composite)co.getChildren().get(i)))
+				return false;
+		
+		return true;
 	}
 }

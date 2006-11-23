@@ -40,6 +40,8 @@ import org.deri.iris.terms.Variable;
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  *
+ * @date $Date$
+ * @id $Id$ 
  */
 public class UnionDescription extends Composite implements IUnion{
 
@@ -48,7 +50,6 @@ public class UnionDescription extends Composite implements IUnion{
 	UnionDescription() {
 	}
 
-	
 	public String getName() {
 		return "union";
 	}
@@ -76,7 +77,6 @@ public class UnionDescription extends Composite implements IUnion{
 			addVariable(v);		
 	}
 	
-	
 	public boolean hasVariable(String v){
 		return variables.contains(v);
 	}
@@ -96,6 +96,20 @@ public class UnionDescription extends Composite implements IUnion{
 		if (variables.size() == 0)
 			addVariables(t.getVariables());
 		return super.addComponent(t);
+	}
+	
+	public boolean equals(final Object o) {
+		if (!(o instanceof UnionDescription)) 
+			return false;
+		UnionDescription ud = (UnionDescription)o;
+
+		if (this.getVariables().size() != ud.getVariables().size())
+			return false;
+		for (int i = 0; i < this.getVariables().size(); i++)
+			if(!(this.getVariables().get(i)).equals(ud.getVariables().get(i)))
+				return false;
+	
+		return super.equals(ud);
 	}
 	
 	public String toString() {
