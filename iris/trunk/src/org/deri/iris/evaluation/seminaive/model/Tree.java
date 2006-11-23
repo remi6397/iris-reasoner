@@ -36,6 +36,7 @@ import java.util.Set;
 /**
  * Contains the head of a rule
  * @author Paco Garcia, University of Murcia
+ * 
  * @date $Date$
  * @version $Id$ 
  */
