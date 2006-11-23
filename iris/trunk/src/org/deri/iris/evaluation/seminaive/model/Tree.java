@@ -36,10 +36,8 @@ import java.util.Set;
 /**
  * Contains the head of a rule
  * @author Paco Garcia, University of Murcia
- * @date 01-sep-2006
- *
  * @date $Date$
- * @id $Id$ 
+ * @version $Id$ 
  */
 public class Tree extends Composite implements ITree{
 	private String name;
