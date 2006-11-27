@@ -89,7 +89,6 @@ public class Predicate implements IPredicate, Cloneable {
 		result = result * 37 + (builtin ? 0 : 1);
 		result = result * 37 + arity;
 		result = result * 37 + symbol.hashCode();
-		result = result * 37 + stratum;
 		return result;
 	}
 
