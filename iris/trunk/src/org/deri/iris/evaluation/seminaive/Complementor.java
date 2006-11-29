@@ -190,4 +190,69 @@ public class Complementor {
 		}
 		return c;
 	}
+	
+	/**
+	 * Returns the highest stratum of a set of predicates
+	 * 
+	 * @param p
+	 *            the set of predicates
+	 * @return the highest stratum
+	 * @throws NullPointerException
+	 *             if the set of predicates is {@code null}
+	 * @throws NullPointerException
+	 *             if the set contains {@code null}
+	 */
+	protected static int getMaxStratum(final Set<IPredicate> p) {
+		if (p == null) {
+			throw new NullPointerException("The predicates must not be null");
+		}
+		/*if (p.contains(null)) {
+			throw new NullPointerException(
+					"The predicates must not contain null");
+		}*/
+
+		int strat = 0;
+		for (final IPredicate pred : p) {
+			strat = Math.max(strat, pred.getStratum());
+		}
+		return strat;
+	}
+	
+	/**
+	 * Determines out of a set of predicates all predicates with a given stratum
+	 * and returns them.
+	 * 
+	 * @param p
+	 *            the set of predicates
+	 * @param s
+	 *            the stratum to look for
+	 * @return the set of predicates at the given stratum
+	 * @throws NullPointerException
+	 *             if the set of predicates is {@code null}
+	 * @throws NullPointerException
+	 *             if the set of predicates contains {@code null}
+	 * @throws IllegalArgumentException
+	 *             if the stratum is smaller than 0
+	 */
+	protected static Set<IPredicate> getPredicatesOfStratum(
+			final Set<IPredicate> p, final int s) {
+		if (p == null) {
+			throw new NullPointerException("The predicates must not be null");
+		}
+		/*if (p.contains(null)) {
+			throw new NullPointerException(
+					"The predicates must not contain null");
+		}*/
+		if (s <= 0) {
+			throw new IllegalArgumentException(s + " is not a valid stratum");
+		}
+
+		final Set<IPredicate> preds = new HashSet<IPredicate>();
+		for (final IPredicate pred : p) {
+			if (pred.getStratum() == s) {
+				preds.add(pred);
+			}
+		}
+		return preds;
+	}
 }
