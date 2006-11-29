@@ -25,70 +25,81 @@
  */
 package org.deri.iris.evaluation.seminaive.model;
 
-
-import org.deri.iris.api.evaluation.seminaive.model.*;
-import org.deri.iris.api.factory.IModelFactory;
-import org.deri.iris.api.factory.IRelationOperationsFactory;
-import org.deri.iris.operations.relations.JoinCondition;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.evaluation.seminaive.model.IDifference;
+import org.deri.iris.api.evaluation.seminaive.model.IJoin;
+import org.deri.iris.api.evaluation.seminaive.model.IProjection;
+import org.deri.iris.api.evaluation.seminaive.model.IRule;
+import org.deri.iris.api.evaluation.seminaive.model.ISelection;
+import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.api.evaluation.seminaive.model.IUnion;
+import org.deri.iris.api.factory.IModelFactory;
+import org.deri.iris.operations.relations.JoinCondition;
 
 /**
  * 
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
- *
+ * 
  */
 public class ModelFactory implements IModelFactory {
 	public static final IModelFactory FACTORY = new ModelFactory();
-	
+
 	private ModelFactory() {
 		// This is a singleton
 	}
-	
+
 	public static IModelFactory getInstance() {
 		return FACTORY;
 	}
-	
+
 	public ISelection createSelection(ITuple pattern) {
 		return new SelectionDescription(pattern);
 	}
-	
+
 	public ISelection createSelection(ITuple pattern, int[] indexes) {
 		return new SelectionDescription(pattern, indexes);
 	}
-	
+
 	public ISelection createSelection(int[] indexes) {
-		return new SelectionDescription(indexes);		
+		return new SelectionDescription(indexes);
 	}
-	
+
 	public IProjection createProjection(int[] indexes) {
 		return new ProjectionDescription(indexes);
 	}
-	
+
 	public IJoin createJoin(int[] indexes, JoinCondition condition) {
 		return new JoinDescription(indexes, condition);
 	}
+
 	public IJoin createJoin(int[] i, JoinCondition c, int[] pi) {
 		return new JoinDescription(i, c, pi);
 	}
+
 	public IJoin createJoin(IJoin j, int[] pi) {
-		JoinDescription jd = (JoinDescription)j;
+		JoinDescription jd = (JoinDescription) j;
 		jd.setProjectIndexes(pi);
 		return jd;
 	}
-	
+
 	public IDifference createDifference() {
 		return new DifferenceDescription();
 	}
-	
+
 	public IUnion createUnion() {
 		return new UnionDescription();
 	}
-	
+
 	public IRule createRule(String relationName, int relationArity) {
 		return new RuleDescription(relationName, relationArity);
 	}
-	
+
+	public IRule createRule(boolean positive, String relationName,
+			int relationArity) {
+		return new RuleDescription(positive, relationName, relationArity);
+	}
+
 	public IRule createUnaryRule(String value) {
 		return new UnaryRuleDescription(value);
 	}
