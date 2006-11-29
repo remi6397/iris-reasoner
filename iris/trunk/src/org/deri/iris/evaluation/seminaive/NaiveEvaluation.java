@@ -25,77 +25,75 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
-import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.storage.Relation;
+import java.util.Map;
+
 import org.deri.iris.api.IEDB;
-import org.deri.iris.exception.DataModelException;
+import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
-
-import java.util.Map;
-import java.util.HashMap;
+import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.exception.DataModelException;
 
 /**
  * Algorithm 3.3: Evaluation of Datalog Equations
  * 
- * INPUT: A collection of datalog rules with EDB predicates r1,...rk and
- * IDB predicates p1,...,pm. A list of relations R1, ..., Rk to serve as 
- * values of the EDB predicates.
+ * INPUT: A collection of datalog rules with EDB predicates r1,...rk and IDB
+ * predicates p1,...,pm. A list of relations R1, ..., Rk to serve as values of
+ * the EDB predicates.
  * 
- * OUTPUT: The least fixed point solution to the datalog equations obtained 
- * from these rules.
+ * OUTPUT: The least fixed point solution to the datalog equations obtained from
+ * these rules.
  * 
- * for i:=1 to m do
- *    Pi := 0;
- * repeat
- *    for i:= 1 to m do
- *       Qi := Pi; // save old values of Pi's
- *    for i := 1 to m do
- *       Pi := EVAL(pi, R1, ..., Rk, Q1,..., Qm);
- * until Pi = Qi for all i, 1 <= i <= m;
- * output Pi's 
+ * for i:=1 to m do Pi := 0; repeat for i:= 1 to m do Qi := Pi; // save old
+ * values of Pi's for i := 1 to m do Pi := EVAL(pi, R1, ..., Rk, Q1,..., Qm);
+ * until Pi = Qi for all i, 1 <= i <= m; output Pi's
  * 
+ * NOTE: Rules need to be rectified, safe and stratified.
+ * 
+ * @author Darko Anicic, DERI Innsbruck
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  */
-public class NaiveEvaluation extends GeneralSeminaiveEvaluation{
+public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 
-	NaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<ITree, ITree> IDB) {
-		super(e, EDB, IDB);
+	public NaiveEvaluation(IEvaluationProcedure e, IEDB EDB,
+			Map<IPredicate, ITree> IDB, Map<IPredicate, ITree> q) {
+
+		super(e, EDB, IDB, q);
 	}
-	
-	public Map<ITree, IRelation> evaluate() throws DataModelException {
-		/*
-		 * Input: IDB --> pi = ITree; Relevants Rs for each IDB are the leaves
-		 * of the ITree
-		 */
-		Map<ITree, IRelation> P = new HashMap<ITree, IRelation>();
-		Map<ITree, IRelation> Q = new HashMap<ITree, IRelation>();
-		
-		for (ITree head: IDB.keySet())
-		{
-			int arity = head.getArity();
-			P.put(head, new Relation(arity));
-			Q.put(head, new Relation(arity));
-		}
-		
-		// 1st iteration
-		for (ITree head: IDB.keySet())
-		{
-			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-			P.put(head, method.eval(IDB.get(head), EDB, Q));
-		}
-		
-		for (; !compare(P, Q);) {
-			addRelations(P, Q);
 
-			for (ITree head: IDB.keySet())
-			{
-				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-				P.put(head, method.eval(IDB.get(head), EDB, Q));
-			}			
+	public boolean evaluate() throws DataModelException {
+
+		boolean newTupleAdded = false, cont = true;
+		IRelation r = null;
+
+		// Evaluate rules
+		for (int i = 1, maxStrat = NegatedSeminaive.getMaxStratum(this.idb
+				.keySet()); i <= maxStrat; i++) {
+
+			cont = true;
+			while (cont) {
+				// Iterating through all predicates of the stratum
+				for (final IPredicate p : NegatedSeminaive
+						.getPredicatesOfStratum(this.idb.keySet(), i)) {
+					cont = false;
+					// EVAL (pi, R1,..., Rk, Q1,..., Qm);
+					r = method.eval(this.idb.get(p), this.edb);
+					if (r != null && r.size() > 0) {
+						newTupleAdded = this.edb.addFacts(p, r);
+						cont = cont || newTupleAdded;
+					}
+				}
+			}
 		}
-		return P;
-		
+
+		// Evaluate queries
+		for (IPredicate p : this.queries.keySet()) {
+			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
+			r = method.eval(this.queries.get(p), this.edb);
+			if (r != null && r.size() > 0)
+				this.getResultSet().getResults().put(p, r);
+		}
+		return true;
 	}
 }
