@@ -63,12 +63,12 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * Tests the adornments.
  * </p>
  * <p>
- * $Id: AdornmentsTest.java,v 1.1 2006-11-23 12:46:32 richardpoettler Exp $
+ * $Id: AdornmentsTest.java,v 1.2 2006-11-29 11:34:20 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-11-23 12:46:32 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-11-29 11:34:20 $
  */
 public class AdornmentsTest extends TestCase {
 
@@ -76,7 +76,7 @@ public class AdornmentsTest extends TestCase {
 
 	private IAdornedProgram p1;
 
-	private static final Comparator<IAdornedRule> RC = new RuleComparator();
+	public static final Comparator<IRule> RC = new RuleComparator();
 
 	public static Test suite() {
 		return new TestSuite(AdornmentsTest.class, AdornmentsTest.class
@@ -109,8 +109,6 @@ public class AdornmentsTest extends TestCase {
 				.createPredicate("sg", 2), BASIC.createTuple(TERM
 				.createString("john"), TERM.createVariable("Y"))));
 		p0 = new AdornedProgram(rules, query0);
-		
-		
 
 		// constructing the rules for p1
 		rules = new HashSet<IRule>();
@@ -229,10 +227,9 @@ public class AdornmentsTest extends TestCase {
 				.hasNext();) {
 			final IAdornedRule r0 = i0.next();
 			final IAdornedRule r1 = i1.next();
-			assertEquals("The head literals don't match", r0.getHeadLiterals(),
-					r1.getHeadLiterals());
-			assertEquals("The body literals don't match", r0.getBodyLiterals(),
-					r1.getBodyLiterals());
+			assertEquals(
+					"The rules\n" + r0 + "\nand\n" + r1 + "\ndon't match.", 0,
+					RC.compare(r0, r1));
 		}
 	}
 
@@ -323,10 +320,9 @@ public class AdornmentsTest extends TestCase {
 				.hasNext();) {
 			final IAdornedRule r0 = i0.next();
 			final IAdornedRule r1 = i1.next();
-			assertEquals("The head literals don't match", r0.getHeadLiterals(),
-					r1.getHeadLiterals());
-			assertEquals("The body literals don't match", r0.getBodyLiterals(),
-					r1.getBodyLiterals());
+			assertEquals(
+					"The rules\n" + r0 + "\nand\n" + r1 + "\ndon't match.", 0,
+					RC.compare(r0, r1));
 		}
 	}
 
@@ -339,7 +335,7 @@ public class AdornmentsTest extends TestCase {
 	 * @throws NullPointerException
 	 *             if the rule is {@code null}
 	 */
-	private static IRule unadornRule(final IRule r) {
+	public static IRule unadornRule(final IRule r) {
 		if (r == null) {
 			throw new NullPointerException("The rule must not be null");
 		}
@@ -376,15 +372,15 @@ public class AdornmentsTest extends TestCase {
 	 * Compares two rules according to their predicate symbols.
 	 * </p>
 	 * <p>
-	 * $Id: AdornmentsTest.java,v 1.1 2006-11-23 12:46:32 richardpoettler Exp $
+	 * $Id: AdornmentsTest.java,v 1.2 2006-11-29 11:34:20 richardpoettler Exp $
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.1 $
-	 * @date $Date: 2006-11-23 12:46:32 $
+	 * @version $Revision: 1.2 $
+	 * @date $Date: 2006-11-29 11:34:20 $
 	 */
-	private static class RuleComparator implements Comparator<IAdornedRule> {
-		public int compare(IAdornedRule o1, IAdornedRule o2) {
+	private static class RuleComparator implements Comparator<IRule> {
+		public int compare(IRule o1, IRule o2) {
 			if ((o1 == null) || (o2 == null)) {
 				throw new NullPointerException("The rules must not be null");
 			}
@@ -429,6 +425,12 @@ public class AdornmentsTest extends TestCase {
 			}
 			// comparing the adornments
 			if ((p1 instanceof IAdornedPredicate)
+					&& !(p2 instanceof IAdornedPredicate)) {
+				return 1;
+			} else if (!(p1 instanceof IAdornedPredicate)
+					&& (p2 instanceof IAdornedPredicate)) {
+				return -1;
+			} else if ((p1 instanceof IAdornedPredicate)
 					&& (p2 instanceof IAdornedPredicate)) {
 				final Adornment[] a1 = ((IAdornedPredicate) p1).getAdornment();
 				final Adornment[] a2 = ((IAdornedPredicate) p2).getAdornment();
