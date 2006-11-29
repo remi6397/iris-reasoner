@@ -41,8 +41,8 @@ import junit.framework.TestSuite;
 
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
- * @date $Date: 2006-11-23 10:54:28 $
- * @version $Id: TreeTest.java,v 1.4 2006-11-23 10:54:28 adi Exp $
+ * @date $Date: 2006-11-29 09:58:56 $
+ * @version $Id: TreeTest.java,v 1.5 2006-11-29 09:58:56 adi Exp $
  */
 public class TreeTest extends TestCase {
 
@@ -105,7 +105,7 @@ public class TreeTest extends TestCase {
 		IRule rule2 = SEMINAIVE_MODEL.createRule("p", 2);
 		rule2.addVariable("X");
 		rule2.addVariable("Z");
-		join2.addComponent(rule);
+		join2.addComponent(rule2);
 		rule2 = SEMINAIVE_MODEL.createRule("r", 2);
 		rule2.addVariable("Y");
 		rule2.addVariable("Z");
@@ -124,7 +124,7 @@ public class TreeTest extends TestCase {
 		IRule rule3 = SEMINAIVE_MODEL.createRule("p", 2);
 		rule3.addVariable("X");
 		rule3.addVariable("Z");
-		join3.addComponent(rule);
+		join3.addComponent(rule3);
 		rule3 = SEMINAIVE_MODEL.createRule("r", 2);
 		rule3.addVariable("Y");
 		rule3.addVariable("Z");
@@ -179,10 +179,12 @@ public class TreeTest extends TestCase {
 	public void testSimpleEquality() {
 
 		assertTrue(tree.equals(tree2));
+		assertTrue(tree2.equals(tree));
 	}
 	public void test_nontrivialEquality() {
 
-		assertTrue(tree3.equals(tree4));
+		assertTrue(tree5.equals(tree4));
+		assertTrue(tree4.equals(tree5));
 	}
 	
 	/*
@@ -190,18 +192,22 @@ public class TreeTest extends TestCase {
 	 */
 	public void testEquality_reflexiv() {
 		assertTrue(tree3.equals(tree3));		
+		assertTrue(tree4.equals(tree4));		
+		assertTrue(tree5.equals(tree5));		
+		assertTrue(tree6.equals(tree6));		
 	}
 	public void testEquality_symetric() {
-		assertTrue(tree3.equals(tree4));
-		assertTrue(tree4.equals(tree3));
+		assertTrue(tree5.equals(tree4));
+		assertTrue(tree4.equals(tree5));
 	}
 	public void testEquality_transitiv() {
-		assertTrue(tree4.equals(tree5));
+		assertTrue(tree3.equals(tree4));
 		assertTrue(tree3.equals(tree5));
 	}
 	public void testEquality_consitence() {
-		assertTrue(!tree3.equals(tree6));
-		assertTrue(!tree3.equals(null));
+		assertTrue(!tree4.equals(tree6));
+		assertTrue(!tree4.equals(null));
+		assertTrue(!tree6.equals(null));
 	}
 	public void testEquality_all2gether() {
 		// ref
