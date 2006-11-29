@@ -25,104 +25,98 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
-import org.deri.iris.api.IEDB;
-import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.storage.Relation;
-import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
-import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Arrays;
 
+import org.deri.iris.api.IEDB;
+import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
+import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.api.storage.IRelation;
 
 /**
  * Algorithm 3.4: Semi-Naive Evaluation of Datalog Equations
  * 
- * INPUT: A collection of rectified datalog rules with EDB predicates r1,...rk and
- * IDB predicates p1,...,pm. Also, a list of relations R1, ..., Rk to serve as 
- * values of the EDB predicates.
+ * INPUT: A collection of rectified datalog rules with EDB predicates r1,...rk
+ * and IDB predicates p1,...,pm. Also, a list of relations R1, ..., Rk to serve
+ * as values of the EDB predicates.
  * 
- * OUTPUT: The least fixed point solution to the datalog equations obtained 
- * from these rules.
+ * OUTPUT: The least fixed point solution to the datalog equations obtained from
+ * these rules.
  * 
- * for i:=1 to m do begin
- *    APi := EVAL(pi, R1,...,Rk, 0,...,0);
- *    Pi := APi;
- * end;
- * repeat
- *    for i:= 1 to m do
- *       AQi := APi; // save old values of APi's
- *    for i := 1 to m do begin
- *       APi := EVAL-INCR(pi,R1,...,Rk,P1,...,Pm,AQ1,...,AQm);
- *       APi := APi - Pi // remove 'new' tuples that actually appeared before
- *    end;
- *    for i := 1 to m do
- *       Pi := Pi U APi; 
- * until APi = 0 for all i, 1 <= i <= m;
- * output Pi's 
+ * for i:=1 to m do begin APi := EVAL(pi, R1,...,Rk, 0,...,0); Pi := APi; end;
+ * repeat for i:= 1 to m do AQi := APi; // save old values of APi's for i := 1
+ * to m do begin APi := EVAL-INCR(pi,R1,...,Rk,P1,...,Pm,AQ1,...,AQm); APi :=
+ * APi - Pi // remove 'new' tuples that actually appeared before end; for i := 1
+ * to m do Pi := Pi U APi; until APi = 0 for all i, 1 <= i <= m; output Pi's
  * 
  * @author Paco Garcia, University of Murcia
+ * @author Darko Anicic, DERI Innsbruck
  * @date 05-sep-2006
  */
-public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation{
+public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 
-	SeminaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<ITree, ITree> IDB) {
-		super(e, EDB, IDB);
+	SeminaiveEvaluation(IEvaluationProcedure e, IEDB edb,
+			Map<IPredicate, ITree> idb, Map<IPredicate, ITree> q) {
+		super(e, edb, idb, q);
 	}
 
-	public Map<ITree, IRelation> evaluate() {
-		/*
+	public boolean evaluate() {
+		/**
 		 * Input: IDB --> pi = ITree; Relevants Rs for each IDB are the leaves
 		 * of the ITree
 		 */
-		Map<ITree, IRelation> P = new HashMap<ITree, IRelation>();
-		Map<ITree, IRelation> AP = new HashMap<ITree, IRelation>();
-		Map<ITree, IRelation> AQ = new HashMap<ITree, IRelation>();
+		boolean newTupleAdded = false, cont = true;
+		IRelation p = null;
+		Map<IPredicate, IRelation> aq = new HashMap<IPredicate, IRelation>();
 
-		for (ITree head: IDB.keySet())
-		{
-			int arity = head.getArity();
-			P.put(head, new Relation(arity));
-			AP.put(head, new Relation(arity));
-			AQ.put(head, new Relation(arity));
-		}
-		
-		/*
-		 * for i := 1 to m do begin
-		 *    APi := EVAL(pi, R1,...,Rk,0,...0);
-		 *    Pi := APi;
-		 * end;
-		 */
-		for (ITree head: IDB.keySet())
-		{
-			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-			AP.put(head, method.eval(IDB.get(head), EDB, AQ));
-		}
-		
-		copyRelations(AP, P);
-		
-		/*
-		 * repeat
-		 *    for i := 1 to m do
-		 *       AQ := APi;
-		 *    for i := 1 to m do begin
-		 *       APi := EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
-		 *       APi := APi - Pi;
-		 *    end;
-		 *    for i := 1 to m do
-		 *       Pi := Pi U APi;
-		 * until APi = 0 for all i;
-		 */		
-		for (; !isEmpty(AP);) {
-			copyRelations(AP, AQ);
-			for (ITree head: IDB.keySet())
-			{
-				// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
-				AP.put(head, method.eval_incr(IDB.get(head), EDB, P, AQ));
-				AP.get(head).removeAll(Arrays.asList(P.get(head).toArray()));
+		// Evaluate rules
+		for (int i = 1, maxStrat = Complementor
+				.getMaxStratum(this.idb.keySet()); i <= maxStrat; i++) {
+
+			cont = true;
+
+			/**
+			 * for i := 1 to m do begin APi := EVAL(pi, R1,...,Rk,0,...0); Pi :=
+			 * APi; end;
+			 */
+			for (final IPredicate pr : Complementor.getPredicatesOfStratum(
+					this.idb.keySet(), i)) {
+				// for (IPredicate pr : this.idb.keySet()) {
+				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
+				p = method.eval(this.idb.get(pr), this.edb);
+				if (p != null && p.size() > 0) {
+					aq.put(pr, p);
+				}
 			}
-			addRelations(AP, P);
+			/**
+			 * repeat for i := 1 to m do AQ := APi; for i := 1 to m do begin APi :=
+			 * EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm); APi := APi -
+			 * Pi; end; for i := 1 to m do Pi := Pi U APi; until APi = 0 for all
+			 * i;
+			 */
+			while (cont) {
+				// for (IPredicate pr : this.idb.keySet()) {
+				for (final IPredicate pr : Complementor.getPredicatesOfStratum(
+						this.idb.keySet(), i)) {
+					cont = false;
+					// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
+					p = method.eval_incr(this.idb.get(pr), this.edb, aq);
+					if (p != null && p.size() > 0) {
+						p.removeAll(this.edb.getFacts(pr));
+						newTupleAdded = this.edb.addFacts(pr, p);
+						cont = cont || newTupleAdded;
+					}
+				}
+			}
 		}
-		return P;		
+		// Evaluate queries
+		for (IPredicate pr : this.queries.keySet()) {
+			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
+			p = method.eval(this.queries.get(pr), this.edb);
+			if (p != null && p.size() > 0)
+				this.getResultSet().getResults().put(pr, p);
+		}
+		return true;
 	}
 }
