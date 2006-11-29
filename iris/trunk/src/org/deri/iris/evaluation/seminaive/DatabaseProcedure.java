@@ -28,51 +28,56 @@ package org.deri.iris.evaluation.seminaive;
 import java.util.Map;
 
 import org.deri.iris.api.IEDB;
+import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.api.storage.IRelation;
 
-
 /**
  * TODO. To implement
+ * 
  * @author Paco Garcia, University of Murcia
  * @date 08-sep-2006
  */
-public class DatabaseProcedure implements IEvaluationProcedure{
+public class DatabaseProcedure implements IEvaluationProcedure {
 
 	/**
-	 * 
-	 * @param pi Rule to evaluate
-	 * @param EDB Extensional Database tuples
-	 * @param Q Tuples already discovered
+	 * @param pi
+	 *            Rule to evaluate
+	 * @param EDB
+	 *            Extensional Database tuples
+	 * @param Q
+	 *            Tuples already discovered
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation eval(ITree pi, IEDB EDB, Map<ITree, IRelation> IDB) {
+	public IRelation eval(ITree pi, IEDB EDB) {
 		// R1,..., Rk & pi = body;
 		// Q1,...,Qm; = Q
 
-		//TODO Get the results 
-		//Pbody.addAll(evaluator.evaluate());
+		// TODO Get the results
+		// Pbody.addAll(evaluator.evaluate());
 		return null;
 	}
-	 
-	 
+
 	/**
 	 * 
-	 * @param pi Rule to evaluate
-	 * @param EDB Extensional Database tuples
-	 * @param P All the tuples discovered so far
-	 * @param AQ Tuples discovered during the last iteration
+	 * @param t
+	 *            Rule to evaluate
+	 * @param EDB
+	 *            Extensional Database tuples
+	 * @param P
+	 *            All the tuples discovered so far
+	 * @param AQ
+	 *            Tuples discovered during the last iteration
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation eval_incr(ITree pi, IEDB EDB, Map<ITree, IRelation>  P, Map<ITree, IRelation>  AQ) {
+	public IRelation eval_incr(ITree pi, IEDB EDB, Map<IPredicate, IRelation> AQ) {
+
 		// TODO Set parameters
 		// R1,..., Rk & pi = body;
-		// Q1,...,Qm; = Q		
-		//TODO Get the results 
-		//Pbody.addAll(evaluator.evaluate());
+		// Q1,...,Qm; = Q
+		// TODO Get the results
+		// Pbody.addAll(evaluator.evaluate());
 		return null;
 	}
-
-
 }
