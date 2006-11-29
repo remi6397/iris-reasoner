@@ -28,6 +28,7 @@ package org.deri.iris.api.evaluation.seminaive;
 import java.util.Map;
 
 import org.deri.iris.api.IEDB;
+import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.api.storage.IRelation;
 
@@ -35,27 +36,29 @@ import org.deri.iris.api.storage.IRelation;
  * 
  * @author Paco Garcia, University of Murcia
  * @date 08-sep-2006
- *
+ * 
  */
- public interface IEvaluationProcedure{
-	 
+public interface IEvaluationProcedure {
+
 	/**
 	 * 
-	 * @param pi Rule to evaluate
-	 * @param EDB Extensional Database tuples
-	 * @param IDB Tuples already discovered
+	 * @param pi
+	 *            Rule to evaluate
+	 * @param EDB
+	 *            Extensional Database tuples
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation eval(ITree pi, IEDB EDB, Map<ITree, IRelation> IDB);
-	 
-	 
+	public IRelation eval(ITree pi, IEDB EDB);
+
 	/**
 	 * 
-	 * @param pi Rule to evaluate
-	 * @param EDB Extensional Database tuples
-	 * @param P All the tuples discovered so far
-	 * @param AQ Tuples discovered during the last iteration
+	 * @param pi
+	 *            Rule to evaluate
+	 * @param EDB
+	 *            Extensional Database tuples
+	 * @param AQ
+	 *            Tuples discovered during the last iteration
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation eval_incr(ITree pi, IEDB EDB, Map<ITree, IRelation>  P, Map<ITree, IRelation>  AQ);
+	public IRelation eval_incr(ITree pi, IEDB EDB, Map<IPredicate, IRelation> AQ);
 }
