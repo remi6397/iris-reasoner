@@ -31,69 +31,85 @@ import java.util.Set;
 
 import org.deri.iris.api.evaluation.seminaive.model.IRule;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.evaluation.seminaive.Complementor;
 import org.deri.iris.terms.Variable;
 
 /**
  * 
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
- *
+ * 
  * @date $Date$
- * @id $Id$ 
+ * @id $Id$
  */
-public class RuleDescription extends Leaf implements IRule{
+public class RuleDescription extends Leaf implements IRule {
 	private String name;
+
 	private int arity;
+
 	private List<String> variables = new LinkedList<String>();
-	
+
+	private boolean positive = true;
+
 	RuleDescription(String name, int arity) {
 		this.name = name;
 		this.arity = arity;
 	}
-	
+
+	RuleDescription(boolean positive, String name, int arity) {
+		this.positive = positive;
+		this.name = name;
+		this.arity = arity;
+	}
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public int getArity() {
 		return arity;
 	}
-	
-	public void addVariable(String v){
+
+	public void addVariable(String v) {
 		variables.add(v);
 	}
-	public void addVariable(IVariable v)
-	{
-		addVariable(((Variable)v).getName());
+
+	public void addVariable(IVariable v) {
+		addVariable(((Variable) v).getName());
 	}
-	
-	public void addVariables(List<String> lv){
-		for (String v: lv)
-			addVariable(v);		
+
+	public void addVariables(List<String> lv) {
+		for (String v : lv)
+			addVariable(v);
 	}
-	
-	public List<String> getVariables(){
+
+	public List<String> getVariables() {
 		return variables;
 	}
-	
-	public void addAllVariables(List<IVariable> lv){
-		for (IVariable v: lv)
-			addVariable(((Variable)v).getName());
-		
+
+	public void addAllVariables(List<IVariable> lv) {
+		for (IVariable v : lv)
+			addVariable(((Variable) v).getName());
+
 	}
-	
-	public boolean hasVariable(String v){
+
+	public boolean hasVariable(String v) {
 		return variables.contains(v);
 	}
-	
-	public void addAllVariables(Set<IVariable> lv){
-		for (IVariable v: lv)
-			addVariable(((Variable)v).getName());				
+
+	public void addAllVariables(Set<IVariable> lv) {
+		for (IVariable v : lv)
+			addVariable(((Variable) v).getName());
 	}
+
+	public boolean isPositive() {
+		return positive;
+	}
+
 	public boolean equals(final Object o) {
-		if (!(o instanceof RuleDescription)) 
+		if (!(o instanceof RuleDescription))
 			return false;
-		RuleDescription rd = (RuleDescription)o;
+		RuleDescription rd = (RuleDescription) o;
 
 		if (this.getName() != rd.getName())
 			return false;
@@ -102,15 +118,17 @@ public class RuleDescription extends Leaf implements IRule{
 		if (this.getVariables().size() != rd.getVariables().size())
 			return false;
 		for (int i = 0; i < this.getVariables().size(); i++)
-			if(!(this.getVariables().get(i)).equals(rd.getVariables().get(i)))
+			if (!(this.getVariables().get(i)).equals(rd.getVariables().get(i)))
 				return false;
-		
+
 		return super.equals(rd);
 	}
-	
+
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("RELATION['");
+		if (!this.positive)
+			buffer.append(Complementor.NOT_PREFIX);
 		buffer.append(name);
 		buffer.append("', ");
 		buffer.append(arity);
