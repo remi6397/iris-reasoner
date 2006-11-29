@@ -25,189 +25,145 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.LinkedList;
+import java.util.Map;
 
-import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.api.evaluation.seminaive.model.IRule;
-import org.deri.iris.api.evaluation.seminaive.model.ITree;
-import org.deri.iris.evaluation.seminaive.model.*;
-import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
-import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.operations.relations.*;
 import org.deri.iris.api.IEDB;
+import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
+import org.deri.iris.api.evaluation.seminaive.model.Component;
+import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.api.operations.relation.IDifference;
+import org.deri.iris.api.operations.relation.IJoin;
+import org.deri.iris.api.operations.relation.IProjection;
+import org.deri.iris.api.operations.relation.ISelection;
+import org.deri.iris.api.operations.relation.IUnion;
+import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.evaluation.seminaive.model.DifferenceDescription;
+import org.deri.iris.evaluation.seminaive.model.JoinDescription;
+import org.deri.iris.evaluation.seminaive.model.ProjectionDescription;
+import org.deri.iris.evaluation.seminaive.model.RuleDescription;
+import org.deri.iris.evaluation.seminaive.model.SelectionDescription;
+import org.deri.iris.evaluation.seminaive.model.UnionDescription;
 import org.deri.iris.factory.Factory;
-
 
 /**
  * @author Paco Garcia, University of Murcia
+ * @author Darko Anicic, DERI Innsbruck
  * @date 08-sep-2006
  */
-public class InMemoryProcedure implements IEvaluationProcedure{
+public class InMemoryProcedure implements IEvaluationProcedure {
+
+	private ITree t;
+
+	private IEDB edb;
+
+	private Complementor complementor = null;
+
+	public InMemoryProcedure(ITree t, IEDB edb) {
+		this.t = t;
+		this.edb = edb;
+		this.complementor = new Complementor(this.edb);
+	}
 
 	/**
 	 * 
-	 * @param pi Rule to evaluate
-	 * @param EDB Extensional Database tuples
-	 * @param Q Tuples already discovered
+	 * @param t
+	 *            Rule to evaluate
+	 * @param edb
+	 *            Extensional Database tuples
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation eval(ITree pi, IEDB EDB, Map<ITree, IRelation> IDB) {
-		return evaluate(pi, EDB, IDB);
-	}
-	 
-	 
-	/**
-	 * 
-	 * @param pi Rule to evaluate
-	 * @param EDB Extensional Database tuples
-	 * @param P All the tuples discovered so far
-	 * @param AQ Tuples discovered during the last iteration
-	 * @return new tuples discovered for the rule evaluated
-	 */
-	public IRelation eval_incr(ITree pi, IEDB EDB, Map<ITree, IRelation>  P, Map<ITree, IRelation>  AQ) {
-		return evaluate(pi, EDB, AQ);
+	public IRelation eval(ITree t, IEDB edb) {
+		return evaluate(t, edb, null);
 	}
 
-	private IRelation evaluate(ITree node, IEDB EDB, Map<ITree, IRelation> IDB){
-		if (node instanceof DifferenceDescription){
-			DifferenceDescription d = (DifferenceDescription)node;
-			// TODO. We do not use difference operations yet
-			return null;
-		}else if (node instanceof JoinDescription){
-			JoinDescription j = (JoinDescription)node;
-			org.deri.iris.api.operations.relation.IJoin join = 
-				Factory.RELATION_OPERATION.createJoinOperator(
-						evaluate((ITree)j.getChildren().get(0), EDB, IDB), 
-						evaluate((ITree)j.getChildren().get(1), EDB, IDB),
-						j.getIndexes(), j.getCondition() );
+	/**
+	 * 
+	 * @param t
+	 *            Rule to evaluate
+	 * @param edb
+	 *            Extensional Database tuples
+	 * @param AQ
+	 *            Tuples discovered during the last iteration
+	 * @return new tuples discovered for the rule evaluated
+	 */
+	public IRelation eval_incr(ITree t, IEDB edb, Map<IPredicate, IRelation> AQ) {
+
+		return evaluate(t, edb, AQ);
+	}
+
+	private IRelation evaluate(ITree node, IEDB edb,
+			Map<IPredicate, IRelation> AQ) {
+		if (node instanceof DifferenceDescription) {
+			DifferenceDescription d = (DifferenceDescription) node;
+			IDifference diff = Factory.RELATION_OPERATION
+					.createDifferenceOperator(evaluate((ITree) d.getChildren()
+							.get(0), edb, AQ), evaluate((ITree) d.getChildren()
+							.get(1), edb, AQ));
+			return diff.difference();
+		} else if (node instanceof JoinDescription) {
+			JoinDescription j = (JoinDescription) node;
+			IJoin join = Factory.RELATION_OPERATION.createJoinSimpleOperator(
+					evaluate((ITree) j.getChildren().get(0), edb, AQ),
+					evaluate((ITree) j.getChildren().get(1), edb, AQ), j
+							.getIndexes(), j.getCondition(), j
+							.getProjectIndexes());
 			return join.join();
-		}else if (node instanceof NaturalJoinDescription){
-			NaturalJoinDescription nj = (NaturalJoinDescription)node;
-			List njChildren = nj.getChildren();
-			if (njChildren.size() == 1) { // No join needed
-				return evaluate((ITree)njChildren.get(0), EDB, IDB);
-			}
-			IRelation result;
-			// Check whether we need cartesian product (no common variables) or join operation
-			ITree child1 = (ITree)njChildren.get(0);
-			ITree child2 = (ITree)njChildren.get(1);
-			List<String> joinVariables = getJoinVariables(child1.getVariables(), child2.getVariables());
-			int[] joinIndexes = getJoinIndexes(child1.getVariables(), child2.getVariables());
+		} else if (node instanceof ProjectionDescription) {
+			ProjectionDescription p = (ProjectionDescription) node;
+			ITree t = (ITree) p.getChildren().get(0);
 
-			if (joinVariables.size() < child1.getVariables().size() + child2.getVariables().size()) {
-				// Join
-				org.deri.iris.api.operations.relation.IJoin join = 
-					Factory.RELATION_OPERATION.createJoinOperator(
-						evaluate(child1, EDB, IDB), 
-						evaluate(child2, EDB, IDB),
-						joinIndexes);
-				result = join.join();
-			} else {
-				// Cartesian product
-				result = null;
-				
-			}
-			for (int i=2; i < njChildren.size(); i++) {
-				result = doJoin(result, joinVariables, (ITree)njChildren.get(i), EDB, IDB);
-			}
-			return result;
+			// Case: projection just after join can be done in one step
+			// (using join operation together with projectIndexes).
+			if (t instanceof JoinDescription) {
+				JoinDescription j = (JoinDescription) t;
+				t = (JoinDescription) Factory.SEMINAIVE_MODEL.createJoin(j, p
+						.getIndexes());
 
-		}else if (node instanceof ProjectionDescription){
-			ProjectionDescription p = (ProjectionDescription)node;
-			org.deri.iris.api.operations.relation.IProjection projection =
-				Factory.RELATION_OPERATION.createProjectionOperator(
-						evaluate((ITree)p.getChildren().get(0), EDB, IDB),
-						p.getIndexes());
+				return evaluate(t, edb, AQ);
+			}
+			IProjection projection = Factory.RELATION_OPERATION
+					.createProjectionOperator(evaluate(t, edb, AQ), p
+							.getIndexes());
 			return projection.project();
-		}else if (node instanceof RuleDescription){
-			RuleDescription r = (RuleDescription)node;
-			// A leaf can be either an EDB predicate or an IDB predicate
-			if (IDB.containsKey(r)) {
-				// This leaf is an IDB
-				return IDB.get(r);
-			} else {
-				// This leaf is an EDB
-				for (org.deri.iris.api.basics.IPredicate p: EDB.getPredicates()) {
-					// Is the predicate in EDB refering to the same as 'r'?
-					if (p.getPredicateSymbol().equalsIgnoreCase(r.getName()) && 
-							p.getArity() == r.getArity())
-						return EDB.getFacts(p);
+		} else if (node instanceof RuleDescription) {
+			RuleDescription r = (RuleDescription) node;
+			if (r.isPositive()) {
+				IPredicate pr = Factory.BASIC.createPredicate(r.getName(), r
+						.getArity());
+
+				// Return tuples from the last iteration only
+				if (AQ != null && AQ.get(pr) != null) {
+					return AQ.get(pr);
+				} else {
+					// Return all tuples from the KB
+					return edb.getFacts(pr);
 				}
-				return null;
-			}			
-		}else if (node instanceof SelectionDescription){
-			SelectionDescription s = (SelectionDescription)node;
-			org.deri.iris.api.operations.relation.ISelection selection =
-				Factory.RELATION_OPERATION.createSelectionOperator(
-						evaluate((ITree)s.getChildren().get(0), EDB, IDB),
-						s.getPattern());
-			return selection.select();			
-		}else if (node instanceof UnionDescription){
-			UnionDescription u = (UnionDescription)node;
-			//TODO. Union
-			return null;
+			} else {
+				return this.complementor.getComplement(Factory.BASIC
+						.createPredicate(r.getName(), r.getArity()));
+			}
+		} else if (node instanceof SelectionDescription) {
+			SelectionDescription s = (SelectionDescription) node;
+			ISelection selection = Factory.RELATION_OPERATION
+					.createSelectionOperator(evaluate((ITree) s.getChildren()
+							.get(0), edb, AQ), s.getPattern(), s.getIndexes());
+			return selection.select();
+		} else if (node instanceof UnionDescription) {
+			List<Component> ul = node.getChildren();
+			List<IRelation> ulr = new ArrayList<IRelation>();
+			ITree t = null;
+
+			for (Component c : ul) {
+				if (c instanceof ITree)
+					t = (ITree) c;
+				ulr.add(evaluate(t, edb, AQ));
+			}
+			IUnion union = Factory.RELATION_OPERATION.createUnionOperator(ulr);
+			return union.union();
 		} else
 			return null;
 	}
-	
-	private IRelation doJoin(
-			IRelation child1, 
-			List<String> child1Variables, 
-			ITree child2, 
-			IEDB EDB, 
-			Map<ITree, IRelation> IDB) {
-		
-		List<String> joinVariables = getJoinVariables(child1Variables, child2.getVariables());
-		int[] joinIndexes = getJoinIndexes(child1Variables, child2.getVariables());
-		
-		if (joinVariables.size() < child1Variables.size() + child2.getVariables().size()) {
-			// Join
-			org.deri.iris.api.operations.relation.IJoin join = 
-				Factory.RELATION_OPERATION.createJoinOperator(
-					child1, 
-					evaluate(child2, EDB, IDB),
-					joinIndexes);
-
-			child1Variables = joinVariables; // New set of variables for the next join
-			return join.join();
-		} else {
-			// Cartesian product
-			return null;			
-		}
-		
-	}
-	
-	private List<String> getJoinVariables(List<String> rel1, List<String> rel2) {
-		List<String> joinVariables = new LinkedList<String>();
-		
-		for (String s: rel1) 
-			joinVariables.add(s);
-		for (String s:rel2)
-			if (!joinVariables.contains(s))
-				joinVariables.add(s);		
-		
-		return joinVariables;
-		
-	}
-	private int[] getJoinIndexes(List<String> rel1, List<String> rel2){
-		int[] indexes;
-		if (rel1.size() > rel2.size()) {
-			int arity = rel1.size();
-			indexes = new int[ arity ];
-			for (int i = 0; i < arity; i++)
-				indexes[i] = rel2.indexOf(rel1.get(i));
-		} else {
-			int arity = rel2.size();
-			indexes = new int[ arity ];
-			for (int i = 0; i < arity; i++)
-				indexes[i] = rel1.indexOf(rel2.get(i));
-		}
-		return indexes;
-		
-
-	}
-
 }
