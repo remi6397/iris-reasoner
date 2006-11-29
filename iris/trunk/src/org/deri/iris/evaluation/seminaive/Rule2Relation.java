@@ -294,8 +294,8 @@ public class Rule2Relation {
 
 		// 1. Ri
 		org.deri.iris.api.evaluation.seminaive.model.IRule leaf = ModelFactory.FACTORY
-				.createRule(l.getPredicate().getPredicateSymbol(), l
-						.getPredicate().getArity());
+				.createRule(l.isPositive(), l.getPredicate()
+						.getPredicateSymbol(), l.getPredicate().getArity());
 
 		/*
 		 * 2. SELECTION_Fi(Ri) Fi: -patternTerms- (a) If position k of Si has a
@@ -553,8 +553,9 @@ public class Rule2Relation {
 		int indexPoint = 1;
 		int negativeIndexPoint = -1;
 		List<Integer> selIndex = new ArrayList<Integer>(selectionIndex.length);
-		for (int j = 0; j < selectionIndex.length; j++)
-			selIndex.add(0);
+		/*
+		 * for (int j = 0; j < selectionIndex.length; j++) selIndex.add(0);
+		 */
 
 		for (IBuiltInAtom b : builtIns) {
 			ITerm t1 = b.getTuple().getTerm(0);
@@ -635,8 +636,10 @@ public class Rule2Relation {
 				}
 			}
 		}
-		for (int j = 0; j < selectionIndex.length; j++)
-			selectionIndex[j] = selIndex.get(j);
+		/*
+		 * for (int j = 0; j < selectionIndex.length; j++) selectionIndex[j] =
+		 * selIndex.get(j);
+		 */
 	}
 
 	private int[] getJoinIndexes(final ITree t0, final ITree t1) {
@@ -664,7 +667,6 @@ public class Rule2Relation {
 	 * @return Projection indexes
 	 */
 	private int[] getProjectionIndexes(final ITree t0, final ITree t1) {
-		int varSize = Math.max(t0.getArity(), t1.getArity());
 		int minSize = Math.min(t0.getArity(), t1.getArity());
 		int arity = t0.getArity() + t1.getArity();
 		int[] projectInds = new int[arity];
