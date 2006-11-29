@@ -68,13 +68,13 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 		IRelation r = null;
 
 		// Evaluate rules
-		for (int i = 1, maxStrat = NegatedSeminaive.getMaxStratum(this.idb
+		for (int i = 1, maxStrat = Complementor.getMaxStratum(this.idb
 				.keySet()); i <= maxStrat; i++) {
 
 			cont = true;
 			while (cont) {
 				// Iterating through all predicates of the stratum
-				for (final IPredicate p : NegatedSeminaive
+				for (final IPredicate p : Complementor
 						.getPredicatesOfStratum(this.idb.keySet(), i)) {
 					cont = false;
 					// EVAL (pi, R1,..., Rk, Q1,..., Qm);
