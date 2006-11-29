@@ -40,7 +40,7 @@ import java.util.Map;
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   27.07.2006 16:04:43
- * @version $Id: IEvaluator.java,v 1.5 2006-10-23 09:09:21 adi Exp $
+ * @version $Id: IEvaluator.java,v 1.6 2006-11-29 17:03:33 darko Exp $
  */
 public interface IEvaluator {
 	
@@ -54,7 +54,7 @@ public interface IEvaluator {
 	 * Returns true if the evaluation has terminated, otherwise false is returned.
 	 * All answers up to now are returned by "Result" or "Substitution".
 	 */
-	public Map<ITree, IRelation> evaluate() throws DataModelException;
- 
+	public boolean evaluate() throws DataModelException;
+	 
 }
  
