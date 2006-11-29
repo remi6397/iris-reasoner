@@ -25,86 +25,48 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
-import org.deri.iris.api.evaluation.IEvaluator;
-import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.api.IEDB;
-import org.deri.iris.exception.DataModelException;
-import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
-import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import static org.deri.iris.factory.Factory.EVALUATION;
 
 import java.util.Map;
-import java.util.Arrays;
-import java.util.LinkedList;
+
+import org.deri.iris.api.IEDB;
+import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.evaluation.IEvaluator;
+import org.deri.iris.api.evaluation.IResultSet;
+import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
+import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.exception.DataModelException;
 
 /**
  * 
  * @author Paco Garcia, University of Murcia
+ * @author Darko Anicic, DERI Innsbruck
  * @date 08-sep-2006
  */
-public abstract class GeneralSeminaiveEvaluation implements IEvaluator{
+public abstract class GeneralSeminaiveEvaluation implements IEvaluator {
 	protected IEvaluationProcedure method;
-	protected IEDB EDB;
-	protected Map<ITree, ITree> IDB;
-	
-	GeneralSeminaiveEvaluation(IEvaluationProcedure e, IEDB EDB, Map<ITree, ITree> IDB) {
+
+	protected IEDB edb;
+
+	protected Map<IPredicate, ITree> idb;
+
+	protected Map<IPredicate, ITree> queries;
+
+	private IResultSet results = null;
+
+	GeneralSeminaiveEvaluation(IEvaluationProcedure e, IEDB edb,
+			Map<IPredicate, ITree> idb, Map<IPredicate, ITree> q) {
+
 		this.method = e;
-		this.EDB = EDB;
-		this.IDB = IDB;
+		this.edb = edb;
+		this.idb = idb;
+		this.queries = q;
+		this.results = EVALUATION.createResultSet();
 	}
-	
-	public abstract Map<ITree, IRelation> evaluate() throws DataModelException;
-	
-	/**
-	 * 
-	 * @param P set of original relations
-	 * @param Q set of temporal backup relations
-	 * @return True if there are no new tuples in any relation in P; false otherwise
-	 */
-	protected boolean compare(Map<ITree, IRelation> P, Map<ITree, IRelation> Q){		
-		for (ITree head : P.keySet())
-		{
-			if (!Q.get(head).containsAll(Arrays.asList(P.get(head).toArray())))
-				return false;
-		}
-		return true;
-	}
-	
-	/**
-	 * @param r set of relations
-	 * @return True if all the relations are empty; false otherwise
-	 */
-	protected boolean isEmpty(Map<ITree, IRelation> r){		
-		for (ITree head: r.keySet())
-			if (!r.get(head).isEmpty())
-				return false;
-		return true;
-	}
-	
-	/**
-	 * Make a copy of the set of source relations to the target
-	 * @param source Set of source relations
-	 * @param target Set of target relations
-	 */
-	protected void copyRelations(Map<ITree, IRelation> source, Map<ITree, IRelation> target) {
-		for (ITree head: source.keySet()){
-			// 1st. Empty target
-			target.get(head).clear();
-			// 2nd. Copy all
-			target.get(head).addAll(new LinkedList( Arrays.asList(source.get(head).toArray())));
-		}
-	}
-	
-	/**
-	 * Add tuples from the source relations to the target relations
-	 * @param source Set of source relations
-	 * @param target Set of target relations
-	 */
-	protected void addRelations(Map<ITree, IRelation> source, Map<ITree, IRelation> target) {
-		for (ITree head: source.keySet())
-			target.get(head).addAll(new LinkedList(Arrays.asList(source.get(head).toArray())));
-		
-	}
-	
 
+	public abstract boolean evaluate() throws DataModelException;
 
+	public IResultSet getResultSet() {
+		return this.results;
+	}
 }
