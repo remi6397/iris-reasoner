@@ -9,6 +9,7 @@ import org.deri.iris.basics.Literal;
 import org.deri.iris.basics.BasicFactory;
 import java.util.List;
 
+// TODO: Remmove this class and its appearance from the program
 public class EqualityLiteral implements ILiteral<ILiteral>{
 	public static final String EQUALS = "=";
 	public static final String NOT_EQUALS = "!=";
