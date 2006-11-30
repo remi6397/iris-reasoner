@@ -79,6 +79,43 @@ public class SemiNaiveNegatedProgramTest{
 		    "q(?X) :- s(?X), not p(?X)." +
 		    "p(?X) :- r(?X)." +
 		    "?- q(?X).";
+  	
+  			// Test 2
+  	  		/*"p('c','a')." +
+		    "p('d','a')." +
+		    "p('d','b')." +
+		    "p('e','b')." +
+		    "p('f','c')." +
+		    
+		    "p('g','c')." +
+		    "p('h','d')." +
+		    "p('i','d')." +
+		    "p('f','e')." +
+		    "p('i','e')." +
+		    
+		    "p('j','f')." +
+		    "p('j','h')." +
+		    "p('k','g')." +
+		    "p('k','i')." +
+		    
+  		    "s(?X,?Y) :- p(?X,?Z) and p(?Y,?Z) and ?X != ?Y. " +
+	   		
+  		    "c(?X,?Y) :- p(?X,?Xp) and p(?Y,?Yp) and s(?Xp,?Yp). " + 
+	 		"c(?X,?Y) :- p(?X,?Xp) and p(?Y,?Yp) and c(?Xp,?Yp). " +
+  		    
+	 		"?- s(?X,?Y).";*/
+		    
+		    
+  		   
+  		   /* "s(?X,?Y) :- p(?X,?Z) and p(?Y,?Z) and ?X != ?Y. " +
+  		    "c(?X,?Y) :- p(?X,?Xp) and p(?Y,?Yp) and s(?Xp,?Yp). " + 
+   		"c(?X,?Y) :- p(?X,?Xp) and p(?Y,?Yp) and c(?Xp,?Yp). " +
+   		
+   		"r(?X,?Y) :- s(?X,?Y). " +
+   		"r(?X,?Y) :- r(?X,?Z) and p(?Y,?Z). " +
+   		"r(?X,?Y) :- r(?Z,?Y) and p(?X,?Z). " +
+   
+  			"?- s(?X,?Y).";*/
    	
    		pa.compileKB(program, p);
 		Set<IRule> rules = p.getRules();
@@ -127,7 +164,6 @@ public class SemiNaiveNegatedProgramTest{
 		boolean done = evaluator.evaluate();
 		if(done){
 			IResultSet rs = evaluator.getResultSet();
-			System.out.println("\nResultSet.size: " + rs.getResultNumber());
 			Iterator<IPredicate> pi = rs.getResults().keySet().iterator();
 			while(pi.hasNext()){
 				pr = pi.next();
@@ -135,6 +171,7 @@ public class SemiNaiveNegatedProgramTest{
 				while (qIt.hasNext()){
 					IQuery q = (IQuery)qIt.next();
 					if(pr.equals(q.getQueryLiteral(0).getPredicate())){
+						System.out.println("\nResultSet.size: " + rs.getResults().get(pr).size());
 						System.out.println("Results for predicate " + pr + " : ");
 						IRelation tr = rs.getResults().get(pr);
 						Iterator ti = tr.iterator();

@@ -128,7 +128,6 @@ public class NaiveNegatedProgramTest{
 		boolean done = evaluator.evaluate();
 		if(done){
 			IResultSet rs = evaluator.getResultSet();
-			System.out.println("\nResultSet.size: " + rs.getResultNumber());
 			Iterator<IPredicate> pi = rs.getResults().keySet().iterator();
 			while(pi.hasNext()){
 				pr = pi.next();
@@ -136,6 +135,7 @@ public class NaiveNegatedProgramTest{
 				while (qIt.hasNext()){
 					IQuery q = (IQuery)qIt.next();
 					if(pr.equals(q.getQueryLiteral(0).getPredicate())){
+						System.out.println("\nResultSet.size: " + rs.getResults().get(pr).size());
 						System.out.println("Results for predicate " + pr + " : ");
 						IRelation tr = rs.getResults().get(pr);
 						Iterator ti = tr.iterator();
