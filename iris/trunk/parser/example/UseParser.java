@@ -26,14 +26,19 @@
 
 package example;
 
-import org.deri.iris.compiler.*;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 import org.deri.iris.api.IEDB;
-import org.deri.iris.factory.*;
-import java.util.*;
-import org.deri.iris.api.basics.*;
-import org.deri.iris.evaluation.seminaive.Rule2Relation;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.compiler.Parser;
+import org.deri.iris.compiler.ParserImpl;
+import org.deri.iris.evaluation.seminaive.Rule2Relation;
+import org.deri.iris.factory.Factory;
 /**
  * @author Francisco Garcia
  */
@@ -44,45 +49,79 @@ public class UseParser {
     }
 
     public void test() throws Exception{
-    	org.deri.iris.compiler.Parser pa = new ParserImpl();
+    	Parser pa = new ParserImpl();
     	IEDB p = Factory.PROGRAM.createEDB();
 
     	
    	String program = 
-    /*		"p(?X,?Y) :- r(?Z, ?Y) and ?X='a'. " + 
+   		/* "p(?X,?Y) :- r(?Z, ?Y) and ?X='a'. " + 
     		"p(?X,?Y) :- s(?X, ?Z) and r(?Z, ?Y). " + 
     		"q(?X,?Y) :- p(?X, 'b') and ?X=?Y. " +
     		"q(?X,?Y) :- p(?X, ?Z) and s(?Z, ?Y). ";
-     	program +=
-    	*/	"s(?X,?Y) :- p(?X,?Z) and p(?Y,?Z) and ?X != ?Y. " + 
+    		program +=
+    	*/	
+   		
+   			/*"s(?X,?Y) :- p(?X,?Z) and p(?Y,?Z) and ?X != ?Y. " + 
     		"c(?X,?Y) :- p(?X,?Xp) and p(?Y,?Yp) and s(?Xp,?Yp). " + 
     		"c(?X,?Y) :- p(?X,?Xp) and p(?Y,?Yp) and c(?Xp,?Yp). " +
     		"r(?X,?Y) :- s(?X,?Y). " +
     		"r(?X,?Y) :- r(?X,?Z) and p(?Y,?Z). " +
-    		"r(?X,?Y) :- r(?Z,?Y) and p(?X,?Z). ";
+    		"r(?X,?Y) :- r(?Z,?Y) and p(?X,?Z). ";*/
 	
+		//  TEST 1
+			"p(?X,?Y) :- r(?Z, ?Y) and ?X='a'. " ;
+   			
+   			//"p(?X,?Y) :- r(?X, ?Y) and ?X!='a'. " ;
+	
+		   	/*"p(?X,?Y) :- r(?Z, ?Y) and ?X='a'. " + 
+			"p(?X,?Y) :- s(?X, ?Z) and r(?Z, ?Y). " ;*/
+			
+   			//"p(?X,?Y,?Z) :- r(?Z,?Y,?X) and ?X='a' and ?Y='b'. " ;
+   			//"p(?X,?Y,?Z) :- ?X='a' and r(?Z,?Y,?X) and ?Y='b'. " ;
+   		
+   			//"p(?X,?Y,?Z) :- r(?Z,?Y,?X) and s(?X,?Y) and ?X='a' and ?Y='b'. " ;
+   			//"p(?X,?Y,?Z) :- r(?Z,?Y,?X) and s(?X,?Y) and ?X!='a' and ?Y='b'. " ;
+   			
+   			// Doesn't work
+   			//"p(?X,?Y,?Z) :- r(?Z,?Y,?X) and s(?X,?Y) and ?X=?Z and ?Y=?Z. " ;
+   			
+   			// Doesn't work (needs indexes in for of a matrix)
+			//"p(?X,?Y,?Z) :- r(?Z,?Y,?X) and ?X=?Z and ?Y!=?Z. " ;
+	
+   		
+   			//"p(?X,?Y,?Z) :- r(?Z,?Y,?X) and ?X!=?Z and ?Y=?Z. " ;
+   	
+		//  TEST 2
+		   	//"s(?X,?Y) :- p(?X,?Z) and r(?Y,?Z).";
+		//  TEST 3
+   			//"p(?X,?Y) :- r(?X,?Y) and ?X!='a'.";
+   			//"p(?X,?Y) :- r(?Z,?Y) and ?X!='a'."; // unsafe rule!
+		   	//"p(?X,?Y) :- r(?X,?Y) and ?X!='a' and s(?X,?Y)."; 
+   			//"p(?X,?Y) :- r(?X,?Y) and s(?X,?Y) and ?X!='a'.";
+   		//  TEST 4	
+   			//"q(?X,?Y) :- p(?X,'b') and ?X=?Y."; // this case is needed
+		   	//"q(?X,?Y) :- p(?X,'b') and ?X=?Y and r(?X,'b')."; // It works now!
+   			//"q(?X,?Y) :- p(?X,?Y) and ?X!=?Y."; // not sure whether we need this case. 
+		//  TEST 5	
+		   	//"q(?X,?Y) :- p(?X,'b') and ?X=?Y. q(?X,?Y) :- p(?X,?Z) and s(?Z,?Y).";
+		//  TEST 6	
+		   	//"p(?X, ?Y, ?Z) :- r(?Y, ?Z) and ?X='a'. p(?X, ?Y, ?Z) :- r(?Y, ?X) and ?Z=?X .";
+		//  TEST 7	
+		   	//"s(?X,?Y) :- p(?X,?Y). s(?X,?Y) :- r(?X,?Y). s(?X,?Y) :- q(?X,?Y).";
+
+	    
     	pa.compileKB(program, p);
 		// * Results
 		System.out.println("These are the results for the input: \n" + program + "\n\n");
 		Set<IRule> rules = p.getRules();
 		Iterator<IRule> it = rules.iterator();
 		System.out.println("Rules:\n");
-		while (it.hasNext())
-		{
+		while (it.hasNext()){
 			IRule r = it.next();
 			System.out.println(r.toString() + "\n");
 
 		}
-/*		IRelation facts = p.getFacts();
-		Iterator<IAtom> itf = facts.iterator();
-		System.out.println("Facts:\n");
-		while (itf.hasNext())
-		{
-			IAtom f = itf.next();
-			System.out.println(f.toString() + "\n");
-
-		}
-*/		System.out.println("Queries:\n");
+		System.out.println("Queries:\n");
 		
 		Iterator qIt = p.queryIterator();
 		while (qIt.hasNext())
@@ -93,12 +132,12 @@ public class UseParser {
 	//	IQuery q =p.queryIterator();
 	//	System.out.println(q.toString() + "\n");
 		Rule2Relation r2r = new Rule2Relation();
-		Map result = r2r.eval(p.getRules());
+		Map result = r2r.evalRule(p.getRules());
 		Iterator kIt = result.keySet().iterator();
 		System.out.println(result.size());
 		while (kIt.hasNext()){
-			ITree head = 
-				(ITree)kIt.next();
+			IPredicate head = 
+				(IPredicate)kIt.next();
 			System.out.println(head.toString() + "->" + result.get(head).toString());
 //			result.get(head);
 		}
