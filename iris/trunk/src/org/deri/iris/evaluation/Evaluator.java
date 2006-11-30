@@ -26,12 +26,7 @@
 package org.deri.iris.evaluation;
 
 import org.deri.iris.api.evaluation.IEvaluator;
-import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.exception.DataModelException;
-
-import java.util.Map;
-import java.util.HashMap;
 
 
 /**
@@ -40,9 +35,9 @@ import java.util.HashMap;
  */
 public class Evaluator implements IEvaluator {
 
-	public Map<ITree, IRelation> evaluate() throws DataModelException {
+	public boolean evaluate() throws DataModelException {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 
 }
