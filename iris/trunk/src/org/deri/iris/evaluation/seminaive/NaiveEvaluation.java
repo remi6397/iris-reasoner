@@ -35,24 +35,36 @@ import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.exception.DataModelException;
 
 /**
+ * <p>
  * Algorithm 3.3: Evaluation of Datalog Equations
- * 
+ * </p>
  * INPUT: A collection of datalog rules with EDB predicates r1,...rk and IDB
  * predicates p1,...,pm. A list of relations R1, ..., Rk to serve as values of
  * the EDB predicates.
- * 
+ * </p>
+ * <p>
  * OUTPUT: The least fixed point solution to the datalog equations obtained from
  * these rules.
- * 
- * for i:=1 to m do Pi := 0; repeat for i:= 1 to m do Qi := Pi; // save old
- * values of Pi's for i := 1 to m do Pi := EVAL(pi, R1, ..., Rk, Q1,..., Qm);
- * until Pi = Qi for all i, 1 <= i <= m; output Pi's
- * 
+ * </p>
+ * <p>
+ * for i:=1 to m do 
+ * 	Pi := 0; 
+ * 	repeat 
+ * 		for i:= 1 to m do 
+ * 			Qi := Pi; // save old values of Pi's 
+ * 		for i := 1 to m do 
+ * 			Pi := EVAL(pi, R1, ..., Rk, Q1,..., Qm);
+ * 	until Pi = Qi for all i, 1 <= i <= m; 
+ * output Pi's
+ * </p>
+ * <p>
  * NOTE: Rules need to be rectified, safe and stratified.
- * 
+ * </p>
+ * <p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
+ * </p>
  */
 public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 
