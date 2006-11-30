@@ -139,12 +139,6 @@ public interface IRelationOperationsFactory {
 			IRelation arg1, int[] indexes, JoinCondition condition,
 			int[] projectIndexes);
 
-	// TODO: Join Operator needs to handles the functionality of
-	// this operator too, thus this operator should be removed
-	// in the future
-	public IJoin createJoinNewSimpleOperator(IRelation arg0, IRelation arg1,
-			int[] indexes, JoinCondition condition);
-
 	public IProjection createProjectionOperator(IRelation relation,
 			int[] pattern);
 

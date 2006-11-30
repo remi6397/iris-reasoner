@@ -98,9 +98,6 @@ public class RelationOperationsFactory implements IRelationOperationsFactory{
 	public IJoin createJoinSimpleExtendedOperator(IRelation arg0, IRelation arg1, int[] indexes, JoinCondition condition, int[] projectIndexes) {
 		return new JoinSimpleExtended(arg0, arg1, indexes, condition, projectIndexes);
 	}
-	public IJoin createJoinNewSimpleOperator(IRelation arg0, IRelation arg1, int[] indexes, JoinCondition condition) {
-		return new NewJoin(arg0, arg1, indexes, condition);
-	}
 	
 	public IProjection createProjectionOperator(IRelation relation, 
 			int[] pattern) {
