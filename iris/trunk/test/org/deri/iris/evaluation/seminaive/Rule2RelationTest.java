@@ -26,36 +26,37 @@
 package org.deri.iris.evaluation.seminaive;
 
 import static org.deri.iris.factory.Factory.BASIC;
-import static org.deri.iris.factory.Factory.TERM;
 import static org.deri.iris.factory.Factory.SEMINAIVE_MODEL;
+import static org.deri.iris.factory.Factory.TERM;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.IBody;
-
-import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.api.basics.IHead;
+import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.evaluation.seminaive.model.IJoin;
 import org.deri.iris.api.evaluation.seminaive.model.IProjection;
-import org.deri.iris.api.evaluation.seminaive.model.INaturalJoin;
 import org.deri.iris.api.evaluation.seminaive.model.IRule;
+import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.operations.relations.JoinCondition;
 
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic, DERI Innsbruck
- * @date $Date: 2006-11-10 10:27:24 $
- * @version $Id: Rule2RelationTest.java,v 1.1 2006-11-10 10:27:24 adi Exp $
+ * @date $Date: 2006-11-30 13:31:17 $
+ * @version $Id: Rule2RelationTest.java,v 1.2 2006-11-30 13:31:17 darko Exp $
  */
 public class Rule2RelationTest extends TestCase {
 
@@ -80,9 +81,9 @@ public class Rule2RelationTest extends TestCase {
 	 * run rule2relation test
 	 *
 	 */
-	protected void runRule2Relation(final Collection<org.deri.iris.api.basics.IRule> rul, final Map<ITree, ITree> rel) {
+	protected void runRule2Relation(final Collection<org.deri.iris.api.basics.IRule> rul, final Map<IPredicate, ITree> rel) {
 
-		Map<ITree, ITree> res = this.r2r.eval(rul);
+		Map<IPredicate, ITree> res = this.r2r.evalRule(rul);
 		assertResults(rel, res);
 	}
 	
@@ -116,7 +117,7 @@ public class Rule2RelationTest extends TestCase {
 		rules.add(BASIC.createRule(head, body));
 
 		// result
-		HashMap<ITree, ITree> result = new HashMap<ITree, ITree>();
+		HashMap<IPredicate, ITree> result = new HashMap<IPredicate, ITree>();
 		// head
 		ITree tree = SEMINAIVE_MODEL.createTree("s");
 		tree.addVariable("X");
@@ -126,7 +127,7 @@ public class Rule2RelationTest extends TestCase {
 		IProjection proj = SEMINAIVE_MODEL.createProjection(index);
 		proj.addVariable("X");
 		proj.addVariable("Y");
-		INaturalJoin join = SEMINAIVE_MODEL.createNaturalJoin();
+		IJoin join = SEMINAIVE_MODEL.createJoin(new int[]{-1,-1}, JoinCondition.EQUALS);
 		join.addVariable("X");
 		join.addVariable("Z");
 		join.addVariable("Y");
@@ -142,15 +143,15 @@ public class Rule2RelationTest extends TestCase {
 		ITree tree2 = proj;
 		tree2.addComponent(proj);
 		
-		result.put(tree, tree2);
+		result.put(BASIC.createPredicate(tree.getName(), tree.getArity()), tree2);
 				
 		runRule2Relation(rules, result);
 	}
-	protected static void assertResults(final Map<ITree, ITree> a, final Map<ITree, ITree> b) {
+	protected static void assertResults(final Map<IPredicate, ITree> a, final Map<IPredicate, ITree> b) {
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", a.size(), b.size());
-		Set<ITree> keyseta = a.keySet();
-		Set<ITree> keysetb = b.keySet();
+		Set<IPredicate> keyseta = a.keySet();
+		Set<IPredicate> keysetb = b.keySet();
 		Iterator it = keyseta.iterator();
 		Iterator it2 = keysetb.iterator();
 		while(it.hasNext() && it2.hasNext()) {
