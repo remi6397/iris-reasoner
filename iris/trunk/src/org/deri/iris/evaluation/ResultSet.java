@@ -51,10 +51,6 @@ public class ResultSet implements IResultSet {
 		this.result = r;
 	}
 
-	public int getResultNumber() {
-		return this.result.size();
-	}
-
 	public Map<IPredicate, IRelation> getResults() {
 		return this.result;
 	}
