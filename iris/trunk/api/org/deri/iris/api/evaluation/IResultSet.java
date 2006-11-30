@@ -38,11 +38,6 @@ import org.deri.iris.api.storage.IRelation;
  * @date   09.11.2006 09:44:49
  */
 public interface IResultSet {
-
-	/**Get number of tuples returned as a query result.
-	 * @return A result number
-	 */
-	public int getResultNumber();
 	
 	/**
 	 * Get the result as Map<IPredicate, IRelation>.
