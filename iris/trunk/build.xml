@@ -25,7 +25,7 @@
 		<tstamp />
 	</target>
 
-	<target name="javac" description="compiles all the class files" depends="init,prepareclasses,preparesablecc">
+	<target name="javac" description="compiles all the class files" depends="init,prepareclasses">
 		<javac srcdir="${dir.api}:${dir.src}" classpathref="defaultcp" destdir="${dir.classes}">
 			<include name="**/*.java" />
 		</javac>
