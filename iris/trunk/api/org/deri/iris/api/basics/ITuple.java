@@ -97,8 +97,12 @@ public interface ITuple extends Comparable<ITuple>{
 	 * @param duplicate
 	 * 					a tuple that will be stored in a list of 
 	 * 					duplicates for the entire tuple.  
+	 * @deprecated a duplicate shouldn't be stored in the tuple
 	 */
 	public void setDuplicate(ITuple duplicate);
 	
+	/**
+	 * @deprecated a duplicate shouldn't be stored in the tuple
+	 */
 	public ITuple getDuplicate();
 }
