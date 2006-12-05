@@ -27,8 +27,8 @@ package org.deri.iris.evaluation.seminaive;
 
 import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.factory.Factory.BASIC;
-import static org.deri.iris.factory.Factory.PROGRAM;
 import static org.deri.iris.factory.Factory.BUILTIN;
+import static org.deri.iris.factory.Factory.PROGRAM;
 import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
@@ -39,26 +39,24 @@ import java.util.Set;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.evaluation.seminaive.MiscOps;
 
 /**
  * <p>
  * Tests the methods in the MiscOps class.
  * </p>
  * <p>
- * $Id: MiscOpsTest.java,v 1.5 2006-11-08 17:33:17 graham Exp $
+ * $Id: MiscOpsTest.java,v 1.6 2006-12-05 08:25:53 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.5 $
- * @date $Date: 2006-11-08 17:33:17 $
+ * @version $Revision: 1.6 $
+ * @date $Date: 2006-12-05 08:25:53 $
  */
 public class MiscOpsTest extends TestCase {
 
@@ -158,7 +156,7 @@ public class MiscOpsTest extends TestCase {
 		// for (IRule _r : rules) {
 		// System.out.println(_r);
 		// }
-		IEDB e = PROGRAM.createEDB(); 	
+		IProgram e = PROGRAM.createProgram(); 	
 		for (IRule _r : rules) {
 			e.addRule(_r);
 		}
@@ -212,7 +210,7 @@ public class MiscOpsTest extends TestCase {
 		// System.out.println(_r);
 		// }
 		
-		e = PROGRAM.createEDB(); 
+		e = PROGRAM.createProgram(); 
 		for (IRule _r : rules) {
 			e.addRule(_r);
 		}

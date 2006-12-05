@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
@@ -55,7 +55,7 @@ public class SemiNaiveNegatedProgramTest{
 
     public void test() throws Exception{
     	Parser pa = new ParserImpl();
-    	IEDB p = Factory.PROGRAM.createEDB();
+    	IProgram p = Factory.PROGRAM.createProgram();
     	
    	String program = 
    	
