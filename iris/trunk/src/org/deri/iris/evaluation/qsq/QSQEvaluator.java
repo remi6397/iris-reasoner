@@ -685,4 +685,9 @@ public class QSQEvaluator implements IEvaluator {
 		}
 		return t0;
 	}
+
+	public IResultSet getResultSet() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

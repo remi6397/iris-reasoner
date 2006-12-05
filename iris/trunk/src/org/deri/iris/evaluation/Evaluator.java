@@ -26,6 +26,7 @@
 package org.deri.iris.evaluation;
 
 import org.deri.iris.api.evaluation.IEvaluator;
+import org.deri.iris.api.evaluation.IResultSet;
 import org.deri.iris.exception.DataModelException;
 
 
@@ -38,6 +39,11 @@ public class Evaluator implements IEvaluator {
 	public boolean evaluate() throws DataModelException {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public IResultSet getResultSet() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
