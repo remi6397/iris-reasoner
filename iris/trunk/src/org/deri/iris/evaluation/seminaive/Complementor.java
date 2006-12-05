@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
@@ -59,11 +59,11 @@ public class Complementor {
 	private final IRelation DOM;
 
 	/** The edb for the evaluation */
-	private final IEDB e;
+	private final IProgram e;
 
 	private Map<Integer, IRelation> cacheMap = null;
 
-	public Complementor(final IEDB e) {
+	public Complementor(final IProgram e) {
 		if (e == null) {
 			throw new NullPointerException("The edb must not be null");
 		}
@@ -120,7 +120,7 @@ public class Complementor {
 	 * @throws NullPointerException
 	 *             if the edb is {@code null}
 	 */
-	private static IRelation createDom(final IEDB e) {
+	private static IRelation createDom(final IProgram e) {
 		if (e == null) {
 			throw new NullPointerException("The edb must not be null");
 		}

@@ -29,7 +29,7 @@ import static org.deri.iris.factory.Factory.EVALUATION;
 
 import java.util.Map;
 
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.IEvaluator;
 import org.deri.iris.api.evaluation.IResultSet;
@@ -46,7 +46,7 @@ import org.deri.iris.exception.DataModelException;
 public abstract class GeneralSeminaiveEvaluation implements IEvaluator {
 	protected IEvaluationProcedure method;
 
-	protected IEDB edb;
+	protected IProgram edb;
 
 	protected Map<IPredicate, ITree> idb;
 
@@ -54,7 +54,7 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator {
 
 	private IResultSet results = null;
 
-	GeneralSeminaiveEvaluation(IEvaluationProcedure e, IEDB edb,
+	GeneralSeminaiveEvaluation(IEvaluationProcedure e, IProgram edb,
 			Map<IPredicate, ITree> idb, Map<IPredicate, ITree> q) {
 
 		this.method = e;

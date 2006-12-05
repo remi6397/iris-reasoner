@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
@@ -50,13 +50,13 @@ import org.deri.iris.api.terms.IVariable;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.3 2006-11-10 08:15:42 richardpoettler Exp $
+ * $Id: MiscOps.java,v 1.4 2006-12-05 08:12:02 richardpoettler Exp $
  * </p>
  * 
  * @author richi
  * @author graham
- * @version $Revision: 1.3 $
- * @date $Date: 2006-11-10 08:15:42 $
+ * @version $Revision: 1.4 $
+ * @date $Date: 2006-12-05 08:12:02 $
  */
 public class MiscOps {
 
@@ -182,7 +182,7 @@ public class MiscOps {
 		}
 	}
 
-	public static boolean stratify(final IEDB e) {
+	public static boolean stratify(final IProgram e) {
 		int max = 1;
 		int total = e.getPredicates().size();
 		Collection<IRule> rules = e.getRules();

@@ -28,7 +28,7 @@ package org.deri.iris.api.factory;
 import java.util.Map;
 import java.util.Set;
 
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
@@ -39,9 +39,9 @@ import org.deri.iris.api.storage.IRelation;
  */
 public interface IProgramFactory {
 	
-	public IEDB createEDB();
+	public IProgram createProgram();
 	
-	public IEDB createEDB(final Map<IPredicate, IRelation> f, 
+	public IProgram createProgram(final Map<IPredicate, IRelation> f, 
 			final Set<IRule> r, final Set<IQuery> q);
 	
 }

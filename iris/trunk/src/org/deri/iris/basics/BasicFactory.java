@@ -115,12 +115,12 @@ public class BasicFactory implements IBasicFactory {
 	
 	public IPredicate createPredicate(String symbol, int arity) {
 		IPredicate p = new Predicate(symbol, arity);
-		return PROGRAM.createEDB().registerPredicate(p);
+		return PROGRAM.createProgram().registerPredicate(p);
 	}
 
 	public IPredicate createBuiltinPredicate(String symbol, int arity) {
 		IPredicate p = new Predicate(symbol, arity, true);
-		return PROGRAM.createEDB().registerPredicate(p);
+		return PROGRAM.createProgram().registerPredicate(p);
 	}
 
 	public IQuery createQuery(ILiteral... literals) {
