@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
@@ -54,12 +54,12 @@ import org.deri.iris.storage.Relation;
  * <p>
  * </p>
  * <p>
- * $Id: TestNeg.java,v 1.1 2006-11-29 17:47:06 darko Exp $
+ * $Id: TestNeg.java,v 1.2 2006-12-05 08:25:53 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-11-29 17:47:06 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2006-12-05 08:25:53 $
  */
 public class TestNeg {
 
@@ -102,7 +102,7 @@ public class TestNeg {
 		rel.add(createStringTuple("4"));
 		facts.put(p, rel);
 
-		final IEDB e = Factory.PROGRAM.createEDB(facts, rules,
+		final IProgram e = Factory.PROGRAM.createProgram(facts, rules,
 				Collections.EMPTY_SET);
 
 		System.out.println("--- input ---");
