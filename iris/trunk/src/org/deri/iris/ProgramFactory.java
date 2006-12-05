@@ -28,7 +28,7 @@ package org.deri.iris;
 import java.util.Map;
 import java.util.Set;
 
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
@@ -42,7 +42,7 @@ import org.deri.iris.api.storage.IRelation;
  */
 public class ProgramFactory implements IProgramFactory {
 	private static final IProgramFactory FACTORY = new ProgramFactory();
-	private static final IEDB EDB = new EDB();
+	private static final IProgram EDB = new Progarm();
 	
 	private ProgramFactory() {
 		// this is a singelton
@@ -52,12 +52,12 @@ public class ProgramFactory implements IProgramFactory {
 		return FACTORY;
 	}
 
-	public IEDB createEDB() {
+	public IProgram createProgram() {
 		return EDB;
 	}
 	
-	public IEDB createEDB(Map<IPredicate, IRelation> f, Set<IRule> r, Set<IQuery> q) {
-		return new EDB(f, r, q);
+	public IProgram createProgram(Map<IPredicate, IRelation> f, Set<IRule> r, Set<IQuery> q) {
+		return new Progarm(f, r, q);
 	}
 
 }

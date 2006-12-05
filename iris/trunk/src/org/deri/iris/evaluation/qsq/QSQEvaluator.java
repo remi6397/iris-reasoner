@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -72,7 +72,7 @@ import org.deri.iris.storage.Relation;
  */
 public class QSQEvaluator implements IEvaluator {
 
-	private IEDB edb = null;
+	private IProgram edb = null;
 
 	/**
 	 * Adorned program
@@ -96,7 +96,7 @@ public class QSQEvaluator implements IEvaluator {
 	 */
 	private boolean contEval = false;
 
-	public QSQEvaluator(IEDB edb) {
+	public QSQEvaluator(IProgram edb) {
 		if (edb == null) {
 			throw new IllegalArgumentException(
 					"Input parameter must not be null");
@@ -481,7 +481,7 @@ public class QSQEvaluator implements IEvaluator {
 	 * @param t
 	 *            tuple provided by a query
 	 * @return Returns initial tuple (created out of bound terms of the query)
-	 *         for beginning of a rule evaluation or null (If the query doesn’t
+	 *         for beginning of a rule evaluation or null (If the query doesnï¿½t
 	 *         contain any ground term).
 	 */
 	private ITuple getInitTuple(ITuple t) {

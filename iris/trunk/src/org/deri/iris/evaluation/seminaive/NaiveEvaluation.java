@@ -27,7 +27,7 @@ package org.deri.iris.evaluation.seminaive;
 
 import java.util.Map;
 
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
@@ -68,7 +68,7 @@ import org.deri.iris.exception.DataModelException;
  */
 public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 
-	public NaiveEvaluation(IEvaluationProcedure e, IEDB EDB,
+	public NaiveEvaluation(IEvaluationProcedure e, IProgram EDB,
 			Map<IPredicate, ITree> IDB, Map<IPredicate, ITree> q) {
 
 		super(e, EDB, IDB, q);

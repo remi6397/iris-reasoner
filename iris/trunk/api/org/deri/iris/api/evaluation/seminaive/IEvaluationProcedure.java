@@ -27,7 +27,7 @@ package org.deri.iris.api.evaluation.seminaive;
 
 import java.util.Map;
 
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.api.storage.IRelation;
@@ -48,7 +48,7 @@ public interface IEvaluationProcedure {
 	 *            Extensional Database tuples
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation eval(ITree pi, IEDB EDB);
+	public IRelation eval(ITree pi, IProgram EDB);
 
 	/**
 	 * 
@@ -60,5 +60,5 @@ public interface IEvaluationProcedure {
 	 *            Tuples discovered during the last iteration
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation eval_incr(ITree pi, IEDB EDB, Map<IPredicate, IRelation> AQ);
+	public IRelation eval_incr(ITree pi, IProgram EDB, Map<IPredicate, IRelation> AQ);
 }

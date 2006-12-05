@@ -28,7 +28,7 @@ package org.deri.iris.evaluation.seminaive;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.evaluation.seminaive.model.ITree;
@@ -56,7 +56,7 @@ import org.deri.iris.api.storage.IRelation;
  */
 public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 
-	SeminaiveEvaluation(IEvaluationProcedure e, IEDB edb,
+	SeminaiveEvaluation(IEvaluationProcedure e, IProgram edb,
 			Map<IPredicate, ITree> idb, Map<IPredicate, ITree> q) {
 		super(e, edb, idb, q);
 	}

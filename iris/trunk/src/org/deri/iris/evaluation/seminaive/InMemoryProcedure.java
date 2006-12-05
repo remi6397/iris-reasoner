@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
 import org.deri.iris.api.evaluation.seminaive.model.Component;
@@ -57,11 +57,11 @@ public class InMemoryProcedure implements IEvaluationProcedure {
 
 	private ITree t;
 
-	private IEDB edb;
+	private IProgram edb;
 
 	private Complementor complementor = null;
 
-	public InMemoryProcedure(ITree t, IEDB edb) {
+	public InMemoryProcedure(ITree t, IProgram edb) {
 		this.t = t;
 		this.edb = edb;
 		this.complementor = new Complementor(this.edb);
@@ -75,7 +75,7 @@ public class InMemoryProcedure implements IEvaluationProcedure {
 	 *            Extensional Database tuples
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation eval(ITree t, IEDB edb) {
+	public IRelation eval(ITree t, IProgram edb) {
 		return evaluate(t, edb, null);
 	}
 
@@ -89,12 +89,12 @@ public class InMemoryProcedure implements IEvaluationProcedure {
 	 *            Tuples discovered during the last iteration
 	 * @return new tuples discovered for the rule evaluated
 	 */
-	public IRelation eval_incr(ITree t, IEDB edb, Map<IPredicate, IRelation> AQ) {
+	public IRelation eval_incr(ITree t, IProgram edb, Map<IPredicate, IRelation> AQ) {
 
 		return evaluate(t, edb, AQ);
 	}
 
-	private IRelation evaluate(ITree node, IEDB edb,
+	private IRelation evaluate(ITree node, IProgram edb,
 			Map<IPredicate, IRelation> AQ) {
 		if (node instanceof DifferenceDescription) {
 			DifferenceDescription d = (DifferenceDescription) node;
