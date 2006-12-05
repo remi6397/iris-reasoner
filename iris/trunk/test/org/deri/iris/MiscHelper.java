@@ -33,21 +33,30 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
 /**
- * @author richi
- *
+ * <p>
+ * Summary of some helpermethods to overcome the shortcommings of the basics and
+ * term factory.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * 
+ * @author Richard Pöttler
+ * @version $Revision$
  */
 public final class MiscHelper {
-	
+
 	private MiscHelper() {
 		// prevent subclassing
 	}
-	
+
 	/**
 	 * Creates a tuple consisting of IStringTerms of the submitted strings
 	 * 
@@ -62,7 +71,7 @@ public final class MiscHelper {
 		}
 		return BASIC.createTuple(termList);
 	}
-	
+
 	public static ITuple createTuple(final ITerm... t) {
 		List<ITerm> termList = new LinkedList<ITerm>();
 		for (ITerm term : t) {
@@ -70,7 +79,7 @@ public final class MiscHelper {
 		}
 		return BASIC.createTuple(termList);
 	}
-	
+
 	/**
 	 * Creates a positive literal out of a predicate name and a set of variable
 	 * names.
@@ -126,6 +135,37 @@ public final class MiscHelper {
 			v.add(TERM.createVariable(var));
 		}
 		return v;
+	}
+
+	/**
+	 * Creates a atom with string constants.
+	 * 
+	 * @param symbol
+	 *            the predicate symbol
+	 * @param cons
+	 *            the constants for this atom
+	 * @return the computed atom
+	 * @throws NullPointerException
+	 *             if the symbol is {@code null}
+	 * @throws IllegalArgumentException
+	 *             if the predicate symbol is an empty stirng
+	 * @throws NullPointerException
+	 *             if the constans are {@code null}
+	 */
+	public static IAtom createFact(final String symbol, final String... cons) {
+		if (symbol == null) {
+			throw new NullPointerException("The symbol must not be null");
+		}
+		if (symbol.length() == 0) {
+			throw new IllegalArgumentException(
+					"The symbol must not be an empty string");
+		}
+		if ((cons == null) || (Arrays.asList(cons).contains(null))) {
+			throw new NullPointerException(
+					"The constanst must not be or contain null");
+		}
+		return BASIC.createAtom(BASIC.createPredicate(symbol, cons.length),
+				createTuple(cons));
 	}
 
 }
