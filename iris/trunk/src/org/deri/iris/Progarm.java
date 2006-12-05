@@ -45,6 +45,7 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.exception.DataNotFoundException;
 import org.deri.iris.storage.Relation;
 import org.deri.iris.terms.ConstructedTerm;
@@ -371,8 +372,13 @@ public class Progarm implements IProgram{
 	}
 	
 	public boolean isStratified() {
-		// TODO Auto-generated method stub
-		return false;
+		WRITE.lock();
+		try {
+			// TODO: store the result somewhere
+			return MiscOps.stratify(this);
+		} finally {
+			WRITE.unlock();
+		}
 	}
 	
 	public boolean hasNegation() {
