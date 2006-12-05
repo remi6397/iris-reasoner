@@ -17,6 +17,8 @@
  */
 package org.deri.iris.evaluation.magic;
 
+// TODO: create hashCode, equals
+
 import static org.deri.iris.factory.Factory.BASIC;
 
 import java.util.ArrayList;
@@ -29,13 +31,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.evaluation.common.IAdornedPredicate;
 import org.deri.iris.api.evaluation.common.IAdornedProgram;
 import org.deri.iris.api.evaluation.common.IAdornedRule;
 import org.deri.iris.api.evaluation.magic.ISip;
@@ -44,6 +46,7 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.common.Adornment;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
+import org.deri.iris.factory.Factory;
 import org.deri.iris.graph.LabeledDirectedEdge;
 
 /**
@@ -201,7 +204,7 @@ public final class MagicSetImpl {
 
 		final ILiteral queryLiteral = q.getQueryLiteral(0);
 		final ILiteral adornedLiteral = BASIC.createLiteral(queryLiteral
-				.isPositive(), (IAdornedPredicate)new AdornedPredicate(queryLiteral), queryLiteral
+				.isPositive(), new AdornedPredicate(queryLiteral), queryLiteral
 				.getTuple());
 
 		return BASIC.createQuery(createMagicLiteral(adornedLiteral));
@@ -259,8 +262,8 @@ public final class MagicSetImpl {
 			for (final IRule rule : rules) {
 				bodyLiterals.add(rule.getHeadLiteral(0));
 			}
-			rules.add(BASIC.createRule(BASIC.createHead(createMagicLiteral(l)), BASIC
-					.createBody(new ArrayList<ILiteral>(bodyLiterals))));
+			rules.add(BASIC.createRule(BASIC.createHead(createMagicLiteral(l)),
+					BASIC.createBody(new ArrayList<ILiteral>(bodyLiterals))));
 			return rules;
 		} else {
 			// TODO: maybe return an empty set
@@ -582,6 +585,22 @@ public final class MagicSetImpl {
 	 */
 	public IQuery getSeed() {
 		return seed;
+	}
+
+	/**
+	 * Constructs a programm out of the rules and the given query.
+	 * 
+	 * @param p
+	 *            the original program. This is only needed if facts are inteded
+	 *            to be copied. If no facts are needed it might be {@code null}.
+	 * @return the constructed program
+	 */
+	public IProgram createProgram(final IProgram p) {
+		final Set<IRule> rules = new HashSet<IRule>(rewrittenRules);
+		rules.addAll(magicRules);
+		return Factory.PROGRAM.createProgram(
+				(p == null) ? Collections.EMPTY_MAP : p.getFacts(), rules,
+				Collections.singleton(seed));
 	}
 
 	/**
