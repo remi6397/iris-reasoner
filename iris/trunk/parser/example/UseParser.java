@@ -30,11 +30,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.deri.iris.api.IEDB;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserImpl;
 import org.deri.iris.evaluation.seminaive.Rule2Relation;
@@ -50,7 +49,7 @@ public class UseParser {
 
     public void test() throws Exception{
     	Parser pa = new ParserImpl();
-    	IEDB p = Factory.PROGRAM.createEDB();
+    	IProgram p = Factory.PROGRAM.createProgram();
 
     	
    	String program = 

@@ -40,20 +40,20 @@ import org.deri.iris.api.basics.*;
  *
  * <pre>
  * Created on 14.11.2005
- * Committed by $Author: franciscogarcia $
+ * Committed by $Author: richardpoettler $
  * $Source: /tmp/iris-cvsbackup/iris/parser/org/deri/iris/compiler/ParserImpl.java,v $,
  * </pre>
  *
  * @author Francisco Garcia
  *
- * @version $Revision: 1.3 $ $Date: 2006-07-28 10:08:43 $
+ * @version $Revision: 1.4 $ $Date: 2006-12-05 08:19:50 $
  */
 public class ParserImpl implements org.deri.iris.compiler.Parser {
      
     /* (non-Javadoc)
      * @see org.deri.iris.compiler.Parser#compileKB(java.lang.StringBuffer, org.deri.mins.RuleSet)
      */
-    public void compileKB(String kb, IEDB p) throws Exception {
+    public void compileKB(String kb, IProgram p) throws Exception {
         generateParseTree(kb).apply(new TreeWalker(p));
     }
     

@@ -49,16 +49,16 @@ import org.deri.iris.factory.*;
  *
  * @author Francisco Garcia
  *
- * @version $Revision: 1.11 $ $Date: 2006-11-15 09:03:48 $
+ * @version $Revision: 1.12 $ $Date: 2006-12-05 08:19:50 $
  */
 public class TreeWalker extends DepthFirstAdapter {
     
 	private List<ITerm> terms = new ArrayList<ITerm>(); 
 	private List<ILiteral> literals = new ArrayList<ILiteral>();
 	
-    private IEDB p;
+    private IProgram p;
 	
-    public TreeWalker(IEDB p){
+    public TreeWalker(IProgram p){
         this.p= p;
     }
     
