@@ -25,6 +25,7 @@
  */
 package org.deri.iris.api;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.basics.IQuery;
@@ -48,12 +49,12 @@ import org.deri.iris.api.basics.ITuple;
  * answers.
  * </p>
  * <p>
- * $Id: IExecutor.java,v 1.1 2006-12-05 08:08:05 richardpoettler Exp $
+ * $Id: IExecutor.java,v 1.2 2006-12-05 13:45:40 richardpoettler Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public interface IExecutor {
 
@@ -69,7 +70,9 @@ public interface IExecutor {
 	 * <p>
 	 * Sets the evaluation method.
 	 * </p>
-	 * @throws NullPointerException if the method is {@code null}
+	 * 
+	 * @param method
+	 *            the evaluation method
 	 */
 	public void setEvaluationMethod(final EvaluationMethod method);
 
@@ -85,18 +88,20 @@ public interface IExecutor {
 	 * Compute substitutions of the evaluation result for a query.
 	 * </p>
 	 * 
-	 * @param q the query for which to compute the substitutions
+	 * @param q
+	 *            the query for which to compute the substitutions
 	 * @return a set of substitutions for the given query
-	 * @throws NullPointerException
-	 *             if the query is {@code null}
 	 */
 	public Set<ITuple> computeSubstitution(final IQuery q);
 
 	/**
-	 * Returns all the evaluation results for all queries.<br>
-	 * The result is a set where each object is a tuple.<br>
-	 * Every tuple is one variable substitution for a certain query.<br>
+	 * <p>
+	 * Returns all the evaluation results for all queries.
+	 * </p>
+	 * 
+	 * @return a map with every executed query as key, and the retrieved
+	 *         substitutions as values for those queries The result is a set
 	 */
-	public Set computeSubstitutions();
+	public Map<IQuery, Set<ITuple>> computeSubstitutions();
 
 }
