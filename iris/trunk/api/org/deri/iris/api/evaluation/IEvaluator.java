@@ -25,36 +25,43 @@
  */
 package org.deri.iris.api.evaluation;
 
-import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.api.evaluation.seminaive.model.ITree;
 import org.deri.iris.exception.DataModelException;
 
-import java.util.Map;
-
 /**
- * Interface of a particular evaluation procedure used to promote
- * modularity of the inference engine.
+ * <p>
+ * Interface of a particular evaluation procedure used to promote modularity of
+ * the inference engine.
+ * </p>
+ * <p>
+ * Each evaluation method, or a set of evaluation methods that is bind in one
+ * evaluation procedure, needs to implement this interface.
+ * </p>
+ * <p>
+ * $Id: IEvaluator.java,v 1.7 2006-12-05 08:56:02 richardpoettler Exp $
+ * </p>
  * 
- * Each evaluation method, or a set of evaluation methods that is bind 
- * in one evaluation procedure, needs to implement this interface. 
- * 
+ * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @date   27.07.2006 16:04:43
- * @version $Id: IEvaluator.java,v 1.6 2006-11-29 17:03:33 darko Exp $
+ * @date 27.07.2006 16:04:43
+ * @version $Revision: 1.7 $
  */
 public interface IEvaluator {
-	
-	/******************************** */
-	/* query evaluation */
-	/******************************** */
-
 	/**
-	 * Evaluates all queries which have been added to the entire EDB. <br>
-	 * until answers have been derived.<br>
-	 * Returns true if the evaluation has terminated, otherwise false is returned.
-	 * All answers up to now are returned by "Result" or "Substitution".
+	 * <p>
+	 * Evaluates all queries which have been added to the program.
+	 * </p>
+	 * 
+	 * @return {@code true} if the evaluation has terminated normally, otherwise
+	 *         {@code false}
 	 */
 	public boolean evaluate() throws DataModelException;
-	 
+
+	/**
+	 * <p>
+	 * Returns the computed results.
+	 * <p>
+	 * 
+	 * @return the computed results
+	 */
+	public IResultSet getResultSet();
 }
- 
