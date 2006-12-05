@@ -25,61 +25,214 @@
  */
 package org.deri.iris.api;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
+import org.deri.iris.api.basics.IAtom;
+import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.terms.ITerm;
 
 /**
- * Interface of a (logic) program used to promote modularity 
- * of the inference engine.
+ * Interface of an EDB - Extensional DataBase used to promote modularity of the
+ * inference engine.
  * 
- * This interface defines an evaluation process. 
- * An implementation of this interface is supposed to get implementations
- * of the IEDB and the IEvaluator interfaces as input parameters and to 
- * produce a substitution or a set of substitutions as an output of 
- * the evaluation process.  
- * This interface also defines a procedure for analyzing a given program 
- * (particularly the entire EDB) and applies the best set of optimization 
- * and evaluation techniques, which are available in IRIS, in order to 
- * produce answers. 
+ * This interface defines an EDB (knowledge base) of a (logic) program. The
+ * knowledge base includes: facts rules queries.
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @date 10.11.2005
+ * @date 26.07.2006 16:45:49
  */
 public interface IProgram {
 
-	// Correct it!
-	public enum EvaluationMethod {
-		SEMI_NAIVE_EVALUATION, DYNAMIC_FILTERING_EVALUATION,
-		WELLFOUNDED_withAFP_EVALUATION, WELLFOUNDED_EVALUATION
-	};
+	/** ***************************** */
+	/* methods for the EDB */
+	/* (handling facts) */
+	/** ***************************** */
 
 	/**
-	 * Determines the evaluation method.<BR>
-	 * 0: Naive Evaluator (only stratified prorgams)<BR>
-	 * 1: Dynamic Filtering Evaluator (only stratified prorgams)<BR>
-	 * 2: Wellfounded Evaluator with alternating fixed point<BR>
-	 * 3: Wellfounded Evaluator
+	 * Adds a fact. If rollback is enabled fact is added temporarily. Otherwise
+	 * the fact is added to the database.
 	 */
-	public void setEvaluationMethod(final EvaluationMethod method);
+	public boolean addFact(final IAtom fact);
 
 	/**
+	 * adds a set of ground facts to the predicate extension
 	 * 
+	 * @param the
+	 *            set of facts to be added
+	 * @return has fact been added
 	 */
-	public boolean execute();
-	
-	/**
-	 * Compute substitutions of the evaluation result for a query q.<br>
-	 * The result is a set where each object is a tuple.<br>
-	 * Every tuple is one variable substitution for the query.<br>
-	 */
-	public Set computeSubstitution(final IQuery q);
+	public boolean addFacts(final Set<IAtom> facts);
+
+	public boolean addFacts(final IPredicate p, final IRelation r);
+
+	/** Removes a fact from the knowledge database */
+	public boolean removeFact(final IAtom fact);
+
+	public boolean removeFacts(final Set<IAtom> facts);
+
+	public boolean hasFact(final IAtom fact);
 
 	/**
-	 * Returns all the evaluation results for all queries.<br>
-	 * The result is a set where each object is a tuple.<br>
-	 * Every tuple is one variable substitution for a certain query.<br>
+	 * are there facts for predicate p available
+	 * 
+	 * @return are there facts for predicate p
 	 */
-	public Set computeSubstitutions();
-	
+	public boolean hasFacts(final IPredicate p);
+
+	/**
+	 * are there facts for predicate p and selection filter f available
+	 * 
+	 * @param predicat
+	 *            p
+	 * @param set
+	 *            of selection tuples
+	 */
+	public boolean hasFacts(final IPredicate p, final Set<ITuple> filter);
+
+	/**
+	 * Get all instantiated predicates (predicates with facts)
+	 * 
+	 * @return Set of all predicates
+	 */
+	public Set<IPredicate> getPredicates();
+
+	/**
+	 * Register predicates (checks that predicate doesn't already exist in EDB)
+	 * 
+	 * @return registered predicate
+	 */
+	public IPredicate registerPredicate(final IPredicate p);
+
+	public int getNumberOfFacts(final IPredicate predicate);
+
+	/**
+	 * returns the number of filtered facts for predicate p from the EDB with
+	 * selection tuples filter
+	 * 
+	 * @param predicate
+	 *            p
+	 * @param set
+	 *            of selection tuples
+	 * @return the number of facts
+	 */
+	public int getNumberOfFacts(final IPredicate p, final Set<ITuple> filter);
+
+	/**
+	 * returns all facts of a predicate p
+	 * 
+	 * @param predicate
+	 *            p
+	 * @return relation of predicate p
+	 */
+	public IRelation getFacts(final IPredicate p);
+
+	/**
+	 * returns the knowledge base
+	 * 
+	 * @return map of all facts from the Knowledge Base
+	 */
+	public Map<IPredicate, IRelation> getFacts();
+
+	/**
+	 * is the edb empty, i.e. does it contain no facts
+	 * 
+	 * @return it the edb empty
+	 */
+	public boolean isEmpty();
+
+	/**
+	 * does term t exist in edb
+	 * 
+	 * @param term
+	 *            t
+	 * @return is term t in edb?
+	 */
+	public boolean existsTerm(final ITerm t);
+
+	/** ***************************** */
+	/* rules */
+	/** ***************************** */
+
+	/**
+	 * Adds a rule r to the ruleset. To get correct evaluation results
+	 * afterwards intermediate results have to be deleted using method
+	 * ClearRuleSet
+	 */
+	public boolean addRule(final IRule r);
+
+	/**
+	 * Deletes a rule r from the Ruleset
+	 */
+	public boolean removeRule(final IRule r);
+
+	public Set<IRule> getRules();
+
+	/**
+	 * does the idb contain stratified rules
+	 * 
+	 * @return is the ruleset stratified?
+	 */
+	public boolean isStratified();
+
+	/**
+	 * does the idb contain only horn rules
+	 * 
+	 * @return is it a horn rule?
+	 */
+	// public boolean isHorn();
+	/**
+	 * does idb have rules with negated bodies
+	 * 
+	 * @return are there negated bodies?
+	 */
+	public boolean hasNegation();
+
+	/**
+	 * does idb have rules with constructed terms
+	 * 
+	 * @return are there constructed terms involved?
+	 */
+	public boolean hasConstructedTerms();
+
+	/**
+	 * returns the number of rules in the program.
+	 * 
+	 * @return the number of rules in program
+	 */
+	public int ruleCount();
+
+	/** ***************************** */
+	/* queries */
+	/** ***************************** */
+
+	public boolean addQuery(final IQuery q);
+
+	/**
+	 * <p>
+	 * Returns subsequently all queries.
+	 * </p>
+	 * 
+	 * @return the iterator over all queries
+	 * @deprecated use {@link IProgram#getQueries()}.iterator() instead
+	 */
+	public Iterator<IQuery> queryIterator();
+
+	/**
+	 * <p>
+	 * Returns the set of all queries.
+	 * </p>
+	 * 
+	 * @return the query set
+	 */
+	public Set<IQuery> getQueries();
+
+	/** Deletes a query q from the Ruleset */
+	public boolean removeQuery(final IQuery q);
+
 }
