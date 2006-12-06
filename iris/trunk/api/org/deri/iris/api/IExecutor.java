@@ -33,37 +33,35 @@ import org.deri.iris.api.basics.ITuple;
 
 /**
  * <p>
- * Interface of a (logic) program used to promote modularity of the inference
- * engine.
- * </p>
- * <p>
  * This interface defines an evaluation process. An implementation of this
  * interface is supposed to get implementations of the IProgram and the
- * IEvaluator interfaces as input parameters and to produce a substitution or a
- * set of substitutions as an output of the evaluation process.
+ * IEvaluator interfaces as input parameters and to produce an output of the
+ * evaluation process.
  * </p>
  * <p>
- * This interface also defines a procedure for analyzing a given program
- * (particularly the entire EDB) and applies the best set of optimization and
- * evaluation techniques, which are available in IRIS, in order to produce
- * answers.
+ * Apart from that, this interface also defines a procedure for analyzing a
+ * given program (particularly the entire IDB and EDB) and applies the best set
+ * of optimization and evaluation techniques, which are available in IRIS, in
+ * order to produce answers.
  * </p>
  * <p>
- * $Id: IExecutor.java,v 1.2 2006-12-05 13:45:40 richardpoettler Exp $
+ * This interface is used to promote modularity of the inference engine.
+ * </p>
+ * <p>
+ * $Id: IExecutor.java,v 1.3 2006-12-06 15:28:26 darko Exp $
  * </p>
  * 
  * @author Richard PÃ¶ttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface IExecutor {
 
-	// TODO: Correct it!
 	public enum EvaluationMethod {
-		SEMI_NAIVE_EVALUATION,
-		DYNAMIC_FILTERING_EVALUATION,
-		WELLFOUNDED_withAFP_EVALUATION,
-		WELLFOUNDED_EVALUATION
+		NAIVE_EVALUATION, 
+		SEMI_NAIVE_EVALUATION, 
+		QSQ, 
+		SEMI_NAÏVE_WITH_MAGIC_SETS
 	};
 
 	/**
@@ -72,7 +70,7 @@ public interface IExecutor {
 	 * </p>
 	 * 
 	 * @param method
-	 *            the evaluation method
+	 *            The evaluation method.
 	 */
 	public void setEvaluationMethod(final EvaluationMethod method);
 
@@ -80,6 +78,9 @@ public interface IExecutor {
 	 * <p>
 	 * Executes the evaluation.
 	 * </p>
+	 * 
+	 * @return True if the evaluation has been successfully terminated,
+	 *         otherwise false.
 	 */
 	public boolean execute();
 
@@ -89,19 +90,18 @@ public interface IExecutor {
 	 * </p>
 	 * 
 	 * @param q
-	 *            the query for which to compute the substitutions
-	 * @return a set of substitutions for the given query
+	 *            The query for which to compute the substitutions.
+	 * @return A set of substitutions for the given query.
 	 */
 	public Set<ITuple> computeSubstitution(final IQuery q);
 
 	/**
 	 * <p>
-	 * Returns all the evaluation results for all queries.
+	 * Returns the evaluation results for all queries from the knowledgebase.
 	 * </p>
 	 * 
-	 * @return a map with every executed query as key, and the retrieved
-	 *         substitutions as values for those queries The result is a set
+	 * @return A map with every executed query as key, and the retrieved
+	 *         substitutions as values for those queries.
 	 */
 	public Map<IQuery, Set<ITuple>> computeSubstitutions();
-
 }
