@@ -27,19 +27,49 @@
 package org.deri.iris.api.basics;
 
 /**
- * @author Darko Anicic, DERI Innsbruck
- * @date   14.11.2005 11:59:34
+ * <p>
+ * An atom (an atomic formula) is a formula that has no subformulas. Atom
+ * consists of a predicate symbol and a tuple (a list of arguments), e.g.,
+ * p(A1,...,An), where p is a predicate symbol and A1,...,An is a tuple (a list
+ * of arguments).
+ * </p>
  * 
- * Revision 1.1  21.07.2006 11:45:56  Darko Anicic
+ * <p>
+ * This interface is used to promote modularity of the inference engine.
+ * </p>
+ * <p>
+ * $Id: IAtom.java,v 1.4 2006-12-06 15:05:50 darko Exp $
+ * </p>
+ * 
+ * @author Darko Anicic, DERI Innsbruck
+ * @date 14.11.2005 11:59:34
  */
 public interface IAtom<Type extends IAtom> extends Comparable<Type> {
-	
-	public IPredicate getPredicate();
-	
-	public ITuple getTuple();
-	
-	public boolean isGround();
-	
-	public boolean isInCycle();
 
+	/**
+	 * <p>
+	 * Returns the predicate symbol of the atom.
+	 * </p>
+	 * 
+	 * @return The predicate symbol.
+	 */
+	public IPredicate getPredicate();
+
+	/**
+	 * <p>
+	 * Returns the tuple of the atom.
+	 * </p>
+	 * 
+	 * @return The tuple.
+	 */
+	public ITuple getTuple();
+
+	/**
+	 * <p>
+	 * Checks whether the atom is grounded (tuple contains no variables).
+	 * </p>
+	 * 
+	 * @return True if the atom is grounded, otherwise false.
+	 */
+	public boolean isGround();
 }
