@@ -25,7 +25,6 @@
  */
 package org.deri.iris.api;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,201 +37,323 @@ import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 
 /**
- * Interface of an EDB - Extensional DataBase used to promote modularity of the
- * inference engine.
+ * <p>
+ * Interface of an EDB and IDB (extensional and intensional database). This
+ * interface defines a set of methods for managing a logic program.
+ * </p>
  * 
- * This interface defines an EDB (knowledge base) of a (logic) program. The
- * knowledge base includes: facts rules queries.
+ * <p>
+ * The interface defines a knowledgebase of a (logic) program. The knowledge
+ * base includes:
+ * 
+ * <ul>
+ * <li> facts</li>
+ * <li> rules</li>
+ * <li> queries</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * This interface is used to promote modularity of the inference engine.
+ * </p>
+ * <p>
+ * $Id: IProgram.java,v 1.7 2006-12-06 14:36:34 darko Exp $
+ * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date 26.07.2006 16:45:49
  */
 public interface IProgram {
 
-	/** ***************************** */
-	/* methods for the EDB */
-	/* (handling facts) */
-	/** ***************************** */
-
 	/**
-	 * Adds a fact. If rollback is enabled fact is added temporarily. Otherwise
-	 * the fact is added to the database.
+	 * Set of methods for handling the facts:
 	 */
-	public boolean addFact(final IAtom fact);
 
 	/**
-	 * adds a set of ground facts to the predicate extension
+	 * <p>
+	 * Adds a fact to the knowledgebase.
+	 * </p>
+	 * <p>
+	 * A fact is a ground atom.
+	 * </p>
 	 * 
-	 * @param the
-	 *            set of facts to be added
-	 * @return has fact been added
+	 * @param f
+	 *            A fact to be added.
+	 * @return True if a fact has successfully been added, otherwise false.
+	 */
+	public boolean addFact(final IAtom f);
+
+	/**
+	 * <p>
+	 * Adds a set of facts to the knowledgebase.
+	 * </p>
+	 * 
+	 * @param facts
+	 *            The set of facts to be added.
+	 * @return True if any fact from the set of facts have been added, otherwise
+	 *         false.
 	 */
 	public boolean addFacts(final Set<IAtom> facts);
 
+	/**
+	 * <p>
+	 * Adds a set of facts represented as a relation (with a particular
+	 * predicate assigned to) to the knowledgebase.
+	 * </p>
+	 * 
+	 * @param p
+	 *            The common predicate for facts from the relation r.
+	 * @param r
+	 *            The relation which contains facts (tuples) to be stored in the
+	 *            knowledgebase.
+	 * @return True if any fact from the relation r have been added, otherwise
+	 *         false.
+	 */
 	public boolean addFacts(final IPredicate p, final IRelation r);
 
-	/** Removes a fact from the knowledge database */
-	public boolean removeFact(final IAtom fact);
-
-	public boolean removeFacts(final Set<IAtom> facts);
-
-	public boolean hasFact(final IAtom fact);
+	/**
+	 * <p>
+	 * Removes a fact from the knowledgebase.
+	 * </p>
+	 * 
+	 * @param f
+	 *            The fact to be removed.
+	 * @return True if the fact f has successfully been removed, otherwise
+	 *         false.
+	 */
+	public boolean removeFact(final IAtom f);
 
 	/**
-	 * are there facts for predicate p available
+	 * <p>
+	 * Removes a set of facts from the knowledgebase.
+	 * </p>
 	 * 
-	 * @return are there facts for predicate p
+	 * @param facts
+	 *            The facts to be removed.
+	 * @return True if the knowledgebase does not contain any fact from the set
+	 *         of facts (all facts have been removed from the knowledgebase),
+	 *         otherwise false.
+	 */
+	public boolean removeFacts(final Set<IAtom> facts);
+
+	/**
+	 * <p>
+	 * Checks whether the knowledgebase contains a fact f.
+	 * </p>
+	 * 
+	 * @param f
+	 *            The fact to be checked.
+	 * @return True if the knowledgebase contains the fact f, otherwise false.
+	 */
+	public boolean hasFact(final IAtom f);
+
+	/**
+	 * <p>
+	 * Checks whether the knowledgebase contains any fact with a predicate p.
+	 * </p>
+	 * 
+	 * @return True if the knowledgebase contains a fact with a predicate p,
+	 *         otherwise false.
 	 */
 	public boolean hasFacts(final IPredicate p);
 
 	/**
-	 * are there facts for predicate p and selection filter f available
+	 * <p>
+	 * Returns all instantiated predicates from the knowledgebase.
+	 * </p>
 	 * 
-	 * @param predicat
-	 *            p
-	 * @param set
-	 *            of selection tuples
-	 */
-	public boolean hasFacts(final IPredicate p, final Set<ITuple> filter);
-
-	/**
-	 * Get all instantiated predicates (predicates with facts)
-	 * 
-	 * @return Set of all predicates
+	 * @return Set of all predicates from the knowledgebase.
 	 */
 	public Set<IPredicate> getPredicates();
 
 	/**
-	 * Register predicates (checks that predicate doesn't already exist in EDB)
+	 * <p>
+	 * Register a predicate p. Checks whether the predicate p already exists in
+	 * the knowledgebase, and if it does not, it registers the predicate within
+	 * the knowledgebase.
+	 * </p>
 	 * 
-	 * @return registered predicate
+	 * @param p
+	 *            The predicate to be checked.
+	 * @return Returns the registered predicate.
 	 */
 	public IPredicate registerPredicate(final IPredicate p);
 
-	public int getNumberOfFacts(final IPredicate predicate);
+	/**
+	 * <p>
+	 * Returns the number of facts, for a predicate p, from the knowledgebase.
+	 * </p>
+	 * 
+	 * @param p
+	 *            The common predicate of facts which will be retrieved.
+	 * @return The number of facts.
+	 */
+	public int getNumberOfFacts(final IPredicate p);
 
 	/**
-	 * returns the number of filtered facts for predicate p from the EDB with
-	 * selection tuples filter
+	 * <p>
+	 * Returns the number of filtered facts, for a predicate from the
+	 * knowledgebase, with the selection tuples filter.
+	 * </p>
 	 * 
-	 * @param predicate
-	 *            p
-	 * @param set
-	 *            of selection tuples
-	 * @return the number of facts
+	 * @param p
+	 *            The common predicate for facts to be retrieved.
+	 * @param filter
+	 *            Set of selection tuples to be used as a filter (a selection
+	 *            pattern).
+	 * @return The number of selected facts.
 	 */
 	public int getNumberOfFacts(final IPredicate p, final Set<ITuple> filter);
 
 	/**
-	 * returns all facts of a predicate p
+	 * <p>
+	 * Returns all facts, from the knowledgebase, for a predicate p.
+	 * </p>
 	 * 
-	 * @param predicate
-	 *            p
-	 * @return relation of predicate p
+	 * @param p
+	 *            The common predicate for facts to be retrieved.
+	 * @return Set of facts (a relation with the predicate p).
 	 */
 	public IRelation getFacts(final IPredicate p);
 
 	/**
-	 * returns the knowledge base
+	 * <p>
+	 * Returns all facts from the knowledgebase.
+	 * </p>
 	 * 
-	 * @return map of all facts from the Knowledge Base
+	 * @return Map of all predicates from the knowledgebase with corresponding
+	 *         relations.
 	 */
 	public Map<IPredicate, IRelation> getFacts();
 
 	/**
-	 * is the edb empty, i.e. does it contain no facts
+	 * <p>
+	 * Checks whether the knowledgebase contains no facts.<p/>
 	 * 
-	 * @return it the edb empty
+	 * @return True if the knowledgebase contains no facts, otherwise false.
 	 */
 	public boolean isEmpty();
 
 	/**
-	 * does term t exist in edb
+	 * <p>
+	 * Checks whether the knowledgebase contains a particular term.
+	 * </p>
 	 * 
-	 * @param term
-	 *            t
-	 * @return is term t in edb?
+	 * @param t
+	 *            A term to be checked.
+	 * @return True if the knowledgebase contains the terms t, otherwise false.
 	 */
 	public boolean existsTerm(final ITerm t);
 
-	/** ***************************** */
-	/* rules */
-	/** ***************************** */
+	/**
+	 * Set of methods for handling the rules:
+	 */
 
 	/**
-	 * Adds a rule r to the ruleset. To get correct evaluation results
-	 * afterwards intermediate results have to be deleted using method
-	 * ClearRuleSet
+	 * <p>
+	 * Adds a rule to the set of rules of the knowledgebase.
+	 * </p>
+	 * 
+	 * @param r
+	 *            A rule to be added.
+	 * @return True if the rule r is successfully added into the knowledgebase,
+	 *         otherwise false.
 	 */
 	public boolean addRule(final IRule r);
 
 	/**
-	 * Deletes a rule r from the Ruleset
+	 * <p>
+	 * Removes a rule r from the set of rules of the knowledgebase.
+	 * </p>
+	 * 
+	 * @param r
+	 *            A rule to be removed.
+	 * @return True if the rule r is successfully removed from the
+	 *         knowledgebase, otherwise false.
 	 */
 	public boolean removeRule(final IRule r);
 
+	/**
+	 * <p>
+	 * Returns all rules from the knowledgebase.
+	 * </p>
+	 * 
+	 * @return Returns set of all rules from the knowledgebase.
+	 */
 	public Set<IRule> getRules();
 
 	/**
-	 * does the idb contain stratified rules
+	 * <p>
+	 * Checks whether the knowledgebase contains only stratified rules.
+	 * </p>
 	 * 
-	 * @return is the ruleset stratified?
+	 * @return True if all rules from the knowledgebase are stratified,
+	 *         otherwise false.
 	 */
 	public boolean isStratified();
 
 	/**
-	 * does the idb contain only horn rules
+	 * <p>
+	 * Checks whether the knowledgebase contains rules with negated atoms.
+	 * </p>
 	 * 
-	 * @return is it a horn rule?
-	 */
-	// public boolean isHorn();
-	/**
-	 * does idb have rules with negated bodies
-	 * 
-	 * @return are there negated bodies?
+	 * @return True if the knowledgebase contains rules with negated atoms,
+	 *         otherwise false.
 	 */
 	public boolean hasNegation();
 
 	/**
-	 * does idb have rules with constructed terms
+	 * <p>
+	 * Checks whether the knowledgebase contains rules with constructed terms.
+	 * </p>
 	 * 
-	 * @return are there constructed terms involved?
+	 * @return True if the knowledgebase contains constructed terms, otherwise
+	 *         false.
 	 */
 	public boolean hasConstructedTerms();
 
 	/**
-	 * returns the number of rules in the program.
+	 * <p>
+	 * Returns the number of rules in the knowledgebase.
+	 * </p>
 	 * 
-	 * @return the number of rules in program
+	 * @return The number of rules.
 	 */
 	public int ruleCount();
 
-	/** ***************************** */
-	/* queries */
-	/** ***************************** */
+	/**
+	 * Set of methods for handling the queries:
+	 */
 
+	/**
+	 * <p>
+	 * Adds a query to the knowledgebase.
+	 * </p>
+	 * 
+	 * @param q
+	 *            A query to be added.
+	 * @return True if the query q has been successfully added, otherwise false.
+	 */
 	public boolean addQuery(final IQuery q);
 
 	/**
 	 * <p>
-	 * Returns subsequently all queries.
+	 * Returns all queries from the knowledgebase.
 	 * </p>
 	 * 
-	 * @return the iterator over all queries
-	 * @deprecated use {@link IProgram#getQueries()}.iterator() instead
-	 */
-	public Iterator<IQuery> queryIterator();
-
-	/**
-	 * <p>
-	 * Returns the set of all queries.
-	 * </p>
-	 * 
-	 * @return the query set
+	 * @return Returns set of all queries from the knowledgebase.
 	 */
 	public Set<IQuery> getQueries();
 
-	/** Deletes a query q from the Ruleset */
+	/**
+	 * <p>
+	 * Removes a query from the knowledgebase.
+	 * </p>
+	 * 
+	 * @param q
+	 *            A query to be removed.
+	 * @return True if a query has been successfully removed from the
+	 *         knowledgebase, otherwise false.
+	 */
 	public boolean removeQuery(final IQuery q);
-
 }
