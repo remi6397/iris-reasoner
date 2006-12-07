@@ -4,10 +4,8 @@ import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.basics.Literal;
 import org.deri.iris.basics.BasicFactory;
-import java.util.List;
+import org.deri.iris.basics.Literal;
 
 // TODO: Remmove this class and its appearance from the program
 public class EqualityLiteral implements ILiteral<ILiteral>{
@@ -53,10 +51,6 @@ public class EqualityLiteral implements ILiteral<ILiteral>{
 	
 	public boolean isGround() {
 		return atom.isGround();
-	}
-
-	public boolean isInCycle() {
-		return atom.isInCycle();
 	}
 
 	public int compareTo(final ILiteral o) {
