@@ -75,10 +75,6 @@ public class Literal implements ILiteral<ILiteral> {
 		return atom.isGround();
 	}
 
-	public boolean isInCycle() {
-		return atom.isInCycle();
-	}
-
 	public int compareTo(final ILiteral o) {
 		if ((positive != o.isPositive()) && positive) {
 			return 1;
