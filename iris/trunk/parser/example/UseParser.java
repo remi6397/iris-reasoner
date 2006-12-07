@@ -122,7 +122,7 @@ public class UseParser {
 		}
 		System.out.println("Queries:\n");
 		
-		Iterator qIt = p.queryIterator();
+		Iterator qIt = p.getQueries().iterator();
 		while (qIt.hasNext())
 			System.out.println(((IQuery)qIt.next()).toString());
 		

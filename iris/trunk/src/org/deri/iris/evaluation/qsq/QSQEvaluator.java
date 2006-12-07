@@ -116,7 +116,7 @@ public class QSQEvaluator implements IEvaluator {
 		IQuery q = null;
 		Adornment[] ads = null;
 
-		Iterator<IQuery> qi = this.edb.queryIterator();
+		Iterator<IQuery> qi = this.edb.getQueries().iterator();
 		while (qi.hasNext()) {
 			q = qi.next();
 
@@ -587,7 +587,7 @@ public class QSQEvaluator implements IEvaluator {
 		Adornment[] ads = null;
 		IQuery q = null;
 
-		Iterator<IQuery> qi = this.edb.queryIterator();
+		Iterator<IQuery> qi = this.edb.getQueries().iterator();
 		while (qi.hasNext()) {
 			q = qi.next();
 			ads = getAdornment(q);
