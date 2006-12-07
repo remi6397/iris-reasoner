@@ -64,14 +64,6 @@ public class Predicate implements IPredicate, Cloneable {
 		return arity;
 	}
 
-	/**
-	 * In this implementation the changing of the symbol is not supported
-	 * @throws UnsupportedOperationException because it should be immutable
-	 */
-	public void setBuiltIn(boolean arg) {
-		throw new UnsupportedOperationException("This implementation should be immutable");
-	}
-
 	public boolean isBuiltIn() {
 		return builtin;
 	}
@@ -124,8 +116,8 @@ public class Predicate implements IPredicate, Cloneable {
 		return stratum;
 	}
 
-	public int setStratum(int stratum) {
-		return this.stratum = stratum;
+	public void setStratum(int stratum) {
+		this.stratum = stratum;
 	}
 
 	public String toString() {
