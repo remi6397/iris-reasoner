@@ -140,13 +140,14 @@ public class SemiNaiveNegatedProgramTest{
 		}
 		System.out.println("\nQueries:");
 		
-		Iterator qIt = p.queryIterator();
+		Iterator qIt = p.getQueries().iterator();
 		while (qIt.hasNext())
 			System.out.println(((IQuery)qIt.next()).toString());
 		
 		Rule2Relation r2r = new Rule2Relation();
 		Map<IPredicate, ITree> ruleRels = r2r.evalRule(p.getRules());
-		Map<IPredicate, ITree> queryRels = r2r.evalQueries(p.queryIterator());
+		Map<IPredicate, ITree> queryRels = 
+			r2r.evalQueries(p.getQueries().iterator());
 		Iterator kIt = ruleRels.keySet().iterator();
 		while (kIt.hasNext()){
 			pr = (IPredicate)kIt.next();
@@ -167,7 +168,7 @@ public class SemiNaiveNegatedProgramTest{
 			Iterator<IPredicate> pi = rs.getResults().keySet().iterator();
 			while(pi.hasNext()){
 				pr = pi.next();
-				qIt = p.queryIterator();
+				qIt = p.getQueries().iterator();
 				while (qIt.hasNext()){
 					IQuery q = (IQuery)qIt.next();
 					if(pr.equals(q.getQueryLiteral(0).getPredicate())){
