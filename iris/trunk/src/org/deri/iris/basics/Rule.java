@@ -143,18 +143,8 @@ public class Rule implements IRule {
 		return false;
 	}
 
-	public boolean isCycled() {
+	public boolean isRecursive() {
 		return GRAPH.createPredicateGraph().detectCycles();
-	}
-
-	public boolean isFact() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean isBuiltIn() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	public int getHeadLenght() {

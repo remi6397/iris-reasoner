@@ -51,12 +51,12 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.17 2006-11-23 12:45:05 richardpoettler Exp $
+ * $Id: AdornedProgram.java,v 1.18 2006-12-07 17:21:33 darko Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.17 $
- * @date $Date: 2006-11-23 12:45:05 $
+ * @version $Revision: 1.18 $
+ * @date $Date: 2006-12-07 17:21:33 $
  */
 public class AdornedProgram implements IAdornedProgram {
 
@@ -494,17 +494,6 @@ public class AdornedProgram implements IAdornedProgram {
 		 * 
 		 * @throws UnsupportedOperationException
 		 *             will be thrown every time.
-		 * @see #isBuiltIn()
-		 */
-		public void setBuiltIn(boolean arg) {
-			throw new UnsupportedOperationException();
-		}
-
-		/**
-		 * This method is not meant to be invoked.
-		 * 
-		 * @throws UnsupportedOperationException
-		 *             will be thrown every time.
 		 * @see #getPredicateSymbol()
 		 */
 		public void setPredicateSymbol(String name) {
@@ -546,8 +535,8 @@ public class AdornedProgram implements IAdornedProgram {
 			return p.getStratum();
 		}
 
-		public int setStratum(int s) {
-			return p.setStratum(s);
+		public void setStratum(int s) {
+			p.setStratum(s);
 		}
 	}
 
@@ -565,8 +554,8 @@ public class AdornedProgram implements IAdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.17 $
-	 * @date $Date: 2006-11-23 12:45:05 $
+	 * @version $Revision: 1.18 $
+	 * @date $Date: 2006-12-07 17:21:33 $
 	 */
 	public static class AdornedRule implements IAdornedRule {
 		/** The inner rule represented by this object */
@@ -675,16 +664,8 @@ public class AdornedProgram implements IAdornedProgram {
 			return res;
 		}
 
-		public boolean isBuiltIn() {
-			return rule.isBuiltIn();
-		}
-
-		public boolean isCycled() {
-			return rule.isCycled();
-		}
-
-		public boolean isFact() {
-			return rule.isFact();
+		public boolean isRecursive() {
+			return rule.isRecursive();
 		}
 
 		public boolean isRectified() {
