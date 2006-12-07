@@ -32,21 +32,16 @@ import org.deri.iris.api.terms.IVariable;
 
 /**
  * <p>
- * A body (a rule body) is a condition part of a rule (Horn rule). A Horn rule
- * (clause) consists of a positive literal (conclusion) and one or more negative
- * literals (conditions). For a rule:
+ * A body (a rule body) is a condition part of a rule. For a rule
  * </p>
  * <p>
- * q :- p1, p2,...,pn
+ * q :- p1, p2,...,pn.
  * </p>
  * <p>
- * we call literals p1, p2,...,pn the body and q the head of a rule.
+ * the body of a rule consist of literals p1, p2,...,pn.
  * </p>
  * <p>
- * This interface is used to promote modularity of the inference engine.
- * </p>
- * <p>
- * $Id: IBody.java,v 1.6 2006-12-06 16:02:56 darko Exp $
+ * $Id: IBody.java,v 1.7 2006-12-07 16:35:25 darko Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -92,16 +87,4 @@ public interface IBody {
 	 * @return A list of all variables.
 	 */
 	public List<IVariable> getBodyVariables();
-
-	/**
-	 * <p>
-	 * Indicates whether some other object is "equal to" this one.
-	 * </p>
-	 * 
-	 * @param obj
-	 *            The reference object with which to compare.
-	 * @return True if this object is the same as the obj argument; false
-	 *         otherwise.
-	 */
-	public boolean equals(Object obj);
 }

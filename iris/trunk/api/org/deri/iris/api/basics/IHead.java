@@ -32,24 +32,19 @@ import org.deri.iris.api.terms.IVariable;
 
 /**
  * <p>
- * A head (a rule head) is a conclusion part of a rule (Horn rule). A Horn rule
- * (clause) consists of a positive literal (conclusion) and one or more negative
- * literals (conditions). For a rule:
+ * A head (a rule head) is a conclusion part of a rule. For a rule:
  * </p>
  * <p>
  * q :- p1, p2,...,pn
  * </p>
  * <p>
- * we call literals p1, p2,...,pn the body and q the head of a rule.
+ * the head of a rule consist of a single positive literal q.
  * </p>
  * <p>
- * NOTE: Currently, IRIS supports rules with only one literal in the head.
+ * NOTE: Currently, rules with only one literal in the head are supported.
  * </p>
  * <p>
- * This interface is used to promote modularity of the inference engine.
- * </p>
- * <p>
- * $Id: IHead.java,v 1.5 2006-12-06 16:13:53 darko Exp $
+ * $Id: IHead.java,v 1.6 2006-12-07 16:37:08 darko Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
