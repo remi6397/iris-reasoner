@@ -25,7 +25,6 @@
  */
 package org.deri.iris.basics;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -54,28 +53,11 @@ public class PredicateTest extends TestCase {
 
 	public void testBasic() {
 		final Predicate REFERENCE = new Predicate(SYMBOL, ARITY);
-		final Predicate MUTABLE = new Predicate(SYMBOL + "1", ARITY);
-		
-		boolean rightExceptionThrown = false;
-		try {
-			MUTABLE.setPredicateSymbol(SYMBOL);
-		} catch (UnsupportedOperationException e) {
-			rightExceptionThrown = true;
-		} finally {
-			if (!rightExceptionThrown) {
-				throw new AssertionFailedError(
-						"Cannot set predicate symbol - should be immutable.");
-			}
-		}
 		
 		assertEquals("getPredicateSymbol doesn't work properly", SYMBOL,
 				REFERENCE.getPredicateSymbol());
 		assertEquals("getArity doesn't work properly", ARITY, REFERENCE
 				.getArity());
-		String s = SYMBOL;
-		String s1 = MUTABLE.getPredicateSymbol();
-		assertNotSame("could not re-set the predicate symbol", SYMBOL,
-				MUTABLE.getPredicateSymbol());
 	}
 
 	public void testEquals() {
