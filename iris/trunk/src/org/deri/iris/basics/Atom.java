@@ -79,11 +79,6 @@ public class Atom implements IAtom<IAtom> {
 		return this.tuple.isGround();
 	}
 
-	public boolean isInCycle() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	@SuppressWarnings("unchecked")
 	public int compareTo(IAtom o) {
 		int res = 0;
@@ -112,7 +107,6 @@ public class Atom implements IAtom<IAtom> {
 			return false;
 		}
 		Atom a = (Atom) o;
-		boolean b = this.tuple.equals(a.getTuple());
 		
 		return (this.predicate.equals(a.predicate)) && 
 				this.tuple.equals(a.getTuple());
