@@ -46,7 +46,6 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.evaluation.MiscOps;
-import org.deri.iris.exception.DataNotFoundException;
 import org.deri.iris.storage.Relation;
 import org.deri.iris.terms.ConstructedTerm;
 
@@ -232,23 +231,13 @@ public class Progarm implements IProgram{
 	public boolean hasFacts(IPredicate p) {
 		return facts.keySet().contains(p);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.deri.iris.api.IEDB#hasFacts(org.deri.iris.api.basics.IPredicate, java.util.Set)
-	 * Note: 
-	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
-	 * 		so this method is thread-save.
-	 */
-	public boolean hasFacts(IPredicate p, Set<ITuple> filter) {
-		return (getNumberOfFacts(p, filter) > 0);
-	}
 	
 	public IPredicate registerPredicate(IPredicate p){
 		if(getPredicates().contains(p)){
-			for (IPredicate _p : facts.keySet()) {
-				if (_p.equals(p))
+			for (IPredicate pr : facts.keySet()) {
+				if (pr.equals(p))
 				{
-					return _p;
+					return pr;
 				}
 			}
 		}
@@ -446,15 +435,6 @@ public class Progarm implements IProgram{
 			return this.queries.add(q);
 		} finally {
 			WRITE.unlock();
-		}
-	}
-
-	public Iterator<IQuery> queryIterator() throws DataNotFoundException {
-		READ.lock();
-		try {
-			return this.queries.iterator();
-		} finally {
-			READ.unlock();
 		}
 	}
 	
