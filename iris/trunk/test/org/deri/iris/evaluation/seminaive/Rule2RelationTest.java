@@ -26,8 +26,10 @@
 package org.deri.iris.evaluation.seminaive;
 
 import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.SEMINAIVE_MODEL;
 import static org.deri.iris.factory.Factory.TERM;
+import static org.deri.iris.factory.Factory.CONCRETE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,8 +57,8 @@ import org.deri.iris.operations.relations.JoinCondition;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic, DERI Innsbruck
- * @date $Date: 2006-12-06 11:34:50 $
- * @version $Id: Rule2RelationTest.java,v 1.3 2006-12-06 11:34:50 adi Exp $
+ * @date $Date: 2006-12-08 10:32:25 $
+ * @version $Id: Rule2RelationTest.java,v 1.4 2006-12-08 10:32:25 adi Exp $
  */
 public class Rule2RelationTest extends TestCase {
 
@@ -84,7 +86,7 @@ public class Rule2RelationTest extends TestCase {
 	protected void runRule2Relation(final Collection<org.deri.iris.api.basics.IRule> rul, final Map<IPredicate, ITree> rel) {
 
 		Map<IPredicate, ITree> res = this.r2r.evalRule(rul);
-		System.out.println("in: " + rul + "\nrel: "+ rel + "\nres: " + res);
+		System.out.println("in: " + rul + "\nrel: "+ rel + "\nres: " + res + "\n");
 		assertResults(rel, res);
 	}
 	
@@ -145,6 +147,115 @@ public class Rule2RelationTest extends TestCase {
 				
 		runRule2Relation(rules, result);
 	}
+	/**
+	 * p(?X,?Y) :- r(?Z, ?Y) and ?X='a'
+	 *
+	 */
+	public void testRule2Relation_1a() {
+		// input
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
+				"p", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("Z"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
+		literals.add(literal);
+
+		IBody body = BASIC.createBody(literals);
+		
+		rules.add(BASIC.createRule(head, body));
+
+		// result
+		HashMap<IPredicate, ITree> result = new HashMap<IPredicate, ITree>();
+		// head
+		ITree tree = SEMINAIVE_MODEL.createTree("p");
+		tree.addVariable("X");
+		tree.addVariable("Y");
+		// body
+		int[] index = new int[] {0, -1, 1};
+		IProjection proj = SEMINAIVE_MODEL.createProjection(index);
+		proj.addVariable("X");
+		proj.addVariable("Y");
+		IJoin join = SEMINAIVE_MODEL.createJoin(new int[]{-1,-1}, JoinCondition.EQUALS);
+		IRule rule = SEMINAIVE_MODEL.createRule("r", 2);
+		rule.addVariable("Z");
+		rule.addVariable("Y");
+		join.addComponent(rule);
+		rule = SEMINAIVE_MODEL.createUnaryRule("a");
+		rule.addVariable("X");
+		join.addComponent(rule);
+		proj.addComponent(join);
+		ITree tree2 = proj;
+		tree2.addComponent(proj);
+		
+		result.put(BASIC.createPredicate(tree.getName(), tree.getArity()), tree2);
+				
+		runRule2Relation(rules, result);
+	}
+	/**
+	 * p(?X,?Y) :- r(?X, ?Y) and ?X!='a'
+	 *
+	 */
+	public void testRule2Relation_1b() {
+		// input
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
+				"p", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("Z"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+
+		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
+		literals.add(literal);
+
+		IBody body = BASIC.createBody(literals);
+		
+		rules.add(BASIC.createRule(head, body));
+
+		// result
+		HashMap<IPredicate, ITree> result = new HashMap<IPredicate, ITree>();
+		// head
+		ITree tree = SEMINAIVE_MODEL.createTree("p");
+		tree.addVariable("X");
+		tree.addVariable("Y");
+		// body
+		int[] index = new int[] {0, -1, 1};
+		IProjection proj = SEMINAIVE_MODEL.createProjection(index);
+		proj.addVariable("X");
+		proj.addVariable("Y");
+		IJoin join = SEMINAIVE_MODEL.createJoin(new int[]{-1,-1}, JoinCondition.EQUALS);
+		IRule rule = SEMINAIVE_MODEL.createRule("r", 2);
+		rule.addVariable("Z");
+		rule.addVariable("Y");
+		join.addComponent(rule);
+		rule = SEMINAIVE_MODEL.createUnaryRule("a");
+		rule.addVariable("X");
+		join.addComponent(rule);
+		proj.addComponent(join);
+		ITree tree2 = proj;
+		tree2.addComponent(proj);
+		
+		result.put(BASIC.createPredicate(tree.getName(), tree.getArity()), tree2);
+				
+		runRule2Relation(rules, result);
+	}
+	
 	protected static void assertResults(final Map<IPredicate, ITree> a, final Map<IPredicate, ITree> b) {
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", a.size(), b.size());
