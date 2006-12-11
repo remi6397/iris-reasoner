@@ -106,7 +106,8 @@ public class Tuple implements ITuple{
 		return this.terms;
 	}
 
-	public boolean setTerm(int index, ITerm term) {
+	public ITerm setTerm(int index, ITerm term) {
+		ITerm t = null;
 		if (index >= this.arity) {
 			throw new IndexOutOfBoundsException(
 					"Can't set a tuple at position: " +
@@ -115,29 +116,27 @@ public class Tuple implements ITuple{
 		}
 		WRITE.lock();
 		try {
-			if(index >= this.terms.size()){
-				this.terms.add(index, term);
-			}else{
-				this.terms.set(index, term);
-			}
+			t = this.terms.set(index, term);
 		} finally {
 			WRITE.unlock();
 		}
-		return true;
+		return t;
 	}
 
 	public boolean setTerms(List<ITerm> terms) {
+		boolean changed = false;
 		if (terms.size() > this.arity) {
 			throw new IndexOutOfBoundsException(
 					"Size of the term list: " +
-					terms.size() + " is longer than the tuple arity: " + 
+					terms.size() + " is bigger than the arity of the tuple: " + 
 					this.arity + ")");
 		}
 		for(int i=0; i<terms.size(); i++){
 			setTerm(i, terms.get(i));
+			changed = true;
 		}
 		
-		return true;
+		return changed;
 	}
 	
 	public boolean setTerms(int index, List<ITerm> terms) {
@@ -234,7 +233,6 @@ public class Tuple implements ITuple{
 				variables.add((IVariable)term);
 			if(term instanceof IConstructedTerm)
 				variables.addAll(getVariables((IConstructedTerm)term));
-				
 		}
 		return variables;
 	}
