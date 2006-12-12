@@ -111,12 +111,17 @@ public class Tuple implements ITuple{
 		if (index >= this.arity) {
 			throw new IndexOutOfBoundsException(
 					"Can't set a tuple at position: " +
-					index + " (the tuple arity is: " + 
+					index + " (as the arity of the tuple is: " + 
 					this.terms.size() + ")");
 		}
 		WRITE.lock();
 		try {
-			t = this.terms.set(index, term);
+			if(index >= this.terms.size()){
+				this.terms.add(index, term);
+				t = term;
+			}else{
+				t = this.terms.set(index, term);
+			}
 		} finally {
 			WRITE.unlock();
 		}
