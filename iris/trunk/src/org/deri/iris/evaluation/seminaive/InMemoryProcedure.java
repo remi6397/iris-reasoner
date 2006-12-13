@@ -26,6 +26,7 @@
 package org.deri.iris.evaluation.seminaive;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -153,7 +154,8 @@ public class InMemoryProcedure implements IEvaluationProcedure {
 			return selection.select();
 		} else if (node instanceof UnionDescription) {
 			List<Component> ul = node.getChildren();
-			List<IRelation> ulr = new ArrayList<IRelation>();
+			List<IRelation> ulr = Collections.synchronizedList(
+					new ArrayList<IRelation>());
 			ITree t = null;
 
 			for (Component c : ul) {
