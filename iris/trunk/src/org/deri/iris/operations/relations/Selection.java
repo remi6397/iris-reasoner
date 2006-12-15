@@ -332,4 +332,33 @@ public class Selection implements ISelection {
 		}
 		return BASIC.createTuple(terms);
 	}
+	
+	/**
+	 * <p>Creates a default selection indexes.</p>
+	 *  
+	 * @param arity	Arity of the default selection indexes.
+	 * @return		The default selection indexes.
+	 */
+	public static int[] getInitIndexes(int arity) {
+		int[] i = new int[arity];
+		for (int j = 0; j < arity; j++){
+			i[j] = 0;
+		}
+		return i;
+	}
+	
+	/**
+	 * <p>Creates a default selection pattern.</p>
+	 * 
+	 * @param arity	Arity of the default selection pattern.
+	 * @return		The default selection pattern.
+	 */
+	public static ITuple getInitPattern(int arity) {
+		List<ITerm> terms = new ArrayList<ITerm>();
+		for (int j = 0; j < arity; j++){
+			terms.add(null);
+		}
+		ITuple t = BASIC.createTuple(terms);
+		return t;
+	}
 }
