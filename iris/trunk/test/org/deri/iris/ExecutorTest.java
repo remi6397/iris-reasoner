@@ -41,6 +41,7 @@ import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.evaluation.Evaluator;
+import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -48,11 +49,11 @@ import org.deri.iris.factory.Factory;
  * Tests the Executor.
  * </p>
  * <p>
- * $Id: ExecutorTest.java,v 1.1 2006-12-05 16:42:24 richardpoettler Exp $
+ * $Id: ExecutorTest.java,v 1.2 2006-12-19 18:20:31 darko Exp $
  * </p>
  * 
  * @author Richard Pöttler
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ExecutorTest extends TestCase {
 	private IProgram p;
@@ -90,7 +91,7 @@ public class ExecutorTest extends TestCase {
 	}
 
 	public void testComputeSubstitution() {
-		Executor e = new Executor(p, new Evaluator());
+		Executor e = new Executor(p, new ExpressionEvaluator());
 		for (final Map.Entry<IQuery, Set<ITuple>> me : e.computeSubstitutions()
 				.entrySet()) {
 			System.out.println("q: " + me.getKey());

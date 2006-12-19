@@ -30,8 +30,8 @@ import java.util.Map;
 
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
-import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.api.evaluation.algebra.IComponent;
+import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
 
 /**
@@ -44,21 +44,15 @@ import org.deri.iris.api.storage.IRelation;
  * OUTPUT: The least fixed point solution to the datalog equations obtained from
  * these rules.
  * 
- * for i:=1 to m do begin APi := EVAL(pi, R1,...,Rk, 0,...,0); Pi := APi; end;
- * repeat for i:= 1 to m do AQi := APi; // save old values of APi's for i := 1
- * to m do begin APi := EVAL-INCR(pi,R1,...,Rk,P1,...,Pm,AQ1,...,AQm); APi :=
- * APi - Pi // remove 'new' tuples that actually appeared before end; for i := 1
- * to m do Pi := Pi U APi; until APi = 0 for all i, 1 <= i <= m; output Pi's
- * 
  * @author Paco Garcia, University of Murcia
  * @author Darko Anicic, DERI Innsbruck
  * @date 05-sep-2006
  */
 public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 
-	SeminaiveEvaluation(IEvaluationProcedure e, IProgram edb,
-			Map<IPredicate, ITree> idb, Map<IPredicate, ITree> q) {
-		super(e, edb, idb, q);
+	public SeminaiveEvaluation(IExpressionEvaluator e, IProgram p,
+			Map<IPredicate, IComponent> idbMap, Map<IPredicate, IComponent> qMap) {
+		super(e, p, idbMap, qMap);
 	}
 
 	public boolean evaluate() {
@@ -70,50 +64,63 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 		IRelation p = null;
 		Map<IPredicate, IRelation> aq = new HashMap<IPredicate, IRelation>();
 
-		// Evaluate rules
+		/** Evaluate rules */
 		for (int i = 1, maxStrat = Complementor
-				.getMaxStratum(this.idb.keySet()); i <= maxStrat; i++) {
+				.getMaxStratum(this.idbMap.keySet()); i <= maxStrat; i++) {
 
 			cont = true;
 
 			/**
-			 * for i := 1 to m do begin APi := EVAL(pi, R1,...,Rk,0,...0); Pi :=
-			 * APi; end;
+			 * <p>Algorithm:</p>
+			 * <p>
+			 * for i := 1 to m do begin 
+			 * 	APi := EVAL(pi, R1,...,Rk,0,...0); 
+			 * 	Pi := APi; 
+			 * end;
+			 * </p>
 			 */
 			for (final IPredicate pr : Complementor.getPredicatesOfStratum(
-					this.idb.keySet(), i)) {
-				// for (IPredicate pr : this.idb.keySet()) {
+					this.idbMap.keySet(), i)) {
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-				p = method.eval(this.idb.get(pr), this.edb);
+				p = method.evaluate(this.idbMap.get(pr), this.p);
 				if (p != null && p.size() > 0) {
 					aq.put(pr, p);
+					this.p.addFacts(pr, p);
 				}
 			}
 			/**
-			 * repeat for i := 1 to m do AQ := APi; for i := 1 to m do begin APi :=
-			 * EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm); APi := APi -
-			 * Pi; end; for i := 1 to m do Pi := Pi U APi; until APi = 0 for all
-			 * i;
+			 * <p>Algorithm:</p>
+			 * <p>
+			 * repeat 
+			 * 	for i := 1 to m do 
+			 * 		AQ := APi; 
+			 * 	for i := 1 to m do begin 
+			 * 		APi := EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm); 
+			 * 		APi := APi - Pi; 
+			 * 	end; 
+			 * 	for i := 1 to m do 
+			 * 		Pi := Pi U APi; 
+			 * until APi = 0 for all i;
+			 * </p>
 			 */
 			while (cont) {
-				// for (IPredicate pr : this.idb.keySet()) {
 				for (final IPredicate pr : Complementor.getPredicatesOfStratum(
-						this.idb.keySet(), i)) {
+						this.idbMap.keySet(), i)) {
 					cont = false;
 					// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
-					p = method.eval_incr(this.idb.get(pr), this.edb, aq);
+					p = method.evaluateIncrementally(this.idbMap.get(pr), this.p, aq);
 					if (p != null && p.size() > 0) {
-						p.removeAll(this.edb.getFacts(pr));
-						newTupleAdded = this.edb.addFacts(pr, p);
+						p.removeAll(this.p.getFacts(pr));
+						newTupleAdded = this.p.addFacts(pr, p);
 						cont = cont || newTupleAdded;
 					}
 				}
 			}
 		}
-		// Evaluate queries
+		/** Evaluate queries */
 		for (IPredicate pr : this.queries.keySet()) {
-			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-			p = method.eval(this.queries.get(pr), this.edb);
+			/** EVAL (pi, R1,..., Rk, Q1,..., Qm); */
+			p = method.evaluate(this.queries.get(pr), this.p);
 			if (p != null && p.size() > 0)
 				this.getResultSet().getResults().put(pr, p);
 		}

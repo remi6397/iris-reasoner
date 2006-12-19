@@ -60,39 +60,39 @@ public class Complementor {
 	private final IRelation DOM;
 
 	/** The edb for the evaluation */
-	private final IProgram e;
+	private final IProgram p;
 
 	private Map<Integer, IRelation> cacheMap = null;
 
-	public Complementor(final IProgram e) {
-		if (e == null) {
+	public Complementor(final IProgram p) {
+		if (p == null) {
 			throw new NullPointerException("The edb must not be null");
 		}
-		if (e.getRules().contains(null)) {
+		if (p.getRules().contains(null)) {
 			throw new NullPointerException("The rules must not contain null");
 		}
-		for (final IRule rule : e.getRules()) {
+		for (final IRule rule : p.getRules()) {
 			if (rule.getHeadLenght() != 1) {
 				throw new IllegalArgumentException(
 						"The length of the head must be 1, but was "
 								+ rule.getHeadLenght());
 			}
 		}
-		this.e = e;
+		this.p = p;
 
 		// Stratify rules
-		if (!MiscOps.stratify(e)) {
+		if (!MiscOps.stratify(p)) {
 			throw new RuntimeException("Rules are unstratifiable");
 		}
-		this.DOM = createDom(e);
+		this.DOM = createDom(p);
 		this.cacheMap = new HashMap<Integer, IRelation>();
 	}
 
-	public IRelation getComplement(final IPredicate p) {
-		if (p == null) {
+	public IRelation getComplement(final IPredicate pr) {
+		if (pr == null) {
 			throw new NullPointerException("The literal must not be null");
 		}
-		final int arity = p.getArity();
+		final int arity = pr.getArity();
 		IRelation r = null;
 
 		if (this.cacheMap.containsKey(arity)) {
@@ -105,7 +105,7 @@ public class Complementor {
 			}
 			this.cacheMap.put(arity, r);
 		}
-		final IRelation facts = e.getFacts(p);
+		final IRelation facts = p.getFacts(pr);
 		if (facts != null) {
 			r.removeAll(facts);
 		}
@@ -115,27 +115,26 @@ public class Complementor {
 	/**
 	 * Creates the DOM for the given edb.
 	 * 
-	 * @param e
-	 *            the edb
+	 * @param p
+	 *            The Program
 	 * @return the DOM relation
 	 * @throws NullPointerException
 	 *             if the edb is {@code null}
 	 */
-	private static IRelation createDom(final IProgram e) {
-		if (e == null) {
+	private static IRelation createDom(final IProgram p) {
+		if (p == null) {
 			throw new NullPointerException("The edb must not be null");
 		}
 		IRelation d = new Relation(1);
 
 		// adding all constants of the rules
-		for (final IRule rule : e.getRules()) {
+		for (final IRule rule : p.getRules()) {
 			for (ITerm term : getConstantsOfRule(rule)) {
 				d.add(Factory.BASIC.createTuple(term));
 			}
 		}
-
 		// adding all constants of the relations
-		for (final IRelation rel : e.getFacts().values()) {
+		for (final IRelation rel : p.getFacts().values()) {
 			for (final ITuple t : rel) {
 				for (ITerm term : t.getTerms()) {
 					d.add(Factory.BASIC.createTuple(term));
@@ -207,11 +206,6 @@ public class Complementor {
 		if (p == null) {
 			throw new NullPointerException("The predicates must not be null");
 		}
-		/*if (p.contains(null)) {
-			throw new NullPointerException(
-					"The predicates must not contain null");
-		}*/
-
 		int strat = 0;
 		for (final IPredicate pred : p) {
 			strat = Math.max(strat, pred.getStratum());
@@ -240,10 +234,6 @@ public class Complementor {
 		if (p == null) {
 			throw new NullPointerException("The predicates must not be null");
 		}
-		/*if (p.contains(null)) {
-			throw new NullPointerException(
-					"The predicates must not contain null");
-		}*/
 		if (s <= 0) {
 			throw new IllegalArgumentException(s + " is not a valid stratum");
 		}
