@@ -25,41 +25,34 @@
  */
 package example;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.ArrayList;
-
-import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.api.basics.IRule;
-import org.deri.iris.compiler.Parser;
-import org.deri.iris.compiler.ParserImpl;
-import org.deri.iris.evaluation.seminaive.Rule2Relation;
-import org.deri.iris.factory.Factory;
-
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.TERM;
-import static org.deri.iris.factory.Factory.CONCRETE;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.compiler.Parser;
+import org.deri.iris.compiler.ParserImpl;
+import org.deri.iris.factory.Factory;
 
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
- * @date $Date: 2006-12-08 11:08:00 $
- * @version $Id: ParserTest.java,v 1.1 2006-12-08 11:08:00 adi Exp $
+ * @date $Date: 2006-12-19 18:23:45 $
+ * @version $Id: ParserTest.java,v 1.2 2006-12-19 18:23:45 darko Exp $
  */
 public class ParserTest extends TestCase {
 

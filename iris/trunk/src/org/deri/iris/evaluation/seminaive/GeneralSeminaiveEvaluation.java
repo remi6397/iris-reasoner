@@ -33,8 +33,8 @@ import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.IEvaluator;
 import org.deri.iris.api.evaluation.IResultSet;
-import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
-import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.api.evaluation.algebra.IComponent;
+import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.exception.DataModelException;
 
 /**
@@ -44,23 +44,25 @@ import org.deri.iris.exception.DataModelException;
  * @date 08-sep-2006
  */
 public abstract class GeneralSeminaiveEvaluation implements IEvaluator {
-	protected IEvaluationProcedure method;
+	
+	protected IExpressionEvaluator method;
 
-	protected IProgram edb;
+	protected IProgram p;
 
-	protected Map<IPredicate, ITree> idb;
+	/** Map of idb predicates and coresponding algebra expressions */
+	protected Map<IPredicate, IComponent> idbMap;
 
-	protected Map<IPredicate, ITree> queries;
+	protected Map<IPredicate, IComponent> queries;
 
 	private IResultSet results = null;
 
-	GeneralSeminaiveEvaluation(IEvaluationProcedure e, IProgram edb,
-			Map<IPredicate, ITree> idb, Map<IPredicate, ITree> q) {
+	GeneralSeminaiveEvaluation(IExpressionEvaluator e, IProgram p,
+			Map<IPredicate, IComponent> idb, Map<IPredicate, IComponent> qMap) {
 
 		this.method = e;
-		this.edb = edb;
-		this.idb = idb;
-		this.queries = q;
+		this.p = p;
+		this.idbMap = idb;
+		this.queries = qMap;
 		this.results = EVALUATION.createResultSet();
 	}
 

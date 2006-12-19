@@ -29,8 +29,8 @@ import java.util.Map;
 
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
-import org.deri.iris.api.evaluation.seminaive.model.ITree;
+import org.deri.iris.api.evaluation.algebra.IComponent;
+import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.exception.DataModelException;
 
@@ -47,17 +47,6 @@ import org.deri.iris.exception.DataModelException;
  * these rules.
  * </p>
  * <p>
- * for i:=1 to m do 
- * 	Pi := 0; 
- * 	repeat 
- * 		for i:= 1 to m do 
- * 			Qi := Pi; // save old values of Pi's 
- * 		for i := 1 to m do 
- * 			Pi := EVAL(pi, R1, ..., Rk, Q1,..., Qm);
- * 	until Pi = Qi for all i, 1 <= i <= m; 
- * output Pi's
- * </p>
- * <p>
  * NOTE: Rules need to be rectified, safe and stratified.
  * </p>
  * <p>
@@ -68,31 +57,45 @@ import org.deri.iris.exception.DataModelException;
  */
 public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 
-	public NaiveEvaluation(IEvaluationProcedure e, IProgram EDB,
-			Map<IPredicate, ITree> IDB, Map<IPredicate, ITree> q) {
+	public NaiveEvaluation(IExpressionEvaluator e, IProgram p,
+			Map<IPredicate, IComponent> idbMap, Map<IPredicate, IComponent> qMap) {
 
-		super(e, EDB, IDB, q);
+		super(e, p, idbMap, qMap);
 	}
 
+	/**
+	 * <p>Algorithm:</p>
+	 * <p>
+	 * for i:=1 to m do 
+	 * 	Pi := 0; 
+	 * 	repeat 
+	 * 		for i:= 1 to m do 
+	 * 			Qi := Pi; // save old values of Pi's 
+	 * 		for i := 1 to m do 
+	 * 			Pi := EVAL(pi, R1, ..., Rk, Q1,..., Qm);
+	 * 	until Pi = Qi for all i, 1 <= i <= m; 
+	 * output Pi's
+	 * </p>
+	 */
 	public boolean evaluate() throws DataModelException {
 
 		boolean newTupleAdded = false, cont = true;
 		IRelation r = null;
 
 		// Evaluate rules
-		for (int i = 1, maxStrat = Complementor.getMaxStratum(this.idb
+		for (int i = 1, maxStrat = Complementor.getMaxStratum(this.idbMap
 				.keySet()); i <= maxStrat; i++) {
 
 			cont = true;
 			while (cont) {
 				// Iterating through all predicates of the stratum
-				for (final IPredicate p : Complementor
-						.getPredicatesOfStratum(this.idb.keySet(), i)) {
+				for (final IPredicate pr : Complementor
+						.getPredicatesOfStratum(this.idbMap.keySet(), i)) {
 					cont = false;
 					// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-					r = method.eval(this.idb.get(p), this.edb);
+					r = method.evaluate(this.idbMap.get(pr), this.p);
 					if (r != null && r.size() > 0) {
-						newTupleAdded = this.edb.addFacts(p, r);
+						newTupleAdded = this.p.addFacts(pr, r);
 						cont = cont || newTupleAdded;
 					}
 				}
@@ -100,11 +103,11 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 		}
 
 		// Evaluate queries
-		for (IPredicate p : this.queries.keySet()) {
+		for (IPredicate pr : this.queries.keySet()) {
 			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-			r = method.eval(this.queries.get(p), this.edb);
+			r = method.evaluate(this.queries.get(pr), this.p);
 			if (r != null && r.size() > 0)
-				this.getResultSet().getResults().put(p, r);
+				this.getResultSet().getResults().put(pr, r);
 		}
 		return true;
 	}
