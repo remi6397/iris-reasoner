@@ -148,7 +148,7 @@ public interface IRelationOperationsFactory {
 	 * select those tuples from relation r, which have term "d" at the 0th
 	 * position and term "a" at the 1st position.
 	 * 
-	 * @param Relation
+	 * @param RelationDescriptor
 	 *            to be selected
 	 * @param Pattern
 	 *            Pattern that defines the selection condition
@@ -162,7 +162,7 @@ public interface IRelationOperationsFactory {
 	 * those tuples from relation r, which have equal terms at the 0th and 1st
 	 * position and equal terms at the 3rd and 4th position.
 	 * 
-	 * @param Relation
+	 * @param RelationDescriptor
 	 *            which selection will be performed on
 	 * @param Indexes
 	 *            Indexes that define the selection condition
@@ -182,7 +182,7 @@ public interface IRelationOperationsFactory {
 	 * 0th position and term "a" at the 1st position,
 	 * 
 	 * @param r
-	 *            Relation which selection will be performed on
+	 *            RelationDescriptor which selection will be performed on
 	 * @param p
 	 *            Pattern that defines the selection condition
 	 * @param neq
