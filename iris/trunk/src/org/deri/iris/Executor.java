@@ -35,26 +35,27 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.IEvaluator;
-import org.deri.iris.api.evaluation.seminaive.IEvaluationProcedure;
-import org.deri.iris.api.evaluation.seminaive.model.ITree;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.evaluation.IResultSet;
+import org.deri.iris.api.evaluation.algebra.IComponent;
+import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
+import org.deri.iris.evaluation.MiscOps;
+import org.deri.iris.evaluation.algebra.Rule2Relation;
 import org.deri.iris.evaluation.common.AdornedProgram;
 import org.deri.iris.evaluation.magic.MagicSetImpl;
-import org.deri.iris.evaluation.seminaive.InMemoryProcedure;
 import org.deri.iris.evaluation.seminaive.NaiveEvaluation;
-import org.deri.iris.evaluation.seminaive.Rule2Relation;
+import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
 
 /**
  * <p>
  * Executes a programm.
  * </p>
  * <p>
- * $Id: Executor.java,v 1.2 2006-12-05 13:47:17 richardpoettler Exp $
+ * $Id: Executor.java,v 1.3 2006-12-19 18:15:44 darko Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class Executor implements IExecutor {
 
@@ -65,36 +66,28 @@ public class Executor implements IExecutor {
 	private IEvaluator evaluator;
 
 	/** The evaluation mehtod. */
-	private EvaluationMethod method;
+	private IExpressionEvaluator method;
 
 	/**
+	 * <p>
 	 * Creates a new evaluator with a given programm and evaluator.
+	 * </p>
 	 * 
 	 * @param p
-	 *            the program
-	 * @param e
-	 *            the evaluator
+	 *            The program
 	 * @throws NullPointerException
-	 *             if the program or the evaluator is {@code null}
+	 *             If the program or the evaluator is {@code null}
 	 */
-	Executor(final IProgram p, final IEvaluator e) {
-		if ((p == null) || (e == null)) {
+	public Executor(final IProgram p, final IExpressionEvaluator m) {
+		if (p == null || m == null) {
 			throw new NullPointerException(
-					"The program and evaluator must not be null");
+					"The program and the expression evaluator must not be null");
 		}
 		this.prog = p;
-		this.evaluator = e;
+		this.method = m;
 	}
-
-	public void setEvaluationMethod(EvaluationMethod method) {
-		if (method == null) {
-			throw new NullPointerException("The method must not be null");
-		}
-		this.method = method;
-	}
-
+	
 	public Set<ITuple> computeSubstitution(final IQuery q) {
-		// TODO: choice between the procedures
 		if (q == null) {
 			throw new NullPointerException("The query must not be null");
 		}
@@ -102,50 +95,48 @@ public class Executor implements IExecutor {
 			throw new IllegalArgumentException(
 					"The length of the query literals must be 1");
 		}
-		if (!prog.isStratified()) {
-			throw new IllegalStateException("The program is not stratified.");
-		}
-		
 		// applying the magic sets
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(prog
-				.getRules(), q));
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(
+				this.prog.getRules(), q));
 		
+		// TODO: Introuduce the magic sets
 		// tests the stratum of the newly constructed program and sets it back
 		// to the original one, if needed
-		IProgram p = ms.createProgram(prog);
-		if (!p.isStratified()) {
-			p = prog;
-		}
+		/*IProgram p = ms.createProgram(prog);
+		if (p.isStratified()) {
+			prog = p;
+		}*/
+		execute();
 		
-		// translating the query and the rules to the relational algebra model
-		final Rule2Relation rr = new Rule2Relation();
-		final Map<IPredicate, ITree> ruleT = rr.evalRule(p.getRules());
-		final Map<IPredicate, ITree> queryT = rr.evalQueries(p.getQueries()
-				.iterator());
-		
-		// run the evalutaion
-		final IEvaluationProcedure proc = new InMemoryProcedure(null, p);
-		final IEvaluator e = new NaiveEvaluation(proc, p, ruleT, queryT);
-		e.evaluate();
-		
-		// adds the computed substitutions to the program
-		final Map<IPredicate, IRelation> rs = e.getResultSet().getResults();
-		for (final Map.Entry<IPredicate, IRelation> me : rs.entrySet()) {
-			p.addFacts(me.getKey(), me.getValue());
-		}
-		return p.getFacts(q.getQueryLiteral(0).getPredicate());
+		return this.prog.getFacts(q.getQueryLiteral(0).getPredicate());
 	}
 
 	public Map<IQuery, Set<ITuple>> computeSubstitutions() {
 		final Map<IQuery, Set<ITuple>> res = new HashMap<IQuery, Set<ITuple>>();
-		for (final IQuery q : prog.getQueries()) {
+		for (final IQuery q : this.prog.getQueries()) {
 			res.put(q, computeSubstitution(q));
 		}
 		return res;
 	}
 
 	public boolean execute() {
-		// TODO Auto-generated method stub
-		return false;
+		// TODO: remove the next checking once you introuduce the magic sets!
+		if(! MiscOps.stratify(this.prog)){
+			throw new RuntimeException("The input program is not strtifed");
+		}
+		// translating the query and the rules to the relational algebra model
+		final Rule2Relation rr = new Rule2Relation();
+		final Map<IPredicate, IComponent> ruleT = rr.translateRules(this.prog.getRules());
+		final Map<IPredicate, IComponent> queryT = rr.translateQueries(this.prog.getQueries());
+		
+		// run the evalutaion
+		this.evaluator = new SeminaiveEvaluation(method, this.prog, ruleT, queryT);
+		//this.evaluator = new NaiveEvaluation(method, this.prog, ruleT, queryT);
+		
+		return this.evaluator.evaluate();
+	}
+	
+	public IResultSet getResultSet(){
+		return this.evaluator.getResultSet();
 	}
 }
