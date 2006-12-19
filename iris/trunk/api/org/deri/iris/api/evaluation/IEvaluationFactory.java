@@ -33,6 +33,13 @@ import org.deri.iris.api.storage.IRelation;
 
 
 /**
+ * <p>
+ * Interface of a factory for creating objects from the evaluation package.
+ * </p>
+ * <p>
+ * $Id: IEvaluationFactory.java,v 1.2 2006-12-19 18:11:41 darko Exp $
+ * </p>
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date 09.11.2006 10:22:34
  */
