@@ -362,4 +362,18 @@ public class JoinSimple implements IJoin{
 		}
 		return 1;
 	}
+	
+	/**
+	 * <p>Creates a default join indexes.</p>
+	 *  
+	 * @param arity	Arity of the default join indexes.
+	 * @return		The default join indexes.
+	 */
+	public static int[] getInitIndexes(int arity) {
+		int[] i = new int[arity];
+		for (int j = 0; j < arity; j++){
+			i[j] = -1;
+		}
+		return i;
+	}
 }
