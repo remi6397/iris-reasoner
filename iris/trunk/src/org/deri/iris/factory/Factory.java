@@ -27,11 +27,11 @@ package org.deri.iris.factory;
 
 import org.deri.iris.ProgramFactory;
 import org.deri.iris.api.evaluation.IEvaluationFactory;
+import org.deri.iris.api.factory.IAlgebraFactory;
 import org.deri.iris.api.factory.IBasicFactory;
 import org.deri.iris.api.factory.IBuiltInsFactory;
 import org.deri.iris.api.factory.IConcreteFactory;
 import org.deri.iris.api.factory.IGraphFactory;
-import org.deri.iris.api.factory.IModelFactory;
 import org.deri.iris.api.factory.IProgramFactory;
 import org.deri.iris.api.factory.IRelationOperationsFactory;
 import org.deri.iris.api.factory.ITermFactory;
@@ -39,7 +39,7 @@ import org.deri.iris.api.factory.ITupleOperationsFactory;
 import org.deri.iris.basics.BasicFactory;
 import org.deri.iris.builtins.BuiltinsFactory;
 import org.deri.iris.evaluation.EvaluationFactory;
-import org.deri.iris.evaluation.seminaive.model.ModelFactory;
+import org.deri.iris.evaluation.algebra.AlgebraFactory;
 import org.deri.iris.graph.GraphFactory;
 import org.deri.iris.operations.relations.RelationOperationsFactory;
 import org.deri.iris.operations.tuple.TupleOperationsFactory;
@@ -73,7 +73,6 @@ public class Factory {
 
 	public static final IEvaluationFactory EVALUATION = EvaluationFactory
 			.getInstance();
-
-	public static final IModelFactory SEMINAIVE_MODEL = ModelFactory
-			.getInstance();
+	
+	public static final IAlgebraFactory ALGEBRA = AlgebraFactory.getInstance();
 }
