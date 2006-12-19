@@ -264,11 +264,15 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	
 	private int[] getJoinIndexes(List<IVariable> l0, List<IVariable> l1){
 		int[] indexes = JoinSimple.getInitIndexes(Math.max(l0.size(), l1.size()));
+		List<Integer> vi = new ArrayList<Integer>();
 		for (int j=0; j<l0.size(); j++) {
 			for (int k=0; k<l1.size(); k++) {
 				if (l0.get(j).equals(l1.get(k))) {
-					indexes[j] = k;
-					break;
+					if(! vi.contains(k)){
+						indexes[j] = k;
+						vi.add(k);
+						break;
+					}
 				} 
 			}
 		}
