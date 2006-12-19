@@ -43,7 +43,7 @@ public class Atom implements IAtom<IAtom> {
 
 	private final IPredicate predicate;
 	
-	private final ITuple tuple;;
+	private final ITuple tuple;
 
 	Atom(final IPredicate predicate) {
 		if (predicate == null) {
