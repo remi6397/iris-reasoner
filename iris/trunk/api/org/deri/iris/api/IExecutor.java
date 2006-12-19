@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.evaluation.IResultSet;
 
 /**
  * <p>
@@ -48,12 +49,12 @@ import org.deri.iris.api.basics.ITuple;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IExecutor.java,v 1.3 2006-12-06 15:28:26 darko Exp $
+ * $Id: IExecutor.java,v 1.4 2006-12-19 18:11:09 darko Exp $
  * </p>
  * 
  * @author Richard PÃ¶ttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface IExecutor {
 
@@ -63,16 +64,6 @@ public interface IExecutor {
 		QSQ, 
 		SEMI_NAÏVE_WITH_MAGIC_SETS
 	};
-
-	/**
-	 * <p>
-	 * Sets the evaluation method.
-	 * </p>
-	 * 
-	 * @param method
-	 *            The evaluation method.
-	 */
-	public void setEvaluationMethod(final EvaluationMethod method);
 
 	/**
 	 * <p>
@@ -104,4 +95,13 @@ public interface IExecutor {
 	 *         substitutions as values for those queries.
 	 */
 	public Map<IQuery, Set<ITuple>> computeSubstitutions();
+	
+	/**
+	 * <p>
+	 * Returns the computed results.
+	 * <p>
+	 * 
+	 * @return the computed results
+	 */
+	public IResultSet getResultSet();
 }
