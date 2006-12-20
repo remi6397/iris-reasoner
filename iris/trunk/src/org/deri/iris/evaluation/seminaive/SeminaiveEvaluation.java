@@ -44,8 +44,8 @@ import org.deri.iris.api.storage.IRelation;
  * OUTPUT: The least fixed point solution to the datalog equations obtained from
  * these rules.
  * 
- * @author Paco Garcia, University of Murcia
  * @author Darko Anicic, DERI Innsbruck
+ * @author Paco Garcia, University of Murcia
  * @date 05-sep-2006
  */
 public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
@@ -69,7 +69,6 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 				.getMaxStratum(this.idbMap.keySet()); i <= maxStrat; i++) {
 
 			cont = true;
-
 			/**
 			 * <p>Algorithm:</p>
 			 * <p>
