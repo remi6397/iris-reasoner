@@ -42,7 +42,7 @@ import org.deri.iris.api.storage.IRelation;
  */
 public class ProgramFactory implements IProgramFactory {
 	private static final IProgramFactory FACTORY = new ProgramFactory();
-	private static final IProgram EDB = new Progarm();
+	private static final IProgram EDB = new Program();
 	
 	private ProgramFactory() {
 		// this is a singelton
@@ -57,7 +57,7 @@ public class ProgramFactory implements IProgramFactory {
 	}
 	
 	public IProgram createProgram(Map<IPredicate, IRelation> f, Set<IRule> r, Set<IQuery> q) {
-		return new Progarm(f, r, q);
+		return new Program(f, r, q);
 	}
 
 }

@@ -57,7 +57,7 @@ import org.deri.iris.terms.ConstructedTerm;
  * @author Darko Anicic, DERI Innsbruck
  * @date   26.07.2006 16:53:36
  */
-public class Progarm implements IProgram{
+public class Program implements IProgram{
 
 	private Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
 	
@@ -79,7 +79,7 @@ public class Progarm implements IProgram{
 	 * Creates an empty extensional database (knowledge base) 
 	 * ready to be filled up with facts, rules and queries.
 	 */
-	Progarm() {
+	Program() {
 		WRITE.lock();
 			this.rules = new HashSet<IRule>();
 			this.queries = new HashSet<IQuery>();
@@ -99,7 +99,7 @@ public class Progarm implements IProgram{
 	 * @param q
 	 * 			a set of queries to be added into the EDB.
 	 */
-	Progarm(final Map<IPredicate, IRelation> f, final Set<IRule> r, final Set<IQuery> q) {
+	Program(final Map<IPredicate, IRelation> f, final Set<IRule> r, final Set<IQuery> q) {
 		if ((f == null) || (r == null) || (q == null)) {
 			throw new IllegalArgumentException("Input parameters must not be null");
 		}
