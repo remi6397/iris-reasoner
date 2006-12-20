@@ -182,7 +182,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		}
 		IProjection projection = Factory.RELATION_OPERATION
 			.createProjectionOperator(
-					evaluate(pr, p, aq), pr.getIndexes());
+					evaluate(comp, p, aq), pr.getIndexes());
 		
 		return projection.project();
 	}
