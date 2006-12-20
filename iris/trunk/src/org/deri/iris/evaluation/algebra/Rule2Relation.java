@@ -30,13 +30,13 @@ import static org.deri.iris.factory.Factory.BASIC;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
@@ -108,7 +108,7 @@ public class Rule2Relation {
 		IComponent c = null;
 		
 		for (IRule r : rules) {
-			m = new TreeMap<ILiteral, List<IVariable>>();
+			m = new HashMap<ILiteral, List<IVariable>>();
 			oVars = new HashSet<IVariable>();
 			IPredicate p = r.getHeadLiteral(0).getPredicate();
 			IAtom a = null;
@@ -276,7 +276,7 @@ public class Rule2Relation {
 		List<ITerm> terms = l.getAtom().getTuple().getTerms();
 		List<IVariable> vars = new ArrayList<IVariable>(l.getPredicate()
 				.getArity());
-		int i = 0, j = 0;
+		int i = 0, j = 0, n=0;
 		ITerm t1 = null;
 		boolean selectionNeeded = false;
 		boolean projectionNeeded = false;
@@ -289,7 +289,7 @@ public class Rule2Relation {
 				projectionNeeded = true;
 			} else {
 				ts.add(null);
-				projectInds[i] = j++;
+				projectInds[n] = j++;
 				// TODO: Constructed terms are not considered in Rule2Relation
 				// transformation
 				vars.add((IVariable) t);
@@ -303,6 +303,7 @@ public class Rule2Relation {
 					}
 				}
 			}
+			n++;
 		}
 		pattern = BASIC.createTuple(ts);
 		IRelationDescriptor le = ALGEBRA.createRelationDescriptor(l
