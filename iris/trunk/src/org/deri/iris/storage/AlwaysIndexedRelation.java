@@ -81,7 +81,7 @@ public class AlwaysIndexedRelation implements IRelation {
 	/**
 	 * A list containing all indexes. An index is a Map sorted on a special
 	 * column (term) of the tuple. It uses the Term at this special position as
-	 * key an the value will be a set of the tuples with the key at the position
+	 * key and the value will be a set of the tuples with the key at the position
 	 * this index sorts on. indexlist[0] will sort on the first column,
 	 * indexlist[1] on the second, and so on.
 	 */
