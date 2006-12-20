@@ -38,9 +38,14 @@ import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.exception.DataModelException;
 
 /**
+ * <p>
+ * This is an abstract implementation of  <code>IEvaluator<code> 
+ * interface used as a super class for the naïve and 
+ * semi-naïve evaluations.
+ * </p>
  * 
- * @author Paco Garcia, University of Murcia
  * @author Darko Anicic, DERI Innsbruck
+ * @author Paco Garcia, University of Murcia
  * @date 08-sep-2006
  */
 public abstract class GeneralSeminaiveEvaluation implements IEvaluator {
@@ -56,8 +61,9 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator {
 
 	private IResultSet results = null;
 
-	GeneralSeminaiveEvaluation(IExpressionEvaluator e, IProgram p,
-			Map<IPredicate, IComponent> idb, Map<IPredicate, IComponent> qMap) {
+	GeneralSeminaiveEvaluation(final IExpressionEvaluator e, final IProgram p,
+			final Map<IPredicate, IComponent> idb, 
+			final Map<IPredicate, IComponent> qMap) {
 
 		this.method = e;
 		this.p = p;
