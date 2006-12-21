@@ -72,9 +72,6 @@ public class AlwaysIndexedRelation implements IRelation {
 	 */
 	private static final int INITIAL_COLS = 5;
 
-	/** The initial amount of columns for this relation. NOT USED AT THE MOMENT. */
-	private static final int INITIAL_ROWS = 10;
-
 	/** How many columns are stored in this relation. */
 	private int arity;
 
@@ -101,7 +98,7 @@ public class AlwaysIndexedRelation implements IRelation {
 
 	public AlwaysIndexedRelation() {
 		WRITE.lock();
-		reset(INITIAL_ROWS, INITIAL_COLS);
+		reset(INITIAL_COLS);
 		WRITE.unlock();
 	}
 
@@ -111,7 +108,7 @@ public class AlwaysIndexedRelation implements IRelation {
 			boolean changed = false;
 			if (isEmpty()) { // if its empty -> initialize the indexes
 				initializeForTuple(tuple);
-			} else if (arity == tuple.getArity()) { // validate arity of the
+			} else if (arity != tuple.getArity()) { // validate arity of the
 				// tuple
 				throw new IllegalArgumentException(
 						"Tried to add a tuple of arity "
@@ -122,16 +119,16 @@ public class AlwaysIndexedRelation implements IRelation {
 
 			if (searchForTuple(tuple) == null) { // check whether tuple
 				// already exists -> update the indexes
-				for (int iCounter = 0; iCounter < tuple.getArity(); iCounter++) {
-					ITerm indexTerm = tuple.getTerm(iCounter);
+				for (int i = 0; i < tuple.getArity(); i++) {
+					ITerm indexTerm = tuple.getTerm(i);
 
-					Set<ITuple> indexed = indexlist.get(iCounter)
+					Set<ITuple> indexed = indexlist.get(i)
 							.get(indexTerm);
 					if (indexed == null) {
 						indexed = new TreeSet<ITuple>();
 					}
 					indexed.add(tuple);
-					indexlist.get(iCounter).put(indexTerm, indexed);
+					indexlist.get(i).put(indexTerm, indexed);
 				}
 				changed = true;
 			}
@@ -158,14 +155,18 @@ public class AlwaysIndexedRelation implements IRelation {
 
 	public void clear() {
 		WRITE.lock();
-		reset(INITIAL_ROWS, indexlist.size());
+		reset(indexlist.size());
 		WRITE.unlock();
 	}
 
 	public boolean contains(Object o) {
 		READ.lock();
 		try {
-			return primaryIndex.containsValue(o);
+			if (o instanceof ITuple) {
+				final ITuple t = (ITuple) o;
+				return indexlist.get(0).get(t.getTerm(0)).contains(t);
+			}
+			return false;
 		} finally {
 			READ.unlock();
 		}
@@ -194,29 +195,8 @@ public class AlwaysIndexedRelation implements IRelation {
 	 */
 	protected void initializeForTuple(final ITuple tuple) {
 		WRITE.lock();
-		arity = tuple.getArity();
-		for (int iCounter = 0; iCounter < arity; iCounter++) {
-			indexlist.set(iCounter, new TreeMap<ITerm, Set<ITuple>>());
-		}
-		sortOn(0);
+		reset(tuple.getArity());
 		WRITE.unlock();
-	}
-
-	/**
-	 * Tells the relation to use another index
-	 * 
-	 * @param index
-	 *            of the Term on which to sort
-	 * @return whether the order of the Tree has changed
-	 */
-	public boolean sortOn(final int index) {
-		WRITE.lock();
-		try {
-			primaryIndex = indexlist.get(index);
-			return false;
-		} finally {
-			WRITE.unlock();
-		}
 	}
 
 	public boolean isEmpty() {
@@ -309,10 +289,17 @@ public class AlwaysIndexedRelation implements IRelation {
 	 * @param columns
 	 *            the arrity of the tuples stored in here
 	 */
-	protected void reset(final int rows, final int columns) {
+	protected void reset(final int columns) {
+		if (columns < 0) {
+			throw new IllegalArgumentException("The number of columns must not be negative");
+		}
 		WRITE.lock();
+		arity = columns;
 		indexlist = new ArrayList<SortedMap<ITerm, Set<ITuple>>>(columns);
-		arity = 0;
+		for (int i = 0; i < columns; i++) {
+			indexlist.add(i, new TreeMap<ITerm, Set<ITuple>>());
+		}
+		primaryIndex = (columns > 0) ? indexlist.get(0) : null;
 		WRITE.unlock();
 	}
 
@@ -345,7 +332,13 @@ public class AlwaysIndexedRelation implements IRelation {
 	protected ITuple searchForTuple(final ITuple tuple) {
 		READ.lock();
 		try {
-			Set<ITuple> tupleSet = primaryIndex.get(tuple.getTerm(0));
+			Set<ITuple> tupleSet = indexlist.get(0).get(tuple.getTerm(0));
+			// if there are no tuples with the same term at the given
+			// index -> return null
+			if (tupleSet == null) {
+				return null;
+			}
+
 			ITuple[] indexed = new ITuple[tupleSet.size()];
 			indexed = tupleSet.toArray(indexed);
 			for (ITuple t : indexed) {
