@@ -27,12 +27,11 @@
 package org.deri.iris.storage;
 
 /*
- * with aspectJ the code scattering for the locks could be prevented and the 
+ * with aspectJ the code scattering for the locks could be prevented and the
  * code would be much less error-phrone and more readable
- * 
- * TODO: write a test for this relation
- * TODO: clone the tuples used to limit the subsets
  */
+// TODO: write a test for this relation 
+// TODO: clone the tuples used to limit the subsets
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -78,8 +77,8 @@ public class AlwaysIndexedRelation implements IRelation {
 	/**
 	 * A list containing all indexes. An index is a Map sorted on a special
 	 * column (term) of the tuple. It uses the Term at this special position as
-	 * key and the value will be a set of the tuples with the key at the position
-	 * this index sorts on. indexlist[0] will sort on the first column,
+	 * key and the value will be a set of the tuples with the key at the
+	 * position this index sorts on. indexlist[0] will sort on the first column,
 	 * indexlist[1] on the second, and so on.
 	 */
 	private List<SortedMap<ITerm, Set<ITuple>>> indexlist;
@@ -107,7 +106,7 @@ public class AlwaysIndexedRelation implements IRelation {
 		try {
 			boolean changed = false;
 			if (isEmpty()) { // if its empty -> initialize the indexes
-				initializeForTuple(tuple);
+				reset(tuple.getArity());
 			} else if (arity != tuple.getArity()) { // validate arity of the
 				// tuple
 				throw new IllegalArgumentException(
@@ -122,8 +121,7 @@ public class AlwaysIndexedRelation implements IRelation {
 				for (int i = 0; i < tuple.getArity(); i++) {
 					ITerm indexTerm = tuple.getTerm(i);
 
-					Set<ITuple> indexed = indexlist.get(i)
-							.get(indexTerm);
+					Set<ITuple> indexed = indexlist.get(i).get(indexTerm);
 					if (indexed == null) {
 						indexed = new TreeSet<ITuple>();
 					}
@@ -228,10 +226,8 @@ public class AlwaysIndexedRelation implements IRelation {
 		READ.lock();
 		try {
 			final List<ITuple> elements = new ArrayList<ITuple>();
-			for (Set<ITuple> s : primaryIndex.values()) {
-				for (ITuple t : s) {
-					elements.add(elements.size(), t);
-				}
+			for (final Set<ITuple> s : primaryIndex.values()) {
+				elements.addAll(s);
 			}
 			return elements;
 		} finally {
@@ -291,7 +287,8 @@ public class AlwaysIndexedRelation implements IRelation {
 	 */
 	protected void reset(final int columns) {
 		if (columns < 0) {
-			throw new IllegalArgumentException("The number of columns must not be negative");
+			throw new IllegalArgumentException(
+					"The number of columns must not be negative");
 		}
 		WRITE.lock();
 		arity = columns;
@@ -332,16 +329,14 @@ public class AlwaysIndexedRelation implements IRelation {
 	protected ITuple searchForTuple(final ITuple tuple) {
 		READ.lock();
 		try {
-			Set<ITuple> tupleSet = indexlist.get(0).get(tuple.getTerm(0));
+			final Set<ITuple> tupleSet = indexlist.get(0).get(tuple.getTerm(0));
 			// if there are no tuples with the same term at the given
 			// index -> return null
 			if (tupleSet == null) {
 				return null;
 			}
 
-			ITuple[] indexed = new ITuple[tupleSet.size()];
-			indexed = tupleSet.toArray(indexed);
-			for (ITuple t : indexed) {
+			for (final ITuple t : tupleSet) {
 				if (t.equals(tuple)) {
 					return t;
 				}
@@ -504,7 +499,9 @@ public class AlwaysIndexedRelation implements IRelation {
 								+ " arity of the relation: " + arity);
 			}
 
-			if (lowest.getTerm(index).compareTo(highest.getTerm(index)) > 0) {
+			if ((lowest != null)
+					&& (highest != null)
+					&& (lowest.getTerm(index).compareTo(highest.getTerm(index)) > 0)) {
 				throw new IllegalArgumentException("lowest (" + lowest
 						+ ") is higher than highest (" + highest + ").");
 			}
@@ -822,11 +819,9 @@ public class AlwaysIndexedRelation implements IRelation {
 		protected Collection<ITuple> listAllTuples() {
 			READ.lock();
 			try {
-				List<ITuple> elements = new ArrayList<ITuple>();
-				for (ITerm t : getValidIndexes()) {
-					for (ITuple tup : primaryIndex.get(t)) {
-						elements.add(elements.size(), tup);
-					}
+				final List<ITuple> elements = new ArrayList<ITuple>();
+				for (final ITerm t : getValidIndexes()) {
+					elements.addAll(primaryIndex.get(t));
 				}
 				return elements;
 			} finally {
