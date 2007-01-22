@@ -28,17 +28,23 @@ package org.deri.iris.api.terms.concrete;
 import org.deri.iris.api.terms.IStringTerm;
 
 /**
+ * <p>
  * Definition: base64Binary represents Base64-encoded arbitrary binary data. The
  * ·value space· of base64Binary is the set of finite-length sequences of binary
  * octets. For base64Binary data the entire binary stream is encoded using the
  * Base64 Alphabet in [RFC 2045].
- * 
+ * </p>
+ * <p>
  * The lexical forms of base64Binary values are limited to the 65 characters of
  * the Base64 Alphabet defined in [RFC 2045], i.e., a-z, A-Z, 0-9, the plus sign
  * (+), the forward slash (/) and the equal sign (=), together with the
  * characters defined in [XML 1.0 (Second Edition)] as white space. No other
  * characters are allowed.
- * 
+ * </p>
+ * <p>
+ * Remark: IRIS supports datatypes according to the standard 
+ * specification for primitive XML Schema datatypes.
+ * </p>
  * <pre>
  *      Created on 04.04.2006
  *      Committed by $Author: darko $
@@ -47,7 +53,7 @@ import org.deri.iris.api.terms.IStringTerm;
  * 
  * @author Richard Pöttler AuthorLastName
  * 
- * @version $Revision: 1.3 $ $Date: 2007-01-22 12:47:27 $
+ * @version $Revision: 1.4 $ $Date: 2007-01-22 16:08:52 $
  */
 public interface IBase64Binary extends IStringTerm<IBase64Binary> {
 }

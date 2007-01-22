@@ -32,7 +32,10 @@ import org.deri.iris.api.terms.ITerm;
 
 /**
  * This is a representation of the builtin datatype IDateTime.
- * 
+ * <p>
+ * Remark: IRIS supports datatypes according to the standard 
+ * specification for primitive XML Schema datatypes.
+ * </p>
  * <br />
  * <code>ATTENTION: internally a Calendar is
  * used, so setting month and hour is zero-based.</code>
@@ -47,7 +50,7 @@ import org.deri.iris.api.terms.ITerm;
  * 
  * @author Richard Pöttler
  * 
- * @version $Revision: 1.4 $ $Date: 2007-01-22 12:48:24 $
+ * @version $Revision: 1.5 $ $Date: 2007-01-22 16:09:20 $
  */
 public interface IDateTime extends ITerm<IDateTime, Calendar> {
 	/**
