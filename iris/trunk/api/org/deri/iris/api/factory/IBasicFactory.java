@@ -39,6 +39,11 @@ import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.terms.ITerm;
 
 /**
+ * <p>
+ * An interface that can be used to create set of basic logical entities 
+ * such as predicates, atoms, rules, queries etc.
+ * </p>
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date 13.01.2006 13:27:34
  */

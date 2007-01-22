@@ -34,8 +34,16 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.storage.IRelation;
 /**
+ * <p>
+ * An interface that can be used to obtain a reference to a logical program.
+ * </p>
+ * <p>
+ * @see org.deri.iris.api.IProgram
+ * </p>
+ * 
+ * @author Darko Anicic, DERI Innsbruck
  * @author Francisco Garcia
- *
+ * @date 14.11.2006 11:59:34
  */
 public interface IProgramFactory {
 	

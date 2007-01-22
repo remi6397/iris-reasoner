@@ -30,6 +30,14 @@ import java.util.Calendar;
 import org.deri.iris.api.terms.ITerm;
 
 /**
+ * <p>
+ * An interface for representing the date datatype. 
+ * </p>
+ * <p>
+ * Remark: IRIS supports datatypes according to the standard 
+ * specification for primitive XML Schema datatypes.
+ * </p>
+ * 
  * @author richi
  *
  */

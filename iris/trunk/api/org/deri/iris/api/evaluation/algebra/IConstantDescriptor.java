@@ -28,10 +28,21 @@ package org.deri.iris.api.evaluation.algebra;
 import org.deri.iris.api.terms.ITerm;
 
 /**
-* @author Darko Anicic, DERI Innsbruck
-* @date 14.12.2006 16:16:34
-*/
+ * <p>
+ * Represents a component for describing a constant (a constant is 
+ * a ground term). This description is used during the evaluation 
+ * of a relational algebra expression.
+ * </p>
+ * 
+ * @author Darko Anicic, DERI Innsbruck
+ * @date 14.12.2006 16:16:34
+ */
 public interface IConstantDescriptor extends IComponent{
 
+	/**
+	 * Returns a constant bound to this component.
+	 * 
+	 * @return	The constant.
+	 */
 	public ITerm getConstant();
 }

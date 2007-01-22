@@ -32,14 +32,21 @@ import org.deri.iris.api.basics.ITuple;
 
 
 /**
+ * <p>
+ * The union of relations R and S, denoted as R U S
+ * An interface for a tuple comparator. The comparator is used 
+ * for a number of operations performed on tuples and relations 
+ * (e.g. join to express the theta operator).
+ * </p>
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   13.10.2006 12:48:34
  */
 public interface IComparator extends Comparator<ITuple>{
 
 	/**
-	 * @return Returns arity of tuples to be compared 
-	 * 		   with this comparator. 
+	 * @return Returns arity of tuples that are compared 
+	 * 		   using this comparator. 
 	 */
 	public int getArity();
 }

@@ -31,11 +31,28 @@ import java.util.List;
 import org.deri.iris.api.terms.IVariable;
 
 /**
+ * <p>
+ * Represents a general component for describing a relational
+ * algebra operation (e.g. join, selection, projection, union etc.). 
+ * An interface of a component (descriptor) for a particular 
+ * relational algebra operation extends this interface.
+ * </p>
+ * <p>
+ * A relational algebra expression is represented as a tree where each node 
+ * represents a particular relational algebra operation. The tree node is 
+ * represented as a component. The evaluation of a relational algebra 
+ * expression is done by the evaluation of the set of  relational algebra 
+ * operations in an order defined by the tree.
+ * </p>
+ * 
 * @author Darko Anicic, DERI Innsbruck
 * @date 13.12.2006 17:29:34
 */
 public interface IComponent {
 
+	/**
+	 * Defines a type of the component.
+	 */
 	public static enum ComponentType {
 		CONSTANT,
 		DIFFERENCE,
@@ -46,15 +63,48 @@ public interface IComponent {
 		UNION
 	};
 	
+	/**
+	 * Returns a type of the component.
+	 * 
+	 * @return	The component type.
+	 */
 	public ComponentType getType();
 	
+	/**
+	 * Adds a collection of variables to the component which are needed for 
+	 * a particular relational algebra operation.
+	 * 
+	 * @param vars	Variables to add.
+	 */
 	public void addVariables(final Collection<IVariable> vars);
 	
+	/**
+	 * Add the child represented as a component to the parent.
+	 * 
+	 * @param c	The component to be added to the parent.
+	 * @return	True if the component is added to the tree, otherwise false.
+	 */
 	public boolean addChild(final IComponent c);
 	
+	/**
+	 * Returns all children.
+	 * 
+	 * @return	List of all children.
+	 */
 	public List<IComponent> getChildren();
 	
+	/**
+	 * Removes a particular component from the tree.
+	 * 
+	 * @param c	The component to be removed.
+	 * @return	True if the component is removed from the tree, otherwise false.
+	 */
 	public boolean removeChild(final IComponent c);
 	
+	/**
+	 * Returns all variables from the component.
+	 * 
+	 * @return	List of all variables from the component.
+	 */
 	public List<IVariable> getVariables();
 }

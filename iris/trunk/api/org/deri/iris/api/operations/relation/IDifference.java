@@ -28,17 +28,30 @@ package org.deri.iris.api.operations.relation;
 import org.deri.iris.api.storage.IRelation;
 
 /**
- * Interface or class description
- *
- * Interface of a difference operation used to promote modularity 
- * of the inference engine.
+ * <p>
+ * An interface for the set difference operation. The difference 
+ * of relations R and S, denoted R-S, is the set of tuples in 
+ * R but not in S. Relations R and S are supposed to have the 
+ * same arity.
+ * </p>
  * 
- * @author Darko Anicic
+ * @author Darko Anicic, DERI Innsbruck
  * @date  11.04.2006 @time  15:25:17
  *
- * @version $Revision: 1.3 $ $Date: 2006-10-05 09:46:11 $
+ * @version $Revision: 1.4 $ $Date: 2007-01-22 12:46:04 $
  */
 public interface IDifference {
 
+	/**
+	 * <p>
+	 * Performs set difference operation.
+	 * </p>
+	 * <p>
+	 * @see org.deri.iris.api.factory.IRelationOperationsFactory#
+	 * createDifferenceOperator(IRelation arg0, IRelation arg1).
+	 * </p>
+	 * 
+	 * @return	The relation which is result of the set difference operation.
+	 */
 	public IRelation difference();
 }

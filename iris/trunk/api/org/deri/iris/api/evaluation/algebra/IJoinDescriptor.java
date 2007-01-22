@@ -28,12 +28,27 @@ package org.deri.iris.api.evaluation.algebra;
 import org.deri.iris.operations.relations.JoinCondition;
 
 /**
+ * <p>
+ * Represents a component for describing the join operation. 
+ * This description is used during the evaluation of a relational 
+ * algebra expression.
+ * </p>
  * 
+ * @author Darko Anicic, DERI Innsbruck
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  *
  */
 public interface IJoinDescriptor extends IComponent{
 
+	/**
+	 * <p>
+	 * Theta-join operation is defined by the theta operator. 
+	 * This method returns a particular theta operator used in this 
+	 * join descriptor.
+	 * </p>
+	 * 
+	 * @return	The theta join operator.
+	 */
 	public JoinCondition getCondition();
 }

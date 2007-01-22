@@ -48,6 +48,7 @@ import org.deri.iris.api.storage.IRelation;
 public interface IExpressionEvaluator {
 
 	/**
+	 * Evaluates the relational algebra expression.
 	 * 
 	 * @param c
 	 * 			A relational algebra expression to be evaluated/executed.
@@ -59,6 +60,7 @@ public interface IExpressionEvaluator {
 	public IRelation evaluate(IComponent c, IProgram p);
 
 	/**
+	 * Evaluates the relational algebra expression incrementally.
 	 * 
 	 * @param c
 	 * 			A relational algebra expression to be evaluated/executed.

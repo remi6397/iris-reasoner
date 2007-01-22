@@ -28,12 +28,16 @@ package org.deri.iris.api.factory;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.tuple.IConcatenation;
-import org.deri.iris.api.operations.tuple.IMatching;
 import org.deri.iris.api.operations.tuple.IUnification;
 import org.deri.iris.api.terms.ITerm;
 
 
 /**
+ * <p>
+ * An interface that can be used to obtain references to set of 
+ * operations performed on tuples.
+ * </p>
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   30.09.2006 17:20:39
  */
@@ -55,8 +59,6 @@ public interface ITupleOperationsFactory {
 	public IConcatenation createConcatenationOperator(
 			final ITuple arg0, final ITuple arg1, final int[] pi);
 
-	public IMatching createMatchingOperator(final ITuple arg0, final ITuple arg1);
-	
 	public IUnification createUnificationOperator(final ITuple arg0, final ITuple arg1);
 	
 	public IUnification createUnificationOperator(final IAtom arg0, final IAtom arg1);
