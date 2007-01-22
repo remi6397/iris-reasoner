@@ -109,7 +109,7 @@ public class JoinSimple implements IJoin{
 	JoinSimple(IRelation arg0, IRelation arg1, int[] inds,
 			JoinCondition condition, int[] projectIndexes) {
 		if (arg0 == null || arg1 == null || inds == null
-				|| condition == null) {
+				|| condition == null || projectIndexes == null) {
 			throw new IllegalArgumentException("Constructor "
 					+ "parameters are not specified correctly");
 		}
@@ -150,17 +150,16 @@ public class JoinSimple implements IJoin{
 		 * If project indexes are not specified, 
 		 * joined tuples will be simple merged.
 		 */
-		int a = this.relation0.getArity() + this.relation1.getArity();
+		int a = this.getRelationArity();
 		if (this.projectIndexes == null) {
 			this.projectIndexes = this.transformIndexes0(a, new int[a]);
 		}
-		this.joinRelation = new Relation(this.getRelationArity());
+		this.joinRelation = new Relation(a);
 	}
 
 	public IRelation join() {
 		/**
 		 * Return an empty join relation for empty input relation/s.
-		
 		 */
 		if (this.relation0.size()==0 || relation1.size() == 0) {
 			return new Relation(this.getRelationArity());
@@ -268,6 +267,9 @@ public class JoinSimple implements IJoin{
 	
 	private int getRelationArity(){
 		int j=0;
+		if(this.projectIndexes == null){
+			return this.relation0.getArity() + this.relation1.getArity();
+		}
 		for(int i=0; i<this.projectIndexes.length; i++){
 			if(this.projectIndexes[i] != -1) j++;
 		}
