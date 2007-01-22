@@ -38,7 +38,7 @@ import org.deri.iris.api.terms.IVariable;
  * relation.
  * </p>
  * <p>
- * $Id: ITuple.java,v 1.8 2006-12-11 15:03:14 darko Exp $
+ * $Id: ITuple.java,v 1.9 2007-01-22 12:44:30 darko Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -48,18 +48,14 @@ import org.deri.iris.api.terms.IVariable;
 public interface ITuple extends Comparable<ITuple> {
 
 	/**
-	 * <p>
 	 * Returns the arity of the predicate.
-	 * </p>
 	 * 
 	 * @return The arity of the predicate.
 	 */
 	public int getArity();
 
 	/**
-	 * <p>
 	 * Returns the term at the specified position in this tuple.
-	 * </p>
 	 * 
 	 * @param index
 	 *            Index of tuple to return.
@@ -68,20 +64,16 @@ public interface ITuple extends Comparable<ITuple> {
 	public ITerm getTerm(int index);
 
 	/**
-	 * <p>
 	 * Returns all terms of this tuple preserving the order of terms in the
 	 * tuple.
-	 * </p>
 	 * 
 	 * @return Returns all terms of this tuple.
 	 */
 	public List<ITerm> getTerms();
 
 	/**
-	 * <p>
 	 * Replaces the term at the specified position in this tuple with the
 	 * specified term.
-	 * </p>
 	 * 
 	 * @param index
 	 *            Index of element to replace.
@@ -127,9 +119,7 @@ public interface ITuple extends Comparable<ITuple> {
 	public boolean setTerms(int index, List<ITerm> terms);
 
 	/**
-	 * <p>
 	 * Checks whether this tuple contains only ground terms.
-	 * </p>
 	 * 
 	 * @return <code>true</code> if all terms of this tuple are grounded;
 	 *         <code>false</code> otherwise.
@@ -137,9 +127,7 @@ public interface ITuple extends Comparable<ITuple> {
 	public boolean isGround();
 
 	/**
-	 * <p>
 	 * Returns all distinct variables from this tupple.
-	 * </p>
 	 * 
 	 * @return All distinct variables from this tupple.
 	 */
