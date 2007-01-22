@@ -42,8 +42,26 @@ import org.deri.iris.api.terms.ITerm;
  *
  */
 public interface IDateTerm extends ITerm<IDateTerm, Calendar> {
+	
+	/**
+	 * Returns the month of the year.
+	 * 
+	 * @return the month.
+	 */
 	public int getMonth();
+	
+	/**
+	 * Returns the year.
+	 * 
+	 * @return the year.
+	 */
 	public int getYear();
+	
+	
+	/**
+	 * Returns the day of the month.
+	 * 
+	 * @return the day
+	 */
 	public int getDay();
-
 }
