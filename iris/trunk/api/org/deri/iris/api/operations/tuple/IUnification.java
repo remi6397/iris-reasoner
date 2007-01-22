@@ -28,24 +28,26 @@ package org.deri.iris.api.operations.tuple;
 import org.deri.iris.operations.tuple.Unification.UnificationResult;
 
 /**
- *
- * Interface of a unification operation used to promote modularity 
- * of the inference engine.
- * 
- * Given two terms containing some variables, find, if it exists, 
- * the simplest substitution (i.e., an assignment of some term to every 
+ * <p>
+ * An interface for the unification operation. The unification problem 
+ * is the following: 
+ * given two terms containing some variables, find, if it exists, 
+ * the simplest substitution (e.g., an assignment of some term to every 
  * variable) which makes the two terms equal. The resulting substitution 
- * is called the most general unifier and is unique up to variable renaming.
- * 
- * An implementation of this interface is supposed to find the most general
- * unifier for two atoms or two tupples.
+ * is called the most general unifier (mgu) and is unique up to variable renaming.
+ * </p>
  * 
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:54:09
  *
- * @version $Revision: 1.9 $ $Date: 2006-11-06 10:49:27 $
+ * @version $Revision: 1.10 $ $Date: 2007-01-22 12:46:18 $
  */
 public interface IUnification {
 
+	/**
+	 * Performs the unification operation.
+	 * 
+	 * @return	The relation which is a result of the unification operation.
+	 */
 	public UnificationResult unify();
 }

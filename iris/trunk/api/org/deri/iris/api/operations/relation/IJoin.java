@@ -29,26 +29,31 @@ package org.deri.iris.api.operations.relation;
 import org.deri.iris.api.storage.IRelation;
 
 /**
- * Interface of a join operation used to promote modularity 
- * of the inference engine.
- * 
- * Note: Implementation of the IJoin interface assumes an 
- * implementation of this interface itself and an implementation of 
- * the IRelationOperationsFactory interface (createJoinOperator methods).
+ * <p>
+ * An interface for the join operation. The theta-join combines two 
+ * relations on shared or not shared attributes based on the 
+ * theta condition.
+ * </p>
+ * <p>
+ * @see org.deri.iris.api.factory.IRelationOperationsFactory#
+ * </p>
  * 
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:09:02
  *
- * @version $Revision: 1.8 $ $Date: 2006-09-30 15:52:35 $
+ * @version $Revision: 1.9 $ $Date: 2007-01-22 12:46:04 $
  * @param <JoinCondition>
  */
 public interface IJoin {
 	
 	/**
-	 * General join operation where a specified condition 
-	 * (=, !=, <, >, <=, >=) must hold.
+	 * <p>
+	 * Theta-join operation is defined by the theta operator,
+	 * which can be one of the following conditions:
+	 * =, !=, <, >, <=, >=.
+	 * </p>
 	 * 
-	 * @return
+	 * @return	The relation which is a result of the join operation.
 	 */
 	public IRelation join();
 		

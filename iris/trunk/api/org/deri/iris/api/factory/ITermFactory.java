@@ -33,7 +33,13 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
 /**
- * @author Darko Anicic, DERI Innsbruck 20.02.2006 16:05:29
+ * <p>
+ * An interface that can be used to create a term as a logical entity. 
+ * Different types of terms may be constructed.
+ * </p>
+ * 
+ * @author Darko Anicic, DERI Innsbruck 
+ * @date 20.02.2006 16:05:29
  */
 public interface ITermFactory {
 

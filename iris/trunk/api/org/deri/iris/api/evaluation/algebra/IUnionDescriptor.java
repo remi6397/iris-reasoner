@@ -26,12 +26,17 @@
 package org.deri.iris.api.evaluation.algebra;
 
 /**
+ * <p>
+ * Represents a component for describing the union operation. 
+ * This description is used during the evaluation of a relational
+ * algebra expression.
+ * </p>
  * 
+ * @author Darko Anicic, DERI Innsbruck
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  *
  */
 public interface IUnionDescriptor extends IComponent{
 
-	//public int getArity();
 }

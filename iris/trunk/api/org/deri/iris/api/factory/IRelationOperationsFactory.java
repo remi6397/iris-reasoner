@@ -38,6 +38,11 @@ import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.operations.relations.JoinCondition;
 
 /**
+ * <p>
+ * An interface that can be used to obtain references to set of 
+ * relational algebra operations.
+ * </p>
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date 26.06.2006 14:26:39
  */

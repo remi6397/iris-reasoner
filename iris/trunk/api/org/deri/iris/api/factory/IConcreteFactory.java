@@ -44,6 +44,11 @@ import org.deri.iris.api.terms.concrete.IIri;
 import org.deri.iris.api.terms.concrete.ISqName;
 
 /**
+ * <p>
+ * An interface that can be used to create set of data types 
+ * supported by this engine.
+ * </p>
+ * 
  * @author richi
  * 
  */

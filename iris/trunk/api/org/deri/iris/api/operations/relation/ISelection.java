@@ -28,26 +28,34 @@ package org.deri.iris.api.operations.relation;
 import org.deri.iris.api.storage.IRelation;
 
 /**
- * Interface or class description
- *
- * The Selection operation is meant to be used for selecting a portion of
- * a relation (tree). Basically the functionality of this operation is to
- * select all tuples, from a relation, that are equal regarding the 
- * condition defined by a certain pattern (tuple).
- * 
- * Interface of a selection relation used to promote modularity of inference
- * engines.
- *
- * Note: Implementation of the selection operation assumes an implementation
- * of this interface and an implementation of the IRelationOperationsFactory interface
- * (createSelectionOperator method/s).
+ *<p>
+ * An interface for the selection operation.
+ * A selection is a unary operation written as SELECT(a theta b)(R) 
+ * or SELECT(a theta v)(R) where:
+ * <ul>
+ * <li> a and b are attribute names</li>
+ * <li> theta is a binary operation in the set (relation)</li>
+ * <li> v is a value constant</li>
+ * <li> R is a relation</li>
+ * </ul>
+ * The selection SELECT(a theta b)(R) selects all those tuples in R for 
+ * which theta holds between the a and the b attribute.
+ * </p>
+ * <p>
+ * @see org.deri.iris.api.factory.IRelationOperationsFactory#
+ * </p>
  * 
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:18:20
  *
- * @version $Revision: 1.7 $ $Date: 2006-09-30 15:52:35 $
+ * @version $Revision: 1.8 $ $Date: 2007-01-22 12:46:04 $
  */
 public interface ISelection {
 	
+	/**
+	 * Performs the selection operation.
+	 * 
+	 * @return	The relation which is a result of the selection operation.
+	 */
 	public IRelation select();
 }

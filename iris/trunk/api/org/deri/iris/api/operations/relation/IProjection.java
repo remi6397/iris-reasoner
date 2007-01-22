@@ -29,17 +29,15 @@ package org.deri.iris.api.operations.relation;
 import org.deri.iris.api.storage.IRelation;
 
 /**
- * Interface or class description
- *
- * The Projection operation is meant to be used for projection on a 
- * relation (tree).
- *
- * Interface of a project operation used to promote modularity of 
- * inference engines.
- * 
- * Note: Implementation of the IProjection interface assumes an 
- * implementation of this interface itself and an implementation of 
- * the IRelationOperationsFactory interface (createProjectionOperator method-s).
+ * <p>
+ * An interface for the projection operation.
+ * The projection operation is performed on a relation R. The 
+ * operation is used to remove some of the components 
+ * (attributes) and/to rearrange some of the remaining components of R.
+ * </p>
+ * <p>
+ * @see org.deri.iris.api.factory.IRelationOperationsFactory#
+ * </p>
  *  
  * @author Darko Anicic, DERI Innsbruck
  * @date   23.06.2006 17:19:58
@@ -47,5 +45,12 @@ import org.deri.iris.api.storage.IRelation;
 
 public interface IProjection {
 
+	/**
+	 * <p>
+	 * Performs the projection operation.
+	 * </p>
+	 * 
+	 * @return	The relation which is a result of the projection operation.
+	 */
 	public IRelation project();
 }

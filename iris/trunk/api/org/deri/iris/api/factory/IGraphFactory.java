@@ -28,6 +28,10 @@ package org.deri.iris.api.factory;
 import org.deri.iris.api.graph.IPredicateGraph;
 
 /**
+ * <p>
+ * An interface that can be used to create a predicate graph.
+ * </p>
+ * 
  * @author richi
  *
  */

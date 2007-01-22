@@ -30,16 +30,17 @@ import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
- * Defines methods for a builtin factory.
+ * An interface that can be used to create set of built-ins supported 
+ * by this engine.
  * </p>
  * <p>
- * $Id: IBuiltInsFactory.java,v 1.3 2006-09-21 08:57:31 richardpoettler Exp $
+ * $Id: IBuiltInsFactory.java,v 1.4 2007-01-22 12:45:45 darko Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author richi
  * @date 17.03.2006 11:55:35
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface IBuiltInsFactory {
 

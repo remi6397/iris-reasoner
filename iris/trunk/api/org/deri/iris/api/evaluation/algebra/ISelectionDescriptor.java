@@ -26,18 +26,45 @@
 package org.deri.iris.api.evaluation.algebra;
 
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.storage.IRelation;
 
 /**
+ * <p>
+ * Represents a component for describing the selection operation. 
+ * This description is used during the evaluation of a relational 
+ * algebra expression.
+ * </p>
  * 
+ * @author Darko Anicic, DERI Innsbruck
  * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  *
  */
 public interface ISelectionDescriptor extends IComponent{
 	
-	//public int getArity();
-	
+	/**
+	 * <p>
+	 * Returns selection pattern used in this component.
+	 * </p>
+	 * <p>
+	 * @see org.deri.iris.api.factory.IRelationOperationsFactory#
+	 * createSelectionOperator(IRelation relation, ITuple pattern)
+	 * </p>
+	 * 
+	 * @return	The selection pattern.
+	 */
 	public ITuple getPattern();
 	
+	/**
+	 * <p>
+	 * Returns selection indexes used in this component.
+	 * </p>
+	 * <p>
+	 * @see org.deri.iris.api.factory.IRelationOperationsFactory#
+	 * createSelectionOperator(IRelation relation, int[] indexes)
+	 * </p>
+	 * 
+	 * @return	The selection indexes.
+	 */
 	public int[] getIndexes();
 }

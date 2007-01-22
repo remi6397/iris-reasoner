@@ -39,6 +39,11 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.operations.relations.JoinCondition;
 
 /**
+ * <p>
+ * An interface that can be used to obtain references to set of 
+ * descriptors for relational algebra operations.
+ * </p>
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date 13.12.2006 17:212:34
  */

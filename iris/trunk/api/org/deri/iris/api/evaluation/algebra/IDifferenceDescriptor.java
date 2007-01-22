@@ -26,12 +26,16 @@
 package org.deri.iris.api.evaluation.algebra;
 
 /**
+ * <p>
+ * Represents a component for describing the difference operation. 
+ * This description is used during the evaluation of a relational 
+ * algebra expression.
+ * </p>
  * 
- * @author Paco Garcia, University of Murcia
- * @date 01-sep-2006
+ * @author Darko Anicic, DERI Innsbruck
+ * @date 19.01.2007 11:29:34
  *
  */
  public interface IDifferenceDescriptor extends IComponent{
-		
-	 //public int getArity();
+
 }

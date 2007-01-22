@@ -26,14 +26,23 @@
 package org.deri.iris.api.evaluation.algebra;
  
 /**
+ * <p>
+ * Represents a component for describing the projection operation. 
+ * This description is used during the evaluation of a relational 
+ * algebra expression.
+ * </p>
  * 
+ * @author Darko Anicic, DERI Innsbruck
  * @author Paco Garcia, Universidad de Murcia
  * @date 01-sep-2006
  *
  */
 public interface IProjectionDescriptor extends IComponent{
 	
+	/**
+	 * Returns project indexes used in this component.
+	 * 
+	 * @return	The project indexes.
+	 */
 	public int[] getIndexes();
-	
-	//public int getArity();
 }
