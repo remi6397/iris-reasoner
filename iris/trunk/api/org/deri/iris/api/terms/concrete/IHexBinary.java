@@ -1,27 +1,57 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
+ * 
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
 package org.deri.iris.api.terms.concrete;
 
 import org.deri.iris.api.terms.IStringTerm;
 
 /**
- * 
+ * <p>
  * Definition: hexBinary represents arbitrary hex-encoded binary data. The
  * ·value space· of hexBinary is the set of finite-length sequences of binary
  * octets. 3.2.15.1 Lexical Representation
- * 
+ * </p>
+ * <p>
  * hexBinary has a lexical representation where each binary octet is encoded as
  * a character tuple, consisting of two hexadecimal digits ([0-9a-fA-F])
  * representing the octet code. For example, "0FB7" is a hex encoding for the
  * 16-bit integer 4023 (whose binary representation is 111110110111).
- * 
+ * </p>
+ * <p>
+ * Remark: IRIS supports datatypes according to the standard 
+ * specification for primitive XML Schema datatypes.
+ * </p>
  * <pre>
  *    Created on 04.04.2006
- *    Committed by $Author: richardpoettler $
+ *    Committed by $Author: darko $
  *    $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/IHexBinary.java,v $,
  * </pre>
  * 
  * @author Richard Pöttler
  * 
- * @version $Revision: 1.2 $ $Date: 2006-05-30 14:56:18 $
+ * @version $Revision: 1.3 $ $Date: 2007-01-22 16:11:19 $
  */
 public interface IHexBinary extends IStringTerm<IHexBinary> {
 }
