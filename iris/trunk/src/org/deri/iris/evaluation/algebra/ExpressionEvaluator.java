@@ -40,7 +40,6 @@ import org.deri.iris.api.evaluation.algebra.IProjectionDescriptor;
 import org.deri.iris.api.evaluation.algebra.IRelationDescriptor;
 import org.deri.iris.api.evaluation.algebra.ISelectionDescriptor;
 import org.deri.iris.api.evaluation.algebra.IUnionDescriptor;
-import org.deri.iris.api.evaluation.algebra.IComponent.ComponentType;
 import org.deri.iris.api.operations.relation.IDifference;
 import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.operations.relation.IProjection;
@@ -117,9 +116,9 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		
 		if (c.getChildren().size() != 2) {
 			throw new IllegalArgumentException(
-					"Please provide the component with two subcomponent" +
-					"(children). The difference operation cannot be" +
-					" performed!");
+					"Please provide the component with two subcomponents " +
+					"(children), otherwise the evaluateDifference cannot be " +
+					"performed!");
 		}
 		IDifferenceDescriptor d = (IDifferenceDescriptor)c;
 		IDifference diff = Factory.RELATION_OPERATION
@@ -136,31 +135,36 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		if (c.getChildren().size() < 2) {
 			throw new IllegalArgumentException(
 					"Please provide the component with at least two " +
-					"subcomponent (children). The join operation " +
+					"subcomponents (children), otherwise the join operation " +
 					"cannot be performed!");
 		}
 		IJoinDescriptor j = (IJoinDescriptor)c;
 		IJoin jo = null;
-		
+		List<IVariable> vars = new ArrayList<IVariable>();
 		IComponent c0 = j.getChildren().get(0);
+		vars.addAll(c0.getVariables());
 		IComponent c1 = null;
 		
 		IRelation r0 = evaluate(c0, p, aq);
 		IRelation r1 = null;
+		boolean emptyRel = false;
 		
 		for(int i=1; i<j.getChildren().size(); i++){
-			c1 = j.getChildren().get(i);
-			r1 = evaluate(c1, p, aq);
-			jo = Factory.RELATION_OPERATION.createJoinSimpleOperator(
-					r0,
-					r1, 
-					// TODO: get correct indexes!
-					getJoinIndexes(c0.getVariables(), c1.getVariables()), 
-					//JoinSimple.getInitIndexes(Math.max(r0.getArity(), r1.getArity())),
-					j.getCondition(),
-					pInds);
-			r0 = jo.join();
-			c0.addVariables(c1.getVariables());
+			if(! emptyRel){
+				c1 = j.getChildren().get(i);
+				r1 = evaluate(c1, p, aq);
+				jo = Factory.RELATION_OPERATION.createJoinSimpleOperator(
+						r0,
+						r1, 
+						// TODO: get correct projection indexes!
+						getJoinIndexes(vars, c1.getVariables()), 
+						//j.getCondition(), pInds);
+						j.getCondition());
+				
+				r0 = jo.join();
+				if(r0.size() == 0) emptyRel = true;
+			}
+			vars.addAll(c1.getVariables());
 		}
 		return r0;
 	}
@@ -170,19 +174,15 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		
 		if (c.getChildren().size() != 1) {
 			throw new IllegalArgumentException(
-					"Please provide the component with only one subcomponent" +
-					"(child). The projection operation cannot be" +
-					" performed!");
+					"Please provide the component with only one subcomponent " +
+					"(child),otherwise the evaluateProjection cannot be " +
+					"performed!");
 		}
 		IProjectionDescriptor pr = (IProjectionDescriptor)c;
-		IComponent comp = pr.getChildren().get(0);
-		if(comp.getType().equals(ComponentType.JOIN)){
-			IJoinDescriptor j = (IJoinDescriptor)comp;
-			return evaluateJoin(j, p, aq, pr.getIndexes());
-		}
 		IProjection projection = Factory.RELATION_OPERATION
 			.createProjectionOperator(
-					evaluate(comp, p, aq), pr.getIndexes());
+					evaluate(pr.getChildren().get(0), p, aq), 
+					pr.getIndexes());
 		
 		return projection.project();
 	}
@@ -192,9 +192,9 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		
 		if (c.getChildren().size() != 0) {
 			throw new IllegalArgumentException(
-					"Please provide the component with no subcomponent" +
-					"(no children), otherwise evaluation of the relation cannot be" +
-					" performed!");
+					"Please provide the component with no subcomponent " +
+					"(no child), otherwise evaluateRelation cannot be " +
+					"performed!");
 		}
 		IRelationDescriptor r = (IRelationDescriptor)c;
 		if (r.isPositive()) {
@@ -215,9 +215,9 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		
 		if (c.getChildren().size() != 1) {
 			throw new IllegalArgumentException(
-					"Please provide the component with one subcomponent" +
-					"(child). The selection operation cannot be" +
-					" performed!");
+					"Please provide the component with one subcomponent " +
+					"(child), otherwise the evaluateSelection cannot be " +
+					"performed!");
 		}
 		ISelectionDescriptor s = (ISelectionDescriptor)c;
 		ISelection sel = Factory.RELATION_OPERATION
@@ -243,6 +243,12 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	private IRelation evaluateUnion(IComponent c,IProgram p,
 			Map<IPredicate, IRelation> aq){
 		
+		if (c.getChildren().size() == 0) {
+			throw new IllegalArgumentException(
+					"Please provide the component with at least one subcomponent " +
+					"(child), otherwise the evaluateUnion cannot be" +
+					"performed!");
+		}
 		IUnionDescriptor u = (IUnionDescriptor)c;
 		List<IRelation> rels = new ArrayList<IRelation>(u.getChildren().size());
 		for(int i=0; i<u.getChildren().size(); i++){
