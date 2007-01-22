@@ -29,7 +29,6 @@ import java.util.SortedSet;
 
 import org.deri.iris.api.basics.ITuple;
 
-
 /**
  * <p>
  * An interface for a relation in general. A relation is a set 
@@ -41,7 +40,7 @@ import org.deri.iris.api.basics.ITuple;
  * @author Darko Anicic
  * @date  11.04.2006 @time  14:55:12
  *
- * @version $Revision: 1.8 $ $Date: 2007-01-22 12:46:39 $
+ * @version $Revision: 1.9 $ $Date: 2007-01-22 16:08:16 $
  */
 
 public interface IRelation extends SortedSet<ITuple>, Cloneable{
