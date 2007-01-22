@@ -354,11 +354,30 @@ public class Selection implements ISelection {
 	 * @return		The default selection pattern.
 	 */
 	public static ITuple getInitPattern(int arity) {
-		List<ITerm> terms = new ArrayList<ITerm>();
+		List<ITerm> terms = new ArrayList<ITerm>(arity);
 		for (int j = 0; j < arity; j++){
 			terms.add(null);
 		}
 		ITuple t = BASIC.createTuple(terms);
 		return t;
+	}
+	
+	/**
+	 * <p>Creates a selection pattern.</p>
+	 * 
+	 * @param t	Tuple used which the pattern will be based on.
+	 * @return	The selection pattern.
+	 */
+	public static ITuple createPattern(final ITuple t) {
+		List<ITerm> terms = new ArrayList<ITerm>(t.getArity());
+		for (int j = 0; j < t.getArity(); j++){
+			if(t.getTerm(j).isGround()){ 
+				terms.add(t.getTerm(j));
+			}else{
+				terms.add(null);
+			}
+		}
+		ITuple pattern = BASIC.createTuple(terms);
+		return pattern;
 	}
 }
