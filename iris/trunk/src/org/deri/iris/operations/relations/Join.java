@@ -162,11 +162,11 @@ public class Join implements IJoin{
 		 * If project indexes are not specified, 
 		 * joined tuples will be simple merged.
 		 */
-		int a = this.relation0.getArity() + this.relation1.getArity();
+		int a = this.getRelationArity();
 		if (this.projectIndexes == null) {
 			this.projectIndexes = this.transformIndexes0(a, new int[a]);
 		}
-		this.joinRelation = new Relation(this.getRelationArity());
+		this.joinRelation = new Relation(a);
 	}
 
 	public IRelation join() {
@@ -315,6 +315,9 @@ public class Join implements IJoin{
 	
 	private int getRelationArity(){
 		int j=0;
+		if(this.projectIndexes == null){
+			return this.relation0.getArity() + this.relation1.getArity();
+		}
 		for(int i=0; i<this.projectIndexes.length; i++){
 			if(this.projectIndexes[i] != -1) j++;
 		}
