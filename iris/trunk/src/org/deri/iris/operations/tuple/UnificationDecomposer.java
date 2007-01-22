@@ -38,30 +38,38 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
 /**
- * This class is used for calculating a common and frontier part of a set 
+ * <p>
+ * This class calculates a common and frontier part out of a set 
  * of two terms.
  * The common part of a multiset of terms M is a term which, intuitively, 
  * is obtained by superimposing all terms of M, and by taking the part
  * which is common to all of them starting from the root. 
  * For instance, given the multiset of terms:
- * 
+ * </p>
+ * <p>
  * (f(xl, g(a, f(x5, b))), f(h(c), g(x2, f(b, x5))), f(h(x4), g(x6, x3)))
- * 
+ * </p>
+ * <p>
  * the common part is
- * 
+ * </p>
+ * <p>
  * f(xl, g(x2, x3)).
- * 
+ * </p>
+ * <p>
  * The frontier is a set of multiequations, where every multiequation is associated
  * with a leaf of the common part and consists of all subterms (one for each term of
  * M) corresponding to that leaf. The frontier of the above multiset of terms is
- * 
- * {{x1} = (h(c), h(x4)),
- * {x2, x6} = (a),
- * {x3} = (f(x5, b), f(b, x5)).
- * 
+ * </p>
+ * <p>
+ * {{x1} = (h(c), h(x4)),<br/> 
+ * {x2, x6} = (a),<br /> 
+ * {x3} = (f(x5, b), f(b, x5)).<br /> 
+ * </p>
+ * <p>
  * Note:
  * The terminology used in this class is borrowed from:
  * An Efficient Unification Algorithm, ALBERTO MARTELLI and UGO MONTANARI
+ * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   16.08.2006 16:40:03

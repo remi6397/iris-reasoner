@@ -42,29 +42,31 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.operations.tuple.UnificationDecomposer.CFholder;
 
 /**
- * In its essence, the unification problem in first-order logic can be expressed as
- * follows: given two terms containing some variables, find, if it exists, the simplest
- * substitution (e.g., an assignment of some term to every variable) which makes the
- * two terms equal. The resulting substitution is called the most general unifier and
- * is unique up to variable renaming.
- * 
+ * <p>
+ * This is an implementation of the unification interface. The algorithm finds 
+ * the most general unifier for two atoms or two tupples.
+ * </p>
+ * <p>
  * This is an implementation of an unification algorithm according to:
- *
- * An Efficient Unification Algorithm, ALBERTO MARTELLI and UGO MONTANARI.
  * 
+ * An Efficient Unification Algorithm, ALBERTO MARTELLI and UGO MONTANARI.
  * This implementation also includes the following transformations: 
  * 
- * 1.	Multiequation reduction;
- * 2.	Compactification. 
- * 
- * Performance of this algorithm has been compared with the other well-known algorithms 
- * in three extreme cases: high probability of stopping with success, 
- * high probability of detecting a cycle, and high probability of detecting a clash. 
- * This algorithm was shown to have a good performance in all the cases.
-
+ * <ul>
+ * <li> Multiequation reduction;</li>
+ * <li> Compactification.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Performance of this algorithm has been compared with the other well-known 
+ * algorithms in three extreme cases: high probability of stopping with success, 
+ * high probability of detecting a cycle, and high probability of detecting a 
+ * clash. This algorithm was shown to have a good performance in all the cases.
+ * </p>
+ * <p>
  * Reference: 
  * An Efficient Unification Algorithm, ALBERTO MARTELLI and UGO MONTANARI
- * 
+ * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   10.08.2006 16:28:06
