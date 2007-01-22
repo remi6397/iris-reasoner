@@ -110,6 +110,7 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 					p = method.evaluateIncrementally(this.idbMap.get(pr), this.p, aq);
 					if (p != null && p.size() > 0) {
 						p.removeAll(this.p.getFacts(pr));
+						aq.put(pr, p);
 						newTupleAdded = this.p.addFacts(pr, p);
 						cont = cont || newTupleAdded;
 					}
