@@ -26,6 +26,7 @@
 package org.deri.iris;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,9 +41,6 @@ import org.deri.iris.api.evaluation.algebra.IComponent;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.evaluation.algebra.Rule2Relation;
-import org.deri.iris.evaluation.common.AdornedProgram;
-import org.deri.iris.evaluation.magic.MagicSetImpl;
-import org.deri.iris.evaluation.seminaive.NaiveEvaluation;
 import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
 
 /**
@@ -50,12 +48,12 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
  * Executes a programm.
  * </p>
  * <p>
- * $Id: Executor.java,v 1.3 2006-12-19 18:15:44 darko Exp $
+ * $Id: Executor.java,v 1.4 2007-01-23 18:39:49 darko Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class Executor implements IExecutor {
 
@@ -96,8 +94,8 @@ public class Executor implements IExecutor {
 					"The length of the query literals must be 1");
 		}
 		// applying the magic sets
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(
-				this.prog.getRules(), q));
+		/*final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(
+				this.prog.getRules(), q));*/
 		
 		// TODO: Introuduce the magic sets
 		// tests the stratum of the newly constructed program and sets it back
@@ -107,8 +105,7 @@ public class Executor implements IExecutor {
 			prog = p;
 		}*/
 		execute();
-		
-		return this.prog.getFacts(q.getQueryLiteral(0).getPredicate());
+		return this.getResultSet().getResults().get(q.getQueryLiteral(0).getPredicate());
 	}
 
 	public Map<IQuery, Set<ITuple>> computeSubstitutions() {
@@ -126,7 +123,7 @@ public class Executor implements IExecutor {
 		}
 		// translating the query and the rules to the relational algebra model
 		final Rule2Relation rr = new Rule2Relation();
-		final Map<IPredicate, IComponent> ruleT = rr.translateRules(this.prog.getRules());
+		final Map<IPredicate, List<IComponent>> ruleT = rr.translateRules(this.prog.getRules());
 		final Map<IPredicate, IComponent> queryT = rr.translateQueries(this.prog.getQueries());
 		
 		// run the evalutaion
