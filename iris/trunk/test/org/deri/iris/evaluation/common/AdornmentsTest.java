@@ -63,12 +63,12 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * Tests the adornments.
  * </p>
  * <p>
- * $Id: AdornmentsTest.java,v 1.2 2006-11-29 11:34:20 richardpoettler Exp $
+ * $Id: AdornmentsTest.java,v 1.3 2007-01-23 15:35:36 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-11-29 11:34:20 $
+ * @version $Revision: 1.3 $
+ * @date $Date: 2007-01-23 15:35:36 $
  */
 public class AdornmentsTest extends TestCase {
 
@@ -369,15 +369,134 @@ public class AdornmentsTest extends TestCase {
 
 	/**
 	 * <p>
+	 * Tests whether all adorned rules are computed when the query got no
+	 * arguments bound.
+	 * </p>
+	 * <p>
+	 * <b>ATTENTION: at the moment only the &quot;core&quot; rules are compared,
+	 * because while the computation of the adorned rules different queries are
+	 * created to get the corresponding sip. So the sip of the adorned rules
+	 * isn't compared</b>
+	 * </p>
+	 */
+	public void testFreeQuery() {
+		// w(Y) :- k(X, Y), l(X)
+		final IRule r = BASIC.createRule(BASIC.createHead(createLiteral("w",
+				"Y")), BASIC.createBody(createLiteral("k", "X", "Y"),
+				createLiteral("l", "X")));
+		// :- w(X)
+		final IQuery q = BASIC.createQuery(createLiteral("w", "X"));
+		final AdornedProgram a = new AdornedProgram(Collections.singleton(r), q);
+		assertTrue("There must not any adorned rules be created", a
+				.getAdornedRules().isEmpty());
+	}
+
+	/**
+	 * <p>
+	 * Tests whether all adorned rules are computed when the query got no
+	 * arguments bound.
+	 * </p>
+	 * <p>
+	 * <b>ATTENTION: at the moment only the &quot;core&quot; rules are compared,
+	 * because while the computation of the adorned rules different queries are
+	 * created to get the corresponding sip. So the sip of the adorned rules
+	 * isn't compared</b>
+	 * </p>
+	 */
+	public void testFreeQuery1() {
+		// constructing the adorned predicate
+		final IAdornedPredicate pred = new AdornedPredicate("w",
+				new Adornment[] { Adornment.BOUND, Adornment.FREE });
+
+		// w(X, Y) :- k(X, B), l(B, C), w(C, Y)
+		final IRule r = BASIC.createRule(BASIC.createHead(createLiteral("w",
+				"X", "Y")), BASIC.createBody(createLiteral("k", "X", "B"),
+				createLiteral("l", "B", "C"), createLiteral("w", "C", "Y")));
+		// w(X, Y)
+		final IQuery q = BASIC.createQuery(createLiteral("w", "X", "Y"));
+
+		// constructing the adorned rules
+		Set<IAdornedRule> rules = new HashSet<IAdornedRule>();
+
+		// w^bf(X, Y) :- k(X, B), l(B, C), w^bf(C, Y)
+		IHead head = BASIC.createHead(BASIC.createLiteral(true, pred, BASIC
+				.createTuple(new ArrayList<ITerm>(createVarList("X", "Y")))));
+		IBody body = BASIC.createBody(createLiteral("k", "X", "B"),
+				createLiteral("l", "B", "C"), BASIC.createLiteral(true, pred,
+						BASIC.createTuple(new ArrayList<ITerm>(createVarList(
+								"C", "Y")))));
+		IRule rule = BASIC.createRule(head, body);
+		// we can call new AdornedRule, because there is no computation, and
+		// we assume that the sip is created correct.
+		rules.add(new AdornedRule(rule, new SIPImpl(unadornRule(rule), q)));
+
+		// w(X, Y) :- k(X, B), l(B, C), w^bf(C, Y)
+		head = BASIC.createHead(createLiteral("w", "X", "Y"));
+		body = BASIC.createBody(createLiteral("k", "X", "B"), createLiteral(
+				"l", "B", "C"), BASIC.createLiteral(true, pred, BASIC
+				.createTuple(new ArrayList<ITerm>(createVarList("C", "Y")))));
+		rule = BASIC.createRule(head, body);
+		// we can call new AdornedRule, because there is no computation, and
+		// we assume that the sip is created correct.
+		rules.add(new AdornedRule(rule, new SIPImpl(unadornRule(rule), q)));
+
+		final AdornedProgram a = new AdornedProgram(Collections.singleton(r), q);
+
+		final List<IAdornedRule> l0 = new ArrayList<IAdornedRule>(rules);
+		final List<IAdornedRule> l1 = new ArrayList<IAdornedRule>(a
+				.getAdornedRules());
+
+		assertEquals("The amount of rules must be equal", l0.size(), l1.size());
+
+		Collections.sort(l0, RC);
+		Collections.sort(l1, RC);
+
+		// TODO: maybe look whether the sip contains all edges
+		for (Iterator<IAdornedRule> i0 = l0.iterator(), i1 = l1.iterator(); i0
+				.hasNext();) {
+			final IAdornedRule r0 = i0.next();
+			final IAdornedRule r1 = i1.next();
+			assertEquals(
+					"The rules\n" + r0 + "\nand\n" + r1 + "\ndon't match.", 0,
+					RC.compare(r0, r1));
+		}
+	}
+
+	/**
+	 * <p>
+	 * Tests whether all adorned rules are computed when the query got no
+	 * arguments bound.
+	 * </p>
+	 * <p>
+	 * <b>ATTENTION: at the moment only the &quot;core&quot; rules are compared,
+	 * because while the computation of the adorned rules different queries are
+	 * created to get the corresponding sip. So the sip of the adorned rules
+	 * isn't compared</b>
+	 * </p>
+	 */
+	public void testFreeQuery2() {
+		// w(X, Y) :- k(X, B), l(B, C), w(D, Y)
+		final IRule r = BASIC.createRule(BASIC.createHead(createLiteral("w",
+				"X", "Y")), BASIC.createBody(createLiteral("k", "X", "B"),
+				createLiteral("l", "B", "C"), createLiteral("w", "D", "Y")));
+		// w(X, Y)
+		final IQuery q = BASIC.createQuery(createLiteral("w", "X", "Y"));
+		final AdornedProgram a = new AdornedProgram(Collections.singleton(r), q);
+		assertTrue("There must not any adorned rules be created", a
+				.getAdornedRules().isEmpty());
+	}
+
+	/**
+	 * <p>
 	 * Compares two rules according to their predicate symbols.
 	 * </p>
 	 * <p>
-	 * $Id: AdornmentsTest.java,v 1.2 2006-11-29 11:34:20 richardpoettler Exp $
+	 * $Id: AdornmentsTest.java,v 1.3 2007-01-23 15:35:36 richardpoettler Exp $
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.2 $
-	 * @date $Date: 2006-11-29 11:34:20 $
+	 * @version $Revision: 1.3 $
+	 * @date $Date: 2007-01-23 15:35:36 $
 	 */
 	private static class RuleComparator implements Comparator<IRule> {
 		public int compare(IRule o1, IRule o2) {
@@ -446,4 +565,5 @@ public class AdornmentsTest extends TestCase {
 		}
 
 	}
+
 }
