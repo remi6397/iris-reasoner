@@ -26,6 +26,7 @@
 package org.deri.iris.evaluation.seminaive;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.deri.iris.api.IProgram;
@@ -45,13 +46,12 @@ import org.deri.iris.api.storage.IRelation;
  * these rules.
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @author Paco Garcia, University of Murcia
  * @date 05-sep-2006
  */
 public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 
 	public SeminaiveEvaluation(IExpressionEvaluator e, IProgram p,
-			Map<IPredicate, IComponent> idbMap, Map<IPredicate, IComponent> qMap) {
+			Map<IPredicate, List<IComponent>> idbMap, Map<IPredicate, IComponent> qMap) {
 		super(e, p, idbMap, qMap);
 	}
 
@@ -63,12 +63,12 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 		boolean newTupleAdded = false, cont = true;
 		IRelation p = null;
 		Map<IPredicate, IRelation> aq = new HashMap<IPredicate, IRelation>();
-
+		List<IComponent> rules4pr = null;
+		
 		/** Evaluate rules */
 		for (int i = 1, maxStrat = Complementor
 				.getMaxStratum(this.idbMap.keySet()); i <= maxStrat; i++) {
 
-			cont = true;
 			/**
 			 * <p>Algorithm:</p>
 			 * <p>
@@ -80,11 +80,15 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 			 */
 			for (final IPredicate pr : Complementor.getPredicatesOfStratum(
 					this.idbMap.keySet(), i)) {
+				
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-				p = method.evaluate(this.idbMap.get(pr), this.p);
-				if (p != null && p.size() > 0) {
-					aq.put(pr, p);
-					this.p.addFacts(pr, p);
+				rules4pr = this.idbMap.get(pr);
+				for(IComponent c:rules4pr){
+					p = method.evaluate(c, this.p);
+					if(! this.p.getFacts(pr).containsAll(p)){
+						aq.put(pr, p);
+						this.p.addFacts(pr, p);
+					}
 				}
 			}
 			/**
@@ -102,17 +106,37 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 			 * until APi = 0 for all i;
 			 * </p>
 			 */
+			cont = true;
 			while (cont) {
 				for (final IPredicate pr : Complementor.getPredicatesOfStratum(
 						this.idbMap.keySet(), i)) {
 					cont = false;
 					// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
-					p = method.evaluateIncrementally(this.idbMap.get(pr), this.p, aq);
-					if (p != null && p.size() > 0) {
-						p.removeAll(this.p.getFacts(pr));
-						aq.put(pr, p);
-						newTupleAdded = this.p.addFacts(pr, p);
+					rules4pr = this.idbMap.get(pr);
+					for(IComponent c:rules4pr){
+						p = method.evaluateIncrementally(c, this.p, aq);
+						if(! this.p.getFacts(pr).containsAll(p)){
+							p.removeAll(this.p.getFacts(pr));
+							aq.put(pr, p);
+							this.p.addFacts(pr, p);
+							newTupleAdded = true;
+						}else{
+							newTupleAdded = false;
+						}
 						cont = cont || newTupleAdded;
+					}
+				}
+			}
+			for (final IPredicate pr : Complementor.getPredicatesOfStratum(
+					this.idbMap.keySet(), i)) {
+				
+				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
+				rules4pr = this.idbMap.get(pr);
+				for(IComponent c:rules4pr){
+					p = method.evaluate(c, this.p);
+					if(! this.p.getFacts(pr).containsAll(p)){
+						aq.put(pr, p);
+						this.p.addFacts(pr, p);
 					}
 				}
 			}

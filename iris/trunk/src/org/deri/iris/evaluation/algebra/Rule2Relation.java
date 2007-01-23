@@ -29,7 +29,6 @@ import static org.deri.iris.factory.Factory.ALGEBRA;
 import static org.deri.iris.factory.Factory.BASIC;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -51,7 +50,6 @@ import org.deri.iris.api.evaluation.algebra.IJoinDescriptor;
 import org.deri.iris.api.evaluation.algebra.IProjectionDescriptor;
 import org.deri.iris.api.evaluation.algebra.IRelationDescriptor;
 import org.deri.iris.api.evaluation.algebra.ISelectionDescriptor;
-import org.deri.iris.api.evaluation.algebra.IUnionDescriptor;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.basics.seminaive.NonEqualityTerm;
@@ -79,10 +77,10 @@ import org.deri.iris.operations.relations.Projection;
  */
 public class Rule2Relation {
 
-	/** prefix for the variables */
+	/** Prefix for the variables */
 	private static final String VAR_PREFIX = "?X_";
 
-	/** counter for an arbitrarly chosen variable */
+	/** Counter for an arbitrarly chosen variable */
 	private static int VAR_COUNTER = 0;
 
 	private Map<ILiteral, List<IVariable>> m = null;
@@ -99,15 +97,20 @@ public class Rule2Relation {
 	 * @return A map of IDB predicates with corresponding relational algebra
 	 *        	  expressions
 	 */
-	public Map<IPredicate, IComponent> translateRules(final Set<IRule> rules) {
+	public Map<IPredicate, List<IComponent>> translateRules(final Set<IRule> rules) {
 
-		Map<IPredicate, IComponent> results = new Hashtable<IPredicate, IComponent>();		
+		Map<IPredicate, List<IComponent>> results = new Hashtable<IPredicate, List<IComponent>>();		
 		
-		Map<IPredicate, IUnionDescriptor> unionMap = new Hashtable<IPredicate, IUnionDescriptor>();		
+		/** List of components with a coresponding predicate from the rule head */
+		List<IComponent> rules4pr = null;
 		
 		IComponent c = null;
 		
 		for (IRule r : rules) {
+			rules4pr = results.get(r.getHeadLiteral(0).getPredicate());
+			if(rules4pr == null){
+				rules4pr = new ArrayList<IComponent>();
+			}
 			m = new HashMap<ILiteral, List<IVariable>>();
 			oVars = new HashSet<IVariable>();
 			IPredicate p = r.getHeadLiteral(0).getPredicate();
@@ -115,7 +118,8 @@ public class Rule2Relation {
 			ISelectionDescriptor s = null;
 			
 			IComponent body = translateBody(r.getBodyLiterals());
-			results.put(p, body);
+			rules4pr.add(body);
+			if(results.get(p) == null) results.put(p, rules4pr);
 			/**
 			 * <p>
 			 * SELECTION
@@ -144,9 +148,10 @@ public class Rule2Relation {
 							s = ALGEBRA.createSelectionDescriptor(BASIC
 									.createTuple(terms));
 						}
-						s.addChild(results.get(p));
+						c = rules4pr.get(rules4pr.size()-1);
+						s.addChild(c);
 						s.addVariables(body.getVariables());
-						results.put(p, s);
+						rules4pr.set(rules4pr.size()-1, s);
 					}
 				}
 			}
@@ -159,52 +164,20 @@ public class Rule2Relation {
 			 * </p>
 			 */
 			IProjectionDescriptor pr = null;
-			c = results.get(p);
+			c = rules4pr.get(rules4pr.size()-1);
 			
-			if (!Arrays.equals(r.getHeadVariables().toArray(), c.getVariables().toArray())) {
+			if(r.getHeadLiteral(0).getTuple().getArity() != c.getVariables().size()){
 				int[] pInds = getProjectionIndexes(r.getHeadVariables(), c.getVariables());
 				pr = ALGEBRA.createProjectionDescriptor(pInds);
-				pr.addChild(results.get(p));
+				pr.addChild(c);
 				pr.addVariables(filterProjectionVariables(pInds, c.getVariables()));
-				results.put(p, pr);
+				rules4pr.set(rules4pr.size()-1, pr);
 			}
 			/**
 			 * <p>
-			 * UNION
+			 * UNION has net been used!
 			 * </p>
-			 * <p>
-			 * Overall union considering the rules with identical heads.
-			 * </p>
-			 * <p>
-			 * Check whether there is a rule with the same head predicate; if
-			 * so, the bodies must be united.
-			 * </p>
-			 * <p>
-			 * The relations should be union-compatible: (a) Same number of
-			 * fields. (b) Corresponding fields have the same type.
-			 * <p>
 			 */
-			IUnionDescriptor u = null;
-			c = unionMap.get(p);
-			IComponent comp = results.get(p);
-			if(c != null){
-				c.addChild(comp);
-				unionMap.put(p, (IUnionDescriptor)c);
-			}else{
-				u = ALGEBRA.createUnionDescriptor();
-				u.addChild(comp);
-				u.addVariables(comp.getVariables());
-				unionMap.put(p, u);
-			}
-		}
-		results.clear();
-		for(IPredicate pred : unionMap.keySet()){
-			c = unionMap.get(pred);
-			if(c.getChildren().size() > 1){
-				results.put(pred, c);
-			}else{
-				results.put(pred, c.getChildren().get(0));
-			}
 		}
 		return results;
 	}
@@ -284,14 +257,15 @@ public class Rule2Relation {
 		for (ITerm t : terms) {
 			if (t.isGround()) {
 				ts.add(t);
-				vars.add(createFreshVariable());
+				vars.add(getFreshVariable(t));
 				selectionNeeded = true;
-				projectionNeeded = true;
+				// TODO: check the projection!
+				//projectionNeeded = true;
 			} else {
 				ts.add(null);
 				projectInds[n] = j++;
 				// TODO: Constructed terms are not considered in Rule2Relation
-				// transformation
+				// transformation yet!
 				vars.add((IVariable) t);
 				for (int k = ++i; k < terms.size(); k++) {
 					t1 = terms.get(k);
@@ -373,11 +347,13 @@ public class Rule2Relation {
 						distinctVars.add((IVariable) t2);
 						break;
 					} else {
-						vars.add(createFreshVariable());
+						// TODO: change null
+						vars.add(getFreshVariable(null));
 					}
 				}
 				for (int k = j + 1; k < terms.size(); k++) {
-					vars.add(createFreshVariable());
+					// TODO: change null
+					vars.add(getFreshVariable(null));
 				}
 				for (int k = 0; k < terms.size(); k++) {
 					if (k != j) {
@@ -411,9 +387,8 @@ public class Rule2Relation {
 		return null;
 	}
 
-	private IVariable createFreshVariable() {
-		IVariable v = Factory.TERM.createVariable(VAR_PREFIX + VAR_COUNTER++);
-		return v;
+	private IVariable getFreshVariable(ITerm t) {
+		return Factory.TERM.createVariable(VAR_PREFIX + VAR_COUNTER++);
 	}
 
 	private int[] getProjectionIndexes(final List<IVariable> vars0,
