@@ -51,12 +51,12 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.18 2006-12-07 17:21:33 darko Exp $
+ * $Id: AdornedProgram.java,v 1.19 2007-01-23 14:22:06 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.18 $
- * @date $Date: 2006-12-07 17:21:33 $
+ * @version $Revision: 1.19 $
+ * @date $Date: 2007-01-23 14:22:06 $
  */
 public class AdornedProgram implements IAdornedProgram {
 
@@ -123,14 +123,21 @@ public class AdornedProgram implements IAdornedProgram {
 
 		// creating an adored predicate out of the query, and add it to the
 		// predicate sets
-		AdornedPredicate qa = new AdornedPredicate(query.getQueryLiteral(0));
-		Set<AdornedPredicate> predicatesToProcess = new HashSet<AdornedPredicate>();
-		predicatesToProcess.add(qa);
-		adornedPredicates.add(qa);
+		final AdornedPredicate qa = new AdornedPredicate(query
+				.getQueryLiteral(0));
+
+		final Set<IAdornedPredicate> predicatesToProcess = new HashSet<IAdornedPredicate>();
+		if (Collections.frequency(Arrays.asList(qa.getAdornment()),
+				Adornment.FREE) == qa.getAdornment().length) {
+			predicatesToProcess.addAll(doAllFreeQuery(query));
+		} else {
+			predicatesToProcess.add(qa);
+			adornedPredicates.add(qa);
+		}
 
 		// iterating through all predicates in the todolist
 		while (!predicatesToProcess.isEmpty()) {
-			final AdornedPredicate ap = predicatesToProcess.iterator().next();
+			final IAdornedPredicate ap = predicatesToProcess.iterator().next();
 			predicatesToProcess.remove(ap);
 
 			for (final IRule r : rules) {
@@ -239,10 +246,11 @@ public class AdornedProgram implements IAdornedProgram {
 	 * @param r
 	 *            the adorned rule containing the literal
 	 * @return the adorned predicate for this literal corresponding to the
-	 *         passed variables of the adorned rule, or null, if the predicate
-	 *         of the literal wasn't derived.
+	 *         passed variables of the adorned rule, or {@code null}, if the
+	 *         predicate of the literal wasn't derived, or if the adornment only
+	 *         consists of free's.
 	 * @throws NullPointerException
-	 *             if the rule, or the literal are null
+	 *             if the rule, or the literal are {@code null}
 	 */
 	private AdornedPredicate processLiteral(final ILiteral l,
 			final IAdornedRule r) {
@@ -253,7 +261,15 @@ public class AdornedProgram implements IAdornedProgram {
 		AdornedPredicate ap = null;
 		if (deriveredPredicates.contains(l.getPredicate())) {
 			ap = new AdornedPredicate(l, r.getSIP().getBoundVariables(l));
-			r.replaceBodyLiteral(l, ap);
+
+			// if all adornmets are "free" then do nothing, and return null
+			if ((Collections.frequency(Arrays.asList(ap.getAdornment()),
+					Adornment.FREE) == ap.getAdornment().length)) {
+				ap = null;
+			} else { // replace the literal in the body, and return the new
+						// adorned predicate
+				r.replaceBodyLiteral(l, ap);
+			}
 		}
 		return ap;
 	}
@@ -288,7 +304,7 @@ public class AdornedProgram implements IAdornedProgram {
 	 *             if the adornment of the predicate contains something else
 	 *             than BOUND or FREE.
 	 */
-	private static IQuery createQueryForAP(final AdornedPredicate ap,
+	private static IQuery createQueryForAP(final IAdornedPredicate ap,
 			final ILiteral hl) {
 		if ((hl == null) || (ap == null)) {
 			throw new NullPointerException(
@@ -316,6 +332,59 @@ public class AdornedProgram implements IAdornedProgram {
 		}
 		return BASIC.createQuery(BASIC.createLiteral(hl.isPositive(), ap, BASIC
 				.createTuple(terms)));
+	}
+
+	/**
+	 * This is a helpermethod to handle the case if no arguments are bound in
+	 * the query.
+	 * 
+	 * @param q
+	 *            the query where no arguments are bound (the arguments (terms)
+	 *            won't be checked)
+	 * @return a set of all newly generated adorned predicates
+	 * @throws NullPointerException
+	 *             if the query is {@code null}
+	 * @throws IllegalArgumentException
+	 *             if the length of the query is not 1
+	 */
+	private Set<IAdornedPredicate> doAllFreeQuery(final IQuery q) {
+		if (q == null) {
+			throw new NullPointerException("The query must not be null");
+		}
+		if (q.getQueryLenght() != 1) {
+			throw new IllegalArgumentException(
+					"The querylenght must be 1, but was " + q.getQueryLenght());
+		}
+
+		final IPredicate p = q.getQueryLiteral(0).getPredicate();
+		final Set<IAdornedPredicate> todo = new HashSet<IAdornedPredicate>();
+
+		for (final IRule r : rules) {
+			// if the headliteral and the adorned predicate have the
+			// same signature
+			if (p.equals(r.getHeadLiteral(0).getPredicate())) {
+				// creating a sip for the actual rule and the ap
+				final ISip sip = new SIPImpl(r, q);
+				final AdornedRule ra = new AdornedRule(r, sip);
+				boolean gotNewAdornedRule = false;
+
+				// iterating through all bodyliterals of the
+				for (final ILiteral l : r.getBodyLiterals()) {
+					final AdornedPredicate newAP = processLiteral(l, ra);
+
+					// adding the adorned predicate to the sets
+					if ((newAP != null) && (adornedPredicates.add(newAP))) {
+						todo.add(newAP);
+						gotNewAdornedRule = true;
+					}
+				}
+				if (gotNewAdornedRule) {
+					adornedRules.add(ra);
+				}
+			}
+		}
+
+		return todo;
 	}
 
 	/**
@@ -464,7 +533,8 @@ public class AdornedProgram implements IAdornedProgram {
 			}
 			return (pred.getArity() == p.getArity())
 					&& (pred.getPredicateSymbol()
-							.equals(p.getPredicateSymbol()));
+							.equals(p.getPredicateSymbol()))
+					&& (p.isBuiltIn() == pred.isBuiltIn());
 		}
 
 		public IPredicate getUnadornedPredicate() {
@@ -487,17 +557,6 @@ public class AdornedProgram implements IAdornedProgram {
 
 		public boolean isBuiltIn() {
 			return p.isBuiltIn();
-		}
-
-		/**
-		 * This method is not meant to be invoked.
-		 * 
-		 * @throws UnsupportedOperationException
-		 *             will be thrown every time.
-		 * @see #getPredicateSymbol()
-		 */
-		public void setPredicateSymbol(String name) {
-			throw new UnsupportedOperationException();
 		}
 
 		public int compareTo(IPredicate o) {
@@ -554,8 +613,8 @@ public class AdornedProgram implements IAdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.18 $
-	 * @date $Date: 2006-12-07 17:21:33 $
+	 * @version $Revision: 1.19 $
+	 * @date $Date: 2007-01-23 14:22:06 $
 	 */
 	public static class AdornedRule implements IAdornedRule {
 		/** The inner rule represented by this object */
