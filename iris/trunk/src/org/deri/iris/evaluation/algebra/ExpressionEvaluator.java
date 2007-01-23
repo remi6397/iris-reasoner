@@ -144,8 +144,12 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		IComponent c0 = j.getChildren().get(0);
 		vars.addAll(c0.getVariables());
 		IComponent c1 = null;
-		
-		IRelation r0 = evaluate(c0, p, aq);
+		/**
+		 * Left relation to be joined is contains all tuples from the KB 
+		 * with the corresponding predicate, not only “fresh tuples” from 
+		 * the last iteration (aq = null)!
+		 */
+		IRelation r0 = evaluate(c0, p, null);
 		IRelation r1 = null;
 		boolean emptyRel = false;
 		
@@ -198,11 +202,11 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		}
 		IRelationDescriptor r = (IRelationDescriptor)c;
 		if (r.isPositive()) {
-			// Return tuples from the last iteration only
 			if (aq != null && aq.get(r.getPredicate()) != null) {
+				// Return tuples from the last iteration only!
 				return aq.get(r.getPredicate());
 			} else {
-				// Return all tuples from the KB
+				// Return all tuples from the KB!
 				return p.getFacts(r.getPredicate());
 			}
 		} else {
