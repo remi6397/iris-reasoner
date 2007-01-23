@@ -27,6 +27,7 @@ package org.deri.iris.evaluation.seminaive;
 
 import static org.deri.iris.factory.Factory.EVALUATION;
 
+import java.util.List;
 import java.util.Map;
 
 import org.deri.iris.api.IProgram;
@@ -55,14 +56,14 @@ public abstract class GeneralSeminaiveEvaluation implements IEvaluator {
 	protected IProgram p;
 
 	/** Map of idb predicates and coresponding algebra expressions */
-	protected Map<IPredicate, IComponent> idbMap;
+	protected Map<IPredicate, List<IComponent>> idbMap;
 
 	protected Map<IPredicate, IComponent> queries;
 
 	private IResultSet results = null;
 
 	GeneralSeminaiveEvaluation(final IExpressionEvaluator e, final IProgram p,
-			final Map<IPredicate, IComponent> idb, 
+			final Map<IPredicate, List<IComponent>> idb, 
 			final Map<IPredicate, IComponent> qMap) {
 
 		this.method = e;

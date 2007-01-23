@@ -60,8 +60,8 @@ import org.deri.iris.operations.relations.JoinCondition;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic, DERI Innsbruck
- * @date $Date: 2006-12-19 18:22:25 $
- * @version $Id: Rule2RelationTest.java,v 1.5 2006-12-19 18:22:25 darko Exp $
+ * @date $Date: 2007-01-23 18:48:47 $
+ * @version $Id: Rule2RelationTest.java,v 1.6 2007-01-23 18:48:47 darko Exp $
  */
 public class Rule2RelationTest extends TestCase {
 
@@ -88,7 +88,7 @@ public class Rule2RelationTest extends TestCase {
 	 */
 	protected void runRule2Relation(final Set<IRule> rul, final Map<IPredicate, IComponent> rel) {
 
-		Map<IPredicate, IComponent> res = this.r2r.translateRules(rul);
+		Map<IPredicate, List<IComponent>> res = this.r2r.translateRules(rul);
 		System.out.println("in: " + rul + "\nrel: "+ rel + "\nres: " + res + "\n");
 		assertResults(rel, res);
 	}
@@ -271,7 +271,11 @@ public class Rule2RelationTest extends TestCase {
 		runRule2Relation(rules, result);
 	}*/
 	
-	protected static void assertResults(final Map<IPredicate, IComponent> a, final Map<IPredicate, IComponent> b) {
+	// TODO: Adapt this method (Map<IPredicate, IComponent> b has been changed 
+	//		 to Map<IPredicate, List<IComponent>> b)
+	protected static void assertResults(final Map<IPredicate, IComponent> a, 
+			final Map<IPredicate, List<IComponent>> b) {
+		
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", a.size(), b.size());
 		Set<IPredicate> keyseta = a.keySet();
