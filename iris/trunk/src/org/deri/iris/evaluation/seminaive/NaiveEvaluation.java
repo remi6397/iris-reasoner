@@ -26,15 +26,12 @@
 package org.deri.iris.evaluation.seminaive;
 
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.api.evaluation.algebra.IComponent;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.exception.DataModelException;
@@ -82,7 +79,6 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 	 */
 	public boolean evaluate() throws DataModelException {
 
-		List<IComponent> rules4pr = null;
 		boolean newTupleAdded = false, cont = true;
 		IRelation r = null;
 
@@ -93,17 +89,14 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 			cont = true;
 			while (cont) {
 				// Iterating through all predicates of the stratum
-				for (final ILiteral lit : Complementor
+				for (final IPredicate pr : Complementor
 						.getPredicatesOfStratum(this.idbMap.keySet(), i)) {
 					cont = false;
 					// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-					rules4pr = this.idbMap.get(lit);
-					for(IComponent c:rules4pr){
-						r = method.evaluate(c, this.p);
-						if (r != null && r.size() > 0) {
-							newTupleAdded = this.p.addFacts(lit.getPredicate(), r);
-							cont = cont || newTupleAdded;
-						}
+					r = method.evaluate(this.idbMap.get(pr), this.p);
+					if (r != null && r.size() > 0) {
+						newTupleAdded = this.p.addFacts(pr, r);
+						cont = cont || newTupleAdded;
 					}
 				}
 			}

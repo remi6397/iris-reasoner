@@ -26,13 +26,10 @@
 package org.deri.iris.evaluation.seminaive;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.evaluation.algebra.IComponent;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.storage.Relation;
@@ -63,9 +60,7 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 		 */
 		boolean newTupleAdded = false, cont = true;
 		IRelation p = null;
-		Map<ILiteral, IRelation> aq = new HashMap<ILiteral, IRelation>();
-		List<IComponent> rules4pr = null;
-		IPredicate pr = null;
+		Map<IPredicate, IRelation> aq = new HashMap<IPredicate, IRelation>();
 		IRelation tempRel = null;
 		
 		/** Evaluate rules */
@@ -81,17 +76,14 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 			 * end;
 			 * </p>
 			 */
-			for (final ILiteral lit : Complementor.getPredicatesOfStratum(
+			for (final IPredicate pr : Complementor.getPredicatesOfStratum(
 					this.idbMap.keySet(), i)) {
 				
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-				rules4pr = this.idbMap.get(lit);
-				for(IComponent c:rules4pr){
-					p = method.evaluate(c, this.p);
-					if(! this.p.getFacts(lit.getPredicate()).containsAll(p)){
-						aq.put(lit, p);
-						this.p.addFacts(lit.getPredicate(), p);
-					}
+				p = method.evaluate(this.idbMap.get(pr), this.p);
+				if(! this.p.getFacts(pr).containsAll(p)){
+					aq.put(pr, p);
+					this.p.addFacts(pr, p);
 				}
 			}
 			/**
@@ -111,39 +103,39 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 			 */
 			cont = true;
 			while (cont) {
-				for (final ILiteral lit : Complementor.getPredicatesOfStratum(
+				for (final IPredicate pr : Complementor.getPredicatesOfStratum(
 						this.idbMap.keySet(), i)) {
+					
 					cont = false;
-					pr = lit.getPredicate();
 					// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
-					rules4pr = this.idbMap.get(lit);
-					for(IComponent c : rules4pr){
-						p = method.evaluateIncrementally(c, this.p, aq);
-						if(! this.p.getFacts(pr).containsAll(p)){
-							tempRel = new Relation(p.getArity());
-							tempRel.addAll(p);
-							tempRel.removeAll(this.p.getFacts(pr));
-							aq.put(lit, tempRel);
-							this.p.addFacts(pr, tempRel);
-							cont = true;
-						}else{
-							newTupleAdded = false;
-						}
+					p = method.evaluateIncrementally(this.idbMap.get(pr), this.p, aq);
+					/*if (p != null && p.size() > 0) {
+						p.removeAll(this.p.getFacts(pr));
+						aq.put(pr, p);
+						newTupleAdded = this.p.addFacts(pr, p);
 						cont = cont || newTupleAdded;
+					}*/
+					if(! this.p.getFacts(pr).containsAll(p)){
+						tempRel = new Relation(p.getArity());
+						tempRel.addAll(p);
+						tempRel.removeAll(this.p.getFacts(pr));
+						aq.put(pr, tempRel);
+						this.p.addFacts(pr, tempRel);
+						cont = true;
+					}else{
+						newTupleAdded = false;
 					}
+					cont = cont || newTupleAdded;
 				}
 			}
-			for (final ILiteral lit : Complementor.getPredicatesOfStratum(
+			for (final IPredicate pr : Complementor.getPredicatesOfStratum(
 					this.idbMap.keySet(), i)) {
 				
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-				rules4pr = this.idbMap.get(lit);
-				for(IComponent c:rules4pr){
-					p = method.evaluate(c, this.p);
-					if(! this.p.getFacts(lit.getPredicate()).containsAll(p)){
-						aq.put(lit, p);
-						this.p.addFacts(lit.getPredicate(), p);
-					}
+				p = method.evaluate(this.idbMap.get(pr), this.p);
+				if(! this.p.getFacts(pr).containsAll(p)){
+					aq.put(pr, p);
+					this.p.addFacts(pr, p);
 				}
 			}
 		}
