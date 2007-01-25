@@ -37,25 +37,23 @@ import org.deri.iris.exception.DataModelException;
  * evaluation procedure, needs to implement this interface.
  * </p>
  * <p>
- * $Id: IEvaluator.java,v 1.7 2006-12-05 08:56:02 richardpoettler Exp $
+ * $Id: IEvaluator.java,v 1.8 2007-01-25 12:52:35 darko Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
  * @date 27.07.2006 16:04:43
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public interface IEvaluator {
 	/**
-	 * <p>
-	 * Evaluates all queries which have been added to the program.
-	 * </p>
+	 * Evaluates the logic program.
 	 * 
 	 * @return {@code true} if the evaluation has terminated normally, otherwise
 	 *         {@code false}
 	 */
 	public boolean evaluate() throws DataModelException;
-
+	
 	/**
 	 * <p>
 	 * Returns the computed results.
