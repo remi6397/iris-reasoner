@@ -31,16 +31,15 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.Map;
-import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.evaluation.Evaluator;
+import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
 
@@ -49,11 +48,11 @@ import org.deri.iris.factory.Factory;
  * Tests the Executor.
  * </p>
  * <p>
- * $Id: ExecutorTest.java,v 1.2 2006-12-19 18:20:31 darko Exp $
+ * $Id: ExecutorTest.java,v 1.3 2007-01-25 13:01:53 darko Exp $
  * </p>
  * 
  * @author Richard Pöttler
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ExecutorTest extends TestCase {
 	private IProgram p;
@@ -92,7 +91,8 @@ public class ExecutorTest extends TestCase {
 
 	public void testComputeSubstitution() {
 		Executor e = new Executor(p, new ExpressionEvaluator());
-		for (final Map.Entry<IQuery, Set<ITuple>> me : e.computeSubstitutions()
+		e.execute();
+		for (final Map.Entry<IPredicate, IRelation> me : e.computeSubstitutions()
 				.entrySet()) {
 			System.out.println("q: " + me.getKey());
 			for (final ITuple t : me.getValue()) {
