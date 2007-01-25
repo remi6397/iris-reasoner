@@ -25,13 +25,11 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.evaluation.IBottomUpEvaluator;
@@ -63,7 +61,7 @@ public abstract class GeneralSeminaiveEvaluation implements IBottomUpEvaluator {
 	protected Rule2Relation rr = null;
 
 	/** Map of idb literals and coresponding algebra expressions */
-	protected Map<ILiteral, List<IComponent>> idbMap;
+	protected Map<IPredicate, IComponent> idbMap;
 
 	protected IResultSet results = null;
 	

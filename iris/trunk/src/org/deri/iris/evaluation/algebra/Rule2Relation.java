@@ -29,6 +29,7 @@ import static org.deri.iris.factory.Factory.ALGEBRA;
 import static org.deri.iris.factory.Factory.BASIC;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -50,6 +51,7 @@ import org.deri.iris.api.evaluation.algebra.IJoinDescriptor;
 import org.deri.iris.api.evaluation.algebra.IProjectionDescriptor;
 import org.deri.iris.api.evaluation.algebra.IRelationDescriptor;
 import org.deri.iris.api.evaluation.algebra.ISelectionDescriptor;
+import org.deri.iris.api.evaluation.algebra.IUnionDescriptor;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.basics.seminaive.NonEqualityTerm;
@@ -98,34 +100,28 @@ public class Rule2Relation {
 	 * @return A map of IDB predicates with corresponding relational algebra
 	 *        	  expressions
 	 */
-	public Map<ILiteral, List<IComponent>> translateRules(final Set<IRule> rls) {
+	public Map<IPredicate, IComponent> translateRules(final Set<IRule> rls) {
 
-		Map<ILiteral, List<IComponent>> results = new Hashtable<ILiteral, List<IComponent>>(rls.size());		
+		Map<IPredicate, IComponent> results = new Hashtable<IPredicate, IComponent>();		
 		
-		/** List of components with a coresponding predicate from the rule head */
-		List<IComponent> rules4pr = null;
-		
+		Map<IPredicate, IUnionDescriptor> unionMap = new Hashtable<IPredicate, IUnionDescriptor>();		
+				
 		IComponent c = null;
 		
 		IRule r = null;
-		ILiteral head = null;
+		IPredicate p = null;
 		
 		for (IRule rule : rls) {
 			/** Rectify rules */
 			r = MiscOps.rectify(rule);
-			head = r.getHeadLiteral(0);
-			rules4pr = results.get(head);
-			if(rules4pr == null){
-				rules4pr = new ArrayList<IComponent>();
-			}
+			p = r.getHeadLiteral(0).getPredicate();
 			m = new HashMap<ILiteral, List<IVariable>>();
 			oVars = new HashSet<IVariable>();
 			IAtom a = null;
 			ISelectionDescriptor s = null;
 			
 			IComponent body = translateBody(r.getBodyLiterals());
-			rules4pr.add(body);
-			if(results.get(head) == null) results.put(head, rules4pr);
+			results.put(p, body);
 			/**
 			 * <p>
 			 * SELECTION
@@ -154,10 +150,9 @@ public class Rule2Relation {
 							s = ALGEBRA.createSelectionDescriptor(BASIC
 									.createTuple(terms));
 						}
-						c = rules4pr.get(rules4pr.size()-1);
-						s.addChild(c);
+						s.addChild(results.get(p));
 						s.addVariables(body.getVariables());
-						rules4pr.set(rules4pr.size()-1, s);
+						results.put(p, s);
 					}
 				}
 			}
@@ -170,31 +165,54 @@ public class Rule2Relation {
 			 * </p>
 			 */
 			IProjectionDescriptor pr = null;
-			c = rules4pr.get(rules4pr.size()-1);
+			c = results.get(p);
 			
-			if(r.getHeadLiteral(0).getTuple().getArity() != c.getVariables().size()){
+			//if(r.getHeadLiteral(0).getTuple().getArity() != c.getVariables().size()){
+			if (!Arrays.equals(r.getHeadVariables().toArray(), c.getVariables().toArray())) {	
 				int[] pInds = getProjectionIndexes(r.getHeadVariables(), c.getVariables());
 				pr = ALGEBRA.createProjectionDescriptor(pInds);
 				pr.addChild(c);
 				pr.addVariables(filterProjectionVariables(pInds, c.getVariables()));
-				rules4pr.set(rules4pr.size()-1, pr);
+				results.put(p, pr);
 			}
 			/**
 			 * <p>
-			 * UNION has not been used!
-			 * 
-			 * TODO: Reconsider use of UNION. Rectification procedure enables UNION!
-			 * In case of rectified rules, it looks, instead of:
-			 * 
-			 * Map<ILiteral, List<IComponent>> results = 
-			 * 		new Hashtable<ILiteral, List<IComponent>>();		
-			 * 
-			 * you need only (as it was initially):
-			 * 
-			 * Map<IPredicate, IComponent> results = 
-			 * 	new Hashtable<IPredicate, IComponent>();		
+			 * UNION
 			 * </p>
+			 * <p>
+			 * Overall union considering the rules with identical rule heads.
+			 * </p>
+			 * <p>
+			 * Check whether there is a rule with the same head predicate; if
+			 * so, the bodies must be united.
+			 * </p>
+			 * <p>
+			 * The relations should be union-compatible: 
+			 * (a) Same number of fields. 
+			 * (b) Corresponding fields have the same type.
+			 * <p>
 			 */
+			IUnionDescriptor u = null;
+			c = unionMap.get(p);
+			IComponent comp = results.get(p);
+			if(c != null){
+				c.addChild(comp);
+				unionMap.put(p, (IUnionDescriptor)c);
+			}else{
+				u = ALGEBRA.createUnionDescriptor();
+				u.addChild(comp);
+				u.addVariables(comp.getVariables());
+				unionMap.put(p, u);
+			}
+		}
+		results.clear();
+		for(IPredicate pred : unionMap.keySet()){
+			c = unionMap.get(pred);
+			if(c.getChildren().size() > 1){
+				results.put(pred, c);
+			}else{
+				results.put(pred, c.getChildren().get(0));
+			}
 		}
 		return results;
 	}

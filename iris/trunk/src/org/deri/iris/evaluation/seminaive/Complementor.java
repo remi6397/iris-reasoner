@@ -196,21 +196,19 @@ public class Complementor {
 	/**
 	 * Returns the highest stratum of a set of predicates.
 	 * 
-	 * @param h	The set of idb literals.
+	 * @param h	The set of idb predicates.
 	 * @return 	The highest stratum.
 	 * @throws 	NullPointerException
 	 *             	if the set of predicates is {@code null}.
 	 * @throws NullPointerException
 	 *             if the set contains {@code null}.
 	 */
-	protected static int getMaxStratum(final Set<ILiteral> h) {
+	protected static int getMaxStratum(final Set<IPredicate> h) {
 		if (h == null) {
 			throw new NullPointerException("The predicates must not be null");
 		}
 		int strat = 0;
-		IPredicate pred = null;
-		for (final ILiteral lit : h) {
-			pred = lit.getPredicate();
+		for (final IPredicate pred : h) {
 			strat = Math.max(strat, pred.getStratum());
 		}
 		return strat;
@@ -219,8 +217,8 @@ public class Complementor {
 	/**
 	 * Determines (out of a set of literals) all literals whose predicats have a given stratum.
 	 * 
-	 * @param lits
-	 *            the set of literals.
+	 * @param preds
+	 *            the set of predicates.
 	 * @param s
 	 *            the stratum to look for
 	 * @return the set of predicates at the given stratum
@@ -231,21 +229,21 @@ public class Complementor {
 	 * @throws IllegalArgumentException
 	 *             if the stratum is smaller than 0
 	 */
-	protected static Set<ILiteral> getPredicatesOfStratum(
-			final Set<ILiteral> lits, final int s) {
-		if (lits == null) {
-			throw new NullPointerException("The literals must not be null");
+	protected static Set<IPredicate> getPredicatesOfStratum(
+			final Set<IPredicate> preds, final int s) {
+		if (preds == null) {
+			throw new NullPointerException("The predicates must not be null");
 		}
 		if (s <= 0) {
 			throw new IllegalArgumentException(s + " is not a valid stratum");
 		}
 
-		final Set<ILiteral> preds = new HashSet<ILiteral>();
-		for (final ILiteral lit : lits) {
-			if (lit.getPredicate().getStratum() == s) {
-				preds.add(lit);
+		final Set<IPredicate> predicates = new HashSet<IPredicate>();
+		for (final IPredicate p : preds) {
+			if (p.getStratum() == s) {
+				predicates.add(p);
 			}
 		}
-		return preds;
+		return predicates;
 	}
 }
