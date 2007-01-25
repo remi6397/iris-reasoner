@@ -28,6 +28,7 @@ import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.deri.iris.api.evaluation.common.IAdornedPredicate;
 import org.deri.iris.api.evaluation.common.IAdornedProgram;
 import org.deri.iris.api.evaluation.common.IAdornedRule;
 import org.deri.iris.api.evaluation.magic.ISip;
+import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.magic.SIPImpl;
@@ -51,12 +53,12 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.19 2007-01-23 14:22:06 richardpoettler Exp $
+ * $Id: AdornedProgram.java,v 1.20 2007-01-25 13:15:32 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.19 $
- * @date $Date: 2007-01-23 14:22:06 $
+ * @version $Revision: 1.20 $
+ * @date $Date: 2007-01-25 13:15:32 $
  */
 public class AdornedProgram implements IAdornedProgram {
 
@@ -267,7 +269,7 @@ public class AdornedProgram implements IAdornedProgram {
 					Adornment.FREE) == ap.getAdornment().length)) {
 				ap = null;
 			} else { // replace the literal in the body, and return the new
-						// adorned predicate
+				// adorned predicate
 				r.replaceBodyLiteral(l, ap);
 			}
 		}
@@ -318,15 +320,15 @@ public class AdornedProgram implements IAdornedProgram {
 		int iCounter = 0;
 		for (Adornment a : ap.getAdornment()) {
 			switch (a) {
-				case BOUND:
-					terms[iCounter] = EMPTY_CONSTANT_TERM;
-					break;
-				case FREE:
-					terms[iCounter] = hl.getTuple().getTerm(iCounter);
-					break;
-				default:
-					throw new IllegalArgumentException(
-							"Only BOUND and FREE are allowed as adornments");
+			case BOUND:
+				terms[iCounter] = EMPTY_CONSTANT_TERM;
+				break;
+			case FREE:
+				terms[iCounter] = hl.getTuple().getTerm(iCounter);
+				break;
+			default:
+				throw new IllegalArgumentException(
+						"Only BOUND and FREE are allowed as adornments");
 			}
 			iCounter++;
 		}
@@ -465,7 +467,8 @@ public class AdornedProgram implements IAdornedProgram {
 		 * @throw nullpointer exception if the literal, the predicate of the
 		 *        literal or the bounds is null.
 		 */
-		public AdornedPredicate(final ILiteral l, final Set<IVariable> bounds) {
+		public AdornedPredicate(final ILiteral l,
+				final Collection<IVariable> bounds) {
 			// TODO: maybe a defensive copy should be made
 			if (l == null) {
 				throw new NullPointerException("The literal must not be null");
@@ -481,8 +484,8 @@ public class AdornedProgram implements IAdornedProgram {
 			adornment = new Adornment[p.getArity()];
 
 			// computing the adornment
-			for (Object t : l.getTuple().getTerms()) {
-				if (bounds.contains(t)) {
+			for (final ITerm t : l.getTuple().getTerms()) {
+				if (isBound(t, bounds)) {
 					adornment[iCoutner] = Adornment.BOUND;
 				} else {
 					adornment[iCoutner] = Adornment.FREE;
@@ -525,6 +528,34 @@ public class AdornedProgram implements IAdornedProgram {
 				}
 				iCounter++;
 			}
+		}
+
+		/**
+		 * Checks whether a term is bound with a submitted collection of bound
+		 * variables. This method also checks whether all variables are covered
+		 * with the variables of the bound collection.
+		 * 
+		 * @param t
+		 *            the term to check
+		 * @param b
+		 *            the collection of bound variables to check agains
+		 * @return {@code true} if the term is bound using the bound collection,
+		 *         otherwise {@code false}
+		 */
+		private static boolean isBound(final ITerm t,
+				final Collection<IVariable> b) {
+			if (t == null) {
+				throw new NullPointerException("The term must not be null");
+			}
+			if (b == null) {
+				throw new NullPointerException(
+						"The bound collection must not be null");
+			}
+
+			if (t instanceof IConstructedTerm) {
+				return b.containsAll(((IConstructedTerm) t).getVariables());
+			}
+			return b.contains(t);
 		}
 
 		public boolean hasSameSignature(final IPredicate pred) {
@@ -613,8 +644,8 @@ public class AdornedProgram implements IAdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.19 $
-	 * @date $Date: 2007-01-23 14:22:06 $
+	 * @version $Revision: 1.20 $
+	 * @date $Date: 2007-01-25 13:15:32 $
 	 */
 	public static class AdornedRule implements IAdornedRule {
 		/** The inner rule represented by this object */
