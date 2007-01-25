@@ -63,12 +63,12 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * Tests the adornments.
  * </p>
  * <p>
- * $Id: AdornmentsTest.java,v 1.3 2007-01-23 15:35:36 richardpoettler Exp $
+ * $Id: AdornmentsTest.java,v 1.4 2007-01-25 13:15:32 richardpoettler Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.3 $
- * @date $Date: 2007-01-23 15:35:36 $
+ * @version $Revision: 1.4 $
+ * @date $Date: 2007-01-25 13:15:32 $
  */
 public class AdornmentsTest extends TestCase {
 
@@ -486,17 +486,99 @@ public class AdornmentsTest extends TestCase {
 				.getAdornedRules().isEmpty());
 	}
 
+	public void testConstructedAdornment() {
+		// w(const(X, A, B)
+		final ILiteral constr = BASIC.createLiteral(true, BASIC
+				.createPredicate("w", 3), BASIC.createTuple(TERM
+				.createConstruct("const", TERM.createVariable("X"), TERM
+						.createVariable("A"), TERM.createVariable("B")), TERM
+				.createVariable("C"), TERM.createVariable("Y")));
+		// w(X, Y, Z) :- k(A, B, Y), w(const(X, A, B), C, Y)
+		final IRule r = BASIC.createRule(BASIC.createHead(createLiteral("w",
+				"X", "Y", "Z")), BASIC.createBody(createLiteral("k", "A", "B",
+				"Y"), constr));
+		// w(asdf, jklö, Z)
+		final IQuery q = BASIC.createQuery(BASIC.createLiteral(true, BASIC
+				.createPredicate("w", 3), BASIC.createTuple(TERM
+				.createString("asdf"), TERM.createString("jklö"), TERM
+				.createVariable("Z"))));
+
+		final AdornedProgram a = new AdornedProgram(Collections.singleton(r),
+				q);
+
+		// constructing the adorned rules
+		// constructing the adorned predicates
+		final IAdornedPredicate bbf = new AdornedPredicate("w",
+				new Adornment[] { Adornment.BOUND, Adornment.BOUND,
+						Adornment.FREE });
+		final IAdornedPredicate bfb = new AdornedPredicate("w",
+				new Adornment[] { Adornment.BOUND, Adornment.FREE,
+						Adornment.BOUND });
+
+		final Set<IAdornedRule> rules = new HashSet<IAdornedRule>();
+
+		// w^bbf(X, Y, Z) :- k(A, B, Y), w^bfb(const[X, A, B], C, Y)
+		IHead head = BASIC.createHead(BASIC.createLiteral(true, bbf,
+				BASIC.createTuple(new ArrayList<ITerm>(createVarList("X", "Y",
+						"Z")))));
+		IBody body = BASIC.createBody(createLiteral("k", "X", "B", "Y"), BASIC
+				.createLiteral(true, bfb, BASIC.createTuple(TERM
+						.createConstruct("const", TERM.createVariable("X"),
+								TERM.createVariable("A"), TERM
+										.createVariable("B")), TERM
+						.createVariable("C"), TERM.createVariable("Y"))));
+		IRule rule = BASIC.createRule(head, body);
+		// we can call new AdornedRule, because there is no computation, and
+		// we assume that the sip is created correct.
+		rules.add(new AdornedRule(rule, new SIPImpl(unadornRule(rule), q)));
+		
+		// w^bfb(X, Y, Z) :- k(A, B, Y), w^bfb(const[X, A, B], C, Y)
+		head = BASIC.createHead(BASIC.createLiteral(true, bfb,
+				BASIC.createTuple(new ArrayList<ITerm>(createVarList("X", "Y",
+				"Z")))));
+		body = BASIC.createBody(createLiteral("k", "X", "B", "Y"), BASIC
+				.createLiteral(true, bfb, BASIC.createTuple(TERM
+						.createConstruct("const", TERM.createVariable("X"),
+								TERM.createVariable("A"), TERM
+								.createVariable("B")), TERM
+								.createVariable("C"), TERM.createVariable("Y"))));
+		rule = BASIC.createRule(head, body);
+		// we can call new AdornedRule, because there is no computation, and
+		// we assume that the sip is created correct.
+		rules.add(new AdornedRule(rule, new SIPImpl(unadornRule(rule), q)));
+		
+		// asserting the result
+		final List<IAdornedRule> l0 = new ArrayList<IAdornedRule>(rules);
+		final List<IAdornedRule> l1 = new ArrayList<IAdornedRule>(a
+				.getAdornedRules());
+
+		assertEquals("The amount of rules must be equal", l0.size(), l1.size());
+
+		Collections.sort(l0, RC);
+		Collections.sort(l1, RC);
+
+		// TODO: maybe look whether the sip contains all edges
+		for (Iterator<IAdornedRule> i0 = l0.iterator(), i1 = l1.iterator(); i0
+				.hasNext();) {
+			final IAdornedRule r0 = i0.next();
+			final IAdornedRule r1 = i1.next();
+			assertEquals(
+					"The rules\n" + r0 + "\nand\n" + r1 + "\ndon't match.", 0,
+					RC.compare(r0, r1));
+		}
+	}
+
 	/**
 	 * <p>
 	 * Compares two rules according to their predicate symbols.
 	 * </p>
 	 * <p>
-	 * $Id: AdornmentsTest.java,v 1.3 2007-01-23 15:35:36 richardpoettler Exp $
+	 * $Id: AdornmentsTest.java,v 1.4 2007-01-25 13:15:32 richardpoettler Exp $
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.3 $
-	 * @date $Date: 2007-01-23 15:35:36 $
+	 * @version $Revision: 1.4 $
+	 * @date $Date: 2007-01-25 13:15:32 $
 	 */
 	private static class RuleComparator implements Comparator<IRule> {
 		public int compare(IRule o1, IRule o2) {
