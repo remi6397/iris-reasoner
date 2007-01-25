@@ -25,22 +25,18 @@
  */
 package org.deri.iris;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.evaluation.IEvaluator;
-import org.deri.iris.api.evaluation.IResultSet;
-import org.deri.iris.api.evaluation.algebra.IComponent;
+import org.deri.iris.api.evaluation.IBottomUpEvaluator;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
+import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.evaluation.algebra.Rule2Relation;
+import org.deri.iris.evaluation.seminaive.NaiveEvaluation;
 import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
 
 /**
@@ -48,24 +44,24 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
  * Executes a programm.
  * </p>
  * <p>
- * $Id: Executor.java,v 1.4 2007-01-23 18:39:49 darko Exp $
+ * $Id: Executor.java,v 1.5 2007-01-25 12:56:12 darko Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class Executor implements IExecutor {
 
 	/** The program to execute. */
 	private IProgram prog;
 
-	/** The evaluator. */
-	private IEvaluator evaluator;
+	/** The bottom-up evaluator. */
+	private IBottomUpEvaluator evaluator;
 
 	/** The evaluation mehtod. */
 	private IExpressionEvaluator method;
-
+	
 	/**
 	 * <p>
 	 * Creates a new evaluator with a given programm and evaluator.
@@ -85,7 +81,7 @@ public class Executor implements IExecutor {
 		this.method = m;
 	}
 	
-	public Set<ITuple> computeSubstitution(final IQuery q) {
+	public IRelation computeSubstitution(final IQuery q) {
 		if (q == null) {
 			throw new NullPointerException("The query must not be null");
 		}
@@ -93,27 +89,13 @@ public class Executor implements IExecutor {
 			throw new IllegalArgumentException(
 					"The length of the query literals must be 1");
 		}
-		// applying the magic sets
-		/*final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(
-				this.prog.getRules(), q));*/
-		
-		// TODO: Introuduce the magic sets
-		// tests the stratum of the newly constructed program and sets it back
-		// to the original one, if needed
-		/*IProgram p = ms.createProgram(prog);
-		if (p.isStratified()) {
-			prog = p;
-		}*/
-		execute();
-		return this.getResultSet().getResults().get(q.getQueryLiteral(0).getPredicate());
+		this.evaluator.runQuery(q);
+		return this.evaluator.getResultSet().getResults().get(q.getQueryLiteral(0).getPredicate());
 	}
-
-	public Map<IQuery, Set<ITuple>> computeSubstitutions() {
-		final Map<IQuery, Set<ITuple>> res = new HashMap<IQuery, Set<ITuple>>();
-		for (final IQuery q : this.prog.getQueries()) {
-			res.put(q, computeSubstitution(q));
-		}
-		return res;
+	
+	public Map<IPredicate, IRelation> computeSubstitutions() {
+		this.evaluator.runQueries(this.prog.getQueries());
+		return this.evaluator.getResultSet().getResults();
 	}
 
 	public boolean execute() {
@@ -121,19 +103,24 @@ public class Executor implements IExecutor {
 		if(! MiscOps.stratify(this.prog)){
 			throw new RuntimeException("The input program is not strtifed");
 		}
-		// translating the query and the rules to the relational algebra model
-		final Rule2Relation rr = new Rule2Relation();
-		final Map<IPredicate, List<IComponent>> ruleT = rr.translateRules(this.prog.getRules());
-		final Map<IPredicate, IComponent> queryT = rr.translateQueries(this.prog.getQueries());
+		/*
+		 * TODO: Introuduce the magic sets here!
+		 * 
+		// Applying the magic sets
+		   final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(
+				this.prog.getRules(), q));
 		
-		// run the evalutaion
-		this.evaluator = new SeminaiveEvaluation(method, this.prog, ruleT, queryT);
-		//this.evaluator = new NaiveEvaluation(method, this.prog, ruleT, queryT);
+		// Tests the stratum of the newly constructed program. If not strtified re-set 
+		// the program to the original one.
+		IProgram p = ms.createProgram(prog);
+		if (p.isStratified()) {
+			prog = p;
+		}*/
+		
+		// Run the evalutaion
+		this.evaluator = new SeminaiveEvaluation(method, this.prog);
+		//this.evaluator = new NaiveEvaluation(method, this.prog);
 		
 		return this.evaluator.evaluate();
-	}
-	
-	public IResultSet getResultSet(){
-		return this.evaluator.getResultSet();
 	}
 }
