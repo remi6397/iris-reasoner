@@ -51,13 +51,13 @@ import org.deri.iris.api.terms.IVariable;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.1 2006-12-05 13:37:57 richardpoettler Exp $
+ * $Id: MiscOps.java,v 1.2 2007-01-25 12:57:24 darko Exp $
  * </p>
  * 
  * @author richi
  * @author graham
- * @version $Revision: 1.1 $
- * @date $Date: 2006-12-05 13:37:57 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2007-01-25 12:57:24 $
  */
 public class MiscOps {
 
@@ -183,6 +183,14 @@ public class MiscOps {
 		}
 	}
 
+	/**	 TODO: 
+	 * 	1. Store the result somewhere!
+	 *	2. Use hashMap with an integer as a key or in getPredicates()
+	 *	   us a comparator so that are predicates sorted dependent on
+	 *	   the stratification! Then correct getPredicatesOfStratum()
+	 *	   from org.deri.iris.evaluation.seminaive.Complementor 
+	*/
+	
 	/**
 	 * <p>
 	 * Calculates and sets the stratum for every predicate of a program.

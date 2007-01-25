@@ -363,7 +363,6 @@ public class Program implements IProgram{
 	public boolean isStratified() {
 		WRITE.lock();
 		try {
-			// TODO: store the result somewhere
 			return MiscOps.stratify(this);
 		} finally {
 			WRITE.unlock();
