@@ -26,11 +26,10 @@
 package org.deri.iris.api;
 
 import java.util.Map;
-import java.util.Set;
 
+import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.evaluation.IResultSet;
+import org.deri.iris.api.storage.IRelation;
 
 /**
  * <p>
@@ -49,12 +48,12 @@ import org.deri.iris.api.evaluation.IResultSet;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IExecutor.java,v 1.4 2006-12-19 18:11:09 darko Exp $
+ * $Id: IExecutor.java,v 1.5 2007-01-25 12:51:12 darko Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface IExecutor {
 
@@ -82,26 +81,18 @@ public interface IExecutor {
 	 * 
 	 * @param q
 	 *            The query for which to compute the substitutions.
-	 * @return A set of substitutions for the given query.
+	 * @return A set of substitutions (IRelation) for the given query.
 	 */
-	public Set<ITuple> computeSubstitution(final IQuery q);
+	public IRelation computeSubstitution(final IQuery q);
 
 	/**
 	 * <p>
 	 * Returns the evaluation results for all queries from the knowledgebase.
 	 * </p>
 	 * 
-	 * @return A map with every executed query as key, and the retrieved
-	 *         substitutions as values for those queries.
+	 * @return A map with query predicates (a query with only 
+	 * 			one literal) as a key, and the retrieved substitutions 
+	 * 			as values for those queries.
 	 */
-	public Map<IQuery, Set<ITuple>> computeSubstitutions();
-	
-	/**
-	 * <p>
-	 * Returns the computed results.
-	 * <p>
-	 * 
-	 * @return the computed results
-	 */
-	public IResultSet getResultSet();
+	public Map<IPredicate, IRelation> computeSubstitutions();	
 }
