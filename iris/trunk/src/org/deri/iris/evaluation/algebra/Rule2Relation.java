@@ -55,6 +55,7 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.basics.seminaive.NonEqualityTerm;
 import org.deri.iris.builtins.EqualBuiltin;
 import org.deri.iris.builtins.UnEqualBuiltin;
+import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.relations.JoinCondition;
 import org.deri.iris.operations.relations.Projection;
@@ -97,29 +98,34 @@ public class Rule2Relation {
 	 * @return A map of IDB predicates with corresponding relational algebra
 	 *        	  expressions
 	 */
-	public Map<IPredicate, List<IComponent>> translateRules(final Set<IRule> rules) {
+	public Map<ILiteral, List<IComponent>> translateRules(final Set<IRule> rls) {
 
-		Map<IPredicate, List<IComponent>> results = new Hashtable<IPredicate, List<IComponent>>();		
+		Map<ILiteral, List<IComponent>> results = new Hashtable<ILiteral, List<IComponent>>(rls.size());		
 		
 		/** List of components with a coresponding predicate from the rule head */
 		List<IComponent> rules4pr = null;
 		
 		IComponent c = null;
 		
-		for (IRule r : rules) {
-			rules4pr = results.get(r.getHeadLiteral(0).getPredicate());
+		IRule r = null;
+		ILiteral head = null;
+		
+		for (IRule rule : rls) {
+			/** Rectify rules */
+			r = MiscOps.rectify(rule);
+			head = r.getHeadLiteral(0);
+			rules4pr = results.get(head);
 			if(rules4pr == null){
 				rules4pr = new ArrayList<IComponent>();
 			}
 			m = new HashMap<ILiteral, List<IVariable>>();
 			oVars = new HashSet<IVariable>();
-			IPredicate p = r.getHeadLiteral(0).getPredicate();
 			IAtom a = null;
 			ISelectionDescriptor s = null;
 			
 			IComponent body = translateBody(r.getBodyLiterals());
 			rules4pr.add(body);
-			if(results.get(p) == null) results.put(p, rules4pr);
+			if(results.get(head) == null) results.put(head, rules4pr);
 			/**
 			 * <p>
 			 * SELECTION
@@ -175,7 +181,18 @@ public class Rule2Relation {
 			}
 			/**
 			 * <p>
-			 * UNION has net been used!
+			 * UNION has not been used!
+			 * 
+			 * TODO: Reconsider use of UNION. Rectification procedure enables UNION!
+			 * In case of rectified rules, it looks, instead of:
+			 * 
+			 * Map<ILiteral, List<IComponent>> results = 
+			 * 		new Hashtable<ILiteral, List<IComponent>>();		
+			 * 
+			 * you need only (as it was initially):
+			 * 
+			 * Map<IPredicate, IComponent> results = 
+			 * 	new Hashtable<IPredicate, IComponent>();		
 			 * </p>
 			 */
 		}
@@ -183,7 +200,7 @@ public class Rule2Relation {
 	}
 
 	public Map<IPredicate, IComponent> translateQueries(final Set<IQuery> queries) {
-		Map<IPredicate, IComponent> results = new Hashtable<IPredicate, IComponent>();		
+		Map<IPredicate, IComponent> results = new Hashtable<IPredicate, IComponent>(queries.size());		
 		
 		for(IQuery q : queries){
 			results.put(
@@ -191,6 +208,10 @@ public class Rule2Relation {
 					translateBody(q.getQueryLiterals()));
 		}
 		return results;
+	}
+	
+	public IComponent translateQuery(final IQuery query) {
+		return	translateBody(query.getQueryLiterals());
 	}
 	
 	/**

@@ -25,18 +25,22 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
-import static org.deri.iris.factory.Factory.EVALUATION;
-
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.deri.iris.api.IProgram;
+import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.evaluation.IEvaluator;
+import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.evaluation.IBottomUpEvaluator;
 import org.deri.iris.api.evaluation.IResultSet;
 import org.deri.iris.api.evaluation.algebra.IComponent;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
+import org.deri.iris.evaluation.algebra.Rule2Relation;
 import org.deri.iris.exception.DataModelException;
+import org.deri.iris.factory.Factory;
 
 /**
  * <p>
@@ -49,32 +53,54 @@ import org.deri.iris.exception.DataModelException;
  * @author Paco Garcia, University of Murcia
  * @date 08-sep-2006
  */
-public abstract class GeneralSeminaiveEvaluation implements IEvaluator {
+public abstract class GeneralSeminaiveEvaluation implements IBottomUpEvaluator {
 	
 	protected IExpressionEvaluator method;
 
 	protected IProgram p;
+	
+	/** Translator to the relational algebra model. */
+	protected Rule2Relation rr = null;
 
-	/** Map of idb predicates and coresponding algebra expressions */
-	protected Map<IPredicate, List<IComponent>> idbMap;
+	/** Map of idb literals and coresponding algebra expressions */
+	protected Map<ILiteral, List<IComponent>> idbMap;
 
-	protected Map<IPredicate, IComponent> queries;
-
-	private IResultSet results = null;
-
-	GeneralSeminaiveEvaluation(final IExpressionEvaluator e, final IProgram p,
-			final Map<IPredicate, List<IComponent>> idb, 
-			final Map<IPredicate, IComponent> qMap) {
+	protected IResultSet results = null;
+	
+	GeneralSeminaiveEvaluation(final IExpressionEvaluator e, final IProgram p) {
 
 		this.method = e;
 		this.p = p;
-		this.idbMap = idb;
-		this.queries = qMap;
-		this.results = EVALUATION.createResultSet();
+		this.rr = new Rule2Relation();
+		this.idbMap = rr.translateRules(this.p.getRules());
+		this.results = Factory.EVALUATION.createResultSet();
 	}
-
-	public abstract boolean evaluate() throws DataModelException;
-
+	
+	/** Evaluate query */
+	public boolean runQuery(IQuery q) 
+		throws DataModelException {
+		
+		/** EVAL (pi, R1,..., Rk, Q1,..., Qm); */
+		this.results.getResults().put(
+				q.getQueryLiteral(0).getPredicate(), 
+				this.method.evaluate(this.rr.translateQuery(q), this.p));
+		
+		return true;
+	}
+	
+	/** Evaluate queries */
+	public boolean runQueries(Set<IQuery> queries) 
+		throws DataModelException{
+		
+		Set<Entry<IPredicate, IComponent>> entrySet = this.rr.translateQueries(queries).entrySet();
+		for(Entry<IPredicate, IComponent> entry : entrySet){
+			this.results.getResults().put(
+					entry.getKey(), 
+					this.method.evaluate(entry.getValue(), this.p));
+		}	
+		return true;
+	}
+	
 	public IResultSet getResultSet() {
 		return this.results;
 	}
