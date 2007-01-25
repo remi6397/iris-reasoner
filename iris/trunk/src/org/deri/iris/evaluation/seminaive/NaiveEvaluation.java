@@ -25,11 +25,15 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.deri.iris.api.IProgram;
+import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.evaluation.algebra.IComponent;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
@@ -52,16 +56,14 @@ import org.deri.iris.exception.DataModelException;
  * </p>
  * <p>
  * @author Darko Anicic, DERI Innsbruck
- * @author Paco Garcia, University of Murcia
  * @date 01-sep-2006
  * </p>
  */
 public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 
-	public NaiveEvaluation(IExpressionEvaluator e, IProgram p,
-			Map<IPredicate, List<IComponent>> idbMap, Map<IPredicate, IComponent> qMap) {
+	public NaiveEvaluation(IExpressionEvaluator e, IProgram p) {
 
-		super(e, p, idbMap, qMap);
+		super(e, p);
 	}
 
 	/**
@@ -91,29 +93,41 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 			cont = true;
 			while (cont) {
 				// Iterating through all predicates of the stratum
-				for (final IPredicate pr : Complementor
+				for (final ILiteral lit : Complementor
 						.getPredicatesOfStratum(this.idbMap.keySet(), i)) {
 					cont = false;
 					// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-					rules4pr = this.idbMap.get(pr);
+					rules4pr = this.idbMap.get(lit);
 					for(IComponent c:rules4pr){
 						r = method.evaluate(c, this.p);
 						if (r != null && r.size() > 0) {
-							newTupleAdded = this.p.addFacts(pr, r);
+							newTupleAdded = this.p.addFacts(lit.getPredicate(), r);
 							cont = cont || newTupleAdded;
 						}
 					}
 				}
 			}
 		}
-
-		// Evaluate queries
-		for (IPredicate pr : this.queries.keySet()) {
-			// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-			r = method.evaluate(this.queries.get(pr), this.p);
-			if (r != null && r.size() > 0)
-				this.getResultSet().getResults().put(pr, r);
-		}
 		return true;
+	}
+	
+	/** Evaluate query */
+	public IRelation evaluateQuery(IQuery q) throws DataModelException{
+		/** EVAL (pi, R1,..., Rk, Q1,..., Qm); */
+		return method.evaluate(this.rr.translateQuery(q) , this.p);
+	}
+	
+	/** Evaluate queries */
+	public Map<IPredicate, IRelation> evaluateQueries(Set<IQuery> queries) 
+		throws DataModelException{
+		
+		Map<IPredicate, IRelation> results = 
+			new Hashtable<IPredicate, IRelation>(queries.size());
+
+		for (IQuery q : queries) {
+			results.put(
+					q.getQueryLiteral(0).getPredicate(), evaluateQuery(q));
+	}
+		return results;
 	}
 }

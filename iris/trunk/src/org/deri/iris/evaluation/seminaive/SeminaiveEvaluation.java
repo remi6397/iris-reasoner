@@ -30,10 +30,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.deri.iris.api.IProgram;
+import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.algebra.IComponent;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.storage.Relation;
 
 /**
  * Algorithm 3.4: Semi-Naive Evaluation of Datalog Equations
@@ -50,9 +52,8 @@ import org.deri.iris.api.storage.IRelation;
  */
 public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 
-	public SeminaiveEvaluation(IExpressionEvaluator e, IProgram p,
-			Map<IPredicate, List<IComponent>> idbMap, Map<IPredicate, IComponent> qMap) {
-		super(e, p, idbMap, qMap);
+	public SeminaiveEvaluation(IExpressionEvaluator e, IProgram p) {
+		super(e, p);
 	}
 
 	public boolean evaluate() {
@@ -62,8 +63,10 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 		 */
 		boolean newTupleAdded = false, cont = true;
 		IRelation p = null;
-		Map<IPredicate, IRelation> aq = new HashMap<IPredicate, IRelation>();
+		Map<ILiteral, IRelation> aq = new HashMap<ILiteral, IRelation>();
 		List<IComponent> rules4pr = null;
+		IPredicate pr = null;
+		IRelation tempRel = null;
 		
 		/** Evaluate rules */
 		for (int i = 1, maxStrat = Complementor
@@ -78,16 +81,16 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 			 * end;
 			 * </p>
 			 */
-			for (final IPredicate pr : Complementor.getPredicatesOfStratum(
+			for (final ILiteral lit : Complementor.getPredicatesOfStratum(
 					this.idbMap.keySet(), i)) {
 				
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-				rules4pr = this.idbMap.get(pr);
+				rules4pr = this.idbMap.get(lit);
 				for(IComponent c:rules4pr){
 					p = method.evaluate(c, this.p);
-					if(! this.p.getFacts(pr).containsAll(p)){
-						aq.put(pr, p);
-						this.p.addFacts(pr, p);
+					if(! this.p.getFacts(lit.getPredicate()).containsAll(p)){
+						aq.put(lit, p);
+						this.p.addFacts(lit.getPredicate(), p);
 					}
 				}
 			}
@@ -108,18 +111,21 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 			 */
 			cont = true;
 			while (cont) {
-				for (final IPredicate pr : Complementor.getPredicatesOfStratum(
+				for (final ILiteral lit : Complementor.getPredicatesOfStratum(
 						this.idbMap.keySet(), i)) {
 					cont = false;
+					pr = lit.getPredicate();
 					// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
-					rules4pr = this.idbMap.get(pr);
-					for(IComponent c:rules4pr){
+					rules4pr = this.idbMap.get(lit);
+					for(IComponent c : rules4pr){
 						p = method.evaluateIncrementally(c, this.p, aq);
 						if(! this.p.getFacts(pr).containsAll(p)){
-							p.removeAll(this.p.getFacts(pr));
-							aq.put(pr, p);
-							this.p.addFacts(pr, p);
-							newTupleAdded = true;
+							tempRel = new Relation(p.getArity());
+							tempRel.addAll(p);
+							tempRel.removeAll(this.p.getFacts(pr));
+							aq.put(lit, tempRel);
+							this.p.addFacts(pr, tempRel);
+							cont = true;
 						}else{
 							newTupleAdded = false;
 						}
@@ -127,26 +133,19 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 					}
 				}
 			}
-			for (final IPredicate pr : Complementor.getPredicatesOfStratum(
+			for (final ILiteral lit : Complementor.getPredicatesOfStratum(
 					this.idbMap.keySet(), i)) {
 				
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-				rules4pr = this.idbMap.get(pr);
+				rules4pr = this.idbMap.get(lit);
 				for(IComponent c:rules4pr){
 					p = method.evaluate(c, this.p);
-					if(! this.p.getFacts(pr).containsAll(p)){
-						aq.put(pr, p);
-						this.p.addFacts(pr, p);
+					if(! this.p.getFacts(lit.getPredicate()).containsAll(p)){
+						aq.put(lit, p);
+						this.p.addFacts(lit.getPredicate(), p);
 					}
 				}
 			}
-		}
-		/** Evaluate queries */
-		for (IPredicate pr : this.queries.keySet()) {
-			/** EVAL (pi, R1,..., Rk, Q1,..., Qm); */
-			p = method.evaluate(this.queries.get(pr), this.p);
-			if (p != null && p.size() > 0)
-				this.getResultSet().getResults().put(pr, p);
 		}
 		return true;
 	}
