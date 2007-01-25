@@ -44,12 +44,12 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
  * Executes a programm.
  * </p>
  * <p>
- * $Id: Executor.java,v 1.5 2007-01-25 12:56:12 darko Exp $
+ * $Id: Executor.java,v 1.6 2007-01-25 15:04:00 darko Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class Executor implements IExecutor {
 
@@ -118,7 +118,10 @@ public class Executor implements IExecutor {
 		}*/
 		
 		// Run the evalutaion
+		// Seminaive evaluation:
 		this.evaluator = new SeminaiveEvaluation(method, this.prog);
+		
+		// Naive evaluation:
 		//this.evaluator = new NaiveEvaluation(method, this.prog);
 		
 		return this.evaluator.evaluate();
