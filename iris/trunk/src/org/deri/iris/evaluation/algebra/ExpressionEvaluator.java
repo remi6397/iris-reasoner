@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.evaluation.algebra.IComponent;
 import org.deri.iris.api.evaluation.algebra.IConstantDescriptor;
 import org.deri.iris.api.evaluation.algebra.IDifferenceDescriptor;
@@ -83,14 +83,14 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	}
 
 	public IRelation evaluateIncrementally(IComponent c, IProgram p, 
-			Map<IPredicate, IRelation> aq) {
+			Map<ILiteral, IRelation> aq) {
 		
 		complementor = new Complementor(p);
 		return evaluate(c, p, aq);
 	}
 	
 	private IRelation evaluate(IComponent c, IProgram p,
-			Map<IPredicate, IRelation> aq) {
+			Map<ILiteral, IRelation> aq) {
 		
 		switch(c.getType()){
 			case DIFFERENCE:
@@ -112,7 +112,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	}
 	
 	private IRelation evaluateDifference(IComponent c,IProgram p,
-			Map<IPredicate, IRelation> aq){
+			Map<ILiteral, IRelation> aq){
 		
 		if (c.getChildren().size() != 2) {
 			throw new IllegalArgumentException(
@@ -130,7 +130,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	}
 	
 	private IRelation evaluateJoin(IComponent c,IProgram p,
-			Map<IPredicate, IRelation> aq, int[] pInds){
+			Map<ILiteral, IRelation> aq, int[] pInds){
 		
 		if (c.getChildren().size() < 2) {
 			throw new IllegalArgumentException(
@@ -174,7 +174,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	}
 	
 	private IRelation evaluateProjection(IComponent c,IProgram p,
-			Map<IPredicate, IRelation> aq){
+			Map<ILiteral, IRelation> aq){
 		
 		if (c.getChildren().size() != 1) {
 			throw new IllegalArgumentException(
@@ -192,7 +192,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	}
 	
 	private IRelation evaluateRelation(IComponent c,IProgram p,
-			Map<IPredicate, IRelation> aq){
+			Map<ILiteral, IRelation> aq){
 		
 		if (c.getChildren().size() != 0) {
 			throw new IllegalArgumentException(
@@ -215,7 +215,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	}
 	
 	private IRelation evaluateSelection(IComponent c,IProgram p,
-			Map<IPredicate, IRelation> aq){
+			Map<ILiteral, IRelation> aq){
 		
 		if (c.getChildren().size() != 1) {
 			throw new IllegalArgumentException(
@@ -245,7 +245,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	 * @return
 	 */
 	private IRelation evaluateUnion(IComponent c,IProgram p,
-			Map<IPredicate, IRelation> aq){
+			Map<ILiteral, IRelation> aq){
 		
 		if (c.getChildren().size() == 0) {
 			throw new IllegalArgumentException(

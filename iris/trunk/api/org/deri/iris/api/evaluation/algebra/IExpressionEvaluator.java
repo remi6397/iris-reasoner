@@ -28,7 +28,7 @@ package org.deri.iris.api.evaluation.algebra;
 import java.util.Map;
 
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.storage.IRelation;
 
 
@@ -68,9 +68,9 @@ public interface IExpressionEvaluator {
 	 * 			The entire program including idb and edb relations 
 	 *          required for the evaluation of c.
 	 * @param aq
-	 * 			IDB predicated and corresponding relations with tuples 
-	 * 			derived during the previous round.
+	 * 			IDB literals and corresponding relations with tuples 
+	 * 			derived during the previous evaluation round.
 	 * @return	Implicit tuples derived after the evaluation of c.
 	 */
-	public IRelation evaluateIncrementally (IComponent c, IProgram p, Map<IPredicate, IRelation> aq);
+	public IRelation evaluateIncrementally (IComponent c, IProgram p, Map<ILiteral, IRelation> aq);
 }

@@ -60,8 +60,8 @@ import org.deri.iris.operations.relations.JoinCondition;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic, DERI Innsbruck
- * @date $Date: 2007-01-23 18:48:47 $
- * @version $Id: Rule2RelationTest.java,v 1.6 2007-01-23 18:48:47 darko Exp $
+ * @date $Date: 2007-01-25 13:02:10 $
+ * @version $Id: Rule2RelationTest.java,v 1.7 2007-01-25 13:02:10 darko Exp $
  */
 public class Rule2RelationTest extends TestCase {
 
@@ -88,7 +88,7 @@ public class Rule2RelationTest extends TestCase {
 	 */
 	protected void runRule2Relation(final Set<IRule> rul, final Map<IPredicate, IComponent> rel) {
 
-		Map<IPredicate, List<IComponent>> res = this.r2r.translateRules(rul);
+		Map<ILiteral, List<IComponent>> res = this.r2r.translateRules(rul);
 		System.out.println("in: " + rul + "\nrel: "+ rel + "\nres: " + res + "\n");
 		assertResults(rel, res);
 	}
@@ -272,14 +272,14 @@ public class Rule2RelationTest extends TestCase {
 	}*/
 	
 	// TODO: Adapt this method (Map<IPredicate, IComponent> b has been changed 
-	//		 to Map<IPredicate, List<IComponent>> b)
+	//		 to Map<ILiteral, List<IComponent>> b)
 	protected static void assertResults(final Map<IPredicate, IComponent> a, 
-			final Map<IPredicate, List<IComponent>> b) {
+			final Map<ILiteral, List<IComponent>> b) {
 		
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", a.size(), b.size());
 		Set<IPredicate> keyseta = a.keySet();
-		Set<IPredicate> keysetb = b.keySet();
+		Set<ILiteral> keysetb = b.keySet();
 		Iterator it = keyseta.iterator();
 		Iterator it2 = keysetb.iterator();
 		while(it.hasNext() && it2.hasNext()) {
