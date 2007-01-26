@@ -23,6 +23,7 @@ import static org.deri.iris.factory.Factory.BASIC;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.common.IAdornedProgram;
 import org.deri.iris.api.evaluation.common.IAdornedRule;
 import org.deri.iris.api.evaluation.magic.ISip;
+import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.common.Adornment;
@@ -142,27 +144,19 @@ public final class MagicSetImpl {
 
 		final ILiteral headL = r.getHeadLiteral(0);
 
-		// computing the sorted body
-		final List<ILiteral> temp = new ArrayList<ILiteral>(r.getBodyLiterals());
-		Collections.sort(temp, getAdornedSip(r).getLiteralComparator());
-		final List<ILiteral> sortedBody = Collections.unmodifiableList(temp);
-
 		// computing the rewritten body
-		final List<ILiteral> rewrittenBody = new ArrayList<ILiteral>(sortedBody);
+		final List<ILiteral> rewrittenBody = new ArrayList<ILiteral>(r
+				.getBodyLiterals());
+		Collections
+				.sort(rewrittenBody, getAdornedSip(r).getLiteralComparator());
+
 		final ILiteral magicL = createMagicLiteral(headL);
 		rewrittenBody.add(0, magicL);
 
 		// modifying the sip
 		final ISip adornedSip = getAdornedSip(r).defensifeCopy();
 		final Set<IVariable> boundVars = new HashSet<IVariable>();
-		for (ITerm t : getBounds(headL)) {
-			if (!(t instanceof IVariable)) {
-				// TODO: add this exception to the javadoc
-				throw new IllegalArgumentException(
-						"All bounds of the head must be variables");
-			}
-			boundVars.add((IVariable) t);
-		}
+		boundVars.addAll(getVariables(getBounds(headL)));
 
 		for (final LabeledDirectedEdge<Set<IVariable>> e : adornedSip
 				.getEdgesLeavingLiteral(headL)) {
@@ -529,8 +523,9 @@ public final class MagicSetImpl {
 		}
 		if (!p.hasSameSignature(l.getPredicate())) {
 			throw new IllegalArgumentException(
-					"The signatures of the headliteral and the adorned "
-							+ "predicate doesn't match");
+					"The signatures of the headliteral (" + l.getPredicate()
+							+ ") and the adorned " + "predicate (" + p
+							+ ") doesn't match");
 		}
 
 		final List<ITerm> bounds = new ArrayList<ITerm>(p.getAdornment().length);
@@ -628,5 +623,31 @@ public final class MagicSetImpl {
 			buffer.append(r).append(NEWLINE);
 		}
 		return buffer.toString();
+	}
+
+	/**
+	 * Extracts all variables out of a collection of terms.
+	 * 
+	 * @param c
+	 *            the collecion from where to extract the variables
+	 * @return the extracted variables
+	 * @throws NullPointerException
+	 *             if the collection is {@code null}
+	 */
+	private static Set<IVariable> getVariables(final Collection<ITerm> c) {
+		if (c == null) {
+			throw new NullPointerException(
+					"The collection of terms must not be null");
+		}
+
+		Set<IVariable> v = new HashSet<IVariable>();
+		for (ITerm t : c) {
+			if (t instanceof IConstructedTerm) {
+				v.addAll(((IConstructedTerm) t).getVariables());
+			} else if (t instanceof IVariable) {
+				v.add((IVariable) t);
+			}
+		}
+		return v;
 	}
 }
