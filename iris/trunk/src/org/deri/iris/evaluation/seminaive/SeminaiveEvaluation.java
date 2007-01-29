@@ -81,7 +81,9 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 				
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 				p = method.evaluate(this.idbMap.get(pr), this.p);
-				if(! this.p.getFacts(pr).containsAll(p)){
+				if(this.p.getFacts(pr) != null && 
+						! this.p.getFacts(pr).containsAll(p)){
+					
 					aq.put(pr, p);
 					this.p.addFacts(pr, p);
 				}
@@ -115,7 +117,9 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 						newTupleAdded = this.p.addFacts(pr, p);
 						cont = cont || newTupleAdded;
 					}*/
-					if(! this.p.getFacts(pr).containsAll(p)){
+					if(this.p.getFacts(pr) != null && 
+							! this.p.getFacts(pr).containsAll(p)){
+						
 						tempRel = new Relation(p.getArity());
 						tempRel.addAll(p);
 						tempRel.removeAll(this.p.getFacts(pr));
@@ -133,7 +137,9 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 				
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 				p = method.evaluate(this.idbMap.get(pr), this.p);
-				if(! this.p.getFacts(pr).containsAll(p)){
+				if(this.p.getFacts(pr) != null && 
+						! this.p.getFacts(pr).containsAll(p)){
+					
 					aq.put(pr, p);
 					this.p.addFacts(pr, p);
 				}
