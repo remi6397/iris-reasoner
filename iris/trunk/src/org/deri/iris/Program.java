@@ -453,4 +453,14 @@ public class Program implements IProgram{
 			WRITE.unlock();
 		}
 	}
+	
+	/********************************/
+	/*		program                 */
+	/********************************/
+	
+	public void resetProgram(){
+		this.facts.clear();
+		this.rules.clear();
+		this.queries.clear();
+	}
 }

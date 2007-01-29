@@ -57,7 +57,7 @@ import org.deri.iris.api.terms.ITerm;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IProgram.java,v 1.7 2006-12-06 14:36:34 darko Exp $
+ * $Id: IProgram.java,v 1.8 2007-01-29 09:04:27 darko Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -356,4 +356,11 @@ public interface IProgram {
 	 *         knowledgebase, otherwise false.
 	 */
 	public boolean removeQuery(final IQuery q);
+	
+	/**
+	 * <p>
+	 * Removes all facts, rules and queries from the entire program.
+	 * </p>
+	 */
+	public void resetProgram();
 }
