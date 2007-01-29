@@ -51,13 +51,13 @@ import org.deri.iris.api.terms.IVariable;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.2 2007-01-25 12:57:24 darko Exp $
+ * $Id: MiscOps.java,v 1.3 2007-01-29 09:06:53 darko Exp $
  * </p>
  * 
  * @author richi
  * @author graham
- * @version $Revision: 1.2 $
- * @date $Date: 2007-01-25 12:57:24 $
+ * @version $Revision: 1.3 $
+ * @date $Date: 2007-01-29 09:06:53 $
  */
 public class MiscOps {
 
@@ -174,8 +174,8 @@ public class MiscOps {
 					final List<ITerm> terms = new ArrayList<ITerm>(lit
 							.getTuple().getTerms());
 					terms.set(j, to);
-					l.set(i, BASIC.createLiteral(lit.isPositive(), lit
-							.getPredicate(), BASIC.createTuple(terms)));
+					lit.getAtom().getTuple().setTerms(terms);
+					l.set(i, lit);
 				}
 				j++;
 			}
