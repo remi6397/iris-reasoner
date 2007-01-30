@@ -85,12 +85,18 @@ public class QSQEvaluator implements IEvaluator {
 
 	private IProjection projectionOperator = null;
 
+	/** Fresh inputs (for the entire round). */
 	private Map<IPredicate, IRelation> inputs = null;
 
+	/** All possible inputs for the entire query. */
 	private Map<IPredicate, IRelation> allInputs = null;
 
+	/** Inputs which are currently being processed
+	 *  (for the entire round). */
 	private Map<IPredicate, IRelation> currentInputs = null;
 
+	/** Fresh inputs (for the previous round)
+	 *  to be added for further computation. */
 	private Map<IPredicate, IRelation> tmpInputs = null;
 
 	private IResultSet results = null;
@@ -169,7 +175,6 @@ public class QSQEvaluator implements IEvaluator {
 				this.inputs.get(ap).addAll(this.allInputs.get(ap));
 
 				r = ri.next();
-				System.out.println(r.toString());
 				this.qsqRecursive(r);
 			}
 		}
@@ -188,6 +193,7 @@ public class QSQEvaluator implements IEvaluator {
 	 * Arity of the output relations is equal to the arity of head literal of
 	 * the entire realtions.
 	 */
+	@SuppressWarnings("unchecked")
 	private AdornedPredicate setEvaluation(IQuery q) {
 		this.inputs = new HashMap<IPredicate, IRelation>();
 		this.allInputs = new HashMap<IPredicate, IRelation>();
@@ -246,6 +252,7 @@ public class QSQEvaluator implements IEvaluator {
 	 * @param r
 	 *            adorned rule to be evaluated.
 	 */
+	@SuppressWarnings("unchecked")
 	private void qsqRecursive(QSQRule r) {
 		Iterator<QSQRule> i = null;
 		List<IVariable> vars = null;
@@ -262,7 +269,6 @@ public class QSQEvaluator implements IEvaluator {
 			rule = new QSQRule(r.getAdornedRule(), r.cloneSupRels());
 			rule.getSup_0().addAll(rel);
 
-			Iterator iter = null;
 			for (ILiteral lit : rule.getAdornedRule().getBodyLiterals()) {
 				ap = getAdornment(lit.getPredicate());
 
@@ -549,6 +555,7 @@ public class QSQEvaluator implements IEvaluator {
 	 * @return true if new tuples are added, otherwise false
 	 */
 	private boolean setInput(AdornedPredicate ap, IRelation rel) {
+		@SuppressWarnings("unused")
 		QSQRule r = null;
 		boolean added = false;
 
