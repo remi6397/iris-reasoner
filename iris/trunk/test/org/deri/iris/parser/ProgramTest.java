@@ -354,7 +354,6 @@ public class ProgramTest extends TestCase {
 			r0 = p.getFacts().get(pr);
 			r1 = res1.get(pr);
 			
-			boolean b = r0.containsAll(r1);
 			assertEquals("The length of relation and the list of"
 					+ " expected tuples must be equal", r0.size(), r1.size());
 			assertTrue("The relation must contain all expected tuples", 
