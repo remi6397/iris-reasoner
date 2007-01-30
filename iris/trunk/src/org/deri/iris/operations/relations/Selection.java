@@ -72,10 +72,6 @@ public class Selection implements ISelection {
 			throw new IllegalArgumentException("All constructor "
 					+ "parameters must not be specified (non null values");
 		}
-		if (relation.size() == 0) {
-			throw new IllegalArgumentException("Cannot do selection on "
-					+ "an empty realtion!");
-		}
 		this.relation = relation;
 		this.pattern = pattern;
 	}
@@ -85,10 +81,6 @@ public class Selection implements ISelection {
 			throw new IllegalArgumentException("All constructor "
 					+ "parameters must not be specified (non null values");
 		}
-		if (relation.size() == 0) {
-			throw new IllegalArgumentException("Cannot do selection on "
-					+ "an empty realtion!");
-		}
 		this.relation = relation;
 		this.indexes = indexes;
 	}
@@ -97,10 +89,6 @@ public class Selection implements ISelection {
 		if (relation == null || pattern == null || indexes == null) {
 			throw new IllegalArgumentException("All constructor "
 					+ "parameters must not be specified (non null values");
-		}
-		if (relation.size() == 0) {
-			throw new IllegalArgumentException("Cannot do selection on "
-					+ "an empty realtion!");
 		}
 		this.relation = relation;
 		this.pattern = pattern;
