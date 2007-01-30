@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.evaluation.common.IAdornedRule;
 import org.deri.iris.evaluation.common.Adornment;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
@@ -76,13 +77,14 @@ public class QSQRule {
 	}
 
 	/**
-	 * @return Returns copz of the supplementary relation list 
+	 * @return Returns copy of the supplementary relation list 
 	 * 	       (copy means that the structure of a supplementary 
 	 * 		   relation will remain the same but none of its properties
 	 * 		   will be set to any non default value).
 	 */
 	public List<SupplementaryRelation> cloneSupRels() {
-		List<SupplementaryRelation> rels = new ArrayList();
+		List<SupplementaryRelation> rels = 
+			new ArrayList<SupplementaryRelation>(this.supRels.size());
 		for(SupplementaryRelation sr : this.supRels){
 			rels.add(sr.clone());
 		}
@@ -128,7 +130,8 @@ public class QSQRule {
 	 */
 	public SupplementaryRelation getSup_0() {
 		for(SupplementaryRelation sr : this.supRels){
-			if(! sr.isHandled() && this.hasNext(sr)) return sr;
+			if(! sr.isHandled() && this.hasNext(sr)) 
+				return sr;
 		}
 		return null;
 	}
@@ -147,4 +150,19 @@ public class QSQRule {
 		return arity;
 	}
 	
+	public String toString(){
+		String rule = "";
+		rule = this.adRule.getHeadLiterals().toString();
+		rule = rule.substring(1, rule.length()-1);
+		rule = rule + " :- ";
+		int index = 0;
+		for(ILiteral l : this.adRule.getBodyLiterals()){
+			rule = rule + this.supRels.get(index++).toString() +
+			"->" +
+			l.toString() +
+			", ";
+		}
+		rule = rule.substring(0, rule.length()-2);
+		return rule;	
+	}
 }
