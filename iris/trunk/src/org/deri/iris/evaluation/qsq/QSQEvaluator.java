@@ -31,7 +31,6 @@ import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 import static org.deri.iris.factory.Factory.TUPLE_OPERATION;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +46,7 @@ import org.deri.iris.api.evaluation.IEvaluator;
 import org.deri.iris.api.evaluation.IResultSet;
 import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.operations.relation.IProjection;
+import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.operations.tuple.IUnification;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.IConstructedTerm;
@@ -57,7 +57,9 @@ import org.deri.iris.evaluation.common.AdornedProgram;
 import org.deri.iris.evaluation.common.Adornment;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.exception.DataModelException;
+import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.relations.JoinCondition;
+import org.deri.iris.operations.relations.Selection;
 import org.deri.iris.operations.tuple.Multiequation;
 import org.deri.iris.operations.tuple.Unification.UnificationResult;
 import org.deri.iris.storage.Relation;
@@ -72,14 +74,12 @@ import org.deri.iris.storage.Relation;
  */
 public class QSQEvaluator implements IEvaluator {
 
-	private IProgram edb = null;
+	private IProgram prg = null;
 
-	/**
-	 * Adorned program
-	 */
+	/** Adorned program */
 	private AdornedProgram adPrg = null;
 
-	private Set<QSQRule> qsqRules = null;
+	private Map<AdornedPredicate, Set<QSQRule>> qsqMap = null;
 
 	private IJoin joinOperator = null;
 
@@ -87,21 +87,23 @@ public class QSQEvaluator implements IEvaluator {
 
 	private Map<IPredicate, IRelation> inputs = null;
 
-	private Map<IPredicate, IRelation> outputs = null;
+	private Map<IPredicate, IRelation> allInputs = null;
+
+	private Map<IPredicate, IRelation> currentInputs = null;
+
+	private Map<IPredicate, IRelation> tmpInputs = null;
 
 	private IResultSet results = null;
 
-	/**
-	 * continue the evaluation while contEval==true
-	 */
+	/** Continue the evaluation while contEval==true */
 	private boolean contEval = false;
 
-	public QSQEvaluator(IProgram edb) {
-		if (edb == null) {
+	public QSQEvaluator(IProgram prg) {
+		if (prg == null) {
 			throw new IllegalArgumentException(
 					"Input parameter must not be null");
 		}
-		this.edb = edb;
+		this.prg = prg;
 		this.results = EVALUATION.createResultSet();
 	}
 
@@ -111,20 +113,23 @@ public class QSQEvaluator implements IEvaluator {
 	 * @see org.deri.iris.api.evaluation.IEvaluator#evaluate()
 	 */
 	public boolean evaluate() throws DataModelException {
+		Set<QSQRule> rules = null;
 		QSQRule r = null;
-		AdornedPredicate ap_inner = null;
+		AdornedPredicate ap = null;
 		IQuery q = null;
-		Adornment[] ads = null;
+		Iterator<QSQRule> ri = null;
 
-		Iterator<IQuery> qi = this.edb.getQueries().iterator();
+		Iterator<IQuery> qi = this.prg.getQueries().iterator();
 		while (qi.hasNext()) {
 			q = qi.next();
 
-			this.adPrg = new AdornedProgram(this.edb.getRules(), q);
+			this.adPrg = new AdornedProgram(this.prg.getRules(), q);
 			QSQTemplate qsqTemplate = new QSQTemplate(adPrg);
-			this.qsqRules = qsqTemplate.getQSQTemplate();
-			ads = getAdornment(q);
-			setEvaluation(ads, q);
+			this.qsqMap = qsqTemplate.getQSQTemplate();
+			ap = setEvaluation(q);
+
+			this.currentInputs.get(ap).addAll(this.inputs.get(ap));
+			this.allInputs.get(ap).addAll(this.inputs.get(ap));
 			/**
 			 * Repeat untill no new tuples are added to any global variable.
 			 * 
@@ -134,16 +139,38 @@ public class QSQEvaluator implements IEvaluator {
 			 * (ones that have not been considered yet).
 			 */
 			while (contEval) {
-				Iterator<QSQRule> ri = this.qsqRules.iterator();
 				contEval = false;
+				rules = this.qsqMap.get(ap);
+				ri = rules.iterator();
+
 				while (ri.hasNext()) {
 					r = ri.next();
-					ap_inner = isAdorned(r.getAdornedRule().getHeadLiteral(0)
-							.getPredicate());
-					if (Arrays.equals(ads, ap_inner.getAdornment()))
-						this.qsqRecursive(r);
+					this.inputs.get(ap).clear();
+					this.inputs.get(ap).addAll(this.currentInputs.get(ap));
+					this.qsqRecursive(r);
+					this.tmpInputs.get(ap).addAll(this.inputs.get(ap));
+
 				}
-				emptyInputs();
+				this.inputs.get(ap).addAll(this.tmpInputs.get(ap));
+				if (!this.allInputs.get(ap).containsAll(this.inputs.get(ap))) {
+					this.inputs.get(ap).removeAll(this.currentInputs.get(ap));
+					this.currentInputs.get(ap).clear();
+					this.currentInputs.get(ap).addAll(this.inputs.get(ap));
+					this.allInputs.get(ap).addAll(this.inputs.get(ap));
+					contEval = true;
+				} else {
+					this.currentInputs.get(ap).clear();
+				}
+			}
+			rules = this.qsqMap.get(ap);
+			ri = rules.iterator();
+			while (ri.hasNext()) {
+				this.inputs.get(ap).clear();
+				this.inputs.get(ap).addAll(this.allInputs.get(ap));
+
+				r = ri.next();
+				System.out.println(r.toString());
+				this.qsqRecursive(r);
 			}
 		}
 		setResult();
@@ -161,48 +188,53 @@ public class QSQEvaluator implements IEvaluator {
 	 * Arity of the output relations is equal to the arity of head literal of
 	 * the entire realtions.
 	 */
-	private void setEvaluation(Adornment[] ads, IQuery q) {
+	private AdornedPredicate setEvaluation(IQuery q) {
 		this.inputs = new HashMap<IPredicate, IRelation>();
-		this.outputs = new HashMap<IPredicate, IRelation>();
+		this.allInputs = new HashMap<IPredicate, IRelation>();
+		this.currentInputs = new HashMap<IPredicate, IRelation>();
+		this.tmpInputs = new HashMap<IPredicate, IRelation>();
 
-		Set rules = this.qsqRules;
-		Iterator<QSQRule> i = rules.iterator();
-		QSQRule r = null;
-		ILiteral h = null;
 		AdornedPredicate ap = null;
+		AdornedPredicate a = null;
+		Iterator<QSQRule> i = null;
+		Iterator<AdornedPredicate> ai = null;
+		QSQRule r = null;
 		ITuple t0 = null;
-
-		while (i.hasNext()) {
-			r = i.next();
-			h = r.getAdornedRule().getHeadLiteral(0);
-			ap = isAdorned(h.getPredicate());
-
-			if (ap != null) {
-				if (!this.inputs.containsKey(ap)) {
-					this.inputs.put(ap, new Relation(r.getInputArity(ap)));
-				}
-				if (!this.outputs.containsKey(ap)) {
-					this.outputs
-							.put(ap, new Relation(r.getAdornedRule()
-									.getHeadLiteral(0).getAtom().getTuple()
-									.getArity()));
-				}
-				// Remove from t all tuples that don't unify,
-				// apply: 1...{first part of step (A)}
-				if (Arrays.equals(ads, ap.getAdornment())) {
-					t0 = getInitTuple(q.getQueryLiteral(0).getTuple());
-					if (!this.inputs.get(ap).contains(t0)) {
-						List l = r.getSup_0().getVariables();
-						ITuple t1 = BASIC.createTuple(l);
-						ITuple t2 = unify(t0, t1);
-						if (t2 != null) {
-							this.inputs.get(ap).add(t0);
-							r.getSupRels().get(0).add(t2);
-							contEval = true;
-						}
-					}
+		ap = this.getAdornPredicate(q);
+		if (ap != null) {
+			Set<AdornedPredicate> aps = this.qsqMap.keySet();
+			ai = aps.iterator();
+			while (ai.hasNext()) {
+				a = ai.next();
+				r = this.qsqMap.get(a).iterator().next();
+				if (!this.inputs.containsKey(a)) {
+					this.inputs.put(a, new Relation(r.getInputArity(a)));
+					this.currentInputs.put(a, new Relation(r.getInputArity(a)));
+					this.allInputs.put(a, new Relation(r.getInputArity(a)));
+					this.tmpInputs.put(a, new Relation(r.getInputArity(a)));
 				}
 			}
+			// Remove from t all tuples that don't unify,
+			// apply: 1...{first part of step (A)}
+			t0 = getInitTuple(q.getQueryLiteral(0).getTuple());
+			Set<QSQRule> rules = this.qsqMap.get(ap);
+			r = rules.iterator().next();
+			List l = r.getSup_0().getVariables();
+			ITuple t1 = BASIC.createTuple(l);
+			ITuple t2 = unify(t0, t1);
+			if (t2 != null) {
+				if (this.inputs.get(ap).add(t2))
+					contEval = true;
+				i = rules.iterator();
+				while (i.hasNext()) {
+					r = i.next();
+					r.getSupRels().get(0).add(t2);
+				}
+			}
+			return ap;
+		} else {
+			throw new RuntimeException(
+					"The query does not contain an idb literal.");
 		}
 	}
 
@@ -217,38 +249,44 @@ public class QSQEvaluator implements IEvaluator {
 	private void qsqRecursive(QSQRule r) {
 		Iterator<QSQRule> i = null;
 		List<IVariable> vars = null;
-		// List<IVariable> litVars = null;
 		List litVars = null;
 		IRelation rel = null;
 		AdornedPredicate ap = null;
-		AdornedPredicate ap_inner = null;
 		QSQRule rule = null;
 
-		if (r.getSupRels().get(0).size() > 0) {
+		rel = this.inputs.get(r.getAdornedRule().getHeadLiteral(0)
+				.getPredicate());
+		if (rel.size() > 0) {
 			// Instantiate a new rule (copy of the rule r)
 			// and set the input (sup_0 relation of that rule)
 			rule = new QSQRule(r.getAdornedRule(), r.cloneSupRels());
-			rule.getSup_0().addAll(setSup_0(r));
-			contEval = true;
+			rule.getSup_0().addAll(rel);
 
+			Iterator iter = null;
 			for (ILiteral lit : rule.getAdornedRule().getBodyLiterals()) {
-				ap = isAdorned(lit.getPredicate());
+				ap = getAdornment(lit.getPredicate());
 
-				// lit has edb predicate R', apply: 3(a)...{(B.i)}
+				// lit contains an edb predicate R' => apply: 3(a)...{(B.i)}
 				if (ap == null) {
-					this.joinOperator = RELATION_OPERATION.createJoinOperator(
-							rule.getSup_0(), this.edb.getFacts(lit
-									.getPredicate()), this.getJoinIndexes(rule
-									.getSup_0().getVariables(), lit),
-							JoinCondition.EQUALS, this.getProjectIndexes0(rule
-									.getSup_0().getVariables(), lit, rule
-									.getSup_1(rule.getSup_0()).getVariables()));
+					// TODO: replace with createJoinOperator
+					this.joinOperator = RELATION_OPERATION
+					// .createJoinOperator(
+							.createJoinSimpleOperator(rule.getSup_0(), this.prg
+									.getFacts(lit.getPredicate()), this
+									.getJoinIndexes(rule.getSup_0()
+											.getVariables(), lit),
+									JoinCondition.EQUALS, this
+											.getProjectIndexes0(rule.getSup_0()
+													.getVariables(), lit, rule
+													.getSup_1(rule.getSup_0())
+													.getVariables()));
 
 					rel = this.joinOperator.join();
 					if (rel.size() > 0)
 						rule.getSup_1(rule.getSup_0()).addAll(rel);
 				} else {
-					// lit has idb predicate R', apply: 3(b)...{(B.ii)}
+					// lit contains an idb predicate R' => apply:
+					// 3(b)...{(B.ii)}
 					// apply: 3(b)(i)
 					litVars = lit.getAtom().getTuple().getTerms();
 					vars = this.getBoundVars(ap, litVars);
@@ -263,21 +301,21 @@ public class QSQEvaluator implements IEvaluator {
 						// If any, add new tuples
 						// (ones that have not been considered yet):
 						if (setInput(ap, rel)) {
-							contEval = true;
-							i = this.qsqRules.iterator();
+							i = this.qsqMap.get(ap).iterator();
 							QSQRule r_inner = null;
 							while (i.hasNext()) {
 								r_inner = i.next();
-								ap_inner = isAdorned(r_inner.getAdornedRule()
-										.getHeadLiteral(0).getPredicate());
-								if (ap.equals(ap_inner))
-									this.qsqRecursive(r_inner);
+								this.qsqRecursive(r_inner);
 							}
 						}
 						// apply: 3(b)(iv)...{(B.ii.b) & (C)}
+						// TODO: replace with createJoinOperator
 						this.joinOperator = RELATION_OPERATION
-								.createJoinOperator(rule.getSup_0(),
-										this.outputs.get(ap), this
+						// .createJoinOperator(
+								.createJoinSimpleOperator(
+										rule.getSup_0(),
+										this.prg.getFacts(ap
+												.getUnadornedPredicate()), this
 												.getJoinIndexes(rule.getSup_0()
 														.getVariables(), lit),
 										JoinCondition.EQUALS,
@@ -296,7 +334,8 @@ public class QSQEvaluator implements IEvaluator {
 						&& rule.getSup_1(rule.getSup_0()).size() > 0) {
 					ap = (AdornedPredicate) rule.getAdornedRule()
 							.getHeadLiteral(0).getPredicate();
-					this.outputs.get(ap).addAll(rule.getSup_1(rule.getSup_0()));
+					this.prg.getFacts(ap.getUnadornedPredicate()).addAll(
+							rule.getSup_1(rule.getSup_0()));
 					contEval = true;
 				}
 				if (rule.getSup_1(rule.getSup_0()).size() == 0)
@@ -307,14 +346,14 @@ public class QSQEvaluator implements IEvaluator {
 	}
 
 	/**
-	 * Checks whether a predicate p is an adorned one
+	 * Returns an adornment of the predicate if it is an adorn one, otherwise
+	 * null.
 	 * 
 	 * @param p
-	 *            Predicate to be checked.
-	 * @return Adorned predicate of p (if p is an adorned predicate), otherwise
-	 *         null.
+	 *            The input predicate to be checked.
+	 * @return Adorned predicate or null.
 	 */
-	private AdornedPredicate isAdorned(IPredicate p) {
+	private AdornedPredicate getAdornment(IPredicate p) {
 		if (p instanceof AdornedPredicate) {
 			return (AdornedPredicate) p;
 		} else
@@ -461,9 +500,9 @@ public class QSQEvaluator implements IEvaluator {
 	/**
 	 * @param q
 	 *            query to be processed
-	 * @return adornment defined by query q
+	 * @return adorn predicate for the query q
 	 */
-	private Adornment[] getAdornment(IQuery q) {
+	private AdornedPredicate getAdornPredicate(IQuery q) {
 		List<ITerm> terms = q.getQueryLiteral(0).getTuple().getTerms();
 		Adornment[] ads = new Adornment[terms.size()];
 		int i = 0;
@@ -474,15 +513,16 @@ public class QSQEvaluator implements IEvaluator {
 			else
 				ads[i++] = Adornment.FREE;
 		}
-		return ads;
+		return new AdornedPredicate(q.getQueryLiteral(0).getPredicate()
+				.getPredicateSymbol(), ads);
 	}
 
 	/**
 	 * @param t
 	 *            tuple provided by a query
 	 * @return Returns initial tuple (created out of bound terms of the query)
-	 *         for beginning of a rule evaluation or null (If the query doesn�t
-	 *         contain any ground term).
+	 *         for beginning of a rule evaluation or null (If the query
+	 *         doesn�t contain any ground term).
 	 */
 	private ITuple getInitTuple(ITuple t) {
 		List<ITerm> terms = new ArrayList<ITerm>();
@@ -499,50 +539,6 @@ public class QSQEvaluator implements IEvaluator {
 	}
 
 	/**
-	 * Empties all input global relations. This operation is needed in order to
-	 * terminate the overall evaluation process. Namely the evaluation is
-	 * looping until no new tuples are added to any of the global variables
-	 * (inputs and outputs). After each loop we empty input global variables
-	 * (relation), so that we can check whether new tuples will be added in the
-	 * next loop. The evaluation terminates when no new tuples are added to any
-	 * of global variables (relations).
-	 */
-	private void emptyInputs() {
-		Iterator<QSQRule> ri = this.qsqRules.iterator();
-		QSQRule r = null;
-		AdornedPredicate ap = null;
-
-		while (ri.hasNext()) {
-			r = ri.next();
-			ap = (AdornedPredicate) r.getAdornedRule().getHeadLiteral(0)
-					.getPredicate();
-			if (this.inputs.get(ap).size() > 0)
-				this.inputs.get(ap).clear();
-		}
-	}
-
-	/**
-	 * Set sup_0 := T of the rule r. (T - set of tuples that have not been
-	 * considered with the entire rule r yet, apply: 2...{(A)}
-	 * 
-	 * @param r
-	 *            rule to be evaluated
-	 */
-	private IRelation setSup_0(QSQRule r) {
-		IRelation rel = null;
-		if (r.getSupRels().get(0).size() > 0) {
-			rel = new Relation(((ITuple) r.getSupRels().get(0).first())
-					.getArity());
-			rel.addAll(r.getSupRels().get(0));
-
-			// Clear the rule input in order to
-			// always consider only new tuples
-			r.getSupRels().get(0).clear();
-		}
-		return rel;
-	}
-
-	/**
 	 * Sets input (sup_0 relation) for each rule r with an adorned predicate ap.
 	 * Only new tuples from relatin rel are added.
 	 * 
@@ -554,25 +550,16 @@ public class QSQEvaluator implements IEvaluator {
 	 */
 	private boolean setInput(AdornedPredicate ap, IRelation rel) {
 		QSQRule r = null;
-		AdornedPredicate ap_inner = null;
-		IRelation copyRel = new Relation(((ITuple) rel.first()).getArity());
 		boolean added = false;
 
-		copyRel.addAll(this.inputs.get(ap));
-		if (this.inputs.get(ap).addAll(rel)) {
-			Iterator<QSQRule> i = this.qsqRules.iterator();
+		if (!this.inputs.get(ap).containsAll(rel)) {
+			this.inputs.get(ap).clear();
+			this.inputs.get(ap).addAll(rel);
+
+			Iterator<QSQRule> i = this.qsqMap.get(ap).iterator();
 			while (i.hasNext()) {
 				r = i.next();
-				ap_inner = isAdorned(r.getAdornedRule().getHeadLiteral(0)
-						.getPredicate());
-				if (ap.equals(ap_inner)) {
-					// Only new tuples are being added
-					// (ones that have not been considered yet):
-					r.getSupRels().get(0).clear();
-					r.getSupRels().get(0).addAll(this.inputs.get(ap));
-					r.getSupRels().get(0).removeAll(copyRel);
-					added = true;
-				}
+				added = true;
 			}
 		}
 		return added;
@@ -582,23 +569,22 @@ public class QSQEvaluator implements IEvaluator {
 	 * Sets results (map) with answers for each query of the program.
 	 */
 	private void setResult() {
-		Iterator<IPredicate> pi = this.outputs.keySet().iterator();
-		AdornedPredicate ap = null;
-		Adornment[] ads = null;
 		IQuery q = null;
+		ISelection sel = null;
+		IRelation res = null;
 
-		Iterator<IQuery> qi = this.edb.getQueries().iterator();
+		Iterator<IQuery> qi = this.prg.getQueries().iterator();
 		while (qi.hasNext()) {
 			q = qi.next();
-			ads = getAdornment(q);
-			while (pi.hasNext()) {
-				ap = (AdornedPredicate) pi.next();
-				if (Arrays.equals(ads, ap.getAdornment())) {
-					this.results.getResults().put(
-							q.getQueryLiteral(0).getPredicate(),
-							this.outputs.get(ap));
-				}
+			res = this.prg.getFacts(q.getQueryLiteral(0).getPredicate());
+			if (res.size() > 0) {
+				sel = Factory.RELATION_OPERATION
+						.createSelectionOperator(res, Selection.createPattern(q
+								.getQueryLiteral(0).getTuple()));
+				res = sel.select();
 			}
+			this.results.getResults().put(q.getQueryLiteral(0).getPredicate(),
+					res);
 		}
 	}
 
@@ -636,11 +622,11 @@ public class QSQEvaluator implements IEvaluator {
 	 * @return Ground tuple if t0 is unifyable with t1
 	 */
 	private ITuple unify(ITuple t0, ITuple t1) {
+		// TODO: try to make this method as set-at-time instead of tuple-at-time
 		IUnification unifier = TUPLE_OPERATION
 				.createUnificationOperator(t0, t1);
 		UnificationResult res = unifier.unify();
 		ITuple tuple = null;
-		ITerm t = null;
 
 		if (res != null) {
 			tuple = BASIC.createTuple(t1.getArity());
