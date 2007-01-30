@@ -201,16 +201,22 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 					"performed!");
 		}
 		IRelationDescriptor r = (IRelationDescriptor)c;
+		IRelation rel = null;
 		if (r.isPositive()) {
 			if (aq != null && aq.get(r.getPredicate()) != null) {
 				// Return tuples from the last iteration only!
-				return aq.get(r.getPredicate());
+				rel = aq.get(r.getPredicate());
 			} else {
 				// Return all tuples from the KB!
-				return p.getFacts(r.getPredicate());
+				rel = p.getFacts(r.getPredicate());
 			}
 		} else {
-			return this.complementor.getComplement(r.getPredicate());
+			rel = this.complementor.getComplement(r.getPredicate());
+		}
+		if(rel == null){
+			return	new Relation(r.getPredicate().getArity());
+		}else{
+			return rel; 
 		}
 	}
 	
