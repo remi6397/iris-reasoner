@@ -26,9 +26,11 @@
 package org.deri.iris.evaluation.qsq;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.basics.ILiteral;
@@ -56,7 +58,7 @@ public class QSQTemplate {
 	
 	private IAdornedProgram adornedProgram;
 	
-	private Set<QSQRule> qsqRules;
+	private Map<AdornedPredicate, Set<QSQRule>> qsqMap;
 	
 	/**
 	 * List of variables of the first supplementary relation
@@ -75,28 +77,37 @@ public class QSQTemplate {
 					"Input argument must not be null");
 		}
 		this.adornedProgram = ap;
-		this.qsqRules = new HashSet();
+		this.qsqMap = new HashMap<AdornedPredicate, Set<QSQRule>>();
 	}
 	
 	/**
 	 * @return the qsqRules (QSQ Template).
 	 */
-	public Set<QSQRule> getQSQTemplate() {
+	public Map<AdornedPredicate, Set<QSQRule>> getQSQTemplate() {
 		Iterator<IAdornedRule> i = this.adornedProgram.getAdornedRules().iterator();
 		QSQRule qsqRule = null;
 		IAdornedRule adornedRule = null;
 		List<SupplementaryRelation> supplementaryRelations = null;
+		AdornedPredicate ap = null;
+		Set<QSQRule> qsqRules = null;
 		int j = 0;
+		
 		while(i.hasNext()){
 			supplementaryRelations 
 							= new ArrayList<SupplementaryRelation>();
 			adornedRule = (IAdornedRule)i.next();
 			supplementaryRelations = createSupplementaryRelations(j, adornedRule);
 			qsqRule = new QSQRule(adornedRule, supplementaryRelations);
-			this.qsqRules.add(qsqRule);
+			ap = (AdornedPredicate)adornedRule.getHeadLiteral(0).getPredicate();
+			qsqRules = this.qsqMap.get(ap);
+			if(qsqRules == null){
+				qsqRules = new HashSet<QSQRule>();
+			}
+			qsqRules.add(qsqRule);
+			this.qsqMap.put(ap, qsqRules);
 			j++;
 		}
-		return this.qsqRules;
+		return this.qsqMap;
 	}
 	
 	private List<SupplementaryRelation> createSupplementaryRelations(
@@ -143,7 +154,7 @@ public class QSQTemplate {
 				}
 				variables_n.add((IVariable)term);
 			}else{
-// 				Constructed terms (function symbols) currently not supported!
+// 				TODO: Constructed terms (function symbols) currently not supported!
 //				if(!(term instanceof ConstructedTerm)){
 //					variables.add(term);
 //				}
@@ -206,14 +217,37 @@ public class QSQTemplate {
 	
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		Iterator i = qsqRules.iterator();
+		Set<QSQRule> qsqRules = null;
+		Iterator i = null;
 		QSQRule qsqRule = null;
-		while(i.hasNext()){
-			qsqRule = (QSQRule)i.next();
-			buffer.append("\n");
-			buffer.append(qsqRule.getAdornedRule().toString());
-			buffer.append("\n");
-			buffer.append(qsqRule.getSupRels().toString());
+		if(this.qsqMap.isEmpty()){
+			
+			Map.Entry entry = null;
+			for (Iterator iter = this.qsqMap.entrySet().iterator(); iter.hasNext();){ 
+			    entry = (Map.Entry)iter.next();
+			    qsqRules = (Set<QSQRule>)entry.getValue();
+			    i = qsqRules.iterator();
+				while(i.hasNext()){
+					qsqRule = (QSQRule)i.next();
+					buffer.append("\n");
+					buffer.append(qsqRule.getAdornedRule().toString());
+					buffer.append("\n");
+					buffer.append(qsqRule.getSupRels().toString());
+				}
+			}
+			
+			/*Iterator it = this.qsqMap.keySet().iterator();
+			while(i.hasNext()){
+				qsqRules = this.qsqMap.get(i.next());
+				i = qsqRules.iterator();
+				while(i.hasNext()){
+					qsqRule = (QSQRule)i.next();
+					buffer.append("\n");
+					buffer.append(qsqRule.getAdornedRule().toString());
+					buffer.append("\n");
+					buffer.append(qsqRule.getSupRels().toString());
+				}
+			}*/
 		}
 		return buffer.toString();
 	}
