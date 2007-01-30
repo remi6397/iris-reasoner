@@ -43,9 +43,10 @@ public class QSQparserTest {
 		QSQparserTest i = new QSQparserTest();
       
 		//i.evluateAndPrint(i.test1());
-		i.evluateAndPrint(i.test2());
+		//i.evluateAndPrint(i.test2());
 		//i.evluateAndPrint(i.test3());
 		//i.evluateAndPrint(i.test4());
+		i.evluateAndPrint(i.test5());
     }
 
     public String test1(){
@@ -117,6 +118,23 @@ public class QSQparserTest {
 		    "in(?X, ?Z) :- in(?X, ?Y), in(?Y, ?Z)." +
 		    "?- in('galway', ?Z).";
 		    //"?- in(?X, 'europe').";
+		
+		return program;
+    }
+    
+    public String test5() throws Exception{
+    	String program = 
+		    "edge('a', 'b')." +
+		    "path('b', 'c')." +
+		    "edge('c', 'd')." +
+		    
+		    "edg('w', 'd')." +
+		    
+		    "edge(?X, ?Y) :- edg(?X, ?Y)." +
+		    "path(?X, ?Y) :- edge(?X, ?Y)." +
+		    "edge(?X, ?Y) :- path(?X, ?Y)." +	
+		    "path(?X, ?Y) :- edge(?X, ?Z), path(?Z, ?Y)." +
+		    "?- path(?X, 'd').";
 		
 		return program;
     }
