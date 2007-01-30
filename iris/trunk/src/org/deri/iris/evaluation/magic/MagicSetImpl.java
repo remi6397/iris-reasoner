@@ -36,9 +36,11 @@ import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.evaluation.common.IAdornedPredicate;
 import org.deri.iris.api.evaluation.common.IAdornedProgram;
 import org.deri.iris.api.evaluation.common.IAdornedRule;
 import org.deri.iris.api.evaluation.magic.ISip;
@@ -81,6 +83,9 @@ public final class MagicSetImpl {
 	/** Holds all rewritten rules. */
 	private Set<IAdornedRule> rewrittenRules = new HashSet<IAdornedRule>();
 
+	/** The remaining not adorned rules. */
+	private Set<IRule> remainingRules = new HashSet<IRule>();
+
 	/** The seed for this magic set. */
 	private IQuery seed;
 
@@ -101,7 +106,7 @@ public final class MagicSetImpl {
 
 		// TODO: maybe a defensive copy should be made
 
-		for (IAdornedRule r : program.getAdornedRules()) {
+		for (final IAdornedRule r : program.getAdornedRules()) {
 			if (r.getHeadLenght() != 1) {
 				throw new IllegalArgumentException("At the moment only heads "
 						+ "with length of 1 are allowed");
@@ -116,6 +121,11 @@ public final class MagicSetImpl {
 			// adding the rewritten rule
 			rewrittenRules.add(getRewrittenRule(r));
 		}
+
+		// adding the remaining rules
+		remainingRules.addAll(filterRemainingRules(program.getNormalRules(),
+				program.getAdornedRules()));
+
 		// creating the seed
 		seed = createSeed(program.getQuery());
 	}
@@ -593,6 +603,7 @@ public final class MagicSetImpl {
 	public IProgram createProgram(final IProgram p) {
 		final Set<IRule> rules = new HashSet<IRule>(rewrittenRules);
 		rules.addAll(magicRules);
+		rules.addAll(remainingRules);
 		return Factory.PROGRAM.createProgram(
 				(p == null) ? Collections.EMPTY_MAP : p.getFacts(), rules,
 				Collections.singleton(seed));
@@ -640,7 +651,7 @@ public final class MagicSetImpl {
 					"The collection of terms must not be null");
 		}
 
-		Set<IVariable> v = new HashSet<IVariable>();
+		final Set<IVariable> v = new HashSet<IVariable>();
 		for (ITerm t : c) {
 			if (t instanceof IConstructedTerm) {
 				v.addAll(((IConstructedTerm) t).getVariables());
@@ -649,5 +660,122 @@ public final class MagicSetImpl {
 			}
 		}
 		return v;
+	}
+
+	/**
+	 * Filters the given normal (unadorned ones) and removes every occurency
+	 * where an adorned one (with or without a guardian literal) exiest.
+	 * 
+	 * @param nr
+	 *            the normal rules to filter
+	 * @param ar
+	 *            the adorned rules
+	 * @return a set of filtered rules
+	 * @throws NullPointerException
+	 *             if one of the collections is {@code null}
+	 */
+	private Set<IRule> filterRemainingRules(final Collection<IRule> nr,
+			final Collection<IAdornedRule> ar) {
+		final Set<IRule> rem = new HashSet<IRule>();
+		for (final IRule n : nr) {
+			boolean add = true;
+			for (final IAdornedRule a : ar) {
+				if (isSameRule(n, a)) {
+					add = false;
+					break;
+				}
+			}
+			if (add) {
+				rem.add(n);
+			}
+		}
+		return rem;
+	}
+
+	/**
+	 * Checks two rules whether they might be the same. If one rule is the
+	 * adorned (with or withoud a guardian literal) version of the other the
+	 * method will return {@code true}.
+	 * 
+	 * @param r0
+	 *            the first rule to compare
+	 * @param r1
+	 *            the second rule to compare
+	 * @return {@code true} if the rules express the same
+	 */
+	private static boolean isSameRule(final IRule r0, final IRule r1) {
+		if ((r0 == null) || (r1 == null)) {
+			throw new NullPointerException("The rules must not be null");
+		}
+
+		// comparing the head literals
+		final Iterator<ILiteral> h0 = r0.getHeadLiterals().iterator();
+		final Iterator<ILiteral> h1 = r1.getHeadLiterals().iterator();
+		while (h0.hasNext() && h1.hasNext()) {
+			if (!isSameLiteral(h0.next(), h1.next())) {
+				return false;
+			}
+		}
+		if (h0.hasNext() || h1.hasNext()) {
+			return false;
+		}
+
+		// comparing the body literals
+		final Iterator<ILiteral> b0 = r0.getBodyLiterals().iterator();
+		final Iterator<ILiteral> b1 = r1.getBodyLiterals().iterator();
+		while (b0.hasNext() && b1.hasNext()) {
+			ILiteral l0 = b0.next();
+			while (l0.getPredicate().getPredicateSymbol().startsWith(
+					MAGIC_PREDICATE_PREFIX)
+					&& b0.hasNext()) {
+				System.out.println("discarding magic literal: " + l0);
+				l0 = b0.next();
+			}
+			ILiteral l1 = b1.next();
+			while (l1.getPredicate().getPredicateSymbol().startsWith(
+					MAGIC_PREDICATE_PREFIX)
+					&& b1.hasNext()) {
+				System.out.println("discarding magic literal: " + l1);
+				l1 = b1.next();
+			}
+			if (!isSameLiteral(l0, l1)) {
+				return false;
+			}
+		}
+		if (b0.hasNext() || b1.hasNext()) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Checks whether two literals are the same. The possible adornments won't
+	 * be taken into account for equality.
+	 * 
+	 * @param l0
+	 *            the first literal to compare
+	 * @param l1
+	 *            the second literal to compare
+	 * @return {@code true} if the literals are the same
+	 * @throws NullPointerException
+	 *             a literal is {@code null}
+	 */
+	private static boolean isSameLiteral(final ILiteral l0, final ILiteral l1) {
+		if ((l0 == null) || (l1 == null)) {
+			throw new NullPointerException("The literals must not be null");
+		}
+
+		// compare the unadorned predicates
+		final IPredicate p0 = (l0.getPredicate() instanceof IAdornedPredicate) ? ((IAdornedPredicate) l0
+				.getPredicate()).getUnadornedPredicate()
+				: l0.getPredicate();
+		final IPredicate p1 = (l1.getPredicate() instanceof IAdornedPredicate) ? ((IAdornedPredicate) l1
+				.getPredicate()).getUnadornedPredicate()
+				: l1.getPredicate();
+		if (!p0.equals(p1)) {
+			return false;
+		}
+		// compare the terms
+		return l0.getTuple().getTerms().equals(l1.getTuple().getTerms());
 	}
 }
