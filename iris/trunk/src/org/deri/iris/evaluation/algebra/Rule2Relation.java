@@ -138,7 +138,10 @@ public class Rule2Relation {
 							a.getTuple().getTerm(1) instanceof IVariable) {
 						
 						if (a instanceof EqualBuiltin) {
-							s = ALGEBRA.createSelectionDescriptor(a.getTuple());
+							s = ALGEBRA.createSelectionDescriptor(
+									// TODO: Add tuple pattern, e.g.: for a built-In case: EQUAL(?X, 'a')
+									null,
+									getSelectionIndexes(a.getTuple().getTerms(), body.getVariables(), true));
 						}
 						if (a instanceof UnEqualBuiltin) {
 							// TODO: Remove/don't use: NonEqualityTerm
@@ -147,8 +150,9 @@ public class Rule2Relation {
 							for (ITerm t : a.getTuple().getTerms()) {
 								terms.add(new NonEqualityTerm(t));
 							}
-							s = ALGEBRA.createSelectionDescriptor(BASIC
-									.createTuple(terms));
+							s = ALGEBRA.createSelectionDescriptor(
+									// TODO: Add tuple pattern, e.g.: for a built-In case: NON-EQUAL(?X, 'a')
+									getSelectionIndexes(a.getTuple().getTerms(), body.getVariables(), false));
 						}
 						s.addChild(results.get(p));
 						s.addVariables(body.getVariables());
@@ -346,8 +350,7 @@ public class Rule2Relation {
 	private IComponent translateBuiltInAtom(final IAtom a) {
 		ITerm t1 = a.getTuple().getTerm(0);
 		ITerm t2 = a.getTuple().getTerm(1);
-		int[] projectInds = new int[a.getPredicate().getArity()];
-
+		
 		// ?X = ?Y or ?X != ?Y
 		if (t1 instanceof IVariable && t2 instanceof IVariable) {
 			if ((!oVars.contains(t1)) || (!oVars.contains(t2))) {
@@ -373,6 +376,7 @@ public class Rule2Relation {
 				List<ITerm> terms = l.getTuple().getTerms();
 				List<IVariable> vars = new ArrayList<IVariable>(terms.size());
 				List<IVariable> distinctVars = new ArrayList<IVariable>();
+				int[] projectInds = new int[l.getPredicate().getArity()];
 				/**
 				 * (b) If Y appears as the jth argument of ordinary subgoal Si,
 				 * let Dx be PROJECTIONj(Ri)
@@ -453,6 +457,47 @@ public class Rule2Relation {
 		return inds;
 	}
 
+	private int[] getSelectionIndexes(final List<ITerm> selVars,
+			final List<IVariable> allVars, boolean equal) {
+		
+		List<IVariable> vars = new ArrayList<IVariable>(allVars.size());
+		vars.addAll(allVars);
+		int[] inds = new int[allVars.size()];
+		// TODO: Use scwitch (below) to integrate built-ins in IRIS
+		int j = 0, k;
+		if(equal) k = 1;
+		else k = -1;
+		for(ITerm v : selVars){
+			j = vars.indexOf((IVariable)v);
+			while(j != -1){
+				inds[j] = k;
+				vars.set(j, null);
+				j = vars.indexOf(v);
+			}
+		}
+		/*switch (condition){
+			case EQUALS:
+				
+				break;
+			case NOT_EQUAL:
+				
+				break;
+			case LESS_THAN:
+				
+				break;
+			case GREATER_THAN:
+				
+				break;
+			case LESS_OR_EQUAL:
+				
+				break;
+			case GREATER_OR_EQUAL:
+				
+				break;
+		}*/
+		return inds;
+	}
+	
 	private List<IVariable> filterProjectionVariables(final int[] pInds,
 			final List<IVariable> vars) {
 		List<IVariable> v = new ArrayList<IVariable>(pInds.length);
