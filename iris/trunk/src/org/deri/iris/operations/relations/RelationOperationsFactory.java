@@ -114,6 +114,12 @@ public class RelationOperationsFactory implements IRelationOperationsFactory{
 	}
 	
 	public ISelection createSelectionOperator(IRelation relation, ITuple pattern, int[] indexes) {
+		if (pattern == null && indexes != null) {
+			return new Selection(relation, indexes);
+		}
+		if (pattern != null && indexes == null) {
+			return new Selection(relation, pattern);
+		}
 		return new Selection(relation, pattern, indexes);
 	}
 

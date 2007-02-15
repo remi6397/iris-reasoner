@@ -87,6 +87,12 @@ public class AlgebraFactory implements IAlgebraFactory{
 	
 	public ISelectionDescriptor createSelectionDescriptor(
 				final ITuple p, final int[] i) {
+		if (p == null && i != null) {
+			return new SelectionDescriptor(i);
+		}
+		if (p != null && i == null) {
+			return new SelectionDescriptor(p);
+		}
 		return new SelectionDescriptor(p, i);
 	}
 	
