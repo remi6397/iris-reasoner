@@ -48,12 +48,12 @@ import org.deri.iris.api.storage.IRelation;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IExecutor.java,v 1.5 2007-01-25 12:51:12 darko Exp $
+ * $Id: IExecutor.java,v 1.6 2007-02-15 08:38:20 poettler_ric Exp $
  * </p>
  * 
  * @author Richard PÃ¶ttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public interface IExecutor {
 
@@ -61,7 +61,7 @@ public interface IExecutor {
 		NAIVE_EVALUATION, 
 		SEMI_NAIVE_EVALUATION, 
 		QSQ, 
-		SEMI_NAÏVE_WITH_MAGIC_SETS
+		SEMI_NAIVE_WITH_MAGIC_SETS
 	};
 
 	/**
