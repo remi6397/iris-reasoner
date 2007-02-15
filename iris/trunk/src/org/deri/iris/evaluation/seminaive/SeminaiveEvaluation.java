@@ -111,12 +111,6 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 					cont = false;
 					// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
 					p = method.evaluateIncrementally(this.idbMap.get(pr), this.p, aq);
-					/*if (p != null && p.size() > 0) {
-						p.removeAll(this.p.getFacts(pr));
-						aq.put(pr, p);
-						newTupleAdded = this.p.addFacts(pr, p);
-						cont = cont || newTupleAdded;
-					}*/
 					if(this.p.getFacts(pr) != null && 
 							! this.p.getFacts(pr).containsAll(p)){
 						
