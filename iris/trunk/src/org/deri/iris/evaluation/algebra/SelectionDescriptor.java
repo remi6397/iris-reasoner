@@ -43,7 +43,7 @@ public class SelectionDescriptor extends Component implements ISelectionDescript
 		super(ComponentType.SELECTION);
 		if (i == null) {
 			throw new IllegalArgumentException("Constructor " +
-				"parameter must not be specified (not null values");
+				"parameter must be specified (not null values");
 		}
 		this.indexes = i;
 	}
@@ -61,7 +61,7 @@ public class SelectionDescriptor extends Component implements ISelectionDescript
 		super(ComponentType.SELECTION);
 		if (i == null || p == null) {
 			throw new IllegalArgumentException("All constructor " +
-				"parameters must not be specified (not null values");
+				"parameters must be specified (not null values");
 		}
 		this.pattern = p;
 		this.indexes = i;

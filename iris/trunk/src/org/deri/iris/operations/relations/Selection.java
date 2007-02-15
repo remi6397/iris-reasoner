@@ -70,7 +70,7 @@ public class Selection implements ISelection {
 	Selection(IRelation relation, ITuple pattern) {
 		if (relation == null || pattern == null) {
 			throw new IllegalArgumentException("All constructor "
-					+ "parameters must not be specified (non null values");
+					+ "parameters must be specified (non null values");
 		}
 		this.relation = relation;
 		this.pattern = pattern;
@@ -79,7 +79,7 @@ public class Selection implements ISelection {
 	Selection(IRelation relation, int[] indexes) {
 		if (relation == null || indexes == null) {
 			throw new IllegalArgumentException("All constructor "
-					+ "parameters must not be specified (non null values");
+					+ "parameters must be specified (non null values");
 		}
 		this.relation = relation;
 		this.indexes = indexes;
@@ -88,7 +88,7 @@ public class Selection implements ISelection {
 	Selection(IRelation relation, ITuple pattern, int[] indexes) {
 		if (relation == null || pattern == null || indexes == null) {
 			throw new IllegalArgumentException("All constructor "
-					+ "parameters must not be specified (non null values");
+					+ "parameters must be specified (non null values");
 		}
 		this.relation = relation;
 		this.pattern = pattern;
@@ -284,7 +284,7 @@ public class Selection implements ISelection {
 		boolean nonEqualTermExist = false;
 
 		for (ITerm t : terms) {
-			if (t instanceof NonEqualityTerm) {
+			if (t instanceof NonEqualityTerm && t.isGround()) {
 				neqTerms.add(t);
 				eqTerms.add(null);
 				if (t != null && t.getValue() != null)
