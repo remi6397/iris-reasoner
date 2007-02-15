@@ -34,12 +34,12 @@ import org.deri.iris.api.terms.ITerm;
  * Factory to create all sorts of builtins.
  * </p>
  * <p>
- * $Id: BuiltinsFactory.java,v 1.1 2006-09-21 09:01:19 richardpoettler Exp $
+ * $Id: BuiltinsFactory.java,v 1.2 2007-02-15 13:10:17 darko_anicic Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-09-21 09:01:19 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2007-02-15 13:10:17 $
  */
 public class BuiltinsFactory implements IBuiltInsFactory {
 
@@ -56,6 +56,10 @@ public class BuiltinsFactory implements IBuiltInsFactory {
 	 */
 	public static IBuiltInsFactory getInstance() {
 		return INSTANCE;
+	}
+
+	public IBuiltInAtom createAddBuiltin(final ITerm t0, final ITerm t1){
+		return new AddBuiltin(t0, t1);
 	}
 
 	public IBuiltInAtom createEqual(ITerm t0, ITerm t1) {
