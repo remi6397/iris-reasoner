@@ -71,6 +71,8 @@ public class Complementor {
 		if (p.getRules().contains(null)) {
 			throw new NullPointerException("The rules must not contain null");
 		}
+		// TODO: Replcae this check together with the stratification check
+		//		 to avoid looping through the ruleset more than once
 		for (final IRule rule : p.getRules()) {
 			if (rule.getHeadLenght() != 1) {
 				throw new IllegalArgumentException(
@@ -138,6 +140,9 @@ public class Complementor {
 			for (final ITuple t : rel) {
 				//TODO: Try to avoid the DOM creation on the 
 				//		term-by-term basis!
+				//TODO: Create DOM as a set of relation, one for each datatype,
+				//		putting two terms with different datatype in one relation
+				//		throws an exception!
 				for (ITerm term : t.getTerms()) {
 					d.add(Factory.BASIC.createTuple(term));
 				}
