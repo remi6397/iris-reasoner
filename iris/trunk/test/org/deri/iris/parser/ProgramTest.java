@@ -53,6 +53,8 @@ import org.deri.iris.factory.Factory;
  */
 public class ProgramTest extends TestCase {
 
+	Map<IPredicate,IRelation> m = null;
+	
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(ProgramTest.class);
 		
@@ -67,8 +69,13 @@ public class ProgramTest extends TestCase {
 		    "w(?Y) :- k(?X, ?Y), l(?X)." +
 		    "?- w(?X).";
     	
+    	m = evluateProgram(program);
+    	System.out.println("test 1");
+    	printResults(m);
+    	System.out.println();
+
     	testProgram(
-				evluateProgram(program),
+				m,
 				resultTest1());
     }
 	public String resultTest1(){
@@ -99,8 +106,13 @@ public class ProgramTest extends TestCase {
 		    "r(?X) :- t(?X)." +
 		    "?- q(?X).";
     	
+    	m = evluateProgram(program);
+    	System.out.println("test 2");
+    	printResults(m);
+    	System.out.println();
+
     	testProgram(
-				evluateProgram(program),
+				m,
 				resultTest2());
     }
 	
@@ -127,8 +139,13 @@ public class ProgramTest extends TestCase {
 		    "w(?X) :- s(?X), p(?X), ?X='d'." +
 		    "?- w(?X).";
    	
+    	m = evluateProgram(program);
+    	System.out.println("test 3");
+    	printResults(m);
+    	System.out.println();
+
     	testProgram(
-				evluateProgram(program),
+				m,
 				resultTest3());
     }
 	
@@ -149,8 +166,14 @@ public class ProgramTest extends TestCase {
 		    "path(?X, ?Y) :- path(?X, ?Z), path(?Z, ?Y)." +
 		    "?- path(?X, ?Y).";
   	
+		m = evluateProgram(program);
+    	System.out.println("test 4");
+    	printResults(m);
+    	System.out.println();
+
+    	
     	testProgram(
-				evluateProgram(program),
+				m,
 				resultTest4());
 	}
 	 
@@ -176,10 +199,14 @@ public class ProgramTest extends TestCase {
 		    
 		    "in(?X, ?Z) :- in(?X, ?Y), in(?Y, ?Z)." +
 		    "?- in('galway', ?Z).";
-		    //"?- in(?X, 'europe').";
+		
+    	m = evluateProgram(program);
+    	System.out.println("test 5");
+    	printResults(m);
+    	System.out.println();
    
     	testProgram(
-				evluateProgram(program),
+				m,
 				resultTest5());
     }
 	
@@ -217,8 +244,13 @@ public class ProgramTest extends TestCase {
 		    "rsg(?X, ?Y) :- flat(?X, ?Y)." +
 		    "?- rsg(?X, ?Y).";
 		   
+    	m = evluateProgram(program);
+    	System.out.println("test 6");
+    	printResults(m);
+    	System.out.println();
+
     	testProgram(
-				evluateProgram(program),
+				m,
 				resultTest6());
     }
 	
@@ -250,8 +282,13 @@ public class ProgramTest extends TestCase {
 		    "path(?X, ?Y) :- edge(?X, ?Z), path(?Z, ?Y)." +
 		    "?- path(?X, ?Y).";
    
+		m = evluateProgram(program);
+    	System.out.println("test 7");
+    	printResults(m);
+    	System.out.println();
+
     	testProgram(
-				evluateProgram(program),
+				m,
 				resultTest7());
     }
 	
@@ -276,8 +313,13 @@ public class ProgramTest extends TestCase {
 		    "p(?X, 'a') :- r(?X, ?Y)." +
 		    "?- p(?X, ?Y).";
   	
+    	m = evluateProgram(program);
+    	System.out.println("test 8");
+    	printResults(m);
+    	System.out.println();
+    	
     	testProgram(
-				evluateProgram(program),
+				m,
 				resultTest8());
     }
 	
@@ -310,8 +352,13 @@ public class ProgramTest extends TestCase {
 		    "t(?X) :- u(?X)." +
 		    "?- p(?X).";
   	
+    	m = evluateProgram(program);
+    	System.out.println("test 9");
+    	printResults(m);
+    	System.out.println();
+
     	testProgram(
-				evluateProgram(program),
+				m,
 				resultTest9());
     }
 	
@@ -363,7 +410,7 @@ public class ProgramTest extends TestCase {
     	}
     }
 	
-	public void printResults(Map<IPredicate, IRelation> m){
+	public static void printResults(Map<IPredicate, IRelation> m){
     	for(IPredicate pr : m.keySet()){
 			System.out.println(pr.toString());
 			for(ITuple t : m.get(pr)){
