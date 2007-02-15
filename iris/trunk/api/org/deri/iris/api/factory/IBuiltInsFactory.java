@@ -34,15 +34,28 @@ import org.deri.iris.api.terms.ITerm;
  * by this engine.
  * </p>
  * <p>
- * $Id: IBuiltInsFactory.java,v 1.4 2007-01-22 12:45:45 darko Exp $
+ * $Id: IBuiltInsFactory.java,v 1.5 2007-02-15 12:44:59 darko_anicic Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author richi
  * @date 17.03.2006 11:55:35
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface IBuiltInsFactory {
+
+	/**
+	 * Creates an add builtin.
+	 * 
+	 * @param t0
+	 *            the first term
+	 * @param t1
+	 *            the second term
+	 * @return the builtin
+	 * @throws NullPointerException
+	 *             if any of the terms is <code>null</code>
+	 */
+	public abstract IBuiltInAtom createAddBuiltin(final ITerm t0, final ITerm t1);
 
 	/**
 	 * Creates an equal builtin.
