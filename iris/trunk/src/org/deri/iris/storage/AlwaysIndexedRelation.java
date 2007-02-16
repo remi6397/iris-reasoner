@@ -833,4 +833,9 @@ public class AlwaysIndexedRelation implements IRelation {
 	public int getArity() {
 		return arity;
 	}
+
+	public SortedSet<ITuple> indexOn(Integer[] idx) {
+		throw new UnsupportedOperationException(
+				"This method is not supported by this relation.");
+	}
 }

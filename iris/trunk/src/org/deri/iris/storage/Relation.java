@@ -290,4 +290,9 @@ public class Relation implements IRelation {
 		}
 		return null;
 	}
+
+	public SortedSet<ITuple> indexOn(Integer[] idx) {
+		throw new UnsupportedOperationException(
+				"This method is not supported by this relation.");
+	}
 }
