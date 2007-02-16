@@ -30,9 +30,8 @@ package org.deri.iris.storage;
  * with aspectJ the code scattering for the locks could be prevented and the
  * code would be much less error-phrone and more readable
  */
-// TODO: write a test for this relation 
+// TODO: write a test for this relation
 // TODO: clone the tuples used to limit the subsets
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -95,13 +94,26 @@ public class AlwaysIndexedRelation implements IRelation {
 	/** The write lock for this relation. */
 	private final Lock WRITE = LOCK.writeLock();
 
-	public AlwaysIndexedRelation() {
+	AlwaysIndexedRelation() {
 		WRITE.lock();
 		reset(INITIAL_COLS);
 		WRITE.unlock();
 	}
 
+	/**
+	 * Adds a new tuple to the relation.
+	 * 
+	 * @param tuple
+	 *            the tuple to add
+	 * @return {@code true} if the relation changed (the tuple wasn't formerly
+	 *         present) or {@false} if it hasn't changed.
+	 * @throws NullPointerException
+	 *             if the tupe is {@code null}
+	 */
 	public boolean add(ITuple tuple) {
+		if (tuple == null) {
+			throw new NullPointerException("The tuple must not be null");
+		}
 		WRITE.lock();
 		try {
 			boolean changed = false;
@@ -118,15 +130,15 @@ public class AlwaysIndexedRelation implements IRelation {
 
 			if (searchForTuple(tuple) == null) { // check whether tuple
 				// already exists -> update the indexes
-				for (int i = 0; i < tuple.getArity(); i++) {
-					ITerm indexTerm = tuple.getTerm(i);
+				for (int i = 0, max = tuple.getArity(); i < max; i++) {
+					final ITerm indexTerm = tuple.getTerm(i);
 
 					Set<ITuple> indexed = indexlist.get(i).get(indexTerm);
 					if (indexed == null) {
 						indexed = new TreeSet<ITuple>();
+						indexlist.get(i).put(indexTerm, indexed);
 					}
 					indexed.add(tuple);
-					indexlist.get(i).put(indexTerm, indexed);
 				}
 				changed = true;
 			}
@@ -242,12 +254,12 @@ public class AlwaysIndexedRelation implements IRelation {
 			if (!(o instanceof ITuple)) {
 				return false;
 			}
-			ITuple t = (ITuple) o;
+			final ITuple t = (ITuple) o;
 			if (t.getArity() == arity) {
 				for (int iCounter = 0; iCounter < arity; iCounter++) {
-					SortedMap<ITerm, Set<ITuple>> indexMap = indexlist
+					final SortedMap<ITerm, Set<ITuple>> indexMap = indexlist
 							.get(iCounter);
-					ITerm term = t.getTerm(iCounter);
+					final ITerm term = t.getTerm(iCounter);
 					if (indexMap.get(term).remove(t)) {
 						if (indexMap.get(term).isEmpty()) {
 							indexMap.remove(term);
@@ -294,7 +306,7 @@ public class AlwaysIndexedRelation implements IRelation {
 		arity = columns;
 		indexlist = new ArrayList<SortedMap<ITerm, Set<ITuple>>>(columns);
 		for (int i = 0; i < columns; i++) {
-			indexlist.add(i, new TreeMap<ITerm, Set<ITuple>>());
+			indexlist.add(new TreeMap<ITerm, Set<ITuple>>());
 		}
 		primaryIndex = (columns > 0) ? indexlist.get(0) : null;
 		WRITE.unlock();
@@ -304,7 +316,7 @@ public class AlwaysIndexedRelation implements IRelation {
 		WRITE.lock();
 		try {
 			boolean changed = false;
-			for (Object o : toArray()) {
+			for (Object o : listAllTuples()) {
 				if (!c.contains(o)) {
 					if (remove(o)) {
 						changed = true;
@@ -325,11 +337,16 @@ public class AlwaysIndexedRelation implements IRelation {
 	 * @param tuple
 	 *            the tuple to search for.
 	 * @return a reference to the found tuple of null.
+	 * @throws NullPointerException
+	 *             if the tuple is {@code null}
 	 */
 	protected ITuple searchForTuple(final ITuple tuple) {
+		if (tuple == null) {
+			throw new NullPointerException("The tuple must not be null");
+		}
 		READ.lock();
 		try {
-			final Set<ITuple> tupleSet = indexlist.get(0).get(tuple.getTerm(0));
+			final Set<ITuple> tupleSet = primaryIndex.get(tuple.getTerm(0));
 			// if there are no tuples with the same term at the given
 			// index -> return null
 			if (tupleSet == null) {
@@ -482,7 +499,6 @@ public class AlwaysIndexedRelation implements IRelation {
 		 *             bigger or equal than the arity, of highest is bigger than
 		 *             lowest.
 		 */
-		@SuppressWarnings("unchecked")
 		public SubRelation(final ITuple lowest, final ITuple highest,
 				final int index) {
 			WRITE.lock();
@@ -835,7 +851,7 @@ public class AlwaysIndexedRelation implements IRelation {
 	}
 
 	public SortedSet<ITuple> indexOn(Integer[] idx) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by this relation.");
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
