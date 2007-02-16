@@ -851,7 +851,7 @@ public class AlwaysIndexedRelation implements IRelation {
 	}
 
 	public SortedSet<ITuple> indexOn(Integer[] idx) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException(
+				"This method is not supported by this relation.");
 	}
 }
