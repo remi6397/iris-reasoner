@@ -25,10 +25,13 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.naming.OperationNotSupportedException;
 
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.ILiteral;
@@ -36,6 +39,7 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.MiscOps;
@@ -43,26 +47,22 @@ import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.Relation;
 
 /**
+ * <p>Computes the complement of a relation</p>
+ * <p>$Id: Complementor.java,v 1.9 2007-02-28 14:35:06 poettler_ric Exp $</p>
  * @author Darko Anicic, DERI Innsbruck
- * @author richi
- * 
- * @date 27.11.2006 19:07:43
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision: 1.9 $
  */
 public class Complementor {
 
 	/** prefix for the negative literals. */
 	public static final String NOT_PREFIX = "NOT_";
 
-	/**
-	 * DOM is a universe created as the union of the symbols appearing in the
-	 * EDB relations and in the rules themselves.
-	 */
-	private final IRelation DOM;
-
 	/** The edb for the evaluation */
 	private final IProgram p;
 
-	private Map<Integer, IRelation> cacheMap = null;
+	/** Map with all different types as keys and all corresponding possibilities as values. */
+	private Map<Class, IRelation> cons;
 
 	public Complementor(final IProgram p) {
 		if (p == null) {
@@ -73,6 +73,7 @@ public class Complementor {
 		}
 		// TODO: Replcae this check together with the stratification check
 		//		 to avoid looping through the ruleset more than once
+		// TODO: remove this. this hasn't anything to do with the complement!
 		for (final IRule rule : p.getRules()) {
 			if (rule.getHeadLenght() != 1) {
 				throw new IllegalArgumentException(
@@ -83,72 +84,98 @@ public class Complementor {
 		this.p = p;
 
 		// Stratify rules
+		// TODO: remove this. this hasn't anything to do with the complement!
 		if (!MiscOps.stratify(p)) {
 			throw new RuntimeException("Rules are unstratifiable");
 		}
-		this.DOM = createDom(p);
-		this.cacheMap = new HashMap<Integer, IRelation>();
+		updateClean();
 	}
 
+	/**
+	 * Computes the complement of a relaiton.
+	 * @param pr the predicate for which to compute the complement
+	 * @throws NullPointerException if the predicate is <code>null</code>
+	 */
 	public IRelation getComplement(final IPredicate pr) {
 		if (pr == null) {
 			throw new NullPointerException("The literal must not be null");
 		}
-		final int arity = pr.getArity();
+		final IRelation facts = p.getFacts(pr);
+		if ((facts == null) || facts.isEmpty()) {
+			// maybe another exception should be thrown
+			throw new IllegalArgumentException("Can't determine the datatypes " + 
+					"if there aren't any facts for the predicate (" + pr + ")");
+		}
+
 		IRelation r = null;
 
-		if (this.cacheMap.containsKey(arity)) {
-			r = this.cacheMap.get(arity);
-		} else {
-			r = DOM;
-			for (int i = 1; i < arity; i++) {
-				r = Factory.RELATION_OPERATION.createJoinOperator(r, DOM,
+		for (final ITerm t : facts.first().getTerms()) {
+			if (r == null) {
+				r = relationForTerm(t);
+			} else {
+				r = Factory.RELATION_OPERATION.createJoinOperator(r, relationForTerm(t), 
 						new int[] { -1, -1 }).join();
 			}
-			this.cacheMap.put(arity, r);
 		}
-		final IRelation facts = p.getFacts(pr);
-		if (facts != null) {
-			r.removeAll(facts);
-		}
+
+		r.removeAll(facts);
 		return r;
 	}
 
-	/**
-	 * Creates the DOM for the given edb.
-	 * 
-	 * @param p
-	 *            The Program
-	 * @return the DOM relation
-	 * @throws NullPointerException
-	 *             if the edb is {@code null}
-	 */
-	private static IRelation createDom(final IProgram p) {
-		if (p == null) {
-			throw new NullPointerException("The edb must not be null");
+	private IRelation relationForTerm(final ITerm t) {
+		if (t == null) {
+			throw new NullPointerException("The term must not be null");
 		}
-		IRelation d = new Relation(1);
+		if (cons.get(t.getClass()) == null) {
+			return new Relation(1);
+		}
+		return cons.get(t.getClass());
+	}
 
+	/**
+	 * Sets all new constants to the constants map (deletes the old ones).
+	 */
+	private void updateClean() {
+		cons = new HashMap<Class, IRelation>();
+		update();
+	}
+
+	/**
+	 * Adds all new constants to the constants map.
+	 */
+	private void update() {
 		// adding all constants of the rules
-		for (final IRule rule : p.getRules()) {
-			for (ITerm term : getConstantsOfRule(rule)) {
-				d.add(Factory.BASIC.createTuple(term));
+		for (final IRule r : p.getRules()) {
+			for (final ITerm t : getConstants(r)) {
+				putTerm(t);
 			}
 		}
 		// adding all constants of the relations
-		for (final IRelation rel : p.getFacts().values()) {
-			for (final ITuple t : rel) {
-				//TODO: Try to avoid the DOM creation on the 
-				//		term-by-term basis!
-				//TODO: Create DOM as a set of relation, one for each datatype,
-				//		putting two terms with different datatype in one relation
-				//		throws an exception!
+		for (final IRelation r : p.getFacts().values()) {
+			for (final ITuple t : r) {
 				for (ITerm term : t.getTerms()) {
-					d.add(Factory.BASIC.createTuple(term));
+					putTerm(term);
 				}
 			}
 		}
-		return d;
+	}
+
+	/**
+	 * Adds a term to the map of constants and creates a new relation if needed.
+	 * @param t the term to add
+	 * @throws NullPointerException if the term is <code>null</code>
+	 */
+	private void putTerm(final ITerm t) {
+		if (t == null) {
+			throw new NullPointerException("The term must not be null");
+		}
+
+		IRelation r = cons.get(t.getClass());
+		if (r == null) {
+			r = new Relation(1);
+			cons.put(t.getClass(), r);
+		}
+		r.add(Factory.BASIC.createTuple(t));
 	}
 
 	/**
@@ -160,17 +187,17 @@ public class Complementor {
 	 * @throws NullPointerException
 	 *             if the rule is {@code null}
 	 */
-	private static Set<ITerm> getConstantsOfRule(final IRule r) {
+	private static Set<ITerm> getConstants(final IRule r) {
 		if (r == null) {
 			throw new NullPointerException("The rule must not be null");
 		}
 
 		final Set<ITerm> c = new HashSet<ITerm>();
 		for (final ILiteral l : r.getHeadLiterals()) {
-			c.addAll(getConstantsOfTuple(l.getTuple()));
+			c.addAll(getConstants(l.getTuple()));
 		}
 		for (final ILiteral l : r.getBodyLiterals()) {
-			c.addAll(getConstantsOfTuple(l.getTuple()));
+			c.addAll(getConstants(l.getTuple()));
 		}
 		return c;
 	}
@@ -184,20 +211,43 @@ public class Complementor {
 	 * @throws NullPointerException
 	 *             if the tuple is {@code null}
 	 */
-	private static Set<ITerm> getConstantsOfTuple(final ITuple t) {
+	private static Set<ITerm> getConstants(final ITuple t) {
 		if (t == null) {
 			throw new NullPointerException("The literal must not be null");
 		}
 
 		final Set<ITerm> c = new HashSet<ITerm>();
-		for (final ITerm term : t.getTerms()) {
-			if (!(term instanceof IVariable)) {
-				c.add(term);
-			}
+		for (final ITerm e : t.getTerms()) {
+			c.addAll(getConstants(e));
 		}
 		return c;
 	}
 	
+	/**
+	 * Determines all constants of a term (might be also a constructed term and returns them.
+	 * @param t the term
+	 * @return all constants of this term
+	 * @throws NullPointerException if the term is <code>null</code>
+	 */
+	private static Set<ITerm> getConstants(final ITerm t) {
+		if (t == null) {
+			throw new NullPointerException("The term must not be null");
+		}
+
+		if (!t.isGround()) {
+			return Collections.EMPTY_SET;
+		} else if (t instanceof IConstructedTerm) {
+			final Set<ITerm> c = new HashSet<ITerm>();
+			c.add(t);
+			// getting out all constatnts of this constructed term
+			for (final ITerm e : ((IConstructedTerm) t).getParameters()) {
+				c.addAll(getConstants(e));
+			}
+			return c;
+		}
+		return Collections.singleton(t);
+	}
+
 	/**
 	 * Returns the highest stratum of a set of predicates.
 	 * 
