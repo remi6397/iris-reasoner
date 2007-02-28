@@ -38,12 +38,20 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
 
 /**
+ * <p>
  * This is a simple Relation implementation based on a TreeSet, so no dublicates
- * are allowed.<br/><br/> <b>ATTENTION:</b> Everytime the index with the
+ * are allowed.
+ * </p>
+ * <p>
+ * <b>ATTENTION:</b> Everytime the index with the
  * sortOn(int) method is changed the whole set will be sorted agein, which is
- * very time consuming.<br/><br/> <b>This implementaion is thread-save.</b>
+ * very time consuming.
+ * </p>
+ * <p>
+ * <b>This implementaion is thread-save.</b>
+ * </p>
  * 
- * @author richi
+ * @author Richard Pöttler, richard dot poettler at deri dot org
  * 
  */
 public class SortAgainRelation implements IRelation {
@@ -102,7 +110,7 @@ public class SortAgainRelation implements IRelation {
 	/** The write lock */
 	private final Lock WRITE = LOCK.writeLock();
 
-	public SortAgainRelation(final int arity) {
+	SortAgainRelation(final int arity) {
 		if (arity < 1) {
 			throw new IllegalArgumentException(
 					"The arity must be bigger than 0, but was " + arity);
