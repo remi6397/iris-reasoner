@@ -39,19 +39,21 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.Relation;
 
 /**
  * <p>Computes the complement of a relation</p>
- * <p>$Id: Complementor.java,v 1.10 2007-02-28 14:41:55 poettler_ric Exp $</p>
+ * <p>$Id: Complementor.java,v 1.11 2007-02-28 15:44:04 poettler_ric Exp $</p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class Complementor {
+
+	/** prefix for the negative literals. */
+	public static final String NOT_PREFIX = "NOT_";
 
 	/** The edb for the evaluation */
 	private final IProgram p;
@@ -63,7 +65,26 @@ public class Complementor {
 		if (p == null) {
 			throw new NullPointerException("The edb must not be null");
 		}
+		if (p.getRules().contains(null)) {
+			throw new NullPointerException("The rules must not contain null");
+		}
+		// TODO: Replcae this check together with the stratification check
+		//		 to avoid looping through the ruleset more than once
+		// TODO: remove this. this hasn't anything to do with the complement!
+		for (final IRule rule : p.getRules()) {
+			if (rule.getHeadLenght() != 1) {
+				throw new IllegalArgumentException(
+						"The length of the head must be 1, but was "
+								+ rule.getHeadLenght());
+			}
+		}
 		this.p = p;
+
+		// Stratify rules
+		// TODO: remove this. this hasn't anything to do with the complement!
+		if (!MiscOps.stratify(p)) {
+			throw new RuntimeException("Rules are unstratifiable");
+		}
 		updateClean();
 	}
 
@@ -98,13 +119,6 @@ public class Complementor {
 		return r;
 	}
 
-	/**
-	 * Retrieves the constants for a given term.
-	 * @param t the term for which to retrieve all constants
-	 * @return the relation containing all constants for the datatype of the 
-	 * 	given term, or an empty relation of no constants could be found
-	 * @throws NullPointerException if the term is <code>null</code>
-	 */
 	private IRelation relationForTerm(final ITerm t) {
 		if (t == null) {
 			throw new NullPointerException("The term must not be null");
@@ -229,5 +243,59 @@ public class Complementor {
 			return c;
 		}
 		return Collections.singleton(t);
+	}
+
+	/**
+	 * Returns the highest stratum of a set of predicates.
+	 * 
+	 * @param h	The set of idb predicates.
+	 * @return 	The highest stratum.
+	 * @throws 	NullPointerException
+	 *             	if the set of predicates is {@code null}.
+	 * @throws NullPointerException
+	 *             if the set contains {@code null}.
+	 */
+	protected static int getMaxStratum(final Set<IPredicate> h) {
+		if (h == null) {
+			throw new NullPointerException("The predicates must not be null");
+		}
+		int strat = 0;
+		for (final IPredicate pred : h) {
+			strat = Math.max(strat, pred.getStratum());
+		}
+		return strat;
+	}
+	
+	/**
+	 * Determines (out of a set of literals) all literals whose predicats have a given stratum.
+	 * 
+	 * @param preds
+	 *            the set of predicates.
+	 * @param s
+	 *            the stratum to look for
+	 * @return the set of predicates at the given stratum
+	 * @throws NullPointerException
+	 *             if the set of predicates is {@code null}
+	 * @throws NullPointerException
+	 *             if the set of predicates contains {@code null}
+	 * @throws IllegalArgumentException
+	 *             if the stratum is smaller than 0
+	 */
+	protected static Set<IPredicate> getPredicatesOfStratum(
+			final Set<IPredicate> preds, final int s) {
+		if (preds == null) {
+			throw new NullPointerException("The predicates must not be null");
+		}
+		if (s <= 0) {
+			throw new IllegalArgumentException(s + " is not a valid stratum");
+		}
+
+		final Set<IPredicate> predicates = new HashSet<IPredicate>();
+		for (final IPredicate p : preds) {
+			if (p.getStratum() == s) {
+				predicates.add(p);
+			}
+		}
+		return predicates;
 	}
 }
