@@ -52,15 +52,19 @@ import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 
 /**
+ * <p>
  * This is a Relation implementation which sorts on every column (term) of of
  * the stored tuples. Therefor it creates an index for every column and holds
  * it. The tuples will be indexed every time you add or remove a tuple to or
  * from this relation. Substitutional to that the relation wont have to be
- * sorted if you join on a column, because it is already sorted.<br/> <b>This
- * implementaion is thread-save.</b>
+ * sorted if you join on a column, because it is already sorted.
+ * </p>
+ * <p>
+ * <b>This implementaion is thread-save.</b>
+ * </p>
  * 
- * @author richi
- * 
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision$
  */
 public class AlwaysIndexedRelation implements IRelation {
 
