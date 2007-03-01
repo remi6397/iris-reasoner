@@ -47,6 +47,7 @@ import org.deri.iris.api.evaluation.magic.ISip;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.evaluation.common.AdornedProgram;
 import org.deri.iris.evaluation.common.Adornment;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
@@ -62,7 +63,7 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * $Id$
  * </p>
  * 
- * @author richi
+ * @author Richard Pöttler, richard dot poettler at deri dot org
  * @version $Revision$
  * @date $Date$
  */
@@ -161,6 +162,10 @@ public final class MagicSetImpl {
 				.sort(rewrittenBody, getAdornedSip(r).getLiteralComparator());
 
 		final ILiteral magicL = createMagicLiteral(headL);
+		if (magicL == headL) { // the head literal is not adorned 
+			// -> the query was not adorned -> nothing to exchange
+			return r;
+		}
 		rewrittenBody.add(0, magicL);
 
 		// modifying the sip
@@ -171,8 +176,7 @@ public final class MagicSetImpl {
 		for (final LabeledDirectedEdge<Set<IVariable>> e : adornedSip
 				.getEdgesLeavingLiteral(headL)) {
 			adornedSip.removeEdge(e);
-			adornedSip
-					.updateSip(magicL, (ILiteral) e.getTarget(), e.getLabel());
+			adornedSip.updateSip(magicL, (ILiteral) e.getTarget(), e.getLabel());
 		}
 		adornedSip.updateSip(headL, magicL, boundVars);
 
@@ -185,13 +189,18 @@ public final class MagicSetImpl {
 	}
 
 	/**
-	 * Creates a seed for the given query. </br></br>The predicate of the
-	 * literal will be adorned according to it's bound and free terms and the
-	 * terms of the literal of the query will be limited to it's bound terms.
+	 * <p>
+	 * Creates a seed for the given query. 
+	 * </p>
+	 * <p>
+	 * The predicate of the literal will be adorned according to it's bound and 
+	 * free terms and the terms of the literal of the query will be limited to 
+	 * it's bound terms.
+	 * </p>
 	 * 
 	 * @param q
 	 *            for which to create the seed
-	 * @return the seed
+	 * @return the seed or <code>null</code> if the query didn't contain any constants
 	 * @throws NullPointerException
 	 *             if the query is null
 	 * @throws IllegalArgumentException
@@ -206,12 +215,12 @@ public final class MagicSetImpl {
 					"At the moment only queries with length 1 are allowed");
 		}
 
-		final ILiteral queryLiteral = q.getQueryLiteral(0);
-		final ILiteral adornedLiteral = BASIC.createLiteral(queryLiteral
-				.isPositive(), new AdornedPredicate(queryLiteral), queryLiteral
-				.getTuple());
+		final ILiteral ql = q.getQueryLiteral(0);
+		final IAdornedPredicate ap = new AdornedPredicate(ql);
+		final ILiteral al = BASIC.createLiteral(ql .isPositive(), ap, ql .getTuple());
 
-		return BASIC.createQuery(createMagicLiteral(adornedLiteral));
+		return (!Arrays.asList(ap.getAdornment()).contains(Adornment.BOUND)) ? 
+			null : BASIC.createQuery(createMagicLiteral(al));
 	}
 
 	/**
@@ -266,7 +275,9 @@ public final class MagicSetImpl {
 			for (final IRule rule : rules) {
 				bodyLiterals.add(rule.getHeadLiteral(0));
 			}
-			rules.add(BASIC.createRule(BASIC.createHead(createMagicLiteral(l)),
+			final ILiteral hl = createMagicLiteral(l);
+			hl.setPositive(true);
+			rules.add(BASIC.createRule(BASIC.createHead(hl),
 					BASIC.createBody(new ArrayList<ILiteral>(bodyLiterals))));
 			return rules;
 		} else {
@@ -306,10 +317,10 @@ public final class MagicSetImpl {
 					"At the moment only heads with length 1 are allowed");
 		}
 
-		final ILiteral headLiteral = rule.getHeadLiteral(0);
-
 		// create head of the rule
-		final IHead head = BASIC.createHead(createMagicLiteral(l));
+		final ILiteral hl = createMagicLiteral(l);
+		hl.setPositive(true);
+		final IHead head = BASIC.createHead(hl);
 
 		// create the body of the rule
 		ISip adornedSip = getAdornedSip(rule);
@@ -318,12 +329,19 @@ public final class MagicSetImpl {
 		Collections.sort(bodyLiterals, adornedSip.getLiteralComparator());
 
 		// correct the literals -> make adorned literals -> magic literals
-		for (int counter = 0, size = bodyLiterals.size(); counter < size; counter++) {
-			if (bodyLiterals.get(counter).equals(headLiteral)) {
-				bodyLiterals.set(counter, createMagicLiteral(bodyLiterals
-						.get(counter)));
-				break;
+		// if the head literal wasn't adorned (only happens if the query hasn't any constants
+		// skip the exchange of the literals, because there isn't anything to exchage, and 
+		// remove the first literal of the body (which is the headliteral)
+		final ILiteral headLiteral = rule.getHeadLiteral(0);
+		if ((headLiteral.getPredicate() instanceof IAdornedPredicate)) {
+			for (int i = 0, max = bodyLiterals.size(); i < max; i++) {
+				if (bodyLiterals.get(i).equals(headLiteral)) {
+					bodyLiterals.set(i, createMagicLiteral(bodyLiterals .get(i)));
+					break;
+				}
 			}
+		} else {
+			bodyLiterals.remove(0);
 		}
 
 		final IBody body = BASIC.createBody(bodyLiterals);
@@ -386,8 +404,9 @@ public final class MagicSetImpl {
 		final ILiteral headLiteral = r.getHeadLiteral(0);
 
 		// create head of the rule
-		final IHead head = BASIC.createHead(createLabeledLiteral(targetLiteral,
-				index));
+		final ILiteral hl = createLabeledLiteral(targetLiteral, index);
+		hl.setPositive(true);
+		final IHead head = BASIC.createHead(hl);
 
 		// create body of the rule
 		final ISip adornedSip = getAdornedSip(r);
@@ -411,27 +430,33 @@ public final class MagicSetImpl {
 	}
 
 	/**
+	 * <p>
 	 * Creates a magic literal out of an adorned one. The predicate of the
 	 * literal must be adorned. The terms of the literal will only consist of
 	 * the bound terms.
+	 * </p>
+	 * <p>
+	 * Note that not adorned literals are taken as if they would have only
+	 * bounds.
+	 * </p>
 	 * 
 	 * @param l
 	 *            for which to create the adorned one
-	 * @return the magic literal
+	 * @return the magic literal or the same literal again, if the 
+	 * 	predicate of the literal wasn't adorned
 	 * @throws NullPointerException
-	 *             if the literal is null
-	 * @throws IllegalArgumentException
-	 *             if the predicate of the literal isn't adorned
+	 *             if the literal is <code>null</code>
 	 */
 	private static ILiteral createMagicLiteral(final ILiteral l) {
 		if (l == null) {
 			throw new NullPointerException("The literal must not be null");
 		}
-		if (!(l.getPredicate() instanceof AdornedPredicate)) {
-			throw new IllegalArgumentException(
-					"The predicate of the literal must be adorned");
-		}
 
+
+		// if the literal isn't adorned then there isn't anything to do.
+		if (!(l.getPredicate() instanceof IAdornedPredicate)) {
+			return l;
+		}
 		final AdornedPredicate p = (AdornedPredicate) l.getPredicate();
 
 		final ITuple boundTuple = BASIC.createTuple(getBounds(p, l));
@@ -504,8 +529,7 @@ public final class MagicSetImpl {
 			throw new NullPointerException("The literal must not be null");
 		}
 		if (!(l.getPredicate() instanceof AdornedPredicate)) {
-			throw new IllegalArgumentException(
-					"The predicate of the literal must be adorned");
+			return Collections.EMPTY_LIST;
 		}
 		return getBounds((AdornedPredicate) l.getPredicate(), l);
 	}
@@ -728,14 +752,12 @@ public final class MagicSetImpl {
 			while (l0.getPredicate().getPredicateSymbol().startsWith(
 					MAGIC_PREDICATE_PREFIX)
 					&& b0.hasNext()) {
-				System.out.println("discarding magic literal: " + l0);
 				l0 = b0.next();
 			}
 			ILiteral l1 = b1.next();
 			while (l1.getPredicate().getPredicateSymbol().startsWith(
 					MAGIC_PREDICATE_PREFIX)
 					&& b1.hasNext()) {
-				System.out.println("discarding magic literal: " + l1);
 				l1 = b1.next();
 			}
 			if (!isSameLiteral(l0, l1)) {
