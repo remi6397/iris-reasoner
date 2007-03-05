@@ -45,10 +45,10 @@ import org.deri.iris.storage.Relation;
 
 /**
  * <p>Computes the complement of a relation</p>
- * <p>$Id: Complementor.java,v 1.11 2007-02-28 15:44:04 poettler_ric Exp $</p>
+ * <p>$Id: Complementor.java,v 1.12 2007-03-05 08:09:51 poettler_ric Exp $</p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class Complementor {
 
@@ -61,6 +61,11 @@ public class Complementor {
 	/** Map with all different types as keys and all corresponding possibilities as values. */
 	private Map<Class, IRelation> cons;
 
+	/**
+	 * Creates the complementor for a given program.
+	 * @param p the program from where to take the constans
+	 * @throws NullPointerException if the program is <code>null</code>
+	 */
 	public Complementor(final IProgram p) {
 		if (p == null) {
 			throw new NullPointerException("The edb must not be null");
@@ -119,14 +124,23 @@ public class Complementor {
 		return r;
 	}
 
+	/**
+	 * Returns the relation with all possible constants for the given term. E.g. if the 
+	 * term is a integer term it will return a relation with all possible integers found in
+	 * the edb.
+	 * @param t the term for which to return all constants
+	 * @return the constants
+	 * @throws NullPointerException if the term is <code>null</code>
+	 */
 	private IRelation relationForTerm(final ITerm t) {
 		if (t == null) {
 			throw new NullPointerException("The term must not be null");
 		}
-		if (cons.get(t.getClass()) == null) {
-			return new Relation(1);
+		final IRelation r = cons.get(t.getClass());
+		if (r == null) {
+			return Factory.RELATION.getRelation(1);
 		}
-		return cons.get(t.getClass());
+		return r;
 	}
 
 	/**
@@ -169,7 +183,7 @@ public class Complementor {
 
 		IRelation r = cons.get(t.getClass());
 		if (r == null) {
-			r = new Relation(1);
+			r =  Factory.RELATION.getRelation(1);
 			cons.put(t.getClass(), r);
 		}
 		r.add(Factory.BASIC.createTuple(t));
