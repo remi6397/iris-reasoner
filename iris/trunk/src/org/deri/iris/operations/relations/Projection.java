@@ -26,6 +26,7 @@
 package org.deri.iris.operations.relations;
 
 import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.RELATION;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -97,7 +98,7 @@ public class Projection implements IProjection {
 		this.relation = relation;
 		this.indexes = pattern;
 		this.arity = this.getRelationArity();
-		projectionRelation = new Relation(this.arity);
+		projectionRelation = RELATION.getRelation(this.arity);
 	}
 
 	public IRelation project() {
@@ -110,7 +111,7 @@ public class Projection implements IProjection {
 		 * will be done only on non equivalent tuples.
 		 */
 		this.comparator = new IndexComparator(this.transformIndexes());
-		IRelation rel = new Relation(comparator);
+		IRelation rel = RELATION.getRelation(comparator);
 		rel.addAll(this.relation);
 		this.relation = rel;
 

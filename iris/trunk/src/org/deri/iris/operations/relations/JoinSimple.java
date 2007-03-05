@@ -25,6 +25,8 @@
  */
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.factory.Factory.RELATION;
+
 import java.util.Iterator;
 
 import org.deri.iris.api.basics.ITuple;
@@ -135,13 +137,13 @@ public class JoinSimple implements IJoin{
 		this.isCartesian = checkCartesian();
 		if(! this.isCartesian){
 			// Sort arg0 on those tupples defined by sort indexes
-			IRelation rel0 = new Relation(
+			IRelation rel0 = RELATION.getRelation(
 					new SimpleIndexComparator(inds0));
 			rel0.addAll(this.relation0);
 			this.relation0 = rel0;
 			
 			// Sort arg1 on those tupples defined by sort indexes
-			IRelation rel1 = new Relation(
+			IRelation rel1 = RELATION.getRelation(
 					new SimpleIndexComparator(inds1));
 			rel1.addAll(this.relation1);
 			this.relation1 = rel1;		
@@ -154,7 +156,7 @@ public class JoinSimple implements IJoin{
 		if (this.projectIndexes == null) {
 			this.projectIndexes = this.transformIndexes0(a, new int[a]);
 		}
-		this.joinRelation = new Relation(a);
+		this.joinRelation = RELATION.getRelation(a);
 	}
 
 	public IRelation join() {
@@ -162,7 +164,7 @@ public class JoinSimple implements IJoin{
 		 * Return an empty join relation for empty input relation/s.
 		 */
 		if (this.relation0.size()==0 || relation1.size() == 0) {
-			return new Relation(this.getRelationArity());
+			return RELATION.getRelation(this.getRelationArity());
 		}
 		setJoinOperator();
 		

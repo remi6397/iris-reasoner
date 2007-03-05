@@ -27,6 +27,7 @@
 package org.deri.iris.operations.relations;
 
 import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.RELATION;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -118,13 +119,13 @@ public class JoinSimpleExtended implements IJoin{
 		
 		// Sort arg0 on those tupples defined by sort indexes
 		this.comparator = new IndexComparator(this.transformIndexes0(indexes));
-		IRelation rel0 = new Relation(comparator);
+		IRelation rel0 = RELATION.getRelation(comparator);
 		rel0.addAll(this.relation0);
 		this.relation0 = rel0;
 		
 		// Sort arg1 on those tupples defined by sort indexes
 		this.comparator = new IndexComparator(this.transformIndexes1(indexes));
-		IRelation rel1 = new Relation(comparator);
+		IRelation rel1 = RELATION.getRelation(comparator);
 		rel1.addAll(this.relation1);
 		this.relation1 = rel1;
 		/*
@@ -135,7 +136,7 @@ public class JoinSimpleExtended implements IJoin{
 			this.projectIndexes = this.transformIndexes0(
 					new int[this.indexes.length*2]);
 		}
-		this.joinRelation = new Relation(this.getRelationArity());
+		this.joinRelation = RELATION.getRelation(this.getRelationArity());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -175,7 +176,7 @@ public class JoinSimpleExtended implements IJoin{
 	 */
 	private IRelation selectAndJoin(ITuple tuple, boolean order){
 		if(relation1.first() == null) return null;
-		IRelation joinElements = new Relation(this.getRelationArity());
+		IRelation joinElements = RELATION.getRelation(this.getRelationArity());
 		
 		SortedSet subSet = null;
 		ITuple transformedTuple;
@@ -201,7 +202,7 @@ public class JoinSimpleExtended implements IJoin{
 	 * @return
 	 */
 	private IRelation checkAndJoin0(ITuple tuple, SortedSet subSet){
-		IRelation joinElements = new Relation(this.getRelationArity());
+		IRelation joinElements = RELATION.getRelation(this.getRelationArity());
 		
 		Concatenation concatenator = new Concatenation();
 		ITuple tmpTuple, copyTuple, copyTmpTuple, concatenatedTuple = null;
@@ -250,7 +251,7 @@ public class JoinSimpleExtended implements IJoin{
 	 * @return
 	 */
 	private IRelation checkAndJoin1(ITuple tuple, SortedSet subSet){
-		IRelation joinElements = new Relation(this.getRelationArity());
+		IRelation joinElements = RELATION.getRelation(this.getRelationArity());
 		
 		Concatenation concatenator = new Concatenation();
 		ITuple tmpTuple, copyTuple, copyTmpTuple, concatenatedTuple = null;

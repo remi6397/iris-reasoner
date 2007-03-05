@@ -27,6 +27,7 @@
 package org.deri.iris.operations.relations;
 
 import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.RELATION;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -137,7 +138,7 @@ public class Selection implements ISelection {
 		int[] indexes = this.getIndexes(this.equalityTuple);
 		SelectionFullComparator comparator = new SelectionFullComparator(
 				indexes);
-		IRelation rel = new Relation(comparator);
+		IRelation rel = RELATION.getRelation(comparator);
 
 		rel.add(this.equalityTuple);
 		rel.addAll(this.relation);
@@ -155,7 +156,7 @@ public class Selection implements ISelection {
 	public IRelation select1() {
 		// Sort relation on tupples defined by the indexes
 		SelectionComparator comparator = new SelectionComparator(this.indexes);
-		IRelation rel = new Relation(comparator);
+		IRelation rel = RELATION.getRelation(comparator);
 		Set<ITuple> relTrash = new HashSet<ITuple>();
 
 		Iterator i = this.relation.iterator();
@@ -199,7 +200,7 @@ public class Selection implements ISelection {
 	public IRelation select3() {
 		this.relation = select0();
 		ITuple tup = null;
-		IRelation rel = new Relation(this.relation.getArity());
+		IRelation rel = RELATION.getRelation(this.relation.getArity());
 		List<ITerm> l = this.nonEqualityTuple.getTerms();
 		ITerm t = null;
 
@@ -220,7 +221,7 @@ public class Selection implements ISelection {
 		int[] indexes = this.getIndexes(eqTuple);
 		SelectionFullComparator comparator = new SelectionFullComparator(
 				indexes);
-		IRelation rel = new Relation(comparator);
+		IRelation rel = RELATION.getRelation(comparator);
 
 		rel.add(eqTuple);
 		rel.addAll(r);
