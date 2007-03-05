@@ -25,6 +25,8 @@
  */
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.factory.Factory.RELATION;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +68,7 @@ public class Union implements IUnion {
 				prevArity = arity;
 			}
 		}
-		this.unionRel = new Relation(arity);
+		this.unionRel = RELATION.getRelation(arity);
 	}
 
 	Union(IRelation... args) {
@@ -92,7 +94,7 @@ public class Union implements IUnion {
 				prevArity = arity;
 			}
 		}
-		this.unionRel = new Relation(arity);
+		this.unionRel = RELATION.getRelation(arity);
 	}
 
 	public IRelation union() {

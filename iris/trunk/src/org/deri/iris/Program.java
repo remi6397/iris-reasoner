@@ -25,6 +25,7 @@
  */
 package org.deri.iris;
 
+import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.Collections;
@@ -130,7 +131,7 @@ public class Program implements IProgram{
 		p = registerPredicate(p);
 		IRelation rel = facts.get(p);
 		if (rel == null) {
-			rel = new Relation(p.getArity());
+			rel = RELATION.getRelation(p.getArity());
 			this.facts.put(p, rel);
 		}
 		return this.facts.get(p).add(a.getTuple());

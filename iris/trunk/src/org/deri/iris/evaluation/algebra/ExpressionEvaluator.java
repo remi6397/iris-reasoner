@@ -25,6 +25,8 @@
  */
 package org.deri.iris.evaluation.algebra;
 
+import static org.deri.iris.factory.Factory.RELATION;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -214,7 +216,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 			rel = this.complementor.getComplement(r.getPredicate());
 		}
 		if(rel == null){
-			return	new Relation(r.getPredicate().getArity());
+			return	RELATION.getRelation(r.getPredicate().getArity());
 		}else{
 			return rel; 
 		}
@@ -273,7 +275,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	private IRelation evaluateConstant(IComponent c){
 		
 		IConstantDescriptor con = (IConstantDescriptor)c;
-		IRelation r = new Relation(1);
+		IRelation r = RELATION.getRelation(1);
 		r.add(Factory.BASIC.createMinimalTuple(con.getConstant()));
 		return r;
 	}

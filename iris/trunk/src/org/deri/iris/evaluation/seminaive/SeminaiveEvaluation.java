@@ -25,6 +25,8 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
+import static org.deri.iris.factory.Factory.RELATION;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -114,7 +116,7 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 					if(this.p.getFacts(pr) != null && 
 							! this.p.getFacts(pr).containsAll(p)){
 						
-						tempRel = new Relation(p.getArity());
+						tempRel = RELATION.getRelation(p.getArity());
 						tempRel.addAll(p);
 						tempRel.removeAll(this.p.getFacts(pr));
 						aq.put(pr, tempRel);

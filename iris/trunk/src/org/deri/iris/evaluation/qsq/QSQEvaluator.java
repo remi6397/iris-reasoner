@@ -27,6 +27,7 @@ package org.deri.iris.evaluation.qsq;
 
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.EVALUATION;
+import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 import static org.deri.iris.factory.Factory.TUPLE_OPERATION;
 
@@ -214,10 +215,10 @@ public class QSQEvaluator implements IEvaluator {
 				a = ai.next();
 				r = this.qsqMap.get(a).iterator().next();
 				if (!this.inputs.containsKey(a)) {
-					this.inputs.put(a, new Relation(r.getInputArity(a)));
-					this.currentInputs.put(a, new Relation(r.getInputArity(a)));
-					this.allInputs.put(a, new Relation(r.getInputArity(a)));
-					this.tmpInputs.put(a, new Relation(r.getInputArity(a)));
+					this.inputs.put(a, RELATION.getRelation(r.getInputArity(a)));
+					this.currentInputs.put(a, RELATION.getRelation(r.getInputArity(a)));
+					this.allInputs.put(a, RELATION.getRelation(r.getInputArity(a)));
+					this.tmpInputs.put(a, RELATION.getRelation(r.getInputArity(a)));
 				}
 			}
 			// Remove from t all tuples that don't unify,
