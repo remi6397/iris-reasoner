@@ -25,20 +25,23 @@
  */
 package org.deri.iris.api.builtins;
 
+import java.util.List;
+import java.util.Collection;
+
 import org.deri.iris.api.basics.IAtom;
+import org.deri.iris.api.basics.ITuple;
 
 /**
  * <p>
  * Defines a Builtin.
  * </p>
  * <p>
- * $Id: IBuiltInAtom.java,v 1.2 2006-09-20 08:10:11 richardpoettler Exp $
+ * $Id: IBuiltInAtom.java,v 1.3 2007-03-13 16:55:15 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @author richi
- * @date 17.03.2006 14:18:27
- * @version $Revision: 1.2 $
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision: 1.3 $
  */
 public abstract interface IBuiltInAtom extends IAtom {
 
@@ -47,26 +50,33 @@ public abstract interface IBuiltInAtom extends IAtom {
 	 * Runns the evaluation.
 	 * </p>
 	 * <p>
-	 * If the builting isn't evaluable, <code>false</code> will be returned.
+	 * This method takes a input a collection of tuples for which it should run the
+	 * evaluation. Each tuple must contain the substitutes for the variables of 
+	 * this builtin at the corresponding possition. Substitutes where this builtin 
+	 * already has a constant might be ignored.
 	 * </p>
 	 * <p>
-	 * If the result of the builtin/evaluation is a boolean (e.g. a equals, or
-	 * less-than builtin) the corresponding value should be returned. If the
-	 * result is more complex, it shoud be stored in an additional term in the
-	 * builtin (e.g. add(x,y,z) should store the sum of x and y in z).
+	 * The returned list contains the tuples for which the builtin holds (e.g. if
+	 * it is a binary builing like A &lt; B and the input was &lt;1, 2&gt; it will return
+	 * &lt;1, 2&gt;, but it the input was &lt;3, 2&gt; it will return a empty list), or 
+	 * tuples where the missing fields were calculated (e.g. we had a add builtin A + 5 = C
+	 * and the input was &lt;null, null, 7&gt; it will return the tuple &lt;2, 5, 7&gt;).
 	 * </p>
 	 * 
-	 * @return <code>true</code> if the evaluation completed successfully and
-	 *         the result (for e.g. a builtin which result is a boolean (e.g.
-	 *         equals)) is <code>true</code>, otherwise <code>false</code>
+	 * @param t the substitutes for the variables of the builtin
+	 * @return the list of tuples where this builtin holds or the calculated results
+	 * @throws IllegalArgumentException if the builtin couldn't be evaluated
+	 * @throws NullPointerException if the collection was <code>null</code>
 	 */
-	public boolean evaluate();
+	public List<ITuple> evaluate(final Collection<ITuple> t);
 
 	/**
 	 * Checks whether the builtin is evaluable.
 	 * 
 	 * @return <code>true</code> if the evaluation could be run correctly,
 	 *         otherwise <code>false</code>
+	 * @deprecated now it is checked at evaluation time whether the builtin
+	 * 		is evaluable
 	 */
 	public boolean isEvaluable();
 }
