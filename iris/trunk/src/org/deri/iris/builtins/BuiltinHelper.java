@@ -25,19 +25,27 @@
  */
 package org.deri.iris.builtins;
 
+import static org.deri.iris.factory.Factory.CONCRETE;
+
+import java.util.Collection;
+
 import org.deri.iris.api.terms.INumericTerm;
+import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.concrete.IDecimalTerm;
+import org.deri.iris.api.terms.concrete.IDoubleTerm;
+import org.deri.iris.api.terms.concrete.IFloatTerm;
+import org.deri.iris.api.terms.concrete.IIntegerTerm;
 
 /**
  * <p>
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.1 2006-09-21 08:58:55 richardpoettler Exp $
+ * $Id: BuiltinHelper.java,v 1.2 2007-03-13 15:49:21 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-09-21 08:58:55 $
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision: 1.2 $
  */
 class BuiltinHelper {
 	private BuiltinHelper() {
@@ -106,5 +114,297 @@ class BuiltinHelper {
 		}
 		// TODO: maybe instance check for Number
 		return ((Number) n.getValue()).doubleValue();
+	}
+
+	/**
+	 * <p>
+	 * Produces the sum of two terms. The resulting term will be of the most accurate
+	 * type of the submitted ones.
+	 * </p>
+	 * <p>
+	 * At the moment only INumericTerms are supported.
+	 * </p>
+	 * @param t0 the first summand
+	 * @param t1 the second summand
+	 * @return the sum
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
+	 */
+	static ITerm add(final ITerm t0, final ITerm t1) {
+		if((t0 == null) || (t1 == null)) {
+			throw new NullPointerException("The terms must not be null");
+		}
+		if(!(t0 instanceof INumericTerm) || !(t1 instanceof INumericTerm)) {
+			throw new IllegalArgumentException("The terms must be INumericTermS, but were " + 
+					t0.getClass().getName() + " and " + t1.getClass().getName());
+		}
+		return toAccuratest(getDouble((INumericTerm) t0) + getDouble((INumericTerm) t1), t0, t1);
+	}
+
+	/**
+	 * <p>
+	 * Produces the difference of two terms. The resulting term will be of the most accurate
+	 * type of the submitted ones.
+	 * </p>
+	 * <p>
+	 * At the moment only INumericTerms are supported.
+	 * </p>
+	 * @param t0 the minuend
+	 * @param t1 the subtrahend
+	 * @return the differnece
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
+	 */
+	static ITerm subtract(final ITerm t0, final ITerm t1) {
+		if((t0 == null) || (t1 == null)) {
+			throw new NullPointerException("The terms must not be null");
+		}
+		if(!(t0 instanceof INumericTerm) || !(t1 instanceof INumericTerm)) {
+			throw new IllegalArgumentException("The terms must be INumericTermS, but were " + 
+					t0.getClass().getName() + " and " + t1.getClass().getName());
+		}
+		return toAccuratest(getDouble((INumericTerm) t0) - getDouble((INumericTerm) t1), t0, t1);
+	}
+
+	/**
+	 * <p>
+	 * Produces the product of two terms. The resulting term will be of the most accurate
+	 * type of the submitted ones.
+	 * </p>
+	 * <p>
+	 * At the moment only INumericTerms are supported.
+	 * </p>
+	 * @param t0 the first factor
+	 * @param t1 the second factor
+	 * @return the product
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
+	 */
+	static ITerm multiply(final ITerm t0, final ITerm t1) {
+		if((t0 == null) || (t1 == null)) {
+			throw new NullPointerException("The terms must not be null");
+		}
+		if(!(t0 instanceof INumericTerm) || !(t1 instanceof INumericTerm)) {
+			throw new IllegalArgumentException("The terms must be INumericTermS, but were " + 
+					t0.getClass().getName() + " and " + t1.getClass().getName());
+		}
+		return toAccuratest(getDouble((INumericTerm) t0) * getDouble((INumericTerm) t1), t0, t1);
+	}
+
+	/**
+	 * <p>
+	 * Produces the quotient of two terms. The resulting term will be of the most accurate
+	 * type of the submitted ones.
+	 * </p>
+	 * <p>
+	 * At the moment only INumericTerms are supported.
+	 * </p>
+	 * @param t0 the dividend
+	 * @param t1 the divisor
+	 * @return the quotient
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
+	 */
+	static ITerm divide(final ITerm t0, final ITerm t1) {
+		if((t0 == null) || (t1 == null)) {
+			throw new NullPointerException("The terms must not be null");
+		}
+		if(!(t0 instanceof INumericTerm) || !(t1 instanceof INumericTerm)) {
+			throw new IllegalArgumentException("The terms must be INumericTermS, but were " + 
+					t0.getClass().getName() + " and " + t1.getClass().getName());
+		}
+		return toAccuratest(getDouble((INumericTerm) t0) / getDouble((INumericTerm) t1), t0, t1);
+	}
+
+	/**
+	 * Constructs a number term with of the most accuratest submitted term type.
+	 * @param n the value for the returned term
+	 * @param t0 the first term (only the type of this term will be taken into account)
+	 * @param t1 the first term (only the type of this term will be taken into account)
+	 * @return a term of the most accuratest type of the submitted ones with the 
+	 * 	given value.
+	 * @throws NullPointerException if the number is <code>null</code>
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if one of the terms is not  a INumericTerm
+	 * @throws IllegalArgumentException if the most accuratest term could not be determined.
+	 */
+	private static ITerm toAccuratest(final Number n, final ITerm t0, final ITerm t1) {
+		if(n == null) {
+			throw new NullPointerException("The number must not be null");
+		}
+		if((t0 == null) || (t1 == null)) {
+			throw new NullPointerException("The terms must not be null");
+		}
+		if(!(t0 instanceof INumericTerm) || !(t1 instanceof INumericTerm)) {
+			throw new IllegalArgumentException("The terms must be INumericTermS, but were " + 
+					t0.getClass().getName() + " and " + t1.getClass().getName());
+		}
+		if((t0 instanceof IDecimalTerm) || (t1 instanceof IDecimalTerm)) {
+			return CONCRETE.createDecimal(n.doubleValue());
+		} else if((t0 instanceof IDoubleTerm) || (t1 instanceof IDoubleTerm)) {
+			return CONCRETE.createDouble(n.doubleValue());
+		} else if((t0 instanceof IFloatTerm) || (t1 instanceof IFloatTerm)) {
+			return CONCRETE.createFloat(n.floatValue());
+		} else if((t0 instanceof IIntegerTerm) || (t1 instanceof IIntegerTerm)) {
+			return CONCRETE.createInteger(n.intValue());
+		}
+		throw new IllegalArgumentException("Couldn't determine the most accurate term out of " + 
+				t0.getClass().getName() + " and " + t1.getClass().getName());
+	}
+
+	/**
+	 * Determines the indexes of the ground terms in a collection.
+	 * @param t the collection where to search for ground terms
+	 * @return the indexes of the ground terms (the first term has the index 0)
+	 * @throws NullPointerException if the collection is <code>null</code>
+	 */
+	static int[] determineGround(final Collection<ITerm> t) {
+		if(t == null) {
+			throw new NullPointerException("The tuple must not be null");
+		}
+		final int[] res = new int[t.size()];
+		int i = 0;
+		int pos = 0;
+		for(final ITerm term : t) {
+			if(term.isGround()) {
+				res[i++] = pos;
+			}
+			pos++;
+		}
+		final int[] ret = new int[i];
+		System.arraycopy(res, 0, ret, 0, i);
+		return ret;
+	}
+
+	/**
+	 * Returns the terms at a given position in a collection.
+	 * @param t the collection from where to retrieve the terms
+	 * @param pos the positions of the terms to retrieve
+	 * @return the retrieved terms
+	 * @throws NullPointerException if the collection is <code>null</code>
+	 * @throws NullPointerException if the position array is <code>null</code>
+	 */
+	static ITerm[] getIndexes(final Collection<ITerm> t, final int[] pos) {
+		if(pos == null) {
+			throw new NullPointerException("The position array must not be null");
+		}
+		if(t == null) {
+			throw new NullPointerException("The tuple must not be null");
+		}
+		final ITerm[] ret = new ITerm[pos.length];
+		int idx = 0;
+		int i = 0;
+		for(final ITerm term : t) {
+			if(i == pos[idx]) {
+				ret[idx++] = term;
+				if(idx >= ret.length) { // if we have already all terms -> return
+					break;
+				}
+			}
+			i++;
+		}
+		return ret;
+	}
+
+	/**
+	 * Determines the indexes of the unground terms in a collection.
+	 * @param t the collection where to search for ground terms
+	 * @return the indexes of the unground terms (the first term has the index 0)
+	 * @throws NullPointerException if the collection is <code>null</code>
+	 */
+	static int[] determineUnground(final Collection<ITerm> t) {
+		if(t == null) {
+			throw new NullPointerException("The tuple must not be null");
+		}
+		final int[] res = new int[t.size()];
+		int i = 0;
+		int pos = 0;
+		for(final ITerm term : t) {
+			if(!term.isGround()) {
+				res[i++] = pos;
+			}
+			pos++;
+		}
+		final int[] ret = new int[i];
+		System.arraycopy(res, 0, ret, 0, i);
+		return ret;
+	}
+
+	/**
+	 * <p>
+	 * Computes the complement of an index array.
+	 * </p>
+	 * <p>
+	 * E.g. we have computed an index array <code>[1, 3, 4]</code> of a collection
+	 * with length 5 we would get <code>[0, 2]</code> as complement.
+	 * </p>
+	 * @param i the array from which to compute the complement
+	 * @param l the length of the collection whe took the index from
+	 * @return the complement
+	 * @throws NullPointerException if the index array was <code>null</code>
+	 * @throws IllegalArgumentException if the lenght was nevative
+	 * @see #determineGround(Collection<ITerm>)
+	 * @see #determineUnground(Collection<ITerm>)
+	 */
+	static int[] complement(final int[] i, final int l) {
+		if(l < 0) {
+			throw new IllegalArgumentException("The length must not be negative");
+		}
+		int[] res = new int[l - i.length];
+		int guess = 0;
+		int ipos = 0;
+		for(int j = 0; j < res.length; ) {
+			if(i[ipos] != guess) {
+				res[j++] = guess;
+			} else {
+				ipos++;
+			}
+			guess++;
+		}
+		return res;
+	}
+
+	/**
+	 * <p>
+	 * Concats two term arrays taking an index array into account.
+	 * </p>
+	 * <p>
+	 * E.g. we got an index of <code>[0, 3, 4]</code>, the firs array is <code>['a', 'b', 'c']</code>  
+	 * and the second <code>[12, 13, 14]</code> we will get <code>['a', 12, 13, 'b', 'c', 14]</code>.
+	 * </p>
+	 * @param idx0 the index array
+	 * @param t0 the first array (this terms will be put at he positions of the index array)
+	 * @param t1 the second array (with this terms the gaps will be filled up)
+	 * @throws NullPointerException if the index array is <code>null</code>
+	 * @throws NullPointerException if one of the term arrays is <code>null</code>
+	 * @throws IllegalArgumentException if the lenght of the index and the first term array don't match
+	 * @see #determineGround(Collection<ITerm>)
+	 * @see #determineUnground(Collection<ITerm>)
+	 */
+	static ITerm[] concat(final int[] idx0, final ITerm[] t0, final ITerm[] t1) {
+		if(idx0 == null) {
+			throw new NullPointerException("The index array must not be null");
+		}
+		if((t0 == null) || (t1 == null)) {
+			throw new NullPointerException("The term arrays must not be null");
+		}
+		if(idx0.length != t0.length) {
+			throw new IllegalArgumentException("The length of the index array and " + 
+					"the first array must be equal, but was " + 
+					idx0.length + " and " + t0.length);
+		}
+		final ITerm[] res = new ITerm[t0.length + t1.length];
+		int ipos = 0;
+		int pos0 = 0;
+		int pos1 = 0;
+		for(int i = 0; i < res.length; i++) {
+			if(idx0[ipos] == i) {
+				res[i] = t0[pos0++];
+				ipos++;
+			} else {
+				res[i] = t1[pos1++];
+			}
+		}
+		return res;
 	}
 }
