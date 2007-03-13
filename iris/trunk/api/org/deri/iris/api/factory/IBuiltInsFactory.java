@@ -34,13 +34,13 @@ import org.deri.iris.api.terms.ITerm;
  * by this engine.
  * </p>
  * <p>
- * $Id: IBuiltInsFactory.java,v 1.5 2007-02-15 12:44:59 darko_anicic Exp $
+ * $Id: IBuiltInsFactory.java,v 1.6 2007-03-13 17:14:48 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @author richi
+ * @author Richard Pöttler, richard dot poettler at deri dot org
  * @date 17.03.2006 11:55:35
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public interface IBuiltInsFactory {
 
@@ -48,14 +48,46 @@ public interface IBuiltInsFactory {
 	 * Creates an add builtin.
 	 * 
 	 * @param t0
-	 *            the first term
+	 *            the first summand
 	 * @param t1
-	 *            the second term
+	 *            the second summand
+	 * @param t2
+	 *            the sum
 	 * @return the builtin
 	 * @throws NullPointerException
 	 *             if any of the terms is <code>null</code>
 	 */
-	public abstract IBuiltInAtom createAddBuiltin(final ITerm t0, final ITerm t1);
+	public abstract IBuiltInAtom createAddBuiltin(final ITerm t0, final ITerm t1, final ITerm t2);
+
+	/**
+	 * Creates a subtract builtin.
+	 * @param t0 the minuend
+	 * @param t1 the subtrahend
+	 * @param t2 the difference
+	 * @return the constructed builtin
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 */
+	public abstract IBuiltInAtom createSubtractBuiltin(final ITerm t0, final ITerm t1, final ITerm t2);
+
+	/**
+	 * Creates a multiply builtin.
+	 * @param t0 the first factor
+	 * @param t1 the second factor
+	 * @param t2 the product
+	 * @return the constructed builtin
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 */
+	public abstract IBuiltInAtom createMultiplyBuiltin(final ITerm t0, final ITerm t1, final ITerm t2);
+
+	/**
+	 * Creates a divide builtin.
+	 * @param t0 the dividend
+	 * @param t1 the diviso
+	 * @param t2 the quotient
+	 * @return the constructed builtin
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 */
+	public abstract IBuiltInAtom createDivideBuiltin(final ITerm t0, final ITerm t1, final ITerm t2);
 
 	/**
 	 * Creates an equal builtin.
