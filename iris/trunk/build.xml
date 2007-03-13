@@ -25,7 +25,7 @@
 		<tstamp />
 	</target>
 
-	<target name="javac" description="compiles all the class files" depends="init,prepareclasses">
+	<target name="compile" description="compiles all the class files" depends="init,prepareclasses">
 		<javac srcdir="${dir.api}:${dir.src}" classpathref="defaultcp" destdir="${dir.classes}">
 			<include name="**/*.java" />
 		</javac>
@@ -56,7 +56,7 @@
 		<jar basedir="${dir.sablecc.src}" destfile="${file.jar.parser}" index="true" />
 	</target>
 
-	<target name="javadoc" description="generates the javadoc" depends="init,preparejavadoc">
+	<target name="doc" description="generates the javadoc" depends="init,preparedoc">
 		<javadoc destdir="${dir.javadoc}" link="http://java.sun.com/j2se/1.5.0/docs/api/">
 			<fileset dir="${dir.api}">
 				<include name="**/*.java" />
@@ -107,7 +107,7 @@
 		</junit>
 	</target>
 
-	<target name="jar" description="creates the jar file" depends="init,javac,preparejar">
+	<target name="jar" description="creates the jar file" depends="init,compile,preparejar">
 		<jar basedir="${dir.classes}" destfile="${file.jar.main}" index="true" />
 	</target>
 
@@ -115,7 +115,7 @@
 		<delete dir="${dir.classes}" />
 	</target>
 
-	<target name="cleanup" description="deletes ALL generated files" depends="init">
+	<target name="clean" description="deletes ALL generated files" depends="init">
 		<delete dir="${dir.build}" />
 	</target>
 
@@ -130,7 +130,7 @@
 		<mkdir dir="${dir.classes}" />
 	</target>
 
-	<target name="preparejavadoc" depends="init">
+	<target name="preparedoc" depends="init">
 		<mkdir dir="${dir.javadoc}" />
 	</target>
 
