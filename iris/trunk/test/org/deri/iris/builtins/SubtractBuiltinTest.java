@@ -25,7 +25,17 @@
  */
 package org.deri.iris.builtins;
 
+import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
+import static org.deri.iris.factory.Factory.TERM;
+
+import java.util.List;
+import java.util.LinkedList;
+
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.concrete.IIntegerTerm;
+import org.deri.iris.api.terms.ITerm;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -35,12 +45,11 @@ import junit.framework.TestSuite;
  * Tests for the {@code SubtractBuiltin}.
  * </p>
  * <p>
- * $Id: SubtractBuiltinTest.java,v 1.1 2006-09-28 11:30:50 richardpoettler Exp $
+ * $Id: SubtractBuiltinTest.java,v 1.2 2007-03-13 17:35:20 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-09-28 11:30:50 $
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision: 1.2 $
  */
 public class SubtractBuiltinTest extends TestCase {
 
@@ -49,11 +58,29 @@ public class SubtractBuiltinTest extends TestCase {
 				.getSimpleName());
 	}
 
-	public void testEvaluation() {
-		SubtractBuiltin a = new SubtractBuiltin(CONCRETE.createInteger(5), CONCRETE
-				.createInteger(2));
-		a.evaluate();
-		assertEquals("5 - 2 should be 6", CONCRETE.createInteger(3), a
-				.getTerm(2));
+	public void testEvaluate() {
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm T_4 = CONCRETE.createInteger(4);
+		final ITerm T_65 = CONCRETE.createFloat(6.5f);
+
+		// X - 4 = Y
+		final SubtractBuiltin a_x4y = new SubtractBuiltin(X, T_4, Y);
+		List<ITuple> in = new LinkedList<ITuple>();
+		List<ITuple> res = new LinkedList<ITuple>();
+		in.add(BASIC.createTuple(CONCRETE.createInteger(6), Y, X));
+		in.add(BASIC.createTuple(CONCRETE.createInteger(16), Y, X));
+		in.add(BASIC.createTuple(X, Y, CONCRETE.createInteger(6)));
+		in.add(BASIC.createTuple(X, Y, CONCRETE.createInteger(16)));
+		res.add(BASIC.createTuple(CONCRETE.createInteger(6), T_4, CONCRETE.createInteger(2)));
+		res.add(BASIC.createTuple(CONCRETE.createInteger(16), T_4, CONCRETE.createInteger(12)));
+		res.add(BASIC.createTuple(CONCRETE.createInteger(10), T_4, CONCRETE.createInteger(6)));
+		res.add(BASIC.createTuple(CONCRETE.createInteger(20), T_4, CONCRETE.createInteger(16)));
+		assertEquals(res, a_x4y.evaluate(in));
+		// X - Y = 6.5
+		final SubtractBuiltin a_xy65 = new SubtractBuiltin(X, Y, T_65);
+		// X - Y = Z
+		final SubtractBuiltin a_xyz = new SubtractBuiltin(X, Y, Z);
 	}
 }
