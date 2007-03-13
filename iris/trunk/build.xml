@@ -14,7 +14,7 @@
 
 	<path id="defaultcp">
 		<fileset dir="${dir.lib}">
-			<include name="**/jgrapht*.jar" />
+			<include name="**/*.jar" />
 		</fileset>
 	</path>
 
@@ -82,6 +82,31 @@
 		
 	</target>
 
+	<target name="compiletest" description="compiles the test classes" depends="init,jar,preparecompiletest">
+		<javac srcdir="${dir.src.test}" destdir="${dir.classes.test}">
+			<classpath>
+				<path refid="defaultcp"/>
+				<fileset dir="${dir.jar}">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="test" description="runs junit tests" depends="init,jar,compiletest,preparetest">
+		<junit showoutput="true" printsummary="true">
+			<classpath>
+				<path refid="defaultcp"/>
+				<fileset dir="${dir.jar}">
+					<include name="**/*.jar"/>
+				</fileset>
+				<dirset dir="${dir.classes.test}"/>
+			</classpath>
+			<formatter type="plain"/>
+			<test name="${file.test}" todir="${dir.test.reports}"/>
+		</junit>
+	</target>
+
 	<target name="jar" description="creates the jar file" depends="init,javac,preparejar">
 		<jar basedir="${dir.classes}" destfile="${file.jar.main}" index="true" />
 	</target>
@@ -115,6 +140,14 @@
 	
 	<target name="preparedoccheck" depends="init">
 		<mkdir dir="${dir.build}/doccheck"/>
+	</target>
+	
+	<target name="preparetest" depends="init">
+		<mkdir dir="${dir.test.reports}"/>
+	</target>
+	
+	<target name="preparecompiletest" depends="init">
+		<mkdir dir="${dir.classes.test}"/>
 	</target>
 
 </project>
