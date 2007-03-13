@@ -25,7 +25,11 @@
  */
 package org.deri.iris.builtins;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.factory.Factory;
@@ -36,12 +40,11 @@ import org.deri.iris.factory.Factory;
  * equal.
  * </p>
  * <p>
- * $Id: LessEqualBuiltin.java,v 1.2 2006-11-14 17:21:15 adi Exp $
+ * $Id: LessEqualBuiltin.java,v 1.3 2007-03-13 16:57:15 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @date $Date: 2006-11-14 17:21:15 $
- * @version $Revision: 1.2 $
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision: 1.3 $
  */
 public class LessEqualBuiltin extends AbstractBuiltin {
 
@@ -61,6 +64,15 @@ public class LessEqualBuiltin extends AbstractBuiltin {
 	 */
 	LessEqualBuiltin(final ITerm t0, final ITerm t1) {
 		super(PREDICATE, t0, t1);
+	}
+
+	/**
+	 * This is an empty method stub to keep the src directory compileable.
+	 * @return at the moment it always returns <code>null</code>
+	 */
+	public List<ITuple> evaluate(final Collection<ITuple> t) {
+		// TODO: not implemented yet
+		return null;
 	}
 
 	/**

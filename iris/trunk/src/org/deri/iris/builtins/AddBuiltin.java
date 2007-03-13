@@ -25,30 +25,33 @@
  */
 package org.deri.iris.builtins;
 
-//TODO: maybe overwrite the evaluate method (maybe to return always true)
+import static org.deri.iris.factory.Factory.BASIC;
 
-import javax.naming.OperationNotSupportedException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.LinkedList;
 
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.factory.Factory;
 
 /**
  * <p>
- * Builtin to compute the product of two terms.
+ * Represents an add operation. In at the evaluation time there must be only one
+ * variable be left for computation, otherwise an exception will be thrown.
  * </p>
  * <p>
- * $Id: AddBuiltin.java,v 1.2 2006-11-14 17:21:15 adi Exp $
+ * $Id: AddBuiltin.java,v 1.3 2007-03-13 16:57:15 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-11-14 17:21:15 $
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision: 1.3 $
  */
 public class AddBuiltin extends AbstractBuiltin {
 
 	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = Factory.BASIC.createBuiltinPredicate(
+	private static final IPredicate PREDICATE = BASIC.createBuiltinPredicate(
 			"ADD", 3);
 
 	/**
@@ -58,31 +61,47 @@ public class AddBuiltin extends AbstractBuiltin {
 	 *            the first term
 	 * @param t1
 	 *            the second term
+	 * @param t2
+	 *            the result of the add operation
 	 * @throws NullPointerException
 	 *             if one of the terms is {@code null}
 	 */
-	AddBuiltin(final ITerm t0, final ITerm t1) {
-		super(PREDICATE, 2, t0, t1);
+	AddBuiltin(final ITerm t0, final ITerm t1, final ITerm t2) {
+		super(PREDICATE, 3, t0, t1, t2);
 	}
 
-	/**
-	 * <p>
-	 * Runns the evaluation. This method used the
-	 * {@code ITerm.add(ITerm)} method for evaluation and stores the
-	 * result at the index 2.
-	 * </p>
-	 * 
-	 * @return {@code true} if the evalueation succeeded
-	 * @throws OperationNotSupportedException
-	 *             if the first term doesn't support the {@code add(ITerm)}
-	 *             method at all
-	 * @throws IllegalArgumentException
-	 *             if the first term doesn't support the {@code add(ITerm)}
-	 *             method with the type of the second term
-	 * @see ITerm#add(ITerm)
-	 */
-	public boolean evaluate() {
-		setTerm(2, getTerm(0).add(getTerm(1)));
-		return true;
+	public List<ITuple> evaluate(final Collection<ITuple> c) {
+		if(c == null) {
+			throw new NullPointerException("The collection must not be null");
+		}
+		final List<ITuple> res = new LinkedList<ITuple>();
+		// calculating the needed term indexes from the submitted tuple
+		int[] outstanding = BuiltinHelper.determineUnground(getTuple().getTerms());
+		// retrieving the constants of this builin
+		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple().getTerms(), 
+				BuiltinHelper.complement(outstanding, getTuple().getArity()));
+		for(final ITuple t : c) {
+			// putting the term from this builtin and the submitted tuple together
+			final ITerm[] complete = BuiltinHelper.concat(outstanding, 
+					BuiltinHelper.getIndexes(t.getTerms(), outstanding), bCons);
+			// determing the remaining vars of the terms
+			final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
+			// run the evaluation
+			if(vars.length > 1) {
+				throw new IllegalArgumentException("Can not evaluate an ADD with 2 variables");
+			}
+			if(vars[0] == 0) {
+				complete[vars[0]] = BuiltinHelper.subtract(complete[2], complete[1]);
+			} else if (vars[0] == 1) {
+				complete[vars[0]] = BuiltinHelper.subtract(complete[2], complete[0]);
+			} else if (vars[0] == 2) {
+				complete[vars[0]] = BuiltinHelper.add(complete[0], complete[1]);
+			} else {
+				throw new IllegalArgumentException("The variable must be at possition " + 
+						"0 to 2, but was on " + vars[0]);
+			}
+			res.add(BASIC.createTuple(complete));
+		}
+		return res;
 	}
 }
