@@ -52,15 +52,14 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.seminaive.Complementor;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.relations.JoinSimple;
-import org.deri.iris.storage.Relation;
 
 /**
  * <p>
  * An evaluator of a relational algebra expression. 
  * This evaluator is used whenever an evaluation of 
  * relational algebra expressions is needed regardless 
- * of a particular evaluation algorithm (e.g. naïve 
- * evaluation, semi-naïve evaluation etc.).
+ * of a particular evaluation algorithm (e.g. naive 
+ * evaluation, semi-naive evaluation etc.).
  * </p>
  * <p>
  * This evaluator takes a program previously transformed to 
@@ -74,20 +73,19 @@ import org.deri.iris.storage.Relation;
 public class ExpressionEvaluator implements IExpressionEvaluator {
 
 	private Complementor complementor = null;
-
 	
 	public ExpressionEvaluator() {
 	}
 
 	public IRelation evaluate(IComponent c, IProgram p) {
-		complementor = new Complementor(p);
+		this.complementor = new Complementor(p);
 		return evaluate(c, p, null);
 	}
 
 	public IRelation evaluateIncrementally(IComponent c, IProgram p, 
 			Map<IPredicate, IRelation> aq) {
 		
-		complementor = new Complementor(p);
+		this.complementor = new Complementor(p);
 		return evaluate(c, p, aq);
 	}
 	
@@ -147,13 +145,13 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		vars.addAll(c0.getVariables());
 		IComponent c1 = null;
 		/**
-		 * Left relation to be joined is contains all tuples from the KB 
-		 * with the corresponding predicate, not only “fresh tuples” from 
+		 * Left relation to be joined contains all tuples from the KB related
+		 * to the corresponding predicate, not only "fresh tuples" from 
 		 * the last iteration (aq = null)!
 		 */
 		IRelation r0 = evaluate(c0, p, null);
+		boolean emptyRel = (r0.size()==0) ? true : false;
 		IRelation r1 = null;
-		boolean emptyRel = false;
 		
 		for(int i=1; i<j.getChildren().size(); i++){
 			if(! emptyRel){

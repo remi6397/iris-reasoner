@@ -43,8 +43,8 @@ import org.deri.iris.factory.Factory;
 /**
  * <p>
  * This is an abstract implementation of  <code>IEvaluator<code> 
- * interface used as a super class for the naïve and 
- * semi-naïve evaluations.
+ * interface used as a super class for the naive and 
+ * semi-naive evaluations.
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck

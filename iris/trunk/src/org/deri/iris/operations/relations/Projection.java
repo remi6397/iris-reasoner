@@ -46,7 +46,7 @@ import org.deri.iris.storage.Relation;
  * relation.
  * 
  * The projection is defined by a pattern. The pattern is an array with its
- * length equals to the relation’s arity. If the array contains -1 on a certain
+ * length equals to the relation's arity. If the array contains -1 on a certain
  * position, a term with that position in a tuple (that is stored in the
  * relation) will not be considered during the projection operation. For
  * example, if the pattern array takes the following values: [2, -1, 0] than the
