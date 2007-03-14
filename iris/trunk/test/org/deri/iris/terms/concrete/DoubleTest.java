@@ -41,9 +41,8 @@ import org.deri.iris.factory.Factory;
  * $Id$
  * </p>
  * 
- * @author richi
+ * @author Richard Pöttler, richard dot poettler at deri dot org
  * @version $Revision$
- * @date $Date$
  */
 public class DoubleTest extends TestCase {
 
@@ -88,39 +87,5 @@ public class DoubleTest extends TestCase {
 
 	public void testGetMinValue() {
 		TermTest.runTestGetMinValue(new DoubleTerm(Double.MIN_VALUE + 0.0001));
-	}
-
-	public void testAdd() {
-		assertEquals("The sum of 5 and -2 should be 3", new DoubleTerm(3),
-				(new DoubleTerm(5)).add(Factory.CONCRETE.createInteger(-2)));
-		assertEquals("The sum of 2.5 and 7.5 should be 10", new DoubleTerm(10),
-				(new DoubleTerm(2.5)).add(new DoubleTerm(7.5)));
-	}
-
-	public void testSubtract() {
-		assertEquals("The difference of 5 and -2 should be 7",
-				new DoubleTerm(7), (new DoubleTerm(5))
-						.subtract(Factory.CONCRETE.createInteger(-2)));
-		assertEquals("The difference of 2.5 and 7.5 should be -5",
-				new DoubleTerm(-5), (new DoubleTerm(2.5))
-						.subtract(new DoubleTerm(7.5)));
-	}
-
-	public void testMultiply() {
-		assertEquals("The product of 5 and -2 should be -10", new DoubleTerm(
-				-10), (new DoubleTerm(5)).multiply(Factory.CONCRETE
-				.createInteger(-2)));
-		assertEquals("The product of 2.5 and 7.5 should be 18.75",
-				new DoubleTerm(18.75), (new DoubleTerm(2.5))
-						.multiply(new DoubleTerm(7.5)));
-	}
-
-	public void testDivide() {
-		assertEquals("The quotient of 5 and -2 should be -2.5", new DoubleTerm(
-				-2.5), (new DoubleTerm(5)).divide(Factory.CONCRETE
-				.createInteger(-2)));
-		assertEquals("The quotient of 5 and 2 should be 2.5", new DoubleTerm(
-				2.5), (new DoubleTerm(5)).divide(Factory.CONCRETE
-				.createInteger(2)));
 	}
 }

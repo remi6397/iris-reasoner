@@ -41,9 +41,8 @@ import junit.framework.TestSuite;
  * $Id$
  * </p>
  * 
- * @author richi
+ * @author Richard Pöttler, richard dot poettler at deri dot org
  * @version $Revision$
- * @date $Date$
  */
 public class FloatTest extends TestCase {
 
@@ -86,39 +85,5 @@ public class FloatTest extends TestCase {
 
 	public void testGetMinValue() {
 		TermTest.runTestGetMinValue(new FloatTerm(Float.MIN_VALUE + 0.0001f));
-	}
-
-	public void testAdd() {
-		assertEquals("The sum of 5 and -2 should be 3", new FloatTerm(3f),
-				(new FloatTerm(5f)).add(Factory.CONCRETE.createInteger(-2)));
-		assertEquals("The sum of 2.5 and 7.5 should be 10", new FloatTerm(10f),
-				(new FloatTerm(2.5f)).add(new FloatTerm(7.5f)));
-	}
-
-	public void testSubtract() {
-		assertEquals("The difference of 5 and -2 should be 7",
-				new FloatTerm(7f), (new FloatTerm(5f))
-						.subtract(Factory.CONCRETE.createInteger(-2)));
-		assertEquals("The difference of 2.5 and 7.5 should be -5",
-				new FloatTerm(-5f), (new FloatTerm(2.5f))
-						.subtract(new FloatTerm(7.5f)));
-	}
-
-	public void testMultiply() {
-		assertEquals("The product of 5 and -2 should be -10", new FloatTerm(
-				-10f), (new FloatTerm(5f)).multiply(Factory.CONCRETE
-				.createInteger(-2)));
-		assertEquals("The product of 2.5 and 7.5 should be 18.75",
-				new FloatTerm(18.75f), (new FloatTerm(2.5f))
-						.multiply(new FloatTerm(7.5f)));
-	}
-
-	public void testDivide() {
-		assertEquals("The quotient of 5 and -2 should be -2.5", new FloatTerm(
-				-2.5f), (new FloatTerm(5f)).divide(Factory.CONCRETE
-				.createInteger(-2)));
-		assertEquals("The quotient of 5 and 2 should be 2.5", new FloatTerm(
-				2.5f), (new FloatTerm(5f)).divide(Factory.CONCRETE
-				.createInteger(2)));
 	}
 }
