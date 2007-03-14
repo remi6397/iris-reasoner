@@ -60,7 +60,7 @@ public class Atom implements IAtom<IAtom> {
 		}
 		if (predicate.getArity() != tuple.getArity()) {
 			throw new IllegalArgumentException("Cannot create an atom when" +
-					" a tuple's arity does not match the predicate’s arity.");
+					" a tuple's arity does not match the predicate's arity.");
 		}
 		this.predicate = predicate;
 		this.tuple = tuple;
