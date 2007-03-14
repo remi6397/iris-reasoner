@@ -34,7 +34,7 @@ import org.deri.iris.api.terms.ITerm;
  * position in a tuple (non equality condition).
  * 
 * @author Darko Anicic, DERI Innsbruck
-* @date   04.10.2006 20:38:40
+* @author Richard Pöttler, richard dot poettler at deri dot org
 */
 public class NonEqualityTerm implements ITerm{
 	
@@ -58,22 +58,6 @@ public class NonEqualityTerm implements ITerm{
 
 	public void setValue(Object t) {
 		this.term.setValue(t);
-	}
-
-	public ITerm add(ITerm t) {
-		return this.term.add(t);
-	}
-
-	public ITerm subtract(ITerm t) {
-		return this.term.add(t);
-	}
-
-	public ITerm multiply(ITerm t) {
-		return this.term.multiply(t);
-	}
-
-	public ITerm divide(ITerm t) {
-		return this.term.divide(t);
 	}
 
 	public int compareTo(Object o) {

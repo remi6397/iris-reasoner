@@ -27,11 +27,16 @@ package org.deri.iris.terms;
 
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.IStringTerm;
-import org.deri.iris.api.terms.ITerm;
 
 /**
- * @author richi
- * 
+ * <p>
+ * Simple implementation of the IStringTerm.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision$
  */
 public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
 
@@ -89,100 +94,5 @@ public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
 
 	public StringTerm getMinValue() {
 		return new StringTerm("");
-	}
-
-	/**
-	 * Concats the given term to the end of this term.
-	 * 
-	 * @param t
-	 *            the term to add to the end
-	 * @return the concated term
-	 * @throws NullPointerException
-	 *             if the term is null
-	 */
-	public StringTerm add(final ITerm t) {
-		if (t == null) {
-			throw new NullPointerException("The term must not be null");
-		}
-		return new StringTerm(value + t.getValue());
-	}
-
-	/**
-	 * <b>This operation is not supported by this term.</b>
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             this operation is not supported
-	 */
-	public StringTerm divide(final ITerm t) {
-		throw new UnsupportedOperationException(
-				"Can't perform this operation on that term");
-	}
-
-	/**
-	 * Copies the actual string n times. E.g. if the actual string is &quot;<code>ab</code>&quot;
-	 * and the submitted term is 3, it will result in &quot;<code>ababab</code>&quot;.
-	 * 
-	 * @param how
-	 *            many times the string should be copied
-	 * @throws NullPointerException
-	 *             if the term is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the submitted term isn't a <code>INumbericTerm</code>
-	 * @throws IllegalArgumentException
-	 *             if the number is negative
-	 */
-	public StringTerm multiply(final ITerm t) {
-		if (t == null) {
-			throw new NullPointerException("The term must not be null");
-		}
-		if (t instanceof INumericTerm) {
-			final int count = TermHelper.getInt((INumericTerm) t);
-			if (count < 0) {
-				throw new IllegalArgumentException(
-						"The number must be bigger than 0, but was " + count);
-			}
-
-			final StringBuilder buffer = new StringBuilder(value.length()
-					* count);
-			for (int i = 0; i < count; i++) {
-				buffer.append(value);
-			}
-			return new StringTerm(buffer.toString());
-		}
-		throw new IllegalArgumentException(
-				"Can perform this task only with INumericTerm's, but was "
-						+ t.getClass());
-	}
-
-	/**
-	 * Cuts n letters at the end of the string off.
-	 * 
-	 * @param the
-	 *            amount of letters which should be cut off
-	 * @return the partial cut string
-	 * @throws NullPointerException
-	 *             if the given term is null
-	 * @throws IllegalArgumentException
-	 *             if the given term isn't a <code>INumericTerm</code>
-	 * @throws IllegalArgumentException
-	 *             if the number is negative
-	 */
-	public StringTerm subtract(final ITerm t) {
-		if (t == null) {
-			throw new NullPointerException("The term must not be null");
-		}
-		if (t instanceof INumericTerm) {
-			int tmp = TermHelper.getInt((INumericTerm) t);
-			final int count = (tmp > value.length()) ? value.length() : tmp;
-			if (count < 0) {
-				throw new IllegalArgumentException(
-						"The number must be bigger than 0, but was " + count);
-			}
-
-			return new StringTerm(value.substring(0, value.length() - count));
-		}
-		throw new IllegalArgumentException(
-				"Can perform this task only with INumericTerm's, but was "
-						+ t.getClass());
 	}
 }

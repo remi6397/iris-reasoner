@@ -28,19 +28,17 @@ package org.deri.iris.terms.concrete;
 
 import java.util.regex.Pattern;
 
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IBase64Binary;
 
 /**
- * Interface or class description
- * 
- * Created on 04.04.2006
- * Committed by $Author$
- * $Source$,
- * 
- * @author Richard Pöttler
- * 
- * @version $Revision$ $Date$
+ * <p>
+ * Simple implementation of the IBase64Binary.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision$
  */
 public class Base64Binary implements IBase64Binary, Cloneable {
 
@@ -109,49 +107,5 @@ public class Base64Binary implements IBase64Binary, Cloneable {
 
 	public IBase64Binary getMinValue() {
 		return new Base64Binary("");
-	}
-
-	/**
-	 * <b>This operation is not supported by this term.</b>
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             this operation is not supported
-	 */
-	public IBase64Binary add(final ITerm t) {
-		throw new UnsupportedOperationException(
-				"Can't perform this operation on that term");
-	}
-
-	/**
-	 * <b>This operation is not supported by this term.</b>
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             this operation is not supported
-	 */
-	public IBase64Binary divide(final ITerm t) {
-		throw new UnsupportedOperationException(
-				"Can't perform this operation on that term");
-	}
-
-	/**
-	 * <b>This operation is not supported by this term.</b>
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             this operation is not supported
-	 */
-	public IBase64Binary multiply(final ITerm t) {
-		throw new UnsupportedOperationException(
-				"Can't perform this operation on that term");
-	}
-
-	/**
-	 * <b>This operation is not supported by this term.</b>
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             this operation is not supported
-	 */
-	public IBase64Binary subtract(final ITerm t) {
-		throw new UnsupportedOperationException(
-				"Can't perform this operation on that term");
 	}
 }

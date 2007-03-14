@@ -37,9 +37,15 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
 /**
- * @author richi
+ * <p>
+ * Simple implementation of the IConstructedTerm.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
- * 
+ * @version $Revision$
  */
 public class ConstructedTerm implements IConstructedTerm, Cloneable {
 
@@ -220,49 +226,5 @@ public class ConstructedTerm implements IConstructedTerm, Cloneable {
 				variables.addAll(getVariables((IConstructedTerm)term));
 		}
 		return variables;
-	}
-
-	/**
-	 * <b>This operation is not supported by this term.</b>
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             this operation is not supported
-	 */
-	public IConstructedTerm add(final ITerm t) {
-		throw new UnsupportedOperationException(
-				"Can't perform this operation on that term");
-	}
-
-	/**
-	 * <b>This operation is not supported by this term.</b>
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             this operation is not supported
-	 */
-	public IConstructedTerm divide(final ITerm t) {
-		throw new UnsupportedOperationException(
-				"Can't perform this operation on that term");
-	}
-
-	/**
-	 * <b>This operation is not supported by this term.</b>
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             this operation is not supported
-	 */
-	public IConstructedTerm multiply(final ITerm t) {
-		throw new UnsupportedOperationException(
-				"Can't perform this operation on that term");
-	}
-
-	/**
-	 * <b>This operation is not supported by this term.</b>
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             this operation is not supported
-	 */
-	public IConstructedTerm subtract(final ITerm t) {
-		throw new UnsupportedOperationException(
-				"Can't perform this operation on that term");
 	}
 }

@@ -32,12 +32,12 @@ import org.deri.iris.api.terms.INumericTerm;
  * Some helper methods for some operations on terms.
  * </p>
  * <p>
- * $Id: TermHelper.java,v 1.1 2006-09-27 12:34:34 richardpoettler Exp $
+ * $Id: TermHelper.java,v 1.2 2007-03-14 10:15:52 poettler_ric Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-09-27 12:34:34 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2007-03-14 10:15:52 $
  */
 class TermHelper {
 	private TermHelper() {
@@ -55,13 +55,13 @@ class TermHelper {
 	 *             if the term is null
 	 * @see Number
 	 */
-	static double getDouble(final INumericTerm n) {
+	/*static double getDouble(final INumericTerm n) {
 		if (n == null) {
 			throw new NullPointerException("The term must not be null");
 		}
 		// TODO: maybe instance check for Number
 		return ((Number) n.getValue()).doubleValue();
-	}
+	}*/
 
 	/**
 	 * Returns the float value from a <code>INumericTerm</code> <b>This method
@@ -74,13 +74,13 @@ class TermHelper {
 	 *             if the term is null
 	 * @see Number
 	 */
-	static float getFloat(final INumericTerm n) {
+	/*static float getFloat(final INumericTerm n) {
 		if (n == null) {
 			throw new NullPointerException("The term must not be null");
 		}
 		// TODO: maybe instance check for Number
 		return ((Number) n.getValue()).floatValue();
-	}
+	}*/
 
 	/**
 	 * Returns the int value from a <code>INumericTerm</code> <b>This method
@@ -93,10 +93,10 @@ class TermHelper {
 	 *             if the term is null
 	 * @see Number
 	 */
-	static int getInt(final INumericTerm n) {
+	/*static int getInt(final INumericTerm n) {
 		if (n == null) {
 			throw new NullPointerException("The term must not be null");
 		}
 		return (int) getDouble(n);
-	}
+	}*/
 }
