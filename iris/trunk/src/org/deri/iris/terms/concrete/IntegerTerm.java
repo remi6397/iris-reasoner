@@ -26,19 +26,18 @@
 
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.api.terms.INumericTerm;
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 
 /**
- * 
- * imple of integer
- * 
- * Created on 26.04.2006 Committed by $Author$ $Source$,
- * 
+ * <p>
+ * Simple implementation of the IIntegerTerm.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Holger Lausen
- * 
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 public class IntegerTerm implements IIntegerTerm, Cloneable {
 	/** integer to represent this datatype */
@@ -103,104 +102,5 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 
 	public IntegerTerm getMinValue() {
 		return new IntegerTerm(Integer.MIN_VALUE);
-	}
-
-	/**
-	 * Creates the sum of the two terms.
-	 * 
-	 * @param t
-	 *            the other summand
-	 * @return a new term representing the sum
-	 * @throws NullPointerException
-	 *             if the term is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the term isn't a <code>INumeericTerm</code>
-	 */
-	public IntegerTerm add(final ITerm t) {
-		if (t == null) {
-			throw new NullPointerException("The term must not be null");
-		}
-		if (t instanceof INumericTerm) {
-			return new IntegerTerm(i + TermHelper.getInt((INumericTerm) t));
-		}
-		throw new IllegalArgumentException(
-				"Can perform this task only with INumericTerm's, but was "
-						+ t.getClass());
-	}
-
-	/**
-	 * Creates the quotient of the two terms.
-	 * 
-	 * @param t
-	 *            the divisor
-	 * @return a new term representing the quotient
-	 * @throws NullPointerException
-	 *             if the term is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the term isn't a <code>INumeericTerm</code>
-	 * @throws IllegalArgumentException
-	 *             if the divisor is 0
-	 */
-	public IntegerTerm divide(final ITerm t) {
-		if (t == null) {
-			throw new NullPointerException("The term must not be null");
-		}
-		if (t instanceof INumericTerm) {
-			final int i = TermHelper.getInt((INumericTerm) t);
-			if (i == 0) {
-				throw new IllegalArgumentException(
-						"A division by 0 is not allowed, but was " + t);
-			}
-			return new IntegerTerm(this.i / i);
-		}
-		throw new IllegalArgumentException(
-				"Can perform this task only with INumericTerm's, but was "
-						+ t.getClass());
-	}
-
-	/**
-	 * Creates the product of the two terms.
-	 * 
-	 * @param t
-	 *            the other factor
-	 * @return a new term representing the product
-	 * @throws NullPointerException
-	 *             if the term is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the term isn't a <code>INumeericTerm</code>
-	 */
-	public IntegerTerm multiply(final ITerm t) {
-		if (t == null) {
-			throw new NullPointerException("The term must not be null");
-		}
-		if (t instanceof INumericTerm) {
-			return new IntegerTerm(i * TermHelper.getInt((INumericTerm) t));
-		}
-		throw new IllegalArgumentException(
-				"Can perform this task only with INumericTerm's, but was "
-						+ t.getClass());
-	}
-
-	/**
-	 * Creates the difference of the two terms.
-	 * 
-	 * @param t
-	 *            the subtrahend
-	 * @return a new term representing the difference
-	 * @throws NullPointerException
-	 *             if the term is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the term isn't a <code>INumeericTerm</code>
-	 */
-	public IntegerTerm subtract(final ITerm t) {
-		if (t == null) {
-			throw new NullPointerException("The term must not be null");
-		}
-		if (t instanceof INumericTerm) {
-			return new IntegerTerm(i - TermHelper.getInt((INumericTerm) t));
-		}
-		throw new IllegalArgumentException(
-				"Can perform this task only with INumericTerm's, but was "
-						+ t.getClass());
 	}
 }

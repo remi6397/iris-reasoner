@@ -25,12 +25,17 @@
  */
 package org.deri.iris.terms;
 
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
 /**
- * @author richi
- * 
+ * <p>
+ * Simple implementation of the IVariable.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision$
  */
 public class Variable implements IVariable<IVariable>, Cloneable {
 
@@ -98,49 +103,5 @@ public class Variable implements IVariable<IVariable>, Cloneable {
 
 	public void setValue(String t) {
 		this.name = t;
-	}
-
-	/**
-	 * <b>This operation is not supported by this term.</b>
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             this operation is not supported
-	 */
-	public IVariable add(final ITerm t) {
-		throw new UnsupportedOperationException(
-				"Can't perform this operation on that term");
-	}
-
-	/**
-	 * <b>This operation is not supported by this term.</b>
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             this operation is not supported
-	 */
-	public IVariable divide(final ITerm t) {
-		throw new UnsupportedOperationException(
-				"Can't perform this operation on that term");
-	}
-
-	/**
-	 * <b>This operation is not supported by this term.</b>
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             this operation is not supported
-	 */
-	public IVariable multiply(final ITerm t) {
-		throw new UnsupportedOperationException(
-				"Can't perform this operation on that term");
-	}
-
-	/**
-	 * <b>This operation is not supported by this term.</b>
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             this operation is not supported
-	 */
-	public IVariable subtract(final ITerm t) {
-		throw new UnsupportedOperationException(
-				"Can't perform this operation on that term");
 	}
 }
