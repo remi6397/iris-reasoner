@@ -39,7 +39,7 @@ package org.deri.iris.api.basics;
  * Only safe rules are supported. A rule is safe if its every variable
  * occurs in one of its positive, non built-in, atoms of the body.</p>
  * <p>
- * $Id: IRule.java,v 1.4 2007-01-22 16:07:56 darko Exp $
+ * $Id: IRule.java,v 1.5 2007-03-14 09:07:11 darko_anicic Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -60,7 +60,7 @@ public interface IRule extends IHead, IBody{
 	 * <p>
 	 * A rule is rectified if its head has the same form as 
 	 * heads of the other rules from the program, 
-	 * e.g. p(X1,…,Xk) for variables X1,…,Xk.
+	 * e.g. p(X1,...,Xk) for variables X1,...,Xk.
 	 * </p>
 	 * <p> 
 	 * For a given pair of rules:
@@ -73,7 +73,7 @@ public interface IRule extends IHead, IBody{
 	 * after the rectification we get the following rules:
 	 * </p>
 	 * <ul>
-	 * <li> p(U, V, W) :- r(V, W), U=’a’.</li>
+	 * <li> p(U, V, W) :- r(V, W), U='a'.</li>
 	 * <li> p(U, V, W) :- r(V, U), W=U.</li>
 	 * </ul>
 	 * <p>
