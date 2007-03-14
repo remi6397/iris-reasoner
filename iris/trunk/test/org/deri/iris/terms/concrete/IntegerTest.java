@@ -35,15 +35,14 @@ import junit.framework.TestSuite;
 
 /**
  * <p>
- * Tests the functionality of the <code>FloatTerm</code>.
+ * Tests the functionality of the <code>IntegerTerm</code>.
  * </p>
  * <p>
  * $Id$
  * </p>
  * 
- * @author richi
+ * @author Richard Pöttler, richard dot poettler at deri dot org
  * @version $Revision$
- * @date $Date$
  */
 public class IntegerTest extends TestCase {
 
@@ -88,37 +87,5 @@ public class IntegerTest extends TestCase {
 
 	public void testGetMinValue() {
 		TermTest.runTestGetMinValue(new IntegerTerm(Integer.MIN_VALUE + 1));
-	}
-
-	public void testAdd() {
-		assertEquals("The sum of 5 and -2 should be 3", new IntegerTerm(3),
-				(new IntegerTerm(5)).add(Factory.CONCRETE.createInteger(-2)));
-		assertEquals("The sum of 2 and 7.5 should be 9", new IntegerTerm(9),
-				(new IntegerTerm(2)).add(Factory.CONCRETE.createDouble(7.5)));
-	}
-
-	public void testSubtract() {
-		assertEquals("The difference of 5 and -2 should be 7", new IntegerTerm(
-				7), (new IntegerTerm(5)).subtract(Factory.CONCRETE
-				.createInteger(-2)));
-		assertEquals("The difference of 2 and 7.5 should be -5",
-				new IntegerTerm(-5), (new IntegerTerm(2))
-						.subtract(Factory.CONCRETE.createDouble(7.5)));
-	}
-
-	public void testMultiply() {
-		assertEquals("The product of 5 and -2 should be -10", new IntegerTerm(
-				-10), (new IntegerTerm(5)).multiply(Factory.CONCRETE
-				.createInteger(-2)));
-		assertEquals("The product of 2 and 7.5 should be 14", new IntegerTerm(
-				14), (new IntegerTerm(2)).multiply(Factory.CONCRETE
-				.createDouble(7.5)));
-	}
-
-	public void testDivide() {
-		assertEquals("The quotient of 5 and -2 should be -2", new IntegerTerm(
-				-2), (new IntegerTerm(5)).divide(new IntegerTerm(-2)));
-		assertEquals("The quotient of 5 and 2 should be 2", new IntegerTerm(2),
-				(new IntegerTerm(5)).divide(new IntegerTerm(2)));
 	}
 }

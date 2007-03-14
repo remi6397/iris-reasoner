@@ -41,9 +41,8 @@ import junit.framework.TestSuite;
  * $Id$
  * </p>
  * 
- * @author richi
+ * @author Richard Pöttler, richard dot poettler at deri dot org
  * @version $Revision$
- * @date $Date$
  */
 public class DecimalTest extends TestCase {
 
@@ -88,40 +87,5 @@ public class DecimalTest extends TestCase {
 
 	public void testGetMinValue() {
 		TermTest.runTestGetMinValue(new DecimalTerm(Double.MIN_VALUE + 0.0001));
-	}
-
-	public void testAdd() {
-		assertEquals("The sum of 5 and -2 should be 3", new DecimalTerm(3),
-				(new DecimalTerm(5)).add(Factory.CONCRETE.createInteger(-2)));
-		assertEquals("The sum of 2.5 and 7.5 should be 10",
-				new DecimalTerm(10), (new DecimalTerm(2.5))
-						.add(new DecimalTerm(7.5)));
-	}
-
-	public void testSubtract() {
-		assertEquals("The difference of 5 and -2 should be 7", new DecimalTerm(
-				7), (new DecimalTerm(5)).subtract(Factory.CONCRETE
-				.createInteger(-2)));
-		assertEquals("The difference of 2.5 and 7.5 should be -5",
-				new DecimalTerm(-5), (new DecimalTerm(2.5))
-						.subtract(new DecimalTerm(7.5)));
-	}
-
-	public void testMultiply() {
-		assertEquals("The product of 5 and -2 should be -10", new DecimalTerm(
-				-10), (new DecimalTerm(5)).multiply(Factory.CONCRETE
-				.createInteger(-2)));
-		assertEquals("The product of 2.5 and 7.5 should be 18.75",
-				new DecimalTerm(18.75), (new DecimalTerm(2.5))
-						.multiply(new DecimalTerm(7.5)));
-	}
-
-	public void testDivide() {
-		assertEquals("The quotient of 5 and -2 should be -2.5",
-				new DecimalTerm(-2.5), (new DecimalTerm(5))
-						.divide(Factory.CONCRETE.createInteger(-2)));
-		assertEquals("The quotient of 5 and 2 should be 2.5", new DecimalTerm(
-				2.5), (new DecimalTerm(5)).divide(Factory.CONCRETE
-				.createInteger(2)));
 	}
 }

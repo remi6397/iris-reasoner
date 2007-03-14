@@ -41,9 +41,8 @@ import org.deri.iris.factory.Factory;
  * $Id$
  * </p>
  * 
- * @author richi
+ * @author Richard Pöttler, richard dot poettler at deri dot org
  * @version $Revision$
- * @date $Date$
  */
 public class StringTermTest extends TestCase {
 
@@ -85,26 +84,5 @@ public class StringTermTest extends TestCase {
 
 	public void testGetMinValue() {
 		TermTest.runTestGetMinValue(new StringTerm("a"));
-	}
-
-	public void testAdd() {
-		assertEquals("The sum of 'ab' and 12 should be 'ab12'", new StringTerm(
-				"ab12"), (new StringTerm("ab").add(Factory.CONCRETE
-				.createInteger(12))));
-		assertEquals("The sum of 'ab' and 'cd' should be 'abcd'",
-				new StringTerm("abcd"), (new StringTerm("ab"))
-						.add(new StringTerm("cd")));
-	}
-
-	public void testMultiply() {
-		assertEquals("The product of 'abc' and 3 should be 'abcabcabc'",
-				new StringTerm("abcabcabc"), (new StringTerm("abc"))
-						.multiply(Factory.CONCRETE.createInteger(3)));
-	}
-
-	public void testSubtract() {
-		assertEquals("'abcdef' minus 2 should be 'abcd'",
-				new StringTerm("abcd"), (new StringTerm("abcdef"))
-						.subtract(Factory.CONCRETE.createInteger(2)));
 	}
 }
