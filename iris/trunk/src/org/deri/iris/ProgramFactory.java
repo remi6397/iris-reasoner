@@ -36,13 +36,19 @@ import org.deri.iris.api.factory.IProgramFactory;
 import org.deri.iris.api.storage.IRelation;
 
 /**
+ * <p>
+ * A simple IProgramFactory implementation.
+ * </p>
+ * <p>
+ * $Id: ProgramFactory.java,v 1.7 2007-03-15 11:26:15 poettler_ric Exp $
+ * </p>
  * @author Francisco Garcia
  * @author Darko Anicic, DERI Innsbruck
- *
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revisionh$
  */
 public class ProgramFactory implements IProgramFactory {
 	private static final IProgramFactory FACTORY = new ProgramFactory();
-	private static final IProgram EDB = new Program();
 	
 	private ProgramFactory() {
 		// this is a singelton
@@ -53,7 +59,7 @@ public class ProgramFactory implements IProgramFactory {
 	}
 
 	public IProgram createProgram() {
-		return EDB;
+		return new Program();
 	}
 	
 	public IProgram createProgram(Map<IPredicate, IRelation> f, Set<IRule> r, Set<IQuery> q) {
