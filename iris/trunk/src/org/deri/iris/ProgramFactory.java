@@ -40,12 +40,12 @@ import org.deri.iris.api.storage.IRelation;
  * A simple IProgramFactory implementation.
  * </p>
  * <p>
- * $Id: ProgramFactory.java,v 1.7 2007-03-15 11:26:15 poettler_ric Exp $
+ * $Id: ProgramFactory.java,v 1.8 2007-03-15 11:27:08 poettler_ric Exp $
  * </p>
  * @author Francisco Garcia
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revisionh$
+ * @version $Revision: 1.8 $
  */
 public class ProgramFactory implements IProgramFactory {
 	private static final IProgramFactory FACTORY = new ProgramFactory();
