@@ -27,9 +27,11 @@ package org.deri.iris.parser;
 
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
+import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -44,15 +46,23 @@ import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserImpl;
 import org.deri.iris.factory.Factory;
 
 /**
+ * <p>
+ * Tests for the datalog parser.
+ * </p>
+ * <p>
+ * $Id: ParserTest.java,v 1.2 2007-03-15 11:35:47 poettler_ric Exp $
+ * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
- * @date $Date: 2007-01-29 09:10:47 $
- * @version $Id: ParserTest.java,v 1.1 2007-01-29 09:10:47 darko Exp $
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision: 1.2 $
  */
 public class ParserTest extends TestCase {
 
@@ -84,8 +94,7 @@ public class ParserTest extends TestCase {
 	protected void runParser(final String expr, final Set<org.deri.iris.api.basics.IRule> rul) throws Exception {
 
 		this.pars.compileKB(expr, prog);
-		System.out.println("in: " + expr + "\nrul: "+ rul + "\nres: " + prog.getRules() + "\n");
-		assertResults(rul, prog.getRules());
+		assertCol(rul, prog.getRules());
 	}
 	
 	/**
@@ -95,7 +104,7 @@ public class ParserTest extends TestCase {
 	public void testParser() {
 		
 		// input
-		String expr = "s(X, Y) :- p(Y, Z), r(Y, Z)";
+		String expr = "s(?X, ?Y) :- p(?X, ?Z), r(?Y, ?Z).";
 		
 		// result
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
@@ -132,7 +141,7 @@ public class ParserTest extends TestCase {
 	public void testParser_1a() {
 
 		// input
-		String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X=a";
+		String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X='a'.";
 		
 		// result
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
@@ -167,7 +176,7 @@ public class ParserTest extends TestCase {
 	public void testParser_1b() {
 
 		// input
-		String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X!=a";
+		String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X!='a'.";
 
 		// result
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
@@ -184,7 +193,7 @@ public class ParserTest extends TestCase {
 		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
 		literals.add(literal);
 
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
+		literal = BASIC.createLiteral(true, BUILTIN.createUnequal(TERM.createVariable("X"), TERM.createString("a")));
 		literals.add(literal);
 
 		IBody body = BASIC.createBody(literals);
@@ -195,16 +204,121 @@ public class ParserTest extends TestCase {
 			runParser(expr, rules);
 		} catch (Exception e) {e.printStackTrace();}
 	}
-	
-	protected static void assertResults(final Set<IRule> a, final Set<IRule> b) {
-		Assert.assertEquals("The length of relation and the list of"
-				+ " expected tuples must be equal", a.size(), b.size());
-		Iterator ita = a.iterator();
-		Iterator itb = a.iterator();
-		while(ita.hasNext() && itb.hasNext()) {
-			IRule rulea = (IRule)ita.next();
-			IRule ruleb = (IRule)itb.next();
-			assertTrue("The keys must be equal.", rulea.equals(ruleb));
+
+	/**
+	 * Tests whether all terms are created correctly.
+	 */
+	public void testTerms() {
+		final String expr = "ints(1). intl(_integer(2)). \n" + 
+			"strs('hallos'). strl(_string('hallol')). \n" + 
+			"decs(1.5). decl(_decimal(3.7)). \n" + 
+			"sqs(sq#short). sql(_sqname(sq#long)). \n" + 
+			"iris(_'http://deri.org/s#short'). iril(_iri('http://deri.org/l#long')). \n" + 
+			"bool(_boolean('false')). \n" + 
+			"double(_double(4.67)). \n" + 
+			"float(_float(4.67)). \n" + 
+			"date(_date(2007, 2, 6)). \n" + 
+			"duration(_duration(2007, 2, 6, 12, 45, 11)). \n" + 
+			"datetime(_datetime(2007, 2, 6, 12, 45, 11)). \n" + 
+			"gday(_gday(6)).\n" + 
+			"gmonth(_gmonth(2)).\n" + 
+			"gyear(_gyear(2007)).\n" + 
+			"gmonthday(_gmonthday(2, 6)).\n" + 
+			"gyearmonth(_gyearmonth(2007, 2)).\n" + 
+			"base(_base64binary('45df')).\n" + 
+			"hex(_hexbinary('a1df')).\n";
+		try {
+			pars.compileKB(expr, prog);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		// TODO: test the function term
+		// asserting the short int
+		IPredicate pred = BASIC.createPredicate("ints", 1);
+		assertTrue("Could not find the short int", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createInteger(1))));
+		// asserting the long int
+		pred = BASIC.createPredicate("intl", 1);
+		assertTrue("Could not find the short int", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createInteger(2))));
+		// asserting the short string
+		pred = BASIC.createPredicate("strs", 1);
+		assertTrue("Could not find the long string", prog.getFacts(pred).contains(BASIC.createTuple(TERM.createString("hallos"))));
+		// asserting the long string
+		pred = BASIC.createPredicate("strl", 1);
+		assertTrue("Could not find the long string", prog.getFacts(pred).contains(BASIC.createTuple(TERM.createString("hallol"))));
+		// asserting the short decimal
+		pred = BASIC.createPredicate("decs", 1);
+		assertTrue("Could not find the short decimal", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDecimal(1.5))));
+		// asserting the long decimal
+		pred = BASIC.createPredicate("decl", 1);
+		assertTrue("Could not find the long decimal", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDecimal(3.7))));
+		// asserting the short sqname
+		pred = BASIC.createPredicate("sqs", 1);
+		assertTrue("Could not find the short sqname", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createSqName("sq#short"))));
+		// asserting the long sqname
+		pred = BASIC.createPredicate("sql", 1);
+		assertTrue("Could not find the long sqname", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createSqName("sq#long"))));
+		// asserting the short iri
+		pred = BASIC.createPredicate("iris", 1);
+		assertTrue("Could not find the short iri", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createIri("http://deri.org/s#short"))));
+		// asserting the long iri
+		pred = BASIC.createPredicate("iril", 1);
+		assertTrue("Could not find the long iri", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createIri("http://deri.org/l#long"))));
+		// asserting the bool
+		pred = BASIC.createPredicate("bool", 1);
+		assertTrue("Could not find the short bool", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createBoolean(false))));
+		// asserting the double
+		pred = BASIC.createPredicate("double", 1);
+		assertTrue("Could not find the double", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDouble(4.67))));
+		// asserting the float
+		pred = BASIC.createPredicate("float", 1);
+		assertTrue("Could not find the float", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createFloat(4.67f))));
+		// asserting the date
+		pred = BASIC.createPredicate("date", 1);
+		assertTrue("Could not find the date", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDate(2007, 2, 6))));
+		// asserting the duration
+		pred = BASIC.createPredicate("duration", 1);
+		assertTrue("Could not find the duration", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDuration(2007, 2, 6, 12, 45, 11))));
+		// asserting the datetime
+		pred = BASIC.createPredicate("datetime", 1);
+		assertTrue("Could not find the datetime", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDateTime(2007, 2, 6, 12, 45, 11))));
+		// TODO: test the time
+		// asserting the gday
+		pred = BASIC.createPredicate("gday", 1);
+		assertTrue("Could not find the gday", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createGDay(6))));
+		// asserting the gmonth
+		pred = BASIC.createPredicate("gmonth", 1);
+		assertTrue("Could not find the gmonth", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createGMonth(2))));
+		// asserting the gyear
+		pred = BASIC.createPredicate("gyear", 1);
+		assertTrue("Could not find the gyear", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createGYear(2007))));
+		// asserting the gmonthday
+		pred = BASIC.createPredicate("gmonthday", 1);
+		assertTrue("Could not find the gmonthday", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createGMonthDay(2, 6))));
+		// asserting the gyearmonth
+		pred = BASIC.createPredicate("gyearmonth", 1);
+		assertTrue("Could not find the gyearmonth", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createGYearMonth(2007, 2))));
+		// asserting the base64 binary
+		pred = BASIC.createPredicate("base", 1);
+		assertTrue("Could not find the base64binary", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createBase64Binary("45df"))));
+		// asserting the hex bin
+		pred = BASIC.createPredicate("hex", 1);
+		assertTrue("Could not find the hex", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createHexBinary("a1df"))));
+	}
+
+	/**
+	 * Checks whether two collections contains the same elements. The size of the collecions will be asserted, too.
+	 * @param c0 the reference collection
+	 * @param c1 the collection to check
+	 * @throws NullPointerException if one collection is <code>null</code>
+	 */
+	private static void assertCol(final Collection<? extends Object> c0, final Collection<? extends Object> c1) {
+		if((c0 == null) || (c1 == null)) {
+			throw new NullPointerException("The collections must not be null");
+		}
+		assertEquals("The sizes of the collections must be equal", c0.size(), c1.size());
+		for(final Object o : c0) {
+			assertTrue("Couldn't find the term: " + o, c1.contains(o));
 		}
 	}
 }
