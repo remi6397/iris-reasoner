@@ -25,13 +25,8 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Set;
-
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.exception.DataModelException;
@@ -102,25 +97,5 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 			}
 		}
 		return true;
-	}
-	
-	/** Evaluate query */
-	public IRelation evaluateQuery(IQuery q) throws DataModelException{
-		/** EVAL (pi, R1,..., Rk, Q1,..., Qm); */
-		return method.evaluate(this.rr.translateQuery(q) , this.p);
-	}
-	
-	/** Evaluate queries */
-	public Map<IPredicate, IRelation> evaluateQueries(Set<IQuery> queries) 
-		throws DataModelException{
-		
-		Map<IPredicate, IRelation> results = 
-			new Hashtable<IPredicate, IRelation>(queries.size());
-
-		for (IQuery q : queries) {
-			results.put(
-					q.getQueryLiteral(0).getPredicate(), evaluateQuery(q));
-	}
-		return results;
 	}
 }
