@@ -81,7 +81,7 @@ import org.deri.iris.operations.relations.Projection;
 public class Rule2Relation {
 
 	/** Prefix for the variables */
-	private static final String VAR_PREFIX = "?X_";
+	private static final String VAR_PREFIX = "?Y_";
 
 	/** Counter for an arbitrarly chosen variable */
 	private static int VAR_COUNTER = 0;
