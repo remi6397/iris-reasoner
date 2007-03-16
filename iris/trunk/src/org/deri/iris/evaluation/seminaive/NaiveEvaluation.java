@@ -25,8 +25,13 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Set;
+
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.exception.DataModelException;
@@ -76,17 +81,21 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 
 		boolean newTupleAdded = false, cont = true;
 		IRelation r = null;
-
+		Set<IPredicate> preds = null;
+		
 		// Evaluate rules
-		for (int i = 1, maxStrat = Complementor.getMaxStratum(this.idbMap
+		for (int i = 0, maxStrat = Complementor.getMaxStratum(this.idbMap
 				.keySet()); i <= maxStrat; i++) {
 
+			preds = Complementor.getPredicatesOfStratum(this.idbMap.keySet(), i);
 			cont = true;
 			while (cont) {
+				if(preds.size() == 0) break;
 				// Iterating through all predicates of the stratum
-				for (final IPredicate pr : Complementor
-						.getPredicatesOfStratum(this.idbMap.keySet(), i)) {
+				for (final IPredicate pr : preds) {
+					
 					cont = false;
+					this.p.registerPredicate(pr);
 					// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 					r = method.evaluate(this.idbMap.get(pr), this.p);
 					if (r != null && r.size() > 0) {
