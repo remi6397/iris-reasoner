@@ -104,6 +104,12 @@ public class Program implements IProgram{
 		if ((f == null) || (r == null) || (q == null)) {
 			throw new IllegalArgumentException("Input parameters must not be null");
 		}
+		
+		for (IPredicate p : f.keySet()){
+			if (f.get(p).getArity() != p.getArity())
+				throw new IllegalArgumentException("Predicate " + p + " is assigned with " +
+						"a relation that has a non-matching arity.");
+		}
 		WRITE.lock();
 			this.facts = f;
 			this.rules = r;
@@ -153,6 +159,10 @@ public class Program implements IProgram{
 	}
 	
 	public boolean addFacts(IPredicate p, IRelation r) {
+		if (r.getArity() != p.getArity())
+			throw new IllegalArgumentException("Predicate " + p + " is assigned with " +
+					"a relation that has a non-matching arity.");
+		
 		IPredicate pr = registerPredicate(p);
 		Iterator<ITuple> it = r.iterator();
 		ITuple t = null;
