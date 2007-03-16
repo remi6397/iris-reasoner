@@ -27,6 +27,7 @@ package org.deri.iris.parser;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,30 +54,37 @@ import org.deri.iris.factory.Factory;
  */
 public class ProgramTest extends TestCase {
 
-	Map<IPredicate,IRelation> m = null;
+	private Map<IPredicate,IRelation> m = null;
+	
+	/** 0 as an argument means: "run all tests" */
+	private static final int TEST_ALL = 0;
+ 
+	/** Set a number of a test to be run */
+	private int TEST_NO = 6;
 	
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(ProgramTest.class);
-		
 	}
 	
 	public void test1() throws Exception{
-    	String program = 
-		    "k('d', 'e')." +
-		    "k('d', 'g')." +
-		    "l('d')." +
-		    
-		    "w(?Y) :- k(?X, ?Y), l(?X)." +
-		    "?- w(?X).";
-    	
-    	m = evluateProgram(program);
-    	System.out.println("test 1");
-    	printResults(m);
-    	System.out.println();
-
-    	testProgram(
-				m,
-				resultTest1());
+		if(TEST_NO == 1 || TEST_ALL == 0){
+	    	String program = 
+			    "k('d', 'e')." +
+			    "k('d', 'g')." +
+			    "l('d')." +
+			    
+			    "w(?Y) :- k(?X, ?Y), l(?X)." +
+			    "?- w(?X).";
+	    	
+	    	m = evluateProgram(program);
+	    	System.out.println("test 1");
+	    	printResults(m);
+	    	System.out.println();
+	
+	    	testProgram(
+					m,
+					resultTest1());
+		}
     }
 	public String resultTest1(){
     	String result = 
@@ -87,33 +95,35 @@ public class ProgramTest extends TestCase {
     }
 	
 	public void test2() throws Exception{
-    	String program = 
- 			"s('d')." +
-		    "s('b')." +
-		    "s('a')." +
-		    "s('q')." +
-		    
-		    "r('d')." +
-		    "r('c')." +
-		    
-		    "p('b')." +
-		    "p('e')." +
-		    
-		    "t('a')." +
-		    
-		    "q(?X) :- s(?X), not p(?X)." +
-		    "p(?X) :- r(?X)." +
-		    "r(?X) :- t(?X)." +
-		    "?- q(?X).";
-    	
-    	m = evluateProgram(program);
-    	System.out.println("test 2");
-    	printResults(m);
-    	System.out.println();
-
-    	testProgram(
-				m,
-				resultTest2());
+		if(TEST_NO == 2 || TEST_ALL == 0){
+			String program = 
+	 			"s('d')." +
+			    "s('b')." +
+			    "s('a')." +
+			    "s('q')." +
+			    
+			    "r('d')." +
+			    "r('c')." +
+			    
+			    "p('b')." +
+			    "p('e')." +
+			    
+			    "t('a')." +
+			    
+			    "q(?X) :- s(?X), not p(?X)." +
+			    "p(?X) :- r(?X)." +
+			    "r(?X) :- t(?X)." +
+			    "?- q(?X).";
+	    	
+	    	m = evluateProgram(program);
+	    	System.out.println("test 2");
+	    	printResults(m);
+	    	System.out.println();
+	
+	    	testProgram(
+					m,
+					resultTest2());
+		}
     }
 	
 	public String resultTest2(){
@@ -124,29 +134,31 @@ public class ProgramTest extends TestCase {
     }
 	
 	public void test3() throws Exception{
-    	String program = 
-   		
- 			"s('d')." +
-		    "s('b')." +
-		    "s('a')." +
-		    
-		    "r('d')." +
-		    
-		    "p('b')." +
-		    
-		    "p(?X) :- r(?X)." +
-		    // TODO: only Equality built-in works currently!
-		    "w(?X) :- s(?X), p(?X), ?X='d'." +
-		    "?- w(?X).";
-   	
-    	m = evluateProgram(program);
-    	System.out.println("test 3");
-    	printResults(m);
-    	System.out.println();
-
-    	testProgram(
-				m,
-				resultTest3());
+		if(TEST_NO == 3 || TEST_ALL == 0){
+			String program = 
+	   		
+	 			"s('d')." +
+			    "s('b')." +
+			    "s('a')." +
+			    
+			    "r('d')." +
+			    
+			    "p('b')." +
+			    
+			    "p(?X) :- r(?X)." +
+			    // TODO: only Equality built-in works currently!
+			    "w(?X) :- s(?X), p(?X), ?X='d'." +
+			    "?- w(?X).";
+	   	
+	    	m = evluateProgram(program);
+	    	System.out.println("test 3");
+	    	printResults(m);
+	    	System.out.println();
+	
+	    	testProgram(
+					m,
+					resultTest3());
+		}
     }
 	
 	public String resultTest3(){
@@ -157,24 +169,26 @@ public class ProgramTest extends TestCase {
     }
 	
 	public void test4() throws Exception{
-		String program = 
-		    "edge('a', 'b')." +
-		    "path('b', 'c')." +
-		    "edge('c', 'd')." +
-		    
-		    "path(?X, ?Y) :- edge(?X, ?Y)." +	
-		    "path(?X, ?Y) :- path(?X, ?Z), path(?Z, ?Y)." +
-		    "?- path(?X, ?Y).";
-  	
-		m = evluateProgram(program);
-    	System.out.println("test 4");
-    	printResults(m);
-    	System.out.println();
-
-    	
-    	testProgram(
-				m,
-				resultTest4());
+		if(TEST_NO == 4 || TEST_ALL == 0){
+			String program = 
+			    "edge('a', 'b')." +
+			    "path('b', 'c')." +
+			    "edge('c', 'd')." +
+			    
+			    "path(?X, ?Y) :- edge(?X, ?Y)." +	
+			    "path(?X, ?Y) :- path(?X, ?Z), path(?Z, ?Y)." +
+			    "?- path(?X, ?Y).";
+	  	
+			m = evluateProgram(program);
+	    	System.out.println("test 4");
+	    	printResults(m);
+	    	System.out.println();
+	
+	    	
+	    	testProgram(
+					m,
+					resultTest4());
+		}
 	}
 	 
 	public String resultTest4(){
@@ -190,24 +204,26 @@ public class ProgramTest extends TestCase {
     }
 	 
 	public void test5() throws Exception{
-    	String program = 
-		    "in('galway', 'ireland')." +
-		    "in('dublin', 'ireland')." +
-		    "in('innsbruck', 'austria')." +
-		    "in('ireland', 'europe')." +
-		    "in('austria', 'europe')." +
-		    
-		    "in(?X, ?Z) :- in(?X, ?Y), in(?Y, ?Z)." +
-		    "?- in('galway', ?Z).";
-		
-    	m = evluateProgram(program);
-    	System.out.println("test 5");
-    	printResults(m);
-    	System.out.println();
-   
-    	testProgram(
-				m,
-				resultTest5());
+		if(TEST_NO == 5 || TEST_ALL == 0){
+	    	String program = 
+			    "in('galway', 'ireland')." +
+			    "in('dublin', 'ireland')." +
+			    "in('innsbruck', 'austria')." +
+			    "in('ireland', 'europe')." +
+			    "in('austria', 'europe')." +
+			    
+			    "in(?X, ?Z) :- in(?X, ?Y), in(?Y, ?Z)." +
+			    "?- in('galway', ?Z).";
+			
+	    	m = evluateProgram(program);
+	    	System.out.println("test 5");
+	    	printResults(m);
+	    	System.out.println();
+	   
+	    	testProgram(
+					m,
+					resultTest5());
+		}
     }
 	
 	public String resultTest5(){
@@ -219,39 +235,41 @@ public class ProgramTest extends TestCase {
 	}
 	
 	public void test6()throws Exception{
-    	String program = 
-    		"down('g', 'b')." +
-    		"down('h', 'c')." +
-    		"down('i', 'd')." +
-    		"down('l', 'f')." +
-    		"down('m', 'f')." +
-    		"down('p', 'k')." +
-    		
-    		"flat('g', 'f')." +
-    		"flat('m', 'n')." +
-    		"flat('m', 'o')." +
-    		"flat('p', 'm')." +
-    		
-    		"up('a', 'e')." +
-    		"up('a', 'f')." +
-    		"up('f', 'm')." +
-    		"up('g', 'n')." +
-    		"up('h', 'n')." +
-    		"up('i', 'o')." +
-    		"up('j', 'o')." +
-    		
-		    "rsg(?X, ?Y) :- up(?X, ?W), rsg(?Q, ?W), down(?Q, ?Y)." +
-		    "rsg(?X, ?Y) :- flat(?X, ?Y)." +
-		    "?- rsg(?X, ?Y).";
-		   
-    	m = evluateProgram(program);
-    	System.out.println("test 6");
-    	printResults(m);
-    	System.out.println();
-
-    	testProgram(
-				m,
-				resultTest6());
+		if(TEST_NO == 6 || TEST_ALL == 0){
+	    	String program = 
+	    		"down('g', 'b')." +
+	    		"down('h', 'c')." +
+	    		"down('i', 'd')." +
+	    		"down('l', 'f')." +
+	    		"down('m', 'f')." +
+	    		"down('p', 'k')." +
+	    		
+	    		"flat('g', 'f')." +
+	    		"flat('m', 'n')." +
+	    		"flat('m', 'o')." +
+	    		"flat('p', 'm')." +
+	    		
+	    		"up('a', 'e')." +
+	    		"up('a', 'f')." +
+	    		"up('f', 'm')." +
+	    		"up('g', 'n')." +
+	    		"up('h', 'n')." +
+	    		"up('i', 'o')." +
+	    		"up('j', 'o')." +
+	    		
+			    "rsg(?X, ?Y) :- up(?X, ?W), rsg(?Q, ?W), down(?Q, ?Y)." +
+			    "rsg(?X, ?Y) :- flat(?X, ?Y)." +
+			    "?- rsg(?X, ?Y).";
+			   
+	    	m = evluateProgram(program);
+	    	System.out.println("test 6");
+	    	printResults(m);
+	    	System.out.println();
+	
+	    	testProgram(
+					m,
+					resultTest6());
+		}
     }
 	
 	public String resultTest6(){
@@ -272,24 +290,26 @@ public class ProgramTest extends TestCase {
 	}
 	
 	public void test7()throws Exception{
-		String program = 
-		    "edge('a', 'b')." +
-		    "path('b', 'c')." +
-		    "edge('c', 'd')." +
-		    
-		    "path(?X, ?Y) :- edge(?X, ?Y)." +
-		    "edge(?X, ?Y) :- path(?X, ?Y)." +	
-		    "path(?X, ?Y) :- edge(?X, ?Z), path(?Z, ?Y)." +
-		    "?- path(?X, ?Y).";
-   
-		m = evluateProgram(program);
-    	System.out.println("test 7");
-    	printResults(m);
-    	System.out.println();
-
-    	testProgram(
-				m,
-				resultTest7());
+		if(TEST_NO == 7 || TEST_ALL == 0){
+			String program = 
+			    "edge('a', 'b')." +
+			    "path('b', 'c')." +
+			    "edge('c', 'd')." +
+			    
+			    "path(?X, ?Y) :- edge(?X, ?Y)." +
+			    "edge(?X, ?Y) :- path(?X, ?Y)." +	
+			    "path(?X, ?Y) :- edge(?X, ?Z), path(?Z, ?Y)." +
+			    "?- path(?X, ?Y).";
+	   
+			m = evluateProgram(program);
+	    	System.out.println("test 7");
+	    	printResults(m);
+	    	System.out.println();
+	
+	    	testProgram(
+					m,
+					resultTest7());
+		}
     }
 	
 	public String resultTest7(){
@@ -305,22 +325,24 @@ public class ProgramTest extends TestCase {
 	}
 	
 	public void test8()throws Exception{
-    	String program = 
-		    "r('a', 'a')." +
-		    "r('b', 'c')." +
-		    "r('c', 'd')." +
-		    
-		    "p(?X, 'a') :- r(?X, ?Y)." +
-		    "?- p(?X, ?Y).";
-  	
-    	m = evluateProgram(program);
-    	System.out.println("test 8");
-    	printResults(m);
-    	System.out.println();
-    	
-    	testProgram(
-				m,
-				resultTest8());
+		if(TEST_NO == 8 || TEST_ALL == 0){
+	    	String program = 
+			    "r('a', 'a')." +
+			    "r('b', 'c')." +
+			    "r('c', 'd')." +
+			    
+			    "p(?X, 'a') :- r(?X, ?Y)." +
+			    "?- p(?X, ?Y).";
+	  	
+	    	m = evluateProgram(program);
+	    	System.out.println("test 8");
+	    	printResults(m);
+	    	System.out.println();
+	    	
+	    	testProgram(
+					m,
+					resultTest8());
+		}
     }
 	
 	public String resultTest8(){
@@ -333,33 +355,35 @@ public class ProgramTest extends TestCase {
 	}
 	
 	public void test9()throws Exception{
-    	String program = 
- 			"u('d')." +
-		    "u('b')." +
-		    "u('a')." +
-		    "u('q')." +
-		    
-		    "s('d')." +
-		    "s('c')." +
-		    
-		    "p('b')." +
-		    "p('e')." +
-		    
-		    "q('a')." +
-		    
-		    "p(?X) :- q(?X), not r(?X)." +
-		    "r(?X) :- s(?X), not t(?X)." +
-		    "t(?X) :- u(?X)." +
-		    "?- p(?X).";
-  	
-    	m = evluateProgram(program);
-    	System.out.println("test 9");
-    	printResults(m);
-    	System.out.println();
-
-    	testProgram(
-				m,
-				resultTest9());
+		if(TEST_NO == 9 || TEST_ALL == 0){
+	    	String program = 
+	 			"u('d')." +
+			    "u('b')." +
+			    "u('a')." +
+			    "u('q')." +
+			    
+			    "s('d')." +
+			    "s('c')." +
+			    
+			    "p('b')." +
+			    "p('e')." +
+			    
+			    "q('a')." +
+			    
+			    "p(?X) :- q(?X), not r(?X)." +
+			    "r(?X) :- s(?X), not t(?X)." +
+			    "t(?X) :- u(?X)." +
+			    "?- p(?X).";
+	  	
+	    	m = evluateProgram(program);
+	    	System.out.println("test 9");
+	    	printResults(m);
+	    	System.out.println();
+	
+	    	testProgram(
+					m,
+					resultTest9());
+		}
     }
 	
 	public String resultTest9(){
@@ -367,6 +391,36 @@ public class ProgramTest extends TestCase {
 		    "p('a')." +
 		    "p('b')." +
 		    "p('e').";
+		    
+		return result;
+	}
+	
+	public void test10()throws Exception{
+		if(TEST_NO == 10 || TEST_ALL == 0){
+	    	String program = 
+			    "r('a', 'a')." +
+			    "r('b', 'a')." +
+			    
+			    "s('a', 'a')." +
+			    "s('b', 'b')." +
+			    
+			    "p(?X) :- r(?X, ?Y), not s(?X, 'a')." +
+			    "?- p(?X).";
+	  	
+	    	m = evluateProgram(program);
+	    	System.out.println("test 10");
+	    	printResults(m);
+	    	System.out.println();
+	    	
+	    	testProgram(
+					m,
+					resultTest10());
+		}
+	}
+	
+	public String resultTest10(){
+    	String result = 
+		    "p('b').";
 		    
 		return result;
 	}
@@ -417,6 +471,13 @@ public class ProgramTest extends TestCase {
 				System.out.println(t.toString());
 			}
     	}
+    }
+	
+	public static void printResults(IRelation r){
+    	Iterator i = r.iterator();
+		while(i.hasNext()){
+			System.out.println(i.next());
+		}
     }
 	
 	public static junit.framework.Test suite() {
