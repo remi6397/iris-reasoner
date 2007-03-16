@@ -32,9 +32,9 @@ import java.util.Iterator;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.operations.tuple.Concatenation;
 import org.deri.iris.operations.tuple.SimpleIndexComparator;
-import org.deri.iris.storage.Relation;
 
 /**
  * Implementation of the sort-merge join operation. 
@@ -161,9 +161,10 @@ public class JoinSimple implements IJoin{
 
 	public IRelation join() {
 		/**
-		 * Return an empty join relation for empty input relation/s.
+		 * Return an empty join relation either if empty input relation/s are empty
+		 * or data types of relations which corresponds to join arguments do not match.
 		 */
-		if (this.relation0.size()==0 || relation1.size() == 0) {
+		if (this.relation0.size()==0 || relation1.size() == 0 || !checkDatatypes()) {
 			return RELATION.getRelation(this.getRelationArity());
 		}
 		setJoinOperator();
@@ -325,6 +326,25 @@ public class JoinSimple implements IJoin{
 	private boolean checkCartesian(){
 		for(int i=0; i<this.indexes.length; i++){
 			if(indexes[i] != -1) return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Checks whether data types which corresponds to join arguments 
+	 * (of joining relation) are of the same type. 
+	 * 
+	 * @return true if data types which corresponds to join arguments 
+	 * 			are of the same type, otherwise false.
+	 */
+	private boolean checkDatatypes(){
+		for(int i=0; i<this.indexes.length; i++){
+			if(indexes[i] != -1){
+				ITerm t0 = this.relation0.first().getTerm(i);
+				ITerm t1 = this.relation1.first().getTerm(indexes[i]);
+				if(! t0.getClass().equals(t1.getClass()))
+				return false;
+			}
 		}
 		return true;
 	}
