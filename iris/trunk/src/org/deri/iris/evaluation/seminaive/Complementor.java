@@ -45,10 +45,10 @@ import org.deri.iris.storage.Relation;
 
 /**
  * <p>Computes the complement of a relation</p>
- * <p>$Id: Complementor.java,v 1.12 2007-03-05 08:09:51 poettler_ric Exp $</p>
+ * <p>$Id: Complementor.java,v 1.13 2007-03-16 13:00:31 darko_anicic Exp $</p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class Complementor {
 
@@ -73,29 +73,13 @@ public class Complementor {
 		if (p.getRules().contains(null)) {
 			throw new NullPointerException("The rules must not contain null");
 		}
-		// TODO: Replcae this check together with the stratification check
-		//		 to avoid looping through the ruleset more than once
-		// TODO: remove this. this hasn't anything to do with the complement!
-		for (final IRule rule : p.getRules()) {
-			if (rule.getHeadLenght() != 1) {
-				throw new IllegalArgumentException(
-						"The length of the head must be 1, but was "
-								+ rule.getHeadLenght());
-			}
-		}
 		this.p = p;
-
-		// Stratify rules
-		// TODO: remove this. this hasn't anything to do with the complement!
-		if (!MiscOps.stratify(p)) {
-			throw new RuntimeException("Rules are unstratifiable");
-		}
 		updateClean();
 	}
 
 	/**
 	 * Computes the complement of a relaiton.
-	 * @param pr the predicate for which to compute the complement
+	 * @param pr the predicate to compute the complement for
 	 * @throws NullPointerException if the predicate is <code>null</code>
 	 */
 	public IRelation getComplement(final IPredicate pr) {
@@ -116,7 +100,7 @@ public class Complementor {
 				r = relationForTerm(t);
 			} else {
 				r = Factory.RELATION_OPERATION.createJoinOperator(r, relationForTerm(t), 
-						new int[] { -1, -1 }).join();
+						new int[] { -1, -1 }).join(); //getInitIndexes
 			}
 		}
 
@@ -126,7 +110,7 @@ public class Complementor {
 
 	/**
 	 * Returns the relation with all possible constants for the given term. E.g. if the 
-	 * term is a integer term it will return a relation with all possible integers found in
+	 * term is an integer term it will return a relation with all possible integers found in
 	 * the edb.
 	 * @param t the term for which to return all constants
 	 * @return the constants
@@ -300,7 +284,7 @@ public class Complementor {
 		if (preds == null) {
 			throw new NullPointerException("The predicates must not be null");
 		}
-		if (s <= 0) {
+		if (s < 0) {
 			throw new IllegalArgumentException(s + " is not a valid stratum");
 		}
 
