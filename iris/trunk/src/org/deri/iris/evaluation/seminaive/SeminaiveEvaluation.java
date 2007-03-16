@@ -29,12 +29,12 @@ import static org.deri.iris.factory.Factory.RELATION;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.storage.Relation;
 
 /**
  * Algorithm 3.4: Semi-Naive Evaluation of Datalog Equations
@@ -64,11 +64,13 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 		IRelation p = null;
 		Map<IPredicate, IRelation> aq = new HashMap<IPredicate, IRelation>();
 		IRelation tempRel = null;
+		Set<IPredicate> preds = null;
 		
 		/** Evaluate rules */
-		for (int i = 1, maxStrat = Complementor
+		for (int i = 0, maxStrat = Complementor
 				.getMaxStratum(this.idbMap.keySet()); i <= maxStrat; i++) {
 
+			preds = Complementor.getPredicatesOfStratum(this.idbMap.keySet(), i);
 			/**
 			 * <p>Algorithm:</p>
 			 * <p>
@@ -78,17 +80,18 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 			 * end;
 			 * </p>
 			 */
-			for (final IPredicate pr : Complementor.getPredicatesOfStratum(
-					this.idbMap.keySet(), i)) {
+			for (final IPredicate pr : preds) {
 				
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
+				this.p.registerPredicate(pr);
 				p = method.evaluate(this.idbMap.get(pr), this.p);
 				if(this.p.getFacts(pr) != null && 
 						! this.p.getFacts(pr).containsAll(p)){
-					
+				
 					aq.put(pr, p);
 					this.p.addFacts(pr, p);
 				}
+				
 			}
 			/**
 			 * <p>Algorithm:</p>
@@ -107,8 +110,8 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 			 */
 			cont = true;
 			while (cont) {
-				for (final IPredicate pr : Complementor.getPredicatesOfStratum(
-						this.idbMap.keySet(), i)) {
+				if(preds.size() == 0) break;
+				for (final IPredicate pr : preds) {
 					
 					cont = false;
 					// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
@@ -128,8 +131,7 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 					cont = cont || newTupleAdded;
 				}
 			}
-			for (final IPredicate pr : Complementor.getPredicatesOfStratum(
-					this.idbMap.keySet(), i)) {
+			for (final IPredicate pr : preds) {
 				
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 				p = method.evaluate(this.idbMap.get(pr), this.p);
