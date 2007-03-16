@@ -52,6 +52,7 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.seminaive.Complementor;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.relations.JoinSimple;
+import org.deri.iris.storage.ComplementRelation;
 
 /**
  * <p>
@@ -158,8 +159,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 				c1 = j.getChildren().get(i);
 				r1 = evaluate(c1, p, aq);
 				jo = Factory.RELATION_OPERATION.createJoinSimpleOperator(
-						r0,
-						r1, 
+						r0, r1, 
 						// TODO: get correct projection indexes!
 						getJoinIndexes(vars, c1.getVariables()), 
 						//j.getCondition(), pInds);
@@ -168,7 +168,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 				r0 = jo.join();
 				if(r0.size() == 0) emptyRel = true;
 			}
-			vars.addAll(c1.getVariables());
+			if(c1 != null && c1.getVariables() != null) vars.addAll(c1.getVariables());
 		}
 		return r0;
 	}
