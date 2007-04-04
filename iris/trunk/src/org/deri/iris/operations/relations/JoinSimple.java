@@ -37,10 +37,12 @@ import org.deri.iris.operations.tuple.Concatenation;
 import org.deri.iris.operations.tuple.SimpleIndexComparator;
 
 /**
+ * <p>
  * Implementation of the sort-merge join operation. 
  * Reference: JoinSimpleExtended Processing in Relational Databases, 
  * PRITI MISHRA and MARGARET H. EICH
- * 
+ * </p>
+ *
  * @author Darko Anicic, DERI Innsbruck
  * @date   24.05.2006 09:26:43
  */
@@ -50,14 +52,15 @@ public class JoinSimple implements IJoin{
 
 	private IRelation relation1 = null;
 
-	private IRelation joinRelation = null;
-
 	private int[] indexes = null;
 
 	private int[] projectIndexes = null;
 
-	private JoinCondition condition = null;
+	private JoinCondition CONDITION = null;
 
+	/** Default value for the form of join operation. */
+	private JoinForm FORM = JoinForm.THETA_JOIN;
+	
 	/**
 	 * If true, make Cartesian product (a special
 	 * case of join operation), otherwise join
@@ -65,28 +68,42 @@ public class JoinSimple implements IJoin{
 	 */
 	private boolean isCartesian = false;
 	
-	JoinSimple(IRelation arg0, IRelation arg1, int[] inds) {
+	JoinSimple(IRelation arg0, IRelation arg1, int[] inds, JoinForm form) {
 		if (arg0 == null || arg1 == null || inds == null) {
 			throw new IllegalArgumentException(
-					"Input parameters must not be null");
+					"Input parameters must not be null!");
 		}
 		this.relation0 = arg0;
 		this.relation1 = arg1;
 		this.indexes = inds;
-		this.condition = JoinCondition.EQUALS;
+		this.CONDITION = JoinCondition.EQUALS;
+		if(form != null){
+			this.FORM = form;
+		}
 	}
 
+	JoinSimple(IRelation arg0, IRelation arg1, int[] inds) {
+		if (arg0 == null || arg1 == null || inds == null) {
+			throw new IllegalArgumentException(
+					"Input parameters must not be null!");
+		}
+		this.relation0 = arg0;
+		this.relation1 = arg1;
+		this.indexes = inds;
+		this.CONDITION = JoinCondition.EQUALS;
+	}
+	
 	JoinSimple(IRelation arg0, IRelation arg1, int[] inds,
 			JoinCondition condition) {
 		if (arg0 == null || arg1 == null || inds == null
 				|| condition == null) {
 			throw new IllegalArgumentException("All constructor "
-					+ "parameters must not be specified (non null values");
+					+ "parameters must be specified non null values!");
 		}
 		this.relation0 = arg0;
 		this.relation1 = arg1;
 		this.indexes = inds;
-		this.condition = condition;
+		this.CONDITION = condition;
 	}
 
 	/**
@@ -113,13 +130,13 @@ public class JoinSimple implements IJoin{
 		if (arg0 == null || arg1 == null || inds == null
 				|| condition == null || projectIndexes == null) {
 			throw new IllegalArgumentException("Constructor "
-					+ "parameters are not specified correctly");
+					+ "parameters are not specified correctly!");
 		}
 		this.relation0 = arg0;
 		this.relation1 = arg1;
 		this.indexes = inds;
 		this.projectIndexes = projectIndexes;
-		this.condition = condition;
+		this.CONDITION = condition;
 	}
 
 	private void setJoinOperator() {
@@ -134,6 +151,7 @@ public class JoinSimple implements IJoin{
 			throw new IllegalArgumentException("Indexes are not specified" +
 					" correctly.");
 		
+		// TODO remoce isCartesian, use only JoinForm.NATURAL_JOIN
 		this.isCartesian = checkCartesian();
 		if(! this.isCartesian){
 			// Sort arg0 on those tupples defined by sort indexes
@@ -147,16 +165,18 @@ public class JoinSimple implements IJoin{
 					new SimpleIndexComparator(inds1));
 			rel1.addAll(this.relation1);
 			this.relation1 = rel1;		
+		}else{
+			this.FORM = JoinForm.NATURAL_JOIN;
 		}
 		/*
 		 * If project indexes are not specified, 
 		 * joined tuples will be simple merged.
 		 */
+		// TODO: comment this out
 		int a = this.getRelationArity();
 		if (this.projectIndexes == null) {
 			this.projectIndexes = this.transformIndexes0(a, new int[a]);
 		}
-		this.joinRelation = RELATION.getRelation(a);
 	}
 
 	public IRelation join() {
@@ -167,46 +187,29 @@ public class JoinSimple implements IJoin{
 		if (this.relation0.size()==0 || relation1.size() == 0 || !checkDatatypes()) {
 			return RELATION.getRelation(this.getRelationArity());
 		}
-		setJoinOperator();
-		
+		this.setJoinOperator();
 		/**
 		 * If true make Cartesian product (a special
 		 * case of join operation), otherwise join
 		 * regularly
 		 */
+		// TODO: put this together with case: NATURAL_JOIN
 		if(this.isCartesian){
 			return joinCartesian();
 		}
-		/**
-		 * the sort-merge join operation:
-		 * (JoinSimpleExtended Processing in Relational Databases, 
-		 * PRITI MISHRA and MARGARET H. EICH)
-		 */
-		Concatenation concatenator = new Concatenation();
-		Iterator<ITuple> it0, it1;
-		ITuple t1, t0, concatenatedTuple;
-		int comp = 0;
-		it0 = this.relation0.iterator();
-		
-		while(it0.hasNext()){
-			t0 = it0.next();
-			it1 = this.relation1.iterator();
-			while(it1.hasNext()){
-				t1 = it1.next();
-				comp = checkJointness(t0, t1);
-				comp = isConditionSatisfied(comp);
-				if(comp == 0){
-					concatenatedTuple = concatenator.concatenate(
-							t0, t1, this.projectIndexes);
-					
-					this.joinRelation.add(concatenatedTuple);
-				}else if(comp < 0) break;
-			}
+		switch (this.FORM){
+			case NATURAL_JOIN:
+				return joinCartesian();
+			case SEMIJOIN:
+				return this.sortMergeJoin();
+			case THETA_JOIN:
+				return this.sortMergeJoin();
 		}
-		return joinRelation;
+		return null;
 	}
 
-	public IRelation joinCartesian() {
+	private IRelation joinCartesian() {
+		IRelation joinRelation = RELATION.getRelation(this.getRelationArity());
 		Concatenation concatenator = new Concatenation();
 		Iterator<ITuple> it0, it1;
 		ITuple t1, t0, concatenatedTuple;
@@ -220,7 +223,44 @@ public class JoinSimple implements IJoin{
 				concatenatedTuple = concatenator.concatenate(
 						t0, t1, this.projectIndexes);
 						
-				this.joinRelation.add(concatenatedTuple);
+				joinRelation.add(concatenatedTuple);
+			}
+		}
+		return joinRelation;
+	}
+	
+	/**
+	 * the sort-merge join operation:
+	 * (JoinSimpleExtended Processing in Relational Databases, 
+	 * PRITI MISHRA and MARGARET H. EICH)
+	 */
+	private IRelation sortMergeJoin() {
+		IRelation joinRelation = RELATION.getRelation(this.getRelationArity());
+		Concatenation concatenator = new Concatenation();
+		Iterator<ITuple> it0, it1;
+		ITuple t1, t0, resTuple = null;
+		int comp = 0;
+		it0 = this.relation0.iterator();
+		
+		while(it0.hasNext()){
+			t0 = it0.next();
+			it1 = this.relation1.iterator();
+			while(it1.hasNext()){
+				t1 = it1.next();
+				comp = checkJointness(t0, t1);
+				comp = isConditionSatisfied(comp);
+				if(comp == 0){
+					switch (this.FORM){
+					case SEMIJOIN:
+						resTuple = t0;
+						break;
+					case THETA_JOIN:
+						resTuple = concatenator.concatenate(
+								t0, t1, this.projectIndexes);
+						break;
+					}
+					joinRelation.add(resTuple);
+				}else if(comp < 0) break;
 			}
 		}
 		return joinRelation;
@@ -270,11 +310,22 @@ public class JoinSimple implements IJoin{
 	
 	private int getRelationArity(){
 		int j=0;
-		if(this.projectIndexes == null){
-			return this.relation0.getArity() + this.relation1.getArity();
-		}
-		for(int i=0; i<this.projectIndexes.length; i++){
-			if(this.projectIndexes[i] != -1) j++;
+		
+		switch (this.FORM){
+		case NATURAL_JOIN:
+			j = this.relation0.getArity() + this.relation1.getArity();
+			break;
+		case SEMIJOIN:
+			j = this.relation0.getArity();
+			break;
+		case THETA_JOIN:
+			if(this.projectIndexes == null){
+				return this.relation0.getArity() + this.relation1.getArity();
+			}
+			for(int i=0; i<this.projectIndexes.length; i++){
+				if(this.projectIndexes[i] != -1) j++;
+			}
+			break;
 		}
 		return j;
 	}
@@ -296,7 +347,6 @@ public class JoinSimple implements IJoin{
 	private int checkJointness(ITuple t0, ITuple t1){
 		int[] indexes = this.indexes;
 		int comp = 0;
-		boolean cont = false;
 		
 		if(t0 != null && t1 != null){
 			for(int i=0; i<indexes.length; i++){
@@ -359,7 +409,7 @@ public class JoinSimple implements IJoin{
 	 * @return
 	 */
 	private int isConditionSatisfied(int comparison){
-		switch (condition){
+		switch (CONDITION){
 			case EQUALS:
 				if(comparison == 0) return 0;
 				if(comparison < 0) return -1;
