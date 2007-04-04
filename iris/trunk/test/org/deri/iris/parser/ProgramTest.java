@@ -60,7 +60,7 @@ public class ProgramTest extends TestCase {
 	private static final int TEST_ALL = 0;
  
 	/** Set a number of a test to be run */
-	private int TEST_NO = 6;
+	private int TEST_NO = 10;
 	
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(ProgramTest.class);
@@ -404,7 +404,7 @@ public class ProgramTest extends TestCase {
 			    "s('a', 'a')." +
 			    "s('b', 'b')." +
 			    
-			    "p(?X) :- r(?X, ?Y), not s(?X, 'a')." +
+			    "p(?X) :- not s(?X, 'a'), r(?X, ?Y)." +
 			    "?- p(?X).";
 	  	
 	    	m = evluateProgram(program);
