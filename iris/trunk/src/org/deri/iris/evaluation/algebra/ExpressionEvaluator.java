@@ -49,10 +49,8 @@ import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.operations.relation.IUnion;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.evaluation.seminaive.Complementor;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.operations.relations.JoinSimple;
-import org.deri.iris.storage.ComplementRelation;
+import org.deri.iris.operations.relations.MiscOps;
 
 /**
  * <p>
@@ -73,20 +71,16 @@ import org.deri.iris.storage.ComplementRelation;
  */
 public class ExpressionEvaluator implements IExpressionEvaluator {
 
-	private Complementor complementor = null;
-	
 	public ExpressionEvaluator() {
 	}
 
 	public IRelation evaluate(IComponent c, IProgram p) {
-		this.complementor = new Complementor(p);
 		return evaluate(c, p, null);
 	}
 
 	public IRelation evaluateIncrementally(IComponent c, IProgram p, 
 			Map<IPredicate, IRelation> aq) {
 		
-		this.complementor = new Complementor(p);
 		return evaluate(c, p, aq);
 	}
 	
@@ -155,21 +149,31 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		IRelation r1 = null;
 		
 		for(int i=1; i<j.getChildren().size(); i++){
+			c1 = j.getChildren().get(i);
 			if(! emptyRel){
-				c1 = j.getChildren().get(i);
 				r1 = evaluate(c1, p, aq);
-				jo = Factory.RELATION_OPERATION.createJoinSimpleOperator(
-						r0, r1, 
-						// TODO: get correct projection indexes!
-						getJoinIndexes(vars, c1.getVariables()), 
-						//j.getCondition(), pInds);
-						j.getCondition());
-				
+				if(c1.isPositive()){
+					jo = Factory.RELATION_OPERATION.createJoinSimpleOperator(
+							r0, r1, 
+							// TODO: get correct projection indexes!
+							MiscOps.getJoinIndexes(vars, c1.getVariables()), 
+							//j.getCondition(), pInds);
+							j.getCondition());
+				} else {
+					jo = Factory.RELATION_OPERATION.createJoinComplementOperator(
+							r0, r1, 
+							MiscOps.getJoinIndexes(vars, c1.getVariables()));
+				}
 				r0 = jo.join();
 				if(r0.size() == 0) emptyRel = true;
 			}
-			if(c1 != null && c1.getVariables() != null) vars.addAll(c1.getVariables());
+			if(c1 != null && c1.getVariables() != null && c1.isPositive()) 
+				vars.addAll(c1.getVariables());
 		}
+		// TODO: If you don't use variables created in Rule2Relation, remove them!
+		j.getVariables().clear();
+		j.addVariables(vars);
+		
 		return r0;
 	}
 	
@@ -186,7 +190,10 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		IProjection projection = Factory.RELATION_OPERATION
 			.createProjectionOperator(
 					evaluate(pr.getChildren().get(0), p, aq), 
-					pr.getIndexes());
+					// TODO: If you don't use project inds, created in Rule2Relation, remove them!
+					//pr.getIndexes());
+					MiscOps.getProjectionIndexes(
+							pr.getChildren().get(0).getVariables(), pr.getVariables()));
 		
 		return projection.project();
 	}
@@ -201,17 +208,15 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 					"performed!");
 		}
 		IRelationDescriptor r = (IRelationDescriptor)c;
+		// TODO: If you don't use Positive property from RelationDescriptor, created in Rule2Relation, remove them!
+		//if (r.isPositive()) {
 		IRelation rel = null;
-		if (r.isPositive()) {
-			if (aq != null && aq.get(r.getPredicate()) != null) {
-				// Return tuples from the last iteration only!
-				rel = aq.get(r.getPredicate());
-			} else {
-				// Return all tuples from the KB!
-				rel = p.getFacts(r.getPredicate());
-			}
+		if (aq != null && aq.get(r.getPredicate()) != null) {
+			// Return tuples from the last iteration only!
+			rel = aq.get(r.getPredicate());
 		} else {
-			rel = this.complementor.getComplement(r.getPredicate());
+			// Return all tuples from the KB!
+			rel = p.getFacts(r.getPredicate());
 		}
 		if(rel == null){
 			return	RELATION.getRelation(r.getPredicate().getArity());
@@ -276,22 +281,5 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		IRelation r = RELATION.getRelation(1);
 		r.add(Factory.BASIC.createMinimalTuple(con.getConstant()));
 		return r;
-	}
-	
-	private int[] getJoinIndexes(List<IVariable> l0, List<IVariable> l1){
-		int[] indexes = JoinSimple.getInitIndexes(Math.max(l0.size(), l1.size()));
-		List<Integer> vi = new ArrayList<Integer>();
-		for (int j=0; j<l0.size(); j++) {
-			for (int k=0; k<l1.size(); k++) {
-				if (l0.get(j).equals(l1.get(k))) {
-					if(! vi.contains(k)){
-						indexes[j] = k;
-						vi.add(k);
-						break;
-					}
-				} 
-			}
-		}
-		return indexes;
 	}
 }
