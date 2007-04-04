@@ -47,7 +47,6 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.evaluation.MiscOps;
-import org.deri.iris.storage.Relation;
 import org.deri.iris.terms.ConstructedTerm;
 
 /**
@@ -252,7 +251,7 @@ public class Program implements IProgram{
 				}
 			}
 		}
-		facts.put(p, new Relation (p.getArity()));
+		facts.put(p, RELATION.getRelation(p.getArity()));
 		return p;
 	}
 	
