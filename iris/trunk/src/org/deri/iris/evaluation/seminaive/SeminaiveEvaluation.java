@@ -35,6 +35,7 @@ import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.evaluation.MiscOps;
 
 /**
  * Algorithm 3.4: Semi-Naive Evaluation of Datalog Equations
@@ -67,10 +68,10 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 		Set<IPredicate> preds = null;
 		
 		/** Evaluate rules */
-		for (int i = 0, maxStrat = Complementor
-				.getMaxStratum(this.idbMap.keySet()); i <= maxStrat; i++) {
+		for (int i = 0, maxStrat = MiscOps.getMaxStratum(this.idbMap.keySet()); 
+				i <= maxStrat; i++) {
 
-			preds = Complementor.getPredicatesOfStratum(this.idbMap.keySet(), i);
+			preds = MiscOps.getPredicatesOfStratum(this.idbMap.keySet(), i);
 			/**
 			 * <p>Algorithm:</p>
 			 * <p>
