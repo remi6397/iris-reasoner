@@ -39,16 +39,20 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.storage.Relation;
 
 /**
  * <p>Computes the complement of a relation</p>
- * <p>$Id: Complementor.java,v 1.13 2007-03-16 13:00:31 darko_anicic Exp $</p>
+ * <p>$Id: Complementor.java,v 1.14 2007-04-04 21:54:57 darko_anicic Exp $</p>
+ * 
+ * @deprecated Functionality of Complementor is replace by JoinComplement. 
+ * Methods related to the stratification: getMaxStratum, 
+ * getPredicatesOfStratum, were moved from this class to 
+ * org.deri.iris.evaluation.MiscOps.
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class Complementor {
 
@@ -243,57 +247,4 @@ public class Complementor {
 		return Collections.singleton(t);
 	}
 
-	/**
-	 * Returns the highest stratum of a set of predicates.
-	 * 
-	 * @param h	The set of idb predicates.
-	 * @return 	The highest stratum.
-	 * @throws 	NullPointerException
-	 *             	if the set of predicates is {@code null}.
-	 * @throws NullPointerException
-	 *             if the set contains {@code null}.
-	 */
-	protected static int getMaxStratum(final Set<IPredicate> h) {
-		if (h == null) {
-			throw new NullPointerException("The predicates must not be null");
-		}
-		int strat = 0;
-		for (final IPredicate pred : h) {
-			strat = Math.max(strat, pred.getStratum());
-		}
-		return strat;
-	}
-	
-	/**
-	 * Determines (out of a set of literals) all literals whose predicats have a given stratum.
-	 * 
-	 * @param preds
-	 *            the set of predicates.
-	 * @param s
-	 *            the stratum to look for
-	 * @return the set of predicates at the given stratum
-	 * @throws NullPointerException
-	 *             if the set of predicates is {@code null}
-	 * @throws NullPointerException
-	 *             if the set of predicates contains {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the stratum is smaller than 0
-	 */
-	protected static Set<IPredicate> getPredicatesOfStratum(
-			final Set<IPredicate> preds, final int s) {
-		if (preds == null) {
-			throw new NullPointerException("The predicates must not be null");
-		}
-		if (s < 0) {
-			throw new IllegalArgumentException(s + " is not a valid stratum");
-		}
-
-		final Set<IPredicate> predicates = new HashSet<IPredicate>();
-		for (final IPredicate p : preds) {
-			if (p.getStratum() == s) {
-				predicates.add(p);
-			}
-		}
-		return predicates;
-	}
 }
