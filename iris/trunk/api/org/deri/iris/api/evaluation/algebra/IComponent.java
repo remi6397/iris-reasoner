@@ -107,4 +107,25 @@ public interface IComponent {
 	 * @return	List of all variables from the component.
 	 */
 	public List<IVariable> getVariables();
+	
+	/**
+	 * <p>
+	 * Checks whether the component (branch) which represents corresponding literal is positive.
+	 * </p>
+	 * 
+	 * @return True if the component (branch) is a positive; false
+	 *         otherwise.
+	 */
+	public boolean isPositive();
+	
+	/**
+	 * <p>
+	 * Set the component (branch), which represents corresponding 
+	 * literal, to be positive or negative.
+	 * </p>
+	 * 
+	 * @param positive	If true, the component is a positive; false 
+	 *            otherwise.
+	 */
+	public void setPositive(boolean positive);
 }
