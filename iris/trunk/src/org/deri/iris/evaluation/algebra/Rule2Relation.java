@@ -253,29 +253,52 @@ public class Rule2Relation {
 	 */
 	private IComponent translateBody(final List<ILiteral> lits) {
 		IJoinDescriptor j = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
-
-		/** a. Ordinary literal (subgoal) */
+		IJoinDescriptor jTmp0 = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
+		IJoinDescriptor jTmp1 = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
+		IComponent cPos, cNeg, cBuilt;
+		
 		for (ILiteral l : lits) {
 			if (!(l.getAtom() instanceof IBuiltInAtom)) {
-				IComponent c = translateOrdinaryLiteral(l);
-				if(c != null){
-					j.addChild(c);
-					j.addVariables(c.getVariables());
+				/** a. Ordinary literal (subgoal) */
+				if(l.isPositive()){
+					cPos = translateOrdinaryLiteral(l);
+					if(cPos != null){
+						cPos.setPositive(true);
+						j.addChild(cPos);
+						j.addVariables(cPos.getVariables());
+					}
+				}else{
+					/**
+					 * b. Negative literal (subgoal): 
+					 * needs to be handled after the ordinary subgoals.
+					 */
+					cNeg = translateOrdinaryLiteral(l);
+					if(cNeg != null){
+						cNeg.setPositive(false);
+						jTmp0.addChild(cNeg);
+						jTmp0.addVariables(cNeg.getVariables());
+					}
+				}
+			}else{
+				/**
+				 * c. Built-in literal (subgoal): needs to be
+				 * handled after the ordinary subgoals.
+				 */
+				cBuilt = translateBuiltInAtom(l.getAtom());
+				if(cBuilt != null){
+					cBuilt.setPositive(l.isPositive());
+					jTmp1.addChild(cBuilt);
+					jTmp1.addVariables(cBuilt.getVariables());
 				}
 			}
 		}
-		/**
-		 * b. Built-in literal (subgoal): Note: Built-in subgoals need to be
-		 * handled after the ordinary subgoals
-		 */
-		for (ILiteral l : lits) {
-			if (l.getAtom() instanceof IBuiltInAtom) {
-				IComponent c = translateBuiltInAtom(l.getAtom());
-				if(c != null){
-					j.addChild(c);
-					j.addVariables(c.getVariables());
-				}
-			}
+		if(jTmp0.getChildren().size() > 0){
+			j.addChild(jTmp0.getChildren().get(0));
+			j.addVariables(jTmp0.getVariables());	
+		}
+		if(jTmp1.getChildren().size() > 0){
+			j.addChild(jTmp1.getChildren().get(0));
+			j.addVariables(jTmp1.getVariables());
 		}
 		if(j.getChildren().size() == 1){
 			return j.getChildren().get(0);
@@ -287,7 +310,8 @@ public class Rule2Relation {
 	private IComponent translateOrdinaryLiteral(final ILiteral l) {
 		ITuple pattern = null;
 		int[] indexes = new int[l.getPredicate().getArity()];
-		int[] projectInds = Projection.getInitIndexes(l.getPredicate().getArity());
+		int[] projectInds = org.deri.iris.operations.relations.
+				MiscOps.getInitProjectionIndexes(l.getPredicate().getArity());
 		List<ITerm> ts = new ArrayList<ITerm>(l.getPredicate().getArity());
 		List<ITerm> terms = l.getAtom().getTuple().getTerms();
 		List<IVariable> vars = new ArrayList<IVariable>(l.getPredicate()
