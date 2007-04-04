@@ -36,6 +36,7 @@ import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.operations.relation.IUnion;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.operations.relations.JoinCondition;
+import org.deri.iris.operations.relations.JoinForm;
 
 /**
  * <p>
@@ -65,7 +66,28 @@ public interface IRelationOperationsFactory {
 	 * @return
 	 */
 	public IJoin createJoinOperator(IRelation arg0, IRelation arg1, int[] inds);
-
+	
+	/**
+	 * <p>
+	 * Creates an equijoin (default) operator which joins two relations where 
+	 * the second relation is the complement of its original relation.
+	 * Basically the joinComplement operator do the following:
+	 * <p>
+	 * arg0 – (arg0 semijoin arg1)
+	 * </p>
+	 * <p>
+	 * Remark: The set difference operation is denoted with "-".
+	 * </p>
+	 * @param arg0
+	 *            the first relation to be joined
+	 * @param arg1
+	 *            the second relation to be joined
+	 * @param inds
+	 *            join indexes
+	 * @return
+	 */
+	public IJoin createJoinComplementOperator(IRelation arg0, IRelation arg1, int[] inds);
+	
 	/**
 	 * Creates a general join operator where one of the following conditions: =,
 	 * !=, <, >, <=, >= must hold.
@@ -109,6 +131,23 @@ public interface IRelationOperationsFactory {
 	public IJoin createJoinSimpleOperator(IRelation arg0, IRelation arg1,
 			int[] indexes);
 
+	/**
+	 * Creates a join operator which has the form specified by form.
+	 * See JoinForm for more details on available forms of the join 
+	 * operator.
+	 * 
+	 * @param arg0
+	 *            the first relation to be joined
+	 * @param arg1
+	 *            the second relation to be joined
+	 * @param inds
+	 *            join indexes
+	 * @param form
+	 * 			  the join form
+	 * @return
+	 */
+	public IJoin createJoinSimpleOperator(IRelation arg0, IRelation arg1, int[] inds, JoinForm form);
+	
 	/**
 	 * No duplicates handled.
 	 * 
