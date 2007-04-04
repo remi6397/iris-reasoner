@@ -44,6 +44,8 @@ public abstract class Component implements IComponent{
 	
 	private List<IVariable> variables = new ArrayList<IVariable>();
 	
+	private boolean positive = true;
+	
 	
 	public Component(final ComponentType t){
 		this.type = t;
@@ -93,6 +95,14 @@ public abstract class Component implements IComponent{
 	
 	public List<IVariable> getVariables(){
 		return this.variables;
+	}
+	
+	public boolean isPositive() {
+		return this.positive;
+	}
+
+	public void setPositive(boolean positive) {
+		this.positive = positive;
 	}
 	
 	public boolean equals(final Object o) {
