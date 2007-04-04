@@ -26,40 +26,45 @@
 package org.deri.iris.evaluation.seminaive;
 
 import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.deri.iris.Executor;
+import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.storage.Relation;
+import org.deri.iris.parser.ProgramTest;
 
 /**
  * <p>
  * </p>
  * <p>
- * $Id: TestNeg.java,v 1.2 2006-12-05 08:25:53 richardpoettler Exp $
+ * $Id: TestNeg.java,v 1.3 2007-04-04 21:29:52 darko_anicic Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-12-05 08:25:53 $
+ * @version $Revision: 1.3 $
+ * @date $Date: 2007-04-04 21:29:52 $
  */
 public class TestNeg {
 
@@ -90,20 +95,25 @@ public class TestNeg {
 		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
 		// r(1), r(2)
 		IPredicate p = Factory.BASIC.createPredicate("r", 1);
-		IRelation rel = new Relation(1);
+		IRelation rel = RELATION.getRelation(1);
 		rel.add(createStringTuple("1"));
 		rel.add(createStringTuple("2"));
 		facts.put(p, rel);
 
 		// s(3), s(4)
 		p = Factory.BASIC.createPredicate("s", 1);
-		rel = new Relation(1);
+		rel = RELATION.getRelation(1);
 		rel.add(createStringTuple("3"));
 		rel.add(createStringTuple("4"));
 		facts.put(p, rel);
 
-		final IProgram e = Factory.PROGRAM.createProgram(facts, rules,
-				Collections.EMPTY_SET);
+		// ?- q(x)
+		IQuery q0 = Factory.BASIC.createQuery(createLiteral("q", "X"));
+		
+		Set<IQuery> queries = new HashSet<IQuery>();
+		queries.add(q0);
+		
+		final IProgram e = Factory.PROGRAM.createProgram(facts, rules, queries);
 
 		System.out.println("--- input ---");
 		for (final IRule rule : e.getRules()) {
@@ -111,8 +121,7 @@ public class TestNeg {
 		}
 
 		System.out.println("--- computing ---");
-		new Complementor(e);
-
+		
 		System.out.println("--- facts ---");
 		System.out.println(e.getPredicates());
 		for (final IPredicate pred : e.getPredicates()) {
@@ -122,6 +131,12 @@ public class TestNeg {
 				System.out.println(pred.getPredicateSymbol() + t);
 			}
 		}
+		IExpressionEvaluator method = new ExpressionEvaluator();
+		IExecutor exec = new Executor(e, method);
+		exec.execute();
+		Map<IPredicate,IRelation> m = exec.computeSubstitutions();
+		System.out.println("*****" + "RESULT: " + "*****");
+		ProgramTest.printResults(m);
 	}
 
 	private static ITuple createStringTuple(final String... s) {
