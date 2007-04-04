@@ -43,7 +43,7 @@ import org.deri.iris.api.storage.IRelation;
  */
 public class RelationOperationsFactory implements IRelationOperationsFactory{
 	private static final IRelationOperationsFactory FACTORY = new RelationOperationsFactory();
-	
+
 	private RelationOperationsFactory() {
 		// this is a singelton
 	}
@@ -68,6 +68,10 @@ public class RelationOperationsFactory implements IRelationOperationsFactory{
 			int[] indexes) {
 		return new Join(arg0, arg1, indexes);
 	}
+	public IJoin createJoinComplementOperator(IRelation arg0, IRelation arg1, 
+			int[] inds) {
+		return new JoinComplement(arg0, arg1, inds);
+	}
 	public IJoin createJoinOperator(IRelation arg0, IRelation arg1,
 			int[] indexes, JoinCondition condition) {
 		return new Join(arg0, arg1, indexes, condition);
@@ -80,6 +84,9 @@ public class RelationOperationsFactory implements IRelationOperationsFactory{
 	public IJoin createJoinSimpleOperator(IRelation arg0, IRelation arg1, 
 			int[] indexes) {
 		return new JoinSimple(arg0, arg1, indexes);
+	}
+	public IJoin createJoinSimpleOperator(IRelation arg0, IRelation arg1, int[] inds, JoinForm form) {
+		return new JoinSimple(arg0, arg1, inds, form);
 	}
 	public IJoin createJoinSimpleOperator(IRelation arg0, IRelation arg1,
 			int[] indexes, JoinCondition condition) {
