@@ -168,17 +168,5 @@ public class Projection implements IProjection {
 		return BASIC.createTuple(termList);
 	}
 	
-	/**
-	 * <p>Creates a default projection indexes.</p>
-	 *  
-	 * @param arity	Arity of the default projection indexes.
-	 * @return		The default projection indexes.
-	 */
-	public static int[] getInitIndexes(int arity) {
-		int[] i = new int[arity];
-		for (int j = 0; j < arity; j++){
-			i[j] = -1;
-		}
-		return i;
-	}
+	
 }
