@@ -51,13 +51,13 @@ import org.deri.iris.api.terms.IVariable;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.3 2007-01-29 09:06:53 darko Exp $
+ * $Id: MiscOps.java,v 1.4 2007-04-04 21:45:15 darko_anicic Exp $
  * </p>
  * 
  * @author richi
  * @author graham
- * @version $Revision: 1.3 $
- * @date $Date: 2007-01-29 09:06:53 $
+ * @version $Revision: 1.4 $
+ * @date $Date: 2007-04-04 21:45:15 $
  */
 public class MiscOps {
 
@@ -247,5 +247,59 @@ public class MiscOps {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns the highest stratum of a set of predicates.
+	 * 
+	 * @param h	The set of idb predicates.
+	 * @return 	The highest stratum.
+	 * @throws 	NullPointerException
+	 *             	if the set of predicates is {@code null}.
+	 * @throws NullPointerException
+	 *             if the set contains {@code null}.
+	 */
+	public static int getMaxStratum(final Set<IPredicate> h) {
+		if (h == null) {
+			throw new NullPointerException("The predicates must not be null");
+		}
+		int strat = 0;
+		for (final IPredicate pred : h) {
+			strat = Math.max(strat, pred.getStratum());
+		}
+		return strat;
+	}
+	
+	/**
+	 * Determines (out of a set of literals) all literals whose predicats have a given stratum.
+	 * 
+	 * @param preds
+	 *            the set of predicates.
+	 * @param s
+	 *            the stratum to look for
+	 * @return the set of predicates at the given stratum
+	 * @throws NullPointerException
+	 *             if the set of predicates is {@code null}
+	 * @throws NullPointerException
+	 *             if the set of predicates contains {@code null}
+	 * @throws IllegalArgumentException
+	 *             if the stratum is smaller than 0
+	 */
+	public static Set<IPredicate> getPredicatesOfStratum(
+			final Set<IPredicate> preds, final int s) {
+		if (preds == null) {
+			throw new NullPointerException("The predicates must not be null");
+		}
+		if (s < 0) {
+			throw new IllegalArgumentException(s + " is not a valid stratum");
+		}
+
+		final Set<IPredicate> predicates = new HashSet<IPredicate>();
+		for (final IPredicate p : preds) {
+			if (p.getStratum() == s) {
+				predicates.add(p);
+			}
+		}
+		return predicates;
 	}
 }
