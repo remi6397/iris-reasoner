@@ -58,11 +58,11 @@ import org.deri.iris.factory.Factory;
  * Tests for the datalog parser.
  * </p>
  * <p>
- * $Id: ParserTest.java,v 1.2 2007-03-15 11:35:47 poettler_ric Exp $
+ * $Id: ParserTest.java,v 1.3 2007-04-05 09:17:19 poettler_ric Exp $
  * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ParserTest extends TestCase {
 
@@ -219,7 +219,10 @@ public class ParserTest extends TestCase {
 			"float(_float(4.67)). \n" + 
 			"date(_date(2007, 2, 6)). \n" + 
 			"duration(_duration(2007, 2, 6, 12, 45, 11)). \n" + 
-			"datetime(_datetime(2007, 2, 6, 12, 45, 11)). \n" + 
+			"datetimes(_datetime(2007, 2, 6, 12, 45, 11)). \n" + 
+			"datetimel(_datetime(2007, 2, 6, 12, 45, 11, 1, 30)). \n" + 
+			"times(_time(12, 45, 11)). \n" + 
+			"timel(_time(12, 45, 11, 1, 30)). \n" + 
 			"gday(_gday(6)).\n" + 
 			"gmonth(_gmonth(2)).\n" + 
 			"gyear(_gyear(2007)).\n" + 
@@ -279,10 +282,18 @@ public class ParserTest extends TestCase {
 		// asserting the duration
 		pred = BASIC.createPredicate("duration", 1);
 		assertTrue("Could not find the duration", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDuration(2007, 2, 6, 12, 45, 11))));
-		// asserting the datetime
-		pred = BASIC.createPredicate("datetime", 1);
-		assertTrue("Could not find the datetime", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDateTime(2007, 2, 6, 12, 45, 11))));
-		// TODO: test the time
+		// asserting the short datetime
+		pred = BASIC.createPredicate("datetimes", 1);
+		assertTrue("Could not find the short datetime", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDateTime(2007, 2, 6, 12, 45, 11))));
+		// asserting the long datetime
+		pred = BASIC.createPredicate("datetimel", 1);
+		assertTrue("Could not find the long datetime", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDateTime(2007, 2, 6, 12, 45, 11, 1, 30))));
+		// asserting the short time
+		pred = BASIC.createPredicate("times", 1);
+		assertTrue("Could not find the short time", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createTime(12, 45, 11))));
+		// asserting the long time
+		pred = BASIC.createPredicate("timel", 1);
+		assertTrue("Could not find the long time", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createTime(12, 45, 11, 1, 30))));
 		// asserting the gday
 		pred = BASIC.createPredicate("gday", 1);
 		assertTrue("Could not find the gday", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createGDay(6))));
