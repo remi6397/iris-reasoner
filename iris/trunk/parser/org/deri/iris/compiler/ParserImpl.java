@@ -25,66 +25,75 @@
  */
 package org.deri.iris.compiler;
 
-import java.io.*;
-
+import org.deri.iris.api.basics.IAtom;
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.parser.lexer.Lexer;
 import org.deri.iris.parser.lexer.LexerException;
 import org.deri.iris.parser.node.Node;
 import org.deri.iris.parser.parser.Parser;
 import org.deri.iris.parser.parser.ParserException;
-import org.deri.iris.api.*;
-import org.deri.iris.api.basics.*;
+import java.io.StringReader;
+import java.io.PushbackReader;
+import java.io.IOException;
+import org.deri.iris.parser.parser.ParserException;
+import org.deri.iris.parser.lexer.LexerException;
 
 /**
- * Interface or class description
- *
- * <pre>
- * Created on 14.11.2005
- * Committed by $Author: richardpoettler $
- * $Source: /tmp/iris-cvsbackup/iris/parser/org/deri/iris/compiler/ParserImpl.java,v $,
- * </pre>
- *
+ * <p>
+ * The parser implementation.
+ * </p>
+ * <p>
+ * $Id: ParserImpl.java,v 1.5 2007-04-05 16:45:30 poettler_ric Exp $
+ * </p>
  * @author Francisco Garcia
- *
- * @version $Revision: 1.4 $ $Date: 2006-12-05 08:19:50 $
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision: 1.5 $
  */
 public class ParserImpl implements org.deri.iris.compiler.Parser {
      
-    /* (non-Javadoc)
-     * @see org.deri.iris.compiler.Parser#compileKB(java.lang.StringBuffer, org.deri.mins.RuleSet)
-     */
-    public void compileKB(String kb, IProgram p) throws Exception {
-        generateParseTree(kb).apply(new TreeWalker(p));
-    }
+	public void compileKB(String kb, IProgram p) {
+		try {
+			generateParseTree(kb).apply(new TreeWalker(p));
+		} catch (ParserException e) {
+			throw new IllegalArgumentException("Could not parse the program", e);
+		} catch (LexerException e) {
+			throw new IllegalArgumentException("Could not parse the program", e);
+		}
+	}
     
-    /* (non-Javadoc)
-     * @see org.deri.iris.compiler.Parser#compileRule(java.lang.String)
-     */
-    public IRule compileRule(String rule) throws Exception{
-        TreeWalker tw = new TreeWalker(null);
-        generateParseTree(rule).apply(tw);
-        return tw.getLastRule();
-    }
+	public IRule compileRule(String rule) {
+		final TreeWalker tw = new TreeWalker(null);
+		try {
+			generateParseTree(rule).apply(tw);
+		} catch (ParserException e) {
+			throw new IllegalArgumentException("Could not parse the program", e);
+		} catch (LexerException e) {
+			throw new IllegalArgumentException("Could not parse the program", e);
+		}
+		return tw.getLastRule();
+	}
     
-    /* (non-Javadoc)
-     * @see org.deri.iris.compiler.Parser#compileFact(java.lang.String)
-     */
-    public IAtom compileFact(String fact) throws Exception{
-        TreeWalker tw = new TreeWalker(null);
-        generateParseTree(fact).apply(tw);
-        return tw.getLastFact();
-    }
+	public IAtom compileFact(String fact) {
+		final TreeWalker tw = new TreeWalker(null);
+		try {
+			generateParseTree(fact).apply(tw);
+		} catch (ParserException e) {
+			throw new IllegalArgumentException("Could not parse the program", e);
+		} catch (LexerException e) {
+			throw new IllegalArgumentException("Could not parse the program", e);
+		}
+		return tw.getLastFact();
+	}
     
-    private Node generateParseTree(String reader) 
-            throws ParserException, LexerException{
-        StringReader r = new StringReader(reader);
-        Lexer lexer = new Lexer(new PushbackReader(r, 16384));
-        Parser parser = new Parser(lexer);
-        try {
-            return parser.parse();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+	private Node generateParseTree(String reader) throws ParserException, LexerException {
+		final StringReader r = new StringReader(reader);
+		final Lexer lexer = new Lexer(new PushbackReader(r, 16384));
+		final Parser parser = new Parser(lexer);
+		try {
+			return parser.parse();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

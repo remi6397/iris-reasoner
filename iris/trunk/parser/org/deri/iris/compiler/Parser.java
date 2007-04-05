@@ -25,64 +25,29 @@
  */
 package org.deri.iris.compiler;
 
-import org.deri.iris.api.*;
-import org.deri.iris.api.basics.*;
+import org.deri.iris.api.basics.IAtom;
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.IProgram;
 
 /**
- * Interface or class description
- *
- * <pre>
- * Created on 16.11.2005
- * Committed by $Author: richardpoettler $
- * $Source: /tmp/iris-cvsbackup/iris/parser/org/deri/iris/compiler/Parser.java,v $,
- * </pre>
- *
+ * <p>
+ * Parser interface to parse a datalog program stirng.
+ * </p>
+ * <p>
+ * $Id: Parser.java,v 1.5 2007-04-05 16:45:30 poettler_ric Exp $
+ * </p>
  * @author Francisco Garcia
- *
- * @version $Revision: 1.4 $ $Date: 2006-12-05 08:19:50 $
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision: 1.5 $
  */
 public interface Parser {
 
     /**
-     * This method compiles a RuleSet from a given test input according 
-     * to the following grammar:
-     *      
-    program      = expr* ;
-    
-    expr         = {rule} rule |
-                   {fact} fact |
-                   {query} query;
-    
-    rule 		= predicate t_impliedby body t_dot;
-    
-    fact 		= predicate t_dot;
-    
-    query		= t_query body t_dot;
-    
-    body	 	= literal |
-                  {and} body t_and literal |
-                  {comma} body t_comma literal;
-    
-    literal     = {negated} t_not predicate |
-                   predicate;
-                
-    predicate    = t_id paramlist?;
-    
-
-    paramlist    = t_lpar termlist? t_rpar;
-
-    termlist     = {term} term |
-                   termlist t_comma term;
-                   
-    term         = {function} t_id paramlist |
-                   {var} t_variable |
-                   {constant} t_id; // constant
-     
      * @param reader Reader containing a String adhering to above grammar
      * @param rs non null RuleSet that programm gets inserted
      * @throws Exception
      */
-    public void compileKB(String kb, IProgram p) throws Exception;
+    public void compileKB(String kb, IProgram p);
 
     public IRule compileRule(String rule) throws Exception;
 
