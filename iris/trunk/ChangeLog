@@ -13,8 +13,9 @@ Changes since 0.2:
 	of the DOM)
 	- modified the parser to distinguish the datatypes (according 
 	to the wsml datatype specification)
+	- added the ITime interface, including the implementation, and so on...
 	Fixes:
 	------
 	- some bugfixes in the magic sets
 
-$Id: ChangeLog,v 1.1 2007-03-20 10:17:52 poettler_ric Exp $
+$Id: ChangeLog,v 1.2 2007-04-05 09:48:36 poettler_ric Exp $
