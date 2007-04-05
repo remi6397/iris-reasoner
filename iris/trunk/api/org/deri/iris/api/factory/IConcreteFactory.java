@@ -42,15 +42,19 @@ import org.deri.iris.api.terms.concrete.IHexBinary;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.concrete.IIri;
 import org.deri.iris.api.terms.concrete.ISqName;
+import org.deri.iris.api.terms.concrete.ITime;
 
 /**
  * <p>
  * An interface that can be used to create set of data types 
  * supported by this engine.
  * </p>
+ * <p>
+ * $Id$
+ * </p>
  * 
- * @author richi
- * 
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision$
  */
 public interface IConcreteFactory {
 	public IBase64Binary createBase64Binary(final String s);
@@ -62,6 +66,24 @@ public interface IConcreteFactory {
 			final int tzHour, final int tzMinute);
 	public IDateTime createDateTime(final int year, final int month,
 			final int day, final int hour, final int minute, final int second);
+
+	/**
+	 * Creates a time object with a given timezone.
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the seconds
+	 * @param tzHour the timezone hours
+	 * @param tzMinute the timezone minutes
+	 */
+	public ITime createTime(final int hour, final int minute, final int second, final int tzHour, final int tzMinute);
+
+	/**
+	 * Creates a time object.
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the seconds
+	 */
+	public ITime createTime(final int hour, final int minute, final int second);
 
 	public IDateTerm createDate(final int year, final int month, final int day);
 

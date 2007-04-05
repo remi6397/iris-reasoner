@@ -43,10 +43,17 @@ import org.deri.iris.api.terms.concrete.IHexBinary;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.concrete.IIri;
 import org.deri.iris.api.terms.concrete.ISqName;
+import org.deri.iris.api.terms.concrete.ITime;
 
 /**
- * @author richi
- * 
+ * <p>
+ * Factory to create concrete terms.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision$
  */
 public class ConcreteFactory implements IConcreteFactory {
 
@@ -83,6 +90,15 @@ public class ConcreteFactory implements IConcreteFactory {
 	public IDateTime createDateTime(final int year, final int month,
 			final int day, final int hour, final int minute, final int second) {
 		return new DateTime(year, month, day, hour, minute, second);
+	}
+
+	public ITime createTime(final int hour, final int minute, final int second,
+			final int tzHour, final int tzMinute) {
+		return new Time(hour, minute, second, tzHour, tzMinute);
+	}
+
+	public ITime createTime(final int hour, final int minute, final int second) {
+		return new Time(hour, minute, second);
 	}
 
 	public IDecimalTerm createDecimal(final double d) {
