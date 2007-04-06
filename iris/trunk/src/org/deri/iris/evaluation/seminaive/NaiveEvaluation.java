@@ -89,10 +89,11 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 			cont = true;
 			while (cont) {
 				if(preds.size() == 0) break;
+				cont = false;
 				// Iterating through all predicates of the stratum
 				for (final IPredicate pr : preds) {
 					
-					cont = false;
+					newTupleAdded = false;
 					this.p.registerPredicate(pr);
 					// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 					r = method.evaluate(this.idbMap.get(pr), this.p);
