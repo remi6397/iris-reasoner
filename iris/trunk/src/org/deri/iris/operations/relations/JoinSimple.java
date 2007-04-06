@@ -346,16 +346,20 @@ public class JoinSimple implements IJoin{
 	
 	private int checkJointness(ITuple t0, ITuple t1){
 		int[] indexes = this.indexes;
-		int comp = 0;
+		int comp = 0, tempComp0 = 0, tempComp1 = 0;
 		
 		if(t0 != null && t1 != null){
 			for(int i=0; i<indexes.length; i++){
 				if(indexes[i] != -1){
 					comp = t0.getTerm(i).compareTo(t1.getTerm(indexes[i]));
-					if(comp != 0) 	
-						return comp;
+					if(comp != 0){ 	
+						tempComp0 = comp;
+						if(tempComp0 > 0)  tempComp1 = tempComp0;
+					}	
 				}
 			}
+			if(tempComp1 != 0) return tempComp1;
+			if(tempComp0 != 0) return tempComp0;
 			return 0;
 		}
 		if(t0 != null && t1 == null)
