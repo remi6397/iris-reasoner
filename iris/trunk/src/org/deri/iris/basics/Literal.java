@@ -36,7 +36,7 @@ import org.deri.iris.api.basics.ITuple;
  * 
  * Revision 1.1  26.07.2006 09:23:14  Darko Anicic, DERI Innsbruck
  */
-public class Literal implements ILiteral<ILiteral> {
+public class Literal implements ILiteral<ILiteral>{
 
 	private boolean positive = true;
 
@@ -99,13 +99,9 @@ public class Literal implements ILiteral<ILiteral> {
 			return false;
 		}
 		Literal l = (Literal) o;
-		
-		boolean b1 = atom.equals(l.atom);
-		boolean b2 = positive == l.positive;
-		
 		return atom.equals(l.atom) && (positive == l.positive);
 	}
-
+	
 	public String toString() {
 		return (positive ? "" : "-") + atom;
 	}
