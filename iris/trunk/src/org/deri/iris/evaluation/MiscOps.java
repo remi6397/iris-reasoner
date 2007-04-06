@@ -45,19 +45,20 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.builtins.AbstractBuiltin;
 
 /**
  * <p>
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.4 2007-04-04 21:45:15 darko_anicic Exp $
+ * $Id: MiscOps.java,v 1.5 2007-04-06 00:57:00 darko_anicic Exp $
  * </p>
  * 
  * @author richi
  * @author graham
- * @version $Revision: 1.4 $
- * @date $Date: 2007-04-04 21:45:15 $
+ * @version $Revision: 1.5 $
+ * @date $Date: 2007-04-06 00:57:00 $
  */
 public class MiscOps {
 
@@ -115,9 +116,9 @@ public class MiscOps {
 		final Map<ITerm, IVariable> subs = new HashMap<ITerm, IVariable>();
 
 		final List<ITerm> headTerms = new ArrayList<ITerm>(arity);
-		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>();
+		List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(r.getBodyLenght());
 		bodyLiterals.addAll(r.getBodyLiterals());
-
+		
 		final Iterator<ITerm> terms = hl.getTuple().getTerms().iterator();
 		// iterating through the terms of the head
 		for (int i = 0; i < arity; i++) {
@@ -127,7 +128,7 @@ public class MiscOps {
 
 			if ((t instanceof IVariable) && !subs.keySet().contains(t)) {
 				// if the term is a variable and never where substituted
-				substituteVar((IVariable) t, v, bodyLiterals);
+				bodyLiterals = substituteVar((IVariable) t, v, bodyLiterals);
 				subs.put(t, v);
 			} else if (subs.keySet().contains(t)) {
 				// if the variable where ever substituted
@@ -139,7 +140,6 @@ public class MiscOps {
 						v, t)));
 			}
 		}
-
 		// assembling the new rectified rule
 		final IHead h = BASIC.createHead(BASIC.createLiteral(hl.isPositive(),
 				hl.getPredicate(), BASIC.createTuple(headTerms)));
@@ -153,36 +153,53 @@ public class MiscOps {
 	 * @param from
 	 *            the variable to search for
 	 * @param to
-	 *            the variable whith wich to replace the found occurences
+	 *            the variable which to replace the found occurences whith
 	 * @param l
 	 *            the list of literals
+	 * @return	  the list of literals with substituted variables
 	 * @throws NullPointerException
 	 *             if one of the variables or the list is {@code null}, or the
 	 *             list contains {@code null}
 	 */
-	private static void substituteVar(final IVariable from, final IVariable to,
-			final List<ILiteral> l) {
-		if ((from == null) || (to == null) || (l == null) || l.contains(null)) {
+	private static List<ILiteral> substituteVar(final IVariable from, final IVariable to,
+			final List<ILiteral> lits) {
+		if ((from == null) || (to == null) || (lits == null) || lits.contains(null)) {
 			throw new NullPointerException(
 					"The variables and the list of literals must not be, or contain null");
 		}
-		int i = 0, j = 0;
-		for (final ILiteral lit : l) {
-			j = 0;
+		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(lits.size());
+		for (final ILiteral lit : lits) {
+			List<ITerm> terms = new ArrayList<ITerm>(lit.getTuple().getTerms().size());
+			
 			for (final ITerm t : lit.getTuple().getTerms()) {
 				if (t.equals(from)) {
-					final List<ITerm> terms = new ArrayList<ITerm>(lit
-							.getTuple().getTerms());
-					terms.set(j, to);
-					lit.getAtom().getTuple().setTerms(terms);
-					l.set(i, lit);
+					terms.add(to);
+				}else{
+					terms.add(t);
 				}
-				j++;
 			}
-			i++;
+			/**
+			 * TODO: Copy method is required like:
+			 * ILiteral l0 = lit.copy(); or
+			 * ILiteral l0 = BASIC.createLiteral(
+			 *		lit.isPositive(), lit.getAtom().copy());
+			 * such that when:
+			 * l0.getTuple().setTerms(terms);
+			 * is called, the original literal (lit) is not affected. 
+			 * 
+			 * Note: currently only equality built-in is handled.
+			 */
+			if(lit.getAtom() instanceof AbstractBuiltin){
+				bodyLiterals.add(BASIC.createLiteral(
+						lit.isPositive(), BUILTIN.createEqual(terms.get(0), terms.get(1))));
+			}else{
+				bodyLiterals.add(BASIC.createLiteral(
+						lit.isPositive(), lit.getPredicate(), BASIC.createTuple(terms)));
+			}
 		}
+		return bodyLiterals;
 	}
-
+	
 	/**	 TODO: 
 	 * 	1. Store the result somewhere!
 	 *	2. Use hashMap with an integer as a key or in getPredicates()
