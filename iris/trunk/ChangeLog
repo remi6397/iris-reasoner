@@ -19,5 +19,6 @@ Changes since 0.2:
 	howto)
 	------
 	- some bugfixes in the magic sets
+	- some bugfixes in the Join operator and SeminaiveEvaluation classes
 
-$Id: ChangeLog,v 1.3 2007-04-06 09:37:30 poettler_ric Exp $
+$Id: ChangeLog,v 1.4 2007-04-06 18:18:27 darko_anicic Exp $
