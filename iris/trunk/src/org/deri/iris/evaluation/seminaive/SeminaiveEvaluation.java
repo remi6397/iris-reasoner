@@ -28,11 +28,13 @@ package org.deri.iris.evaluation.seminaive;
 import static org.deri.iris.factory.Factory.RELATION;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.evaluation.MiscOps;
@@ -70,7 +72,6 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 		/** Evaluate rules */
 		for (int i = 0, maxStrat = MiscOps.getMaxStratum(this.idbMap.keySet()); 
 				i <= maxStrat; i++) {
-
 			preds = MiscOps.getPredicatesOfStratum(this.idbMap.keySet(), i);
 			/**
 			 * <p>Algorithm:</p>
@@ -82,7 +83,6 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 			 * </p>
 			 */
 			for (final IPredicate pr : preds) {
-				
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 				this.p.registerPredicate(pr);
 				p = method.evaluate(this.idbMap.get(pr), this.p);
@@ -92,7 +92,6 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 					aq.put(pr, p);
 					this.p.addFacts(pr, p);
 				}
-				
 			}
 			/**
 			 * <p>Algorithm:</p>
@@ -111,10 +110,10 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 			 */
 			cont = true;
 			while (cont) {
+				cont = false;
 				if(preds.size() == 0) break;
 				for (final IPredicate pr : preds) {
-					
-					cont = false;
+					newTupleAdded = false;
 					// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
 					p = method.evaluateIncrementally(this.idbMap.get(pr), this.p, aq);
 					if(this.p.getFacts(pr) != null && 
@@ -125,7 +124,7 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 						tempRel.removeAll(this.p.getFacts(pr));
 						aq.put(pr, tempRel);
 						this.p.addFacts(pr, tempRel);
-						cont = true;
+						newTupleAdded = true;
 					}else{
 						newTupleAdded = false;
 					}
@@ -133,7 +132,6 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 				}
 			}
 			for (final IPredicate pr : preds) {
-				
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 				p = method.evaluate(this.idbMap.get(pr), this.p);
 				if(this.p.getFacts(pr) != null && 
