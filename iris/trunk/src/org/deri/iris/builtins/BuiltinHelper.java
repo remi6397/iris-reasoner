@@ -41,13 +41,13 @@ import org.deri.iris.api.terms.concrete.IIntegerTerm;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.2 2007-03-13 15:49:21 poettler_ric Exp $
+ * $Id: BuiltinHelper.java,v 1.3 2007-04-06 08:50:26 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
-class BuiltinHelper {
+public class BuiltinHelper {
 	private BuiltinHelper() {
 		// prevent subclassing
 	}
@@ -66,7 +66,7 @@ class BuiltinHelper {
 	 *             if one of the numbers is null
 	 * @see Number
 	 */
-	static boolean numbersEqual(final INumericTerm n0, final INumericTerm n1) {
+	public static boolean numbersEqual(final INumericTerm n0, final INumericTerm n1) {
 		if ((n0 == null) || (n1 == null)) {
 			throw new NullPointerException("The numbers must not be null");
 		}
@@ -90,7 +90,7 @@ class BuiltinHelper {
 	 *             if one of the numbers is null
 	 * @see Number
 	 */
-	static int numbersCompare(final INumericTerm n0, final INumericTerm n1) {
+	public static int numbersCompare(final INumericTerm n0, final INumericTerm n1) {
 		if ((n0 == null) || (n1 == null)) {
 			throw new NullPointerException("The numbers must not be null");
 		}
@@ -108,7 +108,7 @@ class BuiltinHelper {
 	 *             if the term is null
 	 * @see Number
 	 */
-	static double getDouble(final INumericTerm n) {
+	private static double getDouble(final INumericTerm n) {
 		if (n == null) {
 			throw new NullPointerException("The term must not be null");
 		}
@@ -130,7 +130,7 @@ class BuiltinHelper {
 	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
 	 */
-	static ITerm add(final ITerm t0, final ITerm t1) {
+	public static ITerm add(final ITerm t0, final ITerm t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
@@ -155,7 +155,7 @@ class BuiltinHelper {
 	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
 	 */
-	static ITerm subtract(final ITerm t0, final ITerm t1) {
+	public static ITerm subtract(final ITerm t0, final ITerm t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
@@ -180,7 +180,7 @@ class BuiltinHelper {
 	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
 	 */
-	static ITerm multiply(final ITerm t0, final ITerm t1) {
+	public static ITerm multiply(final ITerm t0, final ITerm t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
@@ -205,7 +205,7 @@ class BuiltinHelper {
 	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
 	 */
-	static ITerm divide(final ITerm t0, final ITerm t1) {
+	public static ITerm divide(final ITerm t0, final ITerm t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
@@ -258,7 +258,7 @@ class BuiltinHelper {
 	 * @return the indexes of the ground terms (the first term has the index 0)
 	 * @throws NullPointerException if the collection is <code>null</code>
 	 */
-	static int[] determineGround(final Collection<ITerm> t) {
+	public static int[] determineGround(final Collection<ITerm> t) {
 		if(t == null) {
 			throw new NullPointerException("The tuple must not be null");
 		}
@@ -284,7 +284,7 @@ class BuiltinHelper {
 	 * @throws NullPointerException if the collection is <code>null</code>
 	 * @throws NullPointerException if the position array is <code>null</code>
 	 */
-	static ITerm[] getIndexes(final Collection<ITerm> t, final int[] pos) {
+	public static ITerm[] getIndexes(final Collection<ITerm> t, final int[] pos) {
 		if(pos == null) {
 			throw new NullPointerException("The position array must not be null");
 		}
@@ -312,7 +312,7 @@ class BuiltinHelper {
 	 * @return the indexes of the unground terms (the first term has the index 0)
 	 * @throws NullPointerException if the collection is <code>null</code>
 	 */
-	static int[] determineUnground(final Collection<ITerm> t) {
+	public static int[] determineUnground(final Collection<ITerm> t) {
 		if(t == null) {
 			throw new NullPointerException("The tuple must not be null");
 		}
@@ -346,7 +346,7 @@ class BuiltinHelper {
 	 * @see #determineGround(Collection<ITerm>)
 	 * @see #determineUnground(Collection<ITerm>)
 	 */
-	static int[] complement(final int[] i, final int l) {
+	public static int[] complement(final int[] i, final int l) {
 		if(l < 0) {
 			throw new IllegalArgumentException("The length must not be negative");
 		}
@@ -381,7 +381,7 @@ class BuiltinHelper {
 	 * @see #determineGround(Collection<ITerm>)
 	 * @see #determineUnground(Collection<ITerm>)
 	 */
-	static ITerm[] concat(final int[] idx0, final ITerm[] t0, final ITerm[] t1) {
+	public static ITerm[] concat(final int[] idx0, final ITerm[] t0, final ITerm[] t1) {
 		if(idx0 == null) {
 			throw new NullPointerException("The index array must not be null");
 		}
