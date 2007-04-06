@@ -60,7 +60,7 @@ public class ProgramTest extends TestCase {
 	private static final int TEST_ALL = 0;
  
 	/** Set a number of a test to be run */
-	private int TEST_NO = 10;
+	private int TEST_NO = 11;
 	
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(ProgramTest.class);
@@ -421,6 +421,80 @@ public class ProgramTest extends TestCase {
 	public String resultTest10(){
     	String result = 
 		    "p('b').";
+		    
+		return result;
+	}
+	
+	public void test11()throws Exception{
+		if(TEST_NO == 11 || TEST_ALL == 0){
+	    	String program = 
+			    "s('a', 'a')." +
+			    "s('a', 'b')." +
+			    "s('a', 'c')." +
+			    "s('a', 'd')." +
+			    "s('a', 'e')." +
+			    "s('a', 'f')." +
+			    "s('a', 'g')." +
+			    "s('a', 'h')." +
+			    "s('a', 'i')." +
+			    
+			    "s('b', 'a')." +
+			    "s('b', 'b')." +
+			    "s('b', 'c')." +
+			    "s('b', 'd')." +
+			    "s('b', 'e')." +
+			    "s('b', 'f')." +
+			    "s('b', 'g')." +
+			    "s('b', 'h')." +
+			    "s('b', 'i')." +
+			    
+			    "s('c', 'a')." +
+			    "s('c', 'b')." +
+			    "s('c', 'c')." +
+			    "s('c', 'd')." +
+			    "s('c', 'e')." +
+			    "s('c', 'f')." +
+			    "s('c', 'g')." +
+			    "s('c', 'h')." +
+			    "s('c', 'i')." +
+			    
+			    "s('f', 'f')." +
+			    "s('f', 'g')." +
+			    "s('f', 'h')." +
+			    "s('f', 'i')." +
+			    
+			    "s('g', 'f')." +
+			    "s('g', 'g')." +
+			    "s('g', 'h')." +
+			    "s('g', 'i')." +
+			    
+			    "s('h', 'f')." +
+			    "s('h', 'g')." +
+			    "s('h', 'h')." +
+			    "s('h', 'i')." +
+			    
+			    "p(?X) :- s(?X, ?Y), s(?Y, ?X)." +
+			    "?- p(?X).";
+	  	
+	    	m = evluateProgram(program);
+	    	System.out.println("test 11");
+	    	printResults(m);
+	    	System.out.println();
+	    	
+	    	testProgram(
+					m,
+					resultTest11());
+		}
+	}
+	
+	public String resultTest11(){
+    	String result = 
+		    "p('a')." +
+		    "p('h')." +
+		    "p('f')." +
+		    "p('c')." +
+		    "p('b')." +
+		    "p('g').";
 		    
 		return result;
 	}
