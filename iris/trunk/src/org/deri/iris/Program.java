@@ -46,6 +46,7 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.terms.ConstructedTerm;
 
@@ -53,7 +54,7 @@ import org.deri.iris.terms.ConstructedTerm;
  * This is an implementation of the IEDB interface.
  * <br/><br/><b>This implementaion is thread-save.</b>
  * 
- * @author richi
+ * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
  * @date   26.07.2006 16:53:36
  */
@@ -64,6 +65,9 @@ public class Program implements IProgram{
 	private Set<IQuery> queries;
 	
 	private Set<IRule> rules;
+
+	/** The register to hold the information about registered builtins. */
+	private final BuiltinRegister builtinReg = new BuiltinRegister();
 	 
 	/** The Lock to make this set threadsafe */
 	private final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
@@ -466,5 +470,9 @@ public class Program implements IProgram{
 		this.facts.clear();
 		this.rules.clear();
 		this.queries.clear();
+	}
+
+	public BuiltinRegister getBuiltinRegister() {
+		return builtinReg;
 	}
 }

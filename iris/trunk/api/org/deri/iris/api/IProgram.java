@@ -36,6 +36,8 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 
+import org.deri.iris.builtins.BuiltinRegister;
+
 /**
  * <p>
  * Interface of an EDB and IDB (extensional and intensional database). This
@@ -57,10 +59,11 @@ import org.deri.iris.api.terms.ITerm;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IProgram.java,v 1.8 2007-01-29 09:04:27 darko Exp $
+ * $Id: IProgram.java,v 1.9 2007-04-06 06:52:04 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
+ * @author Richard Pöttler, richard dot poettler at deri dot org
  * @date 26.07.2006 16:45:49
  */
 public interface IProgram {
@@ -169,8 +172,10 @@ public interface IProgram {
 	/**
 	 * <p>
 	 * Register a predicate p. Checks whether the predicate p already exists in
-	 * the knowledgebase, and if it does not, it registers the predicate within
-	 * the knowledgebase.
+	 * the knowledgebase and returns it. Otherwise it will register the
+	 * predicate and return the registered one. The purpos of this mehtod
+	 * is, to keep only one instance of each predicate in the vm, so that
+	 * the statification works correctly.
 	 * </p>
 	 * 
 	 * @param p
@@ -363,4 +368,10 @@ public interface IProgram {
 	 * </p>
 	 */
 	public void resetProgram();
+
+	/**
+	 * Returns the BuiltinRegister for this program.
+	 * @return the register
+	 */
+	public BuiltinRegister getBuiltinRegister();
 }
