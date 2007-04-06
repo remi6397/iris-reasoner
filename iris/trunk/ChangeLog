@@ -15,7 +15,9 @@ Changes since 0.2:
 	to the wsml datatype specification)
 	- added the ITime interface, including the implementation, and so on...
 	Fixes:
+	- added the possibility to make custom builitns (see doc folder for a
+	howto)
 	------
 	- some bugfixes in the magic sets
 
-$Id: ChangeLog,v 1.2 2007-04-05 09:48:36 poettler_ric Exp $
+$Id: ChangeLog,v 1.3 2007-04-06 09:37:30 poettler_ric Exp $
