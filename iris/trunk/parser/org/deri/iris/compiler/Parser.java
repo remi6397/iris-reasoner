@@ -34,23 +34,19 @@ import org.deri.iris.api.IProgram;
  * Parser interface to parse a datalog program stirng.
  * </p>
  * <p>
- * $Id: Parser.java,v 1.5 2007-04-05 16:45:30 poettler_ric Exp $
+ * $Id: Parser.java,v 1.6 2007-04-06 06:59:45 poettler_ric Exp $
  * </p>
  * @author Francisco Garcia
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public interface Parser {
 
     /**
-     * @param reader Reader containing a String adhering to above grammar
-     * @param rs non null RuleSet that programm gets inserted
-     * @throws Exception
+     * Parses a string and adds the parsed object to a program.
+     * @param kb the string to parse
+     * @param p the program to which to add the compiled objects.
+     * @throws IllegalArgumentException if something went wrong while parsing
      */
     public void compileKB(String kb, IProgram p);
-
-    public IRule compileRule(String rule) throws Exception;
-
-    public IAtom compileFact(String fact) throws Exception;
-
 }
