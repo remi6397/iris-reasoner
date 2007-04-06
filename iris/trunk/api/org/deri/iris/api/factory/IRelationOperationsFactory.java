@@ -73,7 +73,7 @@ public interface IRelationOperationsFactory {
 	 * the second relation is the complement of its original relation.
 	 * Basically the joinComplement operator do the following:
 	 * <p>
-	 * arg0 – (arg0 semijoin arg1)
+	 * arg0 - (arg0 semijoin arg1)
 	 * </p>
 	 * <p>
 	 * Remark: The set difference operation is denoted with "-".
