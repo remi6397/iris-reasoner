@@ -44,11 +44,11 @@ import org.deri.iris.parser.lexer.LexerException;
  * The parser implementation.
  * </p>
  * <p>
- * $Id: ParserImpl.java,v 1.5 2007-04-05 16:45:30 poettler_ric Exp $
+ * $Id: ParserImpl.java,v 1.6 2007-04-06 06:59:45 poettler_ric Exp $
  * </p>
  * @author Francisco Garcia
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class ParserImpl implements org.deri.iris.compiler.Parser {
      
@@ -60,30 +60,6 @@ public class ParserImpl implements org.deri.iris.compiler.Parser {
 		} catch (LexerException e) {
 			throw new IllegalArgumentException("Could not parse the program", e);
 		}
-	}
-    
-	public IRule compileRule(String rule) {
-		final TreeWalker tw = new TreeWalker(null);
-		try {
-			generateParseTree(rule).apply(tw);
-		} catch (ParserException e) {
-			throw new IllegalArgumentException("Could not parse the program", e);
-		} catch (LexerException e) {
-			throw new IllegalArgumentException("Could not parse the program", e);
-		}
-		return tw.getLastRule();
-	}
-    
-	public IAtom compileFact(String fact) {
-		final TreeWalker tw = new TreeWalker(null);
-		try {
-			generateParseTree(fact).apply(tw);
-		} catch (ParserException e) {
-			throw new IllegalArgumentException("Could not parse the program", e);
-		} catch (LexerException e) {
-			throw new IllegalArgumentException("Could not parse the program", e);
-		}
-		return tw.getLastFact();
 	}
     
 	private Node generateParseTree(String reader) throws ParserException, LexerException {

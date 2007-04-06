@@ -58,11 +58,11 @@ import org.deri.iris.factory.Factory;
  * Tests for the datalog parser.
  * </p>
  * <p>
- * $Id: ParserTest.java,v 1.3 2007-04-05 09:17:19 poettler_ric Exp $
+ * $Id: ParserTest.java,v 1.4 2007-04-06 06:59:45 poettler_ric Exp $
  * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ParserTest extends TestCase {
 
@@ -91,8 +91,7 @@ public class ParserTest extends TestCase {
 	 * run parser test
 	 *
 	 */
-	protected void runParser(final String expr, final Set<org.deri.iris.api.basics.IRule> rul) throws Exception {
-
+	protected void runParser(final String expr, final Set<IRule> rul) {
 		this.pars.compileKB(expr, prog);
 		assertCol(rul, prog.getRules());
 	}
@@ -130,9 +129,7 @@ public class ParserTest extends TestCase {
 		
 		rules.add(BASIC.createRule(head, body));
 
-		try {
-			runParser(expr, rules);
-		} catch (Exception e) {e.printStackTrace();}
+		runParser(expr, rules);
 	}
 	/**
 	 * p(?X,?Y) :- r(?Z, ?Y) and ?X='a'
@@ -165,9 +162,7 @@ public class ParserTest extends TestCase {
 		
 		rules.add(BASIC.createRule(head, body));
 				
-		try {
-			runParser(expr, rules);
-		} catch (Exception e) {e.printStackTrace();}
+		runParser(expr, rules);
 	}
 	/**
 	 * p(?X,?Y) :- r(?X, ?Y) and ?X!='a'
@@ -200,9 +195,7 @@ public class ParserTest extends TestCase {
 		
 		rules.add(BASIC.createRule(head, body));
 
-		try {
-			runParser(expr, rules);
-		} catch (Exception e) {e.printStackTrace();}
+		runParser(expr, rules);
 	}
 
 	/**
@@ -230,12 +223,9 @@ public class ParserTest extends TestCase {
 			"gyearmonth(_gyearmonth(2007, 2)).\n" + 
 			"base(_base64binary('45df')).\n" + 
 			"hex(_hexbinary('a1df')).\n";
-		try {
-			pars.compileKB(expr, prog);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
+
+		pars.compileKB(expr, prog);
+
 		// TODO: test the function term
 		// asserting the short int
 		IPredicate pred = BASIC.createPredicate("ints", 1);
@@ -329,7 +319,7 @@ public class ParserTest extends TestCase {
 		}
 		assertEquals("The sizes of the collections must be equal", c0.size(), c1.size());
 		for(final Object o : c0) {
-			assertTrue("Couldn't find the term: " + o, c1.contains(o));
+			assertTrue("Couldn't find the term: " + o + " in " + c1, c1.contains(o));
 		}
 	}
 }
