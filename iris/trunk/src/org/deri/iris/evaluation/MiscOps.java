@@ -46,19 +46,22 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.EqualBuiltin;
+import org.deri.iris.builtins.LessBuiltin;
+import org.deri.iris.builtins.UnEqualBuiltin;
 
 /**
  * <p>
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.5 2007-04-06 00:57:00 darko_anicic Exp $
+ * $Id: MiscOps.java,v 1.6 2007-04-07 00:27:13 darko_anicic Exp $
  * </p>
  * 
  * @author richi
  * @author graham
- * @version $Revision: 1.5 $
- * @date $Date: 2007-04-06 00:57:00 $
+ * @version $Revision: 1.6 $
+ * @date $Date: 2007-04-07 00:27:13 $
  */
 public class MiscOps {
 
@@ -190,8 +193,18 @@ public class MiscOps {
 			 * Note: currently only equality built-in is handled.
 			 */
 			if(lit.getAtom() instanceof AbstractBuiltin){
-				bodyLiterals.add(BASIC.createLiteral(
-						lit.isPositive(), BUILTIN.createEqual(terms.get(0), terms.get(1))));
+				if(lit.getAtom() instanceof EqualBuiltin){
+					bodyLiterals.add(BASIC.createLiteral(
+							lit.isPositive(), BUILTIN.createEqual(terms.get(0), terms.get(1))));
+				}else
+				if(lit.getAtom() instanceof UnEqualBuiltin){
+					bodyLiterals.add(BASIC.createLiteral(
+							lit.isPositive(), BUILTIN.createUnequal(terms.get(0), terms.get(1))));
+				}else
+				if(lit.getAtom() instanceof LessBuiltin){
+					bodyLiterals.add(BASIC.createLiteral(
+							lit.isPositive(), BUILTIN.createLess(terms.get(0), terms.get(1))));
+				}
 			}else{
 				bodyLiterals.add(BASIC.createLiteral(
 						lit.isPositive(), lit.getPredicate(), BASIC.createTuple(terms)));
