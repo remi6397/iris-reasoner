@@ -60,7 +60,6 @@ import org.deri.iris.builtins.UnEqualBuiltin;
 import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.relations.JoinCondition;
-import org.deri.iris.operations.relations.Projection;
 
 /**
  * <p>
@@ -286,7 +285,13 @@ public class Rule2Relation {
 				 */
 				cBuilt = translateBuiltInAtom(l.getAtom());
 				if(cBuilt != null){
-					cBuilt.setPositive(l.isPositive());
+					if(l.getAtom() instanceof EqualBuiltin){
+						// EqualBuiltin
+						cBuilt.setPositive(l.isPositive());
+					}else{
+						// UnEqualBuiltin
+						cBuilt.setPositive(! l.isPositive());
+					}
 					jTmp1.addChild(cBuilt);
 					jTmp1.addVariables(cBuilt.getVariables());
 				}
