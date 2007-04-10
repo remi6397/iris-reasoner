@@ -119,4 +119,8 @@ public class Atom implements IAtom<IAtom> {
 		
 		return buffer.toString();
 	}
+
+	public boolean isBuiltin() {
+		return false;
+	}
 }

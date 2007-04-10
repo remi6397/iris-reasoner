@@ -88,4 +88,7 @@ public class EqualityLiteral implements ILiteral<ILiteral>{
 		return (positive ? "" : "-") + atom;
 	}
 
+	public boolean isBuiltin() {
+		return atom.isBuiltin();
+	}
 }

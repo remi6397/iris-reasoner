@@ -38,11 +38,12 @@ package org.deri.iris.api.basics;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IAtom.java,v 1.4 2006-12-06 15:05:50 darko Exp $
+ * $Id: IAtom.java,v 1.5 2007-04-10 11:10:14 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @date 14.11.2005 11:59:34
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision: 1.5 $
  */
 public interface IAtom<Type extends IAtom> extends Comparable<Type> {
 
@@ -72,4 +73,12 @@ public interface IAtom<Type extends IAtom> extends Comparable<Type> {
 	 * @return True if the atom is grounded, otherwise false.
 	 */
 	public boolean isGround();
+
+	/**
+	 * Returns whether this atom is a builtin one, or not.
+	 * @return <code>true</code> if it is builtin, otherwise
+	 * <code>false</code>
+	 * @since 0.3
+	 */
+	public boolean isBuiltin();
 }
