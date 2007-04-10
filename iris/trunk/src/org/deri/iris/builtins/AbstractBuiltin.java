@@ -45,12 +45,12 @@ import org.deri.iris.factory.Factory;
  * documentation for it's default behaviour.
  * </p>
  * <p>
- * $Id: AbstractBuiltin.java,v 1.6 2007-04-06 06:52:04 poettler_ric Exp $
+ * $Id: AbstractBuiltin.java,v 1.7 2007-04-10 11:10:13 poettler_ric Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.6 $
- * @date $Date: 2007-04-06 06:52:04 $
+ * @version $Revision: 1.7 $
+ * @date $Date: 2007-04-10 11:10:13 $
  */
 public abstract class AbstractBuiltin implements IBuiltInAtom {
 
@@ -256,5 +256,9 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 		}
 		AbstractBuiltin ab = (AbstractBuiltin) o;
 		return a.equals(ab.a);
+	}
+
+	public boolean isBuiltin() {
+		return true;
 	}
 }

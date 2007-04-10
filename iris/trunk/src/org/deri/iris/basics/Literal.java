@@ -31,10 +31,15 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 
 /**
- * Simple literal implementation.<br/><br/>$Id$
- * @author richi
- * 
- * Revision 1.1  26.07.2006 09:23:14  Darko Anicic, DERI Innsbruck
+ * <p>
+ * Simple literal implementation.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Darko Anicic, DERI Innsbruck
+ * @version $Revision$
  */
 public class Literal implements ILiteral<ILiteral>{
 
@@ -106,4 +111,7 @@ public class Literal implements ILiteral<ILiteral>{
 		return (positive ? "" : "-") + atom;
 	}
 
+	public boolean isBuiltin() {
+		return atom.isBuiltin();
+	}
 }
