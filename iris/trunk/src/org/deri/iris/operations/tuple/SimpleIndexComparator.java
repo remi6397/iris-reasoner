@@ -25,7 +25,10 @@
  */
 package org.deri.iris.operations.tuple;
 
+import java.util.List;
+
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.ITerm;
 
 public class SimpleIndexComparator extends BasicComparator{
 
@@ -44,27 +47,27 @@ public class SimpleIndexComparator extends BasicComparator{
 					"the arity of the compared tuples.");
 		}
 		int comparison = 0;
-		for(int i=0; i<this.getSortIndexes().length; i++){
-			if(t0.getArity()>i && t1.getArity()>i){
-				if(this.getSortIndexes()[i] != -1){
-					comparison = t0.getTerm(i).compareTo(
-							t1.getTerm(this.getSortIndexes()[i]));
-			    	if(comparison != 0)
-						return comparison;
+
+		// copying some frequently needed values, to save some cpu time
+		final int[] idx = getSortIndexes();
+		final List<ITerm> t0t = t0.getTerms();
+		final List<ITerm> t1t = t1.getTerms();
+
+		for(int i=0; i < idx.length; i++){
+			if(idx[i] != -1){
+				comparison = t0t.get(i).compareTo(t1t.get(idx[i]));
+				if(comparison != 0) {
+					return comparison;
 				}
-			}else 
-				break;
+			}
 		}
-		for(int i=0; i<this.getSortIndexes().length; i++){
-			if(t0.getArity()>i && t1.getArity()>i){
-				if(this.getSortIndexes()[i] == -1){
-					comparison = t0.getTerm(i).compareTo(
-							t1.getTerm(i));
-			    	if(comparison != 0)
-						return comparison;
+		for(int i=0; i < idx.length; i++){
+			if(idx[i] == -1){
+				comparison = t0t.get(i).compareTo(t1t.get(i));
+				if(comparison != 0) {
+					return comparison;
 				}
-			}else 
-				break;
+			}
 		}
 		return 0;
 	}
