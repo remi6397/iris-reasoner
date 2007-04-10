@@ -37,11 +37,16 @@ public class SimpleIndexComparator extends BasicComparator{
 	}
 
 	public int compare(ITuple t0, ITuple t1){
-		if (t0.getArity() != t1.getArity()) {
+        final int t0Arity = t0.getArity();
+        final int t1Arity = t1.getArity();
+        
+		if (t0Arity != t1Arity) {
 			throw new IllegalArgumentException(
 					"Couldn't compare due to different arity of tuples.");
 		}
-		if (t0.getArity() != this.getSortIndexes().length) {
+        
+        final int[] idx = getSortIndexes();        
+		if (t0Arity != idx.length) {
 			throw new IllegalArgumentException(
 					"The length of sort indexe array does not match " +
 					"the arity of the compared tuples.");
@@ -49,7 +54,6 @@ public class SimpleIndexComparator extends BasicComparator{
 		int comparison = 0;
 
 		// copying some frequently needed values, to save some cpu time
-		final int[] idx = getSortIndexes();
 		final List<ITerm> t0t = t0.getTerms();
 		final List<ITerm> t1t = t1.getTerms();
 
