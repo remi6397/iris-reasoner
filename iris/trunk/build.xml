@@ -26,7 +26,10 @@
 	</target>
 
 	<target name="compile" description="compiles all the class files" depends="init,prepareclasses">
-		<javac srcdir="${dir.api}:${dir.src}" classpathref="defaultcp" destdir="${dir.classes}">
+		<javac srcdir="${dir.api}:${dir.src}" classpathref="defaultcp" destdir="${dir.classes}"
+			deprecation="on">
+			<compilerarg value="-Xlint:unchecked" compiler="modern"/>
+			<compilerarg value="-Xlint:unchecked" compiler="classic"/>
 			<include name="**/*.java" />
 		</javac>
 	</target>
@@ -57,7 +60,8 @@
 	</target>
 
 	<target name="doc" description="generates the javadoc" depends="init,preparedoc">
-		<javadoc destdir="${dir.javadoc}" link="http://java.sun.com/j2se/1.5.0/docs/api/">
+		<javadoc destdir="${dir.javadoc}"
+			link="http://java.sun.com/j2se/1.5.0/docs/api/">
 			<fileset dir="${dir.api}">
 				<include name="**/*.java" />
 			</fileset>
@@ -83,7 +87,10 @@
 	</target>
 
 	<target name="compiletest" description="compiles the test classes" depends="init,jar,preparecompiletest">
-		<javac srcdir="${dir.src.test}" destdir="${dir.classes.test}">
+		<javac srcdir="${dir.src.test}" destdir="${dir.classes.test}" 
+			deprecation="on">
+			<compilerarg value="-Xlint:unchecked" compiler="modern"/>
+			<compilerarg value="-Xlint:unchecked" compiler="classic"/>
 			<classpath>
 				<path refid="defaultcp"/>
 				<fileset dir="${dir.jar}">
