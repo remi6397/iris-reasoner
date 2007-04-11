@@ -1,4 +1,4 @@
-<project basedir="." default="jar">
+<project name="iris" basedir="." default="jar">
 	
 	<!-- $Id$ -->
 	
@@ -114,7 +114,18 @@
 		</junit>
 	</target>
 
-	<target name="jar" description="creates the jar file" depends="init,compile,preparejar">
+	<target name="copyconfig" description="copies the config files" depends="init,prepareclasses">
+		<copy todir="${dir.classes}">
+			<fileset dir="${basedir}">
+				<include name="**/*.load"/>
+				<include name="**/*.properties"/>
+				<exclude name="build.properties"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="jar" description="creates the jar file"
+		depends="init,compile,copyconfig,preparejar">
 		<jar basedir="${dir.classes}" destfile="${file.jar.main}" index="true" />
 	</target>
 
