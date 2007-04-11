@@ -1,6 +1,6 @@
 /*
  * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions by 
+ * An extensible rule inference system for dataLOGGER with extensions by 
  * built-in predicates, default negation (under well-founded semantics), 
  * function symbols and contexts. 
  * 
@@ -34,6 +34,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import org.deri.iris.api.basics.IPredicate;
 
 /**
@@ -54,12 +56,15 @@ import org.deri.iris.api.basics.IPredicate;
  * classname of the builtin to register.
  * </p>
  * <p>
- * $Id: BuiltinRegister.java,v 1.1 2007-04-06 06:52:04 poettler_ric Exp $
+ * $Id: BuiltinRegister.java,v 1.2 2007-04-11 12:07:37 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public final class BuiltinRegister {
+
+	/** The Logger for this class. */
+	private static final Logger LOGGER = Logger.getLogger(BuiltinRegister.class);
 
 	/** Holding all the information about the builtins.
 	 * <ul>
@@ -85,18 +90,17 @@ public final class BuiltinRegister {
 					try {
 						privRegisterBuiltin(Class.forName(line));
 					} catch (ClassNotFoundException e) {
-						System.err.println("Couldn't load the class: " + line);
+						LOGGER.warn("Couldn't load the class: " + line);
 					}
 				}
 			} catch (IOException e) {
-				System.err.println("Exception while reading the builtins.load file: " + e.getMessage());
+				LOGGER.warn("Error while reading the builtins.load file", e);
 			} finally {
 				if (br != null) {
 					try {
 						br.close();
 					} catch (IOException e) {
-						System.err.println("Exception while closing the builtins.load file: " + 
-								e.getMessage());
+						LOGGER.warn("Couldn't close the builtins.load file", e);
 					}
 				}
 			}
@@ -118,14 +122,14 @@ public final class BuiltinRegister {
 					(IPredicate) c.getMethod("getBuiltinPredicate").invoke(null));
 			reg.put(ent.getName(), ent);
 		} catch (NoSuchMethodException e) {
-			System.err.println("Coundn't find the method: " + c.getName() + 
-					".getBuiltinPredicate(): " + e.getMessage());
+			LOGGER.warn("Coundn't find the method: " + c.getName() + 
+					".getBuiltinPredicate()", e);
 		} catch (IllegalAccessException e) {
-			System.err.println("Coundn't find the method: " + c.getName() + 
-					".getBuiltinPredicate(): " + e.getMessage());
+			LOGGER.warn("Coundn't find the method: " + c.getName() + 
+					".getBuiltinPredicate()", e);
 		} catch (InvocationTargetException e) {
-			System.err.println("Coundn't find the method: " + c.getName() + 
-					".getBuiltinPredicate(): " + e.getMessage());
+			LOGGER.warn("Coundn't find the method: " + c.getName() + 
+					".getBuiltinPredicate()", e);
 		}
 	}
 
