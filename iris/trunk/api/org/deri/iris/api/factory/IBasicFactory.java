@@ -43,14 +43,28 @@ import org.deri.iris.api.terms.ITerm;
  * An interface that can be used to create set of basic logical entities 
  * such as predicates, atoms, rules, queries etc.
  * </p>
- * 
+ * <p>
+ * $Id: IBasicFactory.java,v 1.12 2007-04-11 09:56:35 poettler_ric Exp $
+ * </p>
  * @author Darko Anicic, DERI Innsbruck
- * @date 13.01.2006 13:27:34
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.12 $
  */
 public interface IBasicFactory {
 
 	public IAtom createAtom(IPredicate p);
 	public IAtom createAtom(IPredicate p, ITuple tuple);
+
+	/**
+	 * Creates a deep copy of an atom. The terms themsemves will remain 
+	 * the same instances.
+	 * @param a the atom to copy
+	 * @return the copy
+	 * @throws NullPointerException if the atom is <code>null</code>
+	 * @throws IllegalArgumentException if the atom is a builtin one.
+	 * @since 0.3
+	 */
+	public IAtom createAtom(final IAtom a);
 
 	public IBody createBody(ILiteral... literals);
 	public IBody createBody(List<ILiteral> literals);
@@ -63,6 +77,17 @@ public interface IBasicFactory {
 	public ILiteral createLiteral(boolean isPositive, IPredicate predicate);
 	public ILiteral createLiteral(boolean isPositive, IPredicate predicate,
 			ITuple tuple);
+
+	/**
+	 * Creates a deep copy of a literal. The terms themsemves will remain 
+	 * the same instances.
+	 * @param l the tuple to copy
+	 * @return the copy
+	 * @throws NullPointerException if the literal is <code>null</code>
+	 * @throws IllegalArgumentException if the underlying atom is a builtin one.
+	 * @since 0.3
+	 */
+	public ILiteral createLiteral(final ILiteral l);
 
 	public ILiteral createEqualityLiteral(final String predicate,final ITuple tuple);
 	public ILiteral createEqualityLiteral(final boolean positive, final String predicate,final ITuple tuple);
@@ -81,4 +106,14 @@ public interface IBasicFactory {
 	public ITuple createTuple(int arity);
 	public ITuple createTuple(ITerm... terms);
 	public ITuple createTuple(List<ITerm> terms);
+
+	/**
+	 * Creates a copy of a tuple. The terms themsemves will remain the same
+	 * instances.
+	 * @param t the tuple to copy
+	 * @return the copy
+	 * @throws NullPointerException if the tuple is <code>null</code>
+	 * @since 0.3
+	 */
+	public ITuple createTuple(final ITuple t);
 }

@@ -42,11 +42,18 @@ import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.factory.IBasicFactory;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.basics.seminaive.EqualityLiteral;
-/**
- * @author Darko Anicic, DERI Innsbruck
- * @date 22.02.2006 16:03:34
- */
 
+/**
+ * <p>
+ * Simple implementatiion of the basic factory.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @author Darko Anicic, DERI Innsbruck
+ * @version $Revision$
+ */
 public class BasicFactory implements IBasicFactory {
 
 	private static final IBasicFactory FACTORY = new BasicFactory();
@@ -147,6 +154,30 @@ public class BasicFactory implements IBasicFactory {
 	
 	public ITuple createTuple(List<ITerm> terms) {
 		return new Tuple(terms);
+	}
+
+	public ITuple createTuple(final ITuple t) {
+		if (t == null) {
+			throw new NullPointerException("The tuple must not be null");
+		}
+		return createTuple(t.getTerms());
+	}
+
+	public IAtom createAtom(final IAtom a) {
+		if (a == null) {
+			throw new NullPointerException("The atom must not be null");
+		}
+		if (a.isBuiltin()) {
+			throw new IllegalArgumentException("The atom must not be a builtin atom");
+		}
+		return createAtom(a.getPredicate(), createTuple(a.getTuple()));
+	}
+
+	public ILiteral createLiteral(final ILiteral l) {
+		if (l == null) {
+			throw new NullPointerException("The literal must not be null");
+		}
+		return createLiteral(l.isPositive(), createAtom(l.getAtom()));
 	}
 
 	public static IBasicFactory getInstance() {
