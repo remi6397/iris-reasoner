@@ -20,7 +20,6 @@ Helpers
 	min = '-';
 	dot = '.';
 	comma = ',';
-	allowed_url = alphanum | '/' | '_' | '-';
 
 	comment = '//' [all - [cr + lf]]* eol;
 
@@ -50,7 +49,7 @@ Tokens
     t_dot = dot;
     t_impliedby = ':-';
     t_and = 'and';
-    t_not = 'not' | '-' | 'naf' | '!';
+    t_not = 'not' | 'naf' | '!';
     t_comma = comma;
     t_lpar = '(';
     t_rpar = ')';
@@ -61,7 +60,7 @@ Tokens
     t_unders = '_';
     
     // builtin symbols
-    t_bin_op = eq | ne | lt | le | gt | ge; // binary operators
+    t_bin_op = ne | lt | le | gt | ge; // binary operators
     t_ter_op = add | sub | mul | div; // ternary operators
     t_eq = eq;
                    
@@ -164,5 +163,6 @@ Productions
                    {hexbinary} t_pre_hex t_lpar t_str t_rpar;
                    
     builtin =		{binary}[first]:term t_bin_op [second]:term |
+				{equals}[first]:term t_eq [second]:term |
     				{ternary}[first]:term t_ter_op [second]:term t_eq [third]:term;
 	
