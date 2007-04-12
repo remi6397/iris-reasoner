@@ -58,11 +58,11 @@ import org.deri.iris.factory.Factory;
  * Tests for the datalog parser.
  * </p>
  * <p>
- * $Id: ParserTest.java,v 1.4 2007-04-06 06:59:45 poettler_ric Exp $
+ * $Id: ParserTest.java,v 1.5 2007-04-12 08:28:51 poettler_ric Exp $
  * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class ParserTest extends TestCase {
 
@@ -305,6 +305,52 @@ public class ParserTest extends TestCase {
 		// asserting the hex bin
 		pred = BASIC.createPredicate("hex", 1);
 		assertTrue("Could not find the hex", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createHexBinary("a1df"))));
+	}
+
+	public void testParseBinaryBuiltins() {
+		final String toParse = "x(?X) :- \n" +
+			"1 < 2, \n" + 
+			"3 <= 4, \n" + 
+			"5 > 6, \n" + 
+			"7 >= 8, \n" + 
+			"9 = 10, \n" + 
+			"11 != 12.";
+		pars.compileKB(toParse, prog);
+		final Collection<ILiteral> body = prog.getRules().iterator().next().getBodyLiterals();
+		assertTrue("Can't find '1 < 2' in " + body, body.contains(
+					BASIC.createLiteral(true, BUILTIN.createLess(CONCRETE.createInteger(1), CONCRETE.createInteger(2)))));
+		assertTrue("Can't find '3 <= 4' in " + body, body.contains(
+					BASIC.createLiteral(true, BUILTIN.createLessEqual(CONCRETE.createInteger(3), CONCRETE.createInteger(4)))));
+		assertTrue("Can't find '5 > 6' in " + body, body.contains(
+					BASIC.createLiteral(true, BUILTIN.createGreater(CONCRETE.createInteger(5), CONCRETE.createInteger(6)))));
+		assertTrue("Can't find '7 >= 8' in " + body, body.contains(
+					BASIC.createLiteral(true, BUILTIN.createGreaterEqual(CONCRETE.createInteger(7), CONCRETE.createInteger(8)))));
+		assertTrue("Can't find '9 = 10' in " + body, body.contains(
+					BASIC.createLiteral(true, BUILTIN.createEqual(CONCRETE.createInteger(9), CONCRETE.createInteger(10)))));
+		assertTrue("Can't find '11 != 12' in " + body, body.contains(
+					BASIC.createLiteral(true, BUILTIN.createUnequal(CONCRETE.createInteger(11), CONCRETE.createInteger(12)))));
+	}
+
+	public void testParseTenaryBuiltins() {
+		final String toParse = "x(?X) :- \n" +
+			"1 + 2 = 3, \n" + 
+			"4 - 5 = 6, \n" + 
+			"7 * 8 = 9, \n" + 
+			"10 / 11 = 12.";
+		pars.compileKB(toParse, prog);
+		final Collection<ILiteral> body = prog.getRules().iterator().next().getBodyLiterals();
+		assertTrue("Can't find '1 + 2 = 3' in " + body, body.contains(
+					BASIC.createLiteral(true, BUILTIN.createAddBuiltin(
+							CONCRETE.createInteger(1), CONCRETE.createInteger(2), CONCRETE.createInteger(3)))));
+		assertTrue("Can't find '4 - 5 = 6' in " + body, body.contains(
+					BASIC.createLiteral(true, BUILTIN.createSubtractBuiltin(
+							CONCRETE.createInteger(4), CONCRETE.createInteger(5), CONCRETE.createInteger(6)))));
+		assertTrue("Can't find '7 * 8 = 9' in " + body, body.contains(
+					BASIC.createLiteral(true, BUILTIN.createMultiplyBuiltin(
+							CONCRETE.createInteger(7), CONCRETE.createInteger(8), CONCRETE.createInteger(9)))));
+		assertTrue("Can't find '10 / 11 = 12' in " + body, body.contains(
+					BASIC.createLiteral(true, BUILTIN.createDivideBuiltin(
+							CONCRETE.createInteger(10), CONCRETE.createInteger(11), CONCRETE.createInteger(12)))));
 	}
 
 	/**
