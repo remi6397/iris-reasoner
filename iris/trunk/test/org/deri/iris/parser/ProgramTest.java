@@ -43,7 +43,6 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.compiler.ParserImpl;
 import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
 
@@ -502,10 +501,9 @@ public class ProgramTest extends TestCase {
 	public Map<IPredicate, IRelation> evluateProgram(String program) 
 		throws Exception{
     	
-		Parser pa = new ParserImpl();
     	IProgram p = Factory.PROGRAM.createProgram();
     	p.resetProgram();
-    	pa.compileKB(program, p);
+    	Parser.parse(program, p);
    		IExpressionEvaluator method = new ExpressionEvaluator();
 		IExecutor exec = new Executor(p, method);
 		exec.execute();
@@ -519,9 +517,8 @@ public class ProgramTest extends TestCase {
 		Set<IRule> r = new HashSet<IRule>();
 		Set<IQuery> q = new HashSet<IQuery>();
 		
-		Parser pa = new ParserImpl();
     	IProgram p = Factory.PROGRAM.createProgram(f, r, q);
-    	pa.compileKB(res0, p);
+    	Parser.parse(res0, p);
     	
    		IRelation r0 = null;
 		IRelation r1 = null;

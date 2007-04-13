@@ -28,7 +28,6 @@ package org.deri.iris.evaluation.qsq;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.evaluation.common.IAdornedProgram;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.compiler.ParserImpl;
 import org.deri.iris.evaluation.common.AdornedProgram;
 import org.deri.iris.factory.Factory;
 
@@ -140,9 +139,8 @@ public class QSQparserTest {
     }
     
     private void evluateAndPrint(String program) throws Exception{
-    	Parser pa = new ParserImpl();
     	IProgram p = Factory.PROGRAM.createProgram();
-    	pa.compileKB(program, p);
+    	Parser.parse(program, p);
     	
     	IAdornedProgram adPrg = 
     		new AdornedProgram(p.getRules(), p.getQueries().iterator().next());

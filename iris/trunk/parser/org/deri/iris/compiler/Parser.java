@@ -25,28 +25,75 @@
  */
 package org.deri.iris.compiler;
 
-import org.deri.iris.api.basics.IAtom;
-import org.deri.iris.api.basics.IRule;
+import java.io.IOException;
+import java.io.PushbackReader;
+import java.io.Reader;
+import java.io.StringReader;
+
 import org.deri.iris.api.IProgram;
+import org.deri.iris.parser.lexer.Lexer;
+import org.deri.iris.parser.lexer.LexerException;
+import org.deri.iris.parser.parser.ParserException;
 
 /**
  * <p>
- * Parser interface to parse a datalog program stirng.
+ * Parser to parse datalog programs.
  * </p>
  * <p>
- * $Id: Parser.java,v 1.6 2007-04-06 06:59:45 poettler_ric Exp $
+ * $Id: Parser.java,v 1.7 2007-04-13 06:55:51 poettler_ric Exp $
  * </p>
  * @author Francisco Garcia
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
-public interface Parser {
+public class Parser {
+     
+	/**
+	 * Parses a datalog string. The parsed object will be add to the
+	 * submitted program.
+	 * @param prog the string to parse
+	 * @param p the program where to add the objects
+	 * @throws IllegalArgumentException if something went wrong while
+	 * parsing
+	 * @throws NullPointerException if the string is <code>null</code>
+	 * @throws NullPointerException if the program is <code>null</code>
+	 */
+	public static void parse(String prog, IProgram p) {
+		if (prog == null) {
+			throw new NullPointerException("The string to parse must not be null");
+		}
+		if (p == null) {
+			throw new NullPointerException("The program must not be null");
+		}
+		parse(new StringReader(prog), p);
+	}
 
-    /**
-     * Parses a string and adds the parsed object to a program.
-     * @param kb the string to parse
-     * @param p the program to which to add the compiled objects.
-     * @throws IllegalArgumentException if something went wrong while parsing
-     */
-    public void compileKB(String kb, IProgram p);
+	/**
+	 * Parses a datalog string. The parsed object will be add to the
+	 * submitted program.
+	 * @param r the reader from where to read the program
+	 * @param p the program where to add the objects
+	 * @throws IllegalArgumentException if something went wrong while
+	 * parsing
+	 * @throws NullPointerException if the reader is <code>null</code>
+	 * @throws NullPointerException if the program is <code>null</code>
+	 */
+	public static void parse(final Reader r, IProgram p) {
+		if (r == null) {
+			throw new NullPointerException("The reader must not be null");
+		}
+		if (p == null) {
+			throw new NullPointerException("The program must not be null");
+		}
+		try {
+			(new org.deri.iris.parser.parser.Parser(new Lexer(new PushbackReader(r, 1024))))
+				.parse().apply(new TreeWalker(p));
+		} catch (ParserException e) {
+			throw new IllegalArgumentException("Could not parse the program", e);
+		} catch (LexerException e) {
+			throw new IllegalArgumentException("Could not parse the program", e);
+		} catch (IOException e) {
+			throw new IllegalArgumentException("Something wrong while reading the program", e);
+		}
+	}
 }
