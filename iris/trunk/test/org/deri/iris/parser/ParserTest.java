@@ -50,7 +50,6 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.compiler.ParserImpl;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -58,11 +57,11 @@ import org.deri.iris.factory.Factory;
  * Tests for the datalog parser.
  * </p>
  * <p>
- * $Id: ParserTest.java,v 1.5 2007-04-12 08:28:51 poettler_ric Exp $
+ * $Id: ParserTest.java,v 1.6 2007-04-13 06:55:51 poettler_ric Exp $
  * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class ParserTest extends TestCase {
 
@@ -80,7 +79,6 @@ public class ParserTest extends TestCase {
 	 * setup for Parser tests
 	 */
 	public void setUp() {
-        pars = new ParserImpl();
     	prog = Factory.PROGRAM.createProgram();
 
 		literals = new ArrayList<ILiteral>();
@@ -92,7 +90,7 @@ public class ParserTest extends TestCase {
 	 *
 	 */
 	protected void runParser(final String expr, final Set<IRule> rul) {
-		this.pars.compileKB(expr, prog);
+		Parser.parse(expr, prog);
 		assertCol(rul, prog.getRules());
 	}
 	
@@ -224,7 +222,7 @@ public class ParserTest extends TestCase {
 			"base(_base64binary('45df')).\n" + 
 			"hex(_hexbinary('a1df')).\n";
 
-		pars.compileKB(expr, prog);
+		Parser.parse(expr, prog);
 
 		// TODO: test the function term
 		// asserting the short int
@@ -315,7 +313,7 @@ public class ParserTest extends TestCase {
 			"7 >= 8, \n" + 
 			"9 = 10, \n" + 
 			"11 != 12.";
-		pars.compileKB(toParse, prog);
+		Parser.parse(toParse, prog);
 		final Collection<ILiteral> body = prog.getRules().iterator().next().getBodyLiterals();
 		assertTrue("Can't find '1 < 2' in " + body, body.contains(
 					BASIC.createLiteral(true, BUILTIN.createLess(CONCRETE.createInteger(1), CONCRETE.createInteger(2)))));
@@ -337,7 +335,7 @@ public class ParserTest extends TestCase {
 			"4 - 5 = 6, \n" + 
 			"7 * 8 = 9, \n" + 
 			"10 / 11 = 12.";
-		pars.compileKB(toParse, prog);
+		Parser.parse(toParse, prog);
 		final Collection<ILiteral> body = prog.getRules().iterator().next().getBodyLiterals();
 		assertTrue("Can't find '1 + 2 = 3' in " + body, body.contains(
 					BASIC.createLiteral(true, BUILTIN.createAddBuiltin(
