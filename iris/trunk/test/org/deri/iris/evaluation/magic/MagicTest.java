@@ -47,23 +47,26 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.compiler.Parser;
 import org.deri.iris.evaluation.common.AdornedProgram;
+import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.evaluation.common.Adornment;
 import org.deri.iris.evaluation.common.AdornmentsTest;
-import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
+import org.deri.iris.factory.Factory;
+import org.deri.iris.MiscHelper;
 
 /**
  * <p>
  * Tests the magic sets.
  * </p>
  * <p>
- * $Id: MagicTest.java,v 1.1 2006-11-29 11:34:38 richardpoettler Exp $
+ * $Id: MagicTest.java,v 1.2 2007-04-16 14:59:44 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-11-29 11:34:38 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.2 $
  */
 public class MagicTest extends TestCase {
 
@@ -413,6 +416,96 @@ public class MagicTest extends TestCase {
 					"The rules\n" + r0 + "\nand\n" + r1 + "\ndon't match.", 0,
 					AdornmentsTest.RC.compare(r0, r1));
 		}
+	}
+
+	/**
+	 * Tests that constatns in bodyliterals are determined as bound.
+	 */
+	public void testBoundConstant() {
+		final String program = "a(?X, ?Y) :- b(?X, ?Z), c('a', ?Z, ?Y). \n" + 
+			"c(?X, ?Y, ?Z) :- x(?X, ?Y, ?Z). \n" + 
+			"?-a('john', ?Y).";
+		final IProgram p = Factory.PROGRAM.createProgram();
+		Parser.parse(program, p);
+
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(
+					p.getRules(), p.getQueries().iterator().next()));
+
+		final ITerm a = TERM.createString("a");
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] XYZ = new ITerm[]{X, Y, Z};
+		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final Adornment[] bf = new Adornment[]{Adornment.BOUND, Adornment.FREE};
+		final ILiteral b = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("b", 2), BASIC.createTuple(X, Z)));
+		final ILiteral x = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("x", 3), BASIC.createTuple(X, Y, Z)));
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// magic_c^bbf(a, Z) :- magic_a^bf(X), b(X, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("c", bbf, new ITerm[]{a, Z})), 
+					BASIC.createBody(createMagicLiteral("a", bf, new ITerm[]{X}), b)));
+		// a^bf(X, Y) :- magic_a^bf(X), b(X, Z), c^bbf(a, Z, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("a", bf, new ITerm[]{X, Y})), 
+					BASIC.createBody(
+						createMagicLiteral("a", bf, new ITerm[]{X}), 
+						b, 
+						createAdornedLiteral("c", bbf, new ITerm[]{a, Z, Y}))));
+		// c^bbf(X, Y, Z) :- magic_c^bbf(X, Y), x(X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("c", bbf, XYZ)), 
+					BASIC.createBody(createMagicLiteral("c", bbf, new ITerm[]{X, Y}), x)));
+
+		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
+		rules.addAll(ms.getMagicRules());
+
+		assertTrue("The rules must be '" + MiscHelper.join("\n", ref) + "', but were '" + 
+				MiscHelper.join("\n", rules) + "'", 
+				MiscHelper.compare(rules, ref, AdornmentsTest.RC));
+	}
+
+	/**
+	 * Tests whether useless magic predicates (magic_q^f()) will be created,
+	 * or not.
+	 */
+	public void testStupidRules() {
+		final String program = "q(?X) :- s(?X), not p(?X)." + 
+			"p(?X) :- r(?X)." + 
+			"r(?X) :- t(?X)." + 
+			"?- q(?X).";
+		final IProgram p = Factory.PROGRAM.createProgram();
+		Parser.parse(program, p);
+
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(
+					p.getRules(), p.getQueries().iterator().next()));
+
+		final ITerm[] X = new ITerm[]{TERM.createVariable("X")};
+		final Adornment[] sb = new Adornment[]{Adornment.BOUND};
+		final ILiteral s = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("s", 1), BASIC.createTuple(X)));
+		final ILiteral t = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("t", 1), BASIC.createTuple(X)));
+		final ILiteral q = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("q", 1), BASIC.createTuple(X)));
+		final ILiteral neg_ad_p = createAdornedLiteral("p", sb, X);
+		neg_ad_p.setPositive(false);
+		final ILiteral ad_p = createAdornedLiteral("p", sb, X);
+		final ILiteral ad_r = createAdornedLiteral("r", sb, X);
+		final ILiteral magic_p = createMagicLiteral("p", sb, X);
+		final ILiteral magic_r = createMagicLiteral("r", sb, X);
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		//magic_r^b(X) :- magic_p^b(X)
+		ref.add(BASIC.createRule(BASIC.createHead(magic_r), BASIC.createBody(magic_p)));
+		//magic_p^b(X) :- s(X)
+		ref.add(BASIC.createRule(BASIC.createHead(magic_p), BASIC.createBody(s)));
+		//r^b(X) :- magic_r^b(X), t(X)
+		ref.add(BASIC.createRule(BASIC.createHead(ad_r), BASIC.createBody(magic_r, t)));
+		//q(X) :- s(X), -p^b(X)
+		ref.add(BASIC.createRule(BASIC.createHead(q), BASIC.createBody(s, neg_ad_p)));
+		//p^b(X) :- magic_p^b(X), r^b(X)
+		ref.add(BASIC.createRule(BASIC.createHead(ad_p), BASIC.createBody(magic_p, ad_r)));
+		
+		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
+		rules.addAll(ms.getMagicRules());
+
+		assertTrue("The two rule collections must be equals", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
 	}
 
 	public static Test suite() {
