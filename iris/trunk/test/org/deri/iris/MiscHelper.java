@@ -30,6 +30,10 @@ import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -168,4 +172,64 @@ public final class MiscHelper {
 				createTuple(cons));
 	}
 
+	/**
+	 * Compares two Collections according to a comparator.
+	 * @param c0 the first collection
+	 * @param c1 the second collection
+	 * @param c the comparator
+	 * @return <code>true</code> if the two collections are equal according
+	 * to the comparator, otherwise <code>false</code>
+	 * @throws NullPointerException if one collection is <code>null</code>
+	 * @throws NullPointerException if the comparator is <code>null</code>
+	 * @since 0.3
+	 */
+	public static <Type> boolean compare(final Collection<? extends Type> c0, final Collection<? extends Type> c1, final Comparator<Type> c) {
+		if ((c0 == null) || (c1 == null)) {
+			throw new NullPointerException("The collections must not be null");
+		}
+		if (c == null) {
+			throw new NullPointerException("The comparator must not be null");
+		}
+
+		if (c0.size() != c1.size()) {
+			return false;
+		}
+
+		final List<Type> l0 = new ArrayList<Type>(c0);
+		final List<Type> l1 = new ArrayList<Type>(c1);
+		Collections.sort(l0, c);
+		Collections.sort(l1, c);
+
+		for (final Iterator<Type> i0 = l0.iterator(), i1 = l1.iterator(); i0.hasNext(); ) {
+			if (c.compare(i0.next(), i1.next()) != 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Behaves like Perl's join function. Concats all elements of the
+	 * colleciton separated by the given delimiter.
+	 * @param d the delimiter to put between the elements
+	 * @param c the collection from where to take the elements
+	 * @return the constructed string
+	 * @throws NullPointerException if the delimiter is <code>null</code>
+	 * @throws NullPointerException if the collection is <code>null</code>
+	 * @since 0.3
+	 */
+	public static String join(final String d, final Collection<? extends Object> c) {
+		if (d == null) {
+			throw new NullPointerException("The delimiter must not be null");
+		}
+		if (c == null) {
+			throw new NullPointerException("The collection must not be null");
+		}
+
+		final StringBuilder b = new StringBuilder();
+		for (final Object o : c) {
+			b.append(o).append(d);
+		}
+		return b.delete(b.length() - d.length(), b.length()).toString();
+	}
 }
