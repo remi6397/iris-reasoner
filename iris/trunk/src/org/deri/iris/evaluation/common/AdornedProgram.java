@@ -53,31 +53,30 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.20 2007-01-25 13:15:32 richardpoettler Exp $
+ * $Id: AdornedProgram.java,v 1.21 2007-04-16 14:54:05 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.20 $
- * @date $Date: 2007-01-25 13:15:32 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.21 $
  */
 public class AdornedProgram implements IAdornedProgram {
 
 	// TODO: make a smaller empty-constant-term
 	private static final ITerm EMPTY_CONSTANT_TERM = TERM.createString("");
 
-	/** Set of all derived predicates */
+	/** Set of all derived predicates. */
 	private final Set<IPredicate> deriveredPredicates = new HashSet<IPredicate>();
 
-	/** Set of all adorned predicates */
+	/** Set of all adorned predicates. */
 	private final Set<IAdornedPredicate> adornedPredicates = new HashSet<IAdornedPredicate>();
 
-	/** Set of all adorned rules */
+	/** Set of all adorned rules. */
 	private final Set<IAdornedRule> adornedRules = new HashSet<IAdornedRule>();
 
-	/** Set of all normal rules */
+	/** Set of all normal rules. */
 	private final Set<IRule> rules;
 
-	/** Query for this program */
+	/** Query for this program. */
 	private final IQuery query;
 
 	/**
@@ -197,7 +196,7 @@ public class AdornedProgram implements IAdornedProgram {
 	}
 
 	public int hashCode() {
-		// TODO: only the submitted query and rules are taken into account,
+		// only the submitted query and rules are taken into account,
 		// because all other member variables should then be the same
 		int result = 17;
 		result = result * 37 + query.hashCode();
@@ -213,9 +212,8 @@ public class AdornedProgram implements IAdornedProgram {
 			return false;
 		}
 		AdornedProgram ap = (AdornedProgram) o;
-		// only the submitted query and rules are compared, because all
-		// other member variables should then be the same, because the're
-		// computed out of them
+		// only the submitted query and rules are taken into account,
+		// because all other member variables should then be the same
 		return query.equals(ap.query) && rules.equals(ap.rules);
 	}
 
@@ -236,12 +234,17 @@ public class AdornedProgram implements IAdornedProgram {
 	}
 
 	/**
-	 * Processes a literal of a given adorned rule.<br/> This method will frist
+	 * <p>
+	 * Processes a literal of a given adorned rule.
+	 * </p>
+	 * <p>
+	 * This method will frist
 	 * determine, whether the predicate of this literal is derived, and if it is
 	 * the predicate will be adorned with the variables passed in from the sip
 	 * of the adorned rule. The predicate of the literal of the adorned rule
 	 * passed in will be replaced by the adorned one. If the predicate was
 	 * derived, the adorned predicate will be returned, otherwise null.
+	 * </p>
 	 * 
 	 * @param l
 	 *            the literal to process
@@ -464,12 +467,11 @@ public class AdornedProgram implements IAdornedProgram {
 		 *            from
 		 * @param bounds
 		 *            set of all bound variables of the literal
-		 * @throw nullpointer exception if the literal, the predicate of the
+		 * @throws nullpointer exception if the literal, the predicate of the
 		 *        literal or the bounds is null.
 		 */
 		public AdornedPredicate(final ILiteral l,
 				final Collection<IVariable> bounds) {
-			// TODO: maybe a defensive copy should be made
 			if (l == null) {
 				throw new NullPointerException("The literal must not be null");
 			}
@@ -508,7 +510,6 @@ public class AdornedProgram implements IAdornedProgram {
 				throw new NullPointerException("The literal must not be null");
 			}
 
-			// TODO: maybe a defensive copy should be made
 			this.p = l.getPredicate();
 
 			// checking the submitted values
@@ -552,6 +553,9 @@ public class AdornedProgram implements IAdornedProgram {
 						"The bound collection must not be null");
 			}
 
+			if (t.isGround()) {
+				return true;
+			}
 			if (t instanceof IConstructedTerm) {
 				return b.containsAll(((IConstructedTerm) t).getVariables());
 			}
@@ -644,8 +648,8 @@ public class AdornedProgram implements IAdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.20 $
-	 * @date $Date: 2007-01-25 13:15:32 $
+	 * @version $Revision: 1.21 $
+	 * @date $Date: 2007-04-16 14:54:05 $
 	 */
 	public static class AdornedRule implements IAdornedRule {
 		/** The inner rule represented by this object */
