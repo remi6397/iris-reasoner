@@ -27,12 +27,13 @@ package org.deri.iris.evaluation.common;
 
 // TODO: test handling of builtins
 
-import static org.deri.iris.MiscHelper.createLiteral;
-import static org.deri.iris.MiscHelper.createVarList;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
+import static org.deri.iris.MiscHelper.createLiteral;
+import static org.deri.iris.MiscHelper.createVarList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -53,22 +54,25 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.evaluation.common.IAdornedPredicate;
 import org.deri.iris.api.evaluation.common.IAdornedProgram;
 import org.deri.iris.api.evaluation.common.IAdornedRule;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.compiler.Parser;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 import org.deri.iris.evaluation.magic.SIPImpl;
+import org.deri.iris.factory.Factory;
+import org.deri.iris.MiscHelper;
 
 /**
  * <p>
  * Tests the adornments.
  * </p>
  * <p>
- * $Id: AdornmentsTest.java,v 1.4 2007-01-25 13:15:32 richardpoettler Exp $
+ * $Id: AdornmentsTest.java,v 1.5 2007-04-16 14:54:07 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.4 $
- * @date $Date: 2007-01-25 13:15:32 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.5 $
  */
 public class AdornmentsTest extends TestCase {
 
@@ -569,16 +573,88 @@ public class AdornmentsTest extends TestCase {
 	}
 
 	/**
+	 * Creates an adorned literal.
+	 * 
+	 * @param symbol
+	 *            the predicate symbot to use for the literal
+	 * @param ad
+	 *            the adornments
+	 * @param t
+	 *            the terms for the literal
+	 * @return the constructed magic literal
+	 * @throws NullPointerException
+	 *             if the symbol is {@code null}
+	 * @throws IllegalArgumentException
+	 *             if the symbol is 0 sighns long
+	 * @throws NullPointerException
+	 *             if the adornments is or contains {@code null}
+	 * @throws NullPointerException
+	 *             if the terms is or contains {@code null}
+	 */
+	private static ILiteral createAdornedLiteral(final String symbol,
+			final Adornment[] ad, final ITerm[] t) {
+		if (symbol == null) {
+			throw new NullPointerException("The symbol must not be null");
+		}
+		if (symbol.length() == 0) {
+			throw new IllegalArgumentException(
+					"The symbol must be longer than 0 characters");
+		}
+		if ((ad == null) || Arrays.asList(ad).contains(null)) {
+			throw new NullPointerException(
+					"The adornments must not be, or contain null");
+		}
+		if ((t == null) || Arrays.asList(t).contains(null)) {
+			throw new NullPointerException(
+					"The terms must not be, or contain null");
+		}
+		return BASIC.createLiteral(true, new AdornedProgram.AdornedPredicate(
+				symbol, t.length, ad), BASIC.createTuple(t));
+	}
+
+	/**
+	 * Tests that constants in literals in the body will be marked as bound.
+	 */
+	public void testConstantsInBody() {
+		final String program = "a(?X, ?Y) :- b(?X, ?Z), c('a', ?Z, ?Y). \n" + 
+			"c(?X, ?Y, ?Z) :- x(?X, ?Y, ?Z). \n" + 
+			"?-a('john', ?Y).";
+		final IProgram p = Factory.PROGRAM.createProgram();
+		Parser.parse(program, p);
+		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
+
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] XYZ = new ITerm[]{X, Y, Z};
+		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final Adornment[] bf = new Adornment[]{Adornment.BOUND, Adornment.FREE};
+		final ILiteral b = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("b", 2), BASIC.createTuple(X, Z)));
+		final ILiteral x = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("x", 3), BASIC.createTuple(XYZ)));
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// a^bf(?X, ?Y) :- b(?X, ?Z), c^bbf('a', ?Z, ?Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("a", bf, new ITerm[]{X, Y})), 
+						BASIC.createBody(
+							b, createAdornedLiteral("c", bbf, new ITerm[]{TERM.createString("a"), Z, Y}))));
+		// c^bbf(?X, ?Y, ?Z) :- x(?X, ?Y, ?Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("c", bbf, XYZ)), BASIC.createBody(x)));
+
+		assertTrue("The rules must be '" + MiscHelper.join("\n", ref) + "', but were '" + 
+				MiscHelper.join("\n", ap.getAdornedRules()) + "'", 
+				MiscHelper.compare(ap.getAdornedRules(), ref, RC));
+	}
+
+	/**
 	 * <p>
 	 * Compares two rules according to their predicate symbols.
 	 * </p>
 	 * <p>
-	 * $Id: AdornmentsTest.java,v 1.4 2007-01-25 13:15:32 richardpoettler Exp $
+	 * $Id: AdornmentsTest.java,v 1.5 2007-04-16 14:54:07 poettler_ric Exp $
 	 * </p>
 	 * 
-	 * @author richi
-	 * @version $Revision: 1.4 $
-	 * @date $Date: 2007-01-25 13:15:32 $
+	 * @author Richard Pöttler (richard dot poettler at deri dot org)
+	 * @version $Revision: 1.5 $
 	 */
 	private static class RuleComparator implements Comparator<IRule> {
 		public int compare(IRule o1, IRule o2) {
