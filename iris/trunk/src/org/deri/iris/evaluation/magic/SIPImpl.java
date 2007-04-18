@@ -61,11 +61,11 @@ import org.jgrapht.graph.SimpleDirectedGraph;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.18 2007-04-18 13:33:49 poettler_ric Exp $
+ * $Id: SIPImpl.java,v 1.19 2007-04-18 14:16:08 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public final class SIPImpl implements ISip {
 	/**
@@ -412,7 +412,7 @@ public final class SIPImpl implements ISip {
 			final ILiteral actual = todoDependencies.iterator().next();
 			todoDependencies.remove(actual);
 
-			final List vertices = Graphs.predecessorListOf(sipGraph,
+			final List<ILiteral> vertices = Graphs.predecessorListOf(sipGraph,
 					actual);
 			dependencies.addAll(vertices);
 			todoDependencies.addAll(vertices);
@@ -456,8 +456,7 @@ public final class SIPImpl implements ISip {
 					"The source and the target must not be null");
 		}
 		Set<IVariable> vars = new HashSet<IVariable>(getBoundVariables(source));
-		vars.addAll(((LabeledEdge<ILiteral, Set<IVariable>>) sipGraph.getEdge(
-				source, target)).getLabel());
+		vars.addAll((sipGraph.getEdge(source, target)).getLabel());
 		return vars;
 	}
 
@@ -479,7 +478,7 @@ public final class SIPImpl implements ISip {
 	public String toString() {
 		final String NEWLINE = System.getProperty("line.separator");
 		StringBuilder buffer = new StringBuilder();
-		for (Object o : sipGraph.edgeSet()) {
+		for (LabeledEdge<ILiteral, Set<IVariable>> o : sipGraph.edgeSet()) {
 			buffer.append(o).append(NEWLINE);
 		}
 		return buffer.toString();
@@ -498,8 +497,7 @@ public final class SIPImpl implements ISip {
 		SIPImpl copy = new SIPImpl();
 		copy.rule = r;
 		copy.query = q;
-		copy.sipGraph = (DirectedGraph) ((SimpleDirectedGraph) sipGraph)
-				.clone();
+		copy.sipGraph = (DirectedGraph)((SimpleDirectedGraph) sipGraph).clone();
 		return copy;
 	}
 
@@ -509,10 +507,8 @@ public final class SIPImpl implements ISip {
 		}
 		for (final LabeledEdge<ILiteral, Set<IVariable>> e : getEdgesEnteringLiteral(from)) {
 			updateSip(e.getSource(), to, e.getLabel());
-			//sipGraph.removeEdge(e);
 		}
 		for (final LabeledEdge<ILiteral, Set<IVariable>> e : getEdgesLeavingLiteral(from)) {
-			//sipGraph.removeEdge(e);
 			updateSip(to, e.getTarget(), e.getLabel());
 		}
 		// needs no check for neighbours, because we deleted all edges
@@ -531,8 +527,7 @@ public final class SIPImpl implements ISip {
 			throw new NullPointerException(
 					"The source and the target must not be null");
 		}
-		removeEdge((LabeledEdge<ILiteral, Set<IVariable>>) sipGraph.getEdge(
-				source, target));
+		removeEdge(sipGraph.getEdge(source, target));
 	}
 
 	public boolean containsVertex(final ILiteral l) {
@@ -546,7 +541,7 @@ public final class SIPImpl implements ISip {
 		final Set<ILiteral> roots = new HashSet<ILiteral>();
 		for (final ILiteral o : sipGraph.vertexSet()) {
 			if (Graphs.predecessorListOf(sipGraph, o).isEmpty()) {
-				roots.add((ILiteral) o);
+				roots.add(o);
 			}
 		}
 		return roots;
@@ -556,7 +551,7 @@ public final class SIPImpl implements ISip {
 		final Set<ILiteral> leafes = new HashSet<ILiteral>();
 		for (final ILiteral o : sipGraph.vertexSet()) {
 			if (Graphs.successorListOf(sipGraph, o).isEmpty()) {
-				leafes.add((ILiteral) o);
+				leafes.add(o);
 			}
 		}
 		return leafes;
@@ -804,10 +799,10 @@ public final class SIPImpl implements ISip {
 	 * The label of the edge will be <code>new HashSet<IVariable>()</code>.
 	 * </p>
 	 * <p>
-	 * $Id: SIPImpl.java,v 1.18 2007-04-18 13:33:49 poettler_ric Exp $
+	 * $Id: SIPImpl.java,v 1.19 2007-04-18 14:16:08 poettler_ric Exp $
 	 * </p>
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.18 $
+	 * @version $Revision: 1.19 $
 	 * @since 0.3
 	 */
 	private static class SipEdgeFactory implements EdgeFactory<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> {
