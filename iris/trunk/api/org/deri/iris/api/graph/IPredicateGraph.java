@@ -31,6 +31,7 @@ import java.util.Set;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.graph.LabeledEdge;
 
 /**
  * <p>
@@ -40,9 +41,8 @@ import org.deri.iris.api.basics.IRule;
  * $Id$
  * </p>
  * 
- * @author richi
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
  * @version $Revision$
- * @date $Date$
  */
 public interface IPredicateGraph {
 	/**
@@ -67,14 +67,14 @@ public interface IPredicateGraph {
 	 * 
 	 * @return a Set containing all the vertexes
 	 */
-	public abstract Set findVertexesForCycle();
+	public abstract Set<IPredicate> findVertexesForCycle();
 
 	/**
 	 * Determines the edges contained in the cycle.
 	 * 
 	 * @return a Set containing all the vertexes
 	 */
-	public abstract Set findEdgesForCycle();
+	public abstract Set<LabeledEdge<IPredicate, Boolean>> findEdgesForCycle();
 
 	/**
 	 * Returns the number of negative Literals in the cycle.

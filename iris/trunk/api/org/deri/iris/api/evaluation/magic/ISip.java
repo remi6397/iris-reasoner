@@ -28,13 +28,12 @@ package org.deri.iris.api.evaluation.magic;
 import java.util.Comparator;
 import java.util.Set;
 
-import org._3pq.jgrapht.Edge;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.magic.SipHelper;
-import org.deri.iris.graph.LabeledDirectedEdge;
+import org.deri.iris.graph.LabeledEdge;
 
 /**
  * <p>
@@ -42,12 +41,11 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * literal was passed/bound by which literal.
  * </p>
  * <p>
- * $Id: ISip.java,v 1.2 2006-09-18 08:08:50 richardpoettler Exp $
+ * $Id: ISip.java,v 1.3 2007-04-18 13:33:49 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-09-18 08:08:50 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.3 $
  */
 public interface ISip {
 
@@ -105,7 +103,7 @@ public interface ISip {
 	 * @throws NullPointerException
 	 *             if the literal is null
 	 */
-	public abstract Set<LabeledDirectedEdge<Set<IVariable>>> getEdgesEnteringLiteral(
+	public abstract Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesEnteringLiteral(
 			final ILiteral l);
 
 	/**
@@ -117,22 +115,8 @@ public interface ISip {
 	 * @throws NullPointerException
 	 *             if the literal is null
 	 */
-	public abstract Set<LabeledDirectedEdge<Set<IVariable>>> getEdgesLeavingLiteral(
+	public abstract Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesLeavingLiteral(
 			final ILiteral l);
-
-	/**
-	 * Determines the set of variables passed to one literal by one specific
-	 * edge.
-	 * 
-	 * @param e
-	 *            edge which passes the variables
-	 * @return the set of variables
-	 * @throws NullPointerException
-	 *             if the edge is null
-	 * @throws IllegalArgumentException
-	 *             if one of the vertices of the edge isn't a literal
-	 */
-	public abstract Set<IVariable> variablesPassedByEdge(final Edge e);
 
 	/**
 	 * Determines the set of variables passed to one literal by one specific
@@ -228,7 +212,7 @@ public interface ISip {
 	 * @throws NullPointerException
 	 *             if the edge is null
 	 */
-	public abstract void removeEdge(final LabeledDirectedEdge<Set<IVariable>> e);
+	public abstract void removeEdge(final LabeledEdge<ILiteral, Set<IVariable>> e);
 
 	/**
 	 * <p>

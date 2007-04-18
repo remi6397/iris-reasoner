@@ -45,19 +45,18 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.graph.LabeledDirectedEdge;
+import org.deri.iris.graph.LabeledEdge;
 
 /**
  * <p>
  * Runns various test on the sip.
  * </p>
  * <p>
- * $Id: SipImplTest.java,v 1.2 2006-11-20 09:57:49 richardpoettler Exp $
+ * $Id: SipImplTest.java,v 1.3 2007-04-18 13:33:49 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-11-20 09:57:49 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.3 $
  */
 public class SipImplTest extends TestCase {
 
@@ -120,7 +119,7 @@ public class SipImplTest extends TestCase {
 	 * Tests whether the sip contains all expected edges.
 	 */
 	public void testForEdges() {
-		final Set<LabeledDirectedEdge<Set<IVariable>>> e = new HashSet<LabeledDirectedEdge<Set<IVariable>>>();
+		final Set<LabeledEdge<ILiteral, Set<IVariable>>> e = new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
 		e.add(createEdge(createLiteral("sg", "X", "Y"), createLiteral("up",
 				"X", "Z1"), createVarList("X")));
 		e.add(createEdge(createLiteral("up", "X", "Z1"), createLiteral("sg",
@@ -137,7 +136,7 @@ public class SipImplTest extends TestCase {
 		assertTrue("The sip must contain all given edges", e.containsAll(sip
 				.getEdges()));
 
-		final Set<LabeledDirectedEdge<Set<IVariable>>> e1 = new HashSet<LabeledDirectedEdge<Set<IVariable>>>();
+		final Set<LabeledEdge<ILiteral, Set<IVariable>>> e1 = new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
 		e1.add(createEdge(createLiteral("rsg", "X", "Y"), createLiteral("up",
 				"X", "X1"), createVarList("X")));
 		e1.add(createEdge(createLiteral("up", "X", "X1"), createLiteral("rsg",
@@ -153,7 +152,7 @@ public class SipImplTest extends TestCase {
 
 	public void testBuiltinSip() {
 		// builtins are at the moment not handeled correctly
-		final Set<LabeledDirectedEdge<Set<IVariable>>> e2 = new HashSet<LabeledDirectedEdge<Set<IVariable>>>();
+		final Set<LabeledEdge<ILiteral, Set<IVariable>>> e2 = new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
 		e2.add(createEdge(createLiteral("rsg", "X", "Y"), createLiteral("up",
 				"X", "X1"), createVarList("X")));
 		e2.add(createEdge(createLiteral("up", "X", "X1"), createLiteral("rsg",
@@ -205,7 +204,7 @@ public class SipImplTest extends TestCase {
 	 * @throws NullPointerException
 	 *             if the label contains {@code null}
 	 */
-	private static LabeledDirectedEdge<Set<IVariable>> createEdge(
+	private static LabeledEdge<ILiteral, Set<IVariable>> createEdge(
 			final ILiteral s, final ILiteral t, final Collection<IVariable> v) {
 		if ((s == null) || (t == null) || (v == null)) {
 			throw new NullPointerException(
@@ -215,7 +214,7 @@ public class SipImplTest extends TestCase {
 			throw new NullPointerException(
 					"The variables must not contain null");
 		}
-		return new LabeledDirectedEdge<Set<IVariable>>(s, t,
+		return new LabeledEdge<ILiteral, Set<IVariable>>(s, t,
 				new HashSet<IVariable>(v));
 	}
 }

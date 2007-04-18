@@ -52,7 +52,7 @@ import org.deri.iris.evaluation.common.Adornment;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.graph.LabeledDirectedEdge;
+import org.deri.iris.graph.LabeledEdge;
 
 /**
  * <p>
@@ -65,7 +65,6 @@ import org.deri.iris.graph.LabeledDirectedEdge;
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @version $Revision$
- * @date $Date$
  */
 public final class MagicSetImpl {
 
@@ -173,7 +172,7 @@ public final class MagicSetImpl {
 		final Set<IVariable> boundVars = new HashSet<IVariable>();
 		boundVars.addAll(getVariables(getBounds(headL)));
 
-		for (final LabeledDirectedEdge<Set<IVariable>> e : adornedSip
+		for (final LabeledEdge<ILiteral, Set<IVariable>> e : adornedSip
 				.getEdgesLeavingLiteral(headL)) {
 			adornedSip.removeEdge(e);
 			adornedSip.updateSip(magicL, (ILiteral) e.getTarget(), e.getLabel());
@@ -254,7 +253,7 @@ public final class MagicSetImpl {
 					"At the moment only heads with length 1 are allowed");
 		}
 
-		final Set<LabeledDirectedEdge<Set<IVariable>>> enteringEdges = getAdornedSip(
+		final Set<LabeledEdge<ILiteral, Set<IVariable>>> enteringEdges = getAdornedSip(
 				r).getEdgesEnteringLiteral(l);
 
 		if (enteringEdges.size() == 1) {
@@ -266,7 +265,7 @@ public final class MagicSetImpl {
 					enteringEdges.size() + 1);
 			// creating the labeled rules
 			int counter = 1;
-			for (final LabeledDirectedEdge<Set<IVariable>> e : enteringEdges) {
+			for (final LabeledEdge<ILiteral, Set<IVariable>> e : enteringEdges) {
 				rules.add(createLabeledRule(e, r, counter++));
 			}
 			// computing the body for the magic rule
@@ -371,7 +370,7 @@ public final class MagicSetImpl {
 	 *             if the headlength of the rule is unequal to 1
 	 */
 	private IRule createLabeledRule(
-			final LabeledDirectedEdge<Set<IVariable>> e, final IAdornedRule r,
+			final LabeledEdge<ILiteral, Set<IVariable>> e, final IAdornedRule r,
 			final int index) {
 		if ((e == null) || (r == null)) {
 			throw new NullPointerException(
