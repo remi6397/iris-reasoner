@@ -39,15 +39,20 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org._3pq.jgrapht.Edge;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 
 /**
- * @author richi
- * 
+ * <p>
+ * Tests the PredicateGraph.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision$
  */
 public class PredicateGraphTest extends TestCase {
 
@@ -121,12 +126,12 @@ public class PredicateGraphTest extends TestCase {
 	}
 
 	public void testFindEdgesForCycle() {
-		final Set<LabeledDirectedEdge<Boolean>> reference = new HashSet<LabeledDirectedEdge<Boolean>>();
-		reference.add(new LabeledDirectedEdge<Boolean>(a, c, false));
-		reference.add(new LabeledDirectedEdge<Boolean>(c, d, true));
-		reference.add(new LabeledDirectedEdge<Boolean>(d, e, true));
-		reference.add(new LabeledDirectedEdge<Boolean>(e, a, true));
-		final Set<Edge> testing = pg0.findEdgesForCycle();
+		final Set<LabeledEdge<IPredicate, Boolean>> reference = new HashSet<LabeledEdge<IPredicate, Boolean>>();
+		reference.add(new LabeledEdge<IPredicate, Boolean>(a, c, false));
+		reference.add(new LabeledEdge<IPredicate, Boolean>(c, d, true));
+		reference.add(new LabeledEdge<IPredicate, Boolean>(d, e, true));
+		reference.add(new LabeledEdge<IPredicate, Boolean>(e, a, true));
+		final Set<LabeledEdge<IPredicate, Boolean>> testing = pg0.findEdgesForCycle();
 
 		assertEquals("The edge sets must be equal", reference, testing);
 	}

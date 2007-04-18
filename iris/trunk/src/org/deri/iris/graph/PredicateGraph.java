@@ -25,7 +25,7 @@
  */
 package org.deri.iris.graph;
 
-// TODO: implement equals, hashCode, toString an clone.
+// TODO: implement equals, hashCode an clone.
 
 import java.util.Collection;
 import java.util.Collections;
@@ -34,16 +34,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org._3pq.jgrapht.DirectedGraph;
-import org._3pq.jgrapht.Edge;
-import org._3pq.jgrapht.GraphHelper;
-import org._3pq.jgrapht.alg.ConnectivityInspector;
-import org._3pq.jgrapht.alg.CycleDetector;
-import org._3pq.jgrapht.graph.DirectedMultigraph;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.graph.IPredicateGraph;
+
+import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.EdgeFactory;
+import org.jgrapht.graph.DirectedMultigraph;
+import org.jgrapht.Graphs;
 
 /**
  * <p>
@@ -53,9 +54,8 @@ import org.deri.iris.api.graph.IPredicateGraph;
  * $Id$
  * </p>
  * 
- * @author richi
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
  * @version $Revision$
- * @date $Date$
  */
 public class PredicateGraph implements IPredicateGraph {
 
@@ -66,10 +66,12 @@ public class PredicateGraph implements IPredicateGraph {
 	private final PredicateComparator pc = new PredicateComparator();
 
 	/** Graph to represent the dependencies of the predicates. */
-	private final DirectedGraph g = new DirectedMultigraph();
+	private final DirectedGraph<IPredicate, LabeledEdge<IPredicate, Boolean>> g = 
+		new DirectedMultigraph<IPredicate, LabeledEdge<IPredicate, Boolean>>(new PredicateEdgeFactory());
 
 	/** Cycle detector, to determine, whether the rules are recursive. */
-	private final CycleDetector cd = new CycleDetector(g);
+	private final CycleDetector<IPredicate, LabeledEdge<IPredicate, Boolean>> cd = 
+		new CycleDetector<IPredicate, LabeledEdge<IPredicate, Boolean>>(g);
 
 	/**
 	 * Connectivity inspector to determine, whether paths between vertices
@@ -94,14 +96,14 @@ public class PredicateGraph implements IPredicateGraph {
 
 			for (final ILiteral l : rule.getBodyLiterals()) {
 				final IPredicate p = l.getPredicate();
-				final Edge e = new LabeledDirectedEdge<Boolean>(p, hp, l
-						.isPositive());
+				final LabeledEdge<IPredicate, Boolean> e = 
+					new LabeledEdge<IPredicate, Boolean>(p, hp, l.isPositive());
 
 				g.addVertex(p);
 
 				// if there is no such edge, add the new one
 				if (!g.edgeSet().contains(e)) {
-					g.addEdge(e);
+					g.addEdge(p, hp, e);
 				}
 			}
 		}
@@ -121,16 +123,16 @@ public class PredicateGraph implements IPredicateGraph {
 		return cd.detectCycles();
 	}
 
-	public Set findVertexesForCycle() {
+	public Set<IPredicate> findVertexesForCycle() {
 		return cd.findCycles();
 	}
 
-	public Set<Edge> findEdgesForCycle() {
-		final Set cycle = findVertexesForCycle();
-		final Set<Edge> edges = new HashSet<Edge>();
-		for (final Object v : cycle) {
-			final List s = GraphHelper.successorListOf(g, v);
-			for (Object p : s) {
+	public Set<LabeledEdge<IPredicate, Boolean>> findEdgesForCycle() {
+		final Set<IPredicate> cycle = findVertexesForCycle();
+		final Set<LabeledEdge<IPredicate, Boolean>> edges = 
+			new HashSet<LabeledEdge<IPredicate, Boolean>>();
+		for (final IPredicate v : cycle) {
+			for (final IPredicate p : Graphs.successorListOf(g, v)) {
 				if (cycle.contains(p)) {
 					edges.add(g.getEdge(v, p));
 					break;
@@ -142,16 +144,10 @@ public class PredicateGraph implements IPredicateGraph {
 	}
 
 	public int countNegativesForCycle() {
-		// TODO: optimize this
 		int neg = 0;
-		for (final Object e : findEdgesForCycle()) {
-			if (e instanceof LabeledDirectedEdge) {
-				Object l = ((LabeledDirectedEdge) e).getLabel();
-				if (l instanceof Boolean) {
-					if (!((Boolean) l)) {
-						neg++;
-					}
-				}
+		for (final LabeledEdge<IPredicate, Boolean> e : findEdgesForCycle()) {
+			if (!e.getLabel()) {
+				neg++;
 			}
 		}
 		return neg;
@@ -181,7 +177,7 @@ public class PredicateGraph implements IPredicateGraph {
 			final IPredicate act = todo.iterator().next();
 			todo.remove(act);
 
-			for (final IPredicate depends : (List<IPredicate>) GraphHelper
+			for (final IPredicate depends : (List<IPredicate>) Graphs
 					.predecessorListOf(g, act)) {
 				if (!deps.contains(depends)) {
 					todo.add(depends);
@@ -192,6 +188,31 @@ public class PredicateGraph implements IPredicateGraph {
 
 		return deps;
 	}
+
+	/**
+	 * <p>
+	 * Computes a short description of this object. <b>The format of the
+	 * returned string is undocumented and subject to change.</b>.
+	 * </p>
+	 * <p>
+	 * And example return string could be:
+	 * </p>
+	 * <p>
+	 * <pre><code>
+	 * a-&gt;(false)-&gt;b
+	 * b-&gt;(true)-&gt;c
+	 * </code></pre>
+	 * </p>
+	 * @return the string description
+	 */
+	public String toString() {
+		final StringBuilder b = new StringBuilder();
+		for (final LabeledEdge<IPredicate, Boolean> e : g.edgeSet()) {
+			b.append(e).append(System.getProperty("line.separator"));
+		}
+		return b.toString();
+	}
+			
 
 	/**
 	 * <p>
@@ -206,7 +227,6 @@ public class PredicateGraph implements IPredicateGraph {
 	 * 
 	 * @author richi
 	 * @version $Revision$
-	 * @date $Date$
 	 * @see PredicateComparator
 	 */
 	private class RuleComparator implements Comparator<IRule> {
@@ -240,7 +260,6 @@ public class PredicateGraph implements IPredicateGraph {
 	 * 
 	 * @author richi
 	 * @version $Revision$
-	 * @date $Date$
 	 */
 	private class PredicateComparator implements Comparator<IPredicate> {
 
@@ -258,6 +277,28 @@ public class PredicateGraph implements IPredicateGraph {
 			}
 			// determine who depends on who
 			return getDepends(o1).contains(o2) ? 1 : -1;
+		}
+	}
+
+	/**
+	 * <p>
+	 * The simple factory to create default edges for the PredicateGraph.
+	 * The label of the edge will be <code>true</code>.
+	 * </p>
+	 * <p>
+	 * $Id$
+	 * </p>
+	 * @author Richard Pöttler (richard dot poettler at deri dot org)
+	 * @version $Revision$
+	 * @since 0.3
+	 */
+	private static class PredicateEdgeFactory implements EdgeFactory<IPredicate, LabeledEdge<IPredicate, Boolean>> {
+
+		public LabeledEdge<IPredicate, Boolean> createEdge(final IPredicate s, final IPredicate t) {
+			if ((s == null) || (t == null)) {
+				throw new NullPointerException("The vertices must not be null");
+			}
+			return new LabeledEdge<IPredicate, Boolean>(s, t, true);
 		}
 	}
 }
