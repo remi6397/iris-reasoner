@@ -69,6 +69,9 @@
 			<fileset dir="${dir.api}">
 				<include name="**/*.java" />
 			</fileset>
+			<fileset dir="${dir.sablecc.grammar}">
+				<include name="**/*.java" />
+			</fileset>
 			<fileset dir="${dir.src}">
 				<include name="**/*.java" />
 			</fileset>
