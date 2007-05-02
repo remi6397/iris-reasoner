@@ -40,15 +40,20 @@ import org.deri.iris.api.storage.IRelation;
  * A simple IProgramFactory implementation.
  * </p>
  * <p>
- * $Id: ProgramFactory.java,v 1.8 2007-03-15 11:27:08 poettler_ric Exp $
+ * $Id: ProgramFactory.java,v 1.9 2007-05-02 10:00:37 poettler_ric Exp $
  * </p>
  * @author Francisco Garcia
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class ProgramFactory implements IProgramFactory {
 	private static final IProgramFactory FACTORY = new ProgramFactory();
+
+	// FIXME: this got to go (because so there is only one program instance
+	// possible per vm...
+	/** The static program returned by the createProgram() method. */
+	private static final IProgram PROG = new Program();
 	
 	private ProgramFactory() {
 		// this is a singelton
@@ -59,7 +64,7 @@ public class ProgramFactory implements IProgramFactory {
 	}
 
 	public IProgram createProgram() {
-		return new Program();
+		return PROG;
 	}
 	
 	public IProgram createProgram(Map<IPredicate, IRelation> f, Set<IRule> r, Set<IQuery> q) {
