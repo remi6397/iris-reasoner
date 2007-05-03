@@ -36,12 +36,12 @@ import junit.framework.TestSuite;
  * Tests for the equals builtin.
  * </p>
  * <p>
- * $Id: EqualBuiltinTest.java,v 1.3 2006-11-14 17:24:43 adi Exp $
+ * $Id: EqualBuiltinTest.java,v 1.4 2007-05-03 11:28:30 darko_anicic Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.3 $
- * @date $Date: 2006-11-14 17:24:43 $
+ * @version $Revision: 1.4 $
+ * @date $Date: 2007-05-03 11:28:30 $
  */
 public class EqualBuiltinTest extends TestCase {
 
@@ -50,14 +50,18 @@ public class EqualBuiltinTest extends TestCase {
 	}
 
 	public void testEvaluation() {
-		assertTrue("5 should be equal to 5", (new EqualBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createInteger(5))).evaluate());
+		assertTrue("5 should be equal to 5", (new EqualBuiltin(
+				TERM.createVariable("X"),TERM.createVariable("Y")).evaluate(
+						CONCRETE.createInteger(5), CONCRETE.createInteger(5))));
 		assertTrue("5 should not be equal to 5.0", (new EqualBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createDouble(5d))).evaluate());
+				.createInteger(5), CONCRETE.createDouble(5d))).evaluate(
+						CONCRETE.createInteger(5), CONCRETE.createDouble(5d)));
 		assertFalse("5 shouldn't be equal to 2", (new EqualBuiltin(CONCRETE
-				.createInteger(2), CONCRETE.createInteger(5))).evaluate());
+				.createInteger(2), CONCRETE.createInteger(5))).evaluate(
+						CONCRETE.createInteger(2), CONCRETE.createInteger(5)));
 		assertFalse("5 should be equal to a", (new EqualBuiltin(CONCRETE
-				.createInteger(5), TERM.createString("a"))).evaluate());
+				.createInteger(5), TERM.createString("a"))).evaluate(
+						CONCRETE.createInteger(5), TERM.createString("a")));
 	}
 	
 	public void test_isBuiltin() {
