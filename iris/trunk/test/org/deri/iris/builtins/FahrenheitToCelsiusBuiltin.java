@@ -40,6 +40,7 @@ import java.util.List;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 
 /**
  * <p>
@@ -47,9 +48,9 @@ import org.deri.iris.api.terms.ITerm;
  * value, the second is the celsius value.
  * </p>
  * <p>
- * $Id: FahrenheitToCelsiusBuiltin.java,v 1.1 2007-04-06 06:53:47 poettler_ric Exp $
+ * $Id: FahrenheitToCelsiusBuiltin.java,v 1.2 2007-05-03 11:29:47 darko_anicic Exp $
  * </p>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @author Richard Pöttler, richard dot poettler at deri dot org
  */
 public class FahrenheitToCelsiusBuiltin extends AbstractBuiltin {
@@ -112,5 +113,10 @@ public class FahrenheitToCelsiusBuiltin extends AbstractBuiltin {
 
 	public static IPredicate getBuiltinPredicate() {
 		return PREDICATE;
+	}
+
+	public ITuple evaluate(ITuple tup, IVariable... vars) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
