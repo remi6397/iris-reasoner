@@ -28,7 +28,9 @@ package org.deri.iris.operations.relations;
 import java.util.List;
 
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.factory.IRelationOperationsFactory;
+import org.deri.iris.api.operations.relation.IBuiltinEvaluator;
 import org.deri.iris.api.operations.relation.IDifference;
 import org.deri.iris.api.operations.relation.IIntersection;
 import org.deri.iris.api.operations.relation.IJoin;
@@ -36,6 +38,7 @@ import org.deri.iris.api.operations.relation.IProjection;
 import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.operations.relation.IUnion;
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.terms.IVariable;
 
 /**
  * @author Darko Anicic, DERI Innsbruck
@@ -136,5 +139,9 @@ public class RelationOperationsFactory implements IRelationOperationsFactory{
 	
 	public IUnion createUnionOperator(final List<IRelation> arg){
 		return new Union(arg);
+	}
+
+	public IBuiltinEvaluator createBuiltinEvaluatorOperator(IBuiltInAtom builtin, List<IVariable> relVars, IRelation rel) {
+		return new BuiltinEvaluator(builtin, relVars, rel);
 	}
 }
