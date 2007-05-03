@@ -90,7 +90,7 @@ public class Rule implements IRule {
 		}
 
 		// handle builtin predicates
-		System.out.println("lit list: "  + tmpLiterals + "\nso far: " + varsLimited + "\n");
+		//System.out.println("lit list: "  + tmpLiterals + "\nso far: " + varsLimited + "\n");
 		boolean somethingChanged = true;
 		while(somethingChanged) {
 			somethingChanged = false;
