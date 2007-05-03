@@ -38,7 +38,7 @@ import org.deri.iris.api.terms.IVariable;
  * relation.
  * </p>
  * <p>
- * $Id: ITuple.java,v 1.9 2007-01-22 12:44:30 darko Exp $
+ * $Id: ITuple.java,v 1.10 2007-05-03 12:01:07 darko_anicic Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -132,6 +132,13 @@ public interface ITuple extends Comparable<ITuple> {
 	 * @return All distinct variables from this tupple.
 	 */
 	public Set<IVariable> getVariables();
+	
+	/**
+	 * Returns all variables from this tupple.
+	 * 
+	 * @return All variables from this tupple.
+	 */
+	public List<IVariable> getAllVariables();
 
 	/**
 	 * Tuples t0 and t1 are duplicates if they have identical terms for each
