@@ -33,6 +33,7 @@ import java.util.Map;
 
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.evaluation.algebra.IBuiltinDescriptor;
 import org.deri.iris.api.evaluation.algebra.IComponent;
 import org.deri.iris.api.evaluation.algebra.IConstantDescriptor;
 import org.deri.iris.api.evaluation.algebra.IDifferenceDescriptor;
@@ -42,6 +43,8 @@ import org.deri.iris.api.evaluation.algebra.IProjectionDescriptor;
 import org.deri.iris.api.evaluation.algebra.IRelationDescriptor;
 import org.deri.iris.api.evaluation.algebra.ISelectionDescriptor;
 import org.deri.iris.api.evaluation.algebra.IUnionDescriptor;
+import org.deri.iris.api.evaluation.algebra.IComponent.ComponentType;
+import org.deri.iris.api.operations.relation.IBuiltinEvaluator;
 import org.deri.iris.api.operations.relation.IDifference;
 import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.operations.relation.IProjection;
@@ -87,7 +90,10 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	private IRelation evaluate(IComponent c, IProgram p,
 			Map<IPredicate, IRelation> aq) {
 		
+		//TODO: reference p and aq in the constructor, instead of passing them all the time. 
 		switch(c.getType()){
+			case BUILTIN:
+				return evaluateBuiltin(c, null, null);
 			case DIFFERENCE:
 				return evaluateDifference(c, p, aq);
 			case JOIN:
@@ -151,7 +157,11 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		for(int i=1; i<j.getChildren().size(); i++){
 			c1 = j.getChildren().get(i);
 			if(! emptyRel){
-				r1 = evaluate(c1, p, aq);
+				if(c1.getType().equals(ComponentType.BUILTIN)){
+					r1 = evaluateBuiltin(c1, vars, r0);
+				}else{
+					r1 = evaluate(c1, p, aq);
+				}
 				if(c1.isPositive()){
 					jo = Factory.RELATION_OPERATION.createJoinSimpleOperator(
 							r0, r1, 
@@ -208,7 +218,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 					"performed!");
 		}
 		IRelationDescriptor r = (IRelationDescriptor)c;
-		// TODO: If you don't use Positive property from RelationDescriptor, created in Rule2Relation, remove them!
+		// TODO: If you don't use Positive property from RelationDescriptor, created in Rule2Relation, remove this!
 		//if (r.isPositive()) {
 		IRelation rel = null;
 		if (aq != null && aq.get(r.getPredicate()) != null) {
@@ -276,10 +286,27 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	}
 
 	private IRelation evaluateConstant(IComponent c){
-		
 		IConstantDescriptor con = (IConstantDescriptor)c;
 		IRelation r = RELATION.getRelation(1);
-		r.add(Factory.BASIC.createMinimalTuple(con.getConstant()));
+		r.add(Factory.BASIC.createTuple(con.getConstant()));
 		return r;
+	}
+	
+	private IRelation evaluateBuiltin(IComponent c, 
+			List<IVariable> relVars, IRelation rel){
+		
+		IBuiltinDescriptor con = (IBuiltinDescriptor)c;
+		IBuiltinEvaluator eval = null;
+		if (c.getChildren().size() == 0) {
+			if (relVars == null || rel == null) {
+				eval = Factory.RELATION_OPERATION.createBuiltinEvaluatorOperator(
+						con.getBuiltin(), con.getVariables(), RELATION.getRelation(con.getVariables().size()));
+			}else{
+				eval = Factory.RELATION_OPERATION.createBuiltinEvaluatorOperator(con.getBuiltin(), relVars, rel);
+			}
+		}else{
+			throw new IllegalArgumentException("Nested built-ins are currently not supported!");
+		}
+		return eval.evaluate();
 	}
 }
