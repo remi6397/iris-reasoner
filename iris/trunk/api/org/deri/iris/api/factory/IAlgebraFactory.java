@@ -27,6 +27,8 @@ package org.deri.iris.api.factory;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.evaluation.algebra.IBuiltinDescriptor;
 import org.deri.iris.api.evaluation.algebra.IConstantDescriptor;
 import org.deri.iris.api.evaluation.algebra.IDifferenceDescriptor;
 import org.deri.iris.api.evaluation.algebra.IJoinDescriptor;
@@ -69,4 +71,6 @@ public interface IAlgebraFactory {
 			final ITuple p, final int[] i);
 	
 	public IUnionDescriptor createUnionDescriptor();
+	
+	public IBuiltinDescriptor createBuiltinDescriptor(boolean isPositive, IBuiltInAtom builtin);
 }
