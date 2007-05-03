@@ -32,6 +32,7 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -39,11 +40,11 @@ import org.deri.iris.factory.Factory;
  * Builtin to compare two terms for unequality.
  * </p>
  * <p>
- * $Id: UnEqualBuiltin.java,v 1.3 2007-03-13 16:57:15 poettler_ric Exp $
+ * $Id: UnEqualBuiltin.java,v 1.4 2007-05-03 11:46:10 darko_anicic Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class UnEqualBuiltin extends AbstractBuiltin {
 
@@ -92,5 +93,10 @@ public class UnEqualBuiltin extends AbstractBuiltin {
 			return !getTerm(0).equals(getTerm(1));
 		}
 		return true;
+	}
+
+	public ITuple evaluate(ITuple tup, IVariable... vars) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
