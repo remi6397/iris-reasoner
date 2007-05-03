@@ -32,18 +32,25 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 
 /**
  * <p>
- * Builtin to compare two terms and determine which one is bigger.
+ * Built-in to compare two terms and determine which one is bigger.
  * </p>
  * <p>
- * $Id: LessBuiltin.java,v 1.3 2007-03-13 16:57:15 poettler_ric Exp $
+ * REMARK: Please note that the current implementation works only with
+ * IntegerTerm data type.
+ * </p>
+ * <p>
+ * $Id: LessBuiltin.java,v 1.4 2007-05-03 11:45:00 darko_anicic Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.3 $
+ * @author Darko Anicic, DERI Innsbruck
+ * 
+ * @version $Revision: 1.4 $
  */
 public class LessBuiltin extends AbstractBuiltin {
 
@@ -73,24 +80,68 @@ public class LessBuiltin extends AbstractBuiltin {
 		// TODO: not implemented yet
 		return null;
 	}
+	
+	public ITuple evaluate(ITuple tup, IVariable... vars) {
+		// e.g., less(3, 4)
+		if(this.getTerm(0).isGround() && this.getTerm(1).isGround()) {
+			if(evaluate(this.getTerm(0), this.getTerm(1))){
+				return tup;
+			}else{
+				return null;
+			}
+		}else
+		// e.g., less(?X, 4)
+		if(! this.getTerm(0).isGround() && this.getTerm(1).isGround()) {
+			if(vars.length != 1)
+				throw new IllegalArgumentException("Expected length of input variable's array is 1!");
+			if(evaluate(tup.getTerm(0), this.getTerm(1))){
+				return tup;
+			}else{
+				return null;
+			}
+		}else
+		// e.g., less(4,?X)
+		if(this.getTerm(0).isGround() && ! this.getTerm(1).isGround()) {
+			if(vars.length != 1)
+				throw new IllegalArgumentException("Expected length of input variable's array is 1!");
+			if(evaluate(this.getTerm(0), tup.getTerm(0))){
+				return tup;
+			}else{
+				return null;
+			}
+		}else
+		// e.g., less(?X,?Y)
+		if(! this.getTerm(0).isGround() && ! this.getTerm(1).isGround()) {
+			if(vars.length != 2)
+				throw new IllegalArgumentException("Expected length of input variable's array is 2!");
+			if(evaluate(tup.getTerm(0), tup.getTerm(1))){
+				return tup;
+			}else{
+				return null;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Runns the evaluation. If the two terms are <code>INumberTerm</code>s
 	 * their values will be converted to doubles, otherwise they will be
 	 * compared.
 	 * 
+	 * @param t0	A term to be compared with t1.
+	 * @param t1	A term to be compared with t0.
 	 * @return <code>true</code> if the two terms are comparable and the
 	 *         second one is bigger than the first one, otherwise
 	 *         <code>false</code>
 	 */
-	public boolean evaluate() {
+	public boolean evaluate(ITerm t0, ITerm t1) {
 		if (isEvaluable()) {
-			if ((getTerm(0) instanceof INumericTerm)
-					&& (getTerm(1) instanceof INumericTerm)) {
-				return BuiltinHelper.numbersCompare((INumericTerm) getTerm(0),
-						(INumericTerm) getTerm(1)) < 0;
+			if ((t0 instanceof INumericTerm)
+					&& (t1 instanceof INumericTerm)) {
+				return BuiltinHelper.numbersCompare((INumericTerm) t0,
+						(INumericTerm) t1) < 0;
 			}
-			return getTerm(0).compareTo(getTerm(1)) < 0;
+			return t0.compareTo(t1) < 0;
 		}
 		return false;
 	}

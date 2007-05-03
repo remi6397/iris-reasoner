@@ -25,6 +25,8 @@
  */
 package org.deri.iris.builtins;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -32,23 +34,25 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.factory.Factory;
+import org.deri.iris.api.terms.IVariable;
 
 /**
  * <p>
  * Builtin to compare two terms for equality.
  * </p>
  * <p>
- * $Id: EqualBuiltin.java,v 1.4 2007-03-13 16:57:15 poettler_ric Exp $
+ * $Id: EqualBuiltin.java,v 1.5 2007-05-03 11:43:41 darko_anicic Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.4 $
+ * @author Darko Anicic, DERI Innsbruck
+ * 
+ * @version $Revision: 1.5 $
  */
 public class EqualBuiltin extends AbstractBuiltin {
 
 	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = Factory.BASIC.createBuiltinPredicate(
+	private static final IPredicate PREDICATE = BASIC.createBuiltinPredicate(
 			"EQUAL", 2);
 
 	/**
@@ -73,16 +77,63 @@ public class EqualBuiltin extends AbstractBuiltin {
 		// TODO: not implemented yet
 		return null;
 	}
-
+	public ITuple evaluate(ITuple tup, IVariable... vars) {
+		// e.g., EQUAL(3, 4)
+		if(this.getTerm(0).isGround() && this.getTerm(1).isGround()) {
+			if(evaluate(this.getTerm(0), this.getTerm(1))){
+				return tup;
+			}else{
+				return null;
+			}
+		}else
+		// e.g., EQUAL(?X, 4)
+		if(! this.getTerm(0).isGround() && this.getTerm(1).isGround()) {
+			if(vars.length != 1)
+				throw new IllegalArgumentException("Expected length of input variable's array is 1!");
+			if(evaluate(tup.getTerm(0), this.getTerm(1))){
+				return tup;
+			}else{
+				return null;
+			}
+		}else
+		// e.g., EQUAL(4,?X)
+		if(this.getTerm(0).isGround() && ! this.getTerm(1).isGround()) {
+			if(vars.length != 1)
+				throw new IllegalArgumentException("Expected length of input variable's array is 1!");
+			if(evaluate(this.getTerm(0), tup.getTerm(0))){
+				return tup;
+			}else{
+				return null;
+			}
+		}else
+		// e.g., EQUAL(?X,?Y)
+		if(! this.getTerm(0).isGround() && ! this.getTerm(1).isGround()) {
+			if(vars.length == 1){
+				return BASIC.createTuple(tup.getTerm(0),tup.getTerm(0));
+			}else if(vars.length == 2){
+				if(evaluate(tup.getTerm(0), tup.getTerm(1))){
+					return tup;
+				}else{
+					return null;
+				}
+			}else
+				throw new IllegalArgumentException("Expected length of input variable's array is either 1 or 2!");
+			
+		}
+		return null;
+	}
+	
 	/**
 	 * Runns the evaluation. If the two terms are <code>INumberTerm</code>s
 	 * their values will be converted to doubles, otherwise they will be checked
 	 * for equality.
 	 * 
+	 * @param t0	A term to be compared with t1.
+	 * @param t1	A term to be compared with t0.
 	 * @return <code>true</code> if the two terms are comparable and they were
 	 *         equal, otherwise <code>false</code>
 	 */
-	public boolean evaluate() {
+	public boolean evaluate(ITerm t0, ITerm t1) {
 		if (isEvaluable()) {
 			if ((getTerm(0) instanceof INumericTerm)
 					&& (getTerm(1) instanceof INumericTerm)) {
