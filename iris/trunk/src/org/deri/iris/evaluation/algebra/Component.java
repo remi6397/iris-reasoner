@@ -89,6 +89,10 @@ public abstract class Component implements IComponent{
 		return this.components.add(c); 
 	} 
 	
+	public boolean addChildren(List<IComponent> children) {
+		return this.components.addAll(children); 
+	}
+	
 	public boolean removeChild(IComponent c){ 
 		return this.components.remove(c); 
 	}
