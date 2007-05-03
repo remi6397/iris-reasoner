@@ -32,6 +32,7 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -40,11 +41,11 @@ import org.deri.iris.factory.Factory;
  * equal.
  * </p>
  * <p>
- * $Id: LessEqualBuiltin.java,v 1.3 2007-03-13 16:57:15 poettler_ric Exp $
+ * $Id: LessEqualBuiltin.java,v 1.4 2007-05-03 11:45:21 darko_anicic Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class LessEqualBuiltin extends AbstractBuiltin {
 
@@ -94,5 +95,10 @@ public class LessEqualBuiltin extends AbstractBuiltin {
 			return getTerm(0).compareTo(getTerm(1)) <= 0;
 		}
 		return false;
+	}
+
+	public ITuple evaluate(ITuple tup, IVariable... vars) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
