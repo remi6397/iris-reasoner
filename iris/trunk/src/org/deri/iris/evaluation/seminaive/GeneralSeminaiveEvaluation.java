@@ -93,7 +93,10 @@ public abstract class GeneralSeminaiveEvaluation implements IBottomUpEvaluator {
 		Set<Entry<IPredicate, IComponent>> entrySet = this.rr.translateQueries(queries).entrySet();
 		for(Entry<IPredicate, IComponent> entry : entrySet){
 			this.results.getResults().put(
-					entry.getKey(), 
+					Factory.BASIC.createPredicate(
+							entry.getKey().getPredicateSymbol(), 
+							entry.getValue().getVariables().size()),
+					//entry.getKey(), 
 					this.method.evaluate(entry.getValue(), this.p));
 		}	
 		return true;
