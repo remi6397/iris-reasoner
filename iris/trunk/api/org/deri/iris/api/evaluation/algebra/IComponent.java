@@ -54,6 +54,7 @@ public interface IComponent {
 	 * Defines a type of the component.
 	 */
 	public static enum ComponentType {
+		BUILTIN,
 		CONSTANT,
 		DIFFERENCE,
 		JOIN,
@@ -85,6 +86,14 @@ public interface IComponent {
 	 * @return	True if the component is added to the tree, otherwise false.
 	 */
 	public boolean addChild(final IComponent c);
+	
+	/**
+	 * Add children represented as a list of components to the parent.
+	 * 
+	 * @param children	The list of components to be added to the parent.
+	 * @return	True if the component is added to the tree, otherwise false.
+	 */
+	public boolean addChildren(final List<IComponent> children);
 	
 	/**
 	 * Returns all children.
