@@ -27,6 +27,8 @@ package org.deri.iris.evaluation.algebra;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.evaluation.algebra.IBuiltinDescriptor;
 import org.deri.iris.api.evaluation.algebra.IConstantDescriptor;
 import org.deri.iris.api.evaluation.algebra.IDifferenceDescriptor;
 import org.deri.iris.api.evaluation.algebra.IJoinDescriptor;
@@ -98,5 +100,9 @@ public class AlgebraFactory implements IAlgebraFactory{
 	
 	public IUnionDescriptor createUnionDescriptor() {
 		return new UnionDescriptor();
+	}
+
+	public IBuiltinDescriptor createBuiltinDescriptor(boolean isPositive, IBuiltInAtom builtin) {
+		return new BuiltinDescriptor(isPositive, builtin);
 	}
 }
