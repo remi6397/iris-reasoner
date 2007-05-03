@@ -59,7 +59,7 @@ public class ProgramTest extends TestCase {
 	private static final int TEST_ALL = 0;
  
 	/** Set a number of a test to be run */
-	private int TEST_NO = 11;
+	private int TEST_NO = 3;
 	
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(ProgramTest.class);
@@ -132,7 +132,7 @@ public class ProgramTest extends TestCase {
     	return result;
     }
 	
-	public void test3() throws Exception{
+	/*public void test3() throws Exception{
 		if(TEST_NO == 3 || TEST_ALL == 0){
 			String program = 
 	   		
@@ -159,13 +159,12 @@ public class ProgramTest extends TestCase {
 					resultTest3());
 		}
     }
-	
 	public String resultTest3(){
     	String result = 
 		    "w('d').";
 		    
     	return result;
-    }
+    }*/
 	
 	public void test4() throws Exception{
 		if(TEST_NO == 4 || TEST_ALL == 0){
@@ -227,8 +226,8 @@ public class ProgramTest extends TestCase {
 	
 	public String resultTest5(){
     	String result = 
-    		"in('galway','europe')." +
-		    "in('galway', 'ireland').";
+    		"in('europe')." +
+		    "in('ireland').";
 		    
 		return result;
 	}
@@ -334,7 +333,7 @@ public class ProgramTest extends TestCase {
 			    "?- p(?X, ?Y).";
 	  	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 8");
+	    	System.out.println("test " + TEST_NO);
 	    	printResults(m);
 	    	System.out.println();
 	    	
@@ -343,7 +342,6 @@ public class ProgramTest extends TestCase {
 					resultTest8());
 		}
     }
-	
 	public String resultTest8(){
     	String result = 
 		    "p('a','a')." +
@@ -416,7 +414,6 @@ public class ProgramTest extends TestCase {
 					resultTest10());
 		}
 	}
-	
 	public String resultTest10(){
     	String result = 
 		    "p('b').";
@@ -485,7 +482,6 @@ public class ProgramTest extends TestCase {
 					resultTest11());
 		}
 	}
-	
 	public String resultTest11(){
     	String result = 
 		    "p('a')." +
@@ -497,6 +493,172 @@ public class ProgramTest extends TestCase {
 		    
 		return result;
 	}
+	
+	/*public void test12() throws Exception{
+		if(TEST_NO == 12 || TEST_ALL == 0){
+			String program = 
+	   		
+	 			"s('d')." +
+			    "s('b')." +
+			    "s('a')." +
+			    
+			    "p('b')." +
+			    "p('d')." +
+			    
+			    
+			    // Inequality built-in:
+			    "w(?X) :- s(?X), p(?X), ?X != 'd'." +
+			    "?- w(?X).";
+	   	
+	    	m = evluateProgram(program);
+	    	System.out.println("test 12");
+	    	printResults(m);
+	    	System.out.println();
+	
+	    	testProgram(
+					m,
+					resultTest12());
+		}
+    }	
+	public String resultTest12(){
+    	String result = 
+		    "w('b').";
+		    
+    	return result;
+    }*/
+	
+	/*public void test13() throws Exception{
+		if(TEST_NO == 13 || TEST_ALL == 0){
+			String program = 
+	   		
+				"s(1)." +
+				"s(2)." +
+				"s(3)." +
+				
+				"p(2)." +
+				"p(3)." +
+				
+			    // Less built-in:
+			    "w(?X) :- s(?X), p(?Y), ?X < ?Y." +
+			    "?- w(?X).";
+	   	
+	    	m = evluateProgram(program);
+	    	System.out.println("test 13");
+	    	printResults(m);
+	    	System.out.println();
+	
+	    	testProgram(
+					m,
+					resultTest13());
+		}
+    }
+	public String resultTest13(){
+    	String result = 
+		    "w(1)." +
+		    "w(2).";
+		    
+    	return result;
+    }*/
+	
+	/*public void test14() throws Exception{
+		if(TEST_NO == 14 || TEST_ALL == 0){
+			String program = 
+	   		
+				"s(1)." +
+				
+				"p(2)." +
+				"p(3)." +
+				
+			    // Less add-in:
+			    "w(?X,?Z) :- s(?X), p(?Y), ?X + ?Y = ?Z." +
+			    "?- w(?X,?Z).";
+	   	
+	    	m = evluateProgram(program);
+	    	System.out.println("test 14");
+	    	printResults(m);
+	    	System.out.println();
+	
+	    	testProgram(
+					m,
+					resultTest14());
+		}
+    }
+	public String resultTest14(){
+    	String result = 
+		    "w(1, 3)." +
+		    "w(1, 4).";
+		    
+    	return result;
+    }*/
+	
+	public void test15() throws Exception{
+		if(TEST_NO == 15 || TEST_ALL == 0){
+			String program = 
+	   		
+				"s(1)." +
+				
+				"p(2)." +
+				"p(3)." +
+				
+			    "w(?X,?Y) :- s(?X), p(?Y)." +
+			    "?- w(?X,?Y).";
+	   	
+	    	m = evluateProgram(program);
+	    	System.out.println("test " + TEST_NO);
+	    	printResults(m);
+	    	System.out.println();
+	
+	    	testProgram(
+					m,
+					resultTest15());
+		}
+    }
+	
+	public String resultTest15(){
+    	String result = 
+		    "w(1, 2)." +
+		    "w(1, 3).";
+		    
+    	return result;
+    }
+	
+	public void test16() throws Exception{
+		if(TEST_NO == 16 || TEST_ALL == 0){
+			String program = 
+	   		
+				"s(1)." +
+				
+				// If we had p(2,9) instead of p(2,2), we would get no result!
+				// Is this OK?
+				"p(2,2)." +
+				"p(3,9)." +
+				
+				"r(9)." +
+				
+			    // Unsafe rule: 
+				//"w(?X,?Y) :- s(?X), not p(2,?Y)." +
+				// Safe rule:
+				"w(?X,?Y) :- s(?X), r(?Y), not p(2,?Y)." +
+			    "?- w(?X,?Y).";
+	   	
+	    	m = evluateProgram(program);
+	    	System.out.println("test " + TEST_NO);
+	    	printResults(m);
+	    	System.out.println();
+	
+	    	testProgram(
+					m,
+					resultTest16());
+		}
+    }
+	
+	public String resultTest16(){
+    	String result = 
+		    //"w(1, 3).";
+    		"w(1, 9).";
+    	
+    	return result;
+    }
 	
 	public Map<IPredicate, IRelation> evluateProgram(String program) 
 		throws Exception{
