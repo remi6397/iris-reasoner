@@ -263,7 +263,7 @@ public class SelectionStringTest extends TestCase {
 	 * Select tuples which do not have term "a"
 	 * at its first position and term "d" at fourth
 	 * position but have term "d" at the second position.
-	 * Also the first and second terms must be equal.
+	 * Also the first and second term must be equal.
 	 */
 	public void testSelect_complex_0() {
 		final List<ITuple> e = new ArrayList<ITuple>();
