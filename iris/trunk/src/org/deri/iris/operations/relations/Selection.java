@@ -44,9 +44,8 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.basics.seminaive.NonEqualityTerm;
 import org.deri.iris.operations.tuple.SelectionComparator;
 import org.deri.iris.operations.tuple.SelectionFullComparator;
-import org.deri.iris.storage.Relation;
 
-/**
+/**  
  * Implementation of the ISelection interface
  * 
  * The Selection operation is meant to be used for selecting a portion of a
@@ -96,20 +95,23 @@ public class Selection implements ISelection {
 		this.indexes = indexes;
 	}
 
+	// TODO: Too expensive, try to improve this!
 	public IRelation select() {
-		if (this.pattern != null)
+		return select5();
+		
+		/*if (this.pattern != null)
 			processPattern();
 
-		/*
+		*//**
 		 * Possibilities:
 		 * 
-		 * ?X = 'a', ?Y = 'b', ... (equalityTuple) ?X != ?Y, ?Z = ?W, ...
-		 * (indexes) ?X != ?Y, ?Z = ?W, ?X = 'a', ?Y = 'b', ... (indexes,
-		 * equalityTuple) ?X != 'a', ?Y = 'b', ... (nonEqualityTuple,
-		 * equalityTuple) ?X != ?Y, ?Z = ?W, ?X != 'a', ?Y = 'b'...(indexes,
-		 * nonEqualityTuple, equalityTuple)
-		 * 
-		 */
+		 * ?X = 'a', ?Y = 'b', ... (equalityTuple) 
+		 * ?X != ?Y, ?Z = ?W, ...  (indexes) 
+		 * ?X != ?Y, ?Z = ?W, ?X = 'a', ?Y = 'b', ... (indexes, equalityTuple) 
+		 * ?X != 'a', ?Y = 'b', ... (nonEqualityTuple, equalityTuple) 
+		 * ?X != ?Y, ?Z = ?W, ?X != 'a', ?Y = 'b'...(indexes, nonEqualityTuple, equalityTuple)
+		 * ?X != 'a' ?X != ?Y, ?Z = ?W ... (nonEqualityTuple,indexes)
+		 *//*
 		if (equalityTuple != null && nonEqualityTuple == null
 				&& indexes == null)
 			return select0();
@@ -125,7 +127,9 @@ public class Selection implements ISelection {
 		if (equalityTuple != null && nonEqualityTuple != null
 				&& indexes != null)
 			return select4();
-		return null;
+		if (nonEqualityTuple != null && indexes != null)
+			return select5();
+		return null;*/
 	}
 
 	/**
@@ -243,6 +247,114 @@ public class Selection implements ISelection {
 		return rel;
 	}
 
+	/**
+	 * Case: ?X != ?Y, ?Z = ?W, ?X != 'a'
+	 * 
+	 * @return Selected tuples based on a given condition
+	 */
+	public IRelation select5() {
+		IRelation rel = RELATION.getRelation(this.relation.getArity());
+		Iterator<ITuple> it = this.relation.iterator();
+		Map<Integer, Set<Integer>> selIndexes = null;
+		ITuple tup = null;
+		ITerm t = null, t1 = null;
+		NonEqualityTerm nt = null;
+		boolean add = true;
+		boolean equal = true;
+		Integer indexValue = null, currIndex = null;
+		
+		if(this.indexes != null){
+			selIndexes = getSelIndexes();
+		}
+			
+		while(it.hasNext()){
+			tup = it.next();
+			add = true;
+			if(this.pattern != null){
+				for(int i=0; i<tup.getTerms().size(); i++){
+					if(this.pattern.getTerm(i) != null && this.pattern.getTerm(i).getValue() != null){
+						t = tup.getTerm(i);
+						if(this.pattern.getTerm(i) instanceof NonEqualityTerm){
+							nt = (NonEqualityTerm)this.pattern.getTerm(i);
+							if(nt.getTerm().equals(t)){
+								add = false;
+								break;
+							}
+						}else if(! this.pattern.getTerm(i).equals(t)){
+							add = false;
+							break;
+						}
+					}
+				}
+			}
+			if(this.indexes != null && add){
+				Iterator<Integer> iter0 = selIndexes.keySet().iterator();
+				Iterator<Integer> iter1 = null;
+				while(iter0.hasNext()){
+					indexValue = iter0.next();
+					if(indexValue >= 0){
+						equal = true;
+					}else{
+						equal = false;
+					}
+					iter1 = selIndexes.get(indexValue).iterator();
+					t1 = tup.getTerm(iter1.next());
+					while(iter1.hasNext()){
+						currIndex = iter1.next();
+						if(equal){
+							if(! t1.equals(tup.getTerm(currIndex))){
+								add = false;
+								break;
+							}
+						}else{
+							if(t1.equals(tup.getTerm(currIndex))){
+								add = false;
+								break;
+							}
+						}	
+					}
+					if(! add) break;
+				}
+			}
+			if(add)rel.add(tup);
+		}
+		
+		return rel;
+	}
+	
+	/**
+	 * <p>
+	 * Returns selection indexes. For example, if this.indexes = [1,2,1,2,1], a map:
+	 * </p>
+	 * <p>
+	 * [1] [0,2,4]
+	 * [2] [1,3]
+	 * </p>
+	 * <p>
+	 * will be returned. This means that first and third terms in a tuple must be equal 
+	 * as well as those on 0th, 2nd and 4th postion (e.g., t = [11, 22, 11, 22, 11]).
+	 * Remark: 0 as an index means that atribute is ignored.
+	 * </p>
+	 *  
+	 * @return		A map with selection indexes.
+	 */
+	public Map<Integer, Set<Integer>> getSelIndexes() {
+		Map<Integer, Set<Integer>> indexes = new HashMap<Integer, Set<Integer>>(this.relation.getArity());
+		Set eqInds = null;
+		for (int j = 0; j < this.relation.getArity(); j++){
+			if(this.indexes[j] != 0){
+				if(! indexes.containsKey(this.indexes[j])){
+					eqInds = new HashSet();
+					eqInds.add(j);
+					indexes.put(this.indexes[j], eqInds);
+				}else{
+					indexes.get(this.indexes[j]).add(j);
+				}
+			}
+		}
+		return indexes;
+	}
+	
 	private int[] getIndexes(ITuple pattern) {
 		Map<ITerm, Integer> termSet = new HashMap<ITerm, Integer>();
 		int[] indexes = new int[pattern.getArity()];
