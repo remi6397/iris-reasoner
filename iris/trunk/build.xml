@@ -136,6 +136,49 @@
 		<jar basedir="${dir.classes}" destfile="${file.jar.main}" index="true" />
 	</target>
 
+	<target name="release" description="packs the release archives"
+		depends="preparerelease,jar,parser,doc">
+		<zip destfile="${file.release.zip}">
+			<zipfileset dir="${dir.jar}">
+				<include name="**/*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${dir.lib}/ext/log4j"
+				prefix="lib/log4j"/>
+			<zipfileset dir="${dir.lib}/ext/jgrapht"
+				prefix="lib/jgrapht"/>
+			<zipfileset dir="${dir.javadoc}" prefix="doc/javadoc"/>
+			<zipfileset dir="doc" prefix="doc">
+				<include name="**/*"/>
+			</zipfileset>
+			<zipfileset dir="${basedir}">
+				<include name="LICENSE.txt"/>
+				<include name="ChangeLog"/>
+			</zipfileset>
+		</zip>
+		<tar destfile="${dir.release}/release.tar">
+			<tarfileset dir="${dir.jar}">
+				<include name="**/*.jar"/>
+			</tarfileset>
+			<tarfileset dir="${dir.lib}/ext/log4j"
+				prefix="lib/log4j"/>
+			<tarfileset dir="${dir.lib}/ext/jgrapht"
+				prefix="lib/jgrapht"/>
+			<tarfileset dir="${dir.javadoc}" prefix="doc/javadoc"/>
+			<tarfileset dir="doc" prefix="doc">
+				<include name="**/*"/>
+			</tarfileset>
+			<tarfileset dir="${basedir}">
+				<include name="LICENSE.txt"/>
+				<include name="ChangeLog"/>
+			</tarfileset>
+		</tar>
+		<gzip src="${dir.release}/release.tar"
+			destfile="${file.release.gz}"/>
+		<bzip2 src="${dir.release}/release.tar"
+			destfile="${file.release.bz2}"/>
+		<delete file="${dir.release}/release.tar"/>
+	</target>
+
 	<target name="delclasses" description="deletes only the class files" depends="init">
 		<delete dir="${dir.classes}" />
 	</target>
@@ -173,6 +216,10 @@
 	
 	<target name="preparecompiletest" depends="init">
 		<mkdir dir="${dir.classes.test}"/>
+	</target>
+	
+	<target name="preparerelease" depends="init">
+		<mkdir dir="${dir.release}"/>
 	</target>
 
 </project>
