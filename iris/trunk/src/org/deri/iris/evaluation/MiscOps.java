@@ -45,23 +45,21 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.builtins.AbstractBuiltin;
-import org.deri.iris.builtins.EqualBuiltin;
-import org.deri.iris.builtins.LessBuiltin;
-import org.deri.iris.builtins.UnEqualBuiltin;
+import org.deri.iris.basics.seminaive.ConstLiteral;
+import org.deri.iris.basics.seminaive.NonEqualityTerm;
 
 /**
  * <p>
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.6 2007-04-07 00:27:13 darko_anicic Exp $
+ * $Id: MiscOps.java,v 1.7 2007-05-03 11:47:34 darko_anicic Exp $
  * </p>
  * 
  * @author richi
  * @author graham
- * @version $Revision: 1.6 $
- * @date $Date: 2007-04-07 00:27:13 $
+ * @version $Revision: 1.7 $
+ * @date $Date: 2007-05-03 11:47:34 $
  */
 public class MiscOps {
 
@@ -130,23 +128,23 @@ public class MiscOps {
 			headTerms.add(v);
 
 			if ((t instanceof IVariable) && !subs.keySet().contains(t)) {
-				// if the term is a variable and never where substituted
+				// if the term is a variable and has never been substituted before
 				bodyLiterals = substituteVar((IVariable) t, v, bodyLiterals);
 				subs.put(t, v);
 			} else if (subs.keySet().contains(t)) {
-				// if the variable where ever substituted
+				// if the variable has already been substituted
 				bodyLiterals.add(BASIC.createLiteral(true, BUILTIN.createEqual(
 						v, subs.get(t))));
 			} else {
-				// by default, create the equal builtin
-				bodyLiterals.add(BASIC.createLiteral(true, BUILTIN.createEqual(
-						v, t)));
+				// by default, create a ConstLiteral, e.g. {a}(?X)
+				ConstLiteral con = new ConstLiteral(true, t, v);
+				bodyLiterals.add(BASIC.createLiteral(true, con));
 			}
 		}
 		// assembling the new rectified rule
 		final IHead h = BASIC.createHead(BASIC.createLiteral(hl.isPositive(),
 				hl.getPredicate(), BASIC.createTuple(headTerms)));
-		return BASIC.createRule(h, BASIC.createBody(bodyLiterals));
+		return BASIC.copyRule(h, BASIC.createBody(bodyLiterals));
 	}
 
 	/**
@@ -168,47 +166,29 @@ public class MiscOps {
 			final List<ILiteral> lits) {
 		if ((from == null) || (to == null) || (lits == null) || lits.contains(null)) {
 			throw new NullPointerException(
-					"The variables and the list of literals must not be, or contain null");
+					"The variables and the list of literals must not be null, or contain null");
 		}
 		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(lits.size());
 		for (final ILiteral lit : lits) {
 			List<ITerm> terms = new ArrayList<ITerm>(lit.getTuple().getTerms().size());
 			
+			// TODO: Can you make this substitution more efficient?
 			for (final ITerm t : lit.getTuple().getTerms()) {
 				if (t.equals(from)) {
 					terms.add(to);
 				}else{
+					/*
+					// p('a', ?Y) and t = 'a' - required for selection!
+					if(! lit.isPositive() && t.isGround() && ! (t instanceof NonEqualityTerm)){
+						terms.add(new NonEqualityTerm(t));
+					}else {
+						terms.add(t);
+					}*/
 					terms.add(t);
 				}
 			}
-			/**
-			 * TODO: Copy method is required like:
-			 * ILiteral l0 = lit.copy(); or
-			 * ILiteral l0 = BASIC.createLiteral(
-			 *		lit.isPositive(), lit.getAtom().copy());
-			 * such that when:
-			 * l0.getTuple().setTerms(terms);
-			 * is called, the original literal (lit) is not affected. 
-			 * 
-			 * Note: currently only equality built-in is handled.
-			 */
-			if(lit.getAtom() instanceof AbstractBuiltin){
-				if(lit.getAtom() instanceof EqualBuiltin){
-					bodyLiterals.add(BASIC.createLiteral(
-							lit.isPositive(), BUILTIN.createEqual(terms.get(0), terms.get(1))));
-				}else
-				if(lit.getAtom() instanceof UnEqualBuiltin){
-					bodyLiterals.add(BASIC.createLiteral(
-							lit.isPositive(), BUILTIN.createUnequal(terms.get(0), terms.get(1))));
-				}else
-				if(lit.getAtom() instanceof LessBuiltin){
-					bodyLiterals.add(BASIC.createLiteral(
-							lit.isPositive(), BUILTIN.createLess(terms.get(0), terms.get(1))));
-				}
-			}else{
-				bodyLiterals.add(BASIC.createLiteral(
-						lit.isPositive(), lit.getPredicate(), BASIC.createTuple(terms)));
-			}
+			lit.getTuple().setTerms(terms);
+			bodyLiterals.add(lit);
 		}
 		return bodyLiterals;
 	}
