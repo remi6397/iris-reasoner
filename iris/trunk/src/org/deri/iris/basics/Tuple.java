@@ -252,4 +252,26 @@ public class Tuple implements ITuple{
 		}
 		return variables;
 	}
+
+	public List<IVariable> getAllVariables() {
+		List<IVariable> variables = new ArrayList<IVariable>();
+		for(ITerm term : this.terms){
+			if(term instanceof IVariable)
+				variables.add((IVariable)term);
+			if(term instanceof IConstructedTerm)
+				variables.addAll(getAllVariables((IConstructedTerm)term));
+		}
+		return variables;
+	}
+	
+	private List<IVariable> getAllVariables(IConstructedTerm t) {
+		List<IVariable> variables = new ArrayList<IVariable>();
+		for(ITerm term : t.getValue()){
+			if(term instanceof IVariable)
+				variables.add((IVariable)term);
+			if(term instanceof IConstructedTerm)
+				variables.addAll(getAllVariables((IConstructedTerm)term));
+		}
+		return variables;
+	}
 }
