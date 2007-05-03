@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +44,7 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.evaluation.algebra.IBuiltinDescriptor;
 import org.deri.iris.api.evaluation.algebra.IComponent;
 import org.deri.iris.api.evaluation.algebra.IConstantDescriptor;
 import org.deri.iris.api.evaluation.algebra.IJoinDescriptor;
@@ -54,9 +54,7 @@ import org.deri.iris.api.evaluation.algebra.ISelectionDescriptor;
 import org.deri.iris.api.evaluation.algebra.IUnionDescriptor;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.basics.seminaive.NonEqualityTerm;
-import org.deri.iris.builtins.EqualBuiltin;
-import org.deri.iris.builtins.UnEqualBuiltin;
+import org.deri.iris.basics.seminaive.ConstLiteral;
 import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.relations.JoinCondition;
@@ -111,8 +109,15 @@ public class Rule2Relation {
 		IPredicate p = null;
 		
 		for (IRule rule : rls) {
+			// TODO: isSafe() doesn't work properly with built-ins
+			/*boolean safe = rule.isSafe();
+			if (! safe) {
+				throw new IllegalArgumentException("Unsafe rules are currently not supported. Rule: " + 
+						rule.toString() + ". is unsafe.");
+			}*/
 			/** Rectify rules */
 			r = MiscOps.rectify(rule);
+			//r = rule;
 			p = r.getHeadLiteral(0).getPredicate();
 			m = new HashMap<ILiteral, List<IVariable>>();
 			oVars = new HashSet<IVariable>();
@@ -130,9 +135,9 @@ public class Rule2Relation {
 			 * built-in subgoals appearing in the rule body.
 			 * </p>
 			 */
-			for (ILiteral l : r.getBodyLiterals()) {
+			/*for (ILiteral l : r.getBodyLiterals()) {
 				a = l.getAtom();
-				if (a instanceof IBuiltInAtom) {
+				if (a.isBuiltin()) {
 					if (a.getTuple().getTerm(0) instanceof IVariable &&
 							a.getTuple().getTerm(1) instanceof IVariable) {
 						
@@ -153,12 +158,13 @@ public class Rule2Relation {
 									// TODO: Add tuple pattern, e.g.: for a built-In case: NON-EQUAL(?X, 'a')
 									getSelectionIndexes(a.getTuple().getTerms(), body.getVariables(), false));
 						}
-						s.addChild(results.get(p));
+						IComponent tmp = results.get(p); 
+						if(tmp != null) s.addChild(tmp);
 						s.addVariables(body.getVariables());
 						results.put(p, s);
 					}
 				}
-			}
+			}*/
 			/**
 			 * <p>
 			 * PROJECTION
@@ -169,8 +175,6 @@ public class Rule2Relation {
 			 */
 			IProjectionDescriptor pr = null;
 			c = results.get(p);
-			
-			//if(r.getHeadLiteral(0).getTuple().getArity() != c.getVariables().size()){
 			if (!Arrays.equals(r.getHeadVariables().toArray(), c.getVariables().toArray())) {	
 				int[] pInds = getProjectionIndexes(r.getHeadVariables(), c.getVariables());
 				pr = ALGEBRA.createProjectionDescriptor(pInds);
@@ -257,7 +261,7 @@ public class Rule2Relation {
 		IComponent cPos, cNeg, cBuilt;
 		
 		for (ILiteral l : lits) {
-			if (!(l.getAtom() instanceof IBuiltInAtom)) {
+			if (! l.getAtom().isBuiltin()) {
 				/** a. Ordinary literal (subgoal) */
 				if(l.isPositive()){
 					cPos = translateOrdinaryLiteral(l);
@@ -283,8 +287,9 @@ public class Rule2Relation {
 				 * c. Built-in literal (subgoal): needs to be
 				 * handled after the ordinary subgoals.
 				 */
-				cBuilt = translateBuiltInAtom(l.getAtom());
-				if(cBuilt != null){
+				cBuilt = translateBuiltInAtom(l);
+				// for comparisson builtins
+				/*if(cBuilt != null){
 					if(l.getAtom() instanceof EqualBuiltin){
 						// EqualBuiltin
 						cBuilt.setPositive(l.isPositive());
@@ -294,15 +299,17 @@ public class Rule2Relation {
 					}
 					jTmp1.addChild(cBuilt);
 					jTmp1.addVariables(cBuilt.getVariables());
-				}
+				}*/
+				jTmp1.addChild(cBuilt);
+				jTmp1.addVariables(cBuilt.getVariables());
 			}
 		}
 		if(jTmp0.getChildren().size() > 0){
-			j.addChild(jTmp0.getChildren().get(0));
+			j.addChildren(jTmp0.getChildren());
 			j.addVariables(jTmp0.getVariables());	
 		}
 		if(jTmp1.getChildren().size() > 0){
-			j.addChild(jTmp1.getChildren().get(0));
+			j.addChildren(jTmp1.getChildren());
 			j.addVariables(jTmp1.getVariables());
 		}
 		if(j.getChildren().size() == 1){
@@ -313,6 +320,9 @@ public class Rule2Relation {
 	}
 
 	private IComponent translateOrdinaryLiteral(final ILiteral l) {
+		if(l.getAtom() instanceof ConstLiteral) 
+			return translateConstLiteral((ConstLiteral)l.getAtom());
+		
 		ITuple pattern = null;
 		int[] indexes = new int[l.getPredicate().getArity()];
 		int[] projectInds = org.deri.iris.operations.relations.
@@ -332,7 +342,7 @@ public class Rule2Relation {
 				vars.add(getFreshVariable(t));
 				selectionNeeded = true;
 				// TODO: check the projection!
-				//projectionNeeded = true;
+				projectionNeeded = true;
 			} else {
 				ts.add(null);
 				projectInds[n] = j++;
@@ -375,8 +385,15 @@ public class Rule2Relation {
 		}
 		return le;
 	}
+	
+	private IComponent translateConstLiteral(final ConstLiteral constL) {
+		IConstantDescriptor con = ALGEBRA.createConstantDescriptor(
+				(ITerm)constL.getAtom().getTuple().getTerm(0), 
+				(IVariable)constL.getAtom().getTuple().getTerm(1));
+		return con;
+	}
 
-	private IComponent translateBuiltInAtom(final IAtom a) {
+	/*private IComponent translateBuiltInAtom(final IAtom a) {
 		ITerm t1 = a.getTuple().getTerm(0);
 		ITerm t2 = a.getTuple().getTerm(1);
 		
@@ -406,10 +423,10 @@ public class Rule2Relation {
 				List<IVariable> vars = new ArrayList<IVariable>(terms.size());
 				List<IVariable> distinctVars = new ArrayList<IVariable>();
 				int[] projectInds = new int[l.getPredicate().getArity()];
-				/**
+				*//**
 				 * (b) If Y appears as the jth argument of ordinary subgoal Si,
 				 * let Dx be PROJECTIONj(Ri)
-				 */
+				 *//*
 				ITerm t = null;
 				int j;
 				for (j = 0; j < terms.size(); j++) {
@@ -457,6 +474,12 @@ public class Rule2Relation {
 			return c;
 		}
 		return null;
+	}*/
+	
+	private IComponent translateBuiltInAtom(final ILiteral l) {
+		IBuiltinDescriptor le = ALGEBRA.createBuiltinDescriptor(l.isPositive(), (IBuiltInAtom) l.getAtom());
+		le.addVariables(l.getTuple().getAllVariables());
+		return le;
 	}
 
 	private IVariable getFreshVariable(ITerm t) {
