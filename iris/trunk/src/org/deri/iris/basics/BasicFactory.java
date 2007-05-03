@@ -27,6 +27,7 @@ package org.deri.iris.basics;
 
 import static org.deri.iris.factory.Factory.GRAPH;
 import static org.deri.iris.factory.Factory.PROGRAM;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,7 +42,6 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.factory.IBasicFactory;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.basics.seminaive.EqualityLiteral;
 
 /**
  * <p>
@@ -102,15 +102,6 @@ public class BasicFactory implements IBasicFactory {
 			ITuple tuple) {
 		return createLiteral(positive, createAtom(p, tuple));
 	}
-	
-	public ILiteral createEqualityLiteral(String predicate,ITuple tuple) {
-		return new EqualityLiteral(predicate, tuple);
-	}
-	
-	public ILiteral createEqualityLiteral(boolean positive, String predicate, ITuple tuple) {
-		return new EqualityLiteral(positive, predicate, tuple);
-	}
-
 
 	public ITuple createMinimalTuple(ITerm... terms) {
 		return createMinimalTuple(Arrays.asList(terms));
@@ -139,11 +130,16 @@ public class BasicFactory implements IBasicFactory {
 	}
 
 	public IRule createRule(IHead head, IBody body) {
-		IRule r =new Rule(head, body); 
+		IRule r = new Rule(head, body); 
 		GRAPH.createPredicateGraph().addRule(r);
 		return r;
 	}
 
+	public IRule copyRule(IHead head, IBody body){
+		IRule r = new Rule(head, body); 
+		return r;
+	}
+	
 	public ITuple createTuple(int arity) {
 		return new Tuple(arity);
 	}
