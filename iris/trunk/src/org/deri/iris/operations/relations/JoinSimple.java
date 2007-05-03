@@ -240,6 +240,14 @@ public class JoinSimple implements IJoin{
 		Iterator<ITuple> it0, it1;
 		ITuple t1, t0, resTuple = null;
 		int comp = 0;
+		IRelation tmpRel = null;
+		// TODO instead of tmpRel change the termination condition 
+		// for the outer relation!
+		/*if(this.relation0.size() > this.relation1.size()){
+			tmpRel = this.relation0;
+			this.relation0 = this.relation1;
+			this.relation1 = tmpRel;
+		}*/
 		it0 = this.relation0.iterator();
 		
 		while(it0.hasNext()){
