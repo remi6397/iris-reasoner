@@ -30,18 +30,19 @@ import java.util.Collection;
 
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.IVariable;
 
 /**
  * <p>
  * Defines a Builtin.
  * </p>
  * <p>
- * $Id: IBuiltInAtom.java,v 1.3 2007-03-13 16:55:15 poettler_ric Exp $
+ * $Id: IBuiltInAtom.java,v 1.4 2007-05-03 12:02:40 darko_anicic Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public abstract interface IBuiltInAtom extends IAtom {
 
@@ -70,6 +71,57 @@ public abstract interface IBuiltInAtom extends IAtom {
 	 */
 	public List<ITuple> evaluate(final Collection<ITuple> t);
 
+	/**
+	 * <p>
+	 * Runns the evaluation of the built-in.
+	 * </p>
+	 * <p>
+	 * This method takes a tuple as an input for which it should run the
+	 * evaluation.
+	 * </p>
+	 * <p>
+	 * The returned tuple is null if a built-in is not evaluable for a given input tuple 
+	 * and bound variables. Otherwise a non null tuple is retrieved for which the builtin holds (e.g. if
+	 * it is a binary builing like ?A &lt; ?B and the input was &lt;1, 2&gt; it will return
+	 * &lt;1, 2&gt;, but it the input was &lt;3, 2&gt; it will return a null tuple), or 
+	 * tuples where the missing fields were calculated (e.g. an add builtin 4 + 5 = ?X
+	 * and the input was null (an empty relation); it will return the tuple ?X = &lt;9&gt;).
+	 * </p>
+	 * <p>
+	 * Input variables correspond to a term from the tuple t in a 
+	 * given order. For instance, for a built-in:
+	 * <p>
+	 * add(3, 4, ?X)
+	 * </p>
+	 * <p>
+	 * there would be vars = <?X> and t would have arity 1, and for:
+	 * </p>
+	 * <p>
+	 * add(?X, ?Y, ?Z)
+	 * </p>
+	 * <p>
+	 * t must have arity 2, so in vars, in this example, we specify which two out of three 
+	 * attributes (terms) are provided in a tuple t. If
+	 * </p>
+	 * <p>
+	 * t = <3,4> and vars = <?X, ?Y>
+	 * </p>
+	 * <p>
+	 * a built-in will set ?Z = 7. But if
+	 * </p>
+	 * <p>
+	 * t = <3,4> and vars = <?X, ?Z>
+	 * </p>
+	 * <p>
+	 * a built-in will set ?Y = 1.
+	 * </p>
+	 * 
+	 * @param tup		A tuple to be evaluated in the built-in.
+	 * @param vars	Input variables.
+	 * @return
+	 */
+	public ITuple evaluate(final ITuple tup, final IVariable... vars);
+	
 	/**
 	 * Checks whether the builtin is evaluable.
 	 * 
