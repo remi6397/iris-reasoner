@@ -175,13 +175,20 @@ public class Rule2Relation {
 			 */
 			IProjectionDescriptor pr = null;
 			c = results.get(p);
-			if (!Arrays.equals(r.getHeadVariables().toArray(), c.getVariables().toArray())) {	
+			/*if (!Arrays.equals(r.getHeadVariables().toArray(), c.getVariables().toArray())) {	
 				int[] pInds = getProjectionIndexes(r.getHeadVariables(), c.getVariables());
 				pr = ALGEBRA.createProjectionDescriptor(pInds);
 				pr.addChild(c);
 				pr.addVariables(filterProjectionVariables(pInds, c.getVariables()));
 				results.put(p, pr);
-			}
+			}*/
+			int[] pInds = getProjectionIndexes(r.getHeadVariables(), c.getVariables());
+			// TODO: don't use pInds! remove them from the constructor
+			pr = ALGEBRA.createProjectionDescriptor(pInds);
+			pr.addChild(c);
+			pr.addVariables(r.getHeadVariables());
+			results.put(p, pr);
+			
 			/**
 			 * <p>
 			 * UNION
@@ -190,8 +197,8 @@ public class Rule2Relation {
 			 * Overall union considering the rules with identical rule heads.
 			 * </p>
 			 * <p>
-			 * Check whether there is a rule with the same head predicate; if
-			 * so, the bodies must be united.
+			 * Check whether there exist rules with the same head predicate; 
+			 * if there are, their bodies must be merged in the union.
 			 * </p>
 			 * <p>
 			 * The relations should be union-compatible: 
@@ -268,7 +275,7 @@ public class Rule2Relation {
 					if(cPos != null){
 						cPos.setPositive(true);
 						j.addChild(cPos);
-						j.addVariables(cPos.getVariables());
+						//j.addVariables(cPos.getVariables());
 					}
 				}else{
 					/**
@@ -279,7 +286,7 @@ public class Rule2Relation {
 					if(cNeg != null){
 						cNeg.setPositive(false);
 						jTmp0.addChild(cNeg);
-						jTmp0.addVariables(cNeg.getVariables());
+						//jTmp0.addVariables(cNeg.getVariables());
 					}
 				}
 			}else{
@@ -301,16 +308,16 @@ public class Rule2Relation {
 					jTmp1.addVariables(cBuilt.getVariables());
 				}*/
 				jTmp1.addChild(cBuilt);
-				jTmp1.addVariables(cBuilt.getVariables());
+				//jTmp1.addVariables(cBuilt.getVariables());
 			}
 		}
 		if(jTmp0.getChildren().size() > 0){
 			j.addChildren(jTmp0.getChildren());
-			j.addVariables(jTmp0.getVariables());	
+			//j.addVariables(jTmp0.getVariables());	
 		}
 		if(jTmp1.getChildren().size() > 0){
 			j.addChildren(jTmp1.getChildren());
-			j.addVariables(jTmp1.getVariables());
+			//j.addVariables(jTmp1.getVariables());
 		}
 		if(j.getChildren().size() == 1){
 			return j.getChildren().get(0);
