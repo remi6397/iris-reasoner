@@ -34,6 +34,7 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.basics.BasicFactory;
+import org.deri.iris.basics.Literal;
 
 /**
  * <p>
@@ -71,8 +72,9 @@ public class ConstLiteral implements ILiteral<ILiteral>{
 					+ "parameters are not specified correctly!");
 		}
 		this.positive = positive;
-		IPredicate p = BasicFactory.getInstance().createPredicate("Const", 2);
-		this.atom = BasicFactory.getInstance().createAtom(p, BASIC.createTuple(groundTerm, var));
+		this.atom = BasicFactory.getInstance().createAtom(
+				BASIC.createPredicate("CONST", 2), 
+				BASIC.createTuple(groundTerm, var));
 
 	}
 
@@ -89,13 +91,11 @@ public class ConstLiteral implements ILiteral<ILiteral>{
 	}
 
 	public IPredicate getPredicate() {
-		throw new UnsupportedOperationException(
-			"This method is not supported by this literal.");
+		return this.atom.getPredicate();
 	}
 
 	public ITuple getTuple() {
-		throw new UnsupportedOperationException(
-			"This method is not supported by this literal.");
+		return this.atom.getTuple();
 	}
 
 	public boolean isBuiltin() {
@@ -112,7 +112,7 @@ public class ConstLiteral implements ILiteral<ILiteral>{
 		buffer.append(this.getAtom().getTuple().getTerm(0).toString());
 		buffer.append("}");
 		buffer.append("(");
-		buffer.append(this.getAtom().getTuple().getTerm(0).toString());
+		buffer.append(this.getAtom().getTuple().getTerm(1).toString());
 		buffer.append(")");
 		return buffer.toString();
 	}
@@ -120,5 +120,19 @@ public class ConstLiteral implements ILiteral<ILiteral>{
 	public int compareTo(ILiteral o) {
 		throw new UnsupportedOperationException(
 			"This method is not supported by this literal.");
+	}
+	
+	public boolean equals(final Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof Literal)) {
+			return false;
+		}
+		Literal l = (Literal) o;
+		if (!(l.getAtom() instanceof ConstLiteral)) {
+			return false;
+		}
+		return atom.getTuple().equals(l.getAtom().getTuple()) && (positive == l.isPositive());
 	}
 }
