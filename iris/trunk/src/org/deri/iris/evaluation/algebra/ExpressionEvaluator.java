@@ -25,9 +25,12 @@
  */
 package org.deri.iris.evaluation.algebra;
 
+import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.RELATION;
+import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +54,9 @@ import org.deri.iris.api.operations.relation.IProjection;
 import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.operations.relation.IUnion;
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.builtins.EqualBuiltin;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.relations.MiscOps;
 
@@ -180,7 +185,6 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 			if(c1 != null && c1.getVariables() != null && c1.isPositive()) 
 				vars.addAll(c1.getVariables());
 		}
-		// TODO: If you don't use variables created in Rule2Relation, remove them!
 		j.getVariables().clear();
 		j.addVariables(vars);
 		
@@ -195,17 +199,21 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 					"Please provide the component with only one subcomponent " +
 					"(child),otherwise the evaluateProjection cannot be " +
 					"performed!");
-		}
+		}	
 		IProjectionDescriptor pr = (IProjectionDescriptor)c;
-		IProjection projection = Factory.RELATION_OPERATION
+		IRelation rel = evaluate(pr.getChildren().get(0), p, aq);
+		if (!Arrays.equals(pr.getVariables().toArray(), pr.getChildren().get(0).getVariables().toArray())) {	
+			IProjection projection = Factory.RELATION_OPERATION
 			.createProjectionOperator(
-					evaluate(pr.getChildren().get(0), p, aq), 
+					rel, 
 					// TODO: If you don't use project inds, created in Rule2Relation, remove them!
 					//pr.getIndexes());
 					MiscOps.getProjectionIndexes(
 							pr.getChildren().get(0).getVariables(), pr.getVariables()));
 		
-		return projection.project();
+			return projection.project();
+		}
+		return rel;
 	}
 	
 	private IRelation evaluateRelation(IComponent c,IProgram p,
@@ -288,7 +296,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	private IRelation evaluateConstant(IComponent c){
 		IConstantDescriptor con = (IConstantDescriptor)c;
 		IRelation r = RELATION.getRelation(1);
-		r.add(Factory.BASIC.createTuple(con.getConstant()));
+		r.add(BASIC.createTuple(con.getConstant()));
 		return r;
 	}
 	
@@ -297,12 +305,32 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		
 		IBuiltinDescriptor con = (IBuiltinDescriptor)c;
 		IBuiltinEvaluator eval = null;
+		
+		// case:  p(U,V,W) :- r(V,W), EQ(U, 'a'), r doesn't contain the variable U => U = 'a'. 
+		if(con.getBuiltin() instanceof EqualBuiltin && 
+				! relVars.containsAll(con.getBuiltin().getTuple().getVariables())){
+			ITerm constant = null, tmp = null;
+			IVariable var = null;
+			tmp = con.getBuiltin().getTuple().getTerm(0);
+			if(tmp.isGround()){
+				var = (IVariable)con.getBuiltin().getTuple().getTerm(1);
+			}else{
+				tmp = con.getBuiltin().getTuple().getTerm(1);
+				var = (IVariable)con.getBuiltin().getTuple().getTerm(0);
+			}
+			if(tmp.isGround()){
+				constant = tmp;
+				IRelation constRel = RELATION.getRelation(1);
+				constRel.add(BASIC.createTuple(constant));
+				return constRel;	
+			}
+		}
 		if (c.getChildren().size() == 0) {
 			if (relVars == null || rel == null) {
-				eval = Factory.RELATION_OPERATION.createBuiltinEvaluatorOperator(
+				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator(
 						con.getBuiltin(), con.getVariables(), RELATION.getRelation(con.getVariables().size()));
 			}else{
-				eval = Factory.RELATION_OPERATION.createBuiltinEvaluatorOperator(con.getBuiltin(), relVars, rel);
+				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator(con.getBuiltin(), relVars, rel);
 			}
 		}else{
 			throw new IllegalArgumentException("Nested built-ins are currently not supported!");
