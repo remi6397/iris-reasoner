@@ -25,12 +25,19 @@
  */
 package org.deri.iris.builtins;
 
+import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
+import static org.deri.iris.factory.Factory.TERM;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
 import org.deri.iris.api.terms.concrete.IFloatTerm;
@@ -41,13 +48,14 @@ import org.deri.iris.api.terms.concrete.IIntegerTerm;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.3 2007-04-06 08:50:26 poettler_ric Exp $
+ * $Id: BuiltinHelper.java,v 1.4 2007-05-04 09:01:51 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class BuiltinHelper {
+
 	private BuiltinHelper() {
 		// prevent subclassing
 	}
@@ -406,5 +414,70 @@ public class BuiltinHelper {
 			}
 		}
 		return res;
+	}
+
+	/**
+	 * <p>
+	 * Constructs the constants tuple used by the evaluage method of the
+	 * builtins. This method takes a builtin tuple, a tuple of constants and
+	 * an array of variables as input. A newly created tuple with the
+	 * constants of <code>c</code> at the positions of the variables of
+	 * <code>v</code> found in <code>b</code>.
+	 * </p>
+	 * <p>
+	 * In other words, if you pass in a builtin <code>ADD(X, Y, 5)</code>
+	 * and a tuple <code>&lt;2&gt;</code> and <code>v</code> is <code>[X]</code> 
+	 * you will get back a tuple <code>&lt;2, Y, 5&gt;</code>. If <code>v</code> 
+	 * is <code>[Y]</code> the returned tuple would be <code>&lt;X, 2, 5&gt;</code>.
+	 * </p>
+	 * <p>
+	 * If performance is very crucial i wouldn't use this method, because it
+	 * has to search for the variables every time. So if you have one
+	 * builtin and a set of constants for wich you want to evaluate the
+	 * builtin you should consider writing the replacement on your own.
+	 * </p>
+	 * @param b the base tuple in which to search for the variable
+	 * possitions
+	 * @param c the constan tuple from where to take the constants
+	 * @param v the variables to replace
+	 * @return the constants tupele used by the evaluate methods of the
+	 * builtins
+	 * @throws NullPointerException if the base tuple is <code>null</code>
+	 * @throws NullPointerException if the constans tuple is <code>null</code>
+	 * @throws NullPointerException if the variable array is <code>null</code>
+	 * @throws IllegalArgumentException if the lenght of the constants tuple
+	 * and the variable array doesn't match
+	 * @see org.deri.iris.api.builtins.IBuiltInAtom#evaluate(ITuple)
+	 */
+	public static ITuple createConstantsTuple(final ITuple b, final ITuple c, IVariable... v) {
+		if (b == null) {
+			throw new NullPointerException("The builtin tuple must not be null");
+		}
+		if (c == null) {
+			throw new NullPointerException("The consants tuple must not be null");
+		}
+		if (v == null) {
+			throw new NullPointerException("The variable array must not be null");
+		}
+		if (c.getArity() != v.length) {
+			throw new IllegalArgumentException("The lenght of the constants (" + 
+					c.getArity() + ") must be equals to the lenght of the variables (" + 
+					v.length + ")");
+		}
+
+		final Iterator<ITerm> iter = c.getTerms().iterator();
+		final ITerm[] ret = b.getTerms().toArray(new ITerm[b.getTerms().size()]);
+		final List<ITerm> terms = Arrays.asList(ret);
+
+		for (final IVariable var : v) {
+			final int pos = terms.indexOf(v);
+			if (pos > -1) {
+				ret[pos] = iter.next();
+			} else {
+				throw new IllegalArgumentException("Couldn't find the variable " + 
+						var + " in " + b);
+			}
+		}
+		return BASIC.createTuple(ret);
 	}
 }
