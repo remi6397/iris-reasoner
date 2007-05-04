@@ -41,13 +41,13 @@ import org.deri.iris.api.terms.IVariable;
  * Builtin to compare two terms for equality.
  * </p>
  * <p>
- * $Id: EqualBuiltin.java,v 1.5 2007-05-03 11:43:41 darko_anicic Exp $
+ * $Id: EqualBuiltin.java,v 1.6 2007-05-04 16:09:09 darko_anicic Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class EqualBuiltin extends AbstractBuiltin {
 
@@ -140,7 +140,7 @@ public class EqualBuiltin extends AbstractBuiltin {
 				return BuiltinHelper.numbersEqual((INumericTerm) getTerm(0),
 						(INumericTerm) getTerm(1));
 			}
-			return getTerm(0).equals(getTerm(1));
+			return t0.equals(t1);
 		}
 		return false;
 	}
