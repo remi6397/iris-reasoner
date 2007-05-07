@@ -28,9 +28,6 @@ package org.deri.iris.builtins;
 import static org.deri.iris.factory.Factory.BASIC;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.LinkedList;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
@@ -43,11 +40,11 @@ import org.deri.iris.api.terms.IVariable;
  * variable be left for computation, otherwise an exception will be thrown.
  * </p>
  * <p>
- * $Id: SubtractBuiltin.java,v 1.4 2007-05-03 11:45:53 darko_anicic Exp $
+ * $Id: SubtractBuiltin.java,v 1.5 2007-05-07 13:23:08 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class SubtractBuiltin extends AbstractBuiltin {
 
@@ -71,39 +68,36 @@ public class SubtractBuiltin extends AbstractBuiltin {
 		super(PREDICATE, 3, t0, t1, t2);
 	}
 
-	public List<ITuple> evaluate(final Collection<ITuple> c) {
+	public ITuple evaluate(final ITuple c) {
 		if(c == null) {
 			throw new NullPointerException("The collection must not be null");
 		}
-		final List<ITuple> res = new LinkedList<ITuple>();
 		// calculating the needed term indexes from the submitted tuple
 		int[] outstanding = BuiltinHelper.determineUnground(getTuple().getTerms());
 		// retrieving the constants of this builin
 		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple().getTerms(), 
 				BuiltinHelper.complement(outstanding, getTuple().getArity()));
-		for(final ITuple t : c) {
-			// putting the term from this builtin and the submitted tuple together
-			final ITerm[] complete = BuiltinHelper.concat(outstanding, 
-					BuiltinHelper.getIndexes(t.getTerms(), outstanding), bCons);
-			// determing the remaining vars of the terms
-			final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
-			// run the evaluation
-			if(vars.length > 1) {
-				throw new IllegalArgumentException("Can not evaluate an ADD with 2 variables");
-			}
-			if(vars[0] == 0) {
-				complete[vars[0]] = BuiltinHelper.add(complete[2], complete[1]);
-			} else if (vars[0] == 1) {
-				complete[vars[0]] = BuiltinHelper.subtract(complete[0], complete[2]);
-			} else if (vars[0] == 2) {
-				complete[vars[0]] = BuiltinHelper.subtract(complete[0], complete[1]);
-			} else {
+
+		// putting the term from this builtin and the submitted tuple together
+		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
+				BuiltinHelper.getIndexes(c.getTerms(), outstanding), bCons);
+		// determing the remaining vars of the terms
+		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
+		// run the evaluation
+		if(vars.length > 1) {
+			throw new IllegalArgumentException("Can not evaluate an ADD with 2 variables");
+		}
+		switch(vars[0]) {
+			case 0:
+				return BASIC.createTuple(BuiltinHelper.add(complete[2], complete[1]));
+			case 1:
+				return BASIC.createTuple(BuiltinHelper.subtract(complete[0], complete[2]));
+			case 2:
+				return BASIC.createTuple(BuiltinHelper.subtract(complete[0], complete[1]));
+			default:
 				throw new IllegalArgumentException("The variable must be at possition " + 
 						"0 to 2, but was on " + vars[0]);
-			}
-			res.add(BASIC.createTuple(complete));
 		}
-		return res;
 	}
 
 	public ITuple evaluate(ITuple tup, IVariable... vars) {

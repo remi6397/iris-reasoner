@@ -25,8 +25,9 @@
  */
 package org.deri.iris.builtins;
 
-import java.util.Collection;
-import java.util.List;
+import static org.deri.iris.factory.Factory.BASIC;
+
+import java.util.Arrays;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
@@ -41,11 +42,11 @@ import org.deri.iris.factory.Factory;
  * equal.
  * </p>
  * <p>
- * $Id: GreaterEqualBuiltin.java,v 1.4 2007-05-03 11:44:39 darko_anicic Exp $
+ * $Id: GreaterEqualBuiltin.java,v 1.5 2007-05-07 13:23:08 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class GreaterEqualBuiltin extends AbstractBuiltin {
 
@@ -71,9 +72,34 @@ public class GreaterEqualBuiltin extends AbstractBuiltin {
 	 * This is an empty method stub to keep the src directory compileable.
 	 * @return at the moment it always returns <code>null</code>
 	 */
-	public List<ITuple> evaluate(final Collection<ITuple> t) {
-		// TODO: not implemented yet
-		return null;
+	public ITuple evaluate(final ITuple t) {
+		if(t == null) {
+			throw new NullPointerException("The collection must not be null");
+		}
+		// calculating the needed term indexes from the submitted tuple
+		int[] outstanding = BuiltinHelper.determineUnground(getTuple().getTerms());
+		// retrieving the constants of this builin
+		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple().getTerms(), 
+				BuiltinHelper.complement(outstanding, getTuple().getArity()));
+
+		// putting the term from this builtin and the submitted tuple together
+		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
+				BuiltinHelper.getIndexes(t.getTerms(), outstanding), bCons);
+		// determing the remaining vars of the terms
+		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
+
+		// run the evaluation
+		if (vars.length == 0) {
+			if ((complete[0] instanceof INumericTerm) && (complete[1] instanceof INumericTerm)) {
+				return BuiltinHelper.numbersCompare((INumericTerm) complete[0], (INumericTerm) complete[1]) >= 0 ? 
+					BASIC.createTuple(complete) : null;
+			} else if (complete[0].getClass().isAssignableFrom(complete[1].getClass())) {
+				return complete[0].compareTo(complete[1]) >= 0 ? BASIC.createTuple(complete) : null;
+			}
+			throw new IllegalArgumentException("Couldn't compare " + complete[0].getClass().getName() + 
+				" and " + complete[1].getClass().getName());
+		}
+		throw new IllegalArgumentException("Can not evaluate a GREATEREQUAL with any variables");
 	}
 
 	/**

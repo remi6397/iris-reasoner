@@ -27,8 +27,7 @@ package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.BASIC;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Arrays;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
@@ -41,13 +40,13 @@ import org.deri.iris.api.terms.IVariable;
  * Builtin to compare two terms for equality.
  * </p>
  * <p>
- * $Id: EqualBuiltin.java,v 1.6 2007-05-04 16:09:09 darko_anicic Exp $
+ * $Id: EqualBuiltin.java,v 1.7 2007-05-07 13:23:08 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class EqualBuiltin extends AbstractBuiltin {
 
@@ -73,75 +72,46 @@ public class EqualBuiltin extends AbstractBuiltin {
 	 * This is an empty method stub to keep the src directory compileable.
 	 * @return at the moment it always returns <code>null</code>
 	 */
-	public List<ITuple> evaluate(final Collection<ITuple> t) {
-		// TODO: not implemented yet
-		return null;
+	public ITuple evaluate(final ITuple t) {
+		if(t == null) {
+			throw new NullPointerException("The collection must not be null");
+		}
+		// calculating the needed term indexes from the submitted tuple
+		int[] outstanding = BuiltinHelper.determineUnground(getTuple().getTerms());
+		// retrieving the constants of this builin
+		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple().getTerms(), 
+				BuiltinHelper.complement(outstanding, getTuple().getArity()));
+
+		// putting the term from this builtin and the submitted tuple together
+		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
+				BuiltinHelper.getIndexes(t.getTerms(), outstanding), bCons);
+		// determing the remaining vars of the terms
+		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
+
+		// run the evaluation
+		if (vars.length == 0) { // if there are no variables -> check for equality
+			if ((complete[0] instanceof INumericTerm) && (complete[1] instanceof INumericTerm)) {
+				return BuiltinHelper.numbersEqual((INumericTerm) complete[0], (INumericTerm) complete[1]) ? 
+					BASIC.createTuple(complete) : null;
+			}
+			return complete[0].equals(complete[1]) ? BASIC.createTuple(complete) : null;
+		} else if(vars.length > 1) { // we can only handle one variable
+			throw new IllegalArgumentException("Can not evaluate an EQUAL with 2 variables");
+		}
+		// return the substitution for the variable
+		switch(vars[0]) {
+			case 0:
+				return BASIC.createTuple(complete[1]);
+			case 1:
+				return BASIC.createTuple(complete[0]);
+			default:
+				throw new IllegalArgumentException("The variable must be at possition " + 
+						"0 to 1, but was on " + vars[0]);
+		}
 	}
+
 	public ITuple evaluate(ITuple tup, IVariable... vars) {
-		// e.g., EQUAL(3, 4)
-		if(this.getTerm(0).isGround() && this.getTerm(1).isGround()) {
-			if(evaluate(this.getTerm(0), this.getTerm(1))){
-				return tup;
-			}else{
-				return null;
-			}
-		}else
-		// e.g., EQUAL(?X, 4)
-		if(! this.getTerm(0).isGround() && this.getTerm(1).isGround()) {
-			if(vars.length != 1)
-				throw new IllegalArgumentException("Expected length of input variable's array is 1!");
-			if(evaluate(tup.getTerm(0), this.getTerm(1))){
-				return tup;
-			}else{
-				return null;
-			}
-		}else
-		// e.g., EQUAL(4,?X)
-		if(this.getTerm(0).isGround() && ! this.getTerm(1).isGround()) {
-			if(vars.length != 1)
-				throw new IllegalArgumentException("Expected length of input variable's array is 1!");
-			if(evaluate(this.getTerm(0), tup.getTerm(0))){
-				return tup;
-			}else{
-				return null;
-			}
-		}else
-		// e.g., EQUAL(?X,?Y)
-		if(! this.getTerm(0).isGround() && ! this.getTerm(1).isGround()) {
-			if(vars.length == 1){
-				return BASIC.createTuple(tup.getTerm(0),tup.getTerm(0));
-			}else if(vars.length == 2){
-				if(evaluate(tup.getTerm(0), tup.getTerm(1))){
-					return tup;
-				}else{
-					return null;
-				}
-			}else
-				throw new IllegalArgumentException("Expected length of input variable's array is either 1 or 2!");
-			
-		}
+		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	/**
-	 * Runns the evaluation. If the two terms are <code>INumberTerm</code>s
-	 * their values will be converted to doubles, otherwise they will be checked
-	 * for equality.
-	 * 
-	 * @param t0	A term to be compared with t1.
-	 * @param t1	A term to be compared with t0.
-	 * @return <code>true</code> if the two terms are comparable and they were
-	 *         equal, otherwise <code>false</code>
-	 */
-	public boolean evaluate(ITerm t0, ITerm t1) {
-		if (isEvaluable()) {
-			if ((getTerm(0) instanceof INumericTerm)
-					&& (getTerm(1) instanceof INumericTerm)) {
-				return BuiltinHelper.numbersEqual((INumericTerm) getTerm(0),
-						(INumericTerm) getTerm(1));
-			}
-			return t0.equals(t1);
-		}
-		return false;
 	}
 }
