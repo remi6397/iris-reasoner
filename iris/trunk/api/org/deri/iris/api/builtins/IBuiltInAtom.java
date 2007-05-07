@@ -37,12 +37,12 @@ import org.deri.iris.api.terms.IVariable;
  * Defines a Builtin.
  * </p>
  * <p>
- * $Id: IBuiltInAtom.java,v 1.4 2007-05-03 12:02:40 darko_anicic Exp $
+ * $Id: IBuiltInAtom.java,v 1.5 2007-05-07 13:23:08 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public abstract interface IBuiltInAtom extends IAtom {
 
@@ -57,19 +57,25 @@ public abstract interface IBuiltInAtom extends IAtom {
 	 * already has a constant might be ignored.
 	 * </p>
 	 * <p>
-	 * The returned list contains the tuples for which the builtin holds (e.g. if
-	 * it is a binary builing like A &lt; B and the input was &lt;1, 2&gt; it will return
-	 * &lt;1, 2&gt;, but it the input was &lt;3, 2&gt; it will return a empty list), or 
-	 * tuples where the missing fields were calculated (e.g. we had a add builtin A + 5 = C
-	 * and the input was &lt;null, null, 7&gt; it will return the tuple &lt;2, 5, 7&gt;).
+	 * The returned tuple contains the calculated substitutions for the
+	 * remaining variables (after replacing the variables with the passed in
+	 * constants) in the builtin in the order their variables
+	 * appear in the builtin. 
+	 * For example if you evaluate 
+	 * <code>4 + X = 9</code> you would get back <code>&lt;5&gt;</code>. 
+	 * The only difference are the binary builtins: For a binary builtin 
+	 * if you try to evaluate <code>3 &tl; 4</code> you will get back 
+	 * <code>&lt;3, 4&gt;</code>, but if you try to evaluate <code>3 &lt; 2</code> 
+	 * you will get back <code>null</code>.
 	 * </p>
 	 * 
 	 * @param t the substitutes for the variables of the builtin
-	 * @return the list of tuples where this builtin holds or the calculated results
+	 * @return the calculated constans or <code>null</code> if the builtin
+	 * isn't evaluable
 	 * @throws IllegalArgumentException if the builtin couldn't be evaluated
 	 * @throws NullPointerException if the collection was <code>null</code>
 	 */
-	public List<ITuple> evaluate(final Collection<ITuple> t);
+	public ITuple evaluate(final ITuple t);
 
 	/**
 	 * <p>

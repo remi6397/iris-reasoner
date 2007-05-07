@@ -25,8 +25,9 @@
  */
 package org.deri.iris.builtins;
 
-import java.util.Collection;
-import java.util.List;
+import static org.deri.iris.factory.Factory.BASIC;
+
+import java.util.Arrays;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
@@ -44,13 +45,13 @@ import org.deri.iris.factory.Factory;
  * IntegerTerm data type.
  * </p>
  * <p>
- * $Id: LessBuiltin.java,v 1.4 2007-05-03 11:45:00 darko_anicic Exp $
+ * $Id: LessBuiltin.java,v 1.5 2007-05-07 13:23:08 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class LessBuiltin extends AbstractBuiltin {
 
@@ -76,73 +77,38 @@ public class LessBuiltin extends AbstractBuiltin {
 	 * This is an empty method stub to keep the src directory compileable.
 	 * @return at the moment it always returns <code>null</code>
 	 */
-	public List<ITuple> evaluate(final Collection<ITuple> t) {
-		// TODO: not implemented yet
-		return null;
-	}
-	
-	public ITuple evaluate(ITuple tup, IVariable... vars) {
-		// e.g., less(3, 4)
-		if(this.getTerm(0).isGround() && this.getTerm(1).isGround()) {
-			if(evaluate(this.getTerm(0), this.getTerm(1))){
-				return tup;
-			}else{
-				return null;
-			}
-		}else
-		// e.g., less(?X, 4)
-		if(! this.getTerm(0).isGround() && this.getTerm(1).isGround()) {
-			if(vars.length != 1)
-				throw new IllegalArgumentException("Expected length of input variable's array is 1!");
-			if(evaluate(tup.getTerm(0), this.getTerm(1))){
-				return tup;
-			}else{
-				return null;
-			}
-		}else
-		// e.g., less(4,?X)
-		if(this.getTerm(0).isGround() && ! this.getTerm(1).isGround()) {
-			if(vars.length != 1)
-				throw new IllegalArgumentException("Expected length of input variable's array is 1!");
-			if(evaluate(this.getTerm(0), tup.getTerm(0))){
-				return tup;
-			}else{
-				return null;
-			}
-		}else
-		// e.g., less(?X,?Y)
-		if(! this.getTerm(0).isGround() && ! this.getTerm(1).isGround()) {
-			if(vars.length != 2)
-				throw new IllegalArgumentException("Expected length of input variable's array is 2!");
-			if(evaluate(tup.getTerm(0), tup.getTerm(1))){
-				return tup;
-			}else{
-				return null;
-			}
+	public ITuple evaluate(final ITuple t) {
+		if(t == null) {
+			throw new NullPointerException("The collection must not be null");
 		}
-		return null;
+		// calculating the needed term indexes from the submitted tuple
+		int[] outstanding = BuiltinHelper.determineUnground(getTuple().getTerms());
+		// retrieving the constants of this builin
+		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple().getTerms(), 
+				BuiltinHelper.complement(outstanding, getTuple().getArity()));
+
+		// putting the term from this builtin and the submitted tuple together
+		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
+				BuiltinHelper.getIndexes(t.getTerms(), outstanding), bCons);
+		// determing the remaining vars of the terms
+		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
+
+		// run the evaluation
+		if (vars.length == 0) {
+			if ((complete[0] instanceof INumericTerm) && (complete[1] instanceof INumericTerm)) {
+				return BuiltinHelper.numbersCompare((INumericTerm) complete[0], (INumericTerm) complete[1]) < 0 ? 
+					BASIC.createTuple(complete) : null;
+			} else if (complete[0].getClass().isAssignableFrom(complete[1].getClass())) {
+				return complete[0].compareTo(complete[1]) < 0 ? BASIC.createTuple(complete) : null;
+			}
+			throw new IllegalArgumentException("Couldn't compare " + complete[0].getClass().getName() + 
+				" and " + complete[1].getClass().getName());
+		}
+		throw new IllegalArgumentException("Can not evaluate a LESS with any variables");
 	}
 
-	/**
-	 * Runns the evaluation. If the two terms are <code>INumberTerm</code>s
-	 * their values will be converted to doubles, otherwise they will be
-	 * compared.
-	 * 
-	 * @param t0	A term to be compared with t1.
-	 * @param t1	A term to be compared with t0.
-	 * @return <code>true</code> if the two terms are comparable and the
-	 *         second one is bigger than the first one, otherwise
-	 *         <code>false</code>
-	 */
-	public boolean evaluate(ITerm t0, ITerm t1) {
-		if (isEvaluable()) {
-			if ((t0 instanceof INumericTerm)
-					&& (t1 instanceof INumericTerm)) {
-				return BuiltinHelper.numbersCompare((INumericTerm) t0,
-						(INumericTerm) t1) < 0;
-			}
-			return t0.compareTo(t1) < 0;
-		}
-		return false;
+	public ITuple evaluate(ITuple tup, IVariable... vars) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -27,8 +27,7 @@ package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.BASIC;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Arrays;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
@@ -41,11 +40,11 @@ import org.deri.iris.api.terms.IVariable;
  * variable be left for computation, otherwise an exception will be thrown.
  * </p>
  * <p>
- * $Id: AddBuiltin.java,v 1.4 2007-05-03 11:42:07 darko_anicic Exp $
+ * $Id: AddBuiltin.java,v 1.5 2007-05-07 13:23:08 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class AddBuiltin extends AbstractBuiltin {
 
@@ -69,142 +68,40 @@ public class AddBuiltin extends AbstractBuiltin {
 		super(PREDICATE, 3, t0, t1, t2);
 	}
 
-	public ITuple evaluate(final ITuple tup, final IVariable... vars) {
-		// e.g., add(3, 4, ?X)
-		if(this.getTerm(0).isGround() && this.getTerm(1).isGround() && ! this.getTerm(2).isGround()) {
-			if(vars.length == 1){
-				if(this.getTerm(2).equals(vars[0])){
-					return BASIC.createTuple(BuiltinHelper.add(this.getTerm(0), this.getTerm(1)));
-				}else{
-					return null;
-				}
-			}else{
-				throw new IllegalArgumentException("Expected length of input variable's array is 1!");
-			}
-		}else 
-		// e.g., add(3, ?X, 4)	
-		if(this.getTerm(0).isGround() && ! this.getTerm(1).isGround() && this.getTerm(2).isGround()) {
-			if(vars.length == 1){
-				if(this.getTerm(1).equals(vars[0])){
-					return BASIC.createTuple(BuiltinHelper.subtract(this.getTerm(2), this.getTerm(0)));
-				}else{
-					return null;
-				}
-			}else{
-				throw new IllegalArgumentException("Expected length of input variable's array is 1!");
-			}
-		}else 
-		// e.g., add(?X, 3, 4)	
-		if(! this.getTerm(0).isGround() && this.getTerm(1).isGround() && this.getTerm(2).isGround()) {
-			if(vars.length == 0){
-				return BASIC.createTuple(BuiltinHelper.subtract(this.getTerm(2), this.getTerm(1)));
-			}
-			if(vars.length == 1){
-				if(this.getTerm(0).equals(vars[0])){
-					return BASIC.createTuple(BuiltinHelper.subtract(this.getTerm(2), this.getTerm(1)));
-				}else{
-					return null;
-				}
-			}else{
-				throw new IllegalArgumentException("Expected length of input variable's array is 1!");
-			}
-		}else 
-		// e.g., add(?X, ?Y, 5)
-		if(! this.getTerm(0).isGround() && ! this.getTerm(1).isGround() && this.getTerm(2).isGround()) {
-			// for vars.length == 1, we calculate ?Y (for a given ?X=4) as 5 - ?X => ?Y=1
-			if(vars.length == 1){
-				if(this.getTerm(0).equals(vars[0])){
-					return BASIC.createTuple(tup.getTerm(0), BuiltinHelper.subtract(this.getTerm(2),tup.getTerm(0)));
-				}else if(this.getTerm(1).equals(vars[0])){
-					return BASIC.createTuple(BuiltinHelper.subtract(this.getTerm(2),tup.getTerm(1)),tup.getTerm(1));
-				}else {
-					return null;
-				}
-			}
-			// for vars.length == 2, we check whether ?X+5=?Y. <4,9> would pass and <5,9> wouldn't!
-			if(vars.length == 2){
-				if(this.getTerm(0).equals(vars[0]) && this.getTerm(1).equals(vars[1])){
-					if(BuiltinHelper.add(tup.getTerm(0), tup.getTerm(1)).equals(this.getTerm(2))){
-						return tup;
-					}else {
-						return null;
-					}
-				}
-			}
-			throw new IllegalArgumentException("Expected length of input variable's array is eiter 1 or 2!");
-		}else 
-		// e.g., add(?X, 5, ?Y)
-		if(! this.getTerm(0).isGround() && this.getTerm(1).isGround() && ! this.getTerm(2).isGround()) {
-			// for vars.length == 1, we calculate ?Y (for a given ?X=4) as a sum => ?Y=9
-			if(vars.length == 1){
-				if(this.getTerm(0).equals(vars[0])){
-					return BASIC.createTuple(tup.getTerm(0), BuiltinHelper.add(tup.getTerm(0), this.getTerm(1)));
-				}else if(this.getTerm(2).equals(vars[0])){
-					return BASIC.createTuple(BuiltinHelper.subtract(tup.getTerm(0), this.getTerm(1)),tup.getTerm(0));
-				}else {
-					return null;
-				}
-			}
-			// for vars.length == 2, we check whether ?X+5=?Y. <4,9> would pass and <5,9> wouldn't!
-			if(vars.length == 2){
-				if(this.getTerm(0).equals(vars[0]) && this.getTerm(2).equals(vars[1])){
-					if(BuiltinHelper.add(tup.getTerm(0), this.getTerm(1)).equals(tup.getTerm(1))){
-						return tup;
-					}else {
-						return null;
-					}
-				}
-			}
-			throw new IllegalArgumentException("Expected length of input variable's array is eiter 1 or 2!");
-		}else 
-		// e.g., add(5, ?X, ?Y)
-		if(this.getTerm(0).isGround() && ! this.getTerm(1).isGround() && ! this.getTerm(2).isGround()) {
-			// for vars.length == 1, we calculate ?Y (for a given ?X=4) as a sum => ?Y=9
-			if(vars.length == 1){
-				if(this.getTerm(1).equals(vars[0])){
-					return BASIC.createTuple(this.getTerm(0), BuiltinHelper.add(tup.getTerm(0), this.getTerm(0)));
-				}else if(this.getTerm(2).equals(vars[0])){
-					return BASIC.createTuple(BuiltinHelper.subtract(tup.getTerm(0), this.getTerm(0)),tup.getTerm(0));
-				}else {
-					return null;
-				}
-			}
-			// for vars.length == 2, we check whether 5+?X=?Y. <4,9> would pass and <5,9> wouldn't!
-			if(vars.length == 2){
-				if(this.getTerm(1).equals(vars[0]) && this.getTerm(2).equals(vars[1])){
-					if(BuiltinHelper.add(tup.getTerm(0), this.getTerm(0)).equals(tup.getTerm(1))){
-						return tup;
-					}else {
-						return null;
-					}
-				}
-			}
-			throw new IllegalArgumentException("Expected length of input variable's array is eiter 1 or 2!");
-		}else 
-		// e.g., add(?X, ?Y, ?Z)
-		if(! this.getTerm(0).isGround() && ! this.getTerm(1).isGround() && ! this.getTerm(2).isGround()) {
-			if(vars.length != 2)
-				throw new IllegalArgumentException("Expected length of input variable's array is 2!");
-			// e.g., ?X=3, ?Y=4, ?Z=?
-			if(this.getTerm(0).equals(vars[0]) && this.getTerm(1).equals(vars[1])){
-				return BASIC.createTuple(tup.getTerm(0), tup.getTerm(1), BuiltinHelper.add(tup.getTerm(0), tup.getTerm(1)));
-			}else
-			// e.g., ?X=3, ?Y=?, ?Z=4
-			if(this.getTerm(0).equals(vars[0]) && this.getTerm(2).equals(vars[1])){
-				return BASIC.createTuple(tup.getTerm(0), BuiltinHelper.subtract(tup.getTerm(2), tup.getTerm(1)), tup.getTerm(1));
-			}else
-			// e.g., ?X=?, ?Y=3, ?Z=4
-			if(this.getTerm(1).equals(vars[0]) && this.getTerm(2).equals(vars[1])){
-				return BASIC.createTuple(BuiltinHelper.add(tup.getTerm(0), tup.getTerm(1)), tup.getTerm(0), tup.getTerm(1));
-			}
-		}else {
-			throw new IllegalArgumentException("The collection is not be evaluable.");
+	public ITuple evaluate(final ITuple c) {
+		if(c == null) {
+			throw new NullPointerException("The collection must not be null");
 		}
-		return null;
+		// calculating the needed term indexes from the submitted tuple
+		int[] outstanding = BuiltinHelper.determineUnground(getTuple().getTerms());
+		// retrieving the constants of this builin
+		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple().getTerms(), 
+				BuiltinHelper.complement(outstanding, getTuple().getArity()));
+
+		// putting the term from this builtin and the submitted tuple together
+		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
+				BuiltinHelper.getIndexes(c.getTerms(), outstanding), bCons);
+		// determing the remaining vars of the terms
+		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
+		// run the evaluation
+		if(vars.length > 1) {
+			throw new IllegalArgumentException("Can not evaluate an ADD with 2 variables");
+		}
+		switch(vars[0]) {
+			case 0:
+				return BASIC.createTuple(BuiltinHelper.subtract(complete[2], complete[1]));
+			case 1:
+				return BASIC.createTuple(BuiltinHelper.subtract(complete[2], complete[0]));
+			case 2:
+				return BASIC.createTuple(BuiltinHelper.add(complete[0], complete[1]));
+			default:
+				throw new IllegalArgumentException("The variable must be at possition " + 
+						"0 to 2, but was on " + vars[0]);
+		}
 	}
 
-//	 TODO Remove this once you correct List<ITuple> evaluate(Collection<ITuple> t) in the IBuiltInAtom
-	public List<ITuple> evaluate(Collection<ITuple> t) {
+	public ITuple evaluate(ITuple tup, IVariable... vars) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }
