@@ -37,12 +37,12 @@ import org.deri.iris.api.terms.IVariable;
  * Defines a Builtin.
  * </p>
  * <p>
- * $Id: IBuiltInAtom.java,v 1.5 2007-05-07 13:23:08 poettler_ric Exp $
+ * $Id: IBuiltInAtom.java,v 1.6 2007-05-08 07:40:13 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public abstract interface IBuiltInAtom extends IAtom {
 
@@ -60,7 +60,10 @@ public abstract interface IBuiltInAtom extends IAtom {
 	 * The returned tuple contains the calculated substitutions for the
 	 * remaining variables (after replacing the variables with the passed in
 	 * constants) in the builtin in the order their variables
-	 * appear in the builtin. 
+	 * appear in the builtin. If there are no variables left to calculate
+	 * the builtin will check the correctness of the terms and return a
+	 * tuple containing all constants if it is correct, otherwise
+	 * <code>null</code>.
 	 * For example if you evaluate 
 	 * <code>4 + X = 9</code> you would get back <code>&lt;5&gt;</code>. 
 	 * The only difference are the binary builtins: For a binary builtin 
