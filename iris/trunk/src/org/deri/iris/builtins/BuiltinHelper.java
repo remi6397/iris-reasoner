@@ -48,11 +48,11 @@ import org.deri.iris.api.terms.concrete.IIntegerTerm;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.5 2007-05-08 07:31:37 poettler_ric Exp $
+ * $Id: BuiltinHelper.java,v 1.6 2007-05-08 13:57:00 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class BuiltinHelper {
 
@@ -139,6 +139,9 @@ public class BuiltinHelper {
 	public static boolean equal(final ITerm t0, final ITerm t1) {
 		if ((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
+		}
+		if ((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm)) {
+			return numbersEqual((INumericTerm) t0, (INumericTerm) t1);
 		}
 		return t0.equals(t1);
 	}
@@ -338,16 +341,11 @@ public class BuiltinHelper {
 			throw new NullPointerException("The tuple must not be null");
 		}
 		final ITerm[] ret = new ITerm[pos.length];
+		final ITerm[] in = t.toArray(new ITerm[t.size()]);
 		int idx = 0;
-		int i = 0;
-		for(final ITerm term : t) {
-			if(i == pos[idx]) {
-				ret[idx++] = term;
-				if(idx >= ret.length) { // if we have already all terms -> return
-					break;
-				}
-			}
-			i++;
+
+		for (final int i : pos) {
+			ret[idx++] = in[i];
 		}
 		return ret;
 	}
@@ -397,15 +395,21 @@ public class BuiltinHelper {
 			throw new IllegalArgumentException("The length must not be negative");
 		}
 		int[] res = new int[l - i.length];
-		int guess = 0;
-		int ipos = 0;
-		for(int j = 0; j < res.length; ) {
-			if(i[ipos] != guess) {
-				res[j++] = guess;
-			} else {
-				ipos++;
+		if (i.length == 0) { // dirty hack would like to use the List.removeAll() method...
+			for (int j = 0; j < res.length; j++) {
+				res[j] = j;
 			}
-			guess++;
+		} else {
+			int guess = 0;
+			int ipos = 0;
+			for(int j = 0; j < res.length; ) {
+				if(i[ipos] != guess) {
+					res[j++] = guess;
+				} else {
+					ipos++;
+				}
+				guess++;
+			}
 		}
 		return res;
 	}
@@ -440,15 +444,19 @@ public class BuiltinHelper {
 					idx0.length + " and " + t0.length);
 		}
 		final ITerm[] res = new ITerm[t0.length + t1.length];
-		int ipos = 0;
-		int pos0 = 0;
-		int pos1 = 0;
-		for(int i = 0; i < res.length; i++) {
-			if(idx0[ipos] == i) {
-				res[i] = t0[pos0++];
-				ipos++;
-			} else {
-				res[i] = t1[pos1++];
+		if (idx0.length == 0) {
+			System.arraycopy(t1, 0, res, 0, t1.length);
+		} else {
+			int ipos = 0;
+			int pos0 = 0;
+			int pos1 = 0;
+			for(int i = 0; i < res.length; i++) {
+				if(idx0[ipos] == i) {
+					res[i] = t0[pos0++];
+					ipos++;
+				} else {
+					res[i] = t1[pos1++];
+				}
 			}
 		}
 		return res;
