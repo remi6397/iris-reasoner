@@ -48,11 +48,11 @@ import org.deri.iris.api.terms.concrete.IIntegerTerm;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.4 2007-05-04 09:01:51 poettler_ric Exp $
+ * $Id: BuiltinHelper.java,v 1.5 2007-05-08 07:31:37 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class BuiltinHelper {
 
@@ -78,8 +78,7 @@ public class BuiltinHelper {
 		if ((n0 == null) || (n1 == null)) {
 			throw new NullPointerException("The numbers must not be null");
 		}
-		return Double.doubleToLongBits(getDouble(n0)) == Double
-				.doubleToLongBits(getDouble(n1));
+		return numbersCompare(n0, n1) == 0;
 	}
 
 	/**
@@ -103,6 +102,45 @@ public class BuiltinHelper {
 			throw new NullPointerException("The numbers must not be null");
 		}
 		return Double.compare(getDouble(n0), getDouble(n1));
+	}
+
+	/**
+	 * Compares two terms to each other. A value <code>&lt;0</code>, <code>0</code> or
+	 * <code>&gt;0</code> will be returned, if the first term is smaller,
+	 * equal or greater than the second one.
+	 * @param t0 the first term
+	 * @param t1 the second term
+	 * @return an Integer determining which one of the terms is bigger
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if the two terms couldn't be
+	 * compared
+	 */
+	public static int compare(final ITerm t0, final ITerm t1) {
+		if ((t0 == null) || (t1 == null)) {
+			throw new NullPointerException("The terms must not be null");
+		}
+		if ((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm)) {
+			return numbersCompare((INumericTerm) t0, (INumericTerm) t1);
+		} else if (t0.getClass().isAssignableFrom(t1.getClass())) {
+			return t0.compareTo(t1);
+		}
+		throw new IllegalArgumentException("Couldn't compare " + t0.getClass().getName() + 
+				" and " + t1.getClass().getName());
+	}
+
+	/**
+	 * Checks whether the values of two terms are the same.
+	 * @param t0 the first term
+	 * @param t1 the second term
+	 * @return <code>true</code> if the values are equal, otherwise
+	 * <code>false</code>
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 */
+	public static boolean equal(final ITerm t0, final ITerm t1) {
+		if ((t0 == null) || (t1 == null)) {
+			throw new NullPointerException("The terms must not be null");
+		}
+		return t0.equals(t1);
 	}
 
 	/**

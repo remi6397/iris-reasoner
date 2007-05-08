@@ -40,11 +40,11 @@ import org.deri.iris.api.terms.IVariable;
  * variable be left for computation, otherwise an exception will be thrown.
  * </p>
  * <p>
- * $Id: MultiplyBuiltin.java,v 1.5 2007-05-07 13:23:08 poettler_ric Exp $
+ * $Id: MultiplyBuiltin.java,v 1.6 2007-05-08 07:31:37 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class MultiplyBuiltin extends AbstractBuiltin {
 
@@ -84,8 +84,11 @@ public class MultiplyBuiltin extends AbstractBuiltin {
 		// determing the remaining vars of the terms
 		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
 		// run the evaluation
-		if(vars.length > 1) {
-			throw new IllegalArgumentException("Can not evaluate an ADD with 2 variables");
+		if (vars.length == 0) { // checking whether the result is correct
+			return BuiltinHelper.equal(complete[2], BuiltinHelper.multiply(complete[0], complete[1])) ? 
+				BASIC.createTuple(complete) : null;
+		} else if(vars.length > 1) {
+			throw new IllegalArgumentException("Can not evaluate an MULTIPLY with >2 variables");
 		}
 		switch(vars[0]) {
 			case 0:
