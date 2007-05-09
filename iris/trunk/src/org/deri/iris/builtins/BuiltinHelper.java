@@ -48,11 +48,11 @@ import org.deri.iris.api.terms.concrete.IIntegerTerm;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.6 2007-05-08 13:57:00 poettler_ric Exp $
+ * $Id: BuiltinHelper.java,v 1.7 2007-05-09 10:11:54 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class BuiltinHelper {
 
@@ -394,24 +394,18 @@ public class BuiltinHelper {
 		if(l < 0) {
 			throw new IllegalArgumentException("The length must not be negative");
 		}
-		int[] res = new int[l - i.length];
-		if (i.length == 0) { // dirty hack would like to use the List.removeAll() method...
-			for (int j = 0; j < res.length; j++) {
-				res[j] = j;
-			}
-		} else {
-			int guess = 0;
-			int ipos = 0;
-			for(int j = 0; j < res.length; ) {
-				if(i[ipos] != guess) {
-					res[j++] = guess;
-				} else {
-					ipos++;
-				}
-				guess++;
+		// TODO: this method needs a rewrite (get rid of this
+		// arraycopy)! WHY DON'T WE USE PERL!?!?!
+		int[] ret = new int[l - i.length];
+		int[] clone = new int[i.length];
+		System.arraycopy(i, 0, clone, 0, i.length);
+		Arrays.sort(clone);
+		for (int j = 0, pos = 0; pos < ret.length; j++) {
+			if (Arrays.binarySearch(clone, j) < 0) {
+				ret[pos++] = j;
 			}
 		}
-		return res;
+		return ret;
 	}
 
 	/**
@@ -443,23 +437,12 @@ public class BuiltinHelper {
 					"the first array must be equal, but was " + 
 					idx0.length + " and " + t0.length);
 		}
-		final ITerm[] res = new ITerm[t0.length + t1.length];
-		if (idx0.length == 0) {
-			System.arraycopy(t1, 0, res, 0, t1.length);
-		} else {
-			int ipos = 0;
-			int pos0 = 0;
-			int pos1 = 0;
-			for(int i = 0; i < res.length; i++) {
-				if(idx0[ipos] == i) {
-					res[i] = t0[pos0++];
-					ipos++;
-				} else {
-					res[i] = t1[pos1++];
-				}
-			}
+		final java.util.List<ITerm> res = new java.util.ArrayList<ITerm>(t0.length + t1.length);
+		res.addAll(Arrays.asList(t1));
+		for (int i = 0; i < idx0.length; i++) {
+			res.add(idx0[i], t0[i]);
 		}
-		return res;
+		return res.toArray(new ITerm[res.size()]);
 	}
 
 	/**
