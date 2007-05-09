@@ -163,23 +163,23 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 			c1 = j.getChildren().get(i);
 			if(! emptyRel){
 				if(c1.getType().equals(ComponentType.BUILTIN)){
-					r1 = evaluateBuiltin(c1, vars, r0);
+					r0 = evaluateBuiltin(c1, vars, r0);
 				}else{
 					r1 = evaluate(c1, p, aq);
+					if(c1.isPositive()){
+						jo = Factory.RELATION_OPERATION.createJoinSimpleOperator(
+								r0, r1, 
+								// TODO: get correct projection indexes!
+								MiscOps.getJoinIndexes(vars, c1.getVariables()), 
+								//j.getCondition(), pInds);
+								j.getCondition());
+					} else {
+						jo = Factory.RELATION_OPERATION.createJoinComplementOperator(
+								r0, r1, 
+								MiscOps.getJoinIndexes(vars, c1.getVariables()));
+					}
+					r0 = jo.join();
 				}
-				if(c1.isPositive()){
-					jo = Factory.RELATION_OPERATION.createJoinSimpleOperator(
-							r0, r1, 
-							// TODO: get correct projection indexes!
-							MiscOps.getJoinIndexes(vars, c1.getVariables()), 
-							//j.getCondition(), pInds);
-							j.getCondition());
-				} else {
-					jo = Factory.RELATION_OPERATION.createJoinComplementOperator(
-							r0, r1, 
-							MiscOps.getJoinIndexes(vars, c1.getVariables()));
-				}
-				r0 = jo.join();
 				if(r0.size() == 0) emptyRel = true;
 			}
 			if(c1 != null && c1.getVariables() != null && c1.isPositive()) 
@@ -226,8 +226,9 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 					"performed!");
 		}
 		IRelationDescriptor r = (IRelationDescriptor)c;
-		// TODO: If you don't use Positive property from RelationDescriptor, created in Rule2Relation, remove this!
-		//if (r.isPositive()) {
+		// TODO: If you don't use Positive property from RelationDescriptor, 
+		// created in Rule2Relation, remove this!
+		// if (r.isPositive()) {
 		IRelation rel = null;
 		if (aq != null && aq.get(r.getPredicate()) != null) {
 			// Return tuples from the last iteration only!
@@ -328,13 +329,16 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		if (c.getChildren().size() == 0) {
 			if (relVars == null || rel == null) {
 				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator(
-						con.getBuiltin(), con.getVariables(), RELATION.getRelation(con.getVariables().size()));
+						//con.getBuiltin(), con.getVariables(), RELATION.getRelation(con.getVariables().size()));
+						con.getBuiltin(), new ArrayList<IVariable>(0), RELATION.getRelation(0));
 			}else{
 				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator(con.getBuiltin(), relVars, rel);
 			}
 		}else{
 			throw new IllegalArgumentException("Nested built-ins are currently not supported!");
 		}
+		c.getVariables().clear();
+		c.addVariables(eval.getOutVars());
 		return eval.evaluate();
 	}
 }
