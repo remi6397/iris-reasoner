@@ -55,12 +55,21 @@ public class BuiltinEvaluator implements IBuiltinEvaluator{
 	
 	private List<IVariable> relVars = null;
 	
+	// TODO: remove this
 	private List<IVariable> inVras = null;
 	
+	private List<IVariable> outVras = null;
+	
 	/**
-	 * @param inVras
-	 * @param relVras
-	 * @param rel
+	 * <p>
+	 * First positive literals are evaluated and then result (a relation) 
+	 * with a list of attributes (variables) is used for the evaluation of
+	 * a built-in subgoal.
+	 * </p>
+	 * @param built-in A built-in subgoal to be evaluated. 
+	 * @param relVars  A list of attributes (variables). 	
+	 * @param rel	   A relation derived during the evaluation of positive 
+	 * literals. Serves as input for the evaluation of a built-in subgoal.
 	 */
 	BuiltinEvaluator(IBuiltInAtom builtin,
 			List<IVariable> relVars, IRelation rel) {
@@ -73,6 +82,7 @@ public class BuiltinEvaluator implements IBuiltinEvaluator{
 		this.relation0 = rel;
 		this.relVars = relVars;
 		this.inVras = getInVars();
+		this.outVras = getOVars();
 	}
 	
 	/**
@@ -101,19 +111,25 @@ public class BuiltinEvaluator implements IBuiltinEvaluator{
 	 * @see org.deri.iris.api.operations.relation#evaluate().
 	 */
 	public IRelation evaluate(){
-		IRelation resultRel = RELATION.getRelation(this.builtin.getTuple().getAllVariables().size());
-		ITuple t0 = null;
+		IRelation resultRel = RELATION.getRelation(this.relation0.getArity() + this.outVras.size());
+		ITuple t0, t1 = null;
 		ITuple tRes = null;
 		if(this.relation0.size() > 0){
 			Iterator<ITuple> it0 = this.relation0.iterator();
 			while(it0.hasNext()){
 				t0 = it0.next();
-				tRes = this.builtin.evaluate(getInTuple(t0), this.inVras.toArray(new IVariable[this.inVras.size()]));
-				if(tRes != null) resultRel.add(tRes);
+				tRes = BASIC.createTuple(t0.getArity() + this.outVras.size());
+				tRes.setTerms(0, t0.getTerms());
+				t1 = this.builtin.evaluate(getInTuple(t0));
+				if(t1 != null){
+					tRes.setTerms(t0.getArity(), t1.getTerms());
+					resultRel.add(tRes);
+				}
 			}
 		}else{
 			// e.g., add(3, 4, ?X)
-			tRes = this.builtin.evaluate(null, this.inVras.toArray(new IVariable[this.inVras.size()]));
+			//tRes = this.builtin.evaluate(null, this.inVras.toArray(new IVariable[this.inVras.size()]));
+			tRes = this.builtin.evaluate(this.builtin.getTuple());
 			resultRel.add(tRes);	
 		}
 		return resultRel;
@@ -122,21 +138,47 @@ public class BuiltinEvaluator implements IBuiltinEvaluator{
 	/**
 	 * <p>
 	 * Transforms/re-order an input tuple so to extract its relevant 
-	 * subset for evaluation of a given builtin.
+	 * subset for evaluation of a given builtin. For instance, if a built-in is: 
+	 * add(X,4,Y) and
+	 * relVars<X,Z,W> with a tuple <3,6,9> are given, then the transformed tuple
+	 * will be: <3,4,Y>.
 	 * </p>
 	 * @param tup	An input tuple. 
 	 * @return		A transformed tuple.
 	 */
 	private ITuple getInTuple(ITuple tup){
 		List<ITerm> termList = new ArrayList<ITerm>(this.inVras.size());
-		for(IVariable v : this.inVras){
-			termList.add(tup.getTerm(this.relVars.indexOf(v)));
+		int i = 0;
+		for(ITerm t : this.builtin.getTuple().getTerms()){
+			if(t.isGround()){
+				termList.add(t);
+			}else{
+				i = this.relVars.indexOf((IVariable)t);
+				if(i != -1){
+					termList.add(tup.getTerm(i));
+				}else{
+					termList.add(t);
+				}
+			}
 		}
 		return BASIC.createTuple(termList);
 	}
 	
 	/**
-	 * Defines builtin input variables.
+	 * @return	A list of output variables of a built-in.
+	 */
+	private List<IVariable> getOVars(){
+		List<IVariable> vars = new ArrayList<IVariable>();
+		for(IVariable v : this.builtin.getTuple().getAllVariables()){
+			if(! this.relVars.contains(v)){
+				vars.add(v);
+			}
+		}
+		return vars;
+	}
+	
+	/**
+	 * Defines builtin input variables of a built-in.
 	 * @return A list of builtin input variables.
 	 */
 	private List<IVariable> getInVars(){
@@ -147,5 +189,9 @@ public class BuiltinEvaluator implements IBuiltinEvaluator{
 			}
 		}
 		return inVras;
+	}
+	
+	public List<IVariable> getOutVars(){
+		return this.outVras;
 	}
 }
