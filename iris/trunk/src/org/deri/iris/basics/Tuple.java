@@ -86,10 +86,6 @@ public class Tuple implements ITuple{
 	 * 				arity of the tuple
 	 */
 	Tuple(int arity){
-		if (arity <= 0) {
-			throw new IllegalArgumentException("The argument must be " +
-					"a positive number greater than 0.");
-		}
 		this.arity = arity;
 		this.terms = new ArrayList<ITerm>(arity);
 	}
