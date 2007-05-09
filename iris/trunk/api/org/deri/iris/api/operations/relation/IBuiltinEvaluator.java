@@ -25,7 +25,10 @@
  */
 package org.deri.iris.api.operations.relation;
 
+import java.util.List;
+
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.terms.IVariable;
 
 /**
  * <p>
@@ -46,4 +49,20 @@ public interface IBuiltinEvaluator {
 	 * @return	A relation which contains result after the evaluation of the built-in.
 	 */
 	public IRelation evaluate();
+	
+	/**
+	 * <p>
+	 * Returns a list of out variables of the built-in. For instance an out variable of 
+	 * the "add" buuilt-in for a rule:
+	 * </p>
+	 * <p>
+	 * r(X,Z) :- s(X), add(X, 4, Z).
+	 * </p>
+	 * <p>
+	 * would be Z.
+	 * </p>
+	 * 
+	 * @return	A list of out variables.
+	 */
+	public List<IVariable> getOutVars();
 }
