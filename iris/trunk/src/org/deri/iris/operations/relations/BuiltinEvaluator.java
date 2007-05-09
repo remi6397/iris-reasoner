@@ -55,12 +55,12 @@ public class BuiltinEvaluator implements IBuiltinEvaluator{
 	
 	private List<IVariable> relVars = null;
 	
-	// TODO: remove this
-	private List<IVariable> inVras = null;
-	
 	private List<IVariable> outVras = null;
 	
 	/**
+	 * <p>
+	 * Constructs a BuiltinEvaluator.
+	 * </p>
 	 * <p>
 	 * First positive literals are evaluated and then result (a relation) 
 	 * with a list of attributes (variables) is used for the evaluation of
@@ -81,34 +81,18 @@ public class BuiltinEvaluator implements IBuiltinEvaluator{
 		this.builtin = builtin;
 		this.relation0 = rel;
 		this.relVars = relVars;
-		this.inVras = getInVars();
 		this.outVras = getOVars();
 	}
 	
-	/**
+	/* 
 	 * <p>
-	 * TODO: Correct this so that the loop does not go through each tuple of 
-	 * the input relation relation0. Depending on a particular built-in, 
-	 * the halting condition may be fulfilled much before the end of the 
-	 * relation0 (e.g., add(5, 2, ?X). 
-	 * </p>
-	 * <p>
-	 * Apart from this, the add built-in 
-	 * in this case, would have only one tuple as a result, thus a result 
-	 * relation containing this tuple should be the outer relation in the 
-	 * join evaluation loop. 
-	 * </p>
-	 * <p>
-	 * Also a projection node above a join of two or 
-	 * more relations and built-ins could be integrated here, avoiding an
-	 * explicite projection after such a join. 
-	 * </p>
-	 * <p>
-	 * Try to delete the input relation
-	 * rel from memory, as it just waits the memory space. 
+	 * The built-in evaluation is implemented w.r.t some universe U, such that 
+	 * U includes at least the tuples we got from the evaluation of positive 
+	 * literals. Relation relation0 serves to define the universe U.
 	 * </p>
 	 * 
-	 * @see org.deri.iris.api.operations.relation#evaluate().
+	 * (non-Javadoc)
+	 * @see org.deri.iris.api.operations.relation.IBuiltinEvaluator#evaluate()
 	 */
 	public IRelation evaluate(){
 		IRelation resultRel = RELATION.getRelation(this.relation0.getArity() + this.outVras.size());
@@ -118,17 +102,17 @@ public class BuiltinEvaluator implements IBuiltinEvaluator{
 			Iterator<ITuple> it0 = this.relation0.iterator();
 			while(it0.hasNext()){
 				t0 = it0.next();
-				tRes = BASIC.createTuple(t0.getArity() + this.outVras.size());
-				tRes.setTerms(0, t0.getTerms());
 				t1 = this.builtin.evaluate(getInTuple(t0));
 				if(t1 != null){
-					tRes.setTerms(t0.getArity(), t1.getTerms());
-					resultRel.add(tRes);
+					tRes = BASIC.createTuple(t0.getArity() + this.outVras.size());
+					tRes.setTerms(0, t0.getTerms());
+					if(this.outVras.size()>0) 
+						tRes.setTerms(t0.getArity(), t1.getTerms());
+					resultRel.add(tRes);	
 				}
 			}
 		}else{
 			// e.g., add(3, 4, ?X)
-			//tRes = this.builtin.evaluate(null, this.inVras.toArray(new IVariable[this.inVras.size()]));
 			tRes = this.builtin.evaluate(this.builtin.getTuple());
 			resultRel.add(tRes);	
 		}
@@ -147,7 +131,7 @@ public class BuiltinEvaluator implements IBuiltinEvaluator{
 	 * @return		A transformed tuple.
 	 */
 	private ITuple getInTuple(ITuple tup){
-		List<ITerm> termList = new ArrayList<ITerm>(this.inVras.size());
+		List<ITerm> termList = new ArrayList<ITerm>();
 		int i = 0;
 		for(ITerm t : this.builtin.getTuple().getTerms()){
 			if(t.isGround()){
@@ -178,19 +162,11 @@ public class BuiltinEvaluator implements IBuiltinEvaluator{
 	}
 	
 	/**
-	 * Defines builtin input variables of a built-in.
-	 * @return A list of builtin input variables.
+	 * <p>
+	 * Returns output variables of a built-in.
+	 * </p>
+	 * @return A list of builtin output variables.
 	 */
-	private List<IVariable> getInVars(){
-		List<IVariable> inVras = new ArrayList<IVariable>();
-		for(IVariable v : this.builtin.getTuple().getAllVariables()){
-			if(this.relVars.contains(v)){
-				inVras.add(v);
-			}
-		}
-		return inVras;
-	}
-	
 	public List<IVariable> getOutVars(){
 		return this.outVras;
 	}
