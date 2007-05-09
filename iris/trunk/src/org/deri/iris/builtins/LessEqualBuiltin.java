@@ -42,11 +42,11 @@ import org.deri.iris.factory.Factory;
  * equal.
  * </p>
  * <p>
- * $Id: LessEqualBuiltin.java,v 1.5 2007-05-07 13:23:08 poettler_ric Exp $
+ * $Id: LessEqualBuiltin.java,v 1.6 2007-05-09 13:55:37 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class LessEqualBuiltin extends AbstractBuiltin {
 
@@ -90,14 +90,8 @@ public class LessEqualBuiltin extends AbstractBuiltin {
 
 		// run the evaluation
 		if (vars.length == 0) {
-			if ((complete[0] instanceof INumericTerm) && (complete[1] instanceof INumericTerm)) {
-				return BuiltinHelper.numbersCompare((INumericTerm) complete[0], (INumericTerm) complete[1]) <= 0 ? 
-					BASIC.createTuple(complete) : null;
-			} else if (complete[0].getClass().isAssignableFrom(complete[1].getClass())) {
-				return complete[0].compareTo(complete[1]) <= 0 ? BASIC.createTuple(complete) : null;
-			}
-			throw new IllegalArgumentException("Couldn't compare " + complete[0].getClass().getName() + 
-				" and " + complete[1].getClass().getName());
+			return BuiltinHelper.compare(complete[0], complete[1]) <= 0 ? 
+				BuiltinHelper.EMPTY_TUPLE : null;
 		}
 		throw new IllegalArgumentException("Can not evaluate a LESSEQUAL with any variables");
 	}
