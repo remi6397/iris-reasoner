@@ -25,7 +25,6 @@
  */
 package org.deri.iris.builtins;
 
-import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
@@ -48,13 +47,18 @@ import org.deri.iris.api.terms.concrete.IIntegerTerm;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.7 2007-05-09 10:11:54 poettler_ric Exp $
+ * $Id: BuiltinHelper.java,v 1.8 2007-05-09 13:53:08 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class BuiltinHelper {
+
+	/** Empty tuple (with arity 0) to avoid some timeconsuming creation of
+	 * tuples. */
+	public static final ITuple EMPTY_TUPLE = 
+		org.deri.iris.factory.Factory.BASIC.createTuple(0);
 
 	private BuiltinHelper() {
 		// prevent subclassing
@@ -507,6 +511,6 @@ public class BuiltinHelper {
 						var + " in " + b);
 			}
 		}
-		return BASIC.createTuple(ret);
+		return org.deri.iris.factory.Factory.BASIC.createTuple(ret);
 	}
 }
