@@ -41,11 +41,11 @@ import org.deri.iris.factory.Factory;
  * Builtin to compare two terms for unequality.
  * </p>
  * <p>
- * $Id: UnEqualBuiltin.java,v 1.6 2007-05-09 13:55:37 poettler_ric Exp $
+ * $Id: UnEqualBuiltin.java,v 1.7 2007-05-09 14:19:06 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class UnEqualBuiltin extends AbstractBuiltin {
 
@@ -89,7 +89,7 @@ public class UnEqualBuiltin extends AbstractBuiltin {
 
 		// run the evaluation
 		if (vars.length == 0) {
-			return !BuiltinHelper.equals(complete[0], complete[1]) ?
+			return !BuiltinHelper.equal(complete[0], complete[1]) ?
 				BuiltinHelper.EMPTY_TUPLE : null;
 		}
 		throw new IllegalArgumentException("Can not evaluate an UNEQUAL with any variables");
