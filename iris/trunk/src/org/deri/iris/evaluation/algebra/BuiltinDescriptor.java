@@ -25,13 +25,8 @@
  */
 package org.deri.iris.evaluation.algebra;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.evaluation.algebra.IBuiltinDescriptor;
-import org.deri.iris.api.evaluation.algebra.IComponent;
-import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.seminaive.Complementor;
 
 /**
@@ -49,7 +44,7 @@ public class BuiltinDescriptor extends Component implements IBuiltinDescriptor{
 	boolean positive = true;
 	
 	BuiltinDescriptor (boolean isPositive, IBuiltInAtom builtin) {
-		super(ComponentType.BUILTIN);
+		super(ComponentType.BUILTIN, builtin.getTuple().getAllVariables());
 		
 		if (builtin == null) {
 			throw new IllegalArgumentException("BuiltinDescriptor input parameters must not be null");
@@ -62,12 +57,6 @@ public class BuiltinDescriptor extends Component implements IBuiltinDescriptor{
 		return this.builtin;
 	}
 
-	public List<IVariable> getVariables() {
-		List l = new LinkedList();
-		l.addAll(this.builtin.getTuple().getAllVariables());
-		return l;
-	}
-	
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(ComponentType.BUILTIN + 
