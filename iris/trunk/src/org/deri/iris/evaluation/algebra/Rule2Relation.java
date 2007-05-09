@@ -117,7 +117,6 @@ public class Rule2Relation {
 			}*/
 			/** Rectify rules */
 			r = MiscOps.rectify(rule);
-			//r = rule;
 			p = r.getHeadLiteral(0).getPredicate();
 			m = new HashMap<ILiteral, List<IVariable>>();
 			oVars = new HashSet<IVariable>();
@@ -485,7 +484,6 @@ public class Rule2Relation {
 	
 	private IComponent translateBuiltInAtom(final ILiteral l) {
 		IBuiltinDescriptor le = ALGEBRA.createBuiltinDescriptor(l.isPositive(), (IBuiltInAtom) l.getAtom());
-		le.addVariables(l.getTuple().getAllVariables());
 		return le;
 	}
 
