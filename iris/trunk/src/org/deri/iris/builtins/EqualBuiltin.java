@@ -40,13 +40,13 @@ import org.deri.iris.api.terms.IVariable;
  * Builtin to compare two terms for equality.
  * </p>
  * <p>
- * $Id: EqualBuiltin.java,v 1.7 2007-05-07 13:23:08 poettler_ric Exp $
+ * $Id: EqualBuiltin.java,v 1.8 2007-05-09 13:55:37 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class EqualBuiltin extends AbstractBuiltin {
 
@@ -90,11 +90,8 @@ public class EqualBuiltin extends AbstractBuiltin {
 
 		// run the evaluation
 		if (vars.length == 0) { // if there are no variables -> check for equality
-			if ((complete[0] instanceof INumericTerm) && (complete[1] instanceof INumericTerm)) {
-				return BuiltinHelper.numbersEqual((INumericTerm) complete[0], (INumericTerm) complete[1]) ? 
-					BASIC.createTuple(complete) : null;
-			}
-			return complete[0].equals(complete[1]) ? BASIC.createTuple(complete) : null;
+			return BuiltinHelper.equal(complete[0], complete[1]) ? 
+				BuiltinHelper.EMPTY_TUPLE : null;
 		} else if(vars.length > 1) { // we can only handle one variable
 			throw new IllegalArgumentException("Can not evaluate an EQUAL with 2 variables");
 		}
