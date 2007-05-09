@@ -54,9 +54,7 @@ import org.deri.iris.api.operations.relation.IProjection;
 import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.operations.relation.IUnion;
 import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.builtins.EqualBuiltin;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.relations.MiscOps;
 
@@ -171,7 +169,6 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 								r0, r1, 
 								// TODO: get correct projection indexes!
 								MiscOps.getJoinIndexes(vars, c1.getVariables()), 
-								//j.getCondition(), pInds);
 								j.getCondition());
 					} else {
 						jo = Factory.RELATION_OPERATION.createJoinComplementOperator(
@@ -187,7 +184,6 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		}
 		j.getVariables().clear();
 		j.addVariables(vars);
-		
 		return r0;
 	}
 	
@@ -306,30 +302,9 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		
 		IBuiltinDescriptor con = (IBuiltinDescriptor)c;
 		IBuiltinEvaluator eval = null;
-		
-		// case:  p(U,V,W) :- r(V,W), EQ(U, 'a'), r doesn't contain the variable U => U = 'a'. 
-		if(con.getBuiltin() instanceof EqualBuiltin && 
-				! relVars.containsAll(con.getBuiltin().getTuple().getVariables())){
-			ITerm constant = null, tmp = null;
-			IVariable var = null;
-			tmp = con.getBuiltin().getTuple().getTerm(0);
-			if(tmp.isGround()){
-				var = (IVariable)con.getBuiltin().getTuple().getTerm(1);
-			}else{
-				tmp = con.getBuiltin().getTuple().getTerm(1);
-				var = (IVariable)con.getBuiltin().getTuple().getTerm(0);
-			}
-			if(tmp.isGround()){
-				constant = tmp;
-				IRelation constRel = RELATION.getRelation(1);
-				constRel.add(BASIC.createTuple(constant));
-				return constRel;	
-			}
-		}
 		if (c.getChildren().size() == 0) {
 			if (relVars == null || rel == null) {
 				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator(
-						//con.getBuiltin(), con.getVariables(), RELATION.getRelation(con.getVariables().size()));
 						con.getBuiltin(), new ArrayList<IVariable>(0), RELATION.getRelation(0));
 			}else{
 				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator(con.getBuiltin(), relVars, rel);
