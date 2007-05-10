@@ -29,11 +29,7 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
-import java.util.List;
-import java.util.LinkedList;
-
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.ITerm;
 
 import junit.framework.Test;
@@ -45,11 +41,11 @@ import junit.framework.TestSuite;
  * Tests for the {@code SubtractBuiltin}.
  * </p>
  * <p>
- * $Id: SubtractBuiltinTest.java,v 1.3 2007-05-10 07:01:18 poettler_ric Exp $
+ * $Id: SubtractBuiltinTest.java,v 1.4 2007-05-10 09:02:29 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class SubtractBuiltinTest extends TestCase {
 
@@ -62,18 +58,52 @@ public class SubtractBuiltinTest extends TestCase {
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
 		final ITerm Z = TERM.createVariable("Z");
-		final ITerm T_4 = CONCRETE.createInteger(4);
-		final ITerm T_65 = CONCRETE.createFloat(6.5f);
+		final ITerm T_11 = CONCRETE.createInteger(11);
+		final ITerm T_5 = CONCRETE.createInteger(5);
+		final ITerm T_6 = CONCRETE.createInteger(6);
 
-		// X - 4 = Y
-		final SubtractBuiltin a_x4y = new SubtractBuiltin(X, T_4, Y);
-		assertEquals(BASIC.createTuple(CONCRETE.createInteger(2)), a_x4y.evaluate(BASIC.createTuple(CONCRETE.createInteger(6), Y, X)));
-		assertEquals(BASIC.createTuple(CONCRETE.createInteger(12)), a_x4y.evaluate(BASIC.createTuple(CONCRETE.createInteger(16), Y, X)));
-		assertEquals(BASIC.createTuple(CONCRETE.createInteger(10)), a_x4y.evaluate(BASIC.createTuple(X, Y, CONCRETE.createInteger(6))));
-		assertEquals(BASIC.createTuple(CONCRETE.createInteger(20)), a_x4y.evaluate(BASIC.createTuple(X,Y, CONCRETE.createInteger(16))));
-		// X - Y = 6.5
-		final SubtractBuiltin a_xy65 = new SubtractBuiltin(X, Y, T_65);
+		// X - 5 = 6
+		final SubtractBuiltin b_x56 = new SubtractBuiltin(X, T_5, T_6);
+		assertEquals(BASIC.createTuple(T_11), b_x56.evaluate(BASIC.createTuple(X, X, X)));
+		// 11 - X = 6
+		final SubtractBuiltin b_11x6 = new SubtractBuiltin(T_11, X, T_6);
+		assertEquals(BASIC.createTuple(T_5), b_11x6.evaluate(BASIC.createTuple(X, X, X)));
+		// 11 - 5 = X
+		final SubtractBuiltin b_115x = new SubtractBuiltin(T_11, T_5, X);
+		assertEquals(BASIC.createTuple(T_6), b_115x.evaluate(BASIC.createTuple(X, X, X)));
+		// 11 - X = Y
+		final SubtractBuiltin b_11xy = new SubtractBuiltin(T_11, X, Y);
+		assertEquals(BASIC.createTuple(T_5), b_11xy.evaluate(BASIC.createTuple(X, X, T_6)));
+		assertEquals(BASIC.createTuple(T_6), b_11xy.evaluate(BASIC.createTuple(X, T_5, X)));
+		// X - 5 = Y
+		final SubtractBuiltin b_x5y = new SubtractBuiltin(X, T_5, Y);
+		assertEquals(BASIC.createTuple(T_11), b_x5y.evaluate(BASIC.createTuple(X, X, T_6)));
+		assertEquals(BASIC.createTuple(T_6), b_x5y.evaluate(BASIC.createTuple(T_11, X, X)));
+		// X - Y = 6
+		final SubtractBuiltin b_xy6 = new SubtractBuiltin(X, Y, T_6);
+		assertEquals(BASIC.createTuple(T_11), b_xy6.evaluate(BASIC.createTuple(X, T_5, X)));
+		assertEquals(BASIC.createTuple(T_5), b_xy6.evaluate(BASIC.createTuple(T_11, X, X)));
 		// X - Y = Z
-		final SubtractBuiltin a_xyz = new SubtractBuiltin(X, Y, Z);
+		final SubtractBuiltin b_xyz = new SubtractBuiltin(X, Y, Z);
+		assertEquals(BASIC.createTuple(T_11), b_xyz.evaluate(BASIC.createTuple(X, T_5, T_6)));
+		assertEquals(BASIC.createTuple(T_5), b_xyz.evaluate(BASIC.createTuple(T_11, X, T_6)));
+		assertEquals(BASIC.createTuple(T_6), b_xyz.evaluate(BASIC.createTuple(T_11, T_5, X)));
+
+		// test the checking for correctness
+		assertNotNull(b_x56.evaluate(BASIC.createTuple(T_11, T_5, T_6)));
+		assertNotNull(b_11x6.evaluate(BASIC.createTuple(T_11, T_5, T_6)));
+		assertNotNull(b_115x.evaluate(BASIC.createTuple(T_11, T_5, T_6)));
+		assertNotNull(b_11xy.evaluate(BASIC.createTuple(T_11, T_5, T_6)));
+		assertNotNull(b_x5y.evaluate(BASIC.createTuple(T_11, T_5, T_6)));
+		assertNotNull(b_xy6.evaluate(BASIC.createTuple(T_11, T_5, T_6)));
+		assertNotNull(b_xyz.evaluate(BASIC.createTuple(T_11, T_5, T_6)));
+
+		assertNull(b_x56.evaluate(BASIC.createTuple(T_5, T_6, T_11)));
+		assertNull(b_11x6.evaluate(BASIC.createTuple(T_5, T_6, T_11)));
+		assertNull(b_115x.evaluate(BASIC.createTuple(T_5, T_6, T_11)));
+		assertNull(b_11xy.evaluate(BASIC.createTuple(T_5, T_6, T_11)));
+		assertNull(b_x5y.evaluate(BASIC.createTuple(T_5, T_6, T_11)));
+		assertNull(b_xy6.evaluate(BASIC.createTuple(T_5, T_6, T_11)));
+		assertNull(b_xyz.evaluate(BASIC.createTuple(T_5, T_6, T_11)));
 	}
 }
