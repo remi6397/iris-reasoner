@@ -47,11 +47,11 @@ import org.deri.iris.api.terms.concrete.IIntegerTerm;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.8 2007-05-09 13:53:08 poettler_ric Exp $
+ * $Id: BuiltinHelper.java,v 1.9 2007-05-10 14:38:55 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class BuiltinHelper {
 
@@ -336,6 +336,8 @@ public class BuiltinHelper {
 	 * @return the retrieved terms
 	 * @throws NullPointerException if the collection is <code>null</code>
 	 * @throws NullPointerException if the position array is <code>null</code>
+	 * @throws IllegalArgumentException if ther are more terms requested,
+	 * than given (pos.length &gt; t.size())
 	 */
 	public static ITerm[] getIndexes(final Collection<ITerm> t, final int[] pos) {
 		if(pos == null) {
@@ -343,6 +345,11 @@ public class BuiltinHelper {
 		}
 		if(t == null) {
 			throw new NullPointerException("The tuple must not be null");
+		}
+		if (pos.length > t.size()) {
+			throw new IllegalArgumentException("There are " + pos.length + " <" + 
+					Arrays.asList(pos) + "> terms requested, but only " + t.size() + 
+					" <" + t + "> terms given");
 		}
 		final ITerm[] ret = new ITerm[pos.length];
 		final ITerm[] in = t.toArray(new ITerm[t.size()]);
@@ -441,7 +448,7 @@ public class BuiltinHelper {
 					"the first array must be equal, but was " + 
 					idx0.length + " and " + t0.length);
 		}
-		final java.util.List<ITerm> res = new java.util.ArrayList<ITerm>(t0.length + t1.length);
+		final java.util.List<ITerm> res = new java.util.LinkedList<ITerm>();
 		res.addAll(Arrays.asList(t1));
 		for (int i = 0; i < idx0.length; i++) {
 			res.add(idx0[i], t0[i]);
