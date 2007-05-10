@@ -27,19 +27,18 @@ package org.deri.iris.builtins;
 
 import static org.deri.iris.builtins.BuiltinHelper.add;
 import static org.deri.iris.builtins.BuiltinHelper.divide;
+import static org.deri.iris.builtins.BuiltinHelper.equal;
 import static org.deri.iris.builtins.BuiltinHelper.multiply;
 import static org.deri.iris.builtins.BuiltinHelper.subtract;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 
 /**
  * <p>
@@ -47,10 +46,10 @@ import org.deri.iris.api.terms.ITerm;
  * value, the second is the celsius value.
  * </p>
  * <p>
- * $Id: FahrenheitToCelsiusBuiltin.java,v 1.1 2007-04-06 08:51:16 poettler_ric Exp $
+ * $Id: FahrenheitToCelsiusBuiltin.java,v 1.2 2007-05-10 09:04:20 poettler_ric Exp $
  * </p>
- * @version $Revision: 1.1 $
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision: 1.2 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
  */
 public class FahrenheitToCelsiusBuiltin extends AbstractBuiltin {
 
@@ -75,42 +74,46 @@ public class FahrenheitToCelsiusBuiltin extends AbstractBuiltin {
 		super(PREDICATE, t);
 	}
 
-	public List<ITuple> evaluate(final Collection<ITuple> c) {
+	public ITuple evaluate(final ITuple c) {
 		if (c == null) {
 			throw new NullPointerException("The collection of terms must not be null");
 		}
-		final List<ITuple> res = new LinkedList<ITuple>();
-		// determines all positions of this builtin which should
-		// be computed
+		// determines all positions of this builtin which should be computed
 		int[] outstanding = BuiltinHelper.determineUnground(getTuple().getTerms());
 		// getting the constants of this builtin
 		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple().getTerms(), 
 				BuiltinHelper.complement(outstanding, getTuple().getArity()));
-		for (final ITuple t : c) {
-			// concat the terms
-			final ITerm[] complete = BuiltinHelper.concat(outstanding, 
-					BuiltinHelper.getIndexes(t.getTerms(), outstanding), bCons);
-			// determine the messing term positions
-			final int[] missing = BuiltinHelper.determineUnground(Arrays.asList(complete));
-			// compute the term positions
-			if (missing.length > 1) {
-				throw new IllegalArgumentException("Only one variable is allowed, but was: " + 
-						missing.length + " " + Arrays.toString(complete));
-			}
-			if (missing[0] == 0) { // fahrenheit are requested
-				complete[0] = add(divide(multiply(complete[1], t9), t5), t32);
-			} else if (missing[0] == 1) { // celsius are requested
-				complete[1] = divide(multiply(subtract(complete[0], t32), t5), t9);
-			} else {
+
+		// concat the terms
+		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
+				BuiltinHelper.getIndexes(c.getTerms(), outstanding), bCons);
+		// determine the messing term positions
+		final int[] missing = BuiltinHelper.determineUnground(Arrays.asList(complete));
+		// run the evaluation
+		if (missing.length == 0) { // check the validity of the constants
+			return equal(complete[1], divide(multiply(subtract(complete[0], t32), t5), t9)) ?
+				BuiltinHelper.EMPTY_TUPLE : null;
+		} else if (missing.length > 1) { // we are only able to calculate one missing position
+			throw new IllegalArgumentException("Only one variable is allowed, but was: " + 
+					missing.length + " " + Arrays.toString(complete));
+		}
+		switch (missing[0]) {
+			case 0: // fahrenheit are requested
+				return BASIC.createTuple(add(divide(multiply(complete[1], t9), t5), t32));
+			case 1: // celsius are requested
+				return BASIC.createTuple(divide(multiply(subtract(complete[0], t32), t5), t9));
+			default:
 				throw new IllegalArgumentException("This builtin only has 2 positions, but " + 
 						missing[0] + " was requested");
-			}
-			res.add(BASIC.createTuple(complete));
 		}
-		return res;
 	}
 
 	public static IPredicate getBuiltinPredicate() {
 		return PREDICATE;
+	}
+
+	public ITuple evaluate(ITuple tup, IVariable... vars) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
