@@ -40,11 +40,11 @@ import org.deri.iris.api.terms.IVariable;
  * variable be left for computation, otherwise an exception will be thrown.
  * </p>
  * <p>
- * $Id: SubtractBuiltin.java,v 1.7 2007-05-09 13:55:37 poettler_ric Exp $
+ * $Id: SubtractBuiltin.java,v 1.8 2007-05-10 15:58:01 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class SubtractBuiltin extends AbstractBuiltin {
 
@@ -65,7 +65,7 @@ public class SubtractBuiltin extends AbstractBuiltin {
 	 *             if one of the terms is {@code null}
 	 */
 	SubtractBuiltin(final ITerm t0, final ITerm t1, final ITerm t2) {
-		super(PREDICATE, 3, t0, t1, t2);
+		super(PREDICATE, t0, t1, t2);
 	}
 
 	public ITuple evaluate(final ITuple c) {
@@ -101,10 +101,5 @@ public class SubtractBuiltin extends AbstractBuiltin {
 				throw new IllegalArgumentException("The variable must be at possition " + 
 						"0 to 2, but was on " + vars[0]);
 		}
-	}
-
-	public ITuple evaluate(ITuple tup, IVariable... vars) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

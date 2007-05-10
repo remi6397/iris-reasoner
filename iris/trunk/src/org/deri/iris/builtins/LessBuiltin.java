@@ -45,13 +45,13 @@ import org.deri.iris.factory.Factory;
  * IntegerTerm data type.
  * </p>
  * <p>
- * $Id: LessBuiltin.java,v 1.6 2007-05-09 13:55:37 poettler_ric Exp $
+ * $Id: LessBuiltin.java,v 1.7 2007-05-10 15:58:01 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class LessBuiltin extends AbstractBuiltin {
 
@@ -99,10 +99,5 @@ public class LessBuiltin extends AbstractBuiltin {
 				BuiltinHelper.EMPTY_TUPLE : null;
 		}
 		throw new IllegalArgumentException("Can not evaluate a LESS with any variables");
-	}
-
-	public ITuple evaluate(ITuple tup, IVariable... vars) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

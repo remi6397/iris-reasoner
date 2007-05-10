@@ -31,26 +31,19 @@ import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltInAtom;
-import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.factory.Factory;
 
 /**
  * <p>
- * Serves as skeleton implementation for builtins.
- * </p>
+ * Serves as skeleton implementation for builtins. If you use this class as
+ * superclass, you only have only to implement the evaluate method.
  * <p>
- * To successfully subclass this class simply implement the evaluate method. If
- * needed the isEvaluable method should be overwritten, too. See the method
- * documentation for it's default behaviour.
- * </p>
- * <p>
- * $Id: AbstractBuiltin.java,v 1.7 2007-04-10 11:10:13 poettler_ric Exp $
+ * $Id: AbstractBuiltin.java,v 1.8 2007-05-10 15:58:01 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.7 $
- * @date $Date: 2007-04-10 11:10:13 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.8 $
  */
 public abstract class AbstractBuiltin implements IBuiltInAtom {
 
@@ -75,40 +68,6 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 	 *             doesn't match
 	 */
 	protected AbstractBuiltin(final IPredicate p, final ITerm... t) {
-		this(p, p.getArity(), t);
-	}
-
-	/**
-	 * <p>
-	 * Constructs the builtin. More precisely it constructs the inner atom. The
-	 * number of terms submitted to this constructor must match the arity of the
-	 * predicate.
-	 * </p>
-	 * <p>
-	 * The necessary field is used to define the minimal amount of initially
-	 * submitted terms to successfully evaluate the builtin. An example usage
-	 * could be a term which computes a result and stores it in an additional
-	 * field, which doesn't need to be submitted while the construction of the
-	 * term (e.g. add(x, y, z) computes x + y and stores the result in z, but
-	 * only x and y need to be submitted for the construction).
-	 * </p>
-	 * 
-	 * @param p
-	 *            the special predicate for this builtin
-	 * @param necessary
-	 *            the amount of necessary terms for this builtin
-	 * @param t
-	 *            the terms defining the values and variables for this builtin
-	 * @throws NullPointerException
-	 *             if the perdicate or the terms is {@code null}
-	 * @throws NullPointerException
-	 *             if the terms contain {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the length of the terms and the arity of the perdicate
-	 *             doesn't match
-	 */
-	protected AbstractBuiltin(final IPredicate p, final int necessary,
-			final ITerm... t) {
 		if ((p == null) || (t == null)) {
 			throw new NullPointerException(
 					"The predicate and the terms must not be null");
@@ -116,50 +75,11 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 		if (Arrays.asList(t).contains(null)) {
 			throw new NullPointerException("The terms must not contain null");
 		}
-		if (necessary > p.getArity()) {
-			throw new IllegalArgumentException("The amount of necessary ("
-					+ necessary + ") terms must not be bigger "
-					+ "than the arity of the predicate (" + p.getArity() + ")");
+		if (t.length != p.getArity()) {
+			throw new IllegalArgumentException("The amount of terms <" + t.length + 
+					"> must match the arity of the predicate <" + p.getArity() + ">");
 		}
-		if ((necessary >= 0) && (t.length < necessary)) {
-			throw new IllegalArgumentException("There where " + necessary
-					+ " terms required, but only " + t.length + " terms given");
-		} else if ((necessary < 0) && (t.length != p.getArity())) {
-			throw new IllegalArgumentException(
-					"The length of the terms and the arity of the perdicate "
-							+ "must match. Was " + p.getArity() + " but was "
-							+ t.length);
-		}
-		final ITuple tup = Factory.BASIC.createTuple(p.getArity());
-		tup.setTerms(Arrays.asList(t));
-		this.a = Factory.BASIC.createAtom(p, tup);
-	}
-
-	/**
-	 * <p>
-	 * Determines whether the builtin is evaluable.
-	 * </p>
-	 * <p>
-	 * First this method determines whether the first and the second term is
-	 * ground. If both were not ground, true will be returned. If they are
-	 * ground, <code>true</code> will be returned, if they are both
-	 * <code>INumericTerm</code>s or their classes match.
-	 * </p>
-	 * 
-	 * @return <code>true</code> if it's evaluable, <code>false</code>, if
-	 *         not
-	 */
-	public boolean isEvaluable() {
-		if (getTerm(0).isGround() && getTerm(1).isGround()) {
-			if ((getTerm(0) instanceof INumericTerm)
-					&& (getTerm(1) instanceof INumericTerm)) {
-				return true;
-			} else if (getTerm(0).getClass().equals(getTerm(1).getClass())) {
-				return true;
-			}
-			return false;
-		}
-		return true;
+		this.a = Factory.BASIC.createAtom(p, Factory.BASIC.createTuple(t));
 	}
 
 	public IPredicate getPredicate() {
@@ -176,47 +96,6 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 
 	public int compareTo(Object o) {
 		return a.compareTo(o);
-	}
-
-	/**
-	 * Returns the term at the given position.
-	 * 
-	 * @param i
-	 *            the index of the term (starts at 0)
-	 * @return the term
-	 * @throws IndexOutOfBoundsException
-	 *             if i is to small, or too big (bigger or equals to the arity
-	 *             of the atom)
-	 * @see #setTerm(int, ITerm)
-	 */
-	protected ITerm getTerm(final int i) {
-		if ((i < 0) || (i >= getTermsLength())) {
-			throw new IndexOutOfBoundsException(
-					"The index must be between 0 and " + getTermsLength()
-							+ ", but was " + i);
-		}
-		return a.getTuple().getTerm(i);
-	}
-
-	/**
-	 * Sets the term at the given position.
-	 * 
-	 * @param i
-	 *            the position of the term (starts at 0)
-	 * @param t
-	 *            the term
-	 * @throws IndexOutOfBoundsException
-	 *             if i is to small, or too big (bigger or equals to the arity
-	 *             of the atom)
-	 * @see #getTerm(int)
-	 */
-	protected void setTerm(final int i, final ITerm t) {
-		if ((i < 0) || (i >= getTermsLength())) {
-			throw new IndexOutOfBoundsException(
-					"The index must be between 0 and " + getTermsLength()
-							+ ", but was " + i);
-		}
-		a.getTuple().setTerm(i, t);
 	}
 
 	/**
