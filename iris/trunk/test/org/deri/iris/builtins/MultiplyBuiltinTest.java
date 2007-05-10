@@ -4,14 +4,14 @@
  * built-in predicates, default negation (under well-founded semantics), 
  * function symbols and contexts. 
  * 
- * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
- * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
- * A-6020 Innsbruck. Austria.
+ * Copyright (C) 10010  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 22a, 
+ * A-10010 Innsbruck. Austria.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * version 2.2 of the License, or (at your option) any later version.
  * 
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,8 +20,8 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
+ * Foundation, Inc., 52 Franklin Street, Fifth Floor, Boston, 
+ * MA  02210-2302, USA.
  */
 package org.deri.iris.builtins;
 
@@ -29,11 +29,7 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
-import java.util.List;
-import java.util.LinkedList;
-
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.ITerm;
 
 import junit.framework.Test;
@@ -45,11 +41,11 @@ import junit.framework.TestSuite;
  * Tests for the {@code MultiplyBuiltin}.
  * </p>
  * <p>
- * $Id: MultiplyBuiltinTest.java,v 1.3 2007-05-10 07:01:17 poettler_ric Exp $
+ * $Id: MultiplyBuiltinTest.java,v 1.4 2007-05-10 09:02:29 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class MultiplyBuiltinTest extends TestCase {
 
@@ -62,18 +58,52 @@ public class MultiplyBuiltinTest extends TestCase {
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
 		final ITerm Z = TERM.createVariable("Z");
-		final ITerm T_4 = CONCRETE.createInteger(4);
-		final ITerm T_65 = CONCRETE.createFloat(6.5f);
+		final ITerm T_2 = CONCRETE.createInteger(2);
+		final ITerm T_5 = CONCRETE.createInteger(5);
+		final ITerm T_10 = CONCRETE.createInteger(10);
 
-		// X * 4 = Y
-		final MultiplyBuiltin a_x4y = new MultiplyBuiltin(X, T_4, Y);
-		assertEquals(BASIC.createTuple(CONCRETE.createInteger(24)), a_x4y.evaluate(BASIC.createTuple(CONCRETE.createInteger(6), Y, X)));
-		assertEquals(BASIC.createTuple(CONCRETE.createInteger(64)), a_x4y.evaluate(BASIC.createTuple(CONCRETE.createInteger(16), Y, X)));
-		assertEquals(BASIC.createTuple(CONCRETE.createInteger(1)), a_x4y.evaluate(BASIC.createTuple(X, Y, CONCRETE.createInteger(6))));
-		assertEquals(BASIC.createTuple(CONCRETE.createInteger(4)), a_x4y.evaluate(BASIC.createTuple(X,Y, CONCRETE.createInteger(16))));
-		// X * Y = 6.5
-		final MultiplyBuiltin a_xy65 = new MultiplyBuiltin(X, Y, T_65);
+		// X * 5 = 10
+		final MultiplyBuiltin b_x510 = new MultiplyBuiltin(X, T_5, T_10);
+		assertEquals(BASIC.createTuple(T_2), b_x510.evaluate(BASIC.createTuple(X, X, X)));
+		// 2 * X = 10
+		final MultiplyBuiltin b_2x10 = new MultiplyBuiltin(T_2, X, T_10);
+		assertEquals(BASIC.createTuple(T_5), b_2x10.evaluate(BASIC.createTuple(X, X, X)));
+		// 2 * 5 = X
+		final MultiplyBuiltin b_25x = new MultiplyBuiltin(T_2, T_5, X);
+		assertEquals(BASIC.createTuple(T_10), b_25x.evaluate(BASIC.createTuple(X, X, X)));
+		// 2 * X = Y
+		final MultiplyBuiltin b_2xy = new MultiplyBuiltin(T_2, X, Y);
+		assertEquals(BASIC.createTuple(T_5), b_2xy.evaluate(BASIC.createTuple(X, X, T_10)));
+		assertEquals(BASIC.createTuple(T_10), b_2xy.evaluate(BASIC.createTuple(X, T_5, X)));
+		// X * 5 = Y
+		final MultiplyBuiltin b_x5y = new MultiplyBuiltin(X, T_5, Y);
+		assertEquals(BASIC.createTuple(T_2), b_x5y.evaluate(BASIC.createTuple(X, X, T_10)));
+		assertEquals(BASIC.createTuple(T_10), b_x5y.evaluate(BASIC.createTuple(T_2, X, X)));
+		// X * Y = 10
+		final MultiplyBuiltin b_xy10 = new MultiplyBuiltin(X, Y, T_10);
+		assertEquals(BASIC.createTuple(T_2), b_xy10.evaluate(BASIC.createTuple(X, T_5, X)));
+		assertEquals(BASIC.createTuple(T_5), b_xy10.evaluate(BASIC.createTuple(T_2, X, X)));
 		// X * Y = Z
-		final MultiplyBuiltin a_xyz = new MultiplyBuiltin(X, Y, Z);
+		final MultiplyBuiltin b_xyz = new MultiplyBuiltin(X, Y, Z);
+		assertEquals(BASIC.createTuple(T_2), b_xyz.evaluate(BASIC.createTuple(X, T_5, T_10)));
+		assertEquals(BASIC.createTuple(T_5), b_xyz.evaluate(BASIC.createTuple(T_2, X, T_10)));
+		assertEquals(BASIC.createTuple(T_10), b_xyz.evaluate(BASIC.createTuple(T_2, T_5, X)));
+
+		// test the checking for correctness
+		assertNotNull(b_x510.evaluate(BASIC.createTuple(T_2, T_5, T_10)));
+		assertNotNull(b_2x10.evaluate(BASIC.createTuple(T_2, T_5, T_10)));
+		assertNotNull(b_25x.evaluate(BASIC.createTuple(T_2, T_5, T_10)));
+		assertNotNull(b_2xy.evaluate(BASIC.createTuple(T_2, T_5, T_10)));
+		assertNotNull(b_x5y.evaluate(BASIC.createTuple(T_2, T_5, T_10)));
+		assertNotNull(b_xy10.evaluate(BASIC.createTuple(T_2, T_5, T_10)));
+		assertNotNull(b_xyz.evaluate(BASIC.createTuple(T_2, T_5, T_10)));
+
+		assertNull(b_x510.evaluate(BASIC.createTuple(T_5, T_10, T_2)));
+		assertNull(b_2x10.evaluate(BASIC.createTuple(T_5, T_10, T_2)));
+		assertNull(b_25x.evaluate(BASIC.createTuple(T_5, T_10, T_2)));
+		assertNull(b_2xy.evaluate(BASIC.createTuple(T_5, T_10, T_2)));
+		assertNull(b_x5y.evaluate(BASIC.createTuple(T_5, T_10, T_2)));
+		assertNull(b_xy10.evaluate(BASIC.createTuple(T_5, T_10, T_2)));
+		assertNull(b_xyz.evaluate(BASIC.createTuple(T_5, T_10, T_2)));
 	}
 }

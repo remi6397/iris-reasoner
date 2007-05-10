@@ -29,11 +29,7 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
-import java.util.List;
-import java.util.LinkedList;
-
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.ITerm;
 
 import junit.framework.Test;
@@ -45,11 +41,11 @@ import junit.framework.TestSuite;
  * Tests for the {@code AddBuiltin}.
  * </p>
  * <p>
- * $Id: AddBuiltinTest.java,v 1.3 2007-05-10 07:01:15 poettler_ric Exp $
+ * $Id: AddBuiltinTest.java,v 1.4 2007-05-10 09:02:29 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class AddBuiltinTest extends TestCase {
 
@@ -62,19 +58,52 @@ public class AddBuiltinTest extends TestCase {
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
 		final ITerm Z = TERM.createVariable("Z");
-		final ITerm T_4 = CONCRETE.createInteger(4);
-		final ITerm T_65 = CONCRETE.createFloat(6.5f);
+		final ITerm T_1 = CONCRETE.createInteger(1);
+		final ITerm T_5 = CONCRETE.createInteger(5);
+		final ITerm T_6 = CONCRETE.createInteger(6);
 
-		// X + 4 = Y
-		final AddBuiltin a_x4y = new AddBuiltin(X, T_4, Y);
-		assertEquals(BASIC.createTuple(CONCRETE.createInteger(10)), a_x4y.evaluate(BASIC.createTuple(CONCRETE.createInteger(6), Y, X)));
-		assertEquals(BASIC.createTuple(CONCRETE.createInteger(20)), a_x4y.evaluate(BASIC.createTuple(CONCRETE.createInteger(16), Y, X)));
-		assertEquals(BASIC.createTuple(CONCRETE.createInteger(2)), a_x4y.evaluate(BASIC.createTuple(X, Y, CONCRETE.createInteger(6))));
-		assertEquals(BASIC.createTuple(CONCRETE.createInteger(12)), a_x4y.evaluate(BASIC.createTuple(X,Y, CONCRETE.createInteger(16))));
-		// X + Y = 6.5
-		final AddBuiltin a_xy65 = new AddBuiltin(X, Y, T_65);
-		a_xy65.evaluate(BASIC.createTuple(T_4, T_4, X));
+		// X + 5 = 6
+		final AddBuiltin b_x56 = new AddBuiltin(X, T_5, T_6);
+		assertEquals(BASIC.createTuple(T_1), b_x56.evaluate(BASIC.createTuple(X, X, X)));
+		// 1 + X = 6
+		final AddBuiltin b_1x6 = new AddBuiltin(T_1, X, T_6);
+		assertEquals(BASIC.createTuple(T_5), b_1x6.evaluate(BASIC.createTuple(X, X, X)));
+		// 1 + 5 = X
+		final AddBuiltin b_15x = new AddBuiltin(T_1, T_5, X);
+		assertEquals(BASIC.createTuple(T_6), b_15x.evaluate(BASIC.createTuple(X, X, X)));
+		// 1 + X = Y
+		final AddBuiltin b_1xy = new AddBuiltin(T_1, X, Y);
+		assertEquals(BASIC.createTuple(T_5), b_1xy.evaluate(BASIC.createTuple(X, X, T_6)));
+		assertEquals(BASIC.createTuple(T_6), b_1xy.evaluate(BASIC.createTuple(X, T_5, X)));
+		// X + 5 = Y
+		final AddBuiltin b_x5y = new AddBuiltin(X, T_5, Y);
+		assertEquals(BASIC.createTuple(T_1), b_x5y.evaluate(BASIC.createTuple(X, X, T_6)));
+		assertEquals(BASIC.createTuple(T_6), b_x5y.evaluate(BASIC.createTuple(T_1, X, X)));
+		// X + Y = 6
+		final AddBuiltin b_xy6 = new AddBuiltin(X, Y, T_6);
+		assertEquals(BASIC.createTuple(T_1), b_xy6.evaluate(BASIC.createTuple(X, T_5, X)));
+		assertEquals(BASIC.createTuple(T_5), b_xy6.evaluate(BASIC.createTuple(T_1, X, X)));
 		// X + Y = Z
-		final AddBuiltin a_xyz = new AddBuiltin(X, Y, Z);
+		final AddBuiltin b_xyz = new AddBuiltin(X, Y, Z);
+		assertEquals(BASIC.createTuple(T_1), b_xyz.evaluate(BASIC.createTuple(X, T_5, T_6)));
+		assertEquals(BASIC.createTuple(T_5), b_xyz.evaluate(BASIC.createTuple(T_1, X, T_6)));
+		assertEquals(BASIC.createTuple(T_6), b_xyz.evaluate(BASIC.createTuple(T_1, T_5, X)));
+
+		// test the checking for correctness
+		assertNotNull(b_x56.evaluate(BASIC.createTuple(T_1, T_5, T_6)));
+		assertNotNull(b_1x6.evaluate(BASIC.createTuple(T_1, T_5, T_6)));
+		assertNotNull(b_15x.evaluate(BASIC.createTuple(T_1, T_5, T_6)));
+		assertNotNull(b_1xy.evaluate(BASIC.createTuple(T_1, T_5, T_6)));
+		assertNotNull(b_x5y.evaluate(BASIC.createTuple(T_1, T_5, T_6)));
+		assertNotNull(b_xy6.evaluate(BASIC.createTuple(T_1, T_5, T_6)));
+		assertNotNull(b_xyz.evaluate(BASIC.createTuple(T_1, T_5, T_6)));
+
+		assertNull(b_x56.evaluate(BASIC.createTuple(T_5, T_6, T_1)));
+		assertNull(b_1x6.evaluate(BASIC.createTuple(T_5, T_6, T_1)));
+		assertNull(b_15x.evaluate(BASIC.createTuple(T_5, T_6, T_1)));
+		assertNull(b_1xy.evaluate(BASIC.createTuple(T_5, T_6, T_1)));
+		assertNull(b_x5y.evaluate(BASIC.createTuple(T_5, T_6, T_1)));
+		assertNull(b_xy6.evaluate(BASIC.createTuple(T_5, T_6, T_1)));
+		assertNull(b_xyz.evaluate(BASIC.createTuple(T_5, T_6, T_1)));
 	}
 }
