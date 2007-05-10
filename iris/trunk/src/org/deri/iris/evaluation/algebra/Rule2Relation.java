@@ -83,9 +83,9 @@ public class Rule2Relation {
 	/** Counter for an arbitrarly chosen variable */
 	private static int VAR_COUNTER = 0;
 
-	private Map<ILiteral, List<IVariable>> m = null;
-
-	private Set<IVariable> oVars = null;
+	// TODO: If you don't need - remove it!
+	//private Map<ILiteral, List<IVariable>> m = null;
+	//private Set<IVariable> oVars = null;
 
 	/**
 	 * <p>
@@ -118,8 +118,10 @@ public class Rule2Relation {
 			/** Rectify rules */
 			r = MiscOps.rectify(rule);
 			p = r.getHeadLiteral(0).getPredicate();
-			m = new HashMap<ILiteral, List<IVariable>>();
-			oVars = new HashSet<IVariable>();
+			
+			// TODO: If you don't need - remove it!
+			//m = new HashMap<ILiteral, List<IVariable>>();
+			//oVars = new HashSet<IVariable>();
 			IAtom a = null;
 			ISelectionDescriptor s = null;
 			
@@ -372,8 +374,11 @@ public class Rule2Relation {
 				.isPositive(), l.getPredicate());
 
 		le.addVariables(vars);
-		m.put(l, vars);
-		oVars.addAll(vars);
+		
+		// TODO: If you don't need - remove it!
+		//m.put(l, vars);
+		//oVars.addAll(vars);
+		
 		ISelectionDescriptor s = null;
 		if (selectionNeeded) {
 			s = ALGEBRA.createSelectionDescriptor(pattern, indexes);
