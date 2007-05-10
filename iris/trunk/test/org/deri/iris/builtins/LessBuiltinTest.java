@@ -25,8 +25,10 @@
  */
 package org.deri.iris.builtins;
 
+import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -36,12 +38,11 @@ import junit.framework.TestSuite;
  * Tests for the less builtin.
  * </p>
  * <p>
- * $Id: LessBuiltinTest.java,v 1.2 2007-05-03 11:30:32 darko_anicic Exp $
+ * $Id: LessBuiltinTest.java,v 1.3 2007-05-10 07:01:16 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2007-05-03 11:30:32 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.3 $
  */
 public class LessBuiltinTest extends TestCase {
 
@@ -50,29 +51,29 @@ public class LessBuiltinTest extends TestCase {
 	}
 
 	public void testEvaluation() {
-		assertFalse("5 shouldn't be less than 5", (new LessBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createInteger(5))).evaluate(
-						CONCRETE.createInteger(5), CONCRETE.createInteger(5)));
-		assertFalse("5 shouldn't be less than 5.0", (new LessBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createDouble(5d))).evaluate(
-						CONCRETE.createInteger(5), CONCRETE.createDouble(5d)));
+		final LessBuiltin xy = new LessBuiltin(TERM.createVariable("X"), TERM.createVariable("Y"));
+
+		assertNull("5 shouldn't be less than 5", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createInteger(5))));
+		assertNull("5 shouldn't be less than 5.0", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createDouble(5d))));
 		
-		assertTrue("2 should be less than 5.0", (new LessBuiltin(CONCRETE
-				.createInteger(2), CONCRETE.createDouble(5d))).evaluate(
-						CONCRETE.createInteger(2), CONCRETE.createDouble(5d)));
-		assertFalse("5 shouldn't be less than 2", (new LessBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createInteger(2))).evaluate(
-						CONCRETE.createInteger(5), CONCRETE.createInteger(2)));
+		assertNotNull("2 should be less than 5.0", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(2), CONCRETE.createDouble(5d))));
+		assertNull("5 shouldn't be less than 2", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createInteger(2))));
 		
-		assertTrue("a should be less than b", (new LessBuiltin(TERM
-				.createString("a"), TERM.createString("b"))).evaluate(
-						TERM.createString("a"), TERM.createString("b")));
-		assertFalse("a shouldn't be less to a", (new LessBuiltin(TERM
-				.createString("a"), TERM.createString("a"))).evaluate(
-						TERM.createString("a"), TERM.createString("a")));
+		assertNotNull("a should be less than b", xy.evaluate(
+					BASIC.createTuple(TERM.createString("a"), TERM.createString("b"))));
+		assertNull("a shouldn't be less to a", xy.evaluate(
+					BASIC.createTuple(TERM.createString("a"), TERM.createString("a"))));
 		
-		assertFalse("5 less a should be false -> not evaluable", (new LessBuiltin(CONCRETE
-				.createInteger(5), TERM.createString("a"))).evaluate(
-						CONCRETE.createInteger(5), TERM.createString("a")));
+		boolean exceptionThrown = false;
+		try {
+			xy.evaluate(BASIC.createTuple(CONCRETE.createInteger(5), TERM.createString("a")));
+		} catch (IllegalArgumentException e) {
+			exceptionThrown = true;
+		}
+		assertTrue("5 < a should not be evaluable", exceptionThrown);
 	}
 }

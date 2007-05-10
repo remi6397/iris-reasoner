@@ -25,8 +25,10 @@
  */
 package org.deri.iris.builtins;
 
+import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -36,12 +38,11 @@ import junit.framework.TestSuite;
  * Tests for the greater builtin.
  * </p>
  * <p>
- * $Id: GreaterBuiltinTest.java,v 1.2 2006-11-14 17:24:43 adi Exp $
+ * $Id: GreaterBuiltinTest.java,v 1.3 2007-05-10 07:01:16 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-11-14 17:24:43 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.3 $
  */
 public class GreaterBuiltinTest extends TestCase {
 
@@ -51,25 +52,30 @@ public class GreaterBuiltinTest extends TestCase {
 	}
 
 	public void testEvaluation() {
-		assertFalse("5 shouldn't be greater than 5", (new GreaterBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createInteger(5))).evaluate());
-		assertFalse("5 shouldn't be greater than 5.0", (new GreaterBuiltin(
-				CONCRETE.createInteger(5), CONCRETE.createDouble(5d)))
-				.evaluate());
+		final GreaterBuiltin xy = new GreaterBuiltin(TERM.createVariable("X"), TERM.createVariable("Y"));
 
-		assertFalse("2 shouldn't be greater than 5.0", (new GreaterBuiltin(CONCRETE
-				.createInteger(2), CONCRETE.createDouble(5d))).evaluate());
-		assertTrue("5 should be greater than 2", (new GreaterBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createInteger(2))).evaluate());
+		assertNull("5 shouldn't be greater than 5", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createInteger(5))));
+		assertNull("5 shouldn't be greater than 5.0", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createDouble(5d))));
 
-		assertFalse("a shouldn't be greater than b", (new GreaterBuiltin(TERM
-				.createString("a"), TERM.createString("b"))).evaluate());
-		assertFalse("a shouldn't be greater to a", (new GreaterBuiltin(TERM
-				.createString("a"), TERM.createString("a"))).evaluate());
+		assertNull("2 shouldn't be greater than 5.0", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(2), CONCRETE.createDouble(5d))));
+		assertNotNull("5 should be greater than 2", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createInteger(2))));
 
-		assertFalse("5 less a should be false -> not evaluable",
-				(new GreaterBuiltin(CONCRETE.createInteger(5), TERM
-						.createString("a"))).evaluate());
+		assertNull("a shouldn't be greater than b", xy.evaluate(
+					BASIC.createTuple(TERM.createString("a"), TERM.createString("b"))));
+		assertNull("a shouldn't be greater to a", xy.evaluate(
+					BASIC.createTuple(TERM.createString("a"), TERM.createString("a"))));
+
+		boolean exceptionThrown = false;
+		try {
+			xy.evaluate(BASIC.createTuple(CONCRETE.createInteger(5), TERM.createString("a")));
+		} catch (IllegalArgumentException e) {
+			exceptionThrown = true;
+		}
+		assertTrue("5 > a should not be evaluable", exceptionThrown);
 	}
 
 	public void test_isBuiltin() {

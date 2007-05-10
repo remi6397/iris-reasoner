@@ -45,11 +45,11 @@ import junit.framework.TestSuite;
  * Tests for the {@code MultiplyBuiltin}.
  * </p>
  * <p>
- * $Id: MultiplyBuiltinTest.java,v 1.2 2007-03-13 17:35:20 poettler_ric Exp $
+ * $Id: MultiplyBuiltinTest.java,v 1.3 2007-05-10 07:01:17 poettler_ric Exp $
  * </p>
  * 
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.2 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.3 $
  */
 public class MultiplyBuiltinTest extends TestCase {
 
@@ -67,17 +67,10 @@ public class MultiplyBuiltinTest extends TestCase {
 
 		// X * 4 = Y
 		final MultiplyBuiltin a_x4y = new MultiplyBuiltin(X, T_4, Y);
-		List<ITuple> in = new LinkedList<ITuple>();
-		List<ITuple> res = new LinkedList<ITuple>();
-		in.add(BASIC.createTuple(CONCRETE.createInteger(6), Y, X));
-		in.add(BASIC.createTuple(CONCRETE.createInteger(16), Y, X));
-		in.add(BASIC.createTuple(X, Y, CONCRETE.createInteger(6)));
-		in.add(BASIC.createTuple(X, Y, CONCRETE.createInteger(16)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(6), T_4, CONCRETE.createInteger(24)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(16), T_4, CONCRETE.createInteger(64)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(1), T_4, CONCRETE.createInteger(6)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(4), T_4, CONCRETE.createInteger(16)));
-		assertEquals(res, a_x4y.evaluate(in));
+		assertEquals(BASIC.createTuple(CONCRETE.createInteger(24)), a_x4y.evaluate(BASIC.createTuple(CONCRETE.createInteger(6), Y, X)));
+		assertEquals(BASIC.createTuple(CONCRETE.createInteger(64)), a_x4y.evaluate(BASIC.createTuple(CONCRETE.createInteger(16), Y, X)));
+		assertEquals(BASIC.createTuple(CONCRETE.createInteger(1)), a_x4y.evaluate(BASIC.createTuple(X, Y, CONCRETE.createInteger(6))));
+		assertEquals(BASIC.createTuple(CONCRETE.createInteger(4)), a_x4y.evaluate(BASIC.createTuple(X,Y, CONCRETE.createInteger(16))));
 		// X * Y = 6.5
 		final MultiplyBuiltin a_xy65 = new MultiplyBuiltin(X, Y, T_65);
 		// X * Y = Z

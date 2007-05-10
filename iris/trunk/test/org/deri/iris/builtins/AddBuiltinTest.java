@@ -45,11 +45,11 @@ import junit.framework.TestSuite;
  * Tests for the {@code AddBuiltin}.
  * </p>
  * <p>
- * $Id: AddBuiltinTest.java,v 1.2 2007-03-13 17:35:20 poettler_ric Exp $
+ * $Id: AddBuiltinTest.java,v 1.3 2007-05-10 07:01:15 poettler_ric Exp $
  * </p>
  * 
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.2 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.3 $
  */
 public class AddBuiltinTest extends TestCase {
 
@@ -67,19 +67,13 @@ public class AddBuiltinTest extends TestCase {
 
 		// X + 4 = Y
 		final AddBuiltin a_x4y = new AddBuiltin(X, T_4, Y);
-		List<ITuple> in = new LinkedList<ITuple>();
-		List<ITuple> res = new LinkedList<ITuple>();
-		in.add(BASIC.createTuple(CONCRETE.createInteger(6), Y, X));
-		in.add(BASIC.createTuple(CONCRETE.createInteger(16), Y, X));
-		in.add(BASIC.createTuple(X, Y, CONCRETE.createInteger(6)));
-		in.add(BASIC.createTuple(X, Y, CONCRETE.createInteger(16)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(6), T_4, CONCRETE.createInteger(10)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(16), T_4, CONCRETE.createInteger(20)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(2), T_4, CONCRETE.createInteger(6)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(12), T_4, CONCRETE.createInteger(16)));
-		assertEquals(res, a_x4y.evaluate(in));
+		assertEquals(BASIC.createTuple(CONCRETE.createInteger(10)), a_x4y.evaluate(BASIC.createTuple(CONCRETE.createInteger(6), Y, X)));
+		assertEquals(BASIC.createTuple(CONCRETE.createInteger(20)), a_x4y.evaluate(BASIC.createTuple(CONCRETE.createInteger(16), Y, X)));
+		assertEquals(BASIC.createTuple(CONCRETE.createInteger(2)), a_x4y.evaluate(BASIC.createTuple(X, Y, CONCRETE.createInteger(6))));
+		assertEquals(BASIC.createTuple(CONCRETE.createInteger(12)), a_x4y.evaluate(BASIC.createTuple(X,Y, CONCRETE.createInteger(16))));
 		// X + Y = 6.5
 		final AddBuiltin a_xy65 = new AddBuiltin(X, Y, T_65);
+		a_xy65.evaluate(BASIC.createTuple(T_4, T_4, X));
 		// X + Y = Z
 		final AddBuiltin a_xyz = new AddBuiltin(X, Y, Z);
 	}
