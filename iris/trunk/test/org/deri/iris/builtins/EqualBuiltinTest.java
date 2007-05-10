@@ -25,8 +25,10 @@
  */
 package org.deri.iris.builtins;
 
+import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -36,12 +38,11 @@ import junit.framework.TestSuite;
  * Tests for the equals builtin.
  * </p>
  * <p>
- * $Id: EqualBuiltinTest.java,v 1.4 2007-05-03 11:28:30 darko_anicic Exp $
+ * $Id: EqualBuiltinTest.java,v 1.5 2007-05-10 07:01:15 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.4 $
- * @date $Date: 2007-05-03 11:28:30 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.5 $
  */
 public class EqualBuiltinTest extends TestCase {
 
@@ -50,18 +51,16 @@ public class EqualBuiltinTest extends TestCase {
 	}
 
 	public void testEvaluation() {
-		assertTrue("5 should be equal to 5", (new EqualBuiltin(
-				TERM.createVariable("X"),TERM.createVariable("Y")).evaluate(
-						CONCRETE.createInteger(5), CONCRETE.createInteger(5))));
-		assertTrue("5 should not be equal to 5.0", (new EqualBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createDouble(5d))).evaluate(
-						CONCRETE.createInteger(5), CONCRETE.createDouble(5d)));
-		assertFalse("5 shouldn't be equal to 2", (new EqualBuiltin(CONCRETE
-				.createInteger(2), CONCRETE.createInteger(5))).evaluate(
-						CONCRETE.createInteger(2), CONCRETE.createInteger(5)));
-		assertFalse("5 should be equal to a", (new EqualBuiltin(CONCRETE
-				.createInteger(5), TERM.createString("a"))).evaluate(
-						CONCRETE.createInteger(5), TERM.createString("a")));
+		final EqualBuiltin xy = new EqualBuiltin(TERM.createVariable("X"), TERM.createVariable("Y"));
+
+		assertNotNull("5 should be equal to 5", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createInteger(5))));
+		assertNotNull("5 should be equal to 5.0", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createDouble(5d))));
+		assertNull("5 should not equal to 2", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(2), CONCRETE.createInteger(5))));
+		assertNull("5 should not be equal to a", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(5), TERM.createString("a"))));
 	}
 	
 	public void test_isBuiltin() {

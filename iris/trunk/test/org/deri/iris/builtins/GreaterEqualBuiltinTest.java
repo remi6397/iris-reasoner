@@ -25,8 +25,10 @@
  */
 package org.deri.iris.builtins;
 
+import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -36,12 +38,11 @@ import junit.framework.TestSuite;
  * Tests for the greater equal builtin.
  * </p>
  * <p>
- * $Id: GreaterEqualBuiltinTest.java,v 1.1 2006-09-21 09:02:11 richardpoettler Exp $
+ * $Id: GreaterEqualBuiltinTest.java,v 1.2 2007-05-10 07:01:16 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-09-21 09:02:11 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.2 $
  */
 public class GreaterEqualBuiltinTest extends TestCase {
 
@@ -51,27 +52,29 @@ public class GreaterEqualBuiltinTest extends TestCase {
 	}
 
 	public void testEvaluation() {
-		assertTrue("5 should be greater-equal to 5", (new GreaterEqualBuiltin(
-				CONCRETE.createInteger(5), CONCRETE.createInteger(5)))
-				.evaluate());
-		assertTrue("5 should be greater-equal to 5.0",
-				(new GreaterEqualBuiltin(CONCRETE.createInteger(5), CONCRETE
-						.createDouble(5d))).evaluate());
+		final GreaterEqualBuiltin xy = new GreaterEqualBuiltin(TERM.createVariable("X"), TERM.createVariable("Y"));
 
-		assertFalse("2 shouldn't be greater than 5.0", (new GreaterEqualBuiltin(
-				CONCRETE.createInteger(2), CONCRETE.createDouble(5d)))
-				.evaluate());
-		assertTrue("5 should be greater than 2", (new GreaterEqualBuiltin(
-				CONCRETE.createInteger(5), CONCRETE.createInteger(2)))
-				.evaluate());
+		assertNotNull("5 should be greater-equal to 5", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createInteger(5))));
+		assertNotNull("5 should be greater-equal to 5.0", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createDouble(5d))));
 
-		assertFalse("a shouldn't be greater than b", (new GreaterEqualBuiltin(TERM
-				.createString("a"), TERM.createString("b"))).evaluate());
-		assertTrue("a should be greater-equal to a", (new GreaterEqualBuiltin(
-				TERM.createString("a"), TERM.createString("a"))).evaluate());
+		assertNull("2 shouldn't be greater than 5.0", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(2), CONCRETE.createDouble(5d))));
+		assertNotNull("5 should be greater than 2", xy.evaluate(
+					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createInteger(2))));
 
-		assertFalse("5 less a should be false -> not evaluable",
-				(new GreaterEqualBuiltin(CONCRETE.createInteger(5), TERM
-						.createString("a"))).evaluate());
+		assertNull("a shouldn't be greater than b", xy.evaluate(
+					BASIC.createTuple(TERM.createString("a"), TERM.createString("b"))));
+		assertNotNull("a should be greater-equal to a", xy.evaluate(
+					BASIC.createTuple(TERM.createString("a"), TERM.createString("a"))));
+
+		boolean exceptionThrown = false;
+		try {
+			xy.evaluate(BASIC.createTuple(CONCRETE.createInteger(5), TERM.createString("a")));
+		} catch (IllegalArgumentException e) {
+			exceptionThrown = true;
+		}
+		assertTrue("5 >= a should not be evaluable", exceptionThrown);
 	}
 }

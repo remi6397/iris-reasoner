@@ -45,11 +45,11 @@ import junit.framework.TestSuite;
  * Tests for the {@code DivideBuiltin}.
  * </p>
  * <p>
- * $Id: DivideBuiltinTest.java,v 1.3 2007-03-13 17:35:20 poettler_ric Exp $
+ * $Id: DivideBuiltinTest.java,v 1.4 2007-05-10 07:01:15 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class DivideBuiltinTest extends TestCase {
 
@@ -67,17 +67,10 @@ public class DivideBuiltinTest extends TestCase {
 
 		// X / 4 = Y
 		final DivideBuiltin a_x4y = new DivideBuiltin(X, T_4, Y);
-		List<ITuple> in = new LinkedList<ITuple>();
-		List<ITuple> res = new LinkedList<ITuple>();
-		in.add(BASIC.createTuple(CONCRETE.createInteger(6), Y, X));
-		in.add(BASIC.createTuple(CONCRETE.createInteger(16), Y, X));
-		in.add(BASIC.createTuple(X, Y, CONCRETE.createInteger(6)));
-		in.add(BASIC.createTuple(X, Y, CONCRETE.createInteger(16)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(6), T_4, CONCRETE.createInteger(1)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(16), T_4, CONCRETE.createInteger(4)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(24), T_4, CONCRETE.createInteger(6)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(64), T_4, CONCRETE.createInteger(16)));
-		assertEquals(res, a_x4y.evaluate(in));
+		assertEquals(BASIC.createTuple(CONCRETE.createInteger(1)), a_x4y.evaluate(BASIC.createTuple(CONCRETE.createInteger(6), Y, X)));
+		assertEquals(BASIC.createTuple(CONCRETE.createInteger(4)), a_x4y.evaluate(BASIC.createTuple(CONCRETE.createInteger(16), Y, X)));
+		assertEquals(BASIC.createTuple(CONCRETE.createInteger(24)), a_x4y.evaluate(BASIC.createTuple(X, Y, CONCRETE.createInteger(6))));
+		assertEquals(BASIC.createTuple(CONCRETE.createInteger(64)), a_x4y.evaluate(BASIC.createTuple(X,Y, CONCRETE.createInteger(16))));
 		// X / Y = 6.5
 		final DivideBuiltin a_xy65 = new DivideBuiltin(X, Y, T_65);
 		// X / Y = Z

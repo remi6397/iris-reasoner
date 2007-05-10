@@ -25,8 +25,12 @@
  */
 package org.deri.iris.builtins;
 
+import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
+
+import org.deri.iris.api.basics.ITuple;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -36,12 +40,11 @@ import junit.framework.TestSuite;
  * Tests for the unequals builtin.
  * </p>
  * <p>
- * $Id: UnequalBuiltinTest.java,v 1.1 2006-09-21 09:02:11 richardpoettler Exp $
+ * $Id: UnequalBuiltinTest.java,v 1.2 2007-05-10 07:01:18 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-09-21 09:02:11 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.2 $
  */
 public class UnequalBuiltinTest extends TestCase {
 
@@ -50,13 +53,14 @@ public class UnequalBuiltinTest extends TestCase {
 	}
 
 	public void testEvaluation() {
-		assertFalse("5 shouldn't be unequal to 5", (new UnEqualBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createInteger(5))).evaluate());
-		assertFalse("5 shouldn't be unequal to 5.0", (new UnEqualBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createDouble(5d))).evaluate());
-		assertTrue("5 should be unequal to 2", (new UnEqualBuiltin(CONCRETE
-				.createInteger(2), CONCRETE.createInteger(5))).evaluate());
-		assertTrue("5 should be unequal to a", (new UnEqualBuiltin(CONCRETE
-				.createInteger(5), TERM.createString("a"))).evaluate());
+		final ITuple x2 = BASIC.createTuple(TERM.createVariable("X"), TERM.createVariable("X"));
+		assertNull("5 shouldn't be unequal to 5", (new UnEqualBuiltin(CONCRETE
+				.createInteger(5), CONCRETE.createInteger(5))).evaluate(x2));
+		assertNull("5 shouldn't be unequal to 5.0", (new UnEqualBuiltin(CONCRETE
+				.createInteger(5), CONCRETE.createDouble(5d))).evaluate(x2));
+		assertNotNull("5 should be unequal to 2", (new UnEqualBuiltin(CONCRETE
+				.createInteger(2), CONCRETE.createInteger(5))).evaluate(x2));
+		assertNotNull("5 should be unequal to a", (new UnEqualBuiltin(CONCRETE
+				.createInteger(5), TERM.createString("a"))).evaluate(x2));
 	}
 }
