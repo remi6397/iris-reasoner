@@ -31,11 +31,6 @@ import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.PROGRAM;
 import static org.deri.iris.factory.Factory.TERM;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
@@ -52,12 +47,11 @@ import org.deri.iris.evaluation.MiscOps;
  * Tests the methods in the MiscOps class.
  * </p>
  * <p>
- * $Id: MiscOpsTest.java,v 1.1 2006-12-05 13:37:35 richardpoettler Exp $
+ * $Id: MiscOpsTest.java,v 1.2 2007-05-10 16:07:03 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-12-05 13:37:35 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.2 $
  */
 public class MiscOpsTest extends TestCase {
 
@@ -102,123 +96,41 @@ public class MiscOpsTest extends TestCase {
 	}
 	
 	public void testStratify() {
-		
-		// TODO: create everytime a new predicate -> 
-		IPredicate p = BASIC.createPredicate("p", 1);
-		IPredicate q = BASIC.createPredicate("q", 1);
-		IPredicate r = BASIC.createPredicate("r", 1);
-		IPredicate s = BASIC.createPredicate("s", 1);
-		
-		Set<IRule> rules = new HashSet<IRule>();
-		
-		// ******First rule:  p(x) :- r(x)
-		// Computing head
-		ILiteral lh = BASIC.createLiteral(true, p, BASIC.createTuple(
-							TERM.createVariable("X")));
-		IHead h = BASIC.createHead(lh);
-		
-		// Computing body
-		ILiteral lb = BASIC.createLiteral(true, r, BASIC.createTuple(
-								TERM.createVariable("X")));
-		IBody b = BASIC.createBody(lb);
 
-		rules.add(BASIC.createRule(h, b));
-
-		// *****Second rule: p(x) :- p(x)
-		// Computing head
-		lh = BASIC.createLiteral(true, p, BASIC.createTuple(
-							TERM.createVariable("X")));
-		h = BASIC.createHead(lh);
+		final String stratProg = "p(?X) :- r(?X).\n" + 
+			"p(?X) :- p(?X).\n" + 
+			"q(?X) :- s(?X), !p(?X).";
 		
-		// Computing body
-		lb = BASIC.createLiteral(true, p, BASIC.createTuple(
-						TERM.createVariable("X")));
-		b = BASIC.createBody(lb);
-
-		rules.add(BASIC.createRule(h, b));
-
-		// *****Third rule: q(x) :- s(x), ~p(x)
-		//Computing head
-		lh = BASIC.createLiteral(true, q, BASIC.createTuple(
-							TERM.createVariable("X")));
-		h = BASIC.createHead(lh);
-		
-		// Computing body
-		List<ILiteral> bl = new ArrayList<ILiteral>();
-		bl.add(BASIC.createLiteral(true, s, BASIC.createTuple(
-									TERM.createVariable("X"))));
-		bl.add(BASIC.createLiteral(false, p, BASIC.createTuple(
-						TERM.createVariable("X"))));
-		
-		b = BASIC.createBody(bl);
-
-		rules.add(BASIC.createRule(h, b));
-		
-		//System.out.println("****** input: ******");
-		// for (IRule _r : rules) {
-		// System.out.println(_r);
-		// }
 		IProgram e = PROGRAM.createProgram(); 	
-		for (IRule _r : rules) {
-			e.addRule(_r);
-		}
+		org.deri.iris.compiler.Parser.parse(stratProg, e);
 	
 		assertEquals(true, MiscOps.stratify(e));
-		//System.out.println("****** output: ******");
-		//System.out.println("Is stratified? " + MiscOps.stratify(e));
 		
-		rules = new HashSet<IRule>();
-		
-		p = BASIC.createPredicate("p", 1);
-		q = BASIC.createPredicate("q", 1);
-		r = BASIC.createPredicate("r", 1);
-		
-		// ******First rule:  p(x) :- r(x), ~q(x)
-		// Computing head
-		lh = BASIC.createLiteral(true, p, BASIC.createTuple(
-							TERM.createVariable("X")));
-		h = BASIC.createHead(lh);
-		
-		// Computing body
-		bl = new ArrayList<ILiteral>();
-		bl.add(BASIC.createLiteral(true, r, BASIC.createTuple(
-									TERM.createVariable("X"))));
-		bl.add(BASIC.createLiteral(false, q, BASIC.createTuple(
-						TERM.createVariable("X"))));
-		
-		b = BASIC.createBody(bl);
+		final String unstratProg = "p(?X) :- r(?X), !q(?X).\n" + 
+			"q(?X) :- r(?X), !p(?X).";
 
-		rules.add(BASIC.createRule(h, b));
-		
-		// ******Second rule:  q(x) :- r(x), ~p(x)
-		// Computing head
-		lh = BASIC.createLiteral(true, q, BASIC.createTuple(
-							TERM.createVariable("X")));
-		h = BASIC.createHead(lh);
-		
-		// Computing body
-		bl = new ArrayList<ILiteral>();
-		bl.add(BASIC.createLiteral(true, r, BASIC.createTuple(
-									TERM.createVariable("X"))));
-		bl.add(BASIC.createLiteral(false, p, BASIC.createTuple(
-						TERM.createVariable("X"))));
-		
-		b = BASIC.createBody(bl);
-
-		rules.add(BASIC.createRule(h, b));
-		
-		// System.out.println("****** input: ******");
-		// for (IRule _r : rules) {
-		// System.out.println(_r);
-		// }
-		
-		e = PROGRAM.createProgram(); 
-		for (IRule _r : rules) {
-			e.addRule(_r);
+		// remove all the rules from the program again. (this is because
+		// of a bug which still remains in iris
+		while (!e.getRules().isEmpty()) {
+			e.removeRule(e.getRules().iterator().next());
 		}
+
+		e = PROGRAM.createProgram(); 
+		org.deri.iris.compiler.Parser.parse(unstratProg, e);
 		
-		// System.out.println("****** output: ******");
-		// System.out.println("Is stratified? " + MiscOps.stratify(e));
+		MiscOps.stratify(e);
+		for (final IRule rule : e.getRules()) {
+			System.out.println(rule);
+			for (final ILiteral l : rule.getHeadLiterals()) {
+				final IPredicate pred = l.getPredicate();
+				System.out.printf("%s: %d\n", pred.getPredicateSymbol(), pred.getStratum());
+			}
+			for (final ILiteral l : rule.getBodyLiterals()) {
+				final IPredicate pred = l.getPredicate();
+				System.out.printf("%s: %d\n", pred.getPredicateSymbol(), pred.getStratum());
+			}
+		}
+
 		assertEquals(false, MiscOps.stratify(e));
 	}
 }
