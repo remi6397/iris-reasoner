@@ -212,7 +212,7 @@ public class LessBuiltinEvaluationTest extends TestCase {
 		IRelation res = RELATION.getRelation(2);
 		res.add(BASIC.createTuple(CONCRETE.createInteger(9),CONCRETE.createInteger(2)));
 		
-		System.out.println("******** TEST 1: ********");
+		System.out.println("******** TEST 2: ********");
 		executeTest(pr, res);
 	}
 	
