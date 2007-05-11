@@ -30,28 +30,25 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.PROGRAM;
 import static org.deri.iris.factory.Factory.TERM;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.evaluation.MiscOps;
+import org.deri.iris.basics.seminaive.ConstLiteral;
 
 /**
  * <p>
  * Tests the methods in the MiscOps class.
  * </p>
  * <p>
- * $Id: MiscOpsTest.java,v 1.2 2007-05-10 16:07:03 poettler_ric Exp $
+ * $Id: MiscOpsTest.java,v 1.3 2007-05-11 09:52:25 darko_anicic Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class MiscOpsTest extends TestCase {
 
@@ -68,7 +65,7 @@ public class MiscOpsTest extends TestCase {
 	 * p(X, Y, X) :- r(Y, X)
 	 * 
 	 * Output:
-	 * p(?X_0, ?X_1, ?X_2) :- r(?X_1, ?X_2), EQUAL(?X_0, a)
+	 * p(?X_0, ?X_1, ?X_2) :- r(?X_1, ?X_2), ?X_0 = a
 	 * p(?X_0, ?X_1, ?X_2) :- r(?X_1, ?X_0), EQUAL(?X_2, ?X_0)
 	 * 
 	 */
@@ -80,8 +77,8 @@ public class MiscOpsTest extends TestCase {
 				.createBody(createLiteral("r", "X", "Y")));
 		final IRule rec0 = BASIC.createRule(BASIC.createHead(createLiteral("p",
 				"?X_0", "?X_1", "?X_2")), BASIC.createBody(createLiteral("r",
-				"?X_1", "?X_2"), BASIC.createLiteral(true, BUILTIN.createEqual(
-				TERM.createVariable("?X_0"), TERM.createString("a")))));
+				"?X_1", "?X_2"), new ConstLiteral(
+						true,TERM.createString("a"),TERM.createVariable("?X_0"))));
 		assertEquals(rec0, MiscOps.rectify(r0));
 		
 		final IRule r1 = BASIC
@@ -91,7 +88,7 @@ public class MiscOpsTest extends TestCase {
 		final IRule rec1 = BASIC.createRule(BASIC.createHead(createLiteral("p",
 				"?X_0", "?X_1", "?X_2")), BASIC.createBody(createLiteral("r",
 				"?X_1", "?X_0"), BASIC.createLiteral(true, BUILTIN.createEqual(
-				TERM.createVariable("?X_2"), TERM.createVariable("?X_0")))));
+				TERM.createVariable("?X_0"), TERM.createVariable("?X_2")))));
 		assertEquals(rec1, MiscOps.rectify(r1));
 	}
 	
