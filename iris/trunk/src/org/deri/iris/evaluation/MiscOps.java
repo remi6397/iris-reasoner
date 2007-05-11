@@ -46,20 +46,21 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.basics.seminaive.ConstLiteral;
-import org.deri.iris.basics.seminaive.NonEqualityTerm;
 
 /**
  * <p>
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.7 2007-05-03 11:47:34 darko_anicic Exp $
+ * $Id: MiscOps.java,v 1.8 2007-05-11 09:53:57 darko_anicic Exp $
  * </p>
  * 
  * @author richi
  * @author graham
- * @version $Revision: 1.7 $
- * @date $Date: 2007-05-03 11:47:34 $
+ * @author Darko Anicic, DERI Innsbruck
+ * 
+ * @version $Revision: 1.8 $
+ * @date $Date: 2007-05-11 09:53:57 $
  */
 public class MiscOps {
 
@@ -92,105 +93,97 @@ public class MiscOps {
 	}
 
 	/**
+	 * <p>
 	 * Rectifies a rule.
-	 * 
-	 * @param r
-	 *            the rule to rectify
-	 * @return the rectified rule
-	 * @throws NullPointerException
-	 *             if the rules is {@code null}
+	 * </p>
+	 * <p>
+	 * Algorithm has been implemented from the book: "Principles of Database and 
+	 * Knowledge-Base Systems Vol. 1", Jeffrey D. Ullman (page: 111.)
+	 * </p>
+	 * <p>
+	 * Remark: This method cannot be used when function symbols (constructed terms) 
+	 * in use. In such a case a modification of the  current implementation is 
+	 * required. Only safe rules can be rectified.
+	 * </p>
+	 * @param r	The rule to rectify.
+	 * @return 	The rectified rule.
+	 * @throws 	NullPointerException
+	 *             if the rule is {@code null}.
 	 * @throws IllegalArgumentException
-	 *             if the length of the head is unequal to 1
+	 *             if the length of the head is unequal to 1.
 	 */
 	public static IRule rectify(final IRule r) {
 		if (r == null) {
-			throw new NullPointerException("The rule must not be null");
+			throw new NullPointerException("The rule must not be null.");
 		}
 		if (r.getHeadLenght() != 1) {
 			throw new IllegalArgumentException(
-					"There must be only one literal in the head");
+					"There must be only one literal in the head.");
 		}
-
 		final ILiteral hl = r.getHeadLiteral(0);
 		final int arity = hl.getPredicate().getArity();
-
-		final Map<ITerm, IVariable> subs = new HashMap<ITerm, IVariable>();
-
 		final List<ITerm> headTerms = new ArrayList<ITerm>(arity);
 		List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(r.getBodyLenght());
+		List<ILiteral> eqSubGoals = new ArrayList<ILiteral>(r.getBodyLenght());
+		Map<IVariable, List<ILiteral>> headVarsMap = new HashMap<IVariable, List<ILiteral>>();
 		bodyLiterals.addAll(r.getBodyLiterals());
+		Iterator<ITerm> terms = hl.getTuple().getTerms().iterator();
+		ITerm t = null;
+		IVariable v = null;
 		
-		final Iterator<ITerm> terms = hl.getTuple().getTerms().iterator();
 		// iterating through the terms of the head
 		for (int i = 0; i < arity; i++) {
-			final ITerm t = terms.next();
-			final IVariable v = TERM.createVariable(VAR_PREFIX + i);
-			headTerms.add(v);
-
-			if ((t instanceof IVariable) && !subs.keySet().contains(t)) {
-				// if the term is a variable and has never been substituted before
-				bodyLiterals = substituteVar((IVariable) t, v, bodyLiterals);
-				subs.put(t, v);
-			} else if (subs.keySet().contains(t)) {
-				// if the variable has already been substituted
-				bodyLiterals.add(BASIC.createLiteral(true, BUILTIN.createEqual(
-						v, subs.get(t))));
-			} else {
-				// by default, create a ConstLiteral, e.g. {a}(?X)
-				ConstLiteral con = new ConstLiteral(true, t, v);
-				bodyLiterals.add(BASIC.createLiteral(true, con));
+			t = terms.next();
+			// Introduce a new variable for each of the arguments of the head predicate.
+			IVariable newVar = TERM.createVariable(VAR_PREFIX + i);
+			headTerms.add(newVar);
+			// Create a ConstLiteral (i.e. {a}(?X) represents ?X='a') whenever an 
+			// argument of the head predicate is a ground term.
+			if(t.isGround()){
+				eqSubGoals.add(BASIC.createLiteral(true, new ConstLiteral(true, t, newVar)));
+			}else{
+				v = (IVariable)t;
+				// If some of the arguments of the head predicate are equal (and they are 
+				// variables) a map is created so we can unify such subgolas later on. For 
+				// instance subgoals: U=X and V=X will be unified in U=V and X will be 
+				// replaced from all body literals with U. 
+				if(headVarsMap.containsKey(v)){
+					headVarsMap.get(v).add(
+							BASIC.createLiteral(true, BUILTIN.createEqual(t, newVar)));
+				}else{
+					List<ILiteral> eqLiterals = new ArrayList<ILiteral>();
+					eqLiterals.add(
+							BASIC.createLiteral(true, BUILTIN.createEqual(t, newVar)));
+					headVarsMap.put(v, eqLiterals);
+				}
 			}
 		}
-		// assembling the new rectified rule
+		// Substitute all body variables with new variables and unify introduced subgolas 
+		// when possible.
+		for (ILiteral l: bodyLiterals) {
+			for (int i = 0; i < l.getTuple().getTerms().size(); i++) {
+				t = l.getTuple().getTerm(i);
+				if(! t.isGround()){
+					v = (IVariable)t;
+					List<ILiteral> eqLiterals = headVarsMap.get(v);
+					if(eqLiterals != null){
+						l.getTuple().getTerms().set(i, eqLiterals.get(0).getTuple().getTerm(1));
+						if(eqLiterals.size() > 1){
+							for (int j = 1; j < eqLiterals.size(); j++) {
+								l = eqLiterals.get(j);
+								l.getTuple().setTerm(0, eqLiterals.get(0).getTuple().getTerm(1));
+								eqSubGoals.add(l);
+							}
+						}
+					}
+				}
+			}
+		}
+		// Assembling the new rectified rule.
+		bodyLiterals.addAll(eqSubGoals);
 		final IHead h = BASIC.createHead(BASIC.createLiteral(hl.isPositive(),
 				hl.getPredicate(), BASIC.createTuple(headTerms)));
 		return BASIC.copyRule(h, BASIC.createBody(bodyLiterals));
-	}
-
-	/**
-	 * Takes a list of literals and substitutes all occurences of a variable
-	 * through another one.
-	 * 
-	 * @param from
-	 *            the variable to search for
-	 * @param to
-	 *            the variable which to replace the found occurences whith
-	 * @param l
-	 *            the list of literals
-	 * @return	  the list of literals with substituted variables
-	 * @throws NullPointerException
-	 *             if one of the variables or the list is {@code null}, or the
-	 *             list contains {@code null}
-	 */
-	private static List<ILiteral> substituteVar(final IVariable from, final IVariable to,
-			final List<ILiteral> lits) {
-		if ((from == null) || (to == null) || (lits == null) || lits.contains(null)) {
-			throw new NullPointerException(
-					"The variables and the list of literals must not be null, or contain null");
-		}
-		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(lits.size());
-		for (final ILiteral lit : lits) {
-			List<ITerm> terms = new ArrayList<ITerm>(lit.getTuple().getTerms().size());
-			
-			// TODO: Can you make this substitution more efficient?
-			for (final ITerm t : lit.getTuple().getTerms()) {
-				if (t.equals(from)) {
-					terms.add(to);
-				}else{
-					/*
-					// p('a', ?Y) and t = 'a' - required for selection!
-					if(! lit.isPositive() && t.isGround() && ! (t instanceof NonEqualityTerm)){
-						terms.add(new NonEqualityTerm(t));
-					}else {
-						terms.add(t);
-					}*/
-					terms.add(t);
-				}
-			}
-			lit.getTuple().setTerms(terms);
-			bodyLiterals.add(lit);
-		}
-		return bodyLiterals;
 	}
 	
 	/**	 TODO: 
