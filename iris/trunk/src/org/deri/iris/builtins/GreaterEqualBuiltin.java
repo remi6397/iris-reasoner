@@ -28,6 +28,8 @@ package org.deri.iris.builtins;
 import static org.deri.iris.factory.Factory.BASIC;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
@@ -42,11 +44,11 @@ import org.deri.iris.factory.Factory;
  * equal.
  * </p>
  * <p>
- * $Id: GreaterEqualBuiltin.java,v 1.8 2007-05-14 12:19:25 poettler_ric Exp $
+ * $Id: GreaterEqualBuiltin.java,v 1.9 2007-05-14 12:47:22 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class GreaterEqualBuiltin extends AbstractBuiltin {
 
@@ -100,6 +102,8 @@ public class GreaterEqualBuiltin extends AbstractBuiltin {
 		if (v == null) {
 			throw new NullPointerException("The variables must not be null");
 		}
-		return !getTuple().getAllVariables().removeAll(v).isEmpty();
+		final List<IVariable> var = getTuple().getAllVariables();
+		var.removeAll(v);
+		return var.isEmpty();
 	}
 }

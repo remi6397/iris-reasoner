@@ -28,6 +28,8 @@ package org.deri.iris.builtins;
 import static org.deri.iris.factory.Factory.BASIC;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
@@ -40,11 +42,11 @@ import org.deri.iris.api.terms.IVariable;
  * variable be left for computation, otherwise an exception will be thrown.
  * </p>
  * <p>
- * $Id: DivideBuiltin.java,v 1.9 2007-05-14 12:19:25 poettler_ric Exp $
+ * $Id: DivideBuiltin.java,v 1.10 2007-05-14 12:47:22 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class DivideBuiltin extends AbstractBuiltin {
 
@@ -107,6 +109,8 @@ public class DivideBuiltin extends AbstractBuiltin {
 		if (v == null) {
 			throw new NullPointerException("The variables must not be null");
 		}
-		return getTuple().getAllVariables().removeAll(v).size() <= 1;
+		final List<IVariable> var = getTuple().getAllVariables();
+		var.removeAll(v);
+		return var.size() <= 1;
 	}
 }
