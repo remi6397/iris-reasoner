@@ -41,11 +41,11 @@ import org.deri.iris.factory.Factory;
  * Builtin to compare two terms and determine which one is bigger.
  * </p>
  * <p>
- * $Id: GreaterBuiltin.java,v 1.7 2007-05-10 15:58:01 poettler_ric Exp $
+ * $Id: GreaterBuiltin.java,v 1.8 2007-05-14 12:19:25 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class GreaterBuiltin extends AbstractBuiltin {
 
@@ -93,5 +93,12 @@ public class GreaterBuiltin extends AbstractBuiltin {
 				BuiltinHelper.EMPTY_TUPLE : null;
 		}
 		throw new IllegalArgumentException("Can not evaluate a GREATER with any variables");
+	}
+
+	public boolean isEvaluable(final Collection<IVariable> v) {
+		if (v == null) {
+			throw new NullPointerException("The variables must not be null");
+		}
+		return !getTuple().getAllVariables().removeAll(v).isEmpty();
 	}
 }

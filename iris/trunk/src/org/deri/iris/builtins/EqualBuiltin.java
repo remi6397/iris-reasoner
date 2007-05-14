@@ -40,13 +40,13 @@ import org.deri.iris.api.terms.IVariable;
  * Builtin to compare two terms for equality.
  * </p>
  * <p>
- * $Id: EqualBuiltin.java,v 1.8 2007-05-09 13:55:37 poettler_ric Exp $
+ * $Id: EqualBuiltin.java,v 1.9 2007-05-14 12:19:25 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class EqualBuiltin extends AbstractBuiltin {
 
@@ -110,5 +110,12 @@ public class EqualBuiltin extends AbstractBuiltin {
 	public ITuple evaluate(ITuple tup, IVariable... vars) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public boolean isEvaluable(final Collection<IVariable> v) {
+		if (v == null) {
+			throw new NullPointerException("The variables must not be null");
+		}
+		return getTuple().getAllVariables().removeAll(v).size() <= 1;
 	}
 }

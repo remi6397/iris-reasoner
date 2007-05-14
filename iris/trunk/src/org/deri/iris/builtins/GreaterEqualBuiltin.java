@@ -42,11 +42,11 @@ import org.deri.iris.factory.Factory;
  * equal.
  * </p>
  * <p>
- * $Id: GreaterEqualBuiltin.java,v 1.7 2007-05-10 15:58:01 poettler_ric Exp $
+ * $Id: GreaterEqualBuiltin.java,v 1.8 2007-05-14 12:19:25 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class GreaterEqualBuiltin extends AbstractBuiltin {
 
@@ -94,5 +94,12 @@ public class GreaterEqualBuiltin extends AbstractBuiltin {
 				BuiltinHelper.EMPTY_TUPLE : null;
 		}
 		throw new IllegalArgumentException("Can not evaluate a GREATEREQUAL with any variables");
+	}
+
+	public boolean isEvaluable(final Collection<IVariable> v) {
+		if (v == null) {
+			throw new NullPointerException("The variables must not be null");
+		}
+		return !getTuple().getAllVariables().removeAll(v).isEmpty();
 	}
 }

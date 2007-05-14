@@ -41,11 +41,11 @@ import org.deri.iris.factory.Factory;
  * Builtin to compare two terms for unequality.
  * </p>
  * <p>
- * $Id: UnEqualBuiltin.java,v 1.7 2007-05-09 14:19:06 poettler_ric Exp $
+ * $Id: UnEqualBuiltin.java,v 1.8 2007-05-14 12:19:29 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class UnEqualBuiltin extends AbstractBuiltin {
 
@@ -98,5 +98,12 @@ public class UnEqualBuiltin extends AbstractBuiltin {
 	public ITuple evaluate(ITuple tup, IVariable... vars) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public boolean isEvaluable(final Collection<IVariable> v) {
+		if (v == null) {
+			throw new NullPointerException("The variables must not be null");
+		}
+		return !getTuple().getAllVariables().removeAll(v).isEmpty();
 	}
 }
