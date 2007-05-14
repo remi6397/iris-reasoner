@@ -155,13 +155,23 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		 */
 		IRelation r0 = evaluate(c0, p, null);
 		boolean emptyRel = (r0.size()==0) ? true : false;
+		boolean addVars = true;
 		IRelation r1 = null;
 		
 		for(int i=1; i<j.getChildren().size(); i++){
 			c1 = j.getChildren().get(i);
 			if(! emptyRel){
 				if(c1.getType().equals(ComponentType.BUILTIN)){
-					r0 = evaluateBuiltin(c1, vars, r0);
+					IBuiltinDescriptor con = (IBuiltinDescriptor)c1;
+					if(con.getBuiltin().isEvaluable(vars)){
+						r0 = evaluateBuiltin(c1, vars, r0);
+						addVars = true;
+					}else{
+						j.getChildren().remove(i);
+						i--;
+						j.addChild(c1);
+						addVars = false;
+					}
 				}else{
 					r1 = evaluate(c1, p, aq);
 					if(c1.isPositive()){
@@ -170,16 +180,18 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 								// TODO: get correct projection indexes!
 								MiscOps.getJoinIndexes(vars, c1.getVariables()), 
 								j.getCondition());
+						addVars = true;
 					} else {
 						jo = Factory.RELATION_OPERATION.createJoinComplementOperator(
 								r0, r1, 
 								MiscOps.getJoinIndexes(vars, c1.getVariables()));
+						addVars = false;
 					}
 					r0 = jo.join();
 				}
-				if(r0.size() == 0) emptyRel = true;
+				if(r0 != null && r0.size() == 0) emptyRel = true;
 			}
-			if(c1 != null && c1.getVariables() != null && c1.isPositive()) 
+			if(addVars && c1 != null && c1.getVariables() != null && c1.isPositive())
 				vars.addAll(c1.getVariables());
 		}
 		j.getVariables().clear();
