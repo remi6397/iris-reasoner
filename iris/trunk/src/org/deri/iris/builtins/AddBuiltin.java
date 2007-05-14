@@ -28,6 +28,7 @@ package org.deri.iris.builtins;
 import static org.deri.iris.factory.Factory.BASIC;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
@@ -40,11 +41,11 @@ import org.deri.iris.api.terms.IVariable;
  * variable be left for computation, otherwise an exception will be thrown.
  * </p>
  * <p>
- * $Id: AddBuiltin.java,v 1.8 2007-05-10 15:58:01 poettler_ric Exp $
+ * $Id: AddBuiltin.java,v 1.9 2007-05-14 12:19:25 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class AddBuiltin extends AbstractBuiltin {
 
@@ -101,5 +102,12 @@ public class AddBuiltin extends AbstractBuiltin {
 				throw new IllegalArgumentException("The variable must be at possition " + 
 						"0 to 2, but was on " + vars[0]);
 		}
+	}
+
+	public boolean isEvaluable(final Collection<IVariable> v) {
+		if (v == null) {
+			throw new NullPointerException("The variables must not be null");
+		}
+		return getTuple().getAllVariables().removeAll(v).size() <= 1;
 	}
 }
