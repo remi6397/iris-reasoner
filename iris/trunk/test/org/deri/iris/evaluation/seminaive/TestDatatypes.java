@@ -28,11 +28,8 @@ package org.deri.iris.evaluation.seminaive;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,15 +38,12 @@ import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
-import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.parser.ProgramTest;
@@ -61,7 +55,11 @@ import org.deri.iris.parser.ProgramTest;
  */
 public class TestDatatypes {
 	public static void main(final String[] arg) {
-		
+		//test1();
+		test2();
+	}
+	
+	private static void test1(){
 		// constructing rules
 		
 		// solarPlanet(X) :- planet(?X), distanceFromSun(?X,?Y)
@@ -184,6 +182,142 @@ public class TestDatatypes {
 		queries.add(q);
 		
 		final IProgram e = Factory.PROGRAM.createProgram(facts, rules, queries);
+		
+		System.out.println("--- input ---");
+		for (final IRule rule : e.getRules()) {
+			System.out.println(rule);
+		}
+	
+		System.out.println("--- facts ---");
+		for (final IPredicate pred : e.getPredicates()) {
+			System.out.printf("%s -> %s\n", pred.getPredicateSymbol(), e
+					.getFacts(pred));
+			for (ITuple t : e.getFacts(pred)) {
+				System.out.println(pred.getPredicateSymbol() + t);
+			}
+		}
+		
+		IExpressionEvaluator method = new ExpressionEvaluator();
+		IExecutor exec = new Executor(e, method);
+		exec.execute();
+		IRelation result = exec.computeSubstitution(q);
+		
+		System.out.println("--- results for query: " + q.toString());
+		ProgramTest.printResults(result);
+	}
+	
+	private static void test2(){
+		// constructing rules
+		
+		// s(?X[String]) :- p(?X[String],?Y[String]), p(?X[String],?Y[Integer]).
+		Set<IRule> rules = new HashSet<IRule>(2);
+		IHead h = BASIC.createHead(
+				BASIC.createLiteral(true, BASIC.createAtom(
+						BASIC.createPredicate("s", 1), 
+						BASIC.createTuple(TERM.createVariable("X")))));
+		
+		IBody b = Factory.BASIC.createBody(
+				BASIC.createLiteral(true, BASIC.createAtom(
+						BASIC.createPredicate("p", 2), 
+						BASIC.createTuple(
+								TERM.createVariable("X"),
+								TERM.createVariable("Y")))),
+				BASIC.createLiteral(true, BASIC.createAtom(
+						BASIC.createPredicate("p", 2), 
+						BASIC.createTuple(
+								TERM.createVariable("X"),
+								TERM.createVariable("Y")))));
+
+		IRule r = Factory.BASIC.createRule(h, b);
+		rules.add(r);
+
+		// constructing facts
+		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>(); 
+		Set<IQuery> queries = new HashSet<IQuery>(1);
+		final IProgram e = Factory.PROGRAM.createProgram(facts, rules, queries);
+		
+		IPredicate p = Factory.BASIC.createPredicate("p", 2);
+		IRelation rel = Factory.RELATION.getRelation(p.getArity());
+		
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("sun"),
+				Factory.TERM.createString("mercury")));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("sun"),
+				Factory.TERM.createString("venus")));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("sun"),
+				Factory.TERM.createString("earth")));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("sun"),
+				Factory.TERM.createString("mars")));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("sun"),
+				Factory.TERM.createString("jupiter")));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("sun"),
+				Factory.TERM.createString("saturn")));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("sun"),
+				Factory.TERM.createString("uranus")));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("sun"),
+				Factory.TERM.createString("neptune")));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("sun"),
+				Factory.TERM.createString("pluto")));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("sun"),
+				Factory.TERM.createString("51pegasi_planet")));
+		
+		e.addFacts(p, rel);
+		
+		p = Factory.BASIC.createPredicate("p", 2);
+		rel = Factory.RELATION.getRelation(p.getArity());
+		
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("mercury"),
+				Factory.CONCRETE.createDecimal(1)));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("venus"),
+				Factory.CONCRETE.createDecimal(0.72)));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("earth"),
+				Factory.CONCRETE.createDecimal(1.0)));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("mars"),
+				Factory.CONCRETE.createDecimal(1.5)));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("jupiter"),
+				Factory.CONCRETE.createDecimal(5.2)));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("saturn"),
+				Factory.CONCRETE.createDecimal(9.5)));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("uranus"),
+				Factory.CONCRETE.createDecimal(19.2)));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("neptune"),
+				Factory.CONCRETE.createDecimal(30.1)));
+		rel.add(Factory.BASIC.createTuple(
+				Factory.TERM.createString("pluto"),
+				Factory.CONCRETE.createDecimal(39.5)));
+		
+		// TODO: At this point facts for the first predicate p will be overwritten with
+		// the second one. The problem is that hash code for a predicate is based only
+		// on a predicate symbol and arity, but not on data types for each atribute of
+		// the predicate symbol. The question is whether when creating a new predicate/
+		// realtion we need to specify data types for each attribute as well.
+		e.addFacts(p, rel);
+		
+		// constructing a query
+		// :- s(X)
+		IQuery q = Factory.BASIC.createQuery(
+				BASIC.createLiteral(true, BASIC.createAtom(
+					BASIC.createPredicate("s", 1), 
+					BASIC.createTuple(TERM.createVariable("X")))));
+		
+		e.addQuery(q);
 		
 		System.out.println("--- input ---");
 		for (final IRule rule : e.getRules()) {
