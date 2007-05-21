@@ -34,6 +34,7 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
@@ -46,9 +47,9 @@ import org.deri.iris.api.terms.IVariable;
  * value, the second is the celsius value.
  * </p>
  * <p>
- * $Id: FahrenheitToCelsiusBuiltin.java,v 1.4 2007-05-10 15:58:02 poettler_ric Exp $
+ * $Id: FahrenheitToCelsiusBuiltin.java,v 1.5 2007-05-21 09:52:16 poettler_ric Exp $
  * </p>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  */
 public class FahrenheitToCelsiusBuiltin extends AbstractBuiltin {
@@ -106,6 +107,15 @@ public class FahrenheitToCelsiusBuiltin extends AbstractBuiltin {
 				throw new IllegalArgumentException("This builtin only has 2 positions, but " + 
 						missing[0] + " was requested");
 		}
+	}
+
+	public boolean isEvaluable(final Collection<IVariable> v) {
+		if (v == null) {
+			throw new NullPointerException("The variable Collection must not be null");
+		}
+		final Collection<IVariable> vars = getTuple().getAllVariables();
+		vars.removeAll(v);
+		return vars.size() <= 1;
 	}
 
 	public static IPredicate getBuiltinPredicate() {
