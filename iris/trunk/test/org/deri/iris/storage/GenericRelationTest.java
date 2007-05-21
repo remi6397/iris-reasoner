@@ -41,29 +41,40 @@ import org.deri.iris.api.storage.IRelation;
 /**
  * <p>
  * Provides generic tests which should be passed by all relation
- * implementations.
+ * implementations. All tests will be done with tuples of arity 4.
  * </p>
  * <p>
- * $Id: GenericRelationTest.java,v 1.2 2007-05-21 11:46:23 poettler_ric Exp $
+ * $Id: GenericRelationTest.java,v 1.3 2007-05-21 15:01:12 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class GenericRelationTest<Type extends IRelation> extends
 		TestCase {
 
-	private static final ITuple[] tup = new ITuple[] {
-			createTuple("a", "b", "c"), createTuple("b", "c", "a"),
-			createTuple("c", "a", "b"), createTuple("x", "y", "z"),
-			createTuple("a", "x", "w") };
+	private static final ITuple[] allTup = new ITuple[] {
+		createTuple("a", "a", "a", "a"),
+		createTuple("b", "b", "b", "b"),
+		createTuple("c", "c", "c", "c"),
+		createTuple("d", "d", "d", "d"),
+		createTuple("e", "e", "e", "e"),
+		createTuple("f", "f", "f", "f"),
+		createTuple("g", "g", "g", "g"),
+		createTuple("h", "h", "h", "h"),
+		createTuple("i", "i", "i", "i"),
+		createTuple("j", "j", "j", "j"),
+		createTuple("k", "k", "k", "k"),
+		createTuple("l", "l", "l", "l"),
+		createTuple("m", "m", "m", "m") };
 
 	protected Type r;
 
 	/**
 	 * <p>
 	 * In this method the field &quot;{@code r}&quot; of
-	 * {@code GenericRelationTest} must be set.
+	 * {@code GenericRelationTest} must be set. Note: all tests will be done
+	 * with tuples of arity 4.
 	 * </p>
 	 * <p>
 	 * e.g.: <code>r = new IndexingOnTheFlyRelation()</code>
@@ -72,49 +83,51 @@ public abstract class GenericRelationTest<Type extends IRelation> extends
 	public abstract void setUp();
 
 	public void testPutGetSingle() {
-		for (final ITuple t : tup) {
-			r.add(t);
+		for (final ITuple t : allTup) {
+			assertTrue("Adding of " + t + " to r must return true", r.add(t));
 		}
 		assertEquals(
 				"The size of the array and the stored tuples mut be equal",
-				tup.length, r.size());
-		for (final ITuple t : tup) {
+				allTup.length, r.size());
+		for (final ITuple t : allTup) {
 			assertTrue("Couldn't find the tuple " + t, r.contains(t));
 		}
 	}
 
 	public void testPutGetAll() {
-		r.addAll(Arrays.asList(tup));
+		assertTrue("Adding of tuples must return true", r.addAll(Arrays.asList(allTup)));
 		assertEquals(
 				"The size of the array and the stored tuples mut be equal",
-				tup.length, r.size());
-		for (final ITuple t : tup) {
+				allTup.length, r.size());
+		for (final ITuple t : allTup) {
 			assertTrue("Couldn't find the tuple " + t, r.contains(t));
 		}
 	}
 
+	public void testRemoveSingle() {
+		r.addAll(Arrays.asList(allTup));
+
+		final ITuple aaaa = createTuple("a", "a", "a", "a");
+		assertTrue("Removing of " + aaaa + " should return true", r.remove(aaaa));
+	}
+
 	public void testTailSet() {
-		r.addAll(Arrays.asList(tup));
-		// set containing all suples wich are larger than (c, a, a) when the
-		// relation is sorted on the first field
+		r.addAll(Arrays.asList(allTup));
 		final Set<ITuple> tailRef = new HashSet<ITuple>();
-		tailRef.add(createTuple("c", "a", "b"));
-		tailRef.add(createTuple("x", "y", "z"));
-		final Set<ITuple> tail = new HashSet<ITuple>(r.tailSet(createTuple("c",
-				"a", "a")));
+		tailRef.add(createTuple("k", "k", "k", "k"));
+		tailRef.add(createTuple("l", "l", "l", "l"));
+		tailRef.add(createTuple("m", "m", "m", "m"));
+		final Set<ITuple> tail = new HashSet<ITuple>(r.tailSet(createTuple("k", "k", "k", "k")));
 		assertEquals("The tails must be equal", tailRef, tail);
 	}
 
 	public void testHeadSet() {
-		r.addAll(Arrays.asList(tup));
-		// set containing all suples wich are smaller than (b, c, b) when the
-		// relation is sorted on the first field
+		r.addAll(Arrays.asList(allTup));
 		final Set<ITuple> headRef = new HashSet<ITuple>();
-		headRef.add(createTuple("a", "b", "c"));
-		headRef.add(createTuple("a", "x", "w"));
-		headRef.add(createTuple("b", "c", "a"));
-		final Set<ITuple> head = new HashSet<ITuple>(r.headSet(createTuple("b",
-				"c", "d")));
+		headRef.add(createTuple("a", "a", "a", "a"));
+		headRef.add(createTuple("b", "b", "b", "b"));
+		headRef.add(createTuple("c", "c", "c", "c"));
+		final Set<ITuple> head = new HashSet<ITuple>(r.headSet(createTuple("d", "d", "d", "d")));
 		assertEquals("The heads must be equal", headRef, head);
 	}
 
@@ -130,46 +143,66 @@ public abstract class GenericRelationTest<Type extends IRelation> extends
 
 		r.addAll(allTup);
 
-		final SortedSet<ITuple> rel_0132 = r
-				.indexOn(new Integer[] { 0, 1, 3, 2 });
-		assertEquals("The first tuple of relation 0132 must be (a, b, k, l)",
-				createTuple("a", "b", "k", "l"), rel_0132.first());
-		final SortedSet<ITuple> rel_3412 = r
-				.indexOn(new Integer[] { 3, 4, 1, 2 });
-		assertEquals("The first tuple of relation 0132 must be (x, y, a, b)",
-				createTuple("x", "y", "a", "b"), rel_3412.first());
-		assertEquals(
-				"The first tuple of relation 0132 must be still (a, b, k, l)",
-				createTuple("a", "b", "k", "l"), rel_0132.first());
+		final SortedSet<ITuple> rel_0132 = r.indexOn(new Integer[] { 0, 1, 3, 2 });
+		final ITuple abkl = createTuple("a", "b", "k", "l");
+		assertEquals("The first tuple of relation 0132 must be " + abkl, abkl, rel_0132.first());
 
-		r.add(createTuple("a", "a", "a", "a"));
+		// test whether the order of the previous set remains the same
+		final SortedSet<ITuple> rel_3412 = r.indexOn(new Integer[] { 3, 4, 1, 2 });
+		final ITuple xyab = createTuple("x", "y", "a", "b");
+		assertEquals("The first tuple of relation 0132 must be " + xyab, xyab, rel_3412.first());
+		assertEquals("The first tuple of relation 0132 must be still " + abkl, abkl, rel_0132.first());
+	}
 
-		assertEquals(
-				"The first tuple of relation 3412 now must be (a, a, a, a)",
-				createTuple("a", "a", "a", "a"), rel_3412.first());
-		assertEquals(
-				"The first tuple of relation 0132 now must still (a, a, a, a)",
-				createTuple("a", "a", "a", "a"), rel_0132.first());
+	public void testIndexOnAdd() {
+		r.addAll(Arrays.asList(allTup));
 
-		final ITuple aaaa = createTuple("b", "b", "b", "b");
-		rel_3412.add(aaaa);
-		assertTrue("Couldn't find aaaa again in r", r.contains(aaaa));
-		assertTrue("Couldn't find aaaa again in rel_0132", rel_0132.contains(aaaa));
-		assertTrue("Couldn't find aaaa again in rel_3412", rel_3412.contains(aaaa));
+		final SortedSet<ITuple> rel_0123 = r.indexOn(new Integer[] { 0, 1, 2, 3 });
+		final SortedSet<ITuple> rel_3210 = r.indexOn(new Integer[] { 3, 2, 1, 0 });
+
+		// test whether adding to r would have an effect to the index
+		// relations
+		final ITuple abbb = createTuple("a", "b", "b", "b");
+		assertTrue("Adding of " + abbb + " must return true", r.add(abbb));
+		assertTrue("Couldn't find " + abbb + " again in r", r.contains(abbb));
+		assertTrue("Couldn't find " + abbb + " again in rel_0132", rel_0123.contains(abbb));
+		assertTrue("Couldn't find " + abbb + " again in rel_3412", rel_3210.contains(abbb));
+
+		// test whether adding to an index relation would have an affect
+		// on the other relations
+		final ITuple accc = createTuple("a", "c", "c", "c");
+		assertTrue("Adding of " + accc + " must return true", rel_0123.add(accc));
+		assertTrue("Couldn't find " + accc + " again in r", r.contains(accc));
+		assertTrue("Couldn't find " + accc + " again in rel_0132", rel_0123.contains(accc));
+		assertTrue("Couldn't find " + accc + " again in rel_3412", rel_3210.contains(accc));
+	}
+
+	public void testIndexOnRemove() {
+		r.addAll(Arrays.asList(allTup));
+
+		final SortedSet<ITuple> rel_0123 = r.indexOn(new Integer[] { 0, 1, 2, 3 });
+		final SortedSet<ITuple> rel_3210 = r.indexOn(new Integer[] { 3, 2, 1, 0 });
+
+		// test whether removing to r would have an effect to the index
+		// relations
+		final ITuple aaaa = createTuple("a", "a", "a", "a");
+		assertTrue("Removing of " + aaaa + " must return true", r.remove(aaaa));
+		assertFalse("Could find " + aaaa + " again in r", r.contains(aaaa));
+		assertFalse("Could find " + aaaa + " again in rel_0132", rel_0123.contains(aaaa));
+		assertFalse("Could find " + aaaa + " again in rel_3412", rel_3210.contains(aaaa));
+
+		// test whether removing to an index relation would have an affect
+		// on the other relations
+		final ITuple bbbb = createTuple("b", "b", "b", "b");
+		assertTrue("Removing of " + bbbb + " must return true", rel_0123.remove(bbbb));
+		assertFalse("Could find " + bbbb + " again in r", r.contains(bbbb));
+		assertFalse("Could find " + bbbb + " again in rel_0132", rel_0123.contains(bbbb));
+		assertFalse("Could find " + bbbb + " again in rel_3412", rel_3210.contains(bbbb));
 	}
 
 	public void testHeadSetAdd() {
-		final Set<ITuple> allTup = new HashSet<ITuple>();
-		allTup.add(createTuple("a", "a", "a", "a"));
-		allTup.add(createTuple("b", "b", "b", "b"));
-		allTup.add(createTuple("c", "c", "c", "c"));
-		allTup.add(createTuple("d", "d", "d", "d"));
-		allTup.add(createTuple("e", "e", "e", "e"));
-		allTup.add(createTuple("f", "f", "f", "f"));
-		allTup.add(createTuple("g", "g", "g", "g"));
-		allTup.add(createTuple("h", "h", "h", "h"));
+		r.addAll(Arrays.asList(allTup));
 
-		r.addAll(allTup);
 		final SortedSet<ITuple> rel_eeee = r.headSet(createTuple("e", "e", "e", "e"));
 		final SortedSet<ITuple> rel_ffff = r.headSet(createTuple("f", "f", "f", "f"));
 
@@ -222,17 +255,8 @@ public abstract class GenericRelationTest<Type extends IRelation> extends
 	}
 
 	public void testTailSetAdd() {
-		final Set<ITuple> allTup = new HashSet<ITuple>();
-		allTup.add(createTuple("a", "a", "a", "a"));
-		allTup.add(createTuple("b", "b", "b", "b"));
-		allTup.add(createTuple("c", "c", "c", "c"));
-		allTup.add(createTuple("d", "d", "d", "d"));
-		allTup.add(createTuple("e", "e", "e", "e"));
-		allTup.add(createTuple("f", "f", "f", "f"));
-		allTup.add(createTuple("g", "g", "g", "g"));
-		allTup.add(createTuple("h", "h", "h", "h"));
+		r.addAll(Arrays.asList(allTup));
 
-		r.addAll(allTup);
 		final SortedSet<ITuple> rel_cccc = r.tailSet(createTuple("c", "c", "c", "c"));
 		final SortedSet<ITuple> rel_dddd = r.tailSet(createTuple("d", "d", "d", "d"));
 
@@ -285,17 +309,8 @@ public abstract class GenericRelationTest<Type extends IRelation> extends
 	}
 
 	public void testSubSetAdd() {
-		final Set<ITuple> allTup = new HashSet<ITuple>();
-		allTup.add(createTuple("a", "a", "a", "a"));
-		allTup.add(createTuple("b", "b", "b", "b"));
-		allTup.add(createTuple("c", "c", "c", "c"));
-		allTup.add(createTuple("d", "d", "d", "d"));
-		allTup.add(createTuple("e", "e", "e", "e"));
-		allTup.add(createTuple("f", "f", "f", "f"));
-		allTup.add(createTuple("g", "g", "g", "g"));
-		allTup.add(createTuple("h", "h", "h", "h"));
+		r.addAll(Arrays.asList(allTup));
 
-		r.addAll(allTup);
 		final SortedSet<ITuple> rel_cccc_eeee = r.subSet(createTuple("c", "c", "c", "c"), 
 				createTuple("e", "e", "e", "e"));
 		final SortedSet<ITuple> rel_bbbb_ffff = r.subSet(createTuple("b", "b", "b", "b"), 
@@ -351,17 +366,8 @@ public abstract class GenericRelationTest<Type extends IRelation> extends
 	}
 
 	public void testHeadSetRemove() {
-		final Set<ITuple> allTup = new HashSet<ITuple>();
-		allTup.add(createTuple("a", "a", "a", "a"));
-		allTup.add(createTuple("b", "b", "b", "b"));
-		allTup.add(createTuple("c", "c", "c", "c"));
-		allTup.add(createTuple("d", "d", "d", "d"));
-		allTup.add(createTuple("e", "e", "e", "e"));
-		allTup.add(createTuple("f", "f", "f", "f"));
-		allTup.add(createTuple("g", "g", "g", "g"));
-		allTup.add(createTuple("h", "h", "h", "h"));
+		r.addAll(Arrays.asList(allTup));
 
-		r.addAll(allTup);
 		final SortedSet<ITuple> rel_gggg = r.headSet(createTuple("g", "g", "g", "g"));
 		final SortedSet<ITuple> rel_hhhh = r.headSet(createTuple("h", "h", "h", "h"));
 
@@ -405,17 +411,8 @@ public abstract class GenericRelationTest<Type extends IRelation> extends
 	}
 
 	public void testTailSetRemove() {
-		final Set<ITuple> allTup = new HashSet<ITuple>();
-		allTup.add(createTuple("a", "a", "a", "a"));
-		allTup.add(createTuple("b", "b", "b", "b"));
-		allTup.add(createTuple("c", "c", "c", "c"));
-		allTup.add(createTuple("d", "d", "d", "d"));
-		allTup.add(createTuple("e", "e", "e", "e"));
-		allTup.add(createTuple("f", "f", "f", "f"));
-		allTup.add(createTuple("g", "g", "g", "g"));
-		allTup.add(createTuple("h", "h", "h", "h"));
+		r.addAll(Arrays.asList(allTup));
 
-		r.addAll(allTup);
 		final SortedSet<ITuple> rel_bbbb = r.tailSet(createTuple("b", "b", "b", "b"));
 		final SortedSet<ITuple> rel_cccc = r.tailSet(createTuple("c", "c", "c", "c"));
 
@@ -459,22 +456,8 @@ public abstract class GenericRelationTest<Type extends IRelation> extends
 	}
 
 	public void testSubSetRemove() {
-		final Set<ITuple> allTup = new HashSet<ITuple>();
-		allTup.add(createTuple("a", "a", "a", "a"));
-		allTup.add(createTuple("b", "b", "b", "b"));
-		allTup.add(createTuple("c", "c", "c", "c"));
-		allTup.add(createTuple("d", "d", "d", "d"));
-		allTup.add(createTuple("e", "e", "e", "e"));
-		allTup.add(createTuple("f", "f", "f", "f"));
-		allTup.add(createTuple("g", "g", "g", "g"));
-		allTup.add(createTuple("h", "h", "h", "h"));
-		allTup.add(createTuple("i", "i", "i", "i"));
-		allTup.add(createTuple("j", "j", "j", "j"));
-		allTup.add(createTuple("k", "k", "k", "k"));
-		allTup.add(createTuple("l", "l", "l", "l"));
-		allTup.add(createTuple("m", "m", "m", "m"));
+		r.addAll(Arrays.asList(allTup));
 
-		r.addAll(allTup);
 		final SortedSet<ITuple> rel_cccc_kkkk = r.subSet(createTuple("c", "c", "c", "c"), createTuple("k", "k", "k", "k"));
 		final SortedSet<ITuple> rel_dddd_jjjj = r.subSet(createTuple("d", "d", "d", "d"), createTuple("j", "j", "j", "j"));
 
@@ -518,17 +501,7 @@ public abstract class GenericRelationTest<Type extends IRelation> extends
 	}
 
 	public void testIterator() {
-		final Set<ITuple> allTup = new HashSet<ITuple>();
-		allTup.add(createTuple("a", "a", "a", "a"));
-		allTup.add(createTuple("b", "b", "b", "b"));
-		allTup.add(createTuple("c", "c", "c", "c"));
-		allTup.add(createTuple("d", "d", "d", "d"));
-		allTup.add(createTuple("e", "e", "e", "e"));
-		allTup.add(createTuple("f", "f", "f", "f"));
-		allTup.add(createTuple("g", "g", "g", "g"));
-		allTup.add(createTuple("h", "h", "h", "h"));
-
-		r.addAll(allTup);
+		r.addAll(Arrays.asList(allTup));
 		
 		// testing the size of the iterator and whether the iterator is
 		// modifiable
@@ -538,9 +511,9 @@ public abstract class GenericRelationTest<Type extends IRelation> extends
 			i.remove();
 			count++;
 		}
-		assertEquals("The number of tuples in the relation must be the same as in the iterator", allTup.size(), count);
+		assertEquals("The number of tuples in the relation must be the same as in the iterator", allTup.length, count);
 		
-		r.addAll(allTup);
+		r.addAll(Arrays.asList(allTup));
 		// testing whether only the wanted tuple will be deleted
 		final ITuple dddd = createTuple("d", "d", "d", "d");
 		for (final Iterator<ITuple> i = r.iterator(); i.hasNext(); ) {
@@ -549,7 +522,7 @@ public abstract class GenericRelationTest<Type extends IRelation> extends
 				break;
 			}
 		}
-		assertEquals("Only one tuple should be deleted, but where " + (allTup.size() - r.size()), allTup.size() - 1, r.size());
+		assertEquals("Only one tuple should be deleted, but where " + (allTup.length - r.size()), allTup.length - 1, r.size());
 		assertFalse(dddd + " must not be found in r again", r.contains(dddd));
 	}
 }
