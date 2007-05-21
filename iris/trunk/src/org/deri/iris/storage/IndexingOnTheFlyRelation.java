@@ -43,19 +43,27 @@ import org.deri.iris.api.storage.IRelation;
 
 /**
  * <p>
- * New relation which creates indexes on the fly.
+ * New relation which creates indexes on the fly. The relation will remember the
+ * relations returned by the <code>indexOn(int[])</code> method, so no
+ * additional computations need to be done, if the same index is requested
+ * again.
  * </p>
  * <p>
- * All collections returned by this Relations are <b>unmodifiable</b>. If you
- * want to alter relation, you have to use the {@code add} and {@code remove}
- * method of this relation directly.
+ * <code>null</code> is not permitted by this relation, nor by its subsets.
  * </p>
  * <p>
- * $Id: IndexingOnTheFlyRelation.java,v 1.1 2007-02-15 08:42:37 poettler_ric Exp $
+ * The subsets, and subsets of the subsets gained from this relation are
+ * modifiable and should work properly according to the <code>SortedSet</code>
+ * specification. The iterators are not modifiable, and will throw an
+ * <code>UnsupportedOperationException</code> if you call the
+ * <code>remove()</code> method.
+ * </p>
+ * <p>
+ * $Id: IndexingOnTheFlyRelation.java,v 1.2 2007-05-21 11:45:18 poettler_ric Exp $
  * </p>
  * 
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.1 $
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision: 1.2 $
  */
 public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 		SortedSet<ITuple>, IRelation {
@@ -77,6 +85,18 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 	 */
 	IndexingOnTheFlyRelation() {
 		initialize(0);
+	}
+
+	/**
+	 * Creates a new empty relation object with a given arity.
+	 * @param a the arity of the relation
+	 * @throws IllegalArgumentException if the arity is negative
+	 */
+	IndexingOnTheFlyRelation(final int a) {
+		if (a < 0) {
+			throw new IllegalArgumentException("The arity must not be negative, but was " + a);
+		}
+		initialize(a);
 	}
 
 	/**
@@ -104,7 +124,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 
 	@Override
 	public Iterator<ITuple> iterator() {
-		return new UnmodifiableIterator<ITuple>(primary.iterator());
+		return new ModifiableIterator<ITuple>(primary);
 	}
 
 	@Override
@@ -114,6 +134,9 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 
 	@Override
 	public synchronized boolean add(final ITuple t) {
+		if (t == null) {
+			throw new NullPointerException("The tuple to add must not be null");
+		}
 		if (!isEmpty()) { // assert the arity
 			if (t.getArity() != arity) {
 				throw new IllegalArgumentException(
@@ -154,47 +177,31 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 		return primary.first();
 	}
 
-	public SortedSet<ITuple> headSet(ITuple toElement) {
-		return Collections.unmodifiableSortedSet(primary.headSet(toElement));
+	public SortedSet<ITuple> headSet(ITuple to) {
+		if (to == null) {
+			throw new NullPointerException("The to tuple must not be null");
+		}
+		return new SubRelation(primary.headSet(to), null, to);
 	}
 
 	public ITuple last() {
 		return primary.last();
 	}
 
-	public SortedSet<ITuple> subSet(ITuple fromElement, ITuple toElement) {
-		return Collections.unmodifiableSortedSet(primary.subSet(fromElement,
-				toElement));
+	public SortedSet<ITuple> subSet(ITuple from, ITuple to) {
+		if ((from == null) || (to == null)) {
+			throw new NullPointerException("The from and to tuple must not be null");
+		}
+		return new SubRelation(primary.subSet(from, to), from, to);
 	}
 
-	public SortedSet<ITuple> tailSet(ITuple fromElement) {
-		return Collections.unmodifiableSortedSet(primary.tailSet(fromElement));
+	public SortedSet<ITuple> tailSet(ITuple from) {
+		if (from == null) {
+			throw new NullPointerException("The from tuple must not be null");
+		}
+		return new SubRelation(primary.tailSet(from), from, null);
 	}
 
-	/**
-	 * <p>
-	 * Returns a sorted set which is sorted on the specified indexes.
-	 * </p>
-	 * <p>
-	 * The indedexes are specified as follows: All indexes you don't want to
-	 * sort on are 0, the index you want to sort on mainly is 1, the second
-	 * index (which will be taken into account if the terms at the given
-	 * possition of the previous index are equal) is 2, and so on.
-	 * </p>
-	 * <p>
-	 * e.g.: If you want a set of tuples first sorted on the third and then
-	 * sorted on the first term you give an index of <code>[2,0,1]</code>.
-	 * </p>
-	 * 
-	 * @param idx
-	 *            the index on which should be sorted
-	 * @return an <b>unmodifiable</b> set sorted on the given indexes
-	 * @throws NullPointerException
-	 *             if the indexes is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the length of the indexes doesn't match the arity of the
-	 *             relation
-	 */
 	public SortedSet<ITuple> indexOn(final Integer[] idx) {
 		if (idx == null) {
 			throw new NullPointerException("The index must not be null");
@@ -205,10 +212,10 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 		}
 
 		SortedSet<ITuple> s = indexes.get(Arrays.hashCode(idx));
-		if (s == null) { // the index wasn't created yet
+		if (s == null) {
 			s = createIndex(idx);
 		}
-		return Collections.unmodifiableSortedSet(s);
+		return new SubRelation(s);
 	}
 
 	/**
@@ -238,8 +245,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 					+ " must match the arity of the relation " + arity);
 		}
 
-		final SortedSet<ITuple> s = new TreeSet<ITuple>(
-				new TupleComparator(idx));
+		final SortedSet<ITuple> s = new TreeSet<ITuple>(new TupleComparator(idx));
 		s.addAll(primary);
 		indexes.put(Arrays.hashCode(idx), s);
 		return s;
@@ -254,11 +260,11 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 	 * Compares two tuples according to a given set of indexes.
 	 * </p>
 	 * <p>
-	 * $Id: IndexingOnTheFlyRelation.java,v 1.1 2007-02-15 08:42:37 poettler_ric Exp $
+	 * $Id: IndexingOnTheFlyRelation.java,v 1.2 2007-05-21 11:45:18 poettler_ric Exp $
 	 * </p>
 	 * 
-	 * @author Richard Pöttler, richard dot poettler at deri dot org
-	 * @version $Revision: 1.1 $
+	 * @author Richard Pöttler (richard dot poettler at deri dot at)
+	 * @version $Revision: 1.2 $
 	 */
 	private static class TupleComparator implements Comparator<ITuple> {
 
@@ -266,7 +272,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 		 * Array holding the position and the priority of the indexes on which
 		 * to sort.
 		 */
-		private Integer[] indexOrder;
+		private final Integer[] indexOrder;
 
 		/**
 		 * <p>
@@ -310,8 +316,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 					}
 				}
 			}
-			indexOrder = new Integer[order.size()];
-			indexOrder = order.toArray(indexOrder);
+			indexOrder = order.toArray(new Integer[order.size()]);
 		}
 
 		public int compare(ITuple o1, ITuple o2) {
@@ -331,37 +336,41 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 
 	/**
 	 * <p>
-	 * This is a Iterator to mask another Iterator as immutable. More precisely
-	 * it throws an exception when the {@code remove} method is invoked and
-	 * passes all other calls to the inner iterator..
+	 * Proxy class to safely iterate through the collections of the
+	 * <code>IndexingOnTheFlyRelation</code>. The calls to the
+	 * <code>remove()</code> method are passed to the outer
+	 * <code>SortedSet</code>.
 	 * </p>
 	 * <p>
-	 * $Id: IndexingOnTheFlyRelation.java,v 1.1 2007-02-15 08:42:37 poettler_ric Exp $
+	 * $Id: IndexingOnTheFlyRelation.java,v 1.2 2007-05-21 11:45:18 poettler_ric Exp $
 	 * </p>
-	 * 
-	 * @author richi
-	 * @version $Revision: 1.1 $
-	 * 
-	 * @param <Type>
+	 * @author Richard Pöttler (richard dot poettler at deri dot at)
+	 * @version $Revision: 1.2 $
 	 */
-	private static class UnmodifiableIterator<Type> implements Iterator<Type> {
+	private class ModifiableIterator<Type> implements Iterator<Type> {
 
-		/** Holds the origianl iterator. */
-		private final Iterator<Type> i;
+		/** The inner iterator through which to iterate. */
+		private Iterator<Type> i;
+
+		/** The inner set from where to obtain the iterator. */
+		private final SortedSet<Type> ss;
+
+		/** The last element returned by this iterator. */
+		private Type last;
 
 		/**
-		 * Creates a new immutable iterator.
-		 * 
-		 * @param it
-		 *            the iterator to save from modifications
-		 * @throws NullPointerException
-		 *             if the iterator is {@code null}
+		 * <p>
+		 * Constructs a new iterator for the given set.
+		 * </p>
+		 * @param ss the set through which to iterate
+		 * @throws NullPointerException if the set is <code>null</code>
 		 */
-		public UnmodifiableIterator(final Iterator<Type> it) {
-			if (it == null) {
-				throw new NullPointerException("The iterator must not be null");
+		public ModifiableIterator(final SortedSet<Type> ss) {
+			if (ss == null) {
+				throw new NullPointerException("The set must not be null");
 			}
-			i = it;
+			this.ss = ss;
+			this.i = ss.iterator();
 		}
 
 		public boolean hasNext() {
@@ -369,20 +378,196 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 		}
 
 		public Type next() {
-			return i.next();
+			return last = i.next();
 		}
+
+		public void remove() {
+			IndexingOnTheFlyRelation.this.remove(last);
+			// resets the iterator so that the next element will be
+			// returned (otherwise an exception will be thrown)
+			i = ss.tailSet(last).iterator();
+		}
+	}
+
+	/**
+	 * <p>
+	 * Proxyclass around subrelations gained by the
+	 * <code>IndexingOnTheFlyRelation</code> or <code>SubRelation</code>.
+	 * </p>
+	 * <p>
+	 * This class will pass all <code>add</code> and <code>remove</code>
+	 * calls to the outer <code>IndexingOnTheFlyRelation</code>, so that it
+	 * is save to modify it's subrelations.
+	 * </p>
+	 * <p>
+	 * $Id: IndexingOnTheFlyRelation.java,v 1.2 2007-05-21 11:45:18 poettler_ric Exp $
+	 * </p>
+	 *
+	 * @author Richard Pöttler (richard dot poettler at deri dot at)
+	 * @version $Revision: 1.2 $
+	 */
+	private class SubRelation extends AbstractSet<ITuple> implements SortedSet<ITuple> {
+
+		/** The inner set holding the tuples. */
+		private final SortedSet<ITuple> s;
+
+		/** The from boundary of this subrelation, inclusive. */
+		private final ITuple from;
+
+		/** The to boundary of this subrelation, exclusive. */
+		private final ITuple to;
 
 		/**
 		 * <p>
-		 * Throws always an UnsupportedOperationException, bacause this iterator
-		 * is immutable
+		 * Construcs a new subrelation with an upper and lower boundary.
+		 * The submitted set must already be the subset which should be
+		 * represented
 		 * </p>
-		 * 
-		 * @throws UnsupportedOperationException
-		 *             because this iterator is immutable
+		 * @param s the subset which should be represented by this
+		 * object
+		 * @param from where this subrelation starts (inclusive),
+		 * <code>null</code> if there is no upper boundary
+		 * @param to there this subrelation goes (exclusive),
+		 * <code>null</code> if there is no lower boundary
+		 * @throws NullPointerException if the set is <code>null</code>
 		 */
-		public void remove() {
-			throw new UnsupportedOperationException("This iterator is imutable");
+		public SubRelation(final SortedSet<ITuple> s, final ITuple from, final ITuple to) {
+			if (s == null) {
+				throw new NullPointerException("The set must not be null");
+			}
+			this.s = s;
+			this.from = from;
+			this.to = to;
+		}
+
+
+		/**
+		 * <p>
+		 * Construcs a new subrelation with no boundaries.
+		 * The submitted set must already be the subset which should be
+		 * represented
+		 * </p>
+		 * @param s the subset which should be represented by this
+		 * object
+		 * @throws NullPointerException if the set is <code>null</code>
+		 */
+		public SubRelation(final SortedSet<ITuple> s) {
+			this(s, null, null);
+		}
+
+		public boolean add(final ITuple e) {
+			if (e == null) {
+				throw new NullPointerException("The element must not be null");
+			}
+			if (!inRange(e)) {
+				throw new IllegalArgumentException("The element <" + e + 
+						">couldn't be added, because it is out of range (from: <" + 
+						from + ">, to:<" + to + ">)");
+			}
+			return IndexingOnTheFlyRelation.this.add(e);
+		}
+
+		public boolean remove(final ITuple e) {
+			if (e == null) {
+				throw new NullPointerException("The element must not be null");
+			}
+			return inRange(e) ? IndexingOnTheFlyRelation.this.remove(e) : false;
+		}
+
+		public int size() {
+			return s.size();
+		}
+
+		public Iterator<ITuple> iterator() {
+			return new ModifiableIterator<ITuple>(s);
+		}
+
+		public ITuple first() {
+			return s.first();
+		}
+
+		public ITuple last() {
+			return s.last();
+		}
+
+		public SortedSet<ITuple> headSet(final ITuple to) {
+			if (to == null) {
+				throw new NullPointerException("The tuple must not be null");
+			}
+			return new SubRelation(s.headSet(to), from, determineTo(to));
+		}
+
+		public SortedSet<ITuple> tailSet(final ITuple from) {
+			if (from == null) {
+				throw new NullPointerException("The tuple must not be null");
+			}
+			return new SubRelation(s.tailSet(from), determineFrom(from), to);
+		}
+
+		public SortedSet<ITuple> subSet(final ITuple from, final ITuple to) {
+			if ((from == null) || (to == null)) {
+				throw new NullPointerException("The tuples must not be null");
+			}
+			return new SubRelation(s.subSet(from, to), determineFrom(from), determineTo(to));
+		}
+
+		public Comparator<? super ITuple> comparator() {
+			return s.comparator();
+		}
+
+		/**
+		 * Checks whether a specified element is in the range of this
+		 * subset.
+		 * @param e the element to check
+		 * @return <code>true</code> if it is in the range, otherwise
+		 * <code>false</code>
+		 * @throws NullPointerException if the element is
+		 * <code>null</code>
+		 */
+		private boolean inRange(final ITuple e) {
+			if (e == null) {
+				throw new NullPointerException("The element to check must not be null");
+			}
+			return ((from == null) || (comparator().compare(e, from) >= 0)) && 
+				((to == null) || (comparator().compare(e, to) < 0));
+		}
+
+		/**
+		 * Determines the most restrective from tuple out of the
+		 * submitted one and the one of the actual subrelation.
+		 * @param from tuple which should be compared with the from
+		 * tuple of <code>this</code> subset.
+		 * @return the most restrective tuple
+		 * @throws NullPointerException if the submitted tuple is
+		 * <code>null</code>
+		 */
+		private ITuple determineFrom(final ITuple from) {
+			if (from == null) {
+				throw new NullPointerException("The tuple must not be null");
+			}
+			if (this.from == null) {
+				return from;
+			}
+			return s.comparator().compare(this.from, from) < 0 ? from : this.from;
+		}
+
+		/**
+		 * Determines the most restrective to tuple out of the
+		 * submitted one and the one of the actual subrelation.
+		 * @param to tuple which should be compared with the to
+		 * tuple of <code>this</code> subset.
+		 * @return the most restrective tuple
+		 * @throws NullPointerException if the submitted tuple is
+		 * <code>null</code>
+		 */
+		private ITuple determineTo(final ITuple to) {
+			if (to == null) {
+				throw new NullPointerException("The tuple must not be null");
+			}
+			if (this.to == null) {
+				return to;
+			}
+			return s.comparator().compare(this.to, to) > 0 ? to : this.to;
 		}
 	}
 }
