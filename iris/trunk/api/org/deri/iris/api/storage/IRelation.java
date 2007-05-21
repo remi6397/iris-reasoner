@@ -37,15 +37,12 @@ import org.deri.iris.api.basics.ITuple;
  * indexing.
  * </p>
  * <p>
- * $Id: IRelation.java,v 1.10 2007-02-16 08:48:15 poettler_ric Exp $
+ * $Id: IRelation.java,v 1.11 2007-05-21 10:02:07 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @date 11.04.2006
- * @time 14:55:12
- * 
- * @version $Revision: 1.10 $ $Date: 2007-02-16 08:48:15 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.11 $ $Date: 2007-05-21 10:02:07 $
  */
 
 public interface IRelation extends SortedSet<ITuple>, Cloneable {
@@ -72,7 +69,7 @@ public interface IRelation extends SortedSet<ITuple>, Cloneable {
 	 * 
 	 * @param idx
 	 *            the index on which should be sorted
-	 * @return an <b>unmodifiable</b> set sorted on the given indexes
+	 * @return a <code>SortedSet</code> sorted on the given indexes
 	 * @throws NullPointerException
 	 *             if the indexes is {@code null}
 	 * @throws IllegalArgumentException
