@@ -37,12 +37,12 @@ import org.deri.iris.api.terms.IVariable;
  * Defines a Builtin.
  * </p>
  * <p>
- * $Id: IBuiltInAtom.java,v 1.8 2007-05-14 12:19:25 poettler_ric Exp $
+ * $Id: IBuiltInAtom.java,v 1.9 2007-05-21 09:59:19 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public abstract interface IBuiltInAtom extends IAtom {
 
@@ -83,7 +83,8 @@ public abstract interface IBuiltInAtom extends IAtom {
 	/**
 	 * <p>
 	 * Determines whether a builtin is evaluable with a given set of
-	 * variables.
+	 * variables. The variables passed to this method are the variables <b>of
+	 * this builtin</b> where substitutions are given.
 	 * </p>
 	 * @param v the collection of known variables
 	 * @return <code>true</code> if the builtin would be evaluable,
