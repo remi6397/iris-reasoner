@@ -25,6 +25,8 @@
  */
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.factory.Factory.RELATION;
+
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IDifference;
 import org.deri.iris.api.storage.IRelation;
@@ -32,8 +34,8 @@ import org.deri.iris.api.storage.IRelation;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic
- * @date $Date: 2006-10-23 07:20:35 $
- * @version $Id: Difference.java,v 1.6 2006-10-23 07:20:35 richardpoettler Exp $
+ * @date $Date: 2007-05-22 14:26:30 $
+ * @version $Id: Difference.java,v 1.7 2007-05-22 14:26:30 darko_anicic Exp $
  * 
  */
 public class Difference implements IDifference{
@@ -68,8 +70,8 @@ public class Difference implements IDifference{
 	}
 	
 	public IRelation difference() {
-	
-		IRelation differenceRel = this.rel0;
+		IRelation differenceRel = RELATION.getRelation(this.rel0.getArity());
+		differenceRel.addAll(this.rel0);
 		differenceRel.removeAll(this.rel1);
 
  		return differenceRel;
