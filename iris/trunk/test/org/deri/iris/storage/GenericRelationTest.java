@@ -44,11 +44,11 @@ import org.deri.iris.api.storage.IRelation;
  * implementations. All tests will be done with tuples of arity 4.
  * </p>
  * <p>
- * $Id: GenericRelationTest.java,v 1.3 2007-05-21 15:01:12 poettler_ric Exp $
+ * $Id: GenericRelationTest.java,v 1.4 2007-05-22 08:29:06 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public abstract class GenericRelationTest<Type extends IRelation> extends
 		TestCase {
@@ -107,8 +107,25 @@ public abstract class GenericRelationTest<Type extends IRelation> extends
 	public void testRemoveSingle() {
 		r.addAll(Arrays.asList(allTup));
 
-		final ITuple aaaa = createTuple("a", "a", "a", "a");
-		assertTrue("Removing of " + aaaa + " should return true", r.remove(aaaa));
+		final ITuple cccc = createTuple("c", "c", "c", "c");
+		final Set<ITuple> remaining = new HashSet<ITuple>(Arrays.asList(allTup));
+		remaining.remove(cccc);
+		assertTrue("Removing of " + cccc + " should return true", r.remove(cccc));
+		assertEquals("Only " + cccc + " should be removed", remaining, r);
+	}
+
+	public void testRemoveAll() {
+		r.addAll(Arrays.asList(allTup));
+
+		final Set<ITuple> toRemove = new HashSet<ITuple>(Arrays.asList(allTup));
+		toRemove.add(createTuple("a", "a", "a", "a"));
+		toRemove.add(createTuple("c", "c", "c", "c"));
+		toRemove.add(createTuple("e", "e", "e", "e"));
+		toRemove.add(createTuple("g", "g", "g", "g"));
+		final Set<ITuple> remaining = new HashSet<ITuple>(Arrays.asList(allTup));
+		remaining.removeAll(toRemove);
+		assertTrue("Removing of " + toRemove + " should return true", r.removeAll(toRemove));
+		assertEquals("Only " + toRemove + " should be removed", remaining, r);
 	}
 
 	public void testTailSet() {
