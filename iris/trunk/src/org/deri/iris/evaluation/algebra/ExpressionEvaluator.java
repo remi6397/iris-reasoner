@@ -234,11 +234,8 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 					"performed!");
 		}
 		IRelationDescriptor r = (IRelationDescriptor)c;
-		// TODO: If you don't use Positive property from RelationDescriptor, 
-		// created in Rule2Relation, remove this!
-		// if (r.isPositive()) {
 		IRelation rel = null;
-		if (aq != null && aq.get(r.getPredicate()) != null) {
+		if (aq != null && aq.get(r.getPredicate()) != null && c.isPositive()) {
 			// Return tuples from the last iteration only!
 			rel = aq.get(r.getPredicate());
 		} else {
