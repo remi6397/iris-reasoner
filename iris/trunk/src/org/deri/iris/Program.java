@@ -247,9 +247,15 @@ public class Program implements IProgram{
 	}
 	
 	public IPredicate registerPredicate(IPredicate p){
-		if(! facts.containsKey(p)){
-			facts.put(p, RELATION.getRelation(p.getArity()));
+		if(getPredicates().contains(p)){
+			for (IPredicate pr : facts.keySet()) {
+				if (pr.equals(p))
+				{
+					return pr;
+				}
+			}
 		}
+		facts.put(p, RELATION.getRelation(p.getArity()));
 		return p;
 	}
 	
