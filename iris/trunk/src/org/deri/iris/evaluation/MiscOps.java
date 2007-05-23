@@ -52,15 +52,15 @@ import org.deri.iris.basics.seminaive.ConstLiteral;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.8 2007-05-11 09:53:57 darko_anicic Exp $
+ * $Id: MiscOps.java,v 1.9 2007-05-23 10:22:44 poettler_ric Exp $
  * </p>
  * 
- * @author richi
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.8 $
- * @date $Date: 2007-05-11 09:53:57 $
+ * @version $Revision: 1.9 $
+ * @date $Date: 2007-05-23 10:22:44 $
  */
 public class MiscOps {
 
@@ -123,26 +123,22 @@ public class MiscOps {
 		final ILiteral hl = r.getHeadLiteral(0);
 		final int arity = hl.getPredicate().getArity();
 		final List<ITerm> headTerms = new ArrayList<ITerm>(arity);
-		List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(r.getBodyLenght());
-		List<ILiteral> eqSubGoals = new ArrayList<ILiteral>(r.getBodyLenght());
-		Map<IVariable, List<ILiteral>> headVarsMap = new HashMap<IVariable, List<ILiteral>>();
-		bodyLiterals.addAll(r.getBodyLiterals());
-		Iterator<ITerm> terms = hl.getTuple().getTerms().iterator();
-		ITerm t = null;
-		IVariable v = null;
+		final List<ILiteral> eqSubGoals = new ArrayList<ILiteral>(r.getBodyLenght());
+		final Map<IVariable, List<ILiteral>> headVarsMap = new HashMap<IVariable, List<ILiteral>>();
 		
 		// iterating through the terms of the head
+		final Iterator<ITerm> terms = hl.getTuple().getTerms().iterator();
 		for (int i = 0; i < arity; i++) {
-			t = terms.next();
+			final ITerm t = terms.next();
 			// Introduce a new variable for each of the arguments of the head predicate.
-			IVariable newVar = TERM.createVariable(VAR_PREFIX + i);
+			final IVariable newVar = TERM.createVariable(VAR_PREFIX + i);
 			headTerms.add(newVar);
 			// Create a ConstLiteral (i.e. {a}(?X) represents ?X='a') whenever an 
 			// argument of the head predicate is a ground term.
 			if(t.isGround()){
 				eqSubGoals.add(BASIC.createLiteral(true, new ConstLiteral(true, t, newVar)));
 			}else{
-				v = (IVariable)t;
+				final IVariable v = (IVariable) t;
 				// If some of the arguments of the head predicate are equal (and they are 
 				// variables) a map is created so we can unify such subgolas later on. For 
 				// instance subgoals: U=X and V=X will be unified in U=V and X will be 
@@ -151,7 +147,7 @@ public class MiscOps {
 					headVarsMap.get(v).add(
 							BASIC.createLiteral(true, BUILTIN.createEqual(t, newVar)));
 				}else{
-					List<ILiteral> eqLiterals = new ArrayList<ILiteral>();
+					final List<ILiteral> eqLiterals = new ArrayList<ILiteral>();
 					eqLiterals.add(
 							BASIC.createLiteral(true, BUILTIN.createEqual(t, newVar)));
 					headVarsMap.put(v, eqLiterals);
@@ -160,27 +156,40 @@ public class MiscOps {
 		}
 		// Substitute all body variables with new variables and unify introduced subgolas 
 		// when possible.
-		for (ILiteral l: bodyLiterals) {
-			for (int i = 0; i < l.getTuple().getTerms().size(); i++) {
-				t = l.getTuple().getTerm(i);
+		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(r.getBodyLenght());
+		for (final ILiteral l: r.getBodyLiterals()) {
+			final List<ITerm> litTerms = new ArrayList<ITerm>(l.getPredicate().getArity());
+			for (final ITerm t : l.getTuple().getTerms()) {
 				if(! t.isGround()){
-					v = (IVariable)t;
-					List<ILiteral> eqLiterals = headVarsMap.get(v);
-					if(eqLiterals != null){
-						l.getTuple().getTerms().set(i, eqLiterals.get(0).getTuple().getTerm(1));
-						if(eqLiterals.size() > 1){
-							for (int j = 1; j < eqLiterals.size(); j++) {
-								l = eqLiterals.get(j);
-								l.getTuple().setTerm(0, eqLiterals.get(0).getTuple().getTerm(1));
-								eqSubGoals.add(l);
-							}
-						}
+					final List<ILiteral> eqLiterals = headVarsMap.get(t);
+					if (eqLiterals != null) { // if this var was substituted in the head
+						litTerms.add(eqLiterals.get(0).getTuple().getTerm(1));
+					} else {
+						litTerms.add(t);
 					}
+				} else {
+					litTerms.add(t);
+				}
+			}
+			bodyLiterals.add(BASIC.createLiteral(l.isPositive(), l.getPredicate(), BASIC.createTuple(litTerms)));
+		}
+		// Assembling the new rectified rule.
+		// adding the constant substitutions for the head
+		bodyLiterals.addAll(eqSubGoals);
+		// adding the variable substitutions for the head
+		for (final List<ILiteral> equals : headVarsMap.values()) {
+			if (equals.size() > 1) { // if there where more occurences of this 
+				// variable in the head -> reap out the origial var
+				ITerm last = null;
+				for (final ILiteral l : equals) {
+					final ITerm actual = l.getTuple().getTerm(1);
+					if (last != null) {
+						bodyLiterals.add(BASIC.createLiteral(true, BUILTIN.createEqual(last, actual)));
+					}
+					last = actual;
 				}
 			}
 		}
-		// Assembling the new rectified rule.
-		bodyLiterals.addAll(eqSubGoals);
 		final IHead h = BASIC.createHead(BASIC.createLiteral(hl.isPositive(),
 				hl.getPredicate(), BASIC.createTuple(headTerms)));
 		return BASIC.copyRule(h, BASIC.createBody(bodyLiterals));
