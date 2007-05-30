@@ -11,11 +11,11 @@ import junit.framework.TestSuite;
  * Tests the IndexingOnTheFlyRelation relation.
  * </p>
  * <p>
- * $Id: IndexingOnTheFlyRelationTest.java,v 1.1 2007-02-16 09:02:38 poettler_ric Exp $
+ * $Id: IndexingOnTheFlyRelationTest.java,v 1.2 2007-05-30 14:06:07 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class IndexingOnTheFlyRelationTest extends
 		GenericRelationTest<IndexingOnTheFlyRelation> {
@@ -27,6 +27,6 @@ public class IndexingOnTheFlyRelationTest extends
 
 	@Override
 	public void setUp() {
-		r = new IndexingOnTheFlyRelation();
+		r = new IndexingOnTheFlyRelation(4);
 	}
 }
