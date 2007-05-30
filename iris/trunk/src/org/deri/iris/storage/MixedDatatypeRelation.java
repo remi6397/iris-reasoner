@@ -1,0 +1,519 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
+ * 
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
+
+package org.deri.iris.storage;
+
+import java.util.AbstractSet;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NoSuchElementException;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.terms.ITerm;
+
+/**
+ * <p>
+ * Relation to store tuples with various datatypes.
+ * </p>
+ * <p>
+ * <b>The <code>first()</code> and <code>last()</code> methods might not work as
+ * expeced.</b> This is because at the moment it is not defined how to
+ * compare e.g. iris with integers. The results of this methods might differ from
+ * call to call. This is because of the internal storing algorithm of the
+ * internal <code>HashMap</code>.
+ * </p>
+ * <p>
+ * Another limitation of this relation is, that if you retrieve a subset with
+ * a given datatypeorder the subset will only contain and accept tuples of the 
+ * same datatypeorder.
+ * </p>
+ * <p>
+ * <code>null</code> is not permitted by this relation, nor by its subsets.
+ * </p>
+ * <p>
+ * $Id: MixedDatatypeRelation.java,v 1.1 2007-05-30 08:51:45 poettler_ric Exp $
+ * </p>
+ * 
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision: 1.1 $
+ */
+public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IRelation {
+
+	/**
+	 * Datatype to relation mappings.
+	 * <ul>
+	 * <li>key: the hash code of the classes of the terms in the tuple</li>
+	 * <li>value: the relation with the tuples only of the given datatypes</li>
+	 * </ul>
+	 */
+	private final Map<Integer, IRelation> datatypeRelations = new HashMap<Integer, IRelation>();
+
+	/** The arity of this relation. */
+	private final int arity;
+
+	/** The default sorting index. */
+	private final Integer[] idx;
+
+	/**
+	 * Constructs a relation with the given arity.
+	 * @param arity the arity of this relation
+	 * @throws IllegalArgumentException if the arity is negative
+	 */
+	MixedDatatypeRelation(final int arity) {
+		if (arity < 0) {
+			throw new IllegalArgumentException(
+					"The arity of the relation must not be negative, but was: " + arity);
+		}
+		// constructing the default index
+		idx = new Integer[arity];
+		Arrays.fill(idx, new Integer(0));
+		if (arity > 0) {
+			idx[0] = new Integer(1);
+		}
+		this.arity = arity;
+	}
+
+	/**
+	 * Internal remove method for this relation.
+	 * @param o the object which should be removed
+	 * @return <code>true</code> if call of this method had any effects on
+	 * the relation, otherwise </code>false</code>
+	 */
+	private boolean intRemove(final Object o) {
+		if ((o == null) || (!(o instanceof ITuple))) {
+			return false;
+		}
+		return getDatatypeRelation((ITuple) o).remove(o);
+	}
+
+	/**
+	 * Returns the relation for storing the tuples of the datatyps of the
+	 * given tuple.
+	 * @param t the tuple which should be stored in the relation
+	 * @return the relation for the given datatype
+	 * @throws NullPointerException if the tuple is <code>null</code>
+	 */
+	private IRelation getDatatypeRelation(final ITuple t) {
+		if (t == null) {
+			throw new NullPointerException("The tuple must not be null");
+		}
+		final Integer hash = classHash(t);
+		IRelation rel = datatypeRelations.get(hash);
+		if (rel == null) { // create new relation if none was found according to the datatypes
+			rel = new IndexingOnTheFlyRelation(arity);
+			datatypeRelations.put(hash, rel);
+		}
+		return rel;
+	}
+
+	/**
+	 * Creates the hash code for the datatypes in this tuple.
+	 * @param t the tuple containing the terms with the datatypes
+	 * @return the hash code
+	 * @throws NullPointerException if the tuple is <code>null</code>
+	 */
+	private static Integer classHash(final ITuple t) {
+		if (t == null) {
+			throw new NullPointerException("The tuple must not be null");
+		}
+		int res = 17;
+		for (final ITerm term : t.getTerms()) {
+			res = res * 37 + term.getClass().hashCode();
+		}
+		return new Integer(res);
+	}
+
+	public boolean add(final ITuple t) {
+		if (t == null) {
+			throw new NullPointerException("The tuple must not ne null");
+		}
+		if (t.getArity() != arity) {
+			throw new IllegalArgumentException("The arity of the relation (" + 
+					arity + ") and of the tuple (" + t.getArity() + ") don't match");
+		}
+		return getDatatypeRelation(t).add(t);
+	}
+
+	public int size() {
+		int size = 0;
+		for (final IRelation r : datatypeRelations.values()) {
+			size += r.size();
+		}
+		return size;
+	}
+
+	public Iterator<ITuple> iterator() {
+		return new CompoundIterator(datatypeRelations.values());
+	}
+	
+	public ITuple first() {
+		for (final IRelation r : datatypeRelations.values()) {
+			if (!r.isEmpty()) {
+				return r.first();
+			}
+		}
+		throw new NoSuchElementException("There is no element in this relation");
+	}
+
+	public ITuple last() {
+		ITuple last = null;
+		for (final IRelation r : datatypeRelations.values()) {
+			if (!r.isEmpty()) {
+				last = r.last();
+			}
+		}
+		if (last != null) {
+			return last;
+		}
+		throw new NoSuchElementException("There is no element in this relation");
+	}
+
+	public SortedSet<ITuple> tailSet(final ITuple from) {
+		if (from == null) {
+			throw new NullPointerException("The from tuple must not be null");
+		}
+		return new CompoundSortedSet(idx, from, null);
+	}
+
+	public SortedSet<ITuple> headSet(final ITuple to) {
+		if (to == null) {
+			throw new NullPointerException("The to tuple must not be null");
+		}
+		return new CompoundSortedSet(idx, null, to);
+	}
+
+	public SortedSet<ITuple> subSet(final ITuple from, final ITuple to) {
+		if ((from == null) || (to == null)) {
+			throw new NullPointerException("The from and to tuple must not be null");
+		}
+		// asserting the datatypes of both tuples
+		if (!classHash(from).equals(classHash(to))) {
+			throw new IllegalArgumentException("The datatypes of both tuples (from: " + 
+					from + " to: " + to + ")must match");
+		}
+		return new CompoundSortedSet(idx, from, to);
+	}
+
+	public Comparator<? super ITuple> comparator() {
+		return datatypeRelations.values().iterator().next().comparator();
+	}
+
+	public SortedSet<ITuple> indexOn(Integer[] idx) {
+		return new CompoundSortedSet(idx);
+	}
+
+	public int getArity() {
+		return arity;
+	}
+
+	/**
+	 * <p>
+	 * Iterator designed to iterate over a set of Relations.
+	 * </p>
+	 * <p>
+	 * $Id: MixedDatatypeRelation.java,v 1.1 2007-05-30 08:51:45 poettler_ric Exp $
+	 * </p>
+	 * @version $Revision: 1.1 $
+	 * @author Richard Pöttler (richard dot poettler at deri dot at)
+	 */
+	private class CompoundIterator implements Iterator<ITuple> {
+
+		/** Iterator over all relation we got to iterate over. */
+		final Iterator<? extends SortedSet<ITuple>> rels;
+
+		/** The iterator over the actual relation. */
+		Iterator<ITuple> actual;
+
+		/** The relation we are actually iterating over. */
+		SortedSet<ITuple> actualSet;
+
+		/** The last tuple returned by this iterator. */
+		ITuple last = null;
+
+		/**
+		 * Constructs the iterator for a collection of relations.
+		 * @param c the collection to iterate over
+		 * @throws NullPointerException if the collection is
+		 * <code>null</code>
+		 */
+		public CompoundIterator(final Collection<? extends SortedSet<ITuple>> c) {
+			if (c == null) {
+				throw new NullPointerException(
+						"The collection we should iterate over must not be null");
+			}
+			rels = c.iterator();
+			actualSet = rels.hasNext() ? rels.next() : null;
+			actual = (actualSet != null) ? actualSet.iterator() : null;
+		}
+
+		public boolean hasNext() {
+			while ((actual != null) && !actual.hasNext()) {
+				actualSet = rels.hasNext() ? rels.next() : null;
+				actual = (actualSet != null) ? actualSet.iterator() : null;
+			}
+			return actual != null;
+		}
+
+		public ITuple next() {
+			if (!hasNext()) {
+				throw new NoSuchElementException("There are no items left to iterate over");
+			}
+			return last = actual.next();
+		}
+
+		public void remove() {
+			MixedDatatypeRelation.this.intRemove(last);
+			// renewing the iterator, to avoid
+			// ConcurrentModificationException
+			actual = actualSet.tailSet(last).iterator();
+		}
+	}
+
+	/**
+	 * <p>
+	 * View/proxy class for the the MixedDatatypeRelation. This class was
+	 * designed to serve as proxy for all SortedSets gained from the
+	 * MixedDatatypeRelation. It handeles which tuples shoul be shown, removed
+	 * and added internally.
+	 * </p>
+	 * <p>
+	 * $Id: MixedDatatypeRelation.java,v 1.1 2007-05-30 08:51:45 poettler_ric Exp $
+	 * </p>
+	 * @version $Revision: 1.1 $
+	 * @author Richard Pöttler (richard dot poettler at deri dot at)
+	 */
+	private class CompoundSortedSet extends AbstractSet<ITuple> implements SortedSet<ITuple> {
+
+		/**
+		 * Datatype to relation mappings.
+		 * <ul>
+		 * <li>key: the hash code of the classes of the terms in the tuple</li>
+		 * <li>value: the relation with the tuples only of the given datatypes</li>
+		 * </ul>
+		 */
+		private final Map<Integer, SortedSet<ITuple>> datatypeRelations = 
+			new HashMap<Integer, SortedSet<ITuple>>();
+
+		/** The indexes to sort on. */
+		private final Integer[] idx;
+
+		/** 
+		 * The hash code of the datatypes accepted by this set. Is
+		 * <code>null</code> if there is no assertion
+		 */
+		private final Integer classHash;
+
+		/** 
+		 * The lower bound of this set. Is <code>null</code> if there
+		 * is no lower bound
+		 */
+		private final ITuple from;
+
+		/** 
+		 * The upper bound of this set. Is <code>null</code> if there
+		 * is no upper bound
+		 */
+		private final ITuple to;
+
+		/**
+		 * Constructs a set which is sorted on the given idexes.
+		 * @param idx the indexes to sort on
+		 * @throws NullPointerException if idx is <code>null</code>
+		 */
+		public CompoundSortedSet(final Integer[] idx) {
+			this(idx, null, null);
+		}
+
+		/**
+		 * Constructs a set which is sorted on the given idexes with the
+		 * given upper and lower bounds.
+		 * @param idx the indexes to sort on
+		 * @param from the lower bound (inclusive), or <code>null</code>
+		 * if there is no lower bound
+		 * @param to the upper bound (exclusive), or <code>null</code>
+		 * if there is no upper bound
+		 * @throws NullPointerException if idx is <code>null</code>
+		 */
+		public CompoundSortedSet(final Integer[] idx, final ITuple from, final ITuple to) {
+			if (idx == null) {
+				throw new NullPointerException("The index array must not be null");
+			}
+			if ((from == null) && (to == null)) { // no upper and lower bound 
+				for (final Entry<Integer, IRelation> e : 
+						MixedDatatypeRelation.this.datatypeRelations.entrySet()) {
+					datatypeRelations.put(e.getKey(), e.getValue().indexOn(idx));
+				}
+				classHash = null;
+			} else if (to == null) { // construct the tail set for this tuple
+				classHash = classHash(from);
+				datatypeRelations.put(classHash, getDatatypeRelation(from).indexOn(idx).tailSet(from));
+			} else if (from == null) { // construct the head set for this tuple
+				classHash = classHash(to);
+				datatypeRelations.put(classHash, getDatatypeRelation(to).indexOn(idx).headSet(to));
+			} else { // construct the sub set for this tuples
+				if (!classHash(from).equals(classHash(to))) { // assert the tuple term classes
+					throw new IllegalArgumentException("The datatypes of both tuples (from: " + 
+							from + " to: " + to + ")must match");
+				}
+				classHash = classHash(from);
+				datatypeRelations.put(classHash, getDatatypeRelation(from).indexOn(idx).subSet(from, to));
+			}
+			this.idx = idx;
+			this.from = from;
+			this.to = to;
+		}
+
+		public boolean add(final ITuple t) {
+			if ((classHash != null) && !classHash.equals(classHash(t))) {
+				throw new IllegalArgumentException("The tuple to add (" + t + 
+					") is not in the range of this subset");
+			} else if (classHash == null) { // if we don't have any bounds for this 
+				// relation it is save any datatypes -> use the outher relation
+				return MixedDatatypeRelation.this.add(t);
+			}
+			// the sub relations of the IndexingOnTheFlyRelation
+			// will take care about the thresholds...
+			return datatypeRelations.get(classHash).add(t);
+		}
+
+		public int size() {
+			int size = 0;
+			for (final SortedSet<ITuple> s : datatypeRelations.values()) {
+				size += s.size();
+			}
+			return size;
+		}
+
+		public Iterator<ITuple> iterator() {
+			return new CompoundIterator(datatypeRelations.values());
+		}
+
+		public Comparator<? super ITuple> comparator() {
+			if (MixedDatatypeRelation.this.datatypeRelations.isEmpty()) {
+				return (new IndexingOnTheFlyRelation(arity)).comparator();
+			}
+			return MixedDatatypeRelation.this.datatypeRelations.values().iterator().next().comparator();
+		}
+
+		public ITuple first() {
+			for (final SortedSet<ITuple> r : datatypeRelations.values()) {
+				if (!r.isEmpty()) {
+					return r.first();
+				}
+			}
+			throw new NoSuchElementException("There is no element in this relation");
+		}
+
+		public ITuple last() {
+			ITuple last = null;
+			for (final SortedSet<ITuple> r : datatypeRelations.values()) {
+				if (!r.isEmpty()) {
+					last = r.last();
+				}
+			}
+			if (last != null) {
+				return last;
+			}
+			throw new NoSuchElementException("There is no element in this relation");
+		}
+
+		public SortedSet<ITuple> tailSet(final ITuple from) {
+			if (from == null) {
+				throw new NullPointerException("The from tuple must not be null");
+			}
+			if (!classHash(from).equals(classHash)) {
+				throw new IllegalArgumentException("The class hashes of the tuples doesn't match");
+			}
+			return new CompoundSortedSet(idx, determineFrom(from), null);
+		}
+
+		public SortedSet<ITuple> headSet(final ITuple to) {
+			if (to == null) {
+				throw new NullPointerException("The to tuple must not be null");
+			}
+			if (!classHash(to).equals(classHash)) {
+				throw new IllegalArgumentException("The class hashes of the tuples doesn't match");
+			}
+			return new CompoundSortedSet(idx, null, determineTo(to));
+		}
+
+		public SortedSet<ITuple> subSet(final ITuple from, final ITuple to) {
+			if ((from == null) || (to == null)) {
+				throw new NullPointerException("The from and to tuple must not be null");
+			}
+			if (!classHash(from).equals(classHash) || !classHash(to).equals(classHash)) {
+				throw new IllegalArgumentException("The class hashes of the tuples doesn't match");
+			}
+			return new CompoundSortedSet(idx, determineFrom(from), determineTo(to));
+		}
+
+		/**
+		 * Determines the most restrective from tuple out of the
+		 * submitted one and the one of the actual subrelation.
+		 * @param from tuple which should be compared with the from
+		 * tuple of <code>this</code> subset.
+		 * @return the most restrective tuple
+		 * @throws NullPointerException if the submitted tuple is
+		 * <code>null</code>
+		 */
+		private ITuple determineFrom(final ITuple from) {
+			if (from == null) {
+				throw new NullPointerException("The tuple must not be null");
+			}
+			if (this.from == null) {
+				return from;
+			}
+			return comparator().compare(this.from, from) < 0 ? from : this.from;
+		}
+
+		/**
+		 * Determines the most restrective to tuple out of the
+		 * submitted one and the one of the actual subrelation.
+		 * @param to tuple which should be compared with the to
+		 * tuple of <code>this</code> subset.
+		 * @return the most restrective tuple
+		 * @throws NullPointerException if the submitted tuple is
+		 * <code>null</code>
+		 */
+		private ITuple determineTo(final ITuple to) {
+			if (to == null) {
+				throw new NullPointerException("The tuple must not be null");
+			}
+			if (this.to == null) {
+				return to;
+			}
+			return comparator().compare(this.to, to) > 0 ? to : this.to;
+		}
+	}
+}
