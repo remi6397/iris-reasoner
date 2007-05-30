@@ -52,40 +52,25 @@ import org.deri.iris.api.storage.IRelation;
  * <code>null</code> is not permitted by this relation, nor by its subsets.
  * </p>
  * <p>
- * The subsets, and subsets of the subsets gained from this relation are
- * modifiable and should work properly according to the <code>SortedSet</code>
- * specification. The iterators are not modifiable, and will throw an
- * <code>UnsupportedOperationException</code> if you call the
- * <code>remove()</code> method.
- * </p>
- * <p>
- * $Id: IndexingOnTheFlyRelation.java,v 1.2 2007-05-21 11:45:18 poettler_ric Exp $
+ * $Id: IndexingOnTheFlyRelation.java,v 1.3 2007-05-30 11:59:08 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
-public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
-		SortedSet<ITuple>, IRelation {
+public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRelation {
 
 	/** Map storing all created indexes and the corresponding relaions to them. */
 	private final Map<Integer, SortedSet<ITuple>> indexes = new HashMap<Integer, SortedSet<ITuple>>();
 
 	/** The primary index. */
-	private SortedSet<ITuple> primary;
+	private final SortedSet<ITuple> primary;
 
 	/** The index array specifying on which the primary key is sorting. */
-	private Integer[] primaryI;
+	private final Integer[] primaryI;
 
 	/** The arity of the relation. */
-	private int arity;
-
-	/**
-	 * Creates a new empty relation object.
-	 */
-	IndexingOnTheFlyRelation() {
-		initialize(0);
-	}
+	private final int arity;
 
 	/**
 	 * Creates a new empty relation object with a given arity.
@@ -96,22 +81,8 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 		if (a < 0) {
 			throw new IllegalArgumentException("The arity must not be negative, but was " + a);
 		}
-		initialize(a);
-	}
 
-	/**
-	 * Initializes the relaiton for a given arity.
-	 * 
-	 * @param a
-	 *            the arity for which to initialize the relation
-	 * @throws IllegalArgumentException
-	 *             if the arity is negative
-	 */
-	private synchronized void initialize(final int a) {
-		if (a < 0) {
-			throw new IllegalArgumentException("The arity must not be negative");
-		}
-		arity = a;
+		// creating the primary index
 		primaryI = new Integer[a];
 		Arrays.fill(primaryI, 0);
 		if (a > 0) {
@@ -120,6 +91,8 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 		primary = new TreeSet<ITuple>(new TupleComparator(primaryI));
 		indexes.clear();
 		indexes.put(Arrays.hashCode(primaryI), primary);
+
+		arity = a;
 	}
 
 	@Override
@@ -137,14 +110,9 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 		if (t == null) {
 			throw new NullPointerException("The tuple to add must not be null");
 		}
-		if (!isEmpty()) { // assert the arity
-			if (t.getArity() != arity) {
-				throw new IllegalArgumentException(
-						"The arity of the tuple must be " + arity + " but was "
-								+ t.getArity());
-			}
-		} else { // initialize the relation
-			initialize(t.getArity());
+		if (t.getArity() != arity) {
+			throw new IllegalArgumentException(
+					"The arity of the tuple must be " + arity + " but was " + t.getArity());
 		}
 
 		boolean changed = false;
@@ -157,8 +125,13 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 		return changed;
 	}
 
-	@Override
-	public synchronized boolean remove(final Object o) {
+	/**
+	 * Internal remove method. Removes the tuple from all relations.
+	 * @param o the object to remove
+	 * @return <code>true</code> if the collection was changed by this call,
+	 * otherwise <code>false</code>
+	 */
+	private synchronized boolean intRemove(final Object o) {
 		boolean changed = false;
 		if (primary.remove(o)) {
 			changed = true;
@@ -211,44 +184,14 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 					+ " must match the arity of the relation " + arity);
 		}
 
-		SortedSet<ITuple> s = indexes.get(Arrays.hashCode(idx));
-		if (s == null) {
-			s = createIndex(idx);
+		final int orderHash = Arrays.hashCode(TupleComparator.indexComparisonOrder(idx));
+		SortedSet<ITuple> s = indexes.get(orderHash);
+		if (s == null) { // create the index
+			s = new TreeSet<ITuple>(new TupleComparator(idx));
+			s.addAll(primary);
+			indexes.put(orderHash, s);
 		}
 		return new SubRelation(s);
-	}
-
-	/**
-	 * <p>
-	 * Creates and adds a new index to the index map.
-	 * </p>
-	 * <p>
-	 * How to construct the indexes, see {@link #indexOn(Integer[])}
-	 * </p>
-	 * 
-	 * @param idx
-	 *            the indexes to sort on
-	 * @return the newly created sorted set.
-	 * @throws NullPointerException
-	 *             if the indexes is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the length of the indexes doesn't match the arity of the
-	 *             relation
-	 * @see #indexOn(Integer[])
-	 */
-	private synchronized SortedSet<ITuple> createIndex(final Integer[] idx) {
-		if (idx == null) {
-			throw new NullPointerException("The index must not be null");
-		}
-		if (idx.length != arity) {
-			throw new IllegalArgumentException("The indexlength " + idx.length
-					+ " must match the arity of the relation " + arity);
-		}
-
-		final SortedSet<ITuple> s = new TreeSet<ITuple>(new TupleComparator(idx));
-		s.addAll(primary);
-		indexes.put(Arrays.hashCode(idx), s);
-		return s;
 	}
 
 	public int getArity() {
@@ -260,11 +203,11 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 	 * Compares two tuples according to a given set of indexes.
 	 * </p>
 	 * <p>
-	 * $Id: IndexingOnTheFlyRelation.java,v 1.2 2007-05-21 11:45:18 poettler_ric Exp $
+	 * $Id: IndexingOnTheFlyRelation.java,v 1.3 2007-05-30 11:59:08 poettler_ric Exp $
 	 * </p>
 	 * 
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
-	 * @version $Revision: 1.2 $
+	 * @version $Revision: 1.3 $
 	 */
 	private static class TupleComparator implements Comparator<ITuple> {
 
@@ -277,7 +220,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 		/**
 		 * <p>
 		 * Creates a new comparator which sorts on a given set of positions in
-		 * the tuple
+		 * the tuple.
 		 * </p>
 		 * <p>
 		 * The indedexes are specified as follows: All indexes you don't want to
@@ -289,16 +232,47 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 		 * e.g.: If you want a set of tuples first sorted on the third and then
 		 * sorted on the first term you give an index of <code>[2,0,1]</code>.
 		 * </p>
-		 * 
-		 * @param indexes
-		 *            the indexes on which to sort the tuples
+		 * <p>
+		 * The index array will be normalized according to {@link
+		 * #indexComparisonOrder(Integer[])
+		 * indexComparisonOrder(Integer[])} before any comparisons will
+		 * be done.
+		 * </p>
+		 * @param indexes the indexes on which to sort the tuples
+		 * @see #indexComparisonOrder(Index[])
 		 */
 		public TupleComparator(final Integer[] indexes) {
 			if (indexes == null) {
 				throw new NullPointerException("The indexes must not be null");
 			}
+			indexOrder = indexComparisonOrder(indexes);
+		}
 
-			// TODO: maybe a defensive copy should be made while computation
+		/**
+		 * <p>
+		 * Returns the normalized order of the indexes on which the
+		 * comparator will compare the terms of the tuples. This 
+		 * method was excluded to make improve the way indexes are stored
+		 * and accessed. E.g.: indexes like <code>[1, 2, 3, 4]</code>,
+		 * <code>[1, 2, 3, 0]</code> and <code>[1, 2, 0, 0]</code> would
+		 * produce a comparator which would compare on the terms at the
+		 * indexes <code>[0, 1, 2, 3]</code>.
+		 * </p>
+		 * <p>
+		 * To see how the submitted index should be constructed, look at
+		 * {@link #TupleComparator(Integer[])
+		 * TupleComparator(Integer[])}.
+		 * </p>
+		 * @param indexes the indexes on which to sort the tuples
+		 * @return the normalized index order
+		 * @throws NullPointerException if the index array is
+		 * <code>null</code>
+		 * @see #TupleComparator(Integer[])
+		 */
+		public static Integer[] indexComparisonOrder(final Integer[] indexes) {
+			if (indexes == null) {
+				throw new NullPointerException("The index array must not be null");
+			}
 			final List<Integer> order = new ArrayList<Integer>(indexes.length);
 			final List<Integer> idx = Arrays.asList(indexes);
 			if (indexes.length > 0) {
@@ -316,7 +290,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 					}
 				}
 			}
-			indexOrder = order.toArray(new Integer[order.size()]);
+			return order.toArray(new Integer[order.size()]);
 		}
 
 		public int compare(ITuple o1, ITuple o2) {
@@ -338,14 +312,14 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 	 * <p>
 	 * Proxy class to safely iterate through the collections of the
 	 * <code>IndexingOnTheFlyRelation</code>. The calls to the
-	 * <code>remove()</code> method are passed to the outer
+	 * <code>intRemove(...)</code> method are passed to the outer
 	 * <code>SortedSet</code>.
 	 * </p>
 	 * <p>
-	 * $Id: IndexingOnTheFlyRelation.java,v 1.2 2007-05-21 11:45:18 poettler_ric Exp $
+	 * $Id: IndexingOnTheFlyRelation.java,v 1.3 2007-05-30 11:59:08 poettler_ric Exp $
 	 * </p>
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
-	 * @version $Revision: 1.2 $
+	 * @version $Revision: 1.3 $
 	 */
 	private class ModifiableIterator<Type> implements Iterator<Type> {
 
@@ -382,7 +356,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 		}
 
 		public void remove() {
-			IndexingOnTheFlyRelation.this.remove(last);
+			IndexingOnTheFlyRelation.this.intRemove(last);
 			// resets the iterator so that the next element will be
 			// returned (otherwise an exception will be thrown)
 			i = ss.tailSet(last).iterator();
@@ -400,11 +374,11 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 	 * is save to modify it's subrelations.
 	 * </p>
 	 * <p>
-	 * $Id: IndexingOnTheFlyRelation.java,v 1.2 2007-05-21 11:45:18 poettler_ric Exp $
+	 * $Id: IndexingOnTheFlyRelation.java,v 1.3 2007-05-30 11:59:08 poettler_ric Exp $
 	 * </p>
 	 *
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
-	 * @version $Revision: 1.2 $
+	 * @version $Revision: 1.3 $
 	 */
 	private class SubRelation extends AbstractSet<ITuple> implements SortedSet<ITuple> {
 
@@ -465,13 +439,6 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements
 						from + ">, to:<" + to + ">)");
 			}
 			return IndexingOnTheFlyRelation.this.add(e);
-		}
-
-		public boolean remove(final ITuple e) {
-			if (e == null) {
-				throw new NullPointerException("The element must not be null");
-			}
-			return inRange(e) ? IndexingOnTheFlyRelation.this.remove(e) : false;
 		}
 
 		public int size() {
