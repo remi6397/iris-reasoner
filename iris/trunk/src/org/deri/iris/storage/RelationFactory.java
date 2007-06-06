@@ -27,6 +27,7 @@ package org.deri.iris.storage;
 
 import org.deri.iris.api.factory.IRelationFactory;
 import org.deri.iris.api.operations.tuple.IComparator;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.storage.IRelation;
 
 /**
@@ -34,10 +35,10 @@ import org.deri.iris.api.storage.IRelation;
  * The factory to obtain IRelation instances.
  * </p>
  * <p>
- * $Id: RelationFactory.java,v 1.1 2007-03-01 17:26:26 poettler_ric Exp $
+ * $Id: RelationFactory.java,v 1.2 2007-06-06 11:44:31 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class RelationFactory implements IRelationFactory {
 	
@@ -51,13 +52,8 @@ public class RelationFactory implements IRelationFactory {
 		return INSTANCE;
 	}
 
-	/**
-	 * Creates a new relation with a given arity.
-	 * @param a the arity of the relation to create
-	 * @throws IllegalArgumentException if the arity is negative
-	 */
 	public IRelation getRelation(final int a) {
-		return new Relation(a);
+		return new IndexingOnTheFlyRelation(a);
 	}
 
 	/**
@@ -68,5 +64,9 @@ public class RelationFactory implements IRelationFactory {
 	 */
 	public IRelation getRelation(final IComparator c) {
 		return new Relation(c);
+	}
+
+	public IMixedDatatypeRelation getMixedRelation(final int a) {
+		return new MixedDatatypeRelation(a);
 	}
 }
