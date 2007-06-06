@@ -26,23 +26,25 @@
 package org.deri.iris.api.factory;
 
 import org.deri.iris.api.operations.tuple.IComparator;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.storage.IRelation;
 
 /**
  * <p>
- * The factory interface to obtain IRelation instances.
+ * The factory interface to obtain relations.
  * </p>
  * <p>
- * $Id: IRelationFactory.java,v 1.10 2007-03-01 17:26:27 poettler_ric Exp $
+ * $Id: IRelationFactory.java,v 1.11 2007-06-06 11:44:31 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public interface IRelationFactory {
 
 	/**
 	 * Creates a new relation with a given arity.
 	 * @param a the arity of the relation to create
+	 * @return the newly created relation
 	 * @throws IllegalArgumentException if the arity is negative
 	 */
 	public abstract IRelation getRelation(final int a);
@@ -50,8 +52,17 @@ public interface IRelationFactory {
 	/**
 	 * Creates a new relation with a given comparator.
 	 * @param c the comparator for the tuples
+	 * @return the newly created relation
 	 * @throws NullPointerException if the comparator is <code>null</code>
 	 * @deprecated the comparator is an implementation specific parameter
 	 */
 	public abstract IRelation getRelation(final IComparator c);
+
+	/**
+	 * Creates a new relation which accepts all datatypes at any column.
+	 * @param a the arity of the relation to create
+	 * @return the newly created relation
+	 * @throws IllegalArgumentException if the arity is negative
+	 */
+	public abstract IMixedDatatypeRelation getMixedRelation(final int a);
 }
