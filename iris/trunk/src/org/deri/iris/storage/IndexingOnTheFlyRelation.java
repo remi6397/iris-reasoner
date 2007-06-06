@@ -40,6 +40,7 @@ import java.util.TreeSet;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -52,11 +53,11 @@ import org.deri.iris.api.storage.IRelation;
  * <code>null</code> is not permitted by this relation, nor by its subsets.
  * </p>
  * <p>
- * $Id: IndexingOnTheFlyRelation.java,v 1.3 2007-05-30 11:59:08 poettler_ric Exp $
+ * $Id: IndexingOnTheFlyRelation.java,v 1.4 2007-06-06 11:40:03 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRelation {
 
@@ -175,7 +176,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 		return new SubRelation(primary.tailSet(from), from, null);
 	}
 
-	public SortedSet<ITuple> indexOn(final Integer[] idx) {
+	public IRelation indexOn(final Integer[] idx) {
 		if (idx == null) {
 			throw new NullPointerException("The index must not be null");
 		}
@@ -203,11 +204,11 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 	 * Compares two tuples according to a given set of indexes.
 	 * </p>
 	 * <p>
-	 * $Id: IndexingOnTheFlyRelation.java,v 1.3 2007-05-30 11:59:08 poettler_ric Exp $
+	 * $Id: IndexingOnTheFlyRelation.java,v 1.4 2007-06-06 11:40:03 poettler_ric Exp $
 	 * </p>
 	 * 
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
-	 * @version $Revision: 1.3 $
+	 * @version $Revision: 1.4 $
 	 */
 	private static class TupleComparator implements Comparator<ITuple> {
 
@@ -300,7 +301,13 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 
 			int res = 0;
 			for (final int i : indexOrder) {
-				if ((res = o1.getTerm(i).compareTo(o2.getTerm(i))) != 0) {
+				final ITerm t1 = o1.getTerm(i);
+				final ITerm t2 = o2.getTerm(i);
+				if ((t1 == null) && (t2 != null)) {
+					return -1;
+				} else if ((t1 != null) && (t2 == null)) {
+					return 1;
+				} else if ((t1 != null) && (t2 != null) && ((res = t1.compareTo(t2)) != 0)) {
 					return res;
 				}
 			}
@@ -316,10 +323,10 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 	 * <code>SortedSet</code>.
 	 * </p>
 	 * <p>
-	 * $Id: IndexingOnTheFlyRelation.java,v 1.3 2007-05-30 11:59:08 poettler_ric Exp $
+	 * $Id: IndexingOnTheFlyRelation.java,v 1.4 2007-06-06 11:40:03 poettler_ric Exp $
 	 * </p>
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
-	 * @version $Revision: 1.3 $
+	 * @version $Revision: 1.4 $
 	 */
 	private class ModifiableIterator<Type> implements Iterator<Type> {
 
@@ -374,13 +381,13 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 	 * is save to modify it's subrelations.
 	 * </p>
 	 * <p>
-	 * $Id: IndexingOnTheFlyRelation.java,v 1.3 2007-05-30 11:59:08 poettler_ric Exp $
+	 * $Id: IndexingOnTheFlyRelation.java,v 1.4 2007-06-06 11:40:03 poettler_ric Exp $
 	 * </p>
 	 *
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
-	 * @version $Revision: 1.3 $
+	 * @version $Revision: 1.4 $
 	 */
-	private class SubRelation extends AbstractSet<ITuple> implements SortedSet<ITuple> {
+	private class SubRelation extends AbstractSet<ITuple> implements IRelation {
 
 		/** The inner set holding the tuples. */
 		private final SortedSet<ITuple> s;
@@ -480,6 +487,22 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 
 		public Comparator<? super ITuple> comparator() {
 			return s.comparator();
+		}
+
+		public int getArity() {
+			return IndexingOnTheFlyRelation.this.arity;
+		}
+
+		public IRelation indexOn(final Integer[] idx) {
+			final SortedSet<ITuple> temp = IndexingOnTheFlyRelation.this.indexOn(idx);
+			if ((from != null) && (to != null)) {
+				return new SubRelation(temp.subSet(from, to), from, to);
+			} else if (from != null) {
+				return new SubRelation(temp.tailSet(from), from, to);
+			} else if (to != null) {
+				return new SubRelation(temp.headSet(to), from, to);
+			}
+			return new SubRelation(temp);
 		}
 
 		/**
