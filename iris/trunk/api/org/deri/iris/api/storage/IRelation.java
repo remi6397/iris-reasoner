@@ -37,12 +37,12 @@ import org.deri.iris.api.basics.ITuple;
  * indexing.
  * </p>
  * <p>
- * $Id: IRelation.java,v 1.11 2007-05-21 10:02:07 poettler_ric Exp $
+ * $Id: IRelation.java,v 1.12 2007-06-06 11:38:35 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic
- * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.11 $ $Date: 2007-05-21 10:02:07 $
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision: 1.12 $ $Date: 2007-06-06 11:38:35 $
  */
 
 public interface IRelation extends SortedSet<ITuple>, Cloneable {
@@ -54,7 +54,7 @@ public interface IRelation extends SortedSet<ITuple>, Cloneable {
 
 	/**
 	 * <p>
-	 * Returns a sorted set which is sorted on the specified indexes.
+	 * Returns a relation which is sorted on the specified indexes.
 	 * </p>
 	 * <p>
 	 * The indedexes are specified as follows: All indexes you don't want to
@@ -79,5 +79,5 @@ public interface IRelation extends SortedSet<ITuple>, Cloneable {
 	 *             if the actual relation implementation doesn't support this
 	 *             method
 	 */
-	public abstract SortedSet<ITuple> indexOn(final Integer[] idx);
+	public abstract IRelation indexOn(final Integer[] idx);
 }
