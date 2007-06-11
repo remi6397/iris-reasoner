@@ -27,11 +27,13 @@
 package org.deri.iris.basics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IConstructedTerm;
@@ -39,16 +41,20 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
 /**
+ * <p>
+ * A simple tuple implementation. This implementation is thread-safe.
+ * </p>
+ * <p>
+ * $Id: Tuple.java,v 1.14 2007-06-11 12:42:38 poettler_ric Exp $
+ * </p>
  * @author Darko Anicic, DERI Innsbruck
- * @date   26.05.2006 12:07:31
- * 
- * Revision 1.1  21.07.2006 12:01:56  Darko Anicic, DERI Innsbruck
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision: 1.14 $
  */
 public class Tuple implements ITuple{
 
-	private final int arity;
-	
-	private List<ITerm> terms = null;
+	/** The terms stored in this tuple. */
+	private final ITerm[] terms;
 	
 	/**
 	 * Tuples t0 and t1 are duplicates if they have identical terms  
@@ -58,149 +64,191 @@ public class Tuple implements ITuple{
 	 */
 	private ITuple duplicate = null;
 	
-	/** The Lock to make this set threadsafe */
+	/** The Lock to make this object threadsafe. */
 	private final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
 
-	/** The write lock */
+	/** The write lock. */
 	private final Lock WRITE = LOCK.writeLock();
+
+	/** The read lock. */
+	private final Lock READ = LOCK.readLock();
 	
 	
 	/**
 	 * Creates a tuple defined by the list of terms.
 	 * 
-	 * @param terms
-	 * 				list of terms that create a tuple
+	 * @param terms list of terms that create a tuple
+	 * @throws NullPointerException if terms is <code>null</code>
 	 */
-	Tuple(List<ITerm> terms){
-		if (terms == null) {
-			throw new IllegalArgumentException("Input argument must not be null");
+	Tuple(final Collection<ITerm> t){
+		if (t == null) {
+			throw new NullPointerException("Input argument must not be null");
 		}
-		this.arity = terms.size();
-		this.terms = terms;
+		terms = t.toArray(new ITerm[t.size()]);
 	}
 	
 	/**
-	 * Creates an empty tuple with an arity defined by the parameter.
+	 * Creates an empty tuple with an given arity.
 	 * 
-	 * @param arity
-	 * 				arity of the tuple
+	 * @param arity	arity of the tuple
+	 * @throws IllegalArgumentException if the arity is negative
 	 */
-	Tuple(int arity){
-		this.arity = arity;
-		this.terms = new ArrayList<ITerm>(arity);
+	Tuple(final int arity){
+		if (arity < 0) {
+			throw new IllegalArgumentException("The arity must not be negative");
+		}
+		terms = new ITerm[arity];
+		Arrays.fill(null, terms);
 	}
 	
 	public int getArity() {
-		return arity;
+		READ.lock();
+		try {
+			return terms.length;
+		} finally {
+			READ.unlock();
+		}
 	}
 
-	public ITerm getTerm(int arg) {
-		return this.terms.get(arg);
+	public ITerm getTerm(final int arg) {
+		if (arg >= terms.length) {
+			throw new IndexOutOfBoundsException("Term at position " + arg + 
+					" was requested from a tuple with arity " + 
+					terms.length);
+		}
+		READ.lock();
+		try {
+			return terms[arg];
+		} finally {
+			READ.unlock();
+		}
 	}
 
 	public List<ITerm> getTerms() {
-		return this.terms;
+		READ.lock();
+		try {
+			return Arrays.asList(terms);
+		} finally {
+			READ.unlock();
+		}
 	}
 
-	public ITerm setTerm(int index, ITerm term) {
-		ITerm t = null;
-		if (index >= this.arity) {
+	public ITerm setTerm(final int index, final ITerm term) {
+		if (index > terms.length) {
 			throw new IndexOutOfBoundsException(
 					"Can't set a tuple at position: " +
 					index + " (as the arity of the tuple is: " + 
-					this.terms.size() + ")");
+					terms.length + ")");
 		}
 		WRITE.lock();
 		try {
-			if(index >= this.terms.size()){
-				this.terms.add(index, term);
-				t = term;
-			}else{
-				t = this.terms.set(index, term);
+			final ITerm ret = terms[index];
+			terms[index] = term;
+			return ret;
+		} finally {
+			WRITE.unlock();
+		}
+	}
+
+	public void setTerms(final Collection<ITerm> terms) {
+		WRITE.lock();
+		try {
+			setTerms(0, terms);
+		} finally {
+			WRITE.unlock();
+		}
+	}
+	
+	public void setTerms(final int index, final Collection<ITerm> t) {
+		if (index + t.size() > terms.length) {
+			throw new IndexOutOfBoundsException("Couldn't store " + t.size() + 
+					" elements starting from " + index + 
+					" in a tuple wiht arity " + terms.length);
+		}
+		WRITE.lock();
+		try {
+			int i = index;
+			for (final ITerm term : t) {
+				terms[i++] = term;
 			}
 		} finally {
 			WRITE.unlock();
 		}
-		return t;
-	}
-
-	public boolean setTerms(List<ITerm> terms) {
-		boolean changed = false;
-		if (terms.size() > this.arity) {
-			throw new IndexOutOfBoundsException(
-					"Size of the term list: " +
-					terms.size() + " is bigger than the arity of the tuple: " + 
-					this.arity + ")");
-		}
-		for(int i=0; i<terms.size(); i++){
-			setTerm(i, terms.get(i));
-			changed = true;
-		}
-		
-		return changed;
 	}
 	
-	public boolean setTerms(int index, List<ITerm> terms) {
-		if (index + terms.size() > this.arity) {
-			throw new IndexOutOfBoundsException(
-					"Cannot store the entire list of terms from position: " +
-					index + ".");
-		}
-		for(int i=0; i<terms.size(); i++){
-			this.setTerm(index + i, terms.get(i));
-		}
-		return true;
-	}
-	
-	@SuppressWarnings("unchecked")
 	public boolean isGround() {
-		for(ITerm t : this.terms){
-			if(!t.isGround()) return false;
+		READ.lock();
+		try {
+			for(final ITerm t : terms){
+				if(!t.isGround()) {
+					return false;
+				}
+			}
+		} finally {
+			READ.unlock();
 		}
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String toString(){
-		String s = "(";
-		for(int i=0; i<this.getArity(); i++){
-			if (this.getTerm(i) != null)
-				s = s + this.getTerm(i).toString();
-			else 
-				s = s + " ";
-			if(i<this.getArity()-1)s = s + ", ";
-			else s = s + ")";
+		READ.lock();
+		try {
+			final StringBuilder buffer = new StringBuilder();
+			buffer.append("(");
+			for (final ITerm t : terms) {
+				buffer.append(t).append(", ");
+			}
+			buffer.delete(buffer.length() - 2, buffer.length()).append(")");
+			return buffer.toString();
+		} finally {
+			READ.unlock();
 		}
-		if(this.getArity() == 0)s = s + ")";
-		return s;
 	}
 
 	public void setDuplicate(ITuple duplicate) {
-		this.duplicate = duplicate;
+		WRITE.lock();
+		try {
+			this.duplicate = duplicate;
+		} finally {
+			WRITE.unlock();
+		}
 	}
 	
 	public ITuple getDuplicate() {
-		return this.duplicate;
+		READ.lock();
+		try {
+			return this.duplicate;
+		} finally {
+			READ.unlock();
+		}
 	}
 	
 	public int compareTo(ITuple t) {
 		if (t == null) {
-			throw new IllegalArgumentException("Cannot compare with null");
+			throw new NullPointerException("Cannot compare with null");
 		}
-		int res = 0;
-		int minsize = 0;
 		
-		minsize = Math.min(this.terms.size(), t.getTerms().size());
-		for (int iCounter = 0; iCounter < minsize; iCounter++) {
-			if ((res = this.terms.get(iCounter).compareTo(t.getTerm(iCounter))) != 0) {
-				return res;
+		READ.lock();
+		try {
+			int res = 0;
+			for (int i = 0; i < Math.min(terms.length, t.getTerms().size()); i++) {
+				if ((res = terms[i].compareTo(t.getTerm(i))) != 0) {
+					return res;
+				}
 			}
+			return terms.length - t.getTerms().size();
+		} finally {
+			READ.unlock();
 		}
-		return this.terms.size() - t.getTerms().size();
 	}
 
 	public int hashCode() {
-		return terms.hashCode();
+		READ.lock();
+		try {
+			return Arrays.hashCode(terms);
+		} finally {
+			READ.unlock();
+		}
 	}
 	
 	public boolean equals(final Object o) {
@@ -210,64 +258,86 @@ public class Tuple implements ITuple{
 		if (!(o instanceof Tuple)) {
 			return false;
 		}
-		Tuple tuple = (Tuple) o;
-		if(terms.size() != tuple.terms.size()) {
-			return false;
-		}
-		ITerm t0, t1;
-		for(int i=0; i<tuple.getTerms().size(); i++){
-			t0 = this.terms.get(i);
-			t1 = tuple.getTerm(i);
-			if (!(t0.getClass() == t1.getClass())) {
+		READ.lock();
+		try {
+			final Tuple tuple = (Tuple) o;
+			if(terms.length != tuple.getTerms().size()) {
 				return false;
 			}
-			if(t0.compareTo(t1) != 0)
-				return false;
+			for(int i=0; i<tuple.getTerms().size(); i++){
+				final ITerm t0 = terms[i];
+				final ITerm t1 = tuple.getTerm(i);
+				if ((t0 != t1) && !t0.equals(t1)) {
+					return false;
+				}
+			}
+			return true;
+		} finally {
+			READ.unlock();
 		}
-		return true;
 	}
 
 	public Set<IVariable> getVariables() {
-		Set<IVariable> variables = new HashSet<IVariable>();
-		for(ITerm term : this.terms){
-			if(term instanceof IVariable)
-				variables.add((IVariable)term);
-			if(term instanceof IConstructedTerm)
-				variables.addAll(getVariables((IConstructedTerm)term));
+		READ.lock();
+		try {
+			Set<IVariable> variables = new HashSet<IVariable>();
+			for(ITerm term : this.terms){
+				if(term instanceof IVariable)
+					variables.add((IVariable)term);
+				if(term instanceof IConstructedTerm)
+					variables.addAll(getVariables((IConstructedTerm)term));
+			}
+			return variables;
+		} finally {
+			READ.unlock();
 		}
-		return variables;
 	}
 	
 	private Set<IVariable> getVariables(IConstructedTerm t) {
-		Set<IVariable> variables = new HashSet<IVariable>();
-		for(ITerm term : t.getValue()){
-			if(term instanceof IVariable)
-				variables.add((IVariable)term);
-			if(term instanceof IConstructedTerm)
-				variables.addAll(getVariables((IConstructedTerm)term));
+		READ.lock();
+		try {
+			Set<IVariable> variables = new HashSet<IVariable>();
+			for(ITerm term : t.getValue()){
+				if(term instanceof IVariable)
+					variables.add((IVariable)term);
+				if(term instanceof IConstructedTerm)
+					variables.addAll(getVariables((IConstructedTerm)term));
+			}
+			return variables;
+		} finally {
+			READ.unlock();
 		}
-		return variables;
 	}
 
 	public List<IVariable> getAllVariables() {
-		List<IVariable> variables = new ArrayList<IVariable>();
-		for(ITerm term : this.terms){
-			if(term instanceof IVariable)
-				variables.add((IVariable)term);
-			if(term instanceof IConstructedTerm)
-				variables.addAll(getAllVariables((IConstructedTerm)term));
+		READ.lock();
+		try {
+			List<IVariable> variables = new ArrayList<IVariable>();
+			for(ITerm term : this.terms){
+				if(term instanceof IVariable)
+					variables.add((IVariable)term);
+				if(term instanceof IConstructedTerm)
+					variables.addAll(getAllVariables((IConstructedTerm)term));
+			}
+			return variables;
+		} finally {
+			READ.unlock();
 		}
-		return variables;
 	}
 	
 	private List<IVariable> getAllVariables(IConstructedTerm t) {
-		List<IVariable> variables = new ArrayList<IVariable>();
-		for(ITerm term : t.getValue()){
-			if(term instanceof IVariable)
-				variables.add((IVariable)term);
-			if(term instanceof IConstructedTerm)
-				variables.addAll(getAllVariables((IConstructedTerm)term));
+		READ.lock();
+		try {
+			List<IVariable> variables = new ArrayList<IVariable>();
+			for(ITerm term : t.getValue()){
+				if(term instanceof IVariable)
+					variables.add((IVariable)term);
+				if(term instanceof IConstructedTerm)
+					variables.addAll(getAllVariables((IConstructedTerm)term));
+			}
+			return variables;
+		} finally {
+			READ.unlock();
 		}
-		return variables;
 	}
 }
