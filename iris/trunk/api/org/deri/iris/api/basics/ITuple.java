@@ -26,6 +26,7 @@
 
 package org.deri.iris.api.basics;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -38,11 +39,12 @@ import org.deri.iris.api.terms.IVariable;
  * relation.
  * </p>
  * <p>
- * $Id: ITuple.java,v 1.10 2007-05-03 12:01:07 darko_anicic Exp $
+ * $Id: ITuple.java,v 1.11 2007-06-11 12:41:30 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @date 07.12.2005 08:45:24
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision: 1.11 $
  */
 
 public interface ITuple extends Comparable<ITuple> {
@@ -91,32 +93,22 @@ public interface ITuple extends Comparable<ITuple> {
 	 * 
 	 * @param terms
 	 *            Elements to be inserted into this list.
-	 * @return <code>true</code> if this list has been changed as a result of
-	 *         the call; <code>false</code> otherwise.
+	 * @throws IndexOutOfBoundsException if the addition of the terms would
+	 * exceed the arity of this tuple.
 	 */
-	public boolean setTerms(List<ITerm> terms);
+	public void setTerms(Collection<ITerm> terms);
 
 	/**
 	 * Inserts all of the elements in the specified collection into this list at
-	 * the specified position. Shifts the element currently at that position (if
-	 * any) and any subsequent elements to the right. Replaces the element
+	 * the specified position. Replaces the element
 	 * currently at that position (if any) and any subsequent elements to the
-	 * right. It does not increases their indices. Thus an
-	 * IndexOutOfBoundsException exception will be thrown if size of a term list
-	 * exceeds the number of available positions, which is: 'tuple arity' -
-	 * index. The new elements will appear in this list in the order that they
-	 * are returned by the specified collection's iterator. This method is
-	 * thread-save.
-	 * 
-	 * @param index
-	 *            Index at which to insert first element from the specified
-	 *            collection.
-	 * @param terms
-	 *            Elements to be inserted into this list.
-	 * @return <code>true</code> if this list has been changed as a result of
-	 *         the call; <code>false</code> otherwise.
+	 * right. It does not increases their indices.
+	 * @param index Index at which to insert first element
+	 * @param terms Elements to be inserted into this list.
+	 * @throws IndexOutOfBoundsException if the addition of the terms would
+	 * exceed the arity of this tuple.
 	 */
-	public boolean setTerms(int index, List<ITerm> terms);
+	public void setTerms(int index, Collection<ITerm> terms);
 
 	/**
 	 * Checks whether this tuple contains only ground terms.
