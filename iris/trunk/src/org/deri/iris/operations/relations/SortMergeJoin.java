@@ -30,7 +30,6 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.RELATION;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
@@ -48,10 +47,10 @@ import org.deri.iris.api.terms.ITerm;
  * <code>indexOn(Integer[])</code> method.
  * </p>
  * <p>
- * $Id: SortMergeJoin.java,v 1.1 2007-06-11 11:48:33 poettler_ric Exp $
+ * $Id: SortMergeJoin.java,v 1.2 2007-06-11 12:06:52 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SortMergeJoin implements IJoin {
 
@@ -84,7 +83,7 @@ public class SortMergeJoin implements IJoin {
 	 * @throws NullPointerException if the index array is <code>null</code>
 	 * @throws IllegalArgumentException if the length of the index array is
 	 * unequal to the arity of the outer relation
-	 * @throws IllegalArgumentException if the greatest index of the index
+	 * @throws IllegalArgumentException if a index of the index
 	 * array is equal or greater than the arity of the inner relation
 	 */
 	SortMergeJoin(final IMixedDatatypeRelation r0, final IMixedDatatypeRelation r1, final int[] idx, final JoinCondition c) {
@@ -99,11 +98,12 @@ public class SortMergeJoin implements IJoin {
 					idx.length + ") must match the arity of the first relation (" + 
 					r0.getArity() + ")");
 		}
-		if (Collections.max(Arrays.asList(idx)) >= r1.getArity()) {
-			throw new IllegalArgumentException("The highest number of the index array (" + 
-					Collections.max(Arrays.asList(idx)) + 
-					" must not be equal or higher than the arity of the second relation (" + 
-					r1.getArity() + ")");
+		for (final int i : idx) {
+			if (i > r1.getArity()) {
+				throw new IllegalArgumentException("The indexes " + Arrays.toString(idx) + 
+						" must not be greater than the arity of the second relation: " + 
+						r1.getArity());
+			}
 		}
 		this.r0 = r0;
 		this.r1 = r1;
