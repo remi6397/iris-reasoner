@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.SortedSet;
 
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.operations.relation.IJoin;
+import org.deri.iris.api.operations.relation.IMixedDatatypeRelationOperation;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
@@ -47,12 +47,12 @@ import org.deri.iris.api.terms.ITerm;
  * <code>indexOn(Integer[])</code> method.
  * </p>
  * <p>
- * $Id: SortMergeJoin.java,v 1.2 2007-06-11 12:06:52 poettler_ric Exp $
+ * $Id: SortMergeJoin.java,v 1.3 2007-06-13 14:56:10 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
-public class SortMergeJoin implements IJoin {
+public class SortMergeJoin implements IMixedDatatypeRelationOperation {
 
 	/** The outher relation. */
 	private final IMixedDatatypeRelation r0;
@@ -68,6 +68,14 @@ public class SortMergeJoin implements IJoin {
 
 	/** The join condition which must be met by tuples to join. */
 	private final JoinCondition c;
+
+	/**
+	 * Which semi-join should be performed. <code>0</code> means take only the
+	 * tuples of the first (outer) relation, <code>1</code> means take only the
+	 * tuples of the second (innder relation and any other number would
+	 * produce an ordinary join.
+	 */
+	private final int semiJoin;
 
 	/**
 	 * Constructs a new join operation.
@@ -86,7 +94,44 @@ public class SortMergeJoin implements IJoin {
 	 * @throws IllegalArgumentException if a index of the index
 	 * array is equal or greater than the arity of the inner relation
 	 */
-	SortMergeJoin(final IMixedDatatypeRelation r0, final IMixedDatatypeRelation r1, final int[] idx, final JoinCondition c) {
+	SortMergeJoin(final IMixedDatatypeRelation r0, final IMixedDatatypeRelation r1, final int[] idx, 
+			final JoinCondition c) {
+		this(r0, r1, idx, c, -1);
+	}
+
+	/**
+	 * <p>
+	 * Constructs a new join operation.
+	 * </p>
+	 * <p>
+	 * This constructor also takes a number to determine whether a semi join
+	 * should be done, or not.
+	 * <ul>
+	 * <li>0 ... result only contains tuples from the first (inner) relatione</li>
+	 * <li>1 ... result only contains tuples from the second (outer) relatione</li>
+	 * <li>any other number ... the tuples of both relations will be
+	 * concated</li>
+	 * </ul>
+	 * </p>
+	 * @param r0 the outer relation
+	 * @param r1 the inner relation
+	 * @param idx the join indexes like the ones definded in {@link
+	 * org.deri.iris.api.factory.IRelationOperationsFactory
+	 * IRelationOperationsFactory}
+	 * @param c the join condition if it is <code>null</code> it will be
+	 * <code>JoinCondition.EQUALS</code>
+	 * @param semiJoin denotes whether a semi join should be done and which
+	 * relation should be taken
+	 * @throws NullPointerException if one of the relations is
+	 * <code>null</code>
+	 * @throws NullPointerException if the index array is <code>null</code>
+	 * @throws IllegalArgumentException if the length of the index array is
+	 * unequal to the arity of the outer relation
+	 * @throws IllegalArgumentException if a index of the index
+	 * array is equal or greater than the arity of the inner relation
+	 */
+	SortMergeJoin(final IMixedDatatypeRelation r0, final IMixedDatatypeRelation r1, final int[] idx, 
+			final JoinCondition c, final int semiJoin) {
 		if ((r0 == null) || (r1 == null)) {
 			throw new NullPointerException("The relations must not be null");
 		}
@@ -109,6 +154,7 @@ public class SortMergeJoin implements IJoin {
 		this.r1 = r1;
 		this.idx = idx;
 		this.c = (c == null) ? JoinCondition.EQUALS : c;
+		this.semiJoin = semiJoin;
 	}
 
 	/**
@@ -161,9 +207,12 @@ public class SortMergeJoin implements IJoin {
 	 * @return the resulting tuple
 	 * @throws NullPointerException if one tuple is <code>null</code>
 	 */
-	private static ITuple concat(final ITuple... t) {
+	private ITuple concat(final ITuple... t) {
 		if (t == null) {
 			throw new NullPointerException("The tuple array must not be null");
+		}
+		if ((semiJoin == 0) || (semiJoin == 1)) {
+			return t[semiJoin];
 		}
 		final List<ITerm> terms = new LinkedList<ITerm>();
 		for (final ITuple tup : t) {
@@ -228,13 +277,20 @@ public class SortMergeJoin implements IJoin {
 		return matches;
 	}
 
-	public IRelation join() {
+	public IMixedDatatypeRelation evaluate() {
 		// sort
 		final Integer[][] sortIndexes = sortIndexes();
 		final IMixedDatatypeRelation sr0 = r0.indexOn(sortIndexes[0]);
 		final IMixedDatatypeRelation sr1 = r1.indexOn(sortIndexes[1]);
 		// merge
-		final IRelation res =  RELATION.getMixedRelation(r0.getArity() + r1.getArity());
+		final IMixedDatatypeRelation res;
+		if (semiJoin == 0) {
+			res =  RELATION.getMixedRelation(r0.getArity());
+		} else if (semiJoin == 1) {
+			res =  RELATION.getMixedRelation(r1.getArity());
+		} else {
+			res =  RELATION.getMixedRelation(r0.getArity() + r1.getArity());
+		}
 		if ((c == JoinCondition.LESS_THAN) || 
 				(c == JoinCondition.LESS_OR_EQUAL) || 
 				(c == JoinCondition.NOT_EQUAL)) {
