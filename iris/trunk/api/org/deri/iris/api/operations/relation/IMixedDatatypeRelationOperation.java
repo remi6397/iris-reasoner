@@ -24,24 +24,24 @@
  * MA  02110-1301, USA.
  */
 
-package org.deri.iris.api.operations.relations;
+package org.deri.iris.api.operations.relation;
 
-import org.deri.iris.storatge.IMixedDatatypeRelationOperation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * <p>
- * Defines operations which operates on IMixedDatatypeRelationOperation. This
+ * Defines operations which operates on IMixedDatatypeRelation. This
  * distinction must be made, because the order of tuples in the iterator of
  * IMixedDatatypeRelationOperation might not be as expected. The speed might
  * also be improved for some operations.
  * </p>
  * <p>
- * $Id: IMixedDatatypeRelationOperation.java,v 1.1 2007-06-13 14:43:43 poettler_ric Exp $
+ * $Id: IMixedDatatypeRelationOperation.java,v 1.2 2007-06-13 14:54:35 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
-public class IMixedDatatypeRelationOperation {
+public interface IMixedDatatypeRelationOperation {
 
 	/**
 	 * Runs the evaluation process.
