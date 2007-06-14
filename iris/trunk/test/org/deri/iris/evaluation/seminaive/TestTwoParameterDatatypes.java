@@ -48,7 +48,7 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
@@ -86,16 +86,16 @@ public class TestTwoParameterDatatypes {
 	    "p('b')." +
 	    "p('d')." +
 	    */
-		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
+		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
 		IPredicate pr = Factory.BASIC.createPredicate("s", 1);
-		IRelation rel = RELATION.getRelation(1);
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(1);
 		rel.add(createStringTuple("d"));
 		rel.add(createStringTuple("b"));
 		rel.add(createStringTuple("a"));
 		facts.put(pr, rel);
 
 		pr = Factory.BASIC.createPredicate("p", 1);
-		rel = RELATION.getRelation(1);
+		rel = RELATION.getMixedRelation(1);
 		rel.add(createStringTuple("b"));
 		rel.add(createStringTuple("d"));
 		facts.put(pr, rel);

@@ -48,7 +48,7 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
@@ -59,12 +59,12 @@ import org.deri.iris.parser.ProgramTest;
  * <p>
  * </p>
  * <p>
- * $Id: TestNeg.java,v 1.3 2007-04-04 21:29:52 darko_anicic Exp $
+ * $Id: TestNeg.java,v 1.4 2007-06-14 21:53:55 darko_anicic Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.3 $
- * @date $Date: 2007-04-04 21:29:52 $
+ * @version $Revision: 1.4 $
+ * @date $Date: 2007-06-14 21:53:55 $
  */
 public class TestNeg {
 
@@ -92,17 +92,17 @@ public class TestNeg {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
+		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
 		// r(1), r(2)
 		IPredicate p = Factory.BASIC.createPredicate("r", 1);
-		IRelation rel = RELATION.getRelation(1);
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(1);
 		rel.add(createStringTuple("1"));
 		rel.add(createStringTuple("2"));
 		facts.put(p, rel);
 
 		// s(3), s(4)
 		p = Factory.BASIC.createPredicate("s", 1);
-		rel = RELATION.getRelation(1);
+		rel = RELATION.getMixedRelation(1);
 		rel.add(createStringTuple("3"));
 		rel.add(createStringTuple("4"));
 		facts.put(p, rel);
@@ -134,7 +134,7 @@ public class TestNeg {
 		IExpressionEvaluator method = new ExpressionEvaluator();
 		IExecutor exec = new Executor(e, method);
 		exec.execute();
-		Map<IPredicate,IRelation> m = exec.computeSubstitutions();
+		Map<IPredicate,IMixedDatatypeRelation> m = exec.computeSubstitutions();
 		System.out.println("*****" + "RESULT: " + "*****");
 		ProgramTest.printResults(m);
 	}

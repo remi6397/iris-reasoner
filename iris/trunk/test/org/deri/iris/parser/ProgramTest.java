@@ -41,7 +41,7 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
@@ -53,13 +53,13 @@ import org.deri.iris.factory.Factory;
  */
 public class ProgramTest extends TestCase {
 
-	private Map<IPredicate,IRelation> m = null;
+	private Map<IPredicate,IMixedDatatypeRelation> m = null;
 	
 	/** 0 as an argument means: "run all tests" */
 	private static final int TEST_ALL = 0;
  
 	/** Set a number of a test to be run */
-	private int TEST_NO = 3;
+	private int TEST_NO = 6;
 	
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(ProgramTest.class);
@@ -79,7 +79,7 @@ public class ProgramTest extends TestCase {
 	    	System.out.println("test 1");
 	    	printResults(m);
 	    	System.out.println();
-	
+	    	
 	    	testProgram(
 					m,
 					resultTest1());
@@ -234,6 +234,9 @@ public class ProgramTest extends TestCase {
 	
 	public void test6()throws Exception{
 		if(TEST_NO == 6 || TEST_ALL == 0){
+			
+		long t0_start = System.currentTimeMillis();
+			
 	    	String program = 
 	    		"down('g', 'b')." +
 	    		"down('h', 'c')." +
@@ -257,8 +260,9 @@ public class ProgramTest extends TestCase {
 	    		
 			    "rsg(?X, ?Y) :- up(?X, ?W), rsg(?Q, ?W), down(?Q, ?Y)." +
 			    "rsg(?X, ?Y) :- flat(?X, ?Y)." +
-			    "?- rsg(?X, ?Y).";
-			   
+			    //"?- rsg(?X, ?Y).";
+			    "?- rsg(?X, 'f').";
+	    	
 	    	m = evluateProgram(program);
 	    	System.out.println("test 6");
 	    	printResults(m);
@@ -267,12 +271,16 @@ public class ProgramTest extends TestCase {
 	    	testProgram(
 					m,
 					resultTest6());
+	    	
+	    	long t0_end = System.currentTimeMillis();
+	        long t0 = t0_end - t0_start;
+	        System.out.println("(" + t0 + "ms)");
 		}
     }
 	
 	public String resultTest6(){
     	String result = 
-		    "rsg('a','b')." +
+		    /*"rsg('a','b')." +
 		    "rsg('a','c')." +
 		    "rsg('a','d')." +
 		    "rsg('f','k')." +
@@ -282,8 +290,13 @@ public class ProgramTest extends TestCase {
 		    "rsg('j','f')." +
 		    "rsg('m','n')." +
 		    "rsg('m','o')." +
-		    "rsg('p','m').";
+		    "rsg('p','m').";*/
 		    
+    		"rsg('g')." +
+		    "rsg('h')." +
+		    "rsg('i')." +
+		    "rsg('j').";
+    	
 		return result;
 	}
 	
@@ -660,7 +673,7 @@ public class ProgramTest extends TestCase {
     	return result;
     }
 	
-	public Map<IPredicate, IRelation> evluateProgram(String program) 
+	public Map<IPredicate, IMixedDatatypeRelation> evluateProgram(String program) 
 		throws Exception{
     	
     	IProgram p = Factory.PROGRAM.createProgram();
@@ -672,18 +685,18 @@ public class ProgramTest extends TestCase {
 		return exec.computeSubstitutions();
     }
 	
-	public void testProgram(Map<IPredicate, IRelation> res1, String res0)
+	public void testProgram(Map<IPredicate, IMixedDatatypeRelation> res1, String res0)
 		throws Exception{
     	
-		Map<IPredicate, IRelation> f = new HashMap<IPredicate, IRelation>();
+		Map<IPredicate, IMixedDatatypeRelation> f = new HashMap<IPredicate, IMixedDatatypeRelation>();
 		Set<IRule> r = new HashSet<IRule>();
 		Set<IQuery> q = new HashSet<IQuery>();
 		
     	IProgram p = Factory.PROGRAM.createProgram(f, r, q);
     	Parser.parse(res0, p);
     	
-   		IRelation r0 = null;
-		IRelation r1 = null;
+   		IMixedDatatypeRelation r0 = null;
+		IMixedDatatypeRelation r1 = null;
 		for(IPredicate pr : p.getPredicates()){
 			r0 = p.getFacts().get(pr);
 			r1 = res1.get(pr);
@@ -697,7 +710,7 @@ public class ProgramTest extends TestCase {
     	}
     }
 	
-	public static void printResults(Map<IPredicate, IRelation> m){
+	public static void printResults(Map<IPredicate, IMixedDatatypeRelation> m){
     	for(IPredicate pr : m.keySet()){
 			System.out.println(pr.toString());
 			for(ITuple t : m.get(pr)){
@@ -706,7 +719,7 @@ public class ProgramTest extends TestCase {
     	}
     }
 	
-	public static void printResults(IRelation r){
+	public static void printResults(IMixedDatatypeRelation r){
     	Iterator i = r.iterator();
 		while(i.hasNext()){
 			System.out.println(i.next());

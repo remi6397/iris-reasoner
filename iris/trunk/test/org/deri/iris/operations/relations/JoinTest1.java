@@ -25,6 +25,7 @@
  */
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.ArrayList;
@@ -39,8 +40,7 @@ import junit.framework.TestSuite;
 import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IJoin;
-import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.storage.Relation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * NOTE: Currently only EQUAL comparison operator (equal join) is supported!
@@ -55,21 +55,21 @@ public class JoinTest1 extends TestCase {
 	}
 
 	public void testJoinAndJoinSimple_m10() {
-		IRelation relation0 = new Relation(2);
+		IMixedDatatypeRelation relation0 = RELATION.getMixedRelation(2);
 		
 		// relation0: add tuples
 		relation0.add(MiscHelper.createTuple("a", "b"));
 		relation0.add(MiscHelper.createTuple("b", "b"));
 		relation0.add(MiscHelper.createTuple("b", "d"));
 				
-		IJoin joinOperator = RELATION_OPERATION.createJoinOperator(
+		IJoin joinOperator = RELATION_OPERATION.createSortMergeJoinOperator(
 				relation0, relation0, new int[] { -1, 0}, JoinCondition.EQUALS);
 		
-		IJoin joinSimpleOperator = RELATION_OPERATION.createJoinSimpleOperator(
+		IJoin joinSimpleOperator = RELATION_OPERATION.createSortMergeJoinOperator(
 				relation0, relation0, new int[] { -1, 0}, JoinCondition.EQUALS);
 		
-		IRelation result0 = joinOperator.join();
-		IRelation result1 = joinSimpleOperator.join();
+		IMixedDatatypeRelation result0 = joinOperator.join();
+		IMixedDatatypeRelation result1 = joinSimpleOperator.join();
 		
 		Assert.assertNotSame("Join and JoinSimple doesn't produce the same result"
 				+ ", when two copies of the same relatation are provided as" +
@@ -88,17 +88,17 @@ public class JoinTest1 extends TestCase {
 	 * @param e collection of expected tuples
 	 */
 	protected static void runJoinSimple(final int[] i, final Collection<ITuple> e) {
-		IRelation relation0 = new Relation(2);
+		IMixedDatatypeRelation relation0 = RELATION.getMixedRelation(2);
 		
 		// relation0: add tuples
 		relation0.add(MiscHelper.createTuple("a", "b"));
 		relation0.add(MiscHelper.createTuple("b", "b"));
 		relation0.add(MiscHelper.createTuple("b", "d"));
 				
-		IJoin joinSimpleOperator = RELATION_OPERATION.createJoinSimpleOperator(
+		IJoin joinSimpleOperator = RELATION_OPERATION.createSortMergeJoinOperator(
 				relation0, relation0, i, JoinCondition.EQUALS);
 		
-		IRelation result = joinSimpleOperator.join();
+		IMixedDatatypeRelation result = joinSimpleOperator.join();
 		
 		assertResults(result, e);
 	}
@@ -140,7 +140,7 @@ public class JoinTest1 extends TestCase {
 	 * @param e
 	 *            the Collection containing all expected tuples
 	 */
-	protected static void assertResults(final IRelation r,
+	protected static void assertResults(final IMixedDatatypeRelation r,
 			final Collection<ITuple> e) {
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", e.size(), r.size());

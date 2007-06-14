@@ -52,7 +52,7 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
@@ -91,10 +91,10 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
+		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
 		// r(b,b), r(c,c).
 		IPredicate p = Factory.BASIC.createPredicate("r", 2);
-		IRelation rel = RELATION.getRelation(p.getArity());
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(p.getArity());
 		rel.add(BASIC.createTuple(TERM.createString("b"),TERM.createString("b")));
 		rel.add(BASIC.createTuple(TERM.createString("c"),TERM.createString("c")));
 		facts.put(p, rel);
@@ -105,7 +105,7 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
 		
 		// Result: p(b,b,a),p(c,c,a)
-		IRelation res = RELATION.getRelation(3);
+		IMixedDatatypeRelation res = RELATION.getMixedRelation(3);
 		res.add(BASIC.createTuple(TERM.createString("a"),TERM.createString("b"),TERM.createString("b")));
 		res.add(BASIC.createTuple(TERM.createString("a"),TERM.createString("c"),TERM.createString("c")));
 		
@@ -130,10 +130,10 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
+		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
 		// r(b,b), r(c,c).
 		IPredicate p = Factory.BASIC.createPredicate("r", 2);
-		IRelation rel = RELATION.getRelation(p.getArity());
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(p.getArity());
 		rel.add(BASIC.createTuple(TERM.createString("b"),TERM.createString("b")));
 		rel.add(BASIC.createTuple(TERM.createString("c"),TERM.createString("c")));
 		facts.put(p, rel);
@@ -144,7 +144,7 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
 		
 		// Result: p(b,b,b),p(c,c,c)
-		IRelation res = RELATION.getRelation(3);
+		IMixedDatatypeRelation res = RELATION.getMixedRelation(3);
 		res.add(BASIC.createTuple(TERM.createString("b"),TERM.createString("b"),TERM.createString("b")));
 		res.add(BASIC.createTuple(TERM.createString("c"),TERM.createString("c"),TERM.createString("c")));
 		
@@ -169,10 +169,10 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
+		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
 		// r(a,a), r(b,b), r(c,c).
 		IPredicate p = Factory.BASIC.createPredicate("r", 2);
-		IRelation rel = RELATION.getRelation(p.getArity());
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(p.getArity());
 		rel.add(BASIC.createTuple(TERM.createString("a"),TERM.createString("a")));
 		rel.add(BASIC.createTuple(TERM.createString("b"),TERM.createString("b")));
 		rel.add(BASIC.createTuple(TERM.createString("c"),TERM.createString("c")));
@@ -184,7 +184,7 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
 		
 		// Result: p(a,a)
-		IRelation res = RELATION.getRelation(2);
+		IMixedDatatypeRelation res = RELATION.getMixedRelation(2);
 		res.add(BASIC.createTuple(TERM.createString("a"),TERM.createString("a")));
 		
 		System.out.println("******** TEST 2: ********");
@@ -253,7 +253,7 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 	 * 
 	 * @param p	A program to be evaluated.
 	 */
-	private static void executeTest(final IProgram p, IRelation res){
+	private static void executeTest(final IProgram p, IMixedDatatypeRelation res){
 		System.out.println("--- input ---");
 		for (final IRule rule : p.getRules()) {
 			System.out.println(rule);
@@ -272,7 +272,7 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		IExecutor exec = new Executor(p, method);
 		exec.execute();
 		System.out.println("Result: ");
-		Map<IPredicate, IRelation> results = exec.computeSubstitutions();
+		Map<IPredicate, IMixedDatatypeRelation> results = exec.computeSubstitutions();
 		ProgramTest.printResults(results);
 		
 		assertTrue(results.get(results.keySet().iterator().next()).containsAll(res));

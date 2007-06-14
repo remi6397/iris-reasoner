@@ -25,6 +25,7 @@
  */
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.ArrayList;
@@ -39,8 +40,7 @@ import junit.framework.TestSuite;
 import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IJoin;
-import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.storage.Relation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * @author Richard Pöttler
@@ -49,7 +49,7 @@ import org.deri.iris.storage.Relation;
  */
 public class JoinSimpleExtendedTest extends TestCase {
 	private static IJoin joinOperator = null;
-	private static IRelation result = null;
+	private static IMixedDatatypeRelation result = null;
 	
 	public static Test suite() {
 		return new TestSuite(JoinSimpleExtendedTest.class, JoinSimpleExtendedTest.class.getSimpleName());
@@ -66,8 +66,8 @@ public class JoinSimpleExtendedTest extends TestCase {
 	 *            the Collection of expected tuples
 	 */
 	protected static void runJoin(final int[] i, final Collection<ITuple> e) {
-		IRelation relation0 = new Relation(3);
-		IRelation relation1 = new Relation(3);
+		IMixedDatatypeRelation relation0 = RELATION.getMixedRelation(3);
+		IMixedDatatypeRelation relation1 = RELATION.getMixedRelation(3);
 
 		relation0.add(MiscHelper.createTuple("a", "b", "c"));
 		relation0.add(MiscHelper.createTuple("a", "b", "b"));
@@ -80,7 +80,7 @@ public class JoinSimpleExtendedTest extends TestCase {
 		relation1.add(MiscHelper.createTuple("a", "b", "c"));
 
 		// test join operation handling duplicates
-		joinOperator = RELATION_OPERATION.createJoinOperator(
+		joinOperator = RELATION_OPERATION.createSortMergeJoinOperator(
 				relation0, relation1, i, JoinCondition.EQUALS);
 		result = joinOperator.join();
 		assertResults(result, e);
@@ -95,10 +95,10 @@ public class JoinSimpleExtendedTest extends TestCase {
 	 * 						define indexes which the projection operation
 	 * 						will be applied on.
 	 */
-	protected static void runJoin_projection(final int[] i, 
+	/*protected static void runJoin_projection(final int[] i, 
 			final Collection<ITuple> e, final int[] projectIndexes) {
-		IRelation relation0 = new Relation(3);
-		IRelation relation1 = new Relation(3);
+		IMixedDatatypeRelation relation0 = RELATION.getMixedRelation(3);
+		IMixedDatatypeRelation relation1 = RELATION.getMixedRelation(3);
 
 		relation0.add(MiscHelper.createTuple("a", "b", "c"));
 		relation0.add(MiscHelper.createTuple("a", "b", "b"));
@@ -111,12 +111,12 @@ public class JoinSimpleExtendedTest extends TestCase {
 		relation1.add(MiscHelper.createTuple("a", "b", "c"));
 
 		// test join operation handling duplicates
-		joinOperator = RELATION_OPERATION.createJoinOperator(
+		joinOperator = RELATION_OPERATION.createSortMergeJoinOperator(
 				relation0, relation1, i, 
 					JoinCondition.EQUALS, projectIndexes);
 		result = joinOperator.join();
 		assertResults(result, e);
-	}
+	}*/
 
 	public void testJoin_m1m10() {
 		final List<ITuple> e = new ArrayList<ITuple>();
@@ -181,12 +181,12 @@ public class JoinSimpleExtendedTest extends TestCase {
 	 * 
 	 * <a,c,b>
 	 */
-	public void testJoin_projection() {
+	/*public void testJoin_projection() {
 		final List<ITuple> e = new ArrayList<ITuple>();
 		e.add(MiscHelper.createTuple("a", "c", "b"));
 		runJoin_projection(new int[] { -1, 2, -1 }, e, 
 				new int[] {1, -1, -1, 1, -1, 1});
-	}
+	}*/
 	
 	/**
 	 * Tests the relation against a list of tuples using the assert methods of
@@ -198,7 +198,7 @@ public class JoinSimpleExtendedTest extends TestCase {
 	 * @param e
 	 *            the Collection containing all expected tuples
 	 */
-	protected static void assertResults(final IRelation r,
+	protected static void assertResults(final IMixedDatatypeRelation r,
 			final Collection<ITuple> e) {
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", e.size(), r.size());

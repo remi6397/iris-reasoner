@@ -30,7 +30,7 @@ import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import org.deri.iris.api.operations.relation.IDifference;
 import org.deri.iris.api.operations.relation.IJoin;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * <p>
@@ -67,9 +67,9 @@ import org.deri.iris.api.storage.IRelation;
  */
 public class JoinComplement implements IJoin{
 
-	private IRelation relation0 = null;
+	private IMixedDatatypeRelation relation0 = null;
 
-	private IRelation relation1 = null;
+	private IMixedDatatypeRelation relation1 = null;
 
 	private int[] inds = null;
 
@@ -78,7 +78,7 @@ public class JoinComplement implements IJoin{
 	 * @param arg1
 	 * @param inds
 	 */
-	JoinComplement(IRelation arg0, IRelation arg1, int[] inds) {
+	JoinComplement(IMixedDatatypeRelation arg0, IMixedDatatypeRelation arg1, int[] inds) {
 		if (arg0 == null || arg1 == null || inds == null) {
 			throw new IllegalArgumentException("Constructor "
 					+ "parameters are not specified correctly!");
@@ -88,11 +88,11 @@ public class JoinComplement implements IJoin{
 		this.inds = inds;
 	}
 	
-	public IRelation join() {
-		IJoin joinOperator = RELATION_OPERATION.createJoinSimpleOperator(
-				this.relation0, this.relation1, this.inds, JoinForm.SEMIJOIN);
+	public IMixedDatatypeRelation join() {
+		IJoin joinOperator = RELATION_OPERATION.createSortMergeJoinOperator(
+				this.relation0, this.relation1, this.inds, JoinCondition.EQUALS, 0);
 		
-		IRelation tmpR = joinOperator.join();
+		IMixedDatatypeRelation tmpR = joinOperator.join();
 		
 		IDifference diffOperator = RELATION_OPERATION.createDifferenceOperator(
 				this.relation0, tmpR);

@@ -25,22 +25,15 @@
  */
 package org.deri.iris.builtins;
 
-import static org.deri.iris.builtins.BuiltinHelper.add;
-import static org.deri.iris.builtins.BuiltinHelper.divide;
-import static org.deri.iris.builtins.BuiltinHelper.multiply;
-import static org.deri.iris.builtins.BuiltinHelper.subtract;
-import static org.deri.iris.factory.Factory.BASIC;
-import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.PROGRAM;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.builtins.IBuiltInAtom;
-import org.deri.iris.api.IProgram;
 import org.deri.iris.compiler.Parser;
 
 /**
@@ -48,9 +41,9 @@ import org.deri.iris.compiler.Parser;
  * Test the possibility of custom made builtins.
  * </p>
  * <p>
- * $Id: FahrenheitBuiltinTest.java,v 1.2 2007-04-13 06:55:51 poettler_ric Exp $
+ * $Id: FahrenheitBuiltinTest.java,v 1.3 2007-06-14 21:52:02 darko_anicic Exp $
  * </p>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @author Richard Pöttler, richard dot poettler at deri dot org
  */
 public class FahrenheitBuiltinTest extends TestCase {

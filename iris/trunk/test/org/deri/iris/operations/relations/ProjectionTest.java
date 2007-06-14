@@ -26,9 +26,14 @@
 
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.CONCRETE;
+import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.RELATION_OPERATION;
+import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,17 +42,27 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IProjection;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.storage.Relation;
 
 /**
  * @author Darko Anicic, DERI Innsbruck
  * @date   17.07.2006 16:19:43
  */
 public class ProjectionTest extends TestCase {
+	
+	private static final ITuple[] tups = new ITuple[]{
+		BASIC.createTuple(CONCRETE.createInteger(1), TERM.createString("b"), CONCRETE.createIri("http://aaa"), CONCRETE.createDouble(2d)), 
+		BASIC.createTuple(TERM.createString("zzzz"), CONCRETE.createIri("http://www.google.com"), CONCRETE.createDouble(10d), CONCRETE.createInteger(8)), 
+		BASIC.createTuple(CONCRETE.createInteger(2), TERM.createString("a"), CONCRETE.createIri("http://bbb"), CONCRETE.createDouble(1d)), 
+		BASIC.createTuple(TERM.createString("zzzz"), CONCRETE.createInteger(3), CONCRETE.createDouble(5d), CONCRETE.createInteger(10)), 
+		BASIC.createTuple(TERM.createString("zzzzab"), CONCRETE.createInteger(4), CONCRETE.createDouble(5d), CONCRETE.createInteger(10)),
+		BASIC.createTuple(TERM.createString("aaa"), CONCRETE.createInteger(4), TERM.createString("aaa"), CONCRETE.createInteger(4)),
+		BASIC.createTuple(CONCRETE.createInteger(4), CONCRETE.createInteger(4), CONCRETE.createInteger(4), CONCRETE.createInteger(4)),
+		BASIC.createTuple(CONCRETE.createInteger(4), CONCRETE.createInteger(6), CONCRETE.createInteger(4), CONCRETE.createInteger(4))
+	};
 	
 	public static Test suite() {
 		return new TestSuite(ProjectionTest.class, ProjectionTest.class.getSimpleName());
@@ -63,22 +78,13 @@ public class ProjectionTest extends TestCase {
 	 * @param e
 	 *            the Collection of expected tuples
 	 */
-	protected static void runProjection(
+	protected static void runProjection(IMixedDatatypeRelation rel, 
 			final int[] p, final Collection<ITuple> e) {
-		IRelation relation = new Relation(3);
-	
-		relation.add(MiscHelper.createTuple("a", "a", "a"));
-		relation.add(MiscHelper.createTuple("a", "b", "a"));
-		relation.add(MiscHelper.createTuple("a", "b", "b"));
-		
-		relation.add(MiscHelper.createTuple("d", "d", "d"));
-		relation.add(MiscHelper.createTuple("d", "d", "a"));
-		relation.add(MiscHelper.createTuple("a", "d", "c"));
 		
 		// test the projection operation handling duplicates
 		IProjection projectionOperator = RELATION_OPERATION.createProjectionOperator(
-				relation, p);
-		IRelation result = projectionOperator.project();
+				rel, p);
+		IMixedDatatypeRelation result = (IMixedDatatypeRelation)projectionOperator.project();
 		assertResults(result, e);
 	}
 
@@ -86,19 +92,34 @@ public class ProjectionTest extends TestCase {
 	 * Projection on the first atribute (column)-
 	 * (terms with 0th index in a tuple).
 	 */
-	public void testProjection_pnn() {
+	public void testProjection_pnnn() {
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(4);
+		rel.addAll(Arrays.asList(tups));
+		
 		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a"));
-		e.add(MiscHelper.createTuple("d"));
-		runProjection(new int[]{0, -1, -1}, e);
+		e.add(BASIC.createTuple(CONCRETE.createInteger(1)));
+		e.add(BASIC.createTuple(CONCRETE.createInteger(2)));
+		e.add(BASIC.createTuple(CONCRETE.createInteger(4)));
+		e.add(BASIC.createTuple(TERM.createString("zzzz")));
+		e.add(BASIC.createTuple(TERM.createString("zzzzab")));
+		e.add(BASIC.createTuple(TERM.createString("aaa")));
+		
+		runProjection(rel, new int[]{0, -1, -1, -1}, e);
 	}
 	
-	public void testProjection_npn() {
+	public void testProjection_npnn() {
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(4);
+		rel.addAll(Arrays.asList(tups));
+		
 		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a"));
-		e.add(MiscHelper.createTuple("d"));
-		e.add(MiscHelper.createTuple("b"));
-		runProjection(new int[]{-1, 0, -1}, e);
+		e.add(BASIC.createTuple(CONCRETE.createInteger(3)));
+		e.add(BASIC.createTuple(CONCRETE.createInteger(4)));
+		e.add(BASIC.createTuple(CONCRETE.createInteger(6)));
+		e.add(BASIC.createTuple(TERM.createString("a")));
+		e.add(BASIC.createTuple(TERM.createString("b")));
+		e.add(BASIC.createTuple(CONCRETE.createIri("http://www.google.com")));
+		
+		runProjection(rel, new int[]{-1, 0, -1, -1}, e);
 	}
 	
 	/**
@@ -113,56 +134,40 @@ public class ProjectionTest extends TestCase {
 	 * of arity 1 and the index of its argument is 0 in 
 	 * both cases. 
 	 */
-	public void testProjection_npn_1() {
+	public void testProjection_npnn_1() {
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(4);
+		rel.addAll(Arrays.asList(tups));
+		
 		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a"));
-		e.add(MiscHelper.createTuple("d"));
-		e.add(MiscHelper.createTuple("b"));
-		runProjection(new int[]{-1, 1, -1}, e);
+		e.add(BASIC.createTuple(CONCRETE.createInteger(3)));
+		e.add(BASIC.createTuple(CONCRETE.createInteger(4)));
+		e.add(BASIC.createTuple(CONCRETE.createInteger(6)));
+		e.add(BASIC.createTuple(TERM.createString("a")));
+		e.add(BASIC.createTuple(TERM.createString("b")));
+		e.add(BASIC.createTuple(CONCRETE.createIri("http://www.google.com")));
+		
+		runProjection(rel, new int[]{-1, 1, -1, -1}, e);
 	}
 	
 	/**
 	 * Do projection on the 0th and 1st index and then swap
 	 * 0th and 1st argument in each tuple. 
 	 */
-	public void testProjection_pnp_reverse() {
+	public void testProjection_ppnn_reverse() {
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(4);
+		rel.addAll(Arrays.asList(tups));
+		
 		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a", "a"));
-		e.add(MiscHelper.createTuple("b", "a"));
-		e.add(MiscHelper.createTuple("d", "d"));
-		e.add(MiscHelper.createTuple("a", "d"));
-		e.add(MiscHelper.createTuple("c", "a"));
-		runProjection(new int[]{1, -1, 0}, e);
-	}
-	
-	/**
-	 * For the following indexes: [0, 1, 2] nothing will 
-	 * be changed after performing the projection.
-	 */
-	public void testProjection_ppp() {
-		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a", "a", "a"));
-		e.add(MiscHelper.createTuple("a", "b", "a"));
-		e.add(MiscHelper.createTuple("a", "b", "b"));
-		e.add(MiscHelper.createTuple("d", "d", "d"));
-		e.add(MiscHelper.createTuple("d", "d", "a"));
-		e.add(MiscHelper.createTuple("a", "d", "c"));
-		runProjection(new int[]{0, 1, 2}, e);
-	}
-	
-	/**
-	 * Do not do projection, only swap attributes with
-	 * 0th index with those with 1st index.
-	 */
-	public void testProjection_ppp_reverse() {
-		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a", "a", "a"));
-		e.add(MiscHelper.createTuple("a", "b", "a"));
-		e.add(MiscHelper.createTuple("b", "b", "a"));
-		e.add(MiscHelper.createTuple("d", "d", "d"));
-		e.add(MiscHelper.createTuple("a", "d", "d"));
-		e.add(MiscHelper.createTuple("c", "d", "a"));
-		runProjection(new int[]{2, 1, 0}, e);
+		e.add(BASIC.createTuple(TERM.createString("b"), CONCRETE.createInteger(1)));
+		e.add(BASIC.createTuple(CONCRETE.createIri("http://www.google.com"), TERM.createString("zzzz")));
+		e.add(BASIC.createTuple(TERM.createString("a"), CONCRETE.createInteger(2)));
+		e.add(BASIC.createTuple(CONCRETE.createInteger(4), TERM.createString("aaa")));
+		e.add(BASIC.createTuple(CONCRETE.createInteger(4), TERM.createString("zzzzab")));
+		e.add(BASIC.createTuple(CONCRETE.createInteger(3), TERM.createString("zzzz")));
+		e.add(BASIC.createTuple(CONCRETE.createInteger(4), CONCRETE.createInteger(4)));
+		e.add(BASIC.createTuple(CONCRETE.createInteger(6), CONCRETE.createInteger(4)));
+		
+		runProjection(rel, new int[]{1, 0, -1, -1}, e);
 	}
 	
 	/**

@@ -53,7 +53,7 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
@@ -95,11 +95,11 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
+		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
 		// s(3), s(7), s(11), s(15)
 		IPredicate p = Factory.BASIC.createPredicate("s", 1);
-		IRelation rel = RELATION.getRelation(1);
-		rel = RELATION.getRelation(1);
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(1);
+		rel = RELATION.getMixedRelation(1);
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(3)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(7)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(11)));
@@ -108,7 +108,7 @@ public class AddBuiltinEvaluationTest extends TestCase {
 
 		// r(1), r(2)
 		p = Factory.BASIC.createPredicate("r", 1);
-		rel = RELATION.getRelation(p.getArity());
+		rel = RELATION.getMixedRelation(p.getArity());
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(1)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(2)));
 		facts.put(p, rel);
@@ -119,7 +119,7 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
 		
 		// Result: p(1), p(2), p(7)
-		IRelation res = RELATION.getRelation(1);
+		IMixedDatatypeRelation res = RELATION.getMixedRelation(1);
 		res.add(BASIC.createTuple(CONCRETE.createInteger(1)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(2)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(7)));
@@ -147,18 +147,18 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
+		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
 		// s(3), s(7)
 		IPredicate p = Factory.BASIC.createPredicate("s", 1);
-		IRelation rel = RELATION.getRelation(1);
-		rel = RELATION.getRelation(1);
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(1);
+		rel = RELATION.getMixedRelation(1);
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(3)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(7)));
 		facts.put(p, rel);
 
 		/// p(1), p(2)
 		p = Factory.BASIC.createPredicate("p", 1);
-		rel = RELATION.getRelation(p.getArity());
+		rel = RELATION.getMixedRelation(p.getArity());
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(1)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(2)));
 		facts.put(p, rel);
@@ -169,7 +169,7 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
 		
 		// Result: q(3,1,4), q(3,2,5), q(7,1,8), q(7,2,9)
-		IRelation res = RELATION.getRelation(3);
+		IMixedDatatypeRelation res = RELATION.getMixedRelation(3);
 		res.add(BASIC.createTuple(CONCRETE.createInteger(3),CONCRETE.createInteger(1),CONCRETE.createInteger(4)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(3),CONCRETE.createInteger(2),CONCRETE.createInteger(5)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(7),CONCRETE.createInteger(1),CONCRETE.createInteger(8)));
@@ -196,10 +196,10 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
+		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
 		// p(3), p(7)
 		IPredicate p = Factory.BASIC.createPredicate("p", 1);
-		IRelation rel = RELATION.getRelation(p.getArity());
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(p.getArity());
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(3)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(9)));
 		facts.put(p, rel);
@@ -210,7 +210,7 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
 		
 		// Result: p(3), p(7), p(9)
-		IRelation res = RELATION.getRelation(1);
+		IMixedDatatypeRelation res = RELATION.getMixedRelation(1);
 		res.add(BASIC.createTuple(CONCRETE.createInteger(3)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(7)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(9)));
@@ -243,10 +243,10 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
+		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
 		// s(3), s(6), s(9)
 		IPredicate p = Factory.BASIC.createPredicate("s", 1);
-		IRelation rel = RELATION.getRelation(p.getArity());
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(p.getArity());
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(3)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(6)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(9)));
@@ -254,7 +254,7 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		
 		// p(2), p(4)
 		p = Factory.BASIC.createPredicate("p", 1);
-		rel = RELATION.getRelation(p.getArity());
+		rel = RELATION.getMixedRelation(p.getArity());
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(2)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(4)));
 		facts.put(p, rel);
@@ -265,7 +265,7 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
 		
 		// Result: q(6,4,10)
-		IRelation res = RELATION.getRelation(q.getQueryLiteral(0).getPredicate().getArity());
+		IMixedDatatypeRelation res = RELATION.getMixedRelation(q.getQueryLiteral(0).getPredicate().getArity());
 		res.add(BASIC.createTuple(CONCRETE.createInteger(6),CONCRETE.createInteger(4),CONCRETE.createInteger(10)));
 		
 		System.out.println("******** TEST 3: ********");
@@ -334,7 +334,7 @@ public class AddBuiltinEvaluationTest extends TestCase {
 	 * 
 	 * @param p	A program to be evaluated.
 	 */
-	private static void executeTest(final IProgram p, IRelation res){
+	private static void executeTest(final IProgram p, IMixedDatatypeRelation res){
 		System.out.println("--- input ---");
 		for (final IRule rule : p.getRules()) {
 			System.out.println(rule);
@@ -353,7 +353,7 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		IExecutor exec = new Executor(p, method);
 		exec.execute();
 		System.out.println("Result: ");
-		Map<IPredicate, IRelation> results = exec.computeSubstitutions();
+		Map<IPredicate, IMixedDatatypeRelation> results = exec.computeSubstitutions();
 		ProgramTest.printResults(results);
 		
 		assertTrue(results.get(results.keySet().iterator().next()).containsAll(res));

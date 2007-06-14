@@ -25,6 +25,7 @@
  */
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.ArrayList;
@@ -39,25 +40,24 @@ import junit.framework.TestSuite;
 import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IDifference;
-import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.storage.Relation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
- * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic, DERI Innsbruck
- * @date $Date: 2006-10-23 07:23:59 $
- * @version $Id: DifferenceTest.java,v 1.6 2006-10-23 07:23:59 richardpoettler Exp $
+ * @date $Date: 2007-06-14 21:54:48 $
+ * @version $Id: DifferenceTest.java,v 1.7 2007-06-14 21:54:48 darko_anicic Exp $
  */
 public class DifferenceTest extends TestCase {
 
 	public static Test suite() {
-		return new TestSuite(DifferenceTest.class, DifferenceTest.class.getSimpleName());
+		return new TestSuite(DifferenceTest.class, DifferenceTest.class
+				.getSimpleName());
 	}
 
 	/**
-	 * Computes the difference of two relations (no duplicates handling) 
-	 * and then checks the result against the submitted Collection of tuples. 
-	 * e = realtion0 - relation1
+	 * Computes the difference of two relations (no duplicates handling) and
+	 * then checks the result against the submitted Collection of tuples. e =
+	 * realtion0 - relation1
 	 * 
 	 * @param relation0
 	 *            the first relation
@@ -66,27 +66,29 @@ public class DifferenceTest extends TestCase {
 	 * @param e
 	 *            the Collection of expected tuples
 	 */
-	protected static void runDifference(final IRelation relation0, final IRelation relation1, final Collection<ITuple> e) {
+	protected static void runDifference(final IMixedDatatypeRelation relation0,
+			final IMixedDatatypeRelation relation1, final Collection<ITuple> e) {
 
-		IDifference differenceOperator = RELATION_OPERATION.createDifferenceOperator(
-				relation0, relation1);
-		IRelation result = differenceOperator.difference();
+		IDifference differenceOperator = RELATION_OPERATION
+				.createDifferenceOperator(relation0, relation1);
+		IMixedDatatypeRelation result = (IMixedDatatypeRelation) differenceOperator
+				.difference();
 		assertResults(result, e);
 	}
-	
+
 	/**
 	 * simplest situation: 2 relations with same arity ... result ok!?
-	 *
+	 * 
 	 */
 	public void testDifference() {
-		final IRelation rel0 = new Relation(3);
-		final IRelation rel1 = new Relation(3);
-		
+		final IMixedDatatypeRelation rel0 = RELATION.getMixedRelation(3);
+		final IMixedDatatypeRelation rel1 = RELATION.getMixedRelation(3);
+
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c"));
 		rel0.add(MiscHelper.createTuple("a", "a", "a"));
 		rel0.add(MiscHelper.createTuple("a", "c", "b"));
-		
+
 		// relation1: add tuples
 		rel1.add(MiscHelper.createTuple("a", "a", "a"));
 
@@ -99,17 +101,17 @@ public class DifferenceTest extends TestCase {
 
 	/**
 	 * are duplets in the parameter relations handled correctly!?
-	 *
+	 * yes
 	 */
 	public void testDifference_duplet0() {
-		final IRelation rel0 = new Relation(3);
-		final IRelation rel1 = new Relation(3);
-		
+		final IMixedDatatypeRelation rel0 = RELATION.getMixedRelation(3);
+		final IMixedDatatypeRelation rel1 = RELATION.getMixedRelation(3);
+
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c"));
 		rel0.add(MiscHelper.createTuple("a", "a", "a"));
 		rel0.add(MiscHelper.createTuple("a", "a", "a"));
-		
+
 		// relation1: add tuples
 		rel1.add(MiscHelper.createTuple("a", "a", "a"));
 
@@ -118,14 +120,15 @@ public class DifferenceTest extends TestCase {
 
 		runDifference(rel0, rel1, e);
 	}
+
 	public void testDifference_duplet1() {
-		final IRelation rel0 = new Relation(3);
-		final IRelation rel1 = new Relation(3);
-		
+		final IMixedDatatypeRelation rel0 = RELATION.getMixedRelation(3);
+		final IMixedDatatypeRelation rel1 = RELATION.getMixedRelation(3);
+
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c"));
 		rel0.add(MiscHelper.createTuple("a", "a", "a"));
-		
+
 		// relation1: add tuples
 		rel1.add(MiscHelper.createTuple("a", "a", "a"));
 		rel1.add(MiscHelper.createTuple("a", "a", "a"));
@@ -138,16 +141,16 @@ public class DifferenceTest extends TestCase {
 
 	/**
 	 * is an empty result ok!?
-	 *
+	 * yes
 	 */
 	public void testDifference_zero() {
-		
-		final IRelation rel0 = new Relation(3);
-		final IRelation rel1 = new Relation(3);
+
+		final IMixedDatatypeRelation rel0 = RELATION.getMixedRelation(3);
+		final IMixedDatatypeRelation rel1 = RELATION.getMixedRelation(3);
 
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c"));
-		
+
 		// relation1: add tuples
 		rel1.add(MiscHelper.createTuple("a", "b", "c"));
 
@@ -157,16 +160,16 @@ public class DifferenceTest extends TestCase {
 	}
 
 	/**
-	 * first parameter relations is empty
-	 *
+	 * first parameter (relation) is empty
+	 * 
 	 */
 	public void testDifference_emptyrel0() {
-	
-		final IRelation rel0 = new Relation(3);
-		final IRelation rel1 = new Relation(3);
+
+		final IMixedDatatypeRelation rel0 = RELATION.getMixedRelation(3);
+		final IMixedDatatypeRelation rel1 = RELATION.getMixedRelation(3);
 
 		// relation0: add tuples
-		
+
 		// relation1: add tuples
 		rel1.add(MiscHelper.createTuple("a", "b", "c"));
 
@@ -176,17 +179,17 @@ public class DifferenceTest extends TestCase {
 	}
 
 	/**
-	 * second parameter relations is empty
-	 *
+	 * second parameter (relation) is empty
+	 * 
 	 */
 	public void testDifference_emptyrel1() {
-		
-		final IRelation rel0 = new Relation(3);
-		final IRelation rel1 = new Relation(3);
+
+		final IMixedDatatypeRelation rel0 = RELATION.getMixedRelation(3);
+		final IMixedDatatypeRelation rel1 = RELATION.getMixedRelation(3);
 
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c"));
-		
+
 		// relation1: add tuples
 
 		final List<ITuple> e = new ArrayList<ITuple>();
@@ -197,15 +200,15 @@ public class DifferenceTest extends TestCase {
 
 	/**
 	 * both parameter relations are empty
-	 *
+	 * 
 	 */
 	public void testDifference_emptyrels() {
-		
-		final IRelation rel0 = new Relation(3);
-		final IRelation rel1 = new Relation(3);
+
+		final IMixedDatatypeRelation rel0 = RELATION.getMixedRelation(3);
+		final IMixedDatatypeRelation rel1 = RELATION.getMixedRelation(3);
 
 		// relation0: add tuples
-		
+
 		// relation1: add tuples
 
 		final List<ITuple> e = new ArrayList<ITuple>();
@@ -214,56 +217,62 @@ public class DifferenceTest extends TestCase {
 	}
 
 	/**
-	 * both parameter are the null-value -> should raise an IllegalArgumentException
-	 *
+	 * both parameter are the null-value -> should raise an
+	 * IllegalArgumentException
+	 * 
 	 */
 	public void testDifference_paramsnull() {
 		try {
-			IDifference differenceOperator = RELATION_OPERATION.createDifferenceOperator(
-				null, null);
-			fail ("should have raised an java.lang.IllegalArgumentException");
-		} catch(java.lang.IllegalArgumentException e)  {}
+			IDifference differenceOperator = RELATION_OPERATION
+					.createDifferenceOperator(null, null);
+			fail("should have raised an java.lang.IllegalArgumentException");
+		} catch (java.lang.IllegalArgumentException e) {
+		}
 	}
 
 	/**
-	 * parameter have different arity -> should raise an IllegalArgumentException
-	 *
+	 * parameter have different arity -> should raise an
+	 * IllegalArgumentException
+	 * 
 	 */
 	public void testDifference_aritydoesnotmatch0() {
-		IRelation rel0 = new Relation(3);
-		IRelation rel1 = new Relation(4);
-		
+		IMixedDatatypeRelation rel0 = RELATION.getMixedRelation(3);
+		IMixedDatatypeRelation rel1 = RELATION.getMixedRelation(4);
+
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c"));
 		rel0.add(MiscHelper.createTuple("a", "a", "a"));
 		rel0.add(MiscHelper.createTuple("a", "c", "b"));
-		
+
 		// relation1: add tuples
 		rel1.add(MiscHelper.createTuple("a", "a", "a", "a"));
 
 		try {
-			IDifference differenceOperator = RELATION_OPERATION.createDifferenceOperator(
-				rel0, rel1);
-			fail ("should have raised an java.lang.IllegalArgumentException");
-		} catch(java.lang.IllegalArgumentException e)  {}
+			IDifference differenceOperator = RELATION_OPERATION
+					.createDifferenceOperator(rel0, rel1);
+			fail("should have raised an java.lang.IllegalArgumentException");
+		} catch (java.lang.IllegalArgumentException e) {
+		}
 	}
+
 	public void testDifference_aritydoesnotmatch1() {
-		IRelation rel0 = new Relation(4);
-		IRelation rel1 = new Relation(3);
-		
+		IMixedDatatypeRelation rel0 = RELATION.getMixedRelation(4);
+		IMixedDatatypeRelation rel1 = RELATION.getMixedRelation(3);
+
 		// relation0: add tuples
 		rel0.add(MiscHelper.createTuple("a", "b", "c", "d"));
 		rel0.add(MiscHelper.createTuple("a", "a", "a", "a"));
 		rel0.add(MiscHelper.createTuple("a", "c", "b", "d"));
-		
+
 		// relation1: add tuples
 		rel1.add(MiscHelper.createTuple("a", "a", "a"));
 
 		try {
-			IDifference differenceOperator = RELATION_OPERATION.createDifferenceOperator(
-				rel0, rel1);
-			fail ("should have raised an java.lang.IllegalArgumentException");
-		} catch(java.lang.IllegalArgumentException e)  {}
+			IDifference differenceOperator = RELATION_OPERATION
+					.createDifferenceOperator(rel0, rel1);
+			fail("should have raised an java.lang.IllegalArgumentException");
+		} catch (java.lang.IllegalArgumentException e) {
+		}
 	}
 
 	/**
@@ -276,7 +285,7 @@ public class DifferenceTest extends TestCase {
 	 * @param e
 	 *            the Collection containing all expected tuples
 	 */
-	protected static void assertResults(final IRelation r,
+	protected static void assertResults(final IMixedDatatypeRelation r,
 			final Collection<ITuple> e) {
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", e.size(), r.size());

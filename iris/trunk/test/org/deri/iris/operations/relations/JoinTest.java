@@ -25,6 +25,7 @@
  */
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.ArrayList;
@@ -39,8 +40,7 @@ import junit.framework.TestSuite;
 import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IJoin;
-import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.storage.Relation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * NOTE: Currently only EQUAL comparison operator (equal join) is supported!
@@ -64,8 +64,8 @@ public class JoinTest extends TestCase {
 	 * @param e collection of expected tuples
 	 */
 	protected static void runJoin(final int[] i, final Collection<ITuple> e) {
-		IRelation relation0 = new Relation(3);
-		IRelation relation1 = new Relation(4);
+		IMixedDatatypeRelation relation0 = RELATION.getMixedRelation(3);
+		IMixedDatatypeRelation relation1 = RELATION.getMixedRelation(4);
 
 		// relation0: add tuples
 		relation0.add(MiscHelper.createTuple("a", "b", "b"));
@@ -93,10 +93,10 @@ public class JoinTest extends TestCase {
 		relation1.add(MiscHelper.createTuple("x", "x", "x", "x"));
 		relation1.add(MiscHelper.createTuple("x", "e", "x", "x"));
 		
-		IJoin joinOperator = RELATION_OPERATION.createJoinOperator(
+		IJoin joinOperator = RELATION_OPERATION.createSortMergeJoinOperator(
 				relation0, relation1, i, JoinCondition.EQUALS);
 		
-		IRelation result = joinOperator.join();
+		IMixedDatatypeRelation result = joinOperator.join();
 		assertResults(result, e);
 	}
 
@@ -107,9 +107,9 @@ public class JoinTest extends TestCase {
 	 * @param pi project indexes
 	 * @param e  collection of expected tuples
 	 */
-	protected static void runJoinWithProjection(final int[] i, final int[] pi, final Collection<ITuple> e) {
-		IRelation relation0 = new Relation(3);
-		IRelation relation1 = new Relation(4);
+	/*protected static void runJoinWithProjection(final int[] i, final int[] pi, final Collection<ITuple> e) {
+		IMixedDatatypeRelation relation0 = RELATION.getMixedRelation(3);
+		IMixedDatatypeRelation relation1 = RELATION.getMixedRelation(4);
 
 		// relation0: add tuples
 		relation0.add(MiscHelper.createTuple("a", "b", "b"));
@@ -119,12 +119,12 @@ public class JoinTest extends TestCase {
 		relation1.add(MiscHelper.createTuple("c", "b", "b", "x"));
 		relation1.add(MiscHelper.createTuple("f", "b", "a", "x"));
 		
-		IJoin joinOperator = RELATION_OPERATION.createJoinOperator(
+		IJoin joinOperator = RELATION_OPERATION.createSortMergeJoinOperator(
 				relation0, relation1,
 				i, JoinCondition.EQUALS, pi);
-		IRelation result = joinOperator.join();
+		IMixedDatatypeRelation result = joinOperator.join();
 		assertResults(result, e);
-	}
+	}*/
 	
 	/**
 	 * This is an example of inconsistent indexes. Namely 3rd column 
@@ -202,12 +202,12 @@ public class JoinTest extends TestCase {
 	 * project on:
 	 * 7th and 2nd and 1st column (in this order) 
 	 */
-	public void testJoinWithProjection_m1p1p2m1() {
+	/*public void testJoinWithProjection_m1p1p2m1() {
 		final List<ITuple> e = new ArrayList<ITuple>();
 		e.add(MiscHelper.createTuple("x", "b", "a"));
 		
 		runJoinWithProjection(new int[] { -1, 1, 2, -1}, new int[]{2, -1, 1, -1, -1, -1, 0}, e);
-	}
+	}*/
 	
 	/**
 	 * Tests the relation against a list of tuples using the assert methods of
@@ -219,7 +219,7 @@ public class JoinTest extends TestCase {
 	 * @param e
 	 *            the Collection containing all expected tuples
 	 */
-	protected static void assertResults(final IRelation r,
+	protected static void assertResults(final IMixedDatatypeRelation r,
 			final Collection<ITuple> e) {
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", e.size(), r.size());
