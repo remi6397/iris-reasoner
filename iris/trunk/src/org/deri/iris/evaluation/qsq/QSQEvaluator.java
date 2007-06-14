@@ -28,7 +28,6 @@ package org.deri.iris.evaluation.qsq;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.EVALUATION;
 import static org.deri.iris.factory.Factory.RELATION;
-import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 import static org.deri.iris.factory.Factory.TUPLE_OPERATION;
 
 import java.util.ArrayList;
@@ -45,10 +44,8 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.IEvaluator;
 import org.deri.iris.api.evaluation.IResultSet;
-import org.deri.iris.api.operations.relation.IJoin;
-import org.deri.iris.api.operations.relation.IProjection;
-import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.operations.tuple.IUnification;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.IStringTerm;
@@ -60,10 +57,12 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.exception.DataModelException;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.relations.JoinCondition;
+import org.deri.iris.operations.relations.JoinSimple;
+import org.deri.iris.operations.relations.MiscOps;
+import org.deri.iris.operations.relations.Projection;
 import org.deri.iris.operations.relations.Selection;
 import org.deri.iris.operations.tuple.Multiequation;
 import org.deri.iris.operations.tuple.Unification.UnificationResult;
-import org.deri.iris.storage.Relation;
 
 /**
  * 
@@ -82,22 +81,27 @@ public class QSQEvaluator implements IEvaluator {
 
 	private Map<AdornedPredicate, Set<QSQRule>> qsqMap = null;
 
-	private IJoin joinOperator = null;
-
-	private IProjection projectionOperator = null;
-
+	//private IJoin joinOperator = null;
+	private JoinSimple joinOperator = null;
+	
+	//private IProjection projectionOperator = null;
+	private Projection projectionOperator = null;
+	
 	/** Fresh inputs (for the entire round). */
 	private Map<IPredicate, IRelation> inputs = null;
 
 	/** All possible inputs for the entire query. */
 	private Map<IPredicate, IRelation> allInputs = null;
 
-	/** Inputs which are currently being processed
-	 *  (for the entire round). */
+	/**
+	 * Inputs which are currently being processed (for the entire round).
+	 */
 	private Map<IPredicate, IRelation> currentInputs = null;
 
-	/** Fresh inputs (for the previous round)
-	 *  to be added for further computation. */
+	/**
+	 * Fresh inputs (for the previous round) to be added for further
+	 * computation.
+	 */
 	private Map<IPredicate, IRelation> tmpInputs = null;
 
 	private IResultSet results = null;
@@ -129,6 +133,11 @@ public class QSQEvaluator implements IEvaluator {
 		Iterator<IQuery> qi = this.prg.getQueries().iterator();
 		while (qi.hasNext()) {
 			q = qi.next();
+			if (q.getQueryLiteral(0).getTuple().getAllVariables().size() == 0) {
+				this.prg.addFact(Factory.BASIC.createAtom(q.getQueryLiteral(0)
+						.getAtom()));
+				break;
+			}
 
 			this.adPrg = new AdornedProgram(this.prg.getRules(), q);
 			QSQTemplate qsqTemplate = new QSQTemplate(adPrg);
@@ -140,10 +149,10 @@ public class QSQEvaluator implements IEvaluator {
 			/**
 			 * Repeat untill no new tuples are added to any global variable.
 			 * 
-			 * The evaluation is looping until no new tuples are added to any of
-			 * the global variables (inputs and outputs). However for each loop
-			 * we need to consider only new tuples in inputs global variables
-			 * (ones that have not been considered yet).
+			 * The evaluation is looping as far as no new tuples are added to
+			 * any of the global variables (inputs and outputs). However for
+			 * each loop we need to consider only new tuples in inputs global
+			 * variables (ones that have not been considered yet).
 			 */
 			while (contEval) {
 				contEval = false;
@@ -215,10 +224,14 @@ public class QSQEvaluator implements IEvaluator {
 				a = ai.next();
 				r = this.qsqMap.get(a).iterator().next();
 				if (!this.inputs.containsKey(a)) {
-					this.inputs.put(a, RELATION.getRelation(r.getInputArity(a)));
-					this.currentInputs.put(a, RELATION.getRelation(r.getInputArity(a)));
-					this.allInputs.put(a, RELATION.getRelation(r.getInputArity(a)));
-					this.tmpInputs.put(a, RELATION.getRelation(r.getInputArity(a)));
+					this.inputs
+							.put(a, RELATION.getRelation(r.getInputArity(a)));
+					this.currentInputs.put(a, RELATION.getRelation(r
+							.getInputArity(a)));
+					this.allInputs.put(a, RELATION.getRelation(r
+							.getInputArity(a)));
+					this.tmpInputs.put(a, RELATION.getRelation(r
+							.getInputArity(a)));
 				}
 			}
 			// Remove from t all tuples that don't unify,
@@ -276,9 +289,10 @@ public class QSQEvaluator implements IEvaluator {
 				// lit contains an edb predicate R' => apply: 3(a)...{(B.i)}
 				if (ap == null) {
 					// TODO: replace with createJoinOperator
-					this.joinOperator = RELATION_OPERATION
-					// .createJoinOperator(
-							.createJoinSimpleOperator(rule.getSup_0(), this.prg
+					this.joinOperator = 
+						//RELATION_OPERATION.createJoinSimpleOperator(
+						new JoinSimple(
+							rule.getSup_0(), this.prg
 									.getFacts(lit.getPredicate()), this
 									.getJoinIndexes(rule.getSup_0()
 											.getVariables(), lit),
@@ -297,8 +311,10 @@ public class QSQEvaluator implements IEvaluator {
 					// apply: 3(b)(i)
 					litVars = lit.getAtom().getTuple().getTerms();
 					vars = this.getBoundVars(ap, litVars);
-					this.projectionOperator = RELATION_OPERATION
-							.createProjectionOperator(rule.getSup_0(), this
+					this.projectionOperator = 
+						new Projection(
+						//RELATION_OPERATION.createProjectionOperator(
+							rule.getSup_0(), this
 									.getProjectIndexes1(rule.getSup_0()
 											.getVariables(), vars));
 
@@ -317,19 +333,19 @@ public class QSQEvaluator implements IEvaluator {
 						}
 						// apply: 3(b)(iv)...{(B.ii.b) & (C)}
 						// TODO: replace with createJoinOperator
-						this.joinOperator = RELATION_OPERATION
-						// .createJoinOperator(
-								.createJoinSimpleOperator(
-										rule.getSup_0(),
-										this.prg.getFacts(ap
-												.getUnadornedPredicate()), this
-												.getJoinIndexes(rule.getSup_0()
-														.getVariables(), lit),
-										JoinCondition.EQUALS,
-										this.getProjectIndexes0(rule.getSup_0()
-												.getVariables(), lit, rule
-												.getSup_1(rule.getSup_0())
-												.getVariables()));
+						this.joinOperator = 
+							//RELATION_OPERATION.createJoinSimpleOperator(
+							new JoinSimple(
+								rule.getSup_0(),
+								this.prg.getFacts(ap
+										.getUnadornedPredicate()), this
+										.getJoinIndexes(rule.getSup_0()
+												.getVariables(), lit),
+								JoinCondition.EQUALS,
+								this.getProjectIndexes0(rule.getSup_0()
+										.getVariables(), lit, rule
+										.getSup_1(rule.getSup_0())
+										.getVariables()));
 
 						rule.getSup_1(rule.getSup_0()).addAll(
 								this.joinOperator.join());
@@ -515,7 +531,7 @@ public class QSQEvaluator implements IEvaluator {
 		int i = 0;
 
 		for (ITerm t : terms) {
-			if (t instanceof IStringTerm)
+			if (t.isGround())
 				ads[i++] = Adornment.BOUND;
 			else
 				ads[i++] = Adornment.FREE;
@@ -578,21 +594,41 @@ public class QSQEvaluator implements IEvaluator {
 	 */
 	private void setResult() {
 		IQuery q = null;
-		ISelection sel = null;
+		//ISelection sel = null;
+		Selection sel = null;
 		IRelation res = null;
+		//IProjection pro = null;
+		Projection pro = null;
 
 		Iterator<IQuery> qi = this.prg.getQueries().iterator();
 		while (qi.hasNext()) {
 			q = qi.next();
 			res = this.prg.getFacts(q.getQueryLiteral(0).getPredicate());
 			if (res.size() > 0) {
-				sel = Factory.RELATION_OPERATION
-						.createSelectionOperator(res, Selection.createPattern(q
+				sel = 
+					//Factory.RELATION_OPERATION.createSelectionOperator(
+					new Selection(
+					res, Selection.createPattern(q
 								.getQueryLiteral(0).getTuple()));
 				res = sel.select();
+
+				int[] pInds = MiscOps.getProjectionIndexes(q.getQueryLiteral(0)
+						.getTuple());
+				if(MiscOps.doProjection(pInds)){
+					pro = 
+						//Factory.RELATION_OPERATION.createProjectionOperator(
+						new Projection(res, pInds);
+					res = pro.project();
+				}
+				if (res.size() > 0) {
+					IMixedDatatypeRelation result = Factory.RELATION.getMixedRelation(res.getArity());
+					result.addAll(res);
+					this.results.getResults().put(
+						Factory.BASIC.createPredicate(q.getQueryLiteral(0)
+							.getPredicate().getPredicateSymbol(), res
+							.first().getArity()), result);
+				}
 			}
-			this.results.getResults().put(q.getQueryLiteral(0).getPredicate(),
-					res);
 		}
 	}
 
@@ -681,7 +717,6 @@ public class QSQEvaluator implements IEvaluator {
 	}
 
 	public IResultSet getResultSet() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.results;
 	}
 }
