@@ -47,10 +47,10 @@ import org.deri.iris.api.terms.ITerm;
  * <code>indexOn(Integer[])</code> method.
  * </p>
  * <p>
- * $Id: SortMergeJoin.java,v 1.3 2007-06-13 14:56:10 poettler_ric Exp $
+ * $Id: SortMergeJoin.java,v 1.4 2007-06-14 15:39:19 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class SortMergeJoin implements IMixedDatatypeRelationOperation {
 
@@ -70,10 +70,12 @@ public class SortMergeJoin implements IMixedDatatypeRelationOperation {
 	private final JoinCondition c;
 
 	/**
-	 * Which semi-join should be performed. <code>0</code> means take only the
-	 * tuples of the first (outer) relation, <code>1</code> means take only the
-	 * tuples of the second (innder relation and any other number would
-	 * produce an ordinary join.
+	 * Which semi-join should be performed.
+	 * A <code>0</code> means, that only the tuples
+	 * of the first relation (<code>r0</code>) are taken. A <code>1</code>
+	 * means, that only tuples from the second (<code>r1</code>) relation
+	 * are taken. A negative number means, that tuples of all relations
+	 * should be concated.
 	 */
 	private final int semiJoin;
 
@@ -105,13 +107,11 @@ public class SortMergeJoin implements IMixedDatatypeRelationOperation {
 	 * </p>
 	 * <p>
 	 * This constructor also takes a number to determine whether a semi join
-	 * should be done, or not.
-	 * <ul>
-	 * <li>0 ... result only contains tuples from the first (inner) relatione</li>
-	 * <li>1 ... result only contains tuples from the second (outer) relatione</li>
-	 * <li>any other number ... the tuples of both relations will be
-	 * concated</li>
-	 * </ul>
+	 * should be done, or not. A <code>0</code> means, that only the tuples
+	 * of the first relation (<code>r0</code>) are taken. A <code>1</code>
+	 * means, that only tuples from the second (<code>r1</code>) relation
+	 * are taken. A negative number means, that tuples of all relations
+	 * should be concated.
 	 * </p>
 	 * @param r0 the outer relation
 	 * @param r1 the inner relation
@@ -211,7 +211,7 @@ public class SortMergeJoin implements IMixedDatatypeRelationOperation {
 		if (t == null) {
 			throw new NullPointerException("The tuple array must not be null");
 		}
-		if ((semiJoin == 0) || (semiJoin == 1)) {
+		if (semiJoin >= 0) {
 			return t[semiJoin];
 		}
 		final List<ITerm> terms = new LinkedList<ITerm>();
