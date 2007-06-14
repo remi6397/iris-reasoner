@@ -56,7 +56,8 @@ import org.deri.iris.api.terms.ITerm;
  * expeced.</b> This is because at the moment it is not defined how to
  * compare e.g. iris with integers. The results of this methods might differ from
  * call to call. This is because of the internal storing algorithm of the
- * internal <code>HashMap</code>.
+ * internal <code>HashMap</code>. Also the iterator might not seem to have the
+ * correct order, since it groups the tuples in potions with the same datatypes.
  * </p>
  * <p>
  * Another limitation of this relation is, that if you retrieve a subset with
@@ -67,11 +68,11 @@ import org.deri.iris.api.terms.ITerm;
  * <code>null</code> is not permitted by this relation, nor by its subsets.
  * </p>
  * <p>
- * $Id: MixedDatatypeRelation.java,v 1.2 2007-06-06 11:45:39 poettler_ric Exp $
+ * $Id: MixedDatatypeRelation.java,v 1.3 2007-06-14 15:35:25 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixedDatatypeRelation {
 
@@ -153,7 +154,7 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 			final Class[] classes = new Class[arity];
 			int i = 0;
 			for (final ITerm term : t.getTerms()) {
-				classes[i++] = term.getClass();
+				classes[i++] = (term == null) ? null : term.getClass();
 			}
 			datatypeIndex.put(hash, classes);
 		}
@@ -281,7 +282,9 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 			final Class[] others = e.getValue();
 			boolean matches = true;
 			for (int i = 0; (i < arity) && matches; i++) {
-				matches &= (classes[i] == null) || classes[i].equals(others[i]);
+				matches &= (classes[i] == null) || 
+					(classes[i] == others[i]) || 
+					classes[i].equals(others[i]);
 			}
 			if (matches) {
 				res.add(e.getKey());
@@ -328,9 +331,9 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 	 * Iterator designed to iterate over a set of Relations.
 	 * </p>
 	 * <p>
-	 * $Id: MixedDatatypeRelation.java,v 1.2 2007-06-06 11:45:39 poettler_ric Exp $
+	 * $Id: MixedDatatypeRelation.java,v 1.3 2007-06-14 15:35:25 poettler_ric Exp $
 	 * </p>
-	 * @version $Revision: 1.2 $
+	 * @version $Revision: 1.3 $
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
 	 */
 	private class CompoundIterator implements Iterator<ITuple> {
@@ -394,9 +397,9 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 	 * and added internally.
 	 * </p>
 	 * <p>
-	 * $Id: MixedDatatypeRelation.java,v 1.2 2007-06-06 11:45:39 poettler_ric Exp $
+	 * $Id: MixedDatatypeRelation.java,v 1.3 2007-06-14 15:35:25 poettler_ric Exp $
 	 * </p>
-	 * @version $Revision: 1.2 $
+	 * @version $Revision: 1.3 $
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
 	 */
 	private class CompoundRelation extends AbstractSet<ITuple> implements IMixedDatatypeRelation {
