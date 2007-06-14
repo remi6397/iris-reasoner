@@ -35,9 +35,9 @@ import java.util.List;
 import java.util.SortedSet;
 
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.operations.relation.IMixedDatatypeRelationOperation;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 
 /**
@@ -47,12 +47,12 @@ import org.deri.iris.api.terms.ITerm;
  * <code>indexOn(Integer[])</code> method.
  * </p>
  * <p>
- * $Id: SortMergeJoin.java,v 1.4 2007-06-14 15:39:19 poettler_ric Exp $
+ * $Id: SortMergeJoin.java,v 1.5 2007-06-14 21:49:32 darko_anicic Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
-public class SortMergeJoin implements IMixedDatatypeRelationOperation {
+public class SortMergeJoin implements IMixedDatatypeRelationOperation, IJoin {
 
 	/** The outher relation. */
 	private final IMixedDatatypeRelation r0;
@@ -335,5 +335,9 @@ public class SortMergeJoin implements IMixedDatatypeRelationOperation {
 			}
 		}
 		return res;
+	}
+	
+	public IMixedDatatypeRelation join() {
+		return this.evaluate();
 	}
 }
