@@ -28,14 +28,13 @@ package org.deri.iris.operations.relations;
 import static org.deri.iris.factory.Factory.RELATION;
 
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.operations.relation.IDifference;
 import org.deri.iris.api.storage.IRelation;
 
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic
- * @date $Date: 2007-06-14 21:41:27 $
- * @version $Id: Difference.java,v 1.8 2007-06-14 21:41:27 darko_anicic Exp $
+ * @date $Date: 2007-06-14 21:46:13 $
+ * @version $Id: Difference.java,v 1.9 2007-06-14 21:46:13 darko_anicic Exp $
  * 
  */
 public class Difference {//implements IDifference{

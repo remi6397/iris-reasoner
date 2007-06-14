@@ -33,18 +33,18 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.operations.relation.IProjection;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.operations.tuple.BasicComparator;
 import org.deri.iris.operations.tuple.IndexComparator;
-import org.deri.iris.storage.Relation;
 
 /**
+ * <p>
  * The implementation of IProjection interface meant to be used for doing
  * projection on a relation (tree) as well as for the tuple reordering in a
  * relation.
- * 
+ * </p>
+ * <p>
  * The projection is defined by a pattern. The pattern is an array with its
  * length equals to the relation's arity. If the array contains -1 on a certain
  * position, a term with that position in a tuple (that is stored in the
@@ -53,27 +53,33 @@ import org.deri.iris.storage.Relation;
  * projection will be performed on 0th and 2nd (as we have values different from
  * -1 on 0th and 2nd index of the array) arguments of each tuple in the
  * relation.
- * 
+ * </p>
+ * <p>
  * The result will be a relation where each tuple has arity two. Each tuple in
  * the relation is created so that:
- * 
+ * </p>
+ * <p>
  * term with index 0 will be replaced at the position 2; term with index 1 will
  * be ignored (due to -1 index vale); term with index 2 will be replaced at the
  * position 0;
- * 
+ * </p>
+ * <p>
  * For instance for a tuple: <a, b, c> and projection indexes: <2, -1, 0> we
  * would get a tuple: <c, null, a>. As we do not need null values (supposed to
  * be ignored), we will finally get: <c, a>.
- * 
+ * </p>
+ * <p>
  * Note: The implementation of IJoin (Join and JoinSimpleExtended) using
  * projectIndexes can handle projection operation too! Use this option in cases
  * where the join operation is needed following with the projection operation
  * just after the join operation.
+ * </p>
+ * @deprecated use GeneralProjection.
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date 30.05.2006 10:44:38
  */
-public class Projection implements IProjection {
+public class Projection {//implements IProjection {
 	private IRelation relation = null;
 
 	private int[] indexes = null;
@@ -90,7 +96,7 @@ public class Projection implements IProjection {
 	 *            define indexes which the projection operation will be applied
 	 *            on.
 	 */
-	Projection(final IRelation relation, final int[] pattern) {
+	public Projection(final IRelation relation, final int[] pattern) {
 		if (relation == null || pattern == null) {
 			throw new IllegalArgumentException("All construcotr "
 					+ "parameters must not be specified (non null values");
