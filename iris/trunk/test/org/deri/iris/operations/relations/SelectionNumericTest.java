@@ -27,6 +27,7 @@
 package org.deri.iris.operations.relations;
 
 import static org.deri.iris.factory.Factory.CONCRETE;
+import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.ArrayList;
@@ -41,8 +42,7 @@ import junit.framework.TestSuite;
 import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.ISelection;
-import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.storage.Relation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 
 /**
@@ -50,14 +50,14 @@ import org.deri.iris.storage.Relation;
  * @date   20.09.2006 11:30:30
  */
 public class SelectionNumericTest extends TestCase {
-	static IRelation relation = null;
+	static IMixedDatatypeRelation relation = null;
 	
 	public static Test suite() {
 		return new TestSuite(SelectionNumericTest.class, SelectionNumericTest.class.getSimpleName());
 	}
 	
 	private static void setNumRelation(){
-		relation = new Relation(4);
+		relation = RELATION.getMixedRelation(4);
 	
 		relation.add(MiscHelper.createTuple(
 				CONCRETE.createDecimal(1.3),
@@ -77,11 +77,11 @@ public class SelectionNumericTest extends TestCase {
 	}
 	
 	/**
-	 * Checks out createSelectionOperator(IRelation relation, ITuple pattern);
+	 * Checks out createSelectionOperator(IMixedDatatypeRelation relation, ITuple pattern);
 	 * 
 	 * Also see:
 	 * (non-Javadoc)
-	 * @see org.deri.iris.api.factory.IRelationOperationsFactory#createSelectionOperator(IRelation relation, ITuple pattern)
+	 * @see org.deri.iris.api.factory.IRelationOperationsFactory#createSelectionOperator(IMixedDatatypeRelation relation, ITuple pattern)
 	 */
 	protected static void runSelection_0(final ITuple p, 
 			final Collection<ITuple> e) {
@@ -90,16 +90,16 @@ public class SelectionNumericTest extends TestCase {
 		ISelection selectionOperator 
 			= RELATION_OPERATION.createSelectionOperator(relation, p);
 			
-		IRelation result = selectionOperator.select();
+		IMixedDatatypeRelation result = selectionOperator.select();
 		assertResults(result, e);
 	}
 	
 	/**
-	 * Checks out createSelectionOperator(IRelation relation, int[] indexes);
+	 * Checks out createSelectionOperator(IMixedDatatypeRelation relation, int[] indexes);
 	 * 
 	 * Also see:
 	 * (non-Javadoc)
-	 * @see org.deri.iris.api.factory.IRelationOperationsFactory#createSelectionOperator(IRelation relation, int[] indexes)
+	 * @see org.deri.iris.api.factory.IRelationOperationsFactory#createSelectionOperator(IMixedDatatypeRelation relation, int[] indexes)
 	 */
 	protected static void runSelection_1(final int[] indexes, 
 			final Collection<ITuple> e) {
@@ -108,16 +108,16 @@ public class SelectionNumericTest extends TestCase {
 		ISelection selectionOperator 
 			= RELATION_OPERATION.createSelectionOperator(relation, indexes);
 			
-		IRelation result = selectionOperator.select();
+		IMixedDatatypeRelation result = selectionOperator.select();
 		assertResults(result, e);
 	}
 	
 	/**
-	 * Checks out createSelectionOperator(IRelation relation, int[] indexes);
+	 * Checks out createSelectionOperator(IMixedDatatypeRelation relation, int[] indexes);
 	 * 
 	 * Also see:
 	 * (non-Javadoc)
-	 * @see org.deri.iris.api.factory.IRelationOperationsFactory#createSelectionOperator(IRelation relation, ITuple pattern, int[] indexes)
+	 * @see org.deri.iris.api.factory.IRelationOperationsFactory#createSelectionOperator(IMixedDatatypeRelation relation, ITuple pattern, int[] indexes)
 	 */
 	protected static void runSelection_2(final ITuple p, final int[] indexes, 
 			final Collection<ITuple> e) {
@@ -126,7 +126,7 @@ public class SelectionNumericTest extends TestCase {
 		ISelection selectionOperator 
 			= RELATION_OPERATION.createSelectionOperator(relation, p, indexes);
 			
-		IRelation result = selectionOperator.select();
+		IMixedDatatypeRelation result = selectionOperator.select();
 		assertResults(result, e);
 	}
 	
@@ -221,7 +221,7 @@ public class SelectionNumericTest extends TestCase {
 	 * @param e
 	 *            the Collection containing all expected tuples
 	 */
-	protected static void assertResults(final IRelation r,
+	protected static void assertResults(final IMixedDatatypeRelation r,
 			final Collection<ITuple> e) {
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", e.size(), r.size());

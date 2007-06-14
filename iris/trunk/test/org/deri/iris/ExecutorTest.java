@@ -39,7 +39,7 @@ import junit.framework.TestSuite;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
 
@@ -48,11 +48,11 @@ import org.deri.iris.factory.Factory;
  * Tests the Executor.
  * </p>
  * <p>
- * $Id: ExecutorTest.java,v 1.3 2007-01-25 13:01:53 darko Exp $
+ * $Id: ExecutorTest.java,v 1.4 2007-06-14 21:50:43 darko_anicic Exp $
  * </p>
  * 
  * @author Richard Pöttler
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ExecutorTest extends TestCase {
 	private IProgram p;
@@ -92,7 +92,7 @@ public class ExecutorTest extends TestCase {
 	public void testComputeSubstitution() {
 		Executor e = new Executor(p, new ExpressionEvaluator());
 		e.execute();
-		for (final Map.Entry<IPredicate, IRelation> me : e.computeSubstitutions()
+		for (final Map.Entry<IPredicate, IMixedDatatypeRelation> me : e.computeSubstitutions()
 				.entrySet()) {
 			System.out.println("q: " + me.getKey());
 			for (final ITuple t : me.getValue()) {

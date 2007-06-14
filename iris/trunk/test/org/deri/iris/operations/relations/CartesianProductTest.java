@@ -25,6 +25,7 @@
  */
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.ArrayList;
@@ -39,8 +40,7 @@ import junit.framework.TestSuite;
 import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IJoin;
-import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.storage.Relation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * @author Darko Anicic, DERI Innsbruck
@@ -63,8 +63,8 @@ public class CartesianProductTest extends TestCase {
 	 *            the Collection of expected tuples
 	 */
 	protected static void runJoin0(final int[] i, final Collection<ITuple> e) {
-		IRelation relation0 = new Relation(3);
-		IRelation relation1 = new Relation(3);
+		IMixedDatatypeRelation relation0 = RELATION.getMixedRelation(3);
+		IMixedDatatypeRelation relation1 = RELATION.getMixedRelation(3);
 	
 		relation0.add(MiscHelper.createTuple("a", "b", "i"));
 		relation0.add(MiscHelper.createTuple("a", "b", "j"));	
@@ -74,15 +74,15 @@ public class CartesianProductTest extends TestCase {
 		relation1.add(MiscHelper.createTuple("e", "b", "b"));
 		relation1.add(MiscHelper.createTuple("h", "a", "a"));
 		
-		IJoin joinOperator = RELATION_OPERATION.createJoinOperator(
+		IJoin joinOperator = RELATION_OPERATION.createSortMergeJoinOperator(
 				relation0, relation1, i, JoinCondition.EQUALS);
-		IRelation result = joinOperator.join();
+		IMixedDatatypeRelation result = joinOperator.join();
 		assertResults(result, e);
 	}
 
 	protected static void runJoin1(final int[] i, final Collection<ITuple> e) {
-		IRelation relation0 = new Relation(2);
-		IRelation relation1 = new Relation(3);
+		IMixedDatatypeRelation relation0 = RELATION.getMixedRelation(2);
+		IMixedDatatypeRelation relation1 = RELATION.getMixedRelation(3);
 	
 		relation0.add(MiscHelper.createTuple("a", "b"));
 		relation0.add(MiscHelper.createTuple("a", "j"));	
@@ -92,9 +92,9 @@ public class CartesianProductTest extends TestCase {
 		relation1.add(MiscHelper.createTuple("e", "b", "b"));
 		relation1.add(MiscHelper.createTuple("h", "a", "a"));
 		
-		IJoin joinOperator = RELATION_OPERATION.createJoinOperator(
+		IJoin joinOperator = RELATION_OPERATION.createSortMergeJoinOperator(
 				relation0, relation1, i, JoinCondition.EQUALS);
-		IRelation result = joinOperator.join();
+		IMixedDatatypeRelation result = joinOperator.join();
 		assertResults(result, e);
 	}
 	
@@ -144,7 +144,7 @@ public class CartesianProductTest extends TestCase {
 	 * @param e
 	 *            the Collection containing all expected tuples
 	 */
-	protected static void assertResults(final IRelation r,
+	protected static void assertResults(final IMixedDatatypeRelation r,
 			final Collection<ITuple> e) {
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", e.size(), r.size());

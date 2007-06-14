@@ -38,6 +38,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.deri.iris.Executor;
 import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
@@ -49,16 +53,12 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.parser.ProgramTest;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * <p>
@@ -97,10 +97,10 @@ public class MultiplyBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
+		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
 		// p1(a,1), p1(b,2), p1(c,3), p1(d,12)
 		IPredicate p = Factory.BASIC.createPredicate("p1", 2);
-		IRelation rel = RELATION.getRelation(p.getArity());
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(p.getArity());
 		rel.add(BASIC.createTuple(TERM.createString("a"), CONCRETE.createInteger(1)));
 		rel.add(BASIC.createTuple(TERM.createString("b"), CONCRETE.createInteger(2)));
 		rel.add(BASIC.createTuple(TERM.createString("c"), CONCRETE.createInteger(3)));
@@ -109,7 +109,7 @@ public class MultiplyBuiltinEvaluationTest extends TestCase {
 
 		// p2(b)
 		p = Factory.BASIC.createPredicate("p2", 1);
-		rel = RELATION.getRelation(p.getArity());
+		rel = RELATION.getMixedRelation(p.getArity());
 		rel.add(BASIC.createTuple(TERM.createString("b")));
 		facts.put(p, rel);
 		
@@ -120,7 +120,7 @@ public class MultiplyBuiltinEvaluationTest extends TestCase {
 		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
 		
 		// Result: p(b,4)
-		IRelation res = RELATION.getRelation(2);
+		IMixedDatatypeRelation res = RELATION.getMixedRelation(2);
 		res.add(BASIC.createTuple(TERM.createString("b"), CONCRETE.createInteger(4)));
 		
 		System.out.println("******** TEST 0: ********");
@@ -189,7 +189,7 @@ public class MultiplyBuiltinEvaluationTest extends TestCase {
 	 * 
 	 * @param p	A program to be evaluated.
 	 */
-	private static void executeTest(final IProgram p, IRelation res){
+	private static void executeTest(final IProgram p, IMixedDatatypeRelation res){
 		System.out.println("--- input ---");
 		for (final IRule rule : p.getRules()) {
 			System.out.println(rule);
@@ -208,7 +208,7 @@ public class MultiplyBuiltinEvaluationTest extends TestCase {
 		IExecutor exec = new Executor(p, method);
 		exec.execute();
 		System.out.println("Result: ");
-		Map<IPredicate, IRelation> results = exec.computeSubstitutions();
+		Map<IPredicate, IMixedDatatypeRelation> results = exec.computeSubstitutions();
 		ProgramTest.printResults(results);
 		
 		assertTrue(results.get(results.keySet().iterator().next()).containsAll(res));

@@ -43,7 +43,7 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.parser.ProgramTest;
@@ -98,14 +98,14 @@ public class TestDatatypes {
 		rules.add(r);
 
 		// constructing facts
-		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>(); 
+		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>(); 
 		/*
 		 * Solar planets: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, 
 		 * Neptune and Pluto;
 		 * Non Solar planets: 51Pegasi_planet
 		 */
 		IPredicate p = Factory.BASIC.createPredicate("planet", 1);
-		IRelation rel = Factory.RELATION.getRelation(1);
+		IMixedDatatypeRelation rel = Factory.RELATION.getMixedRelation(1);
 		
 		rel.add(Factory.BASIC.createTuple(
 				Factory.TERM.createString("mercury")));
@@ -133,7 +133,7 @@ public class TestDatatypes {
 		// distanceFromSun(?X,?Y)
 		
 		p = Factory.BASIC.createPredicate("distanceFromSun", 2);
-		rel = Factory.RELATION.getRelation(2);
+		rel = Factory.RELATION.getMixedRelation(2);
 		rel.add(Factory.BASIC.createTuple(
 				Factory.TERM.createString("mercury"),
 				Factory.CONCRETE.createDecimal(1)));
@@ -200,7 +200,7 @@ public class TestDatatypes {
 		IExpressionEvaluator method = new ExpressionEvaluator();
 		IExecutor exec = new Executor(e, method);
 		exec.execute();
-		IRelation result = exec.computeSubstitution(q);
+		IMixedDatatypeRelation result = exec.computeSubstitution(q);
 		
 		System.out.println("--- results for query: " + q.toString());
 		ProgramTest.printResults(result);
@@ -232,12 +232,12 @@ public class TestDatatypes {
 		rules.add(r);
 
 		// constructing facts
-		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>(); 
+		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>(); 
 		Set<IQuery> queries = new HashSet<IQuery>(1);
 		final IProgram e = Factory.PROGRAM.createProgram(facts, rules, queries);
 		
 		IPredicate p = Factory.BASIC.createPredicate("p", 2);
-		IRelation rel = Factory.RELATION.getRelation(p.getArity());
+		IMixedDatatypeRelation rel = Factory.RELATION.getMixedRelation(p.getArity());
 		
 		rel.add(Factory.BASIC.createTuple(
 				Factory.TERM.createString("sun"),
@@ -273,7 +273,7 @@ public class TestDatatypes {
 		e.addFacts(p, rel);
 		
 		p = Factory.BASIC.createPredicate("p", 2);
-		rel = Factory.RELATION.getRelation(p.getArity());
+		rel = Factory.RELATION.getMixedRelation(p.getArity());
 		
 		rel.add(Factory.BASIC.createTuple(
 				Factory.TERM.createString("mercury"),
@@ -336,7 +336,7 @@ public class TestDatatypes {
 		IExpressionEvaluator method = new ExpressionEvaluator();
 		IExecutor exec = new Executor(e, method);
 		exec.execute();
-		IRelation result = exec.computeSubstitution(q);
+		IMixedDatatypeRelation result = exec.computeSubstitution(q);
 		
 		System.out.println("--- results for query: " + q.toString());
 		ProgramTest.printResults(result);

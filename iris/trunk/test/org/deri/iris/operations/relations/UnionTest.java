@@ -25,22 +25,23 @@
  */
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.CONCRETE;
+import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.RELATION_OPERATION;
+import static org.deri.iris.factory.Factory.TERM;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IUnion;
-import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.storage.Relation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * @author Darko Anicic, DERI Innsbruck
@@ -48,6 +49,34 @@ import org.deri.iris.storage.Relation;
  */
 public class UnionTest extends TestCase {
 
+	private static final ITuple[] tups_0 = new ITuple[]{
+		BASIC.createTuple(CONCRETE.createInteger(1), TERM.createString("b")), 
+		BASIC.createTuple(TERM.createString("zzzz"), CONCRETE.createIri("http://www.google.com")), 
+		BASIC.createTuple(CONCRETE.createInteger(2), TERM.createString("a")), 
+	};
+	
+	private static final ITuple[] tups_1 = new ITuple[]{
+		BASIC.createTuple(TERM.createString("zzzz"), CONCRETE.createInteger(3)), 
+		BASIC.createTuple(TERM.createString("zzzzab"), CONCRETE.createInteger(4)),
+		BASIC.createTuple(TERM.createString("aaa"), CONCRETE.createInteger(4)),
+	};
+	
+	private static final ITuple[] tups_2 = new ITuple[]{
+		BASIC.createTuple(CONCRETE.createInteger(4), CONCRETE.createInteger(4)),
+		BASIC.createTuple(CONCRETE.createInteger(4), CONCRETE.createInteger(6))
+	};
+	
+	private static final ITuple[] tups = new ITuple[]{
+		BASIC.createTuple(CONCRETE.createInteger(1), TERM.createString("b")), 
+		BASIC.createTuple(TERM.createString("zzzz"), CONCRETE.createIri("http://www.google.com")), 
+		BASIC.createTuple(CONCRETE.createInteger(2), TERM.createString("a")), 
+		BASIC.createTuple(TERM.createString("zzzz"), CONCRETE.createInteger(3)), 
+		BASIC.createTuple(TERM.createString("zzzzab"), CONCRETE.createInteger(4)),
+		BASIC.createTuple(TERM.createString("aaa"), CONCRETE.createInteger(4)),
+		BASIC.createTuple(CONCRETE.createInteger(4), CONCRETE.createInteger(4)),
+		BASIC.createTuple(CONCRETE.createInteger(4), CONCRETE.createInteger(6))
+	};
+	
 	public static Test suite() {
 		return new TestSuite(UnionTest.class, UnionTest.class.getSimpleName());
 	}
@@ -62,79 +91,26 @@ public class UnionTest extends TestCase {
 	 * @param e
 	 *            the Collection of expected tuples
 	 */
-	protected static void runJoin(final Collection<ITuple> e) {
-		IRelation relation0 = new Relation(3);
-		IRelation relation1 = new Relation(3);
-		IRelation relation2 = new Relation(3);
+	
+	public void testUnion() {
+		IMixedDatatypeRelation relation0 = RELATION.getMixedRelation(2);
+		IMixedDatatypeRelation relation1 = RELATION.getMixedRelation(2);
+		IMixedDatatypeRelation relation2 = RELATION.getMixedRelation(2);
+		
 		
 		// relation0: add tuples
-		relation0.add(MiscHelper.createTuple("a", "b", "b"));
-		relation0.add(MiscHelper.createTuple("a", "b", "d"));
-		relation0.add(MiscHelper.createTuple("e", "e", "e"));
-		relation0.add(MiscHelper.createTuple("h", "h", "h"));
-		relation0.add(MiscHelper.createTuple("h", "g", "h"));
-		
-		relation0.add(MiscHelper.createTuple("a", "b", "i"));
-		relation0.add(MiscHelper.createTuple("a", "b", "i"));
-		
-		relation0.add(MiscHelper.createTuple("f", "g", "k"));
-		relation0.add(MiscHelper.createTuple("x", "x", "x"));
-		relation0.add(MiscHelper.createTuple("a", "b", "c"));
-		
-		relation0.add(MiscHelper.createTuple("a", "b", "b"));
-		
-		relation0.add(MiscHelper.createTuple("f", "g", "h"));
-		relation0.add(MiscHelper.createTuple("h", "g", "f"));
-		relation0.add(MiscHelper.createTuple("h", "g", "a"));
-
+		relation0.addAll(Arrays.asList(tups_0));
 		
 		// relation1: add tuples
-		relation1.add(MiscHelper.createTuple("c", "b", "b"));
-		relation1.add(MiscHelper.createTuple("c", "b", "a"));
-		relation1.add(MiscHelper.createTuple("a", "b", "c"));
-		relation1.add(MiscHelper.createTuple("c", "b", "b"));
-		
-		relation1.add(MiscHelper.createTuple("c", "b", "a"));
-		
+		relation1.addAll(Arrays.asList(tups_1));
 		
 		// relation2: add tuples
-		relation2.add(MiscHelper.createTuple("w", "b", "b"));
-		relation2.add(MiscHelper.createTuple("s", "b", "a"));
-		relation2.add(MiscHelper.createTuple("x", "b", "c"));
-		relation2.add(MiscHelper.createTuple("r", "b", "b"));
-		relation2.add(MiscHelper.createTuple("f", "b", "a"));
-		relation2.add(MiscHelper.createTuple("v", "b", "c"));
+		relation2.addAll(Arrays.asList(tups_2));
 		
 		IUnion unionOperator = RELATION_OPERATION.createUnionOperator(
 				relation0, relation1, relation2);
-		IRelation result = unionOperator.union();
-		assertResults(result, e);
-	}
-	
-	public void testUnion() {
-		final List<ITuple> e = new ArrayList<ITuple>();
-		e.add(MiscHelper.createTuple("a", "b", "b"));
-		e.add(MiscHelper.createTuple("a", "b", "d"));
-		e.add(MiscHelper.createTuple("a", "b", "c"));
-		e.add(MiscHelper.createTuple("c", "b", "b"));
-		e.add(MiscHelper.createTuple("c", "b", "a"));
-		e.add(MiscHelper.createTuple("e", "e", "e"));
-		e.add(MiscHelper.createTuple("h", "h", "h"));
-		e.add(MiscHelper.createTuple("h", "g", "h"));
-		e.add(MiscHelper.createTuple("a", "b", "i"));
-		e.add(MiscHelper.createTuple("f", "g", "k"));
-		e.add(MiscHelper.createTuple("x", "x", "x"));
-		e.add(MiscHelper.createTuple("f", "g", "h"));
-		e.add(MiscHelper.createTuple("h", "g", "f"));
-		e.add(MiscHelper.createTuple("h", "g", "a"));
-		e.add(MiscHelper.createTuple("w", "b", "b"));
-		e.add(MiscHelper.createTuple("s", "b", "a"));
-		e.add(MiscHelper.createTuple("x", "b", "c"));
-		e.add(MiscHelper.createTuple("r", "b", "b"));
-		e.add(MiscHelper.createTuple("f", "b", "a"));
-		e.add(MiscHelper.createTuple("v", "b", "c"));
-		
-		runJoin(e);
+		IMixedDatatypeRelation result = (IMixedDatatypeRelation)unionOperator.union();
+		assertResults(result, Arrays.asList(tups));
 	}
 
 	/**
@@ -147,7 +123,7 @@ public class UnionTest extends TestCase {
 	 * @param e
 	 *            the Collection containing all expected tuples
 	 */
-	protected static void assertResults(final IRelation r,
+	protected static void assertResults(final IMixedDatatypeRelation r,
 			final Collection<ITuple> e) {
 		Assert.assertEquals("The length of relation and the list of"
 				+ " expected tuples must be equal", e.size(), r.size());
