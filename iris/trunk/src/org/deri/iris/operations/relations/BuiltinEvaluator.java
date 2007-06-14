@@ -42,6 +42,7 @@ import org.deri.iris.api.terms.IVariable;
  * <p>
  * Evaluates a built-in.
  * </p>
+ * @deprecated use GeneralBuiltinEvaluator.
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   22.04.2007 21:12:43
