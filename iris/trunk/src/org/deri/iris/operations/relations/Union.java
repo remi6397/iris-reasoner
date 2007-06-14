@@ -30,16 +30,16 @@ import static org.deri.iris.factory.Factory.RELATION;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deri.iris.api.operations.relation.IUnion;
 import org.deri.iris.api.storage.IRelation;
-import org.deri.iris.storage.Relation;
 
 /**
+ * @deprecated use GeneralUnion.
+ * 
  * @author Darko Anicic
  * @date 23.09.2006
  * 
  */
-public class Union implements IUnion {
+public class Union {//implements IUnion {
 
 	private List<IRelation> rels = null;
 

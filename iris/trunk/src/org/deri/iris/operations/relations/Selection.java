@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.basics.seminaive.NonEqualityTerm;
@@ -53,10 +52,12 @@ import org.deri.iris.operations.tuple.SelectionFullComparator;
  * all tuples, from a relation, that are equal regarding the condition defined
  * by a certain pattern (tuple).
  * 
+ * @deprecated use GeneralSelection.
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date 31.05.2006 10:38:40
  */
-public class Selection implements ISelection {
+public class Selection {//implements ISelection {
 	private IRelation relation = null;
 
 	private ITuple pattern = null;
@@ -67,7 +68,7 @@ public class Selection implements ISelection {
 
 	private int[] indexes = null;
 
-	Selection(IRelation relation, ITuple pattern) {
+	public Selection(IRelation relation, ITuple pattern) {
 		if (relation == null || pattern == null) {
 			throw new IllegalArgumentException("All constructor "
 					+ "parameters must be specified (non null values");
@@ -76,7 +77,7 @@ public class Selection implements ISelection {
 		this.pattern = pattern;
 	}
 
-	Selection(IRelation relation, int[] indexes) {
+	public Selection(IRelation relation, int[] indexes) {
 		if (relation == null || indexes == null) {
 			throw new IllegalArgumentException("All constructor "
 					+ "parameters must be specified (non null values");
@@ -85,7 +86,7 @@ public class Selection implements ISelection {
 		this.indexes = indexes;
 	}
 
-	Selection(IRelation relation, ITuple pattern, int[] indexes) {
+	public Selection(IRelation relation, ITuple pattern, int[] indexes) {
 		if (relation == null || pattern == null || indexes == null) {
 			throw new IllegalArgumentException("All constructor "
 					+ "parameters must be specified (non null values");

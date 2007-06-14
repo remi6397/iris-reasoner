@@ -30,7 +30,6 @@ import static org.deri.iris.factory.Factory.RELATION;
 import java.util.Iterator;
 
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.operations.tuple.Concatenation;
@@ -42,11 +41,12 @@ import org.deri.iris.operations.tuple.SimpleIndexComparator;
  * Reference: JoinSimpleExtended Processing in Relational Databases, 
  * PRITI MISHRA and MARGARET H. EICH
  * </p>
- *
+ * @deprecated use SortMergeJoin.
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   24.05.2006 09:26:43
  */
-public class JoinSimple implements IJoin{
+public class JoinSimple {//implements IJoin{
 
 	private IRelation relation0 = null;
 
@@ -68,7 +68,7 @@ public class JoinSimple implements IJoin{
 	 */
 	private boolean isCartesian = false;
 	
-	JoinSimple(IRelation arg0, IRelation arg1, int[] inds, JoinForm form) {
+	public JoinSimple(IRelation arg0, IRelation arg1, int[] inds, JoinForm form) {
 		if (arg0 == null || arg1 == null || inds == null) {
 			throw new IllegalArgumentException(
 					"Input parameters must not be null!");
@@ -82,7 +82,7 @@ public class JoinSimple implements IJoin{
 		}
 	}
 
-	JoinSimple(IRelation arg0, IRelation arg1, int[] inds) {
+	public JoinSimple(IRelation arg0, IRelation arg1, int[] inds) {
 		if (arg0 == null || arg1 == null || inds == null) {
 			throw new IllegalArgumentException(
 					"Input parameters must not be null!");
@@ -93,7 +93,7 @@ public class JoinSimple implements IJoin{
 		this.CONDITION = JoinCondition.EQUALS;
 	}
 	
-	JoinSimple(IRelation arg0, IRelation arg1, int[] inds,
+	public JoinSimple(IRelation arg0, IRelation arg1, int[] inds,
 			JoinCondition condition) {
 		if (arg0 == null || arg1 == null || inds == null
 				|| condition == null) {
@@ -125,7 +125,7 @@ public class JoinSimple implements IJoin{
 	 *            (index -1) would be omitted.
 	 *            If not specified join tuples will be simple merged.
 	 */
-	JoinSimple(IRelation arg0, IRelation arg1, int[] inds,
+	public JoinSimple(IRelation arg0, IRelation arg1, int[] inds,
 			JoinCondition condition, int[] projectIndexes) {
 		if (arg0 == null || arg1 == null || inds == null
 				|| condition == null || projectIndexes == null) {

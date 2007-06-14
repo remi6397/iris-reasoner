@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.SortedSet;
 
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.basics.MinimalTuple;
@@ -43,18 +42,20 @@ import org.deri.iris.operations.tuple.BasicComparator;
 import org.deri.iris.operations.tuple.Concatenation;
 import org.deri.iris.operations.tuple.IndexComparator;
 import org.deri.iris.operations.tuple.JoinComparator;
-import org.deri.iris.storage.Relation;
 
 /**
+ * <p>
  * Implementation of the sort-merge join operation handling duplicates. 
  * Duplicate tuples are those tuples that have identical terms on 
  * positions defined by sort indexes.  Reference: JoinSimpleExtended Processing in 
  * Relational Databases, PRITI MISHRA and MARGARET H. EICH
+ * </p>
+ * @deprecated use SortMergeJoin.
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   24.05.2006 09:26:43
  */
-public class JoinSimpleExtended implements IJoin{
+public class JoinSimpleExtended {//implements IJoin{
 	private IRelation relation0 = null;
 	private IRelation relation1 = null;
 	private IRelation joinRelation = null;

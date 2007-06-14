@@ -30,12 +30,10 @@ import static org.deri.iris.factory.Factory.RELATION;
 import java.util.Iterator;
 
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.operations.tuple.IComparator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.operations.tuple.Concatenation;
 import org.deri.iris.operations.tuple.IndexComparator;
-import org.deri.iris.storage.Relation;
 
 /**
  * Implementation of the sort-merge join operation handling duplicates.
@@ -43,10 +41,12 @@ import org.deri.iris.storage.Relation;
  * defined by sort indexes. Reference: JoinSimpleExtended Processing in Relational Databases,
  * PRITI MISHRA and MARGARET H. EICH
  * 
+ * @deprecated use SortMergeJoin.
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date 21.09.2006 11:55:43
  */
-public class Join implements IJoin{
+public class Join {//implements IJoin{
 
 	private IRelation relation0 = null;
 
