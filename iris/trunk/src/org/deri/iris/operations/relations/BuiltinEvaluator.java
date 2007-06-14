@@ -34,7 +34,6 @@ import java.util.List;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltInAtom;
-import org.deri.iris.api.operations.relation.IBuiltinEvaluator;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
@@ -47,7 +46,7 @@ import org.deri.iris.api.terms.IVariable;
  * @author Darko Anicic, DERI Innsbruck
  * @date   22.04.2007 21:12:43
  */
-public class BuiltinEvaluator implements IBuiltinEvaluator{
+public class BuiltinEvaluator {//implements IBuiltinEvaluator{
 
 	private IBuiltInAtom builtin = null;
 	
@@ -113,6 +112,13 @@ public class BuiltinEvaluator implements IBuiltinEvaluator{
 			}
 		}else{
 			// e.g., add(3, 4, ?X)
+			
+			// TODO: Sometimes this.relation0 is empty but builtin is not
+			// evaluable with the bindings from the rule
+			/*if(this.builtin.isEvaluable(vars)){
+				tRes = this.builtin.evaluate(this.builtin.getTuple());
+				resultRel.add(tRes);
+			}*/
 			tRes = this.builtin.evaluate(this.builtin.getTuple());
 			resultRel.add(tRes);	
 		}
