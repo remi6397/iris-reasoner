@@ -37,6 +37,7 @@ import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.operations.relation.IProjection;
 import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.operations.relation.IUnion;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.IVariable;
 
@@ -55,93 +56,64 @@ public class RelationOperationsFactory implements IRelationOperationsFactory{
 		return FACTORY;
 	}
 	
-	public IDifference createDifferenceOperator(IRelation arg0, 
-			IRelation arg1) {
-		
-		return new Difference(arg0, arg1);
+	public IDifference createDifferenceOperator(IMixedDatatypeRelation arg0, 
+			IMixedDatatypeRelation arg1) {
+		return new GeneralDifference(arg0, arg1);
 	}
-
+	
 	public IIntersection createIntersectionOperator(IRelation arg0, 
 			IRelation arg1) {
 		
 		return null;
 	}
 
-	public IJoin createJoinOperator(IRelation arg0, IRelation arg1, 
-			int[] indexes) {
-		return new Join(arg0, arg1, indexes);
-	}
-	public IJoin createJoinComplementOperator(IRelation arg0, IRelation arg1, 
+	public IJoin createJoinComplementOperator(IMixedDatatypeRelation arg0, IMixedDatatypeRelation arg1, 
 			int[] inds) {
 		return new JoinComplement(arg0, arg1, inds);
 	}
-	public IJoin createJoinOperator(IRelation arg0, IRelation arg1,
-			int[] indexes, JoinCondition condition) {
-		return new Join(arg0, arg1, indexes, condition);
+	
+	public IJoin createSortMergeJoinOperator(final IMixedDatatypeRelation arg0, final IMixedDatatypeRelation arg1, 
+			final int[] indexes, final JoinCondition condition) {
+		return new SortMergeJoin(arg0, arg1, indexes, condition);
 	}
-	public IJoin createJoinOperator(IRelation arg0, 
-			IRelation arg1, int[] indexes, JoinCondition condition, 
-			int[] projectIndexes) {
-		return new Join(arg0, arg1, indexes, condition, projectIndexes);
-	}
-	public IJoin createJoinSimpleOperator(IRelation arg0, IRelation arg1, 
-			int[] indexes) {
-		return new JoinSimple(arg0, arg1, indexes);
-	}
-	public IJoin createJoinSimpleOperator(IRelation arg0, IRelation arg1, int[] inds, JoinForm form) {
-		return new JoinSimple(arg0, arg1, inds, form);
-	}
-	public IJoin createJoinSimpleOperator(IRelation arg0, IRelation arg1,
-			int[] indexes, JoinCondition condition) {
-		return new JoinSimple(arg0, arg1, indexes, condition);
-	}
-	public IJoin createJoinSimpleOperator(IRelation arg0, 
-			IRelation arg1, int[] i, JoinCondition c, int[] pi) {
-		return new JoinSimple(arg0, arg1, i, c, pi);
-	}
-	public IJoin createJoinSimpleExtendedOperator(IRelation arg0, IRelation arg1, int[] indexes) {
-		return new JoinSimpleExtended(arg0, arg1, indexes);
-	}
-	public IJoin createJoinSimpleExtendedOperator(IRelation arg0, IRelation arg1, int[] indexes, JoinCondition condition) {
-		return new JoinSimpleExtended(arg0, arg1, indexes, condition);
-	}
-	public IJoin createJoinSimpleExtendedOperator(IRelation arg0, IRelation arg1, int[] indexes, JoinCondition condition, int[] projectIndexes) {
-		return new JoinSimpleExtended(arg0, arg1, indexes, condition, projectIndexes);
+	public IJoin createSortMergeJoinOperator(IMixedDatatypeRelation r0, IMixedDatatypeRelation r1, 
+			int[] idx, JoinCondition c, int semiJoin) {
+		return new SortMergeJoin(r0, r1, idx, c, semiJoin);
 	}
 	
-	public IProjection createProjectionOperator(IRelation relation, 
+	public IProjection createProjectionOperator(IMixedDatatypeRelation relation, 
 			int[] pattern) {
-		return new Projection(relation, pattern);
+		return new GeneralProjection(relation, pattern);
 	}
 
-	public ISelection createSelectionOperator(IRelation relation, 
+	public ISelection createSelectionOperator(IMixedDatatypeRelation relation, 
 			ITuple pattern) {
-		return new Selection(relation, pattern);
+		return new GeneralSelection(relation, pattern);
 	}
 
-	public ISelection createSelectionOperator(IRelation relation, int[] indexes) {
-		return new Selection(relation, indexes);
+	public ISelection createSelectionOperator(IMixedDatatypeRelation relation, int[] indexes) {
+		return new GeneralSelection(relation, indexes);
 	}
 	
-	public ISelection createSelectionOperator(IRelation relation, ITuple pattern, int[] indexes) {
+	public ISelection createSelectionOperator(IMixedDatatypeRelation relation, ITuple pattern, int[] indexes) {
 		if (pattern == null && indexes != null) {
-			return new Selection(relation, indexes);
+			return new GeneralSelection(relation, indexes);
 		}
 		if (pattern != null && indexes == null) {
-			return new Selection(relation, pattern);
+			return new GeneralSelection(relation, pattern);
 		}
-		return new Selection(relation, pattern, indexes);
+		return new GeneralSelection(relation, pattern, indexes);
 	}
 
-	public IUnion createUnionOperator(IRelation... args) {
-		return new Union(args);
+	public IUnion createUnionOperator(IMixedDatatypeRelation... args) {
+		return new GeneralUnion(args);
 	}
 	
-	public IUnion createUnionOperator(final List<IRelation> arg){
-		return new Union(arg);
+	public IUnion createUnionOperator(final List<IMixedDatatypeRelation> arg){
+		return new GeneralUnion(arg);
 	}
-
-	public IBuiltinEvaluator createBuiltinEvaluatorOperator(IBuiltInAtom builtin, List<IVariable> relVars, IRelation rel) {
-		return new BuiltinEvaluator(builtin, relVars, rel);
+	
+	public IBuiltinEvaluator createBuiltinEvaluatorOperator(IBuiltInAtom builtin, List<IVariable> relVars, IMixedDatatypeRelation rel) {
+		return new GeneralBuiltinEvaluator(builtin, relVars, rel);
 	}
 }
