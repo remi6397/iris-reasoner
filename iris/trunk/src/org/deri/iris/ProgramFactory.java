@@ -29,10 +29,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.IProgram;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.factory.IProgramFactory;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.storage.IRelation;
 
 /**
@@ -40,12 +42,12 @@ import org.deri.iris.api.storage.IRelation;
  * A simple IProgramFactory implementation.
  * </p>
  * <p>
- * $Id: ProgramFactory.java,v 1.9 2007-05-02 10:00:37 poettler_ric Exp $
+ * $Id: ProgramFactory.java,v 1.10 2007-06-14 21:26:15 darko_anicic Exp $
  * </p>
  * @author Francisco Garcia
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class ProgramFactory implements IProgramFactory {
 	private static final IProgramFactory FACTORY = new ProgramFactory();
@@ -67,8 +69,7 @@ public class ProgramFactory implements IProgramFactory {
 		return PROG;
 	}
 	
-	public IProgram createProgram(Map<IPredicate, IRelation> f, Set<IRule> r, Set<IQuery> q) {
+	public IProgram createProgram(Map<IPredicate, IMixedDatatypeRelation> f, Set<IRule> r, Set<IQuery> q) {
 		return new Program(f, r, q);
 	}
-
 }

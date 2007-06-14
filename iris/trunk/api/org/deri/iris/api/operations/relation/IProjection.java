@@ -26,7 +26,7 @@
 
 package org.deri.iris.api.operations.relation;
 
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * <p>
@@ -52,5 +52,5 @@ public interface IProjection {
 	 * 
 	 * @return	The relation which is a result of the projection operation.
 	 */
-	public IRelation project();
+	public IMixedDatatypeRelation project();
 }

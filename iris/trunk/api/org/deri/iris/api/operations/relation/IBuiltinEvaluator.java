@@ -27,7 +27,7 @@ package org.deri.iris.api.operations.relation;
 
 import java.util.List;
 
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.IVariable;
 
 /**
@@ -48,7 +48,7 @@ public interface IBuiltinEvaluator {
 	 * 
 	 * @return	A relation which contains result after the evaluation of the built-in.
 	 */
-	public IRelation evaluate();
+	public IMixedDatatypeRelation evaluate();
 	
 	/**
 	 * <p>

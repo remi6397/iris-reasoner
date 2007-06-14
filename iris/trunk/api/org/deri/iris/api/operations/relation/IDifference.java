@@ -25,7 +25,7 @@
  */
 package org.deri.iris.api.operations.relation;
 
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * <p>
@@ -38,7 +38,7 @@ import org.deri.iris.api.storage.IRelation;
  * @author Darko Anicic, DERI Innsbruck
  * @date  11.04.2006 @time  15:25:17
  *
- * @version $Revision: 1.4 $ $Date: 2007-01-22 12:46:04 $
+ * @version $Revision: 1.5 $ $Date: 2007-06-14 21:24:54 $
  */
 public interface IDifference {
 
@@ -48,10 +48,10 @@ public interface IDifference {
 	 * </p>
 	 * <p>
 	 * @see org.deri.iris.api.factory.IRelationOperationsFactory#
-	 * createDifferenceOperator(IRelation arg0, IRelation arg1).
+	 * createDifferenceOperator(IMixedDatatypeRelation arg0, IMixedDatatypeRelation arg1).
 	 * </p>
 	 * 
 	 * @return	The relation which is result of the set difference operation.
 	 */
-	public IRelation difference();
+	public IMixedDatatypeRelation difference();
 }

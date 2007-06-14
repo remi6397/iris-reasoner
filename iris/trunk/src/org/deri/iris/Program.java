@@ -44,7 +44,7 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.evaluation.MiscOps;
@@ -60,7 +60,7 @@ import org.deri.iris.terms.ConstructedTerm;
  */
 public class Program implements IProgram{
 
-	private Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
+	private Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
 	
 	private Set<IQuery> queries;
 	
@@ -103,7 +103,7 @@ public class Program implements IProgram{
 	 * @param q
 	 * 			a set of queries to be added into the EDB.
 	 */
-	Program(final Map<IPredicate, IRelation> f, final Set<IRule> r, final Set<IQuery> q) {
+	Program(final Map<IPredicate, IMixedDatatypeRelation> f, final Set<IRule> r, final Set<IQuery> q) {
 		if ((f == null) || (r == null) || (q == null)) {
 			throw new IllegalArgumentException("Input parameters must not be null");
 		}
@@ -138,9 +138,9 @@ public class Program implements IProgram{
 		}
 		IPredicate p = a.getPredicate();
 		p = registerPredicate(p);
-		IRelation rel = facts.get(p);
+		IMixedDatatypeRelation rel = facts.get(p);
 		if (rel == null) {
-			rel = RELATION.getRelation(p.getArity());
+			rel = RELATION.getMixedRelation(p.getArity());
 			this.facts.put(p, rel);
 		}
 		return this.facts.get(p).add(a.getTuple());
@@ -161,7 +161,7 @@ public class Program implements IProgram{
 		return added;
 	}
 	
-	public boolean addFacts(IPredicate p, IRelation r) {
+	public boolean addFacts(IPredicate p, IMixedDatatypeRelation r) {
 		if (r.getArity() != p.getArity())
 			throw new IllegalArgumentException("Predicate " + p + " is assigned with " +
 					"a relation that has a non-matching arity.");
@@ -197,7 +197,7 @@ public class Program implements IProgram{
 					a.toString() + " needs to be a ground atom (it is not a fact).");
 		}
 		IPredicate p = a.getPredicate();
-		IRelation r = this.facts.get(p);
+		IMixedDatatypeRelation r = this.facts.get(p);
 		boolean bChanged = r.remove(a.getTuple());
 		// Remove this statement for propositional rules:
 		if (r.size() <= 0) {
@@ -255,7 +255,7 @@ public class Program implements IProgram{
 				}
 			}
 		}
-		facts.put(p, RELATION.getRelation(p.getArity()));
+		facts.put(p, RELATION.getMixedRelation(p.getArity()));
 		return p;
 	}
 	
@@ -282,8 +282,8 @@ public class Program implements IProgram{
 	public int getNumberOfFacts(IPredicate p, Set<ITuple> filter) {
 		int result = 0;
 		for (ITuple t : filter) {
-			result += RELATION_OPERATION.createSelectionOperator(facts.get(p), t)
-					.select().size();
+			result += RELATION_OPERATION.createSelectionOperator(
+					facts.get(p), t).select().size();
 		}
 		return result;
 	}
@@ -294,7 +294,7 @@ public class Program implements IProgram{
 	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
 	 * 		so this method is thread-save.
 	 */
-	public IRelation getFacts(final IPredicate p){
+	public IMixedDatatypeRelation getFacts(final IPredicate p){
 		return facts.get(p);
 	}
 
@@ -304,7 +304,7 @@ public class Program implements IProgram{
 	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
 	 * 		so this method is thread-save.
 	 */
-	public Map<IPredicate, IRelation> getFacts(){
+	public Map<IPredicate, IMixedDatatypeRelation> getFacts(){
 		return this.facts;
 	}
 	
