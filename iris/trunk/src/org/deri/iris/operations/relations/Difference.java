@@ -34,11 +34,11 @@ import org.deri.iris.api.storage.IRelation;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic
- * @date $Date: 2007-05-22 14:26:30 $
- * @version $Id: Difference.java,v 1.7 2007-05-22 14:26:30 darko_anicic Exp $
+ * @date $Date: 2007-06-14 21:41:27 $
+ * @version $Id: Difference.java,v 1.8 2007-06-14 21:41:27 darko_anicic Exp $
  * 
  */
-public class Difference implements IDifference{
+public class Difference {//implements IDifference{
 
 	private IRelation rel0 = null;
 	private IRelation rel1 = null;	
