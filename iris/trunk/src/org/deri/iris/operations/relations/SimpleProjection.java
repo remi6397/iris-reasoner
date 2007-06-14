@@ -53,10 +53,10 @@ import java.util.List;
  * columns will be left out.
  * </p>
  * <p>
- * $Id: SimpleProjection.java,v 1.1 2007-06-14 15:54:34 poettler_ric Exp $
+ * $Id: SimpleProjection.java,v 1.2 2007-06-14 16:18:21 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SimpleProjection implements IMixedDatatypeRelationOperation {
 
@@ -105,7 +105,8 @@ public class SimpleProjection implements IMixedDatatypeRelationOperation {
 	 * @return the optimized array
 	 */
 	private int[] optimizeIndexes() {
-		final int[] sorted = Arrays.copyOfRange(idx, 0, idx.length);
+		final int[] sorted = new int[idx.length];
+		System.arraycopy(idx, 0, sorted, 0, idx.length);
 		Arrays.sort(sorted);
 		final int[] tmp = new int[idx.length];
 		int j = 0;
@@ -115,7 +116,9 @@ public class SimpleProjection implements IMixedDatatypeRelationOperation {
 			}
 			tmp[j++] = indexOf(idx, i);
 		}
-		return Arrays.copyOfRange(tmp, 0, j);
+		final int[] res = new int[j];
+		System.arraycopy(tmp, 0, res, 0, j);
+		return res;
 	}
 
 	/**

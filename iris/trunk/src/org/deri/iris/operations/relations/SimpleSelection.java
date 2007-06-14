@@ -72,10 +72,10 @@ import org.deri.iris.api.terms.ITerm;
  * be ignored in the index array.
  * </p>
  * <p>
- * $Id: SimpleSelection.java,v 1.3 2007-06-14 15:40:51 poettler_ric Exp $
+ * $Id: SimpleSelection.java,v 1.4 2007-06-14 16:18:21 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class SimpleSelection implements IMixedDatatypeRelationOperation {
 
@@ -142,14 +142,16 @@ public class SimpleSelection implements IMixedDatatypeRelationOperation {
 		if (stack == null) {
 			throw new NullPointerException("The stack must not be null");
 		}
-		int[] tmp = new int[stack.length];
+		final int[] tmp = new int[stack.length];
 		int j = 0;
 		for (int i = 0; i < stack.length; i++) {
 			if (needle == stack[i]) {
 				tmp[j++] = i;
 			}
 		}
-		return Arrays.copyOfRange(tmp, 0, j);
+		final int[] res = new int[j];
+		System.arraycopy(tmp, 0, res, 0, j);
+		return res;
 	}
 
 	/**
@@ -164,7 +166,8 @@ public class SimpleSelection implements IMixedDatatypeRelationOperation {
 		if ((idx0 == null) || (idx1 == null)) {
 			throw new NullPointerException("The indexes must not be null");
 		}
-		int[] res = Arrays.copyOfRange(idx1, 0, idx1.length);
+		final int[] res = new int[idx1.length];
+		System.arraycopy(idx1, 0, res, 0, idx1.length);
 		for (int i = 0; i < idx0.length; i++) {
 			if (idx0[i] > -1) {
 				res[i] = idx0[i];
@@ -185,7 +188,7 @@ public class SimpleSelection implements IMixedDatatypeRelationOperation {
 		if (stack == null) {
 			throw new NullPointerException("The stack must not be null");
 		}
-		int[] tmp = new int[stack.length];
+		final int[] tmp = new int[stack.length];
 		int j = 0;
 		if (needle == null) {
 			for (int i = 0; i < stack.length; i++) {
@@ -200,7 +203,9 @@ public class SimpleSelection implements IMixedDatatypeRelationOperation {
 				}
 			}
 		}
-		return Arrays.copyOfRange(tmp, 0, j);
+		final int [] res = new int[j];
+		System.arraycopy(tmp, 0, res, 0, j);
+		return res;
 	}
 
 	public IMixedDatatypeRelation evaluate() {
