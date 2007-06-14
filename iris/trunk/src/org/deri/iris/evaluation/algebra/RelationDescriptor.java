@@ -27,7 +27,6 @@ package org.deri.iris.evaluation.algebra;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.algebra.IRelationDescriptor;
-import org.deri.iris.evaluation.seminaive.Complementor;
 
 /**
 * @author Darko Anicic, DERI Innsbruck
@@ -62,7 +61,7 @@ public class RelationDescriptor extends Component implements IRelationDescriptor
 		buffer.append(ComponentType.RELATION + 
 				"['");
 		if (!this.positive)
-			buffer.append(Complementor.NOT_PREFIX);
+			buffer.append("NOT_");
 		buffer.append(this.p);
 		buffer.append("', ");
 		buffer.append(p.getArity());
