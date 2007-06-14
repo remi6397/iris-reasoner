@@ -72,10 +72,10 @@ import org.deri.iris.api.terms.ITerm;
  * be ignored in the index array.
  * </p>
  * <p>
- * $Id: SimpleSelection.java,v 1.2 2007-06-14 10:49:22 poettler_ric Exp $
+ * $Id: SimpleSelection.java,v 1.3 2007-06-14 15:40:51 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class SimpleSelection implements IMixedDatatypeRelationOperation {
 
@@ -149,9 +149,7 @@ public class SimpleSelection implements IMixedDatatypeRelationOperation {
 				tmp[j++] = i;
 			}
 		}
-		int[] res = new int[j];
-		System.arraycopy(tmp, 0, res, 0, j);
-		return res;
+		return Arrays.copyOfRange(tmp, 0, j);
 	}
 
 	/**
@@ -166,8 +164,7 @@ public class SimpleSelection implements IMixedDatatypeRelationOperation {
 		if ((idx0 == null) || (idx1 == null)) {
 			throw new NullPointerException("The indexes must not be null");
 		}
-		int[] res = new int[idx1.length];
-		System.arraycopy(idx1, 0, res, 0, idx1.length);
+		int[] res = Arrays.copyOfRange(idx1, 0, idx1.length);
 		for (int i = 0; i < idx0.length; i++) {
 			if (idx0[i] > -1) {
 				res[i] = idx0[i];
@@ -203,9 +200,7 @@ public class SimpleSelection implements IMixedDatatypeRelationOperation {
 				}
 			}
 		}
-		int[] res = new int[j];
-		System.arraycopy(tmp, 0, res, 0, j);
-		return res;
+		return Arrays.copyOfRange(tmp, 0, j);
 	}
 
 	public IMixedDatatypeRelation evaluate() {
