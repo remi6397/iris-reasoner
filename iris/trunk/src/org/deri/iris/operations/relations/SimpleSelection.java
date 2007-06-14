@@ -50,32 +50,32 @@ import org.deri.iris.api.terms.ITerm;
  * <p>
  * With the relative selection it is only possible to select tuples with the
  * same value at some predefined positions. To do this, two equal numbers are
- * put into the index array. E.g. <code>[0, 1, 1, 0]</code> would select all
+ * put into the index array. E.g. <code>[-1, 1, 1, -1]</code> would select all
  * tuples where the term at index 1 and 2 (starting from 0) are equal. An index
- * of <code>[11, 0, 11, 0]</code> would select all tuples where the terms at
+ * of <code>[11, -1, 11, -1]</code> would select all tuples where the terms at
  * index 0 and 2 are equal.
  * </p>
  * <h5>absolute:</h5>
  * <p>
  * In the absolute selection all tuples are selected meeting some special
  * condition defined by a condition operator and a threshold. E.g. an index of
- * <code>[0, 1, 0, 0]<code>, a term array of <code>[3]</code> and a condition
+ * <code>[-1, 1, -1, -1]<code>, a term array of <code>[3]</code> and a condition
  * array of <code>[LESS_THAN]</code> would select all tuples where the term at index
- * 1 (starting from 0) is less than 3. An index array of <code>[1, 0, 0,
+ * 1 (starting from 0) is less than 3. An index array of <code>[1, -1, -1,
  * 2]</code>, a term array of <code>[5, k]</code> and a condition array of
  * <code>[GREATER_THAN, LESS_OR_EQUAL]</code> would select all terms where the
  * term at index 0 is greater than 5 and the term at index 3 is less or equal
  * than k.
  * </p>
  * <p>
- * The both types can be done in one selection. Numbers less or equal to 0 will
+ * The both types can be done in one selection. Numbers less than 0 will
  * be ignored in the index array.
  * </p>
  * <p>
- * $Id: SimpleSelection.java,v 1.1 2007-06-13 15:00:47 poettler_ric Exp $
+ * $Id: SimpleSelection.java,v 1.2 2007-06-14 10:49:22 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SimpleSelection implements IMixedDatatypeRelationOperation {
 
@@ -176,65 +176,109 @@ public class SimpleSelection implements IMixedDatatypeRelationOperation {
 		return res;
 	}
 
+	/**
+	 * Returns the indexes at which the needle occurs in the stack.
+	 * @param stack through wich to search
+	 * @param needle for what to look for
+	 * @return the indexes where <code>needle</code> occurs in
+	 * <code>stack</code>
+	 * @throws NullPointerException if <code>stack</code> is <code>null</code>
+	 */
+	private static <Type> int[] occurences(final Type[] stack, final Type needle) {
+		if (stack == null) {
+			throw new NullPointerException("The stack must not be null");
+		}
+		int[] tmp = new int[stack.length];
+		int j = 0;
+		if (needle == null) {
+			for (int i = 0; i < stack.length; i++) {
+				if (needle == stack[i]) {
+					tmp[j++] = i;
+				}
+			}
+		} else {
+			for (int i = 0; i < stack.length; i++) {
+				if (needle.equals(stack[i])) {
+					tmp[j++] = i;
+				}
+			}
+		}
+		int[] res = new int[j];
+		System.arraycopy(tmp, 0, res, 0, j);
+		return res;
+	}
+
 	public IMixedDatatypeRelation evaluate() {
 		IMixedDatatypeRelation res = null;
 		// getting the index groups on which we should select
-		final Set<Integer> todo = new HashSet();
+		final List<int[]> relative = new ArrayList<int[]>();
+		final List<Integer> absolute = new ArrayList<Integer>();
+		final List<Integer> todo = new ArrayList<Integer>();
 		for (int i = 0; i < idx.length; i++) {
 			todo.add(i);
 		}
-		final List<int[]> selectOn = new ArrayList<int[]>(idx.length);
 		while (!todo.isEmpty()) {
-			final int i = todo.iterator().next();
-			if (idx[i] <= 0) {
-				todo.remove(i);
+			final int i = todo.get(0);
+			if (idx[i] < 0) {
+				todo.remove(0);
 				continue;
 			}
 			final int[] found = occurences(idx, idx[i]);
-			selectOn.add(found);
+			if (found.length > 1) {
+				relative.add(found);
+			} else if (found.length == 1) {
+				absolute.add(found[0]);
+			}
 			for (int j : found) {
-				todo.remove(j);
+				todo.remove(todo.indexOf(j));
 			}
 		}
-		// selecting the indexes for the self join
+		// selecting the indexes for relative indexes
 		int[] jidx0 = new int[r.getArity()];
 		Arrays.fill(jidx0, -1);
 		boolean doJoin = false;
-		for (final int[] i : selectOn) {
-			if (i.length > 1) {
-				final int[] tmpidx = new int[r.getArity()];
-				Arrays.fill(tmpidx, -1);
-				for (int j = 0; j < i.length; j++) {
-					tmpidx[i[j]] = i[0];
-				}
-				jidx0 = mergeJoinIndexes(tmpidx, jidx0);
-				doJoin = true;
+		for (final int[] i : relative) {
+			final int[] tmpidx = new int[r.getArity()];
+			Arrays.fill(tmpidx, -1);
+			for (int j = 0; j < i.length; j++) {
+				tmpidx[i[j]] = i[0];
 			}
+			jidx0 = mergeJoinIndexes(tmpidx, jidx0);
+			doJoin = true;
 		}
 		if (doJoin) {
 			res = (new SortMergeJoin(r, r, jidx0, JoinCondition.EQUALS, 0)).evaluate();
 		}
-		// selecting for the remaining thresholds
-		int j = 0;
-		for (final int[] i : selectOn) {
-			if (i.length == 1) {
-				final IMixedDatatypeRelation tmp = RELATION.getMixedRelation(r.getArity());
-				// constructing the minimal tuple
-				final ITerm[] minTerms = new ITerm[r.getArity()];
-				Arrays.fill(minTerms, null);
-				minTerms[0] = threshold[j];
-				tmp.add(BASIC.createTuple(minTerms));
-				// constructing the join index
-				final int[] jidx1 = new int[r.getArity()];
-				Arrays.fill(jidx1, -1);
-				jidx1[0] = i[0];
-
-				if (res == null) { // add matching tuples
-					res = (new SortMergeJoin(tmp, r, jidx1, c[j], 1)).evaluate();
-				} else { // remove not matching tuples
-					res.retainAll((new SortMergeJoin(tmp, res, jidx1, c[j], 1)).evaluate());
-				}
+		// selecting for the absolute indexes
+		final Set<JoinCondition> done = new HashSet<JoinCondition>();
+		for (int i = 0, max = absolute.size(); i < max; i++) {
+			if (done.contains(c[i])) {
+				continue;
+			} else {
+				done.add(c[i]);
+			}
+			// initializing the minimal terms and the join index
+			final ITerm[] thresholdTerms = new ITerm[r.getArity()];
+			Arrays.fill(thresholdTerms, null);
+			final int[] jidx1 = new int[r.getArity()];
+			Arrays.fill(jidx1, -1);
+			// getting the occurences of the same conditions
+			final int[] found = occurences(c, c[i]);
+			// constructing the minimal terms and the join index
+			int j = 0;
+			for (final int k : found) {
+				thresholdTerms[j] = threshold[k];
+				jidx1[j] = absolute.get(k);
 				j++;
+			}
+			// contructing the relation with the threshold tuple
+			final IMixedDatatypeRelation tmp = RELATION.getMixedRelation(r.getArity());
+			tmp.add(BASIC.createTuple(thresholdTerms));
+
+			if (res == null) { // add matching tuples
+				res = (new SortMergeJoin(tmp, r, jidx1, c[i], 1)).evaluate();
+			} else { // remove not matching tuples
+				res.retainAll((new SortMergeJoin(tmp, res, jidx1, c[i], 1)).evaluate());
 			}
 		}
 		return res;
