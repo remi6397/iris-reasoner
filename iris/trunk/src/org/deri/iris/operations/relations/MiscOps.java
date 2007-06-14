@@ -29,6 +29,8 @@ package org.deri.iris.operations.relations;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
 /**
@@ -85,5 +87,43 @@ public class MiscOps {
 			i[j] = -1;
 		}
 		return i;
+	}
+	
+	/**
+	 * <p>Creates projection indexes so that column which contains a 
+	 * ground term will be projected out.
+	 * </p>
+	 *  
+	 * @param tup	A tuple which terms will be examined.
+	 * @return		The projection indexes.
+	 */
+	public static int[] getProjectionIndexes(ITuple tup) {
+		int[] i = new int[tup.getArity()];
+		int j = 0, k = 0;
+		for (ITerm t : tup.getTerms()){
+			if(! t.isGround()){
+				i[k++] = j++;
+			}else{
+				i[k++] = -1;	
+			}
+		}
+		return i;
+	}
+	
+	/**
+	 * <p>
+	 * Checks whether the projection operation is needed.
+	 * </p>
+	 * 
+	 * @param pInds	Projection indexes to be examined.
+	 * @return		True if the projection operation is required otherwise false.
+	 */
+	public static boolean doProjection(int[] pInds) {
+		for (int i : pInds){
+			if(i != -1){
+				return true;
+			}
+		}
+		return false;
 	}
 }
