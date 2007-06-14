@@ -28,15 +28,13 @@ package org.deri.iris.evaluation.seminaive;
 import static org.deri.iris.factory.Factory.RELATION;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.evaluation.MiscOps;
 
 /**
@@ -54,8 +52,8 @@ import org.deri.iris.evaluation.MiscOps;
  */
 public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 
-	public SeminaiveEvaluation(IExpressionEvaluator e, IProgram p) {
-		super(e, p);
+	public SeminaiveEvaluation(IExpressionEvaluator e, IProgram program) {
+		super(e, program);
 	}
 
 	public boolean evaluate() {
@@ -64,9 +62,9 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 		 * of the ITree
 		 */
 		boolean newTupleAdded = false, cont = true;
-		IRelation p = null;
-		Map<IPredicate, IRelation> aq = new HashMap<IPredicate, IRelation>();
-		IRelation tempRel = null;
+		IMixedDatatypeRelation p = null;
+		Map<IPredicate, IMixedDatatypeRelation> aq = new HashMap<IPredicate, IMixedDatatypeRelation>();
+		IMixedDatatypeRelation tempRel = null;
 		Set<IPredicate> preds = null;
 		
 		/** Evaluate rules */
@@ -119,7 +117,7 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 					if(this.p.getFacts(pr) != null && 
 							! this.p.getFacts(pr).containsAll(p)){
 						
-						tempRel = RELATION.getRelation(p.getArity());
+						tempRel = RELATION.getMixedRelation(p.getArity());
 						tempRel.addAll(p);
 						tempRel.removeAll(this.p.getFacts(pr));
 						aq.put(pr, tempRel);
