@@ -52,15 +52,15 @@ import org.deri.iris.basics.seminaive.ConstLiteral;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.9 2007-05-23 10:22:44 poettler_ric Exp $
+ * $Id: MiscOps.java,v 1.10 2007-06-14 21:28:34 darko_anicic Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.9 $
- * @date $Date: 2007-05-23 10:22:44 $
+ * @version $Revision: 1.10 $
+ * @date $Date: 2007-06-14 21:28:34 $
  */
 public class MiscOps {
 
@@ -171,7 +171,8 @@ public class MiscOps {
 					litTerms.add(t);
 				}
 			}
-			bodyLiterals.add(BASIC.createLiteral(l.isPositive(), l.getPredicate(), BASIC.createTuple(litTerms)));
+			l.getTuple().setTerms(litTerms);
+			bodyLiterals.add(l);
 		}
 		// Assembling the new rectified rule.
 		// adding the constant substitutions for the head
