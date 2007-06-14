@@ -27,7 +27,6 @@ package org.deri.iris.evaluation.algebra;
 
 import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.evaluation.algebra.IBuiltinDescriptor;
-import org.deri.iris.evaluation.seminaive.Complementor;
 
 /**
  * <p>
@@ -62,7 +61,7 @@ public class BuiltinDescriptor extends Component implements IBuiltinDescriptor{
 		buffer.append(ComponentType.BUILTIN + 
 				"[");
 		if (!this.positive)
-			buffer.append(Complementor.NOT_PREFIX);
+			buffer.append("NOT_");
 		buffer.append(this.builtin.toString());
 		buffer.append("]");
 		return buffer.toString();
