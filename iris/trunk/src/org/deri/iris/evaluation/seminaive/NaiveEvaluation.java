@@ -30,7 +30,7 @@ import java.util.Set;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.exception.DataModelException;
 
@@ -78,7 +78,7 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 	public boolean evaluate() throws DataModelException {
 
 		boolean newTupleAdded = false, cont = true;
-		IRelation r = null;
+		IMixedDatatypeRelation r = null;
 		Set<IPredicate> preds = null;
 		
 		// Evaluate rules
