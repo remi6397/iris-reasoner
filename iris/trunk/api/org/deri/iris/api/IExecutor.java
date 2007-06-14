@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * <p>
@@ -48,12 +48,12 @@ import org.deri.iris.api.storage.IRelation;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IExecutor.java,v 1.6 2007-02-15 08:38:20 poettler_ric Exp $
+ * $Id: IExecutor.java,v 1.7 2007-06-14 21:13:27 darko_anicic Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public interface IExecutor {
 
@@ -83,7 +83,7 @@ public interface IExecutor {
 	 *            The query for which to compute the substitutions.
 	 * @return A set of substitutions (IRelation) for the given query.
 	 */
-	public IRelation computeSubstitution(final IQuery q);
+	public IMixedDatatypeRelation computeSubstitution(final IQuery q);
 
 	/**
 	 * <p>
@@ -94,5 +94,5 @@ public interface IExecutor {
 	 * 			one literal) as a key, and the retrieved substitutions 
 	 * 			as values for those queries.
 	 */
-	public Map<IPredicate, IRelation> computeSubstitutions();	
+	public Map<IPredicate, IMixedDatatypeRelation> computeSubstitutions();	
 }

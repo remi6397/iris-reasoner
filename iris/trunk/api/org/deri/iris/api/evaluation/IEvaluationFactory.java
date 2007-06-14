@@ -29,7 +29,7 @@ package org.deri.iris.api.evaluation;
 import java.util.Map;
 
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 
 /**
@@ -37,7 +37,7 @@ import org.deri.iris.api.storage.IRelation;
  * Interface of a factory for creating objects from the evaluation package.
  * </p>
  * <p>
- * $Id: IEvaluationFactory.java,v 1.2 2006-12-19 18:11:41 darko Exp $
+ * $Id: IEvaluationFactory.java,v 1.3 2007-06-14 21:14:09 darko_anicic Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -56,5 +56,5 @@ public interface IEvaluationFactory {
 	 * @param m Result
 	 * @return  A ResultSet containig result m 
 	 */
-	public IResultSet createResultSet(Map<IPredicate,IRelation> m);
+	public IResultSet createResultSet(Map<IPredicate,IMixedDatatypeRelation> m);
 }

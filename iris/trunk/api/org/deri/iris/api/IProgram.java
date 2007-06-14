@@ -33,9 +33,8 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
-
 import org.deri.iris.builtins.BuiltinRegister;
 
 /**
@@ -59,12 +58,11 @@ import org.deri.iris.builtins.BuiltinRegister;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IProgram.java,v 1.9 2007-04-06 06:52:04 poettler_ric Exp $
+ * $Id: IProgram.java,v 1.10 2007-06-14 21:13:40 darko_anicic Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @date 26.07.2006 16:45:49
+ * @date 14.06.2007 16:45:49
  */
 public interface IProgram {
 
@@ -112,7 +110,7 @@ public interface IProgram {
 	 * @return True if any fact from the relation r have been added, otherwise
 	 *         false.
 	 */
-	public boolean addFacts(final IPredicate p, final IRelation r);
+	public boolean addFacts(final IPredicate p, final IMixedDatatypeRelation r);
 
 	/**
 	 * <p>
@@ -219,7 +217,7 @@ public interface IProgram {
 	 *            The common predicate for facts to be retrieved.
 	 * @return Set of facts (a relation with the predicate p).
 	 */
-	public IRelation getFacts(final IPredicate p);
+	public IMixedDatatypeRelation getFacts(final IPredicate p);
 
 	/**
 	 * <p>
@@ -229,7 +227,7 @@ public interface IProgram {
 	 * @return Map of all predicates from the knowledgebase with corresponding
 	 *         relations.
 	 */
-	public Map<IPredicate, IRelation> getFacts();
+	public Map<IPredicate, IMixedDatatypeRelation> getFacts();
 
 	/**
 	 * <p>
