@@ -71,7 +71,7 @@ public class QSQTemplate {
 	List<IVariable> variables_n = null;
 	
 	
-	QSQTemplate(final IAdornedProgram ap){
+	public QSQTemplate(final IAdornedProgram ap){
 		if (ap == null) {
 			throw new IllegalArgumentException(
 					"Input argument must not be null");
@@ -142,10 +142,19 @@ public class QSQTemplate {
 		AdornedPredicate predicate = null;
 		ITerm term = null;
 		
-		if(h.getPredicate()instanceof AdornedPredicate)
+		Adornment[] adornments = null;
+		if(h.getPredicate()instanceof AdornedPredicate){
 			predicate = (AdornedPredicate)h.getPredicate();
-		Adornment[] adornments = predicate.getAdornment();
-		
+			adornments = predicate.getAdornment();
+		}else{
+			throw new IllegalArgumentException(
+				"Unbound queries currntly not supported!");
+			
+			/*adornments = new Adornment[h.getPredicate().getArity()];
+			for (int i = 0; i<adornments.length; i++) {
+				adornments[i] = Adornment.BOUND;
+			}*/
+		}
 		for(int i=0; i<adornments.length; i++){
 			term = h.getTuple().getTerm(i);
 			if(term instanceof IVariable){
