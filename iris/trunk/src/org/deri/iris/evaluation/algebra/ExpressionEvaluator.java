@@ -53,23 +53,23 @@ import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.operations.relation.IProjection;
 import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.operations.relation.IUnion;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.relations.MiscOps;
 
 /**
  * <p>
- * An evaluator of a relational algebra expression. 
- * This evaluator is used whenever an evaluation of 
- * relational algebra expressions is needed regardless 
- * of a particular evaluation algorithm (e.g. naive 
- * evaluation, semi-naive evaluation etc.).
+ * An evaluator of a relational algebra expression. This evaluator is used
+ * whenever an evaluation of relational algebra expressions is needed regardless
+ * of a particular evaluation algorithm (e.g. naive evaluation, semi-naive
+ * evaluation etc.).
  * </p>
  * <p>
- * This evaluator takes a program previously transformed to 
- * a set of relation algebra expressions, as an input, 
- * and executes these expressions. 
+ * This evaluator takes a program previously transformed to a set of relation
+ * algebra expressions, as an input, and executes these expressions. Each relation 
+ * in algebra expressions may contain tuples with terms of different data types 
+ * in arbitrary positions.
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -80,161 +80,160 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	public ExpressionEvaluator() {
 	}
 
-	public IRelation evaluate(IComponent c, IProgram p) {
+	public IMixedDatatypeRelation evaluate(IComponent c, IProgram p) {
 		return evaluate(c, p, null);
 	}
 
-	public IRelation evaluateIncrementally(IComponent c, IProgram p, 
-			Map<IPredicate, IRelation> aq) {
-		
+	public IMixedDatatypeRelation evaluateIncrementally(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
 		return evaluate(c, p, aq);
 	}
-	
-	private IRelation evaluate(IComponent c, IProgram p,
-			Map<IPredicate, IRelation> aq) {
-		
-		//TODO: reference p and aq in the constructor, instead of passing them all the time. 
-		switch(c.getType()){
-			case BUILTIN:
-				return evaluateBuiltin(c, null, null);
-			case DIFFERENCE:
-				return evaluateDifference(c, p, aq);
-			case JOIN:
-				return evaluateJoin(c, p, aq, null);
-			case PROJECTION:
-				return evaluateProjection(c, p, aq);
-			case SELECTION:
-				return evaluateSelection(c, p, aq);
-			case UNION:
-				return evaluateUnion(c, p, aq);
-			case RELATION:
-				return evaluateRelation(c, p, aq);
-			case CONSTANT:
-				return evaluateConstant(c);
+
+	private IMixedDatatypeRelation evaluate(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
+		// TODO: reference p and aq in the constructor, instead of passing them
+		// all the time.
+		switch (c.getType()) {
+		case BUILTIN:
+			return evaluateBuiltin(c, null, null);
+		case DIFFERENCE:
+			return evaluateDifference(c, p, aq);
+		case JOIN:
+			return evaluateJoin(c, p, aq, null);
+		case PROJECTION:
+			return evaluateProjection(c, p, aq);
+		case SELECTION:
+			return evaluateSelection(c, p, aq);
+		case UNION:
+			return evaluateUnion(c, p, aq);
+		case RELATION:
+			return evaluateRelation(c, p, aq);
+		case CONSTANT:
+			return evaluateConstant(c);
 		}
 		return null;
 	}
-	
-	private IRelation evaluateDifference(IComponent c,IProgram p,
-			Map<IPredicate, IRelation> aq){
-		
+
+	private IMixedDatatypeRelation evaluateDifference(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
 		if (c.getChildren().size() != 2) {
 			throw new IllegalArgumentException(
-					"Please provide the component with two subcomponents " +
-					"(children), otherwise the evaluateDifference cannot be " +
-					"performed!");
+					"Please provide the component with two subcomponents (children), " +
+					"otherwise the evaluateDifference cannot be performed!");
 		}
-		IDifferenceDescriptor d = (IDifferenceDescriptor)c;
-		IDifference diff = Factory.RELATION_OPERATION
-				.createDifferenceOperator(
-						evaluate(d.getChildren().get(0), p, aq), 
-						evaluate(d.getChildren().get(1), p, aq));
-		
+		IDifferenceDescriptor d = (IDifferenceDescriptor) c;
+		IDifference diff = Factory.RELATION_OPERATION.createDifferenceOperator(
+				evaluate(d.getChildren().get(0), p, aq), 
+				evaluate(d.getChildren().get(1), p, aq));
+
 		return diff.difference();
 	}
-	
-	private IRelation evaluateJoin(IComponent c,IProgram p,
-			Map<IPredicate, IRelation> aq, int[] pInds){
-		
+
+	private IMixedDatatypeRelation evaluateJoin(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq, int[] pInds) {
+
 		if (c.getChildren().size() < 2) {
 			throw new IllegalArgumentException(
-					"Please provide the component with at least two " +
-					"subcomponents (children), otherwise the join operation " +
-					"cannot be performed!");
+					"Please provide the component with at least two subcomponents " +
+					"(children), otherwise the join operation cannot be performed!");
 		}
-		IJoinDescriptor j = (IJoinDescriptor)c;
+		IJoinDescriptor j = (IJoinDescriptor) c;
 		IJoin jo = null;
 		List<IVariable> vars = new ArrayList<IVariable>();
 		IComponent c0 = j.getChildren().get(0);
 		vars.addAll(c0.getVariables());
 		IComponent c1 = null;
 		/**
-		 * Left relation to be joined contains all tuples from the KB related
-		 * to the corresponding predicate, not only "fresh tuples" from 
-		 * the last iteration (aq = null)!
+		 * Left relation to be joined contains all tuples from the KB related to
+		 * the corresponding predicate, not only "fresh tuples" from the last
+		 * iteration (aq = null)!
 		 */
-		IRelation r0 = evaluate(c0, p, null);
-		boolean emptyRel = (r0.size()==0) ? true : false;
+		IMixedDatatypeRelation r0 = evaluate(c0, p, null);
+		boolean emptyRel = (r0.size() == 0) ? true : false;
 		boolean addVars = true;
-		IRelation r1 = null;
-		
-		for(int i=1; i<j.getChildren().size(); i++){
+		IMixedDatatypeRelation r1 = null;
+
+		for (int i = 1; i < j.getChildren().size(); i++) {
 			c1 = j.getChildren().get(i);
-			if(! emptyRel){
-				if(c1.getType().equals(ComponentType.BUILTIN)){
-					IBuiltinDescriptor con = (IBuiltinDescriptor)c1;
-					if(con.getBuiltin().isEvaluable(vars)){
+			if (!emptyRel) {
+				if (c1.getType().equals(ComponentType.BUILTIN)) {
+					IBuiltinDescriptor con = (IBuiltinDescriptor) c1;
+					if (con.getBuiltin().isEvaluable(vars)) {
 						r0 = evaluateBuiltin(c1, vars, r0);
 						addVars = true;
-					}else{
+					} else {
 						j.getChildren().remove(i);
 						i--;
 						j.addChild(c1);
 						addVars = false;
 					}
-				}else{
+				} else {
 					r1 = evaluate(c1, p, aq);
-					if(c1.isPositive()){
-						jo = Factory.RELATION_OPERATION.createJoinSimpleOperator(
+					if (c1.isPositive()) {
+						jo = Factory.RELATION_OPERATION.createSortMergeJoinOperator(
 								r0, r1, 
 								// TODO: get correct projection indexes!
 								MiscOps.getJoinIndexes(vars, c1.getVariables()), 
 								j.getCondition());
 						addVars = true;
 					} else {
-						jo = Factory.RELATION_OPERATION.createJoinComplementOperator(
-								r0, r1, 
-								MiscOps.getJoinIndexes(vars, c1.getVariables()));
+						jo = Factory.RELATION_OPERATION
+								.createJoinComplementOperator(r0, r1,
+										MiscOps.getJoinIndexes(vars, c1
+												.getVariables()));
 						addVars = false;
 					}
 					r0 = jo.join();
 				}
-				if(r0 != null && r0.size() == 0) emptyRel = true;
+				if (r0 != null && r0.size() == 0)
+					emptyRel = true;
 			}
-			if(addVars && c1 != null && c1.getVariables() != null && c1.isPositive())
+			if (addVars && c1 != null && c1.getVariables() != null && c1.isPositive())
 				vars.addAll(c1.getVariables());
 		}
 		j.getVariables().clear();
 		j.addVariables(vars);
 		return r0;
 	}
-	
-	private IRelation evaluateProjection(IComponent c,IProgram p,
-			Map<IPredicate, IRelation> aq){
-		
+
+	private IMixedDatatypeRelation evaluateProjection(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
 		if (c.getChildren().size() != 1) {
 			throw new IllegalArgumentException(
-					"Please provide the component with only one subcomponent " +
-					"(child),otherwise the evaluateProjection cannot be " +
-					"performed!");
-		}	
-		IProjectionDescriptor pr = (IProjectionDescriptor)c;
-		IRelation rel = evaluate(pr.getChildren().get(0), p, aq);
-		if (!Arrays.equals(pr.getVariables().toArray(), pr.getChildren().get(0).getVariables().toArray())) {	
-			IProjection projection = Factory.RELATION_OPERATION
-			.createProjectionOperator(
-					rel, 
-					// TODO: If you don't use project inds, created in Rule2Relation, remove them!
-					//pr.getIndexes());
-					MiscOps.getProjectionIndexes(
-							pr.getChildren().get(0).getVariables(), pr.getVariables()));
-		
+				"Please provide the component with only one subcomponent "
+				+ "(child),otherwise the evaluateProjection cannot be performed!");
+		}
+		IProjectionDescriptor pr = (IProjectionDescriptor) c;
+		IMixedDatatypeRelation rel = evaluate(pr.getChildren().get(0), p, aq);
+		if (!Arrays.equals(pr.getVariables().toArray(), 
+						   pr.getChildren().get(0).getVariables().toArray())) {
+			IProjection projection = Factory.RELATION_OPERATION.
+					createProjectionOperator(rel,
+					// TODO: If you don't use project inds, created in
+					// Rule2Relation, remove them!
+					// pr.getIndexes());
+					MiscOps.getProjectionIndexes(pr.getChildren()
+							.get(0).getVariables(), pr.getVariables()));
+
 			return projection.project();
 		}
 		return rel;
 	}
-	
-	private IRelation evaluateRelation(IComponent c,IProgram p,
-			Map<IPredicate, IRelation> aq){
-		
+
+	private IMixedDatatypeRelation evaluateRelation(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
 		if (c.getChildren().size() != 0) {
 			throw new IllegalArgumentException(
-					"Please provide the component with no subcomponent " +
-					"(no child), otherwise evaluateRelation cannot be " +
-					"performed!");
+				"Please provide the component with no subcomponent (no child), " +
+				"otherwise evaluateRelation cannot be performed!");
 		}
-		IRelationDescriptor r = (IRelationDescriptor)c;
-		IRelation rel = null;
+		IRelationDescriptor r = (IRelationDescriptor) c;
+		IMixedDatatypeRelation rel = null;
 		if (aq != null && aq.get(r.getPredicate()) != null && c.isPositive()) {
 			// Return tuples from the last iteration only!
 			rel = aq.get(r.getPredicate());
@@ -242,36 +241,35 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 			// Return all tuples from the KB!
 			rel = p.getFacts(r.getPredicate());
 		}
-		if(rel == null){
-			return	RELATION.getRelation(r.getPredicate().getArity());
-		}else{
-			return rel; 
+		if (rel == null) {
+			return RELATION.getMixedRelation(r.getPredicate().getArity());
+		} else {
+			return rel;
 		}
 	}
-	
-	private IRelation evaluateSelection(IComponent c,IProgram p,
-			Map<IPredicate, IRelation> aq){
-		
+
+	private IMixedDatatypeRelation evaluateSelection(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
 		if (c.getChildren().size() != 1) {
 			throw new IllegalArgumentException(
-					"Please provide the component with one subcomponent " +
-					"(child), otherwise the evaluateSelection cannot be " +
-					"performed!");
+				"Please provide the component with one subcomponent (child), " +
+				"otherwise the evaluateSelection cannot be performed!");
 		}
-		ISelectionDescriptor s = (ISelectionDescriptor)c;
-		ISelection sel = Factory.RELATION_OPERATION
-				.createSelectionOperator(
-						evaluate(s.getChildren().get(0), p, aq),
-						s.getPattern(), s.getIndexes());
-		
+		ISelectionDescriptor s = (ISelectionDescriptor) c;
+		ISelection sel = Factory.RELATION_OPERATION.createSelectionOperator(
+				evaluate(s.getChildren().get(0), p, aq), 
+				s.getPattern(), 
+				s.getIndexes());
+
 		return sel.select();
 	}
-	
+
 	/**
 	 * <p>
-	 * Evaluates a component which is of type of UNION. The execution of 
-	 * this method may be a very expensive operation if a component to be 
-	 * executed contains a number of very big relations to be unified.
+	 * Evaluates a component which is of type of UNION. The execution of this
+	 * method may be a very expensive operation if a component to be executed
+	 * contains a number of very big relations to be unified.
 	 * </p>
 	 * 
 	 * @param c
@@ -279,47 +277,47 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	 * @param aq
 	 * @return
 	 */
-	private IRelation evaluateUnion(IComponent c,IProgram p,
-			Map<IPredicate, IRelation> aq){
-		
+	private IMixedDatatypeRelation evaluateUnion(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
 		if (c.getChildren().size() == 0) {
 			throw new IllegalArgumentException(
-					"Please provide the component with at least one subcomponent " +
-					"(child), otherwise the evaluateUnion cannot be" +
-					"performed!");
+				"Please provide the component with at least one subcomponent "
+				+ "(child), otherwise the evaluateUnion cannot be performed!");
 		}
-		IUnionDescriptor u = (IUnionDescriptor)c;
-		List<IRelation> rels = new ArrayList<IRelation>(u.getChildren().size());
-		for(int i=0; i<u.getChildren().size(); i++){
+		IUnionDescriptor u = (IUnionDescriptor) c;
+		List<IMixedDatatypeRelation> rels = new ArrayList<IMixedDatatypeRelation>(u.getChildren().size());
+		for (int i = 0; i < u.getChildren().size(); i++) {
 			rels.add(evaluate(u.getChildren().get(i), p, aq));
 		}
-		IUnion un = Factory.RELATION_OPERATION
-				.createUnionOperator(rels);
-		
+		IUnion un = Factory.RELATION_OPERATION.createUnionOperator(rels);
 		return un.union();
 	}
 
-	private IRelation evaluateConstant(IComponent c){
-		IConstantDescriptor con = (IConstantDescriptor)c;
-		IRelation r = RELATION.getRelation(1);
+	private IMixedDatatypeRelation evaluateConstant(IComponent c) {
+		IConstantDescriptor con = (IConstantDescriptor) c;
+		IMixedDatatypeRelation r = RELATION.getMixedRelation(1);
 		r.add(BASIC.createTuple(con.getConstant()));
 		return r;
 	}
-	
-	private IRelation evaluateBuiltin(IComponent c, 
-			List<IVariable> relVars, IRelation rel){
-		
-		IBuiltinDescriptor con = (IBuiltinDescriptor)c;
+
+	private IMixedDatatypeRelation evaluateBuiltin(IComponent c, List<IVariable> relVars,
+		IMixedDatatypeRelation rel) {
+
+		IBuiltinDescriptor con = (IBuiltinDescriptor) c;
 		IBuiltinEvaluator eval = null;
 		if (c.getChildren().size() == 0) {
 			if (relVars == null || rel == null) {
 				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator(
-						con.getBuiltin(), new ArrayList<IVariable>(0), RELATION.getRelation(0));
-			}else{
-				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator(con.getBuiltin(), relVars, rel);
+						con.getBuiltin(), new ArrayList<IVariable>(0), 
+						RELATION.getMixedRelation(0));
+			} else {
+				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator(con
+						.getBuiltin(), relVars, rel);
 			}
-		}else{
-			throw new IllegalArgumentException("Nested built-ins are currently not supported!");
+		} else {
+			throw new IllegalArgumentException(
+					"Nested built-ins are currently not supported!");
 		}
 		c.getVariables().clear();
 		c.addVariables(eval.getOutVars());
