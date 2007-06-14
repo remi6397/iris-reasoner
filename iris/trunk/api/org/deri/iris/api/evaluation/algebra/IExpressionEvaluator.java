@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 
 /**
@@ -52,12 +52,12 @@ public interface IExpressionEvaluator {
 	 * 
 	 * @param c
 	 * 			A relational algebra expression to be evaluated/executed.
-	 * @param p
+	 * @param program
 	 * 			The entire program including idb and edb relations 
 	 *          required for the evaluation of c.
 	 * @return	Implicit tuples derived after the evaluation of c.
 	 */
-	public IRelation evaluate(IComponent c, IProgram p);
+	public IMixedDatatypeRelation evaluate(IComponent c, IProgram program);
 
 	/**
 	 * Evaluates the relational algebra expression incrementally.
@@ -72,5 +72,6 @@ public interface IExpressionEvaluator {
 	 * 			derived during the previous evaluation round.
 	 * @return	Implicit tuples derived after the evaluation of c.
 	 */
-	public IRelation evaluateIncrementally (IComponent c, IProgram p, Map<IPredicate, IRelation> aq);
+	public IMixedDatatypeRelation evaluateIncrementally 
+		(IComponent c, IProgram p, Map<IPredicate, IMixedDatatypeRelation> aq);
 }

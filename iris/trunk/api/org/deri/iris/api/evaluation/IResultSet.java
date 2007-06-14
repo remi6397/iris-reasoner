@@ -29,7 +29,7 @@ package org.deri.iris.api.evaluation;
 import java.util.Map;
 
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * <p>
@@ -39,7 +39,7 @@ import org.deri.iris.api.storage.IRelation;
  * (that can be proved from the knowledgebase).
  * </p>
  * <p>
- * $Id: IResultSet.java,v 1.3 2006-12-12 13:59:28 darko Exp $
+ * $Id: IResultSet.java,v 1.4 2007-06-14 21:14:09 darko_anicic Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -56,5 +56,5 @@ public interface IResultSet {
 	 * 
 	 * @return A map of IDB predicates and corresponding relations.
 	 */
-	public Map<IPredicate, IRelation> getResults();
+	public Map<IPredicate, IMixedDatatypeRelation> getResults();
 }
