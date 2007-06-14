@@ -26,7 +26,7 @@
 
 package org.deri.iris.api.operations.relation;
 
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * <p>
@@ -41,7 +41,7 @@ import org.deri.iris.api.storage.IRelation;
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:09:02
  *
- * @version $Revision: 1.9 $ $Date: 2007-01-22 12:46:04 $
+ * @version $Revision: 1.10 $ $Date: 2007-06-14 21:24:55 $
  * @param <JoinCondition>
  */
 public interface IJoin {
@@ -55,6 +55,6 @@ public interface IJoin {
 	 * 
 	 * @return	The relation which is a result of the join operation.
 	 */
-	public IRelation join();
+	public IMixedDatatypeRelation join();
 		
 }

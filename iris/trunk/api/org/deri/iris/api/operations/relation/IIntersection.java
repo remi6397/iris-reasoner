@@ -25,7 +25,7 @@
  */
 package org.deri.iris.api.operations.relation;
 
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * <p>
@@ -39,9 +39,9 @@ import org.deri.iris.api.storage.IRelation;
  * @author Darko Anicic
  * @date  11.04.2006 15:42:32
  *
- * @version $Revision: 1.3 $ $Date: 2007-01-22 12:46:04 $
+ * @version $Revision: 1.4 $ $Date: 2007-06-14 21:24:53 $
  */
 public interface IIntersection {
 
-	public IRelation intersection(final IRelation arg0, final IRelation arg1);
+	public IMixedDatatypeRelation intersection(final IMixedDatatypeRelation arg0, final IMixedDatatypeRelation arg1);
 }

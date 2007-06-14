@@ -32,7 +32,7 @@ import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 /**
  * <p>
  * An interface that can be used to obtain a reference to a logical program.
@@ -49,7 +49,6 @@ public interface IProgramFactory {
 	
 	public IProgram createProgram();
 	
-	public IProgram createProgram(final Map<IPredicate, IRelation> f, 
+	public IProgram createProgram(final Map<IPredicate, IMixedDatatypeRelation> f, 
 			final Set<IRule> r, final Set<IQuery> q);
-	
 }

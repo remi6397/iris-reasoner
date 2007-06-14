@@ -31,7 +31,7 @@ import java.util.Map;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.IEvaluationFactory;
 import org.deri.iris.api.evaluation.IResultSet;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * @author Darko Anicic, DERI Innsbruck
@@ -58,7 +58,7 @@ public class EvaluationFactory implements IEvaluationFactory {
 		return new ResultSet();
 	}
 
-	public IResultSet createResultSet(Map<IPredicate, IRelation> m) {
+	public IResultSet createResultSet(Map<IPredicate, IMixedDatatypeRelation> m) {
 		return new ResultSet(m);
 	}
 

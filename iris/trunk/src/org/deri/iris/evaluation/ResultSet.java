@@ -31,7 +31,7 @@ import java.util.Map;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.IResultSet;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * An implemenation of IResultSet (which represents the result set of a query).
@@ -41,17 +41,17 @@ import org.deri.iris.api.storage.IRelation;
  */
 public class ResultSet implements IResultSet {
 
-	private Map<IPredicate, IRelation> result = null;
+	private Map<IPredicate, IMixedDatatypeRelation> result = null;
 
 	ResultSet() {
-		this.result = new HashMap<IPredicate, IRelation>();
+		this.result = new HashMap<IPredicate, IMixedDatatypeRelation>();
 	}
 
-	ResultSet(Map<IPredicate, IRelation> r) {
+	ResultSet(Map<IPredicate, IMixedDatatypeRelation> r) {
 		this.result = r;
 	}
 
-	public Map<IPredicate, IRelation> getResults() {
+	public Map<IPredicate, IMixedDatatypeRelation> getResults() {
 		return this.result;
 	}
 }

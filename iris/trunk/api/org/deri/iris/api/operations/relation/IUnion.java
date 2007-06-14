@@ -25,7 +25,7 @@
  */
 package org.deri.iris.api.operations.relation;
 
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * <p>
@@ -47,5 +47,5 @@ public interface IUnion {
 	 * 
 	 * @return	The relation which is a result of the union operation.
 	 */
-	public IRelation union();
+	public IMixedDatatypeRelation union();
 }

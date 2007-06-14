@@ -25,7 +25,7 @@
  */
 package org.deri.iris.api.operations.relation;
 
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  *<p>
@@ -48,7 +48,7 @@ import org.deri.iris.api.storage.IRelation;
  * @author Darko Anicic
  * @date  11.04.2006 @time  15:18:20
  *
- * @version $Revision: 1.8 $ $Date: 2007-01-22 12:46:04 $
+ * @version $Revision: 1.9 $ $Date: 2007-06-14 21:24:54 $
  */
 public interface ISelection {
 	
@@ -57,5 +57,5 @@ public interface ISelection {
 	 * 
 	 * @return	The relation which is a result of the selection operation.
 	 */
-	public IRelation select();
+	public IMixedDatatypeRelation select();
 }

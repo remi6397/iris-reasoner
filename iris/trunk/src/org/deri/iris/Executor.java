@@ -33,10 +33,8 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.evaluation.IBottomUpEvaluator;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.evaluation.MiscOps;
-import org.deri.iris.evaluation.algebra.Rule2Relation;
-import org.deri.iris.evaluation.seminaive.NaiveEvaluation;
 import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
 
 /**
@@ -44,12 +42,12 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
  * Executes a programm.
  * </p>
  * <p>
- * $Id: Executor.java,v 1.8 2007-02-15 13:23:34 darko_anicic Exp $
+ * $Id: Executor.java,v 1.9 2007-06-14 21:26:15 darko_anicic Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class Executor implements IExecutor {
 
@@ -81,7 +79,7 @@ public class Executor implements IExecutor {
 		this.method = m;
 	}
 	
-	public IRelation computeSubstitution(final IQuery q) {
+	public IMixedDatatypeRelation computeSubstitution(final IQuery q) {
 		if (q == null) {
 			throw new NullPointerException("The query must not be null");
 		}
@@ -93,7 +91,7 @@ public class Executor implements IExecutor {
 		return this.evaluator.getResultSet().getResults().get(q.getQueryLiteral(0).getPredicate());
 	}
 	
-	public Map<IPredicate, IRelation> computeSubstitutions() {
+	public Map<IPredicate, IMixedDatatypeRelation> computeSubstitutions() {
 		this.evaluator.runQueries(this.prog.getQueries());
 		return this.evaluator.getResultSet().getResults();
 	}
