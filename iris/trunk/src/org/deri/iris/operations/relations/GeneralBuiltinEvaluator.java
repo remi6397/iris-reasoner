@@ -38,6 +38,10 @@ import org.deri.iris.api.operations.relation.IBuiltinEvaluator;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.builtins.AddBuiltin;
+import org.deri.iris.builtins.DivideBuiltin;
+import org.deri.iris.builtins.MultiplyBuiltin;
+import org.deri.iris.builtins.SubtractBuiltin;
 
 /**
  * <p>
@@ -125,16 +129,20 @@ public class GeneralBuiltinEvaluator implements IBuiltinEvaluator {
 			}
 		} else {
 			// e.g., add(3, 4, ?X)
-
 			// TODO: Sometimes this.relation0 is empty but builtin is not
 			// evaluable with the bindings from the rule
-			/*
-			 * if(this.builtin.isEvaluable(vars)){ tRes =
-			 * this.builtin.evaluate(this.builtin.getTuple());
-			 * resultRel.add(tRes); }
-			 */
-			tRes = this.builtin.evaluate(this.builtin.getTuple());
-			resultRel.add(tRes);
+			// Correct this once the isEvaluable method is correctly implemented
+			
+			//if(this.builtin.isEvaluable(this.builtin.getTuple().getAllVariables())){
+			if(this.builtin.getTuple().getAllVariables().size() == 1 &&
+					(this.builtin instanceof AddBuiltin ||
+					 this.builtin instanceof DivideBuiltin ||
+					 this.builtin instanceof MultiplyBuiltin ||
+					 this.builtin instanceof SubtractBuiltin
+					)){
+				tRes = this.builtin.evaluate(this.builtin.getTuple());
+				resultRel.add(tRes); 
+			}
 		}
 		return resultRel;
 	}
