@@ -47,10 +47,10 @@ import org.deri.iris.api.terms.ITerm;
  * <code>indexOn(Integer[])</code> method.
  * </p>
  * <p>
- * $Id: SortMergeJoin.java,v 1.5 2007-06-14 21:49:32 darko_anicic Exp $
+ * $Id: SortMergeJoin.java,v 1.6 2007-06-15 12:33:20 darko_anicic Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class SortMergeJoin implements IMixedDatatypeRelationOperation, IJoin {
 
@@ -138,11 +138,11 @@ public class SortMergeJoin implements IMixedDatatypeRelationOperation, IJoin {
 		if (idx == null) {
 			throw new NullPointerException("The joinindex must not be null");
 		}
-		if (idx.length != r0.getArity()) {
+		/*if (idx.length != r0.getArity()) {
 			throw new IllegalArgumentException("The lenght of the index array (" + 
 					idx.length + ") must match the arity of the first relation (" + 
 					r0.getArity() + ")");
-		}
+		}*/
 		for (final int i : idx) {
 			if (i > r1.getArity()) {
 				throw new IllegalArgumentException("The indexes " + Arrays.toString(idx) + 
