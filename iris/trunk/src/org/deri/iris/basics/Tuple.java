@@ -45,11 +45,11 @@ import org.deri.iris.api.terms.IVariable;
  * A simple tuple implementation. This implementation is thread-safe.
  * </p>
  * <p>
- * $Id: Tuple.java,v 1.14 2007-06-11 12:42:38 poettler_ric Exp $
+ * $Id: Tuple.java,v 1.15 2007-06-15 07:25:16 poettler_ric Exp $
  * </p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class Tuple implements ITuple{
 
@@ -98,7 +98,7 @@ public class Tuple implements ITuple{
 			throw new IllegalArgumentException("The arity must not be negative");
 		}
 		terms = new ITerm[arity];
-		Arrays.fill(null, terms);
+		Arrays.fill(terms, null);
 	}
 	
 	public int getArity() {
