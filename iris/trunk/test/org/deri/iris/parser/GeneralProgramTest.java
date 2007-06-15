@@ -136,7 +136,7 @@ public class GeneralProgramTest extends TestCase {
     	return result;
     }
 	
-	/*public void test3() throws Exception{
+	public void test3() throws Exception{
 		if(TEST_NO == 3 || TEST_ALL == 0){
 			String program = 
 	   		
@@ -149,7 +149,6 @@ public class GeneralProgramTest extends TestCase {
 			    "p('b')." +
 			    
 			    "p(?X) :- r(?X)." +
-			    // TODO: only Equality built-in works currently!
 			    "w(?X) :- s(?X), p(?X), ?X='d'." +
 			    "?- w(?X).";
 	   	
@@ -168,7 +167,7 @@ public class GeneralProgramTest extends TestCase {
 		    "w('d').";
 		    
     	return result;
-    }*/
+    }
 	
 	public void test4() throws Exception{
 		if(TEST_NO == 4 || TEST_ALL == 0){
@@ -350,7 +349,7 @@ public class GeneralProgramTest extends TestCase {
 			    "?- p(?X, ?Y).";
 	  	
 	    	m = evluateProgram(program);
-	    	System.out.println("test " + TEST_NO);
+	    	System.out.println("test 8");
 	    	printResults(m);
 	    	System.out.println();
 	    	
@@ -511,7 +510,7 @@ public class GeneralProgramTest extends TestCase {
 		return result;
 	}
 	
-	/*public void test12() throws Exception{
+	public void test12() throws Exception{
 		if(TEST_NO == 12 || TEST_ALL == 0){
 			String program = 
 	   		
@@ -542,9 +541,9 @@ public class GeneralProgramTest extends TestCase {
 		    "w('b').";
 		    
     	return result;
-    }*/
+    }
 	
-	/*public void test13() throws Exception{
+	public void test13() throws Exception{
 		if(TEST_NO == 13 || TEST_ALL == 0){
 			String program = 
 	   		
@@ -575,9 +574,9 @@ public class GeneralProgramTest extends TestCase {
 		    "w(2).";
 		    
     	return result;
-    }*/
+    }
 	
-	/*public void test14() throws Exception{
+	public void test14() throws Exception{
 		if(TEST_NO == 14 || TEST_ALL == 0){
 			String program = 
 	   		
@@ -606,7 +605,7 @@ public class GeneralProgramTest extends TestCase {
 		    "w(1, 4).";
 		    
     	return result;
-    }*/
+    }
 	
 	public void test15() throws Exception{
 		if(TEST_NO == 15 || TEST_ALL == 0){
@@ -621,7 +620,7 @@ public class GeneralProgramTest extends TestCase {
 			    "?- w(?X,?Y).";
 	   	
 	    	m = evluateProgram(program);
-	    	System.out.println("test " + TEST_NO);
+	    	System.out.println("test 15");
 	    	printResults(m);
 	    	System.out.println();
 	
@@ -659,7 +658,7 @@ public class GeneralProgramTest extends TestCase {
 			    "?- w(?X,?Y).";
 	   	
 	    	m = evluateProgram(program);
-	    	System.out.println("test " + TEST_NO);
+	    	System.out.println("test 16");
 	    	printResults(m);
 	    	System.out.println();
 	
