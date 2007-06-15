@@ -107,7 +107,7 @@ public class GeneralProjection implements IProjection {
 
 	public IMixedDatatypeRelation project() {
 		if (this.relation.size() == 0)
-			return this.relation;
+			return RELATION.getMixedRelation(this.arity);
 		Iterator<ITuple> iterator = this.relation.iterator();
 		ITuple tuple;
 
