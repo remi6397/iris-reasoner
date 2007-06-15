@@ -158,7 +158,7 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 
 		for (int i = 1; i < j.getChildren().size(); i++) {
 			c1 = j.getChildren().get(i);
-			if (!emptyRel) {
+			//if (!emptyRel) {
 				if (c1.getType().equals(ComponentType.BUILTIN)) {
 					IBuiltinDescriptor con = (IBuiltinDescriptor) c1;
 					if (con.getBuiltin().isEvaluable(vars)) {
@@ -188,9 +188,9 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 					}
 					r0 = jo.join();
 				}
-				if (r0 != null && r0.size() == 0)
+				/*if (r0 != null && r0.size() == 0)
 					emptyRel = true;
-			}
+			}*/
 			if (addVars && c1 != null && c1.getVariables() != null && c1.isPositive())
 				vars.addAll(c1.getVariables());
 		}
