@@ -25,15 +25,12 @@
  */
 package org.deri.iris.builtins;
 
-import static org.deri.iris.factory.Factory.BASIC;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
@@ -43,11 +40,11 @@ import org.deri.iris.factory.Factory;
  * Builtin to compare two terms for unequality.
  * </p>
  * <p>
- * $Id: UnEqualBuiltin.java,v 1.9 2007-05-14 12:47:22 poettler_ric Exp $
+ * $Id: UnEqualBuiltin.java,v 1.10 2007-06-15 12:28:34 darko_anicic Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class UnEqualBuiltin extends AbstractBuiltin {
 
@@ -94,7 +91,7 @@ public class UnEqualBuiltin extends AbstractBuiltin {
 			return !BuiltinHelper.equal(complete[0], complete[1]) ?
 				BuiltinHelper.EMPTY_TUPLE : null;
 		}
-		throw new IllegalArgumentException("Can not evaluate an UNEQUAL with any variables");
+		throw new IllegalArgumentException("Can not evaluate an UNEQUAL with no bound variable.");
 	}
 
 	public ITuple evaluate(ITuple tup, IVariable... vars) {
