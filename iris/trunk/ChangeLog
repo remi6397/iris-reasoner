@@ -5,10 +5,15 @@ Changes since 0.2:
 ==================
 	Additions:
 	----------
+	- Support for all data types supported by WSML
+	- A numbr of built-ins implemented
+	- The evaluation modified to properly handle built-ins.
+	- added the IMixedDatatypeRelation  and corresponding implementations
+	- added the IndexingOnTheFlyRelation and corresponding implementations
+	- Relational algebra operators modified to handle IMixedDatatypeRelation
 	- Added the IRelationFactory interface (not all calls 
 	to the Relation constructor are exchanged, yet)
 	- modified the IBuiltinInterface
-	- added the IndexingOnTheFlyRelation
 	- reimplemented the Complementor class (used for the construction 
 	of the DOM)
 	- modified the parser to distinguish the datatypes (according 
@@ -21,4 +26,4 @@ Changes since 0.2:
 	- some bugfixes in the magic sets
 	- some bugfixes in the Join operator and SeminaiveEvaluation classes
 
-$Id: ChangeLog,v 1.4 2007-04-06 18:18:27 darko_anicic Exp $
+$Id: ChangeLog,v 1.5 2007-06-15 12:57:07 darko_anicic Exp $
