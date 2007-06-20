@@ -1,6 +1,11 @@
 The IRIS ChangeLog:
 ===================
 
+Changes since 0.3:
+==================
+	Improvements:
+	-------------
+	- enabled multible programs per vm
 Changes since 0.2:
 ==================
 	Additions:
@@ -28,4 +33,4 @@ Changes since 0.2:
 	- some bugfixes in the magic sets
 	- some bugfixes in the Join operator and SeminaiveEvaluation classes
 
-$Id: ChangeLog,v 1.6 2007-06-20 08:53:08 poettler_ric Exp $
+$Id: ChangeLog,v 1.7 2007-06-20 08:55:47 poettler_ric Exp $
