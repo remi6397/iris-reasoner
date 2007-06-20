@@ -22,8 +22,10 @@ Changes since 0.2:
 	Fixes:
 	- added the possibility to make custom builitns (see doc folder for a
 	howto)
+	- added relations to accept tuples with various datatypes at any
+	position
 	------
 	- some bugfixes in the magic sets
 	- some bugfixes in the Join operator and SeminaiveEvaluation classes
 
-$Id: ChangeLog,v 1.5 2007-06-15 12:57:07 darko_anicic Exp $
+$Id: ChangeLog,v 1.6 2007-06-20 08:53:08 poettler_ric Exp $
