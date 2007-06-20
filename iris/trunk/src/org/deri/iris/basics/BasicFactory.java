@@ -50,7 +50,7 @@ import org.deri.iris.api.terms.ITerm;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
  * @version $Revision$
  */
@@ -112,13 +112,11 @@ public class BasicFactory implements IBasicFactory {
 	}
 	
 	public IPredicate createPredicate(String symbol, int arity) {
-		IPredicate p = new Predicate(symbol, arity);
-		return PROGRAM.createProgram().registerPredicate(p);
+		return new Predicate(symbol, arity);
 	}
 
 	public IPredicate createBuiltinPredicate(String symbol, int arity) {
-		IPredicate p = new Predicate(symbol, arity, true);
-		return PROGRAM.createProgram().registerPredicate(p);
+		return new Predicate(symbol, arity, true);
 	}
 
 	public IQuery createQuery(ILiteral... literals) {
@@ -130,14 +128,11 @@ public class BasicFactory implements IBasicFactory {
 	}
 
 	public IRule createRule(IHead head, IBody body) {
-		IRule r = new Rule(head, body); 
-		GRAPH.createPredicateGraph().addRule(r);
-		return r;
+		return new Rule(head, body); 
 	}
 
 	public IRule copyRule(IHead head, IBody body){
-		IRule r = new Rule(head, body); 
-		return r;
+		return new Rule(head, body); 
 	}
 	
 	public ITuple createTuple(int arity) {

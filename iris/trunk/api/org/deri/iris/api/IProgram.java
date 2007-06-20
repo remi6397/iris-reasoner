@@ -58,11 +58,12 @@ import org.deri.iris.builtins.BuiltinRegister;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IProgram.java,v 1.10 2007-06-14 21:13:40 darko_anicic Exp $
+ * $Id: IProgram.java,v 1.11 2007-06-20 12:20:00 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @date 14.06.2007 16:45:49
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision: 1.11 $
  */
 public interface IProgram {
 
@@ -166,21 +167,6 @@ public interface IProgram {
 	 * @return Set of all predicates from the knowledgebase.
 	 */
 	public Set<IPredicate> getPredicates();
-
-	/**
-	 * <p>
-	 * Register a predicate p. Checks whether the predicate p already exists in
-	 * the knowledgebase and returns it. Otherwise it will register the
-	 * predicate and return the registered one. The purpos of this mehtod
-	 * is, to keep only one instance of each predicate in the vm, so that
-	 * the statification works correctly.
-	 * </p>
-	 * 
-	 * @param p
-	 *            The predicate to be checked.
-	 * @return Returns the registered predicate.
-	 */
-	public IPredicate registerPredicate(final IPredicate p);
 
 	/**
 	 * <p>
@@ -372,4 +358,25 @@ public interface IProgram {
 	 * @return the register
 	 */
 	public BuiltinRegister getBuiltinRegister();
+
+	/**
+	 * Returns the stratum of the predicate in this program.
+	 * @param p the predicate
+	 * @return the stratum
+	 * @throws NullPointerException if the predicate is <code>null</code>
+	 * @throws NoSuchElementException if the predicate is unknown to the
+	 * program
+	 */
+	public int getStratum(final IPredicate p);
+
+	/**
+	 * Sets the stratum for a predicate.
+	 * @param p the predicate
+	 * @param s the stratum to set
+	 * @throws NullPointerException if the predicate is <code>null</code>
+	 * @throws NoSuchElementException if the predicate is unknown to the
+	 * program
+	 * @throws IllegalArgumentException if the stratum is negative
+	 */
+	public void setStratum(final IPredicate p, final int s);
 }

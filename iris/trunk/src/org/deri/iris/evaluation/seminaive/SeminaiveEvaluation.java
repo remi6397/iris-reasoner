@@ -70,9 +70,9 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 		Set<IPredicate> preds = null;
 		
 		/** Evaluate rules */
-		for (int i = 1, maxStrat = MiscOps.getMaxStratum(this.idbMap.keySet()); 
+		for (int i = 1, maxStrat = MiscOps.getMaxStratum(this.p, this.idbMap.keySet()); 
 				i <= maxStrat; i++) {
-			preds = MiscOps.getPredicatesOfStratum(this.idbMap.keySet(), i);
+			preds = MiscOps.getPredicatesOfStratum(this.p, this.idbMap.keySet(), i);
 			/**
 			 * <p>Algorithm:</p>
 			 * <p>
@@ -84,7 +84,6 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 			 */
 			for (final IPredicate pr : preds) {
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-				this.p.registerPredicate(pr);
 				p = method.evaluate(this.idbMap.get(pr), this.p);
 				if(this.p.getFacts(pr) != null && 
 						! this.p.getFacts(pr).containsAll(p)){

@@ -52,15 +52,14 @@ import org.deri.iris.basics.seminaive.ConstLiteral;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.10 2007-06-14 21:28:34 darko_anicic Exp $
+ * $Id: MiscOps.java,v 1.11 2007-06-20 12:20:08 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.10 $
- * @date $Date: 2007-06-14 21:28:34 $
+ * @version $Revision: 1.11 $
  */
 public class MiscOps {
 
@@ -225,7 +224,7 @@ public class MiscOps {
 
 		// set all strata to 1
 		for (final IPredicate p : e.getPredicates()) {
-			p.setStratum(1);
+			e.setStratum(p, 1);
 		}
 		while ((total >= max) && change) {
 			change = false;
@@ -237,17 +236,17 @@ public class MiscOps {
 						final IPredicate bp = bl.getPredicate();
 
 						if (!bl.isPositive()) {
-							int current = bp.getStratum();
-							if (current >= hp.getStratum()) {
-								hp.setStratum(current + 1);
+							int current = e.getStratum(bp);
+							if (current >= e.getStratum(hp)) {
+								e.setStratum(hp, current + 1);
 								max = Math.max(max, current + 1);
 								change = true;
 							}
 						} else {
-							int greater = Math.max(hp.getStratum(), bp
-									.getStratum());
-							if (hp.getStratum() < greater) {
-								hp.setStratum(greater);
+							int greater = Math.max(e.getStratum(hp), 
+									e.getStratum(bp));
+							if (e.getStratum(hp) < greater) {
+								e.setStratum(hp, greater);
 								change = true;
 							}
 							max = Math.max(max, greater);
@@ -266,19 +265,22 @@ public class MiscOps {
 	 * Returns the highest stratum of a set of predicates.
 	 * 
 	 * @param h	The set of idb predicates.
+	 * @param p the program from where to retrieve the stratum
 	 * @return 	The highest stratum.
 	 * @throws 	NullPointerException
 	 *             	if the set of predicates is {@code null}.
-	 * @throws NullPointerException
-	 *             if the set contains {@code null}.
+	 * @throws NullPointerException if the program is <code>null</code>
 	 */
-	public static int getMaxStratum(final Set<IPredicate> h) {
+	public static int getMaxStratum(final IProgram p, final Set<IPredicate> h) {
+		if (p == null) {
+			throw new NullPointerException("The program must not be null");
+		}
 		if (h == null) {
 			throw new NullPointerException("The predicates must not be null");
 		}
 		int strat = 0;
 		for (final IPredicate pred : h) {
-			strat = Math.max(strat, pred.getStratum());
+			strat = Math.max(strat, p.getStratum(pred));
 		}
 		return strat;
 	}
@@ -286,11 +288,13 @@ public class MiscOps {
 	/**
 	 * Determines (out of a set of literals) all literals whose predicats have a given stratum.
 	 * 
+	 * @param p the program from where to retieve the stratum
 	 * @param preds
 	 *            the set of predicates.
 	 * @param s
 	 *            the stratum to look for
 	 * @return the set of predicates at the given stratum
+	 * @throws NullPointerException if the program is <code>null</code>
 	 * @throws NullPointerException
 	 *             if the set of predicates is {@code null}
 	 * @throws NullPointerException
@@ -299,7 +303,10 @@ public class MiscOps {
 	 *             if the stratum is smaller than 0
 	 */
 	public static Set<IPredicate> getPredicatesOfStratum(
-			final Set<IPredicate> preds, final int s) {
+			final IProgram p, final Set<IPredicate> preds, final int s) {
+		if (p == null) {
+			throw new NullPointerException("The program must not be null");
+		}
 		if (preds == null) {
 			throw new NullPointerException("The predicates must not be null");
 		}
@@ -308,9 +315,9 @@ public class MiscOps {
 		}
 
 		final Set<IPredicate> predicates = new HashSet<IPredicate>();
-		for (final IPredicate p : preds) {
-			if (p.getStratum() == s) {
-				predicates.add(p);
+		for (final IPredicate pred : preds) {
+			if (p.getStratum(pred) == s) {
+				predicates.add(pred);
 			}
 		}
 		return predicates;
