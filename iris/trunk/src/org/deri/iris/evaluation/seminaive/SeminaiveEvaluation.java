@@ -25,8 +25,6 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
-import static org.deri.iris.factory.Factory.RELATION;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -121,14 +119,7 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 					if(this.p.getFacts(pr) != null && 
 							! this.p.getFacts(pr).containsAll(p)){
 						
-						//tempRel = RELATION.getMixedRelation(p.getArity());
-						// Swap the next 2 lines!
 						p.removeAll(this.p.getFacts(pr));
-						//tempRel.addAll(p);
-						//tempRel.removeAll(this.p.getFacts(pr));
-						
-						/*aq.put(pr, tempRel);
-						this.p.addFacts(pr, tempRel);*/
 						aq.put(pr, p);
 						this.p.addFacts(pr, p);
 						newTupleAdded = true;
@@ -138,16 +129,6 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 					cont = cont || newTupleAdded;
 				}
 			}
-			/*for (final IPredicate pr : preds) {
-				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-				p = method.evaluate(this.idbMap.get(pr), this.p);
-				if(this.p.getFacts(pr) != null && 
-						! this.p.getFacts(pr).containsAll(p)){
-					
-					aq.put(pr, p);
-					this.p.addFacts(pr, p);
-				}
-			}*/
 		}
 		return true;
 	}
