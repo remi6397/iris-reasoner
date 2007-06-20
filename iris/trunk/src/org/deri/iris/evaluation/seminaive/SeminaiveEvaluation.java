@@ -47,6 +47,10 @@ import org.deri.iris.evaluation.MiscOps;
  * OUTPUT: The least fixed point solution to the datalog equations obtained from
  * these rules.
  * 
+ * <p>
+ * $Id$
+ * </p>
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @date 05-sep-2006
  */
@@ -117,11 +121,16 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 					if(this.p.getFacts(pr) != null && 
 							! this.p.getFacts(pr).containsAll(p)){
 						
-						tempRel = RELATION.getMixedRelation(p.getArity());
-						tempRel.addAll(p);
-						tempRel.removeAll(this.p.getFacts(pr));
-						aq.put(pr, tempRel);
-						this.p.addFacts(pr, tempRel);
+						//tempRel = RELATION.getMixedRelation(p.getArity());
+						// Swap the next 2 lines!
+						p.removeAll(this.p.getFacts(pr));
+						//tempRel.addAll(p);
+						//tempRel.removeAll(this.p.getFacts(pr));
+						
+						/*aq.put(pr, tempRel);
+						this.p.addFacts(pr, tempRel);*/
+						aq.put(pr, p);
+						this.p.addFacts(pr, p);
 						newTupleAdded = true;
 					}else{
 						newTupleAdded = false;
@@ -129,7 +138,7 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 					cont = cont || newTupleAdded;
 				}
 			}
-			for (final IPredicate pr : preds) {
+			/*for (final IPredicate pr : preds) {
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 				p = method.evaluate(this.idbMap.get(pr), this.p);
 				if(this.p.getFacts(pr) != null && 
@@ -138,7 +147,7 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 					aq.put(pr, p);
 					this.p.addFacts(pr, p);
 				}
-			}
+			}*/
 		}
 		return true;
 	}
