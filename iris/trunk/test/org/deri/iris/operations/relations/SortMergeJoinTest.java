@@ -30,11 +30,14 @@ import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 import static org.deri.iris.factory.Factory.TERM;
+import static org.deri.iris.MiscHelper.createTuple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 import junit.framework.Assert;
 import junit.framework.Test;
@@ -50,15 +53,21 @@ import org.deri.iris.api.storage.IRelation;
  * <p>
  * Demonstrates use of the SortMergeJoin operator implementation. 
  * </p>
- * 
+ * <p>
+ * $Id: SortMergeJoinTest.java,v 1.2 2007-06-20 09:46:29 poettler_ric Exp $
+ * </p>
  * @author Darko Anicic, DERI Innsbruck
- * @date 12.06.2007 09:52:43
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  */
 public class SortMergeJoinTest extends TestCase {
 	
 	static IMixedDatatypeRelation relation_0 = null;
 	
 	static IMixedDatatypeRelation relation_1 = null;
+	
+	static IMixedDatatypeRelation r0 = null;
+	
+	static IMixedDatatypeRelation r1 = null;
 	
 	// Tuples from the first relation to be joined.
 	private static final ITuple[] tups_0 = new ITuple[]{
@@ -81,16 +90,39 @@ public class SortMergeJoinTest extends TestCase {
 		return new TestSuite(SortMergeJoinTest.class, SortMergeJoinTest.class.getSimpleName());
 	}
 
-	private static void setRelations(){
+	public void setUp() {
+		// fill r0
+		r0 = RELATION.getMixedRelation(3);
+		r0.add(createTuple("a", "a", "c"));
+		r0.add(createTuple("b", "a", "c"));
+		r0.add(createTuple("c", "b", "b"));
+
+		r0.add(BASIC.createTuple(TERM.createString("r"), TERM.createString("x"), CONCRETE.createInteger(1)));
+		r0.add(BASIC.createTuple(TERM.createString("r"), TERM.createString("y"), CONCRETE.createInteger(1)));
+		r0.add(BASIC.createTuple(TERM.createString("s"), TERM.createString("x"), CONCRETE.createInteger(2)));
+		r0.add(BASIC.createTuple(TERM.createString("s"), TERM.createString("y"), CONCRETE.createInteger(2)));
+
+		// fill r1
+		r1 = RELATION.getMixedRelation(4);
+		r1.add(createTuple("a", "b", "d", "c"));
+		r1.add(createTuple("a", "c", "c", "c"));
+		r1.add(createTuple("c", "d", "b", "a"));
+		r1.add(createTuple("c", "e", "a", "a"));
+
+		r1.add(BASIC.createTuple(TERM.createString("a"), TERM.createString("x"), CONCRETE.createInteger(1), CONCRETE.createInteger(8)));
+		r1.add(BASIC.createTuple(TERM.createString("a"), TERM.createString("y"), CONCRETE.createInteger(2), CONCRETE.createInteger(7)));
+		r1.add(BASIC.createTuple(TERM.createString("b"), TERM.createString("x"), CONCRETE.createInteger(3), CONCRETE.createInteger(6)));
+		r1.add(BASIC.createTuple(TERM.createString("b"), TERM.createString("y"), CONCRETE.createInteger(4), CONCRETE.createInteger(5)));
+
+		// adding darkos relations -> do it automatically
 		relation_0 = RELATION.getMixedRelation(4);
 		relation_1 = RELATION.getMixedRelation(4);
 		
 		relation_0.addAll(Arrays.asList(tups_0));
 		relation_1.addAll(Arrays.asList(tups_1));
 	}
-	
+
 	public void runJoin_0(final int[] idxs, final Collection<ITuple> e) {
-		setRelations();
 		IJoin sortMergeJoinOperator 
 			= RELATION_OPERATION.createSortMergeJoinOperator(
 					relation_0,relation_1, idxs, JoinCondition.EQUALS);
@@ -113,6 +145,64 @@ public class SortMergeJoinTest extends TestCase {
 				TERM.createString("zzzz"), CONCRETE.createIri("http://www.google.com"), CONCRETE.createDouble(10d), CONCRETE.createInteger(8)));
 		
 		runJoin_0(idxs, e);
+	}
+
+	public void testJoin1() {
+		final SortMergeJoin j = new SortMergeJoin(r0, r1, new int[]{0, -1, -1}, null);
+		final Set<ITuple> exp = new HashSet<ITuple>();
+		exp.add(createTuple("a", "a", "c", "a", "b", "d", "c"));
+		exp.add(createTuple("a", "a", "c", "a", "c", "c", "c"));
+		exp.add(createTuple("c", "b", "b", "c", "d", "b", "a"));
+		exp.add(createTuple("c", "b", "b", "c", "e", "a", "a"));
+		exp.add(BASIC.createTuple(TERM.createString("a"), TERM.createString("a"), TERM.createString("c"), 
+					TERM.createString("a"), TERM.createString("x"), CONCRETE.createInteger(1), CONCRETE.createInteger(8)));
+		exp.add(BASIC.createTuple(TERM.createString("a"), TERM.createString("a"), TERM.createString("c"), 
+					TERM.createString("a"), TERM.createString("y"), CONCRETE.createInteger(2), CONCRETE.createInteger(7)));
+		exp.add(BASIC.createTuple(TERM.createString("b"), TERM.createString("a"), TERM.createString("c"), 
+					TERM.createString("b"), TERM.createString("x"), CONCRETE.createInteger(3), CONCRETE.createInteger(6)));
+		exp.add(BASIC.createTuple(TERM.createString("b"), TERM.createString("a"), TERM.createString("c"), 
+					TERM.createString("b"), TERM.createString("y"), CONCRETE.createInteger(4), CONCRETE.createInteger(5)));
+		assertResults(j.evaluate(), exp);
+	}
+
+	public void testJoin2() {
+		final SortMergeJoin j = new SortMergeJoin(r0, r1, new int[]{-1, -1, 2}, null);
+		final Set<ITuple> exp = new HashSet<ITuple>();
+		exp.add(BASIC.createTuple(TERM.createString("r"), TERM.createString("x"), CONCRETE.createInteger(1), 
+					TERM.createString("a"), TERM.createString("x"), CONCRETE.createInteger(1), CONCRETE.createInteger(8)));
+		exp.add(BASIC.createTuple(TERM.createString("r"), TERM.createString("y"), CONCRETE.createInteger(1), 
+					TERM.createString("a"), TERM.createString("x"), CONCRETE.createInteger(1), CONCRETE.createInteger(8)));
+		exp.add(BASIC.createTuple(TERM.createString("s"), TERM.createString("x"), CONCRETE.createInteger(2), 
+					TERM.createString("a"), TERM.createString("y"), CONCRETE.createInteger(2), CONCRETE.createInteger(7)));
+		exp.add(BASIC.createTuple(TERM.createString("s"), TERM.createString("y"), CONCRETE.createInteger(2), 
+					TERM.createString("a"), TERM.createString("y"), CONCRETE.createInteger(2), CONCRETE.createInteger(7)));
+		exp.add(createTuple("a", "a", "c", "a", "c", "c", "c"));
+		exp.add(createTuple("b", "a", "c", "a", "c", "c", "c"));
+		exp.add(createTuple("c", "b", "b", "c", "d", "b", "a"));
+		assertResults(j.evaluate(), exp);
+	}
+
+	public void testJoin3() {
+		final SortMergeJoin j = new SortMergeJoin(r0, r1, new int[]{-1, 1, 2}, JoinCondition.LESS_THAN);
+		final Set<ITuple> exp = new HashSet<ITuple>();
+		exp.add(BASIC.createTuple(TERM.createString("s"), TERM.createString("y"), CONCRETE.createInteger(2), 
+					TERM.createString("a"), TERM.createString("x"), CONCRETE.createInteger(1), CONCRETE.createInteger(8)));
+		assertResults(j.evaluate(), exp);
+	}
+
+	public void testJoin4() {
+		final SortMergeJoin j = new SortMergeJoin(r0, r1, new int[]{-1, 1, 2}, JoinCondition.GREATER_THAN);
+		final Set<ITuple> exp = new HashSet<ITuple>();
+		exp.add(BASIC.createTuple(TERM.createString("r"), TERM.createString("x"), CONCRETE.createInteger(1), 
+					TERM.createString("a"), TERM.createString("y"), CONCRETE.createInteger(2), CONCRETE.createInteger(7)));
+		exp.add(BASIC.createTuple(TERM.createString("r"), TERM.createString("x"), CONCRETE.createInteger(1), 
+					TERM.createString("b"), TERM.createString("y"), CONCRETE.createInteger(4), CONCRETE.createInteger(5)));
+		exp.add(BASIC.createTuple(TERM.createString("s"), TERM.createString("x"), CONCRETE.createInteger(2), 
+					TERM.createString("b"), TERM.createString("y"), CONCRETE.createInteger(4), CONCRETE.createInteger(5)));
+		exp.add(createTuple("a", "a", "c", "a", "b", "d", "c"));
+		exp.add(createTuple("b", "a", "c", "a", "b", "d", "c"));
+		exp.add(createTuple("c", "b", "b", "a", "c", "c", "c"));
+		assertResults(j.evaluate(), exp);
 	}
 	
 	/**
