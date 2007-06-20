@@ -1,0 +1,326 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
+ * 
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
+package org.deri.iris.evaluation.algebra;
+
+import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.RELATION;
+import static org.deri.iris.factory.Factory.RELATION_OPERATION;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.deri.iris.api.IProgram;
+import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.evaluation.algebra.IBuiltinDescriptor;
+import org.deri.iris.api.evaluation.algebra.IComponent;
+import org.deri.iris.api.evaluation.algebra.IConstantDescriptor;
+import org.deri.iris.api.evaluation.algebra.IDifferenceDescriptor;
+import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
+import org.deri.iris.api.evaluation.algebra.IJoinDescriptor;
+import org.deri.iris.api.evaluation.algebra.IProjectionDescriptor;
+import org.deri.iris.api.evaluation.algebra.IRelationDescriptor;
+import org.deri.iris.api.evaluation.algebra.ISelectionDescriptor;
+import org.deri.iris.api.evaluation.algebra.IUnionDescriptor;
+import org.deri.iris.api.evaluation.algebra.IComponent.ComponentType;
+import org.deri.iris.api.operations.relation.IBuiltinEvaluator;
+import org.deri.iris.api.operations.relation.IDifference;
+import org.deri.iris.api.operations.relation.IJoin;
+import org.deri.iris.api.operations.relation.IProjection;
+import org.deri.iris.api.operations.relation.ISelection;
+import org.deri.iris.api.operations.relation.IUnion;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.factory.Factory;
+import org.deri.iris.operations.relations.MiscOps;
+
+/**
+ * <p>
+ * An evaluator of a relational algebra expression. This evaluator is used
+ * whenever an evaluation of relational algebra expressions is needed regardless
+ * of a particular evaluation algorithm (e.g. naive evaluation, semi-naive
+ * evaluation etc.).
+ * </p>
+ * <p>
+ * This evaluator takes a program previously transformed to a set of relation
+ * algebra expressions, as an input, and executes these expressions. Each relation 
+ * in algebra expressions may contain tuples with terms of different data types 
+ * in arbitrary positions.
+ * </p>
+ * 
+ * @author Darko Anicic, DERI Innsbruck
+ * @date Dec 18, 2006 
+ */
+public class ExpressionEvaluator implements IExpressionEvaluator {
+
+	public ExpressionEvaluator() {
+	}
+
+	public IMixedDatatypeRelation evaluate(IComponent c, IProgram p) {
+		return evaluate(c, p, null);
+	}
+
+	public IMixedDatatypeRelation evaluateIncrementally(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
+		return evaluate(c, p, aq);
+	}
+
+	private IMixedDatatypeRelation evaluate(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
+		// TODO: reference p and aq in the constructor, instead of passing them
+		// all the time.
+		switch (c.getType()) {
+		case BUILTIN:
+			return evaluateBuiltin(c, null, null);
+		case DIFFERENCE:
+			return evaluateDifference(c, p, aq);
+		case JOIN:
+			return evaluateJoin(c, p, aq, null);
+		case PROJECTION:
+			return evaluateProjection(c, p, aq);
+		case SELECTION:
+			return evaluateSelection(c, p, aq);
+		case UNION:
+			return evaluateUnion(c, p, aq);
+		case RELATION:
+			return evaluateRelation(c, p, aq);
+		case CONSTANT:
+			return evaluateConstant(c);
+		}
+		return null;
+	}
+
+	private IMixedDatatypeRelation evaluateDifference(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
+		if (c.getChildren().size() != 2) {
+			throw new IllegalArgumentException(
+					"Please provide the component with two subcomponents (children), " +
+					"otherwise the evaluateDifference cannot be performed!");
+		}
+		IDifferenceDescriptor d = (IDifferenceDescriptor) c;
+		IDifference diff = Factory.RELATION_OPERATION.createDifferenceOperator(
+				evaluate(d.getChildren().get(0), p, aq), 
+				evaluate(d.getChildren().get(1), p, aq));
+
+		return diff.difference();
+	}
+
+	private IMixedDatatypeRelation evaluateJoin(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq, int[] pInds) {
+
+		if (c.getChildren().size() < 2) {
+			throw new IllegalArgumentException(
+					"Please provide the component with at least two subcomponents " +
+					"(children), otherwise the join operation cannot be performed!");
+		}
+		IJoinDescriptor j = (IJoinDescriptor) c;
+		IJoin jo = null;
+		List<IVariable> vars = new ArrayList<IVariable>();
+		IComponent c0 = j.getChildren().get(0);
+		vars.addAll(c0.getVariables());
+		IComponent c1 = null;
+		/**
+		 * Left relation to be joined contains all tuples from the KB related to
+		 * the corresponding predicate, not only "fresh tuples" from the last
+		 * iteration (aq = null)!
+		 */
+		IMixedDatatypeRelation r0 = evaluate(c0, p, null);
+		boolean emptyRel = (r0.size() == 0) ? true : false;
+		boolean addVars = true;
+		IMixedDatatypeRelation r1 = null;
+
+		for (int i = 1; i < j.getChildren().size(); i++) {
+			c1 = j.getChildren().get(i);
+			//if (!emptyRel) {
+				if (c1.getType().equals(ComponentType.BUILTIN)) {
+					IBuiltinDescriptor con = (IBuiltinDescriptor) c1;
+					if (con.getBuiltin().isEvaluable(vars)) {
+						r0 = evaluateBuiltin(c1, vars, r0);
+						addVars = true;
+					} else {
+						j.getChildren().remove(i);
+						i--;
+						j.addChild(c1);
+						addVars = false;
+					}
+				} else {
+					r1 = evaluate(c1, p, aq);
+					if (c1.isPositive()) {
+						jo = Factory.RELATION_OPERATION.createSortMergeJoinOperator(
+								r0, r1, 
+								// TODO: get correct projection indexes!
+								MiscOps.getJoinIndexes(vars, c1.getVariables()), 
+								j.getCondition());
+						addVars = true;
+					} else {
+						jo = Factory.RELATION_OPERATION
+								.createJoinComplementOperator(r0, r1,
+										MiscOps.getJoinIndexes(vars, c1
+												.getVariables()));
+						addVars = false;
+					}
+					r0 = jo.join();
+				}
+				/*if (r0 != null && r0.size() == 0)
+					emptyRel = true;
+			}*/
+			if (addVars && c1 != null && c1.getVariables() != null && c1.isPositive())
+				vars.addAll(c1.getVariables());
+		}
+		j.getVariables().clear();
+		j.addVariables(vars);
+		return r0;
+	}
+
+	private IMixedDatatypeRelation evaluateProjection(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
+		if (c.getChildren().size() != 1) {
+			throw new IllegalArgumentException(
+				"Please provide the component with only one subcomponent "
+				+ "(child),otherwise the evaluateProjection cannot be performed!");
+		}
+		IProjectionDescriptor pr = (IProjectionDescriptor) c;
+		IMixedDatatypeRelation rel = evaluate(pr.getChildren().get(0), p, aq);
+		if (!Arrays.equals(pr.getVariables().toArray(), 
+						   pr.getChildren().get(0).getVariables().toArray())) {
+			IProjection projection = Factory.RELATION_OPERATION.
+					createProjectionOperator(rel,
+					// TODO: If you don't use project inds, created in
+					// Rule2Relation, remove them!
+					// pr.getIndexes());
+					MiscOps.getProjectionIndexes(pr.getChildren()
+							.get(0).getVariables(), pr.getVariables()));
+
+			return projection.project();
+		}
+		return rel;
+	}
+
+	private IMixedDatatypeRelation evaluateRelation(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
+		if (c.getChildren().size() != 0) {
+			throw new IllegalArgumentException(
+				"Please provide the component with no subcomponent (no child), " +
+				"otherwise evaluateRelation cannot be performed!");
+		}
+		IRelationDescriptor r = (IRelationDescriptor) c;
+		IMixedDatatypeRelation rel = null;
+		if (aq != null && aq.get(r.getPredicate()) != null && c.isPositive()) {
+			// Return tuples from the last iteration only!
+			rel = aq.get(r.getPredicate());
+		} else {
+			// Return all tuples from the KB!
+			rel = p.getFacts(r.getPredicate());
+		}
+		if (rel == null) {
+			return RELATION.getMixedRelation(r.getPredicate().getArity());
+		} else {
+			return rel;
+		}
+	}
+
+	private IMixedDatatypeRelation evaluateSelection(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
+		if (c.getChildren().size() != 1) {
+			throw new IllegalArgumentException(
+				"Please provide the component with one subcomponent (child), " +
+				"otherwise the evaluateSelection cannot be performed!");
+		}
+		ISelectionDescriptor s = (ISelectionDescriptor) c;
+		ISelection sel = Factory.RELATION_OPERATION.createSelectionOperator(
+				evaluate(s.getChildren().get(0), p, aq), 
+				s.getPattern(), 
+				s.getIndexes());
+
+		return sel.select();
+	}
+
+	/**
+	 * <p>
+	 * Evaluates a component which is of type of UNION. The execution of this
+	 * method may be a very expensive operation if a component to be executed
+	 * contains a number of very big relations to be unified.
+	 * </p>
+	 * 
+	 * @param c
+	 * @param p
+	 * @param aq
+	 * @return
+	 */
+	private IMixedDatatypeRelation evaluateUnion(IComponent c, IProgram p,
+			Map<IPredicate, IMixedDatatypeRelation> aq) {
+
+		if (c.getChildren().size() == 0) {
+			throw new IllegalArgumentException(
+				"Please provide the component with at least one subcomponent "
+				+ "(child), otherwise the evaluateUnion cannot be performed!");
+		}
+		IUnionDescriptor u = (IUnionDescriptor) c;
+		List<IMixedDatatypeRelation> rels = new ArrayList<IMixedDatatypeRelation>(u.getChildren().size());
+		for (int i = 0; i < u.getChildren().size(); i++) {
+			rels.add(evaluate(u.getChildren().get(i), p, aq));
+		}
+		IUnion un = Factory.RELATION_OPERATION.createUnionOperator(rels);
+		return un.union();
+	}
+
+	private IMixedDatatypeRelation evaluateConstant(IComponent c) {
+		IConstantDescriptor con = (IConstantDescriptor) c;
+		IMixedDatatypeRelation r = RELATION.getMixedRelation(1);
+		r.add(BASIC.createTuple(con.getConstant()));
+		return r;
+	}
+
+	private IMixedDatatypeRelation evaluateBuiltin(IComponent c, List<IVariable> relVars,
+		IMixedDatatypeRelation rel) {
+
+		IBuiltinDescriptor con = (IBuiltinDescriptor) c;
+		IBuiltinEvaluator eval = null;
+		if (c.getChildren().size() == 0) {
+			if (relVars == null || rel == null) {
+				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator(
+						con.getBuiltin(), new ArrayList<IVariable>(0), 
+						RELATION.getMixedRelation(0));
+			} else {
+				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator(con
+						.getBuiltin(), relVars, rel);
+			}
+		} else {
+			throw new IllegalArgumentException(
+					"Nested built-ins are currently not supported!");
+		}
+		c.getVariables().clear();
+		c.addVariables(eval.getOutVars());
+		return eval.evaluate();
+	}
+}

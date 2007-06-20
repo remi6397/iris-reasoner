@@ -1,0 +1,117 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
+ * 
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
+package org.deri.iris.api.factory;
+
+import java.util.List;
+
+import org.deri.iris.api.basics.IAtom;
+import org.deri.iris.api.basics.IBody;
+import org.deri.iris.api.basics.IHead;
+import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.terms.ITerm;
+
+/**
+ * <p>
+ * An interface that can be used to create set of basic logical entities 
+ * such as predicates, atoms, rules, queries etc.
+ * </p>
+ * <p>
+ * $Id: IBasicFactory.java,v 1.13 2007-05-03 12:11:47 darko_anicic Exp $
+ * </p>
+ * @author Darko Anicic, DERI Innsbruck
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.13 $
+ */
+public interface IBasicFactory {
+
+	public IAtom createAtom(IPredicate p);
+	public IAtom createAtom(IPredicate p, ITuple tuple);
+
+	/**
+	 * Creates a deep copy of an atom. The terms themsemves will remain 
+	 * the same instances.
+	 * @param a the atom to copy
+	 * @return the copy
+	 * @throws NullPointerException if the atom is <code>null</code>
+	 * @throws IllegalArgumentException if the atom is a builtin one.
+	 * @since 0.3
+	 */
+	public IAtom createAtom(final IAtom a);
+
+	public IBody createBody(ILiteral... literals);
+	public IBody createBody(List<ILiteral> literals);
+
+	public IHead createHead(ILiteral... literals);
+	public IHead createHead(List<ILiteral> literals);
+
+	public ILiteral createLiteral(boolean isPositive, IAtom atom);
+	public ILiteral createLiteral(boolean isPositive, IBuiltInAtom builtinAtom);
+	public ILiteral createLiteral(boolean isPositive, IPredicate predicate);
+	public ILiteral createLiteral(boolean isPositive, IPredicate predicate,
+			ITuple tuple);
+
+	/**
+	 * Creates a deep copy of a literal. The terms themsemves will remain 
+	 * the same instances.
+	 * @param l the tuple to copy
+	 * @return the copy
+	 * @throws NullPointerException if the literal is <code>null</code>
+	 * @throws IllegalArgumentException if the underlying atom is a builtin one.
+	 * @since 0.3
+	 */
+	public ILiteral createLiteral(final ILiteral l);
+	
+	public ITuple createMinimalTuple(ITerm... terms);
+	public ITuple createMinimalTuple(List<ITerm> terms);
+	
+	public IPredicate createPredicate(String symbol, int arity);
+	public IPredicate createBuiltinPredicate(String symbol, int arity);
+	
+	public IQuery createQuery(ILiteral... literals);
+	public IQuery createQuery(List<ILiteral> literals);
+
+	public IRule createRule(IHead head, IBody body);
+	public IRule copyRule(IHead head, IBody body);
+	
+	public ITuple createTuple(int arity);
+	public ITuple createTuple(ITerm... terms);
+	public ITuple createTuple(List<ITerm> terms);
+
+	/**
+	 * Creates a copy of a tuple. The terms themsemves will remain the same
+	 * instances.
+	 * @param t the tuple to copy
+	 * @return the copy
+	 * @throws NullPointerException if the tuple is <code>null</code>
+	 * @since 0.3
+	 */
+	public ITuple createTuple(final ITuple t);
+}

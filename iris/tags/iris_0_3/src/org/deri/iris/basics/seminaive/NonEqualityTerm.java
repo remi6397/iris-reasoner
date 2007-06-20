@@ -1,0 +1,78 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
+ * 
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
+
+package org.deri.iris.basics.seminaive;
+
+import org.deri.iris.api.terms.ITerm;
+/**
+ * Non equality representation for a term. 
+ * This wrapper is used to represent a term which 
+ * must not appear in selected tuples at certain 
+ * position in a tuple (non equality condition).
+ * 
+* @author Darko Anicic, DERI Innsbruck
+* @author Richard Pöttler, richard dot poettler at deri dot org
+*/
+public class NonEqualityTerm implements ITerm{
+	
+	private ITerm term = null;
+	
+	public NonEqualityTerm(final ITerm t) {
+		this.term = t;
+	}
+
+	public boolean isGround() {
+		return this.term.isGround();
+	}
+
+	public ITerm getMinValue() {
+		return this.term.getMinValue();
+	}
+
+	public Object getValue() {
+		return this.term.getValue();
+	}
+
+	public void setValue(Object t) {
+		this.term.setValue(t);
+	}
+
+	public int compareTo(Object o) {
+		return this.term.compareTo(o);
+	}
+	
+	public Object clone() throws CloneNotSupportedException{
+		return this.term.clone();
+	}
+	
+	public String toString() {
+		return "!" + this.term.toString();
+	}
+	
+	public ITerm getTerm() {
+		return this.term;
+	}
+}

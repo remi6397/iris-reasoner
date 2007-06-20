@@ -1,0 +1,90 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
+ * 
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ * dation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+package org.deri.iris.api.basics;
+
+/**
+ * <p>
+ * A predicate is either a relation or the boolean-valued function that amounts
+ * to the characteristic function or the indicator function of such a relation.
+ * </p>
+ * <p>
+ * A predicate is characterized by a predicate symbol and an arity of the
+ * predicate.
+ * </p>
+ * <p>
+ * $Id: IPredicate.java,v 1.5 2006-12-07 16:56:18 darko Exp $
+ * </p>
+ * 
+ * @author Darko Anicic, DERI Innsbruck
+ * @date 07.01.2006 12:00:00
+ */
+
+public interface IPredicate extends Comparable<IPredicate> {
+	/**
+	 * <p>
+	 * Returns the predicate symbol. <p/>
+	 * 
+	 * @return The predicate symbol.
+	 */
+	public String getPredicateSymbol();
+
+	/**
+	 * <p>
+	 * Returns the arity of the predicate. <p/>
+	 * 
+	 * @return The arity.
+	 */
+	public int getArity();
+
+	/**
+	 * <p>
+	 * Sets the stratum of the predicate.
+	 * </p>
+	 * 
+	 * @param s
+	 *            The stratum.
+	 */
+	public void setStratum(int s);
+
+	/**
+	 * <p>
+	 * Returns the stratum of the predicate.
+	 * </p>
+	 * 
+	 * @return The stratum.
+	 */
+	public int getStratum();
+
+	/**
+	 * <p>
+	 * Checks whether the predicate is a built-in predicate.
+	 * </p>
+	 * 
+	 * @return True if the predicate is a built-in predicate; otherwise false.
+	 */
+	public boolean isBuiltIn();
+}
