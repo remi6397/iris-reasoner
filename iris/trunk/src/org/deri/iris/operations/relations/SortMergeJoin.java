@@ -47,10 +47,24 @@ import org.deri.iris.api.terms.ITerm;
  * <code>indexOn(Integer[])</code> method.
  * </p>
  * <p>
- * $Id: SortMergeJoin.java,v 1.6 2007-06-15 12:33:20 darko_anicic Exp $
+ * The join indexes are specified as follows: the lenght of the index array is
+ * equal to the first relation. The numbers in the denote the indexes of the
+ * terms in the second relation with which the terms of the
+ * first relation will be compared. To compare the terms every not-negative
+ * number of the index array will be taken and the term of the first relation at
+ * the index (starting from 0) of the number in the index array will be compared
+ * to the term for the second relation at the number's index (starting at 0).
+ * E.g. the first relation has arity 4, the second one 6 and the index array is
+ * <code>[-1, 5, 1, 3]</code>. Then the second term of the first relation will
+ * be compared with the 6th of the second one, the 3rd of the first with the
+ * second of the second, and the 4th of the first with the 4th of the second
+ * according to the <code>JoinCondition</code>.
+ * </p>
+ * <p>
+ * $Id: SortMergeJoin.java,v 1.7 2007-06-20 09:45:53 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class SortMergeJoin implements IMixedDatatypeRelationOperation, IJoin {
 
@@ -60,10 +74,7 @@ public class SortMergeJoin implements IMixedDatatypeRelationOperation, IJoin {
 	/** The inner relation. */
 	private final IMixedDatatypeRelation r1; 
 
-	/**
-	 * The join index array. 
-	 * @see org.deri.iris.api.factory.IRelationOperationsFactory
-	 */
+	/** The join index array. */
 	private final int[] idx;
 
 	/** The join condition which must be met by tuples to join. */
@@ -83,9 +94,7 @@ public class SortMergeJoin implements IMixedDatatypeRelationOperation, IJoin {
 	 * Constructs a new join operation.
 	 * @param r0 the outer relation
 	 * @param r1 the inner relation
-	 * @param idx the join indexes like the ones definded in {@link
-	 * org.deri.iris.api.factory.IRelationOperationsFactory
-	 * IRelationOperationsFactory}
+	 * @param idx the join indexes (see class description)
 	 * @param c the join condition if it is <code>null</code> it will be
 	 * <code>JoinCondition.EQUALS</code>
 	 * @throws NullPointerException if one of the relations is
@@ -138,11 +147,11 @@ public class SortMergeJoin implements IMixedDatatypeRelationOperation, IJoin {
 		if (idx == null) {
 			throw new NullPointerException("The joinindex must not be null");
 		}
-		/*if (idx.length != r0.getArity()) {
+		if (idx.length != r0.getArity()) {
 			throw new IllegalArgumentException("The lenght of the index array (" + 
 					idx.length + ") must match the arity of the first relation (" + 
 					r0.getArity() + ")");
-		}*/
+		}
 		for (final int i : idx) {
 			if (i > r1.getArity()) {
 				throw new IllegalArgumentException("The indexes " + Arrays.toString(idx) + 
