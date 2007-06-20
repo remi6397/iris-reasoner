@@ -31,7 +31,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.deri.iris.Executor;
 import org.deri.iris.api.IExecutor;
@@ -56,18 +58,33 @@ public class GeneralProgramTest extends TestCase {
 	private Map<IPredicate,IMixedDatatypeRelation> m = null;
 	
 	/** 0 as an argument means: "run all tests" */
-	private static final int TEST_ALL = 0;
+	private static final int TEST_ALL = 10;
  
 	/** Set a number of a test to be run */
-	private int TEST_NO = 11;
+	private int TEST_NO = 17;
 	
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(GeneralProgramTest.class);
 	}
 	
 	public static junit.framework.Test suite() {
-        return new junit.framework.TestSuite(GeneralProgramTest.class);
-    }
+		Test test = new junit.extensions.TestSetup(new TestSuite(
+				GeneralProgramTest.class)) {
+			long t0_start = System.currentTimeMillis();
+			protected void setUp() throws Exception {
+                //setupScenario();
+             }
+
+            protected void tearDown() throws Exception {
+            	long t0_end = System.currentTimeMillis();
+    	        long t0 = t0_end - t0_start;
+    	        System.out.println("(" + t0 + "ms)");
+                System.out.println("Finished!");
+            }
+        };
+		//return new junit.framework.TestSuite(GeneralProgramTest.class);
+        return test;
+	}
 	
 	public void test1() throws Exception{
 		if(TEST_NO == 1 || TEST_ALL == 0){
@@ -662,9 +679,7 @@ public class GeneralProgramTest extends TestCase {
 	    	printResults(m);
 	    	System.out.println();
 	
-	    	testProgram(
-					m,
-					resultTest16());
+	    	testProgram(m, resultTest16());
 		}
     }
 	
@@ -676,6 +691,152 @@ public class GeneralProgramTest extends TestCase {
     	return result;
     }
 	
+	public void test17() throws Exception{
+		if(TEST_NO == 17 || TEST_ALL == 0){
+			String program = 
+	   		
+				"parent('c','a')." +
+				"parent('d','a')." +
+				"parent('d','b')." +
+				"parent('e','b')." +
+				"parent('f','c')." +
+				"parent('f','e')." +
+				"parent('g','c')." +
+				"parent('h','d')." +
+				"parent('i','d')." +
+				"parent('i','e')." +
+				"parent('j','f')." +
+				"parent('j','h')." +
+				"parent('k','g')." +
+				"parent('k','i')." +
+				
+			    "sibling(?X,?Y) :- parent(?X, ?Z), parent(?Y, ?Z), ?X != ?Y." +
+			    "cousin(?X,?Y)  :- parent(?X, ?Xp), parent(?Y, ?Yp), sibling(?Xp,?Yp)." +
+			    "cousin(?X,?Y)  :- parent(?X, ?Xp), parent(?Y, ?Yp), cousin(?Xp,?Yp)." +
+			    
+			    "related(?X,?Y) :- sibling(?X, ?Y)." +
+			    "related(?X,?Y) :- related(?X, ?Z), parent(?Y, ?Z)." +
+			    "related(?X,?Y) :- related(?Z, ?Y), parent(?X, ?Z)." +
+			    
+			    "?- sibling(?X,?Y)." +
+			    "?- cousin (?X,?Y)."  +
+			    "?- related(?X,?Y)." ;
+	   	
+	    	m = evluateProgram(program);
+	    	System.out.println("test 17");
+	    	printResults(m);
+	    	System.out.println();
+	
+	    	testProgram(m, resultTest17_S());
+	    	testProgram(m, resultTest17_C());
+	    	testProgram(m, resultTest17_R());
+		}
+    }
+	
+	public String resultTest17_S(){
+    	String result = 
+    		"sibling('c','d')." +
+    		"sibling('d','c')." +
+			"sibling('d','e')." +
+			"sibling('e','d')." +
+			"sibling('f','g')." +
+			"sibling('g','f')." +
+			"sibling('h','i')." +
+			"sibling('i','h')." +
+			"sibling('f','i')." +
+    		"sibling('i','f')." ; 
+    	return result;
+    }
+	public String resultTest17_C(){
+    	String result = 
+    		"cousin('f','h')." +
+    		"cousin('h','f')." +
+			"cousin('f','i')." +
+			"cousin('i','f')." +
+			"cousin('i','i')." +
+			"cousin('g','h')." +
+			"cousin('h','g')." +
+			"cousin('g','i')." +
+			"cousin('i','g')." +
+    		"cousin('h','i')." +
+			"cousin('i','h')." +
+    		"cousin('j','k')." +
+			"cousin('k','j')." +
+			"cousin('j','j')." +
+			"cousin('k','k')." ; 
+    	return result;
+    }
+	public String resultTest17_R(){
+    	String result = 
+    		"related('c','d')." +
+    		"related('d','c')." +
+			"related('d','e')." +
+			"related('e','d')." +
+			"related('f','g')." +
+			"related('g','f')." +
+			"related('h','i')." +
+			"related('i','h')." +
+			"related('f','i')." +
+    		"related('i','f')." +
+    		
+			"related('d','f')." +
+    		"related('f','d')." +
+			"related('d','g')." +
+			"related('g','d')." +
+			"related('c','h')." +
+			"related('h','c')." +
+			"related('d','i')." +
+    		"related('i','d')." +
+			"related('c','i')." +
+			"related('i','c')." +
+			"related('e','h')." +
+			"related('h','e')." +
+			"related('e','i')." +
+			"related('i','e')." +
+			"related('g','j')." +
+    		"related('j','g')." +
+			"related('f','k')." +
+    		"related('k','f')." +
+			"related('h','k')." +
+			"related('k','h')." +
+			"related('i','j')." + 
+	    	"related('j','i')." +
+	    	
+			"related('f','h')." +
+			"related('h','f')." +
+			"related('d','j')." +
+			"related('j','d')." +
+			"related('g','h')." +
+			"related('h','g')." +
+			"related('j','k')." +
+			"related('k','j')." +
+			"related('g','i')." +
+			"related('i','g')." +
+			"related('d','k')." +
+			"related('k','d')." +
+			"related('c','j')." +
+			"related('j','c')." +
+			"related('i','i')." +
+			"related('c','k')." +
+			"related('k','c')." +
+			"related('e','j')." +
+			"related('j','e')." +
+			"related('e','k')." +
+			"related('k','e')." +
+			
+			"related('f','j')." +
+			"related('j','f')." +
+			"related('h','j')." +
+			"related('j','h')." +
+			"related('g','k')." +
+			"related('k','g')." +
+			"related('i','k')." +
+			"related('k','i')." +
+			
+			"related('j','j')." +
+			"related('k','k')." ;
+    	return result;
+    }
 	public Map<IPredicate, IMixedDatatypeRelation> evluateProgram(String program) 
 		throws Exception{
     	
