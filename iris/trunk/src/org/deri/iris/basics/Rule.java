@@ -25,8 +25,6 @@
  */
 package org.deri.iris.basics;
 
-import static org.deri.iris.factory.Factory.GRAPH;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
@@ -141,10 +139,6 @@ public class Rule implements IRule {
 	public boolean isRectified() {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	public boolean isRecursive() {
-		return GRAPH.createPredicateGraph().detectCycles();
 	}
 
 	public int getHeadLenght() {

@@ -58,12 +58,12 @@ import org.deri.iris.builtins.BuiltinRegister;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IProgram.java,v 1.11 2007-06-20 12:20:00 poettler_ric Exp $
+ * $Id: IProgram.java,v 1.12 2007-06-20 13:39:21 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public interface IProgram {
 
@@ -170,32 +170,6 @@ public interface IProgram {
 
 	/**
 	 * <p>
-	 * Returns the number of facts, for a predicate p, from the knowledgebase.
-	 * </p>
-	 * 
-	 * @param p
-	 *            The common predicate of facts which will be retrieved.
-	 * @return The number of facts.
-	 */
-	public int getNumberOfFacts(final IPredicate p);
-
-	/**
-	 * <p>
-	 * Returns the number of filtered facts, for a predicate from the
-	 * knowledgebase, with the selection tuples filter.
-	 * </p>
-	 * 
-	 * @param p
-	 *            The common predicate for facts to be retrieved.
-	 * @param filter
-	 *            Set of selection tuples to be used as a filter (a selection
-	 *            pattern).
-	 * @return The number of selected facts.
-	 */
-	public int getNumberOfFacts(final IPredicate p, final Set<ITuple> filter);
-
-	/**
-	 * <p>
 	 * Returns all facts, from the knowledgebase, for a predicate p.
 	 * </p>
 	 * 
@@ -214,25 +188,6 @@ public interface IProgram {
 	 *         relations.
 	 */
 	public Map<IPredicate, IMixedDatatypeRelation> getFacts();
-
-	/**
-	 * <p>
-	 * Checks whether the knowledgebase contains no facts.<p/>
-	 * 
-	 * @return True if the knowledgebase contains no facts, otherwise false.
-	 */
-	public boolean isEmpty();
-
-	/**
-	 * <p>
-	 * Checks whether the knowledgebase contains a particular term.
-	 * </p>
-	 * 
-	 * @param t
-	 *            A term to be checked.
-	 * @return True if the knowledgebase contains the terms t, otherwise false.
-	 */
-	public boolean existsTerm(final ITerm t);
 
 	/**
 	 * Set of methods for handling the rules:
