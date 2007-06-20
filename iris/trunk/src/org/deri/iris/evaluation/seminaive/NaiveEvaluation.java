@@ -82,10 +82,10 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 		Set<IPredicate> preds = null;
 		
 		// Evaluate rules
-		for (int i = 0, maxStrat = MiscOps.getMaxStratum(this.idbMap.keySet()); 
+		for (int i = 0, maxStrat = MiscOps.getMaxStratum(p, this.idbMap.keySet()); 
 				i <= maxStrat; i++) {
 
-			preds = MiscOps.getPredicatesOfStratum(this.idbMap.keySet(), i);
+			preds = MiscOps.getPredicatesOfStratum(p, this.idbMap.keySet(), i);
 			cont = true;
 			while (cont) {
 				if(preds.size() == 0) break;
@@ -94,7 +94,6 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 				for (final IPredicate pr : preds) {
 					
 					newTupleAdded = false;
-					this.p.registerPredicate(pr);
 					// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 					r = method.evaluate(this.idbMap.get(pr), this.p);
 					if (r != null && r.size() > 0) {

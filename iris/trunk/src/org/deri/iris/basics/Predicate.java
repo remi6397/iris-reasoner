@@ -28,10 +28,16 @@ package org.deri.iris.basics;
 import org.deri.iris.api.basics.IPredicate;
 
 /**
- * This is a simple IPredicate implementation.</br>
- * <b>NOTE: This implementation is immutable</b>
- * </br></br>$Id$
- * @author richi
+ * <p>
+ * This is a simple IPredicate implementation.
+ * </p>
+ * <p>
+ * NOTE: This implementation is immutable
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class Predicate implements IPredicate, Cloneable {
@@ -110,14 +116,6 @@ public class Predicate implements IPredicate, Cloneable {
 			return res;
 		}
 		return 0;
-	}
-
-	public int getStratum() {
-		return stratum;
-	}
-
-	public void setStratum(int stratum) {
-		this.stratum = stratum;
 	}
 
 	public String toString() {

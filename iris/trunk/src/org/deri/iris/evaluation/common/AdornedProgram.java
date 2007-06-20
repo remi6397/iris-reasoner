@@ -53,11 +53,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.21 2007-04-16 14:54:05 poettler_ric Exp $
+ * $Id: AdornedProgram.java,v 1.22 2007-06-20 12:20:09 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public class AdornedProgram implements IAdornedProgram {
 
@@ -624,14 +624,6 @@ public class AdornedProgram implements IAdornedProgram {
 			AdornedPredicate p = (AdornedPredicate) o;
 			return this.p.equals(p.p) && Arrays.equals(adornment, p.adornment);
 		}
-
-		public int getStratum() {
-			return p.getStratum();
-		}
-
-		public void setStratum(int s) {
-			p.setStratum(s);
-		}
 	}
 
 	/**
@@ -648,8 +640,8 @@ public class AdornedProgram implements IAdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.21 $
-	 * @date $Date: 2007-04-16 14:54:05 $
+	 * @version $Revision: 1.22 $
+	 * @date $Date: 2007-06-20 12:20:09 $
 	 */
 	public static class AdornedRule implements IAdornedRule {
 		/** The inner rule represented by this object */

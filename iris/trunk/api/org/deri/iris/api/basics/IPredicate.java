@@ -36,11 +36,12 @@ package org.deri.iris.api.basics;
  * predicate.
  * </p>
  * <p>
- * $Id: IPredicate.java,v 1.5 2006-12-07 16:56:18 darko Exp $
+ * $Id: IPredicate.java,v 1.6 2007-06-20 12:20:00 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @date 07.01.2006 12:00:00
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision: 1.6 $
  */
 
 public interface IPredicate extends Comparable<IPredicate> {
@@ -59,25 +60,6 @@ public interface IPredicate extends Comparable<IPredicate> {
 	 * @return The arity.
 	 */
 	public int getArity();
-
-	/**
-	 * <p>
-	 * Sets the stratum of the predicate.
-	 * </p>
-	 * 
-	 * @param s
-	 *            The stratum.
-	 */
-	public void setStratum(int s);
-
-	/**
-	 * <p>
-	 * Returns the stratum of the predicate.
-	 * </p>
-	 * 
-	 * @return The stratum.
-	 */
-	public int getStratum();
 
 	/**
 	 * <p>

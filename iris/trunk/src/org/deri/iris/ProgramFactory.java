@@ -42,21 +42,16 @@ import org.deri.iris.api.storage.IRelation;
  * A simple IProgramFactory implementation.
  * </p>
  * <p>
- * $Id: ProgramFactory.java,v 1.10 2007-06-14 21:26:15 darko_anicic Exp $
+ * $Id: ProgramFactory.java,v 1.11 2007-06-20 12:20:00 poettler_ric Exp $
  * </p>
  * @author Francisco Garcia
  * @author Darko Anicic, DERI Innsbruck
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.10 $
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.11 $
  */
 public class ProgramFactory implements IProgramFactory {
 	private static final IProgramFactory FACTORY = new ProgramFactory();
 
-	// FIXME: this got to go (because so there is only one program instance
-	// possible per vm...
-	/** The static program returned by the createProgram() method. */
-	private static final IProgram PROG = new Program();
-	
 	private ProgramFactory() {
 		// this is a singelton
 	}
@@ -66,7 +61,7 @@ public class ProgramFactory implements IProgramFactory {
 	}
 
 	public IProgram createProgram() {
-		return PROG;
+		return new Program();
 	}
 	
 	public IProgram createProgram(Map<IPredicate, IMixedDatatypeRelation> f, Set<IRule> r, Set<IQuery> q) {

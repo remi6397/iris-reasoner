@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -51,12 +52,18 @@ import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.terms.ConstructedTerm;
 
 /**
+ * <p>
  * This is an implementation of the IEDB interface.
- * <br/><br/><b>This implementaion is thread-save.</b>
- * 
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * </p>
+ * <p>
+ * This implementaion is thread-save.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
- * @date   26.07.2006 16:53:36
+ * @version $Revision$
  */
 public class Program implements IProgram{
 
@@ -77,8 +84,19 @@ public class Program implements IProgram{
 
 	/** The write lock */
 	private final Lock WRITE = LOCK.writeLock();
+
+	/** Map to count the occurences of a predicate in rules and queries. */
+	private final Map<IPredicate, Integer> predicateCount = new HashMap<IPredicate, Integer>();
+
+	/** Map for the strata of the different predicates. */
+	private final Map<IPredicate, Integer> strata = new HashMap<IPredicate, Integer>();
 	
-	
+	/**
+	 * Whether the program (only the rules) has changed since the latest
+	 * stratum computation. 
+	 */
+	private boolean dirtyStratum = true;
+
 	/**
 	 * Creates an empty extensional database (knowledge base) 
 	 * ready to be filled up with facts, rules and queries.
@@ -105,7 +123,7 @@ public class Program implements IProgram{
 	 */
 	Program(final Map<IPredicate, IMixedDatatypeRelation> f, final Set<IRule> r, final Set<IQuery> q) {
 		if ((f == null) || (r == null) || (q == null)) {
-			throw new IllegalArgumentException("Input parameters must not be null");
+			throw new NullPointerException("Input parameters must not be null");
 		}
 		
 		for (IPredicate p : f.keySet()){
@@ -119,167 +137,249 @@ public class Program implements IProgram{
 			this.queries = q;
 		WRITE.unlock();
 	}
+
+	/**
+	 * Registeres a predicate in the program. <b>This method must be called
+	 * every time a new predicate (in a rule, fact or query) is added to the
+	 * program</b>. The maps for the facts, predicateCount and strata will
+	 * also be created, if they don't already exist.
+	 * @param p the predicate to register
+	 * @throws NullPointerException if the predicate is <code>null</code>
+	 */
+	private void registerPredicate(final IPredicate p) {
+		if (p == null) {
+			throw new NullPointerException("The predicate must not be null");
+		}
+		WRITE.lock();
+		try {
+			if (!facts.keySet().contains(p)) {
+				facts.put(p, RELATION.getMixedRelation(p.getArity()));
+				strata.put(p, Integer.valueOf(-1));
+				predicateCount.put(p, Integer.valueOf(0));
+			}
+		} finally {
+			WRITE.unlock();
+		}
+	}
+
+	/**
+	 * Increases the occurence count for the given predicate. <b>This method
+	 * must be called for every predicate occurence in a rule or query,
+	 * which will be added to the program</b>.
+	 * @param p the predicate for which to increase the count
+	 * @throws NullPointerException if the predicate is <code>null</code>
+	 */
+	private void increasePredicateCount(final IPredicate p) {
+		if (p == null) {
+			throw new NullPointerException("The predicate must not be null");
+		}
+		WRITE.lock();
+		try {
+			registerPredicate(p);
+			predicateCount.put(p, Integer.valueOf(predicateCount.get(p) + 1));
+			dirtyStratum = true;
+		} finally {
+			WRITE.unlock();
+		}
+	}
+
+	/**
+	 * Decreases the occurence count for the given predicate. <b>This method
+	 * must be called for every predicate occurence in a rule or query,
+	 * which will be removed from the program</b>.
+	 * @param p the predicate for which to decrease the count
+	 * @throws NullPointerException if the predicate is <code>null</code>
+	 */
+	private void decreasePredicateCount(final IPredicate p) {
+		if (p == null) {
+			throw new NullPointerException("The predicate must not be null");
+		}
+		if (!predicateCount.keySet().contains(p)) {
+			throw new NoSuchElementException("The predicate " + p + 
+					" has not been registered, yet");
+		}
+		WRITE.lock();
+		try {
+			predicateCount.put(p, Integer.valueOf(predicateCount.get(p) - 1));
+			dirtyStratum = true;
+		} finally {
+			WRITE.unlock();
+		}
+	}
+
+	/**
+	 * Cleans up the predicate maps. <b>This method should be called before
+	 * all predicates or the number of predicates is retrieved, to get a
+	 * correct result</b>. With this method all predicate mappings will be
+	 * removed, where the predicate count is less, or equal to 0 and no
+	 * facts are given for this predicate.
+	 */
+	private void cleanupPredicates() {
+		final Set<IPredicate> toRemove = new HashSet<IPredicate>();
+		WRITE.lock();
+		try {
+			for (final IPredicate p : facts.keySet()) {
+				if ((predicateCount.get(p) <= 0) && facts.get(p).isEmpty()) {
+					toRemove.add(p);
+				}
+			}
+			for (final IPredicate p : toRemove) {
+				facts.remove(p);
+				predicateCount.remove(p);
+				strata.remove(p);
+			}
+		} finally {
+			WRITE.unlock();
+		}
+	}
+
+	public int getStratum(final IPredicate p) {
+		if (p == null) {
+			throw new NullPointerException("The predicate must not be null");
+		}
+		if (!predicateCount.keySet().contains(p)) {
+			throw new NoSuchElementException("The predicate " + p + 
+					" has not been registered, yet");
+		}
+		WRITE.lock();
+		try {
+			if (dirtyStratum) { // recompute the stratum if a rule updated
+				dirtyStratum = false;
+				cleanupPredicates();
+				isStratified();
+			}
+			READ.lock();
+		} finally {
+			WRITE.unlock();
+		}
+		try {
+			return strata.get(p).intValue();
+		} finally {
+			READ.unlock();
+		}
+	}
+
+	public void setStratum(final IPredicate p, final int s) {
+		if (p == null) {
+			throw new NullPointerException("The predicate must not be null");
+		}
+		if (!predicateCount.keySet().contains(p)) {
+			throw new NoSuchElementException("The predicate " + p + 
+					" has not been registered, yet");
+		}
+		if (s < 0) {
+			throw new IllegalArgumentException("The statum must not be negative, but was: " + s);
+		}
+		WRITE.lock();
+		try {
+			strata.put(p, Integer.valueOf(s));
+		} finally {
+			WRITE.unlock();
+		}
+	}
 	
 	/** ***************************** */
 	/* methods for the EDB */
 	/* (handling facts)    */
 	/** ***************************** */
 	
-	/* (non-Javadoc)
-	 * @see org.deri.iris.api.IEDB#addFact(org.deri.iris.api.basics.IAtom)
-	 * Note: 
-	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
-	 * 		so this method is thread-save.  
-	 */
 	public boolean addFact(IAtom a) {
 		if(!a.isGround()){
 			throw new IllegalArgumentException("The input parameter: " + 
 					a.toString() + " needs to be a ground atom (it is not a fact).");
 		}
 		IPredicate p = a.getPredicate();
-		p = registerPredicate(p);
-		IMixedDatatypeRelation rel = facts.get(p);
-		if (rel == null) {
-			rel = RELATION.getMixedRelation(p.getArity());
-			this.facts.put(p, rel);
-		}
+		registerPredicate(p);
 		return this.facts.get(p).add(a.getTuple());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.deri.iris.api.IEDB#addFacts(java.util.Set)
-	 * Note: 
-	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
-	 * 		so this method is thread-save.
-	 */
 	public boolean addFacts(Set<IAtom> facts) {
+		if (facts == null) {
+			throw new NullPointerException("The facts must not be null");
+		}
 		boolean added = false;
-		
 		for (IAtom f : facts) {
-			added = added || addFact(f);
+			added |= addFact(f);
 		}
 		return added;
 	}
 	
 	public boolean addFacts(IPredicate p, IMixedDatatypeRelation r) {
-		if (r.getArity() != p.getArity())
+		if (p == null) {
+			throw new NullPointerException("The predicate must not be null");
+		}
+		if (r == null) {
+			throw new NullPointerException("The relation must not be null");
+		}
+		if (r.getArity() != p.getArity()) {
 			throw new IllegalArgumentException("Predicate " + p + " is assigned with " +
 					"a relation that has a non-matching arity.");
-		
-		IPredicate pr = registerPredicate(p);
-		Iterator<ITuple> it = r.iterator();
-		ITuple t = null;
-		boolean added = false, a = false;
-		
-		while(it.hasNext()){
-			t = it.next();
-			if(t.isGround()){
-				a = this.facts.get(pr).add(t);
-				added = added || a;
-			}
-			else{
-				throw new IllegalArgumentException("The input realtion " + 
-						"is not a ground relation.");
-			}
 		}
-		return added;
+		registerPredicate(p);
+		boolean modified = false;
+		final IMixedDatatypeRelation rel = facts.get(p);
+		for (final ITuple t : rel) {
+			if (!t.isGround()) {
+				throw new IllegalArgumentException("The fact to add " + 
+						t + " must be ground.");
+			}
+			modified |= rel.add(t);
+		}
+		return modified;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.deri.iris.api.IEDB#removeFact(org.deri.iris.api.basics.IAtom)
-	 * Note: 
-	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
-	 * 		so this method is thread-save.
-	 */
 	public boolean removeFact(IAtom a) {
-		if(!a.isGround()){
-			throw new IllegalArgumentException("The input parameter: " + 
-					a.toString() + " needs to be a ground atom (it is not a fact).");
+		if (a == null) {
+			return false;
 		}
-		IPredicate p = a.getPredicate();
-		IMixedDatatypeRelation r = this.facts.get(p);
-		boolean bChanged = r.remove(a.getTuple());
-		// Remove this statement for propositional rules:
-		if (r.size() <= 0) {
-			facts.remove(p);
-		}
-		return bChanged;
+		return facts.get(a.getPredicate()).remove(a.getTuple());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.deri.iris.api.IEDB#removeFacts(java.util.Set)
-	 * Note: 
-	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
-	 * 		so this method is thread-save.
-	 */
 	public boolean removeFacts(Set<IAtom> f) {
+		if (f == null) {
+			throw new NullPointerException("The set of facts must not be null");
+		}
 		boolean bChanged = false;
 		for (IAtom a : f) {
-			if (removeFact(a)) {
-				bChanged = true;
-			}
+			bChanged |= removeFact(a);
 		}
 		return bChanged;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.deri.iris.api.IEDB#hasFact(org.deri.iris.api.basics.IAtom)
-	 * Note: 
-	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
-	 * 		so this method is thread-save.
-	 */
 	public boolean hasFact(IAtom a) {
-		if(!a.isGround()){
-			throw new IllegalArgumentException("The input parameter: " + 
-					a.toString() + " needs to be a ground atom (it is not a fact).");
+		if (a == null) {
+			throw new NullPointerException("The fact must not be null");
 		}
 		return this.facts.get(a.getPredicate()).contains(a.getTuple());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.deri.iris.api.IEDB#hasFacts(org.deri.iris.api.basics.IPredicate)
-	 * Note: 
-	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
-	 * 		so this method is thread-save.
-	 */
 	public boolean hasFacts(IPredicate p) {
+		if (p == null) {
+			throw new NullPointerException("The predicate must not be null");
+		}
+		cleanupPredicates();
 		return facts.keySet().contains(p);
 	}
 	
-	public IPredicate registerPredicate(IPredicate p){
-		if(getPredicates().contains(p)){
-			for (IPredicate pr : facts.keySet()) {
-				if (pr.equals(p))
-				{
-					return pr;
-				}
-			}
-		}
-		facts.put(p, RELATION.getMixedRelation(p.getArity()));
-		return p;
-	}
-	
 	public Set<IPredicate> getPredicates() {
+		cleanupPredicates();
 		return Collections.unmodifiableSet(facts.keySet());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.deri.iris.api.IEDB#getNumberOfFacts(org.deri.iris.api.basics.IPredicate)
-	 * Note: 
-	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
-	 * 		so this method is thread-save.
-	 */
 	public int getNumberOfFacts(IPredicate predicate) {
+		if (predicate == null) {
+			throw new NullPointerException("The predicate must not be null");
+		}
 		return getFacts(predicate).size();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.deri.iris.api.IEDB#getNumberOfFacts(org.deri.iris.api.basics.IPredicate, java.util.Set)
-	 * Note: 
-	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
-	 * 		so this method is thread-save.
-	 */
 	public int getNumberOfFacts(IPredicate p, Set<ITuple> filter) {
+		if (p == null) {
+			throw new NullPointerException("The predicate must not be null");
+		}
+		if (filter == null) {
+			throw new NullPointerException("The filter must not be null");
+		}
 		int result = 0;
 		for (ITuple t : filter) {
 			result += RELATION_OPERATION.createSelectionOperator(
@@ -288,43 +388,25 @@ public class Program implements IProgram{
 		return result;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.deri.iris.api.IEDB#getFacts(org.deri.iris.api.basics.IPredicate)
-	 * Note: 
-	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
-	 * 		so this method is thread-save.
-	 */
 	public IMixedDatatypeRelation getFacts(final IPredicate p){
+		if (p == null) {
+			throw new NullPointerException("The predicate must not be null");
+		}
 		return facts.get(p);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.deri.iris.api.IEDB#getFacts()
-	 * Note: 
-	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
-	 * 		so this method is thread-save.
-	 */
 	public Map<IPredicate, IMixedDatatypeRelation> getFacts(){
-		return this.facts;
+		return Collections.unmodifiableMap(facts);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.deri.iris.api.IEDB#isEmpty()
-	 * Note: 
-	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
-	 * 		so this method is thread-save.
-	 */
 	public boolean isEmpty() {
 		return facts.isEmpty();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.deri.iris.api.IEDB#existsTerm(org.deri.iris.api.terms.ITerm)
-	 * Note: 
-	 * 		org.deri.iris.storage.Relation has already been implemented using the read/write lock,
-	 * 		so this method is thread-save.
-	 */
 	public boolean existsTerm(ITerm t) {
+		if (t == null) {
+			throw new NullPointerException("The term must not be null");
+		}
 		for (IPredicate p : facts.keySet()) {
 			for (ITuple tup : facts.get(p)) {
 				if (tup.getTerms().contains(t)) {
@@ -341,12 +423,20 @@ public class Program implements IProgram{
 	
 	public boolean addRule(IRule r) {
 		if (r == null) {
-			throw new NullPointerException(
-					"The input parameter must not be null");
+			throw new NullPointerException("The rule must not be null");
 		}
 		WRITE.lock();
 		try {
-			return this.rules.add(r);
+			if(rules.add(r)) {
+				for (final ILiteral l : r.getHeadLiterals()) {
+					increasePredicateCount(l.getPredicate());
+				}
+				for (final ILiteral l : r.getBodyLiterals()) {
+					increasePredicateCount(l.getPredicate());
+				}
+				return true;
+			}
+			return false;
 		} finally {
 			WRITE.unlock();
 		}
@@ -354,12 +444,20 @@ public class Program implements IProgram{
 	
 	public boolean removeRule(IRule r){
 		if (r == null) {
-			throw new NullPointerException(
-					"The input parameter must not be null");
+			throw new NullPointerException("The rule must not be null");
 		}
 		WRITE.lock();
 		try {
-			return this.rules.remove(r);
+			if(rules.remove(r)) {
+				for (final ILiteral l : r.getHeadLiterals()) {
+					decreasePredicateCount(l.getPredicate());
+				}
+				for (final ILiteral l : r.getBodyLiterals()) {
+					decreasePredicateCount(l.getPredicate());
+				}
+				return true;
+			}
+			return false;
 		} finally {
 			WRITE.unlock();
 		}
@@ -440,12 +538,17 @@ public class Program implements IProgram{
 	
 	public boolean addQuery(IQuery q) {
 		if (q == null) {
-			throw new NullPointerException(
-					"The input parameter must not be null");
+			throw new NullPointerException("The query must not be null");
 		}
 		WRITE.lock();
 		try {
-			return this.queries.add(q);
+			if (queries.add(q)) {
+				for (final ILiteral l : q.getQueryLiterals()) {
+					increasePredicateCount(l.getPredicate());
+				}
+				return true;
+			}
+			return false;
 		} finally {
 			WRITE.unlock();
 		}
@@ -457,12 +560,17 @@ public class Program implements IProgram{
 	
 	public boolean removeQuery(IQuery q) {
 		if (q == null) {
-			throw new NullPointerException(
-					"The input parameter must not be null");
+			throw new NullPointerException("The query must not be null");
 		}
 		WRITE.lock();
 		try {
-			return this.queries.remove(q);
+			if (queries.remove(q)) {
+				for (final ILiteral l : q.getQueryLiterals()) {
+					decreasePredicateCount(l.getPredicate());
+				}
+				return true;
+			}
+			return false;
 		} finally {
 			WRITE.unlock();
 		}
@@ -476,6 +584,9 @@ public class Program implements IProgram{
 		this.facts.clear();
 		this.rules.clear();
 		this.queries.clear();
+		predicateCount.clear();
+		strata.clear();
+		dirtyStratum = true;
 	}
 
 	public BuiltinRegister getBuiltinRegister() {
