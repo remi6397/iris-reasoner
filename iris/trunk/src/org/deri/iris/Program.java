@@ -318,7 +318,7 @@ public class Program implements IProgram{
 		registerPredicate(p);
 		boolean modified = false;
 		final IMixedDatatypeRelation rel = facts.get(p);
-		for (final ITuple t : rel) {
+		for (final ITuple t : r) {
 			if (!t.isGround()) {
 				throw new IllegalArgumentException("The fact to add " + 
 						t + " must be ground.");
@@ -366,28 +366,6 @@ public class Program implements IProgram{
 		return Collections.unmodifiableSet(facts.keySet());
 	}
 
-	public int getNumberOfFacts(IPredicate predicate) {
-		if (predicate == null) {
-			throw new NullPointerException("The predicate must not be null");
-		}
-		return getFacts(predicate).size();
-	}
-
-	public int getNumberOfFacts(IPredicate p, Set<ITuple> filter) {
-		if (p == null) {
-			throw new NullPointerException("The predicate must not be null");
-		}
-		if (filter == null) {
-			throw new NullPointerException("The filter must not be null");
-		}
-		int result = 0;
-		for (ITuple t : filter) {
-			result += RELATION_OPERATION.createSelectionOperator(
-					facts.get(p), t).select().size();
-		}
-		return result;
-	}
-	
 	public IMixedDatatypeRelation getFacts(final IPredicate p){
 		if (p == null) {
 			throw new NullPointerException("The predicate must not be null");
@@ -397,24 +375,6 @@ public class Program implements IProgram{
 
 	public Map<IPredicate, IMixedDatatypeRelation> getFacts(){
 		return Collections.unmodifiableMap(facts);
-	}
-	
-	public boolean isEmpty() {
-		return facts.isEmpty();
-	}
-	
-	public boolean existsTerm(ITerm t) {
-		if (t == null) {
-			throw new NullPointerException("The term must not be null");
-		}
-		for (IPredicate p : facts.keySet()) {
-			for (ITuple tup : facts.get(p)) {
-				if (tup.getTerms().contains(t)) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 	
 	/********************************/
