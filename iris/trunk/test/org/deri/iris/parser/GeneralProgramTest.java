@@ -58,10 +58,12 @@ public class GeneralProgramTest extends TestCase {
 	private Map<IPredicate,IMixedDatatypeRelation> m = null;
 	
 	/** 0 as an argument means: "run all tests" */
-	private static final int TEST_ALL = 10;
+	private static final int TEST_ALL = 0;
  
 	/** Set a number of a test to be run */
-	private int TEST_NO = 17;
+	private int TEST_NO = 4;
+	
+	private boolean PRINT = false;
 	
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(GeneralProgramTest.class);
@@ -88,6 +90,7 @@ public class GeneralProgramTest extends TestCase {
 	
 	public void test1() throws Exception{
 		if(TEST_NO == 1 || TEST_ALL == 0){
+			int no = 1;
 	    	String program = 
 			    "k('d', 'e')." +
 			    "k('d', 'g')." +
@@ -97,13 +100,8 @@ public class GeneralProgramTest extends TestCase {
 			    "?- w(?X).";
 	    	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 1");
-	    	printResults(m);
-	    	System.out.println();
-	    	
-	    	testProgram(
-					m,
-					resultTest1());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest1());
 		}
     }
 	public String resultTest1(){
@@ -116,6 +114,7 @@ public class GeneralProgramTest extends TestCase {
 	
 	public void test2() throws Exception{
 		if(TEST_NO == 2 || TEST_ALL == 0){
+			int no = 2;
 			String program = 
 	 			"s('d')." +
 			    "s('b')." +
@@ -136,25 +135,21 @@ public class GeneralProgramTest extends TestCase {
 			    "?- q(?X).";
 	    	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 2");
-	    	printResults(m);
-	    	System.out.println();
-	
-	    	testProgram(
-					m,
-					resultTest2());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest2());
 		}
     }
 	
 	public String resultTest2(){
     	String result = 
 		    "q('q').";
-		    
+    	
     	return result;
     }
 	
 	public void test3() throws Exception{
 		if(TEST_NO == 3 || TEST_ALL == 0){
+			int no = 3;
 			String program = 
 	   		
 	 			"s('d')." +
@@ -170,13 +165,8 @@ public class GeneralProgramTest extends TestCase {
 			    "?- w(?X).";
 	   	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 3");
-	    	printResults(m);
-	    	System.out.println();
-	
-	    	testProgram(
-					m,
-					resultTest3());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest3());
 		}
     }
 	public String resultTest3(){
@@ -188,6 +178,7 @@ public class GeneralProgramTest extends TestCase {
 	
 	public void test4() throws Exception{
 		if(TEST_NO == 4 || TEST_ALL == 0){
+			int no = 4;
 			String program = 
 			    "edge('a', 'b')." +
 			    "path('b', 'c')." +
@@ -198,14 +189,8 @@ public class GeneralProgramTest extends TestCase {
 			    "?- path(?X, ?Y).";
 	  	
 			m = evluateProgram(program);
-	    	System.out.println("test 4");
-	    	printResults(m);
-	    	System.out.println();
-	
-	    	
-	    	testProgram(
-					m,
-					resultTest4());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest4());
 		}
 	}
 	 
@@ -223,6 +208,7 @@ public class GeneralProgramTest extends TestCase {
 	 
 	public void test5() throws Exception{
 		if(TEST_NO == 5 || TEST_ALL == 0){
+			int no = 5;
 	    	String program = 
 			    "in('galway', 'ireland')." +
 			    "in('dublin', 'ireland')." +
@@ -234,13 +220,8 @@ public class GeneralProgramTest extends TestCase {
 			    "?- in('galway', ?Z).";
 			
 	    	m = evluateProgram(program);
-	    	System.out.println("test 5");
-	    	printResults(m);
-	    	System.out.println();
-	   
-	    	testProgram(
-					m,
-					resultTest5());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest5());
 		}
     }
 	
@@ -255,46 +236,35 @@ public class GeneralProgramTest extends TestCase {
 	public void test6()throws Exception{
 		if(TEST_NO == 6 || TEST_ALL == 0){
 			
-		long t0_start = System.currentTimeMillis();
-			
-	    	String program = 
-	    		"down('g', 'b')." +
-	    		"down('h', 'c')." +
-	    		"down('i', 'd')." +
-	    		"down('l', 'f')." +
-	    		"down('m', 'f')." +
-	    		"down('p', 'k')." +
-	    		
-	    		"flat('g', 'f')." +
-	    		"flat('m', 'n')." +
-	    		"flat('m', 'o')." +
-	    		"flat('p', 'm')." +
-	    		
-	    		"up('a', 'e')." +
-	    		"up('a', 'f')." +
-	    		"up('f', 'm')." +
-	    		"up('g', 'n')." +
-	    		"up('h', 'n')." +
-	    		"up('i', 'o')." +
-	    		"up('j', 'o')." +
-	    		
-			    "rsg(?X, ?Y) :- up(?X, ?W), rsg(?Q, ?W), down(?Q, ?Y)." +
-			    "rsg(?X, ?Y) :- flat(?X, ?Y)." +
-			    "?- rsg(?X, ?Y).";
-			    //"?- rsg(?X, 'f').";
-	    	
+		int no = 6;
+    	String program = 
+    		"down('g', 'b')." +
+    		"down('h', 'c')." +
+    		"down('i', 'd')." +
+    		"down('l', 'f')." +
+    		"down('m', 'f')." +
+    		"down('p', 'k')." +
+    		
+    		"flat('g', 'f')." +
+    		"flat('m', 'n')." +
+    		"flat('m', 'o')." +
+    		"flat('p', 'm')." +
+    		
+    		"up('a', 'e')." +
+    		"up('a', 'f')." +
+    		"up('f', 'm')." +
+    		"up('g', 'n')." +
+    		"up('h', 'n')." +
+    		"up('i', 'o')." +
+    		"up('j', 'o')." +
+    		
+		    "rsg(?X, ?Y) :- up(?X, ?W), rsg(?Q, ?W), down(?Q, ?Y)." +
+		    "rsg(?X, ?Y) :- flat(?X, ?Y)." +
+		    "?- rsg(?X, ?Y).";
+		    
 	    	m = evluateProgram(program);
-	    	System.out.println("test 6");
-	    	printResults(m);
-	    	System.out.println();
-	
-	    	testProgram(
-					m,
-					resultTest6());
-	    	
-	    	long t0_end = System.currentTimeMillis();
-	        long t0 = t0_end - t0_start;
-	        System.out.println("(" + t0 + "ms)");
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest6());
 		}
     }
 	
@@ -312,16 +282,12 @@ public class GeneralProgramTest extends TestCase {
 		    "rsg('m','o')." +
 		    "rsg('p','m').";
 		    
-    		/*"rsg('g')." +
-		    "rsg('h')." +
-		    "rsg('i')." +
-		    "rsg('j').";*/
-    	
 		return result;
 	}
-	
+
 	public void test7()throws Exception{
 		if(TEST_NO == 7 || TEST_ALL == 0){
+			int no = 7;
 			String program = 
 			    "edge('a', 'b')." +
 			    "path('b', 'c')." +
@@ -333,13 +299,8 @@ public class GeneralProgramTest extends TestCase {
 			    "?- path(?X, ?Y).";
 	   
 			m = evluateProgram(program);
-	    	System.out.println("test 7");
-	    	printResults(m);
-	    	System.out.println();
-	
-	    	testProgram(
-					m,
-					resultTest7());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest7());
 		}
     }
 	
@@ -357,6 +318,7 @@ public class GeneralProgramTest extends TestCase {
 	
 	public void test8()throws Exception{
 		if(TEST_NO == 8 || TEST_ALL == 0){
+			int no = 8;
 	    	String program = 
 			    "r('a', 'a')." +
 			    "r('b', 'c')." +
@@ -366,13 +328,8 @@ public class GeneralProgramTest extends TestCase {
 			    "?- p(?X, ?Y).";
 	  	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 8");
-	    	printResults(m);
-	    	System.out.println();
-	    	
-	    	testProgram(
-					m,
-					resultTest8());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest8());
 		}
     }
 	public String resultTest8(){
@@ -386,6 +343,7 @@ public class GeneralProgramTest extends TestCase {
 	
 	public void test9()throws Exception{
 		if(TEST_NO == 9 || TEST_ALL == 0){
+			int no = 9;
 	    	String program = 
 	 			"u('d')." +
 			    "u('b')." +
@@ -406,13 +364,8 @@ public class GeneralProgramTest extends TestCase {
 			    "?- p(?X).";
 	  	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 9");
-	    	printResults(m);
-	    	System.out.println();
-	
-	    	testProgram(
-					m,
-					resultTest9());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest9());
 		}
     }
 	
@@ -427,6 +380,7 @@ public class GeneralProgramTest extends TestCase {
 	
 	public void test10()throws Exception{
 		if(TEST_NO == 10 || TEST_ALL == 0){
+			int no = 10;
 	    	String program = 
 			    "r('a', 'a')." +
 			    "r('b', 'a')." +
@@ -438,13 +392,8 @@ public class GeneralProgramTest extends TestCase {
 			    "?- p(?X).";
 	  	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 10");
-	    	printResults(m);
-	    	System.out.println();
-	    	
-	    	testProgram(
-					m,
-					resultTest10());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest10());
 		}
 	}
 	public String resultTest10(){
@@ -456,6 +405,7 @@ public class GeneralProgramTest extends TestCase {
 	
 	public void test11()throws Exception{
 		if(TEST_NO == 11 || TEST_ALL == 0){
+			int no = 11;
 	    	String program = 
 			    "s('a', 'a')." +
 			    "s('a', 'b')." +
@@ -506,13 +456,8 @@ public class GeneralProgramTest extends TestCase {
 			    "?- p(?X).";
 	  	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 11");
-	    	printResults(m);
-	    	System.out.println();
-	    	
-	    	testProgram(
-					m,
-					resultTest11());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest11());
 		}
 	}
 	public String resultTest11(){
@@ -529,28 +474,22 @@ public class GeneralProgramTest extends TestCase {
 	
 	public void test12() throws Exception{
 		if(TEST_NO == 12 || TEST_ALL == 0){
+			int no = 12;
 			String program = 
-	   		
-	 			"s('d')." +
+	   			"s('d')." +
 			    "s('b')." +
 			    "s('a')." +
 			    
 			    "p('b')." +
 			    "p('d')." +
 			    
-			    
 			    // Inequality built-in:
 			    "w(?X) :- s(?X), p(?X), ?X != 'd'." +
 			    "?- w(?X).";
 	   	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 12");
-	    	printResults(m);
-	    	System.out.println();
-	
-	    	testProgram(
-					m,
-					resultTest12());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest12());
 		}
     }	
 	public String resultTest12(){
@@ -562,6 +501,7 @@ public class GeneralProgramTest extends TestCase {
 	
 	public void test13() throws Exception{
 		if(TEST_NO == 13 || TEST_ALL == 0){
+			int no = 13;
 			String program = 
 	   		
 				"s(1)." +
@@ -576,13 +516,8 @@ public class GeneralProgramTest extends TestCase {
 			    "?- w(?X).";
 	   	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 13");
-	    	printResults(m);
-	    	System.out.println();
-	
-	    	testProgram(
-					m,
-					resultTest13());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest13());
 		}
     }
 	public String resultTest13(){
@@ -595,6 +530,7 @@ public class GeneralProgramTest extends TestCase {
 	
 	public void test14() throws Exception{
 		if(TEST_NO == 14 || TEST_ALL == 0){
+			int no = 14;
 			String program = 
 	   		
 				"s(1)." +
@@ -607,13 +543,8 @@ public class GeneralProgramTest extends TestCase {
 			    "?- w(?X,?Z).";
 	   	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 14");
-	    	printResults(m);
-	    	System.out.println();
-	
-	    	testProgram(
-					m,
-					resultTest14());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest14());
 		}
     }
 	public String resultTest14(){
@@ -626,9 +557,9 @@ public class GeneralProgramTest extends TestCase {
 	
 	public void test15() throws Exception{
 		if(TEST_NO == 15 || TEST_ALL == 0){
+			int no = 15;
 			String program = 
-	   		
-				"s(1)." +
+	   			"s(1)." +
 				
 				"p(2)." +
 				"p(3)." +
@@ -637,13 +568,8 @@ public class GeneralProgramTest extends TestCase {
 			    "?- w(?X,?Y).";
 	   	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 15");
-	    	printResults(m);
-	    	System.out.println();
-	
-	    	testProgram(
-					m,
-					resultTest15());
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest15());
 		}
     }
 	
@@ -657,9 +583,9 @@ public class GeneralProgramTest extends TestCase {
 	
 	public void test16() throws Exception{
 		if(TEST_NO == 16 || TEST_ALL == 0){
+			int no = 16;
 			String program = 
-	   		
-				"s(1)." +
+	   			"s(1)." +
 				
 				// If we had p(2,9) instead of p(2,2), we would get no result!
 				// Is this OK?
@@ -675,27 +601,23 @@ public class GeneralProgramTest extends TestCase {
 			    "?- w(?X,?Y).";
 	   	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 16");
-	    	printResults(m);
-	    	System.out.println();
-	
+	    	if(PRINT) printResults(m, no);
 	    	testProgram(m, resultTest16());
 		}
     }
 	
 	public String resultTest16(){
     	String result = 
-		    //"w(1, 3).";
-    		"w(1, 9).";
+		    "w(1, 9).";
     	
     	return result;
     }
 	
 	public void test17() throws Exception{
 		if(TEST_NO == 17 || TEST_ALL == 0){
+			int no = 17;
 			String program = 
-	   		
-				"parent('c','a')." +
+	   			"parent('c','a')." +
 				"parent('d','a')." +
 				"parent('d','b')." +
 				"parent('e','b')." +
@@ -723,10 +645,7 @@ public class GeneralProgramTest extends TestCase {
 			    "?- related(?X,?Y)." ;
 	   	
 	    	m = evluateProgram(program);
-	    	System.out.println("test 17");
-	    	printResults(m);
-	    	System.out.println();
-	
+	    	if(PRINT) printResults(m, no);
 	    	testProgram(m, resultTest17_S());
 	    	testProgram(m, resultTest17_C());
 	    	testProgram(m, resultTest17_R());
@@ -874,13 +793,15 @@ public class GeneralProgramTest extends TestCase {
     	}
     }
 	
-	public static void printResults(Map<IPredicate, IMixedDatatypeRelation> m){
-    	for(IPredicate pr : m.keySet()){
+	public static void printResults(Map<IPredicate, IMixedDatatypeRelation> m, int no){
+		System.out.println("test " + no);
+		for(IPredicate pr : m.keySet()){
 			System.out.println(pr.toString());
 			for(ITuple t : m.get(pr)){
 				System.out.println(t.toString());
 			}
     	}
+		System.out.println();
     }
 	
 	public static void printResults(IMixedDatatypeRelation r){
