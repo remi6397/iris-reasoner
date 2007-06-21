@@ -45,11 +45,11 @@ import org.deri.iris.api.terms.IVariable;
  * A simple tuple implementation. This implementation is thread-safe.
  * </p>
  * <p>
- * $Id: Tuple.java,v 1.15 2007-06-15 07:25:16 poettler_ric Exp $
+ * $Id: Tuple.java,v 1.16 2007-06-21 16:29:48 poettler_ric Exp $
  * </p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class Tuple implements ITuple{
 
@@ -193,6 +193,9 @@ public class Tuple implements ITuple{
 	public String toString(){
 		READ.lock();
 		try {
+			if (terms.length <= 0) {
+				return "()";
+			}
 			final StringBuilder buffer = new StringBuilder();
 			buffer.append("(");
 			for (final ITerm t : terms) {
