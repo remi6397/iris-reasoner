@@ -39,7 +39,7 @@ package org.deri.iris.api.basics;
  * Only safe rules are supported. A rule is safe if its every variable
  * occurs in one of its positive, non built-in, atoms of the body.</p>
  * <p>
- * $Id: IRule.java,v 1.5 2007-03-14 09:07:11 darko_anicic Exp $
+ * $Id: IRule.java,v 1.6 2007-06-21 08:56:09 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -83,13 +83,4 @@ public interface IRule extends IHead, IBody{
 	 * @return	True if the rule is rectified; otherwise false.
 	 */
 	public boolean isRectified();
-	
-	/**
-	 * <p>
-	 * Checks whether the entire rule is recursive.
-	 * </p>
-	 * 
-	 * @return	True if the rule is recursive; otherwise false.
-	 */
-	public boolean isRecursive();
 }
