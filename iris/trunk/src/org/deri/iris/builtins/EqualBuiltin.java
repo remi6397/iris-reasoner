@@ -42,13 +42,13 @@ import org.deri.iris.api.terms.IVariable;
  * Builtin to compare two terms for equality.
  * </p>
  * <p>
- * $Id: EqualBuiltin.java,v 1.10 2007-05-14 12:47:22 poettler_ric Exp $
+ * $Id: EqualBuiltin.java,v 1.11 2007-06-22 07:08:43 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class EqualBuiltin extends AbstractBuiltin {
 
@@ -57,17 +57,17 @@ public class EqualBuiltin extends AbstractBuiltin {
 			"EQUAL", 2);
 
 	/**
-	 * Constructs a builtin.
+	 * Constructs a builtin. Two terms must be passed to the constructor,
+	 * otherweise an exception will be thrown
 	 * 
-	 * @param t0
-	 *            the first term
-	 * @param t1
-	 *            the second term
-	 * @throws NullPointerException
-	 *             if one of the terms is null
+	 * @param t the terms
+	 * @throws NullPointerException if one of the terms is null
+	 * @throws IllegalArgumentException if the number of terms submitted is
+	 * not 2
+	 * @throws NullPointerException if t is <code>null</code>
 	 */
-	EqualBuiltin(final ITerm t0, final ITerm t1) {
-		super(PREDICATE, t0, t1);
+	public EqualBuiltin(final ITerm... t) {
+		super(PREDICATE, t);
 	}
 
 	/**
