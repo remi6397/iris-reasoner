@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.IProgram;
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
@@ -52,14 +53,14 @@ import org.deri.iris.basics.seminaive.ConstLiteral;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.11 2007-06-20 12:20:08 poettler_ric Exp $
+ * $Id: MiscOps.java,v 1.12 2007-06-22 07:09:43 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class MiscOps {
 
@@ -170,8 +171,13 @@ public class MiscOps {
 					litTerms.add(t);
 				}
 			}
-			l.getTuple().setTerms(litTerms);
-			bodyLiterals.add(l);
+			final IAtom a;
+			if (l.getAtom().isBuiltin()) {
+				a = dublicateAtom(l.getAtom(), litTerms);
+			} else {
+				a = BASIC.createAtom(l.getPredicate(), BASIC.createTuple(litTerms));
+			}
+			bodyLiterals.add(BASIC.createLiteral(l.isPositive(), a));
 		}
 		// Assembling the new rectified rule.
 		// adding the constant substitutions for the head
@@ -193,6 +199,48 @@ public class MiscOps {
 		final IHead h = BASIC.createHead(BASIC.createLiteral(hl.isPositive(),
 				hl.getPredicate(), BASIC.createTuple(headTerms)));
 		return BASIC.copyRule(h, BASIC.createBody(bodyLiterals));
+	}
+
+	/**
+	 * Creates a new instance of the given atom. This mehtod was intented to
+	 * dublicate builtin atoms. Therefore the constructor of the atom must 
+	 * be public and take an array of terms as parameters. If the builtin 
+	 * should be dublicated with it's terms, then the term collection might 
+	 * be <code>null</code>.
+	 * @param a the atom to dublicate
+	 * @param t the terms to put into the builtin (if <code>null</code> the
+	 * terms from the atom are taken)
+	 * @return the copy of the builtin
+	 * @throws NullPointerException if the atom is <code>null</code>
+	 * @throws IllegalArgumentException if the constructor couldn't be found
+	 * @throws IllegalArgumentException if the builtin class is abstract
+	 * @throws IllegalArgumentException if the construcot could not be
+	 * accessed
+	 * @throws IllegalArgumentException if the construcor threw an exception
+	 * @deprecated using reflection is a bad idea -&gt; find a better approach
+	 */
+	private static IAtom dublicateAtom(final IAtom a, final Collection<ITerm> t) {
+		if (a == null) {
+			throw new NullPointerException("The atom must not be null");
+		}
+		final ITerm[] terms = (t == null) ? 
+			a.getTuple().getTerms().toArray(new ITerm[a.getTuple().getArity()]) : 
+			t.toArray(new ITerm[t.size()]);
+		try {
+			return a.getClass().getConstructor(ITerm[].class).newInstance(new Object[]{terms});
+		} catch (NoSuchMethodException e) {
+			throw new IllegalArgumentException("Couldn't find the consturctor for " + 
+					a.getClass().getName(), e);
+		} catch (InstantiationException e) {
+			throw new IllegalArgumentException("Couldn't create the instance " + 
+					"(the class is abstract) for " + a.getClass().getName(), e);
+		} catch (IllegalAccessException e) {
+			throw new IllegalArgumentException("Couldn't access the constructor for " + 
+					a.getClass().getName(), e);
+		} catch (java.lang.reflect.InvocationTargetException e) {
+			throw new IllegalArgumentException("The constructor of " + 
+					a.getClass().getName() + " threw an exception", e);
+		}
 	}
 	
 	/**	 TODO: 
