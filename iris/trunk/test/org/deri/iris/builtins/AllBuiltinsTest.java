@@ -34,12 +34,12 @@ import junit.framework.TestSuite;
  * Runns all builtins tests at once.
  * </p>
  * <p>
- * $Id: AllBuiltinsTest.java,v 1.1 2006-09-28 11:30:50 richardpoettler Exp $
+ * $Id: AllBuiltinsTest.java,v 1.2 2007-06-22 07:06:51 poettler_ric Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.1 $
- * @date $Date: 2006-09-28 11:30:50 $
+ * @version $Revision: 1.2 $
+ * @date $Date: 2007-06-22 07:06:51 $
  */
 public class AllBuiltinsTest extends TestCase {
 	public static Test suite() {
@@ -54,6 +54,7 @@ public class AllBuiltinsTest extends TestCase {
 		suite.addTest(MultiplyBuiltinTest.suite());
 		suite.addTest(SubtractBuiltinTest.suite());
 		suite.addTest(UnequalBuiltinTest.suite());
+		suite.addTest(BuiltinHelperTest.suite());
 		return suite;
 	}
 }
