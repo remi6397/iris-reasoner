@@ -42,11 +42,11 @@ import org.deri.iris.api.terms.IVariable;
  * variable be left for computation, otherwise an exception will be thrown.
  * </p>
  * <p>
- * $Id: MultiplyBuiltin.java,v 1.10 2007-05-14 12:47:22 poettler_ric Exp $
+ * $Id: MultiplyBuiltin.java,v 1.11 2007-06-22 07:08:43 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class MultiplyBuiltin extends AbstractBuiltin {
 
@@ -55,19 +55,17 @@ public class MultiplyBuiltin extends AbstractBuiltin {
 			"MULTIPLY", 3);
 
 	/**
-	 * Constructs a builtin.
+	 * Constructs a builtin. Three terms must be passed to the constructor,
+	 * otherwise an exception will be thrown.
 	 * 
-	 * @param t0
-	 *            the first term
-	 * @param t1
-	 *            the second term
-	 * @param t2
-	 *            the result of the multiplication
-	 * @throws NullPointerException
-	 *             if one of the terms is {@code null}
+	 * @param t the terms
+	 * @throws NullPointerException if one of the terms is {@code null}
+	 * @throws IllegalArgumentException if the number of terms submitted is
+	 * not 3
+	 * @throws NullPointerException if t is <code>null</code>
 	 */
-	MultiplyBuiltin(final ITerm t0, final ITerm t1, final ITerm t2) {
-		super(PREDICATE, t0, t1, t2);
+	public MultiplyBuiltin(final ITerm... t) {
+		super(PREDICATE, t);
 	}
 
 	public ITuple evaluate(final ITuple c) {
