@@ -69,9 +69,9 @@ public class Program implements IProgram{
 
 	private Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
 	
-	private Set<IQuery> queries;
+	private Set<IQuery> queries = new HashSet<IQuery>();
 	
-	private Set<IRule> rules;
+	private Set<IRule> rules = new HashSet<IRule>();
 
 	/** The register to hold the information about registered builtins. */
 	private final BuiltinRegister builtinReg = new BuiltinRegister();
@@ -102,10 +102,6 @@ public class Program implements IProgram{
 	 * ready to be filled up with facts, rules and queries.
 	 */
 	Program() {
-		WRITE.lock();
-			this.rules = new HashSet<IRule>();
-			this.queries = new HashSet<IQuery>();
-		WRITE.unlock();
 	}
 	
 	/**
@@ -131,11 +127,16 @@ public class Program implements IProgram{
 				throw new IllegalArgumentException("Predicate " + p + " is assigned with " +
 						"a relation that has a non-matching arity.");
 		}
-		WRITE.lock();
-			this.facts = f;
-			this.rules = r;
-			this.queries = q;
-		WRITE.unlock();
+		for (final IPredicate pred : f.keySet()) {
+			registerPredicate(pred);
+		}
+		facts = f;
+		for (final IRule rule : r) {
+			_addRule(rule);
+		}
+		for (final IQuery query : q) {
+			_addQuery(query);
+		}
 	}
 
 	/**
@@ -381,7 +382,19 @@ public class Program implements IProgram{
 	/*		rules                   */
 	/********************************/
 	
-	public boolean addRule(IRule r) {
+	public boolean addRule(final IRule r) {
+		return _addRule(r);
+	}
+
+	/**
+	 * Adds a rule to the program. The predicate count will be increased,
+	 * too.
+	 * @param r the rule to add
+	 * @return <code>false</code> if the rule was already in the program,
+	 * otherwise <code>true</code>
+	 * @throws NullPointerException if the rule was <code>null</code>
+	 */
+	private boolean _addRule(final IRule r) {
 		if (r == null) {
 			throw new NullPointerException("The rule must not be null");
 		}
@@ -496,7 +509,19 @@ public class Program implements IProgram{
 	/*		queries                 */
 	/********************************/
 	
-	public boolean addQuery(IQuery q) {
+	public boolean addQuery(final IQuery q) {
+		return _addQuery(q);
+	}
+
+	/**
+	 * Adds a query to the program. The predicate count will be increased,
+	 * too.
+	 * @param q the query to add
+	 * @return <code>false</code> if the query was already in the program,
+	 * otherwise <code>true</code>
+	 * @throws NullPointerException if the query was <code>null</code>
+	 */
+	private boolean _addQuery(final IQuery q) {
 		if (q == null) {
 			throw new NullPointerException("The query must not be null");
 		}
