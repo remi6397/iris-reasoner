@@ -37,12 +37,6 @@ import org.deri.iris.api.basics.IPredicate;
 * @date 13.12.2006 17:27:34
 */
 public interface IRelationDescriptor extends IComponent{
-
-	/**
-	 * @return	Returns true if this relation is bound to a 
-	 * 			positive atom in a particular rule, otherwise false.
-	 */
-	public boolean isPositive();
 	
 	/**
 	 * Returns the predicate of an atom which is bound to this relation.
