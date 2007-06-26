@@ -39,7 +39,7 @@ import org.deri.iris.api.storage.IMixedDatatypeRelation;
  * (that can be proved from the knowledgebase).
  * </p>
  * <p>
- * $Id: IResultSet.java,v 1.4 2007-06-14 21:14:09 darko_anicic Exp $
+ * $Id: IResultSet.java,v 1.5 2007-06-26 10:05:23 darko_anicic Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -50,10 +50,16 @@ public interface IResultSet {
 	/**
 	 * <p>
 	 * Returns a result of the evaluation of the program with respect to a given
-	 * set of queries. Result is a map of IDB predicates and corresponding
+	 * set of queries. Result is a map of IDB or EDB predicates and corresponding
 	 * relations which contain tuples (that can be proved from the
-	 * knowledgebase).
-	 * 
+	 * knowledgebase). 
+	 * </p>
+	 * <p>
+	 * Note that tuples, from the map bounded with a particular predicate, may be 
+	 * derived from the original relation for the certain predicate using an 
+	 * algebra operation/s (i.e., projection, selection etc.) in order to deliver 
+	 * expected result for a query and its given bindings.
+	 * </p>
 	 * @return A map of IDB predicates and corresponding relations.
 	 */
 	public Map<IPredicate, IMixedDatatypeRelation> getResults();
