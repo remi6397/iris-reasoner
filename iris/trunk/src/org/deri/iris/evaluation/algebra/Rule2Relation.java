@@ -29,9 +29,7 @@ import static org.deri.iris.factory.Factory.ALGEBRA;
 import static org.deri.iris.factory.Factory.BASIC;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -339,55 +337,42 @@ public class Rule2Relation {
 		List<ITerm> terms = l.getAtom().getTuple().getTerms();
 		List<IVariable> vars = new ArrayList<IVariable>(l.getPredicate()
 				.getArity());
-		int i = 0, j = 0, n=0;
-		ITerm t1 = null;
-		boolean selectionNeeded = false;
+		Map<IVariable, Integer> selIndexes = new HashMap<IVariable, Integer>();
+		int i = 0, j = 0, n = 0, m = 0;
 		boolean projectionNeeded = false;
 
 		for (ITerm t : terms) {
 			if (t.isGround()) {
 				ts.add(t);
 				vars.add(getFreshVariable(t));
-				selectionNeeded = true;
-				// TODO: check the projection!
 				projectionNeeded = true;
 			} else {
 				ts.add(null);
 				projectInds[n] = j++;
-				// TODO: Constructed terms are not considered in Rule2Relation
-				// transformation yet!
-				vars.add((IVariable) t);
-				for (int k = ++i; k < terms.size(); k++) {
-					t1 = terms.get(k);
-					if (t.equals(t1)) {
-						indexes[i] = i;
-						selectionNeeded = true;
-					} else {
-						indexes[i] = 0;
-					}
+				// TODO: Constructed terms are not considered in Rule2Relation transformation yet!
+				IVariable v = (IVariable) t;
+				vars.add(v);
+				if(selIndexes.get(v) == null){
+					selIndexes.put(v, ++m);
 				}
+				indexes[i++] = selIndexes.get(v);
 			}
 			n++;
 		}
 		pattern = BASIC.createTuple(ts);
-		IRelationDescriptor le = ALGEBRA.createRelationDescriptor(l
-				.isPositive(), l.getPredicate());
+		IRelationDescriptor le = ALGEBRA.createRelationDescriptor(
+				l.isPositive(), l.getPredicate());
 
 		le.addVariables(vars);
-		
-		// TODO: If you don't need - remove it!
-		//m.put(l, vars);
-		//oVars.addAll(vars);
-		
 		ISelectionDescriptor s = null;
-		if (selectionNeeded) {
+		// Is the selection required?
+		if (m != terms.size()) {
 			s = ALGEBRA.createSelectionDescriptor(pattern, indexes);
 			s.addChild(le);
 			s.addVariables(le.getVariables());
-			if (!projectionNeeded)
-				return s;
+			if (!projectionNeeded) return s;
 		}
-		if (selectionNeeded && projectionNeeded) {
+		if (projectionNeeded) {
 			IProjectionDescriptor p = ALGEBRA
 					.createProjectionDescriptor(projectInds);
 			p.addChild(s);
