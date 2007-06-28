@@ -61,7 +61,7 @@ public class GeneralProgramTest extends TestCase {
 	private static final int TEST_ALL = 0;
  
 	/** Set a number of a test to be run */
-	private int TEST_NO = 4;
+	private int TEST_NO = 20;
 	
 	private boolean PRINT = false;
 	
@@ -756,6 +756,87 @@ public class GeneralProgramTest extends TestCase {
 			"related('k','k')." ;
     	return result;
     }
+	
+	public void test18() throws Exception{
+		if(TEST_NO == 18 || TEST_ALL == 0){
+			int no = 18;
+			String program = 
+			    "edb('a')." +
+			    
+			    "idbZOne(?X) :- edb(?X)." +	
+			    "idbTwo(?X) :- idbZOne(?X)." +	
+			    "idbThree(?X) :- idbTwo(?X)." +	
+			    "idb(?X) :- edb(?X), idbZOne(?X), idbTwo(?X), idbThree(?X)." +	
+			    
+			    "?- idb(?X).";
+	  	
+			m = evluateProgram(program);
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest18());
+		}
+	}
+	 
+	public String resultTest18(){
+    	String result = 
+    		"idb('a').";
+			    
+    	return result;
+    }
+	
+	public void test19() throws Exception{
+		if(TEST_NO == 19 || TEST_ALL == 0){
+			int no = 19;
+			String program = 
+			    "edb('a')." +
+			    
+			    "idbZOne(?X) :- edb(?X)." +	
+			    "idbTwo(?X) :- idb(?X),idb(?X)." +	
+			    "idbThree(?X) :- idb(?X)." +	
+			    
+			    "idb(?X) :- idbZOne(?X), idbZOne(?X)." +
+			    "idb(?X) :- edb(?X), idbTwo(?X)." +	
+			    "idb(?X) :- idbThree(?X)." +	
+			    "idb(?X) :- edb(?X), idb(?X), idbTwo(?X)." +	
+			    
+			    "?- idb(?X).";
+	  	
+			m = evluateProgram(program);
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest19());
+		}
+	}
+	 
+	public String resultTest19(){
+    	String result = 
+    		"idb('a').";
+			    
+    	return result;
+    }
+	
+	// Propositional case
+	public void test20() throws Exception{
+		if(TEST_NO == 20 || TEST_ALL == 0){
+			int no = 20;
+	    	String program = 
+			    "k :- b. " +
+			    "a :- k, c. " +
+			    "b. " +
+			    "c. " +
+			    
+			    "?- a. ";
+	    	
+	    	m = evluateProgram(program);
+	    	if(PRINT) printResults(m, no);
+	    	testProgram(m, resultTest20());
+		}
+    }
+	public String resultTest20(){
+    	String result = 
+		    "a.";
+		    
+    	return result;
+    }
+	
 	public Map<IPredicate, IMixedDatatypeRelation> evluateProgram(String program) 
 		throws Exception{
     	
