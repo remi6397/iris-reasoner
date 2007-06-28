@@ -71,6 +71,10 @@ public class Relation implements IRelation {
 	 *            arity of tuples to be stored in the relation.
 	 */
 	public Relation(int arity) {
+		if (arity < 0) {
+			throw new IllegalArgumentException(
+					"The arity of the relation must not be negative, but was: " + arity);
+		}
 		WRITE.lock();
 		this.comparator = new BasicComparator(arity);
 		this.elements = new TreeSet<ITuple>(this.comparator);
@@ -83,6 +87,10 @@ public class Relation implements IRelation {
 	 *            Comparator that defines tuple ordering in the relation.
 	 */
 	public Relation(IComparator comp) {
+		if (comp.getArity() < 0) {
+			throw new IllegalArgumentException(
+					"The arity of the relation must not be negative, but was: " + arity);
+		}
 		WRITE.lock();
 		this.comparator = comp;
 		this.elements = new TreeSet<ITuple>(comparator);
