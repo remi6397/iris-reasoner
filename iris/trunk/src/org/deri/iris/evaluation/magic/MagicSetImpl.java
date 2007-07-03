@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.IProgram;
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
@@ -44,6 +45,7 @@ import org.deri.iris.api.evaluation.common.IAdornedPredicate;
 import org.deri.iris.api.evaluation.common.IAdornedProgram;
 import org.deri.iris.api.evaluation.common.IAdornedRule;
 import org.deri.iris.api.evaluation.magic.ISip;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
@@ -63,7 +65,7 @@ import org.deri.iris.graph.LabeledEdge;
  * $Id$
  * </p>
  * 
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public final class MagicSetImpl {
@@ -78,16 +80,19 @@ public final class MagicSetImpl {
 	private final Map<IAdornedRule, ISip> adornedSipCache = new HashMap<IAdornedRule, ISip>();
 
 	/** Holds all magic rules. */
-	private Set<IRule> magicRules = new HashSet<IRule>();
+	private final Set<IRule> magicRules = new HashSet<IRule>();
 
 	/** Holds all rewritten rules. */
-	private Set<IAdornedRule> rewrittenRules = new HashSet<IAdornedRule>();
+	private final Set<IAdornedRule> rewrittenRules = new HashSet<IAdornedRule>();
 
 	/** The remaining not adorned rules. */
-	private Set<IRule> remainingRules = new HashSet<IRule>();
+	private final Set<IRule> remainingRules = new HashSet<IRule>();
 
 	/** The seed for this magic set. */
-	private IQuery seed;
+	private final IAtom seed;
+
+	/** The query for which the adorned program was constructed. */
+	private final IQuery query;
 
 	/**
 	 * Construcs a MagicSet using the submitted programm.
@@ -122,17 +127,18 @@ public final class MagicSetImpl {
 			rewrittenRules.add(getRewrittenRule(r));
 		}
 
+		query = adjustQuery(program.getQuery());
+		seed = createSeed(program.getQuery());
 		// adding the remaining rules
 		remainingRules.addAll(filterRemainingRules(program.getNormalRules(),
 				program.getAdornedRules()));
-
-		// creating the seed
-		seed = createSeed(program.getQuery());
 	}
 
 	/**
 	 * <p>
-	 * Creates a rewritten rule for the adorned one.
+	 * Creates a rewritten rule for the adorned one. This method simply
+	 * rewrites a rule my adding the "magic_" literal at the beginning of
+	 * the rule.
 	 * </p>
 	 * 
 	 * @param r
@@ -205,7 +211,7 @@ public final class MagicSetImpl {
 	 * @throws IllegalArgumentException
 	 *             if the length of the query is unequal 1.
 	 */
-	private static IQuery createSeed(final IQuery q) {
+	private static IAtom createSeed(final IQuery q) {
 		if (q == null) {
 			throw new NullPointerException();
 		}
@@ -216,10 +222,33 @@ public final class MagicSetImpl {
 
 		final ILiteral ql = q.getQueryLiteral(0);
 		final IAdornedPredicate ap = new AdornedPredicate(ql);
-		final ILiteral al = BASIC.createLiteral(ql .isPositive(), ap, ql .getTuple());
+		final IAtom aa = BASIC.createAtom(ap, ql.getTuple());
 
 		return (!Arrays.asList(ap.getAdornment()).contains(Adornment.BOUND)) ? 
-			null : BASIC.createQuery(createMagicLiteral(al));
+			null : createMagicAtom(aa);
+	}
+
+	/**
+	 * Adjusts the query, so that the query could be run properly.
+	 * @param q the query to adjust
+	 * @return the adjusted query
+	 * @throws NullPointerException if the quers is <code>null</code>
+	 * @throws IllegalArgumentException if the query is conjunctive
+	 */
+	private static IQuery adjustQuery(final IQuery q) {
+		if (q == null) {
+			throw new NullPointerException("The query must not be null");
+		}
+		if (q.getQueryLenght() != 1) {
+			throw new IllegalArgumentException(
+					"At the moment conjunctive queries are not allowed");
+		}
+		final ILiteral ql = q.getQueryLiteral(0);
+		final IAdornedPredicate ap = new AdornedPredicate(ql);
+		if (!Arrays.asList(ap.getAdornment()).contains(Adornment.BOUND)) {
+			return q;
+		}
+		return BASIC.createQuery(BASIC.createLiteral(ql.isPositive(), ap, ql.getTuple()));
 	}
 
 	/**
@@ -392,7 +421,7 @@ public final class MagicSetImpl {
 		}
 
 		if (index < 0) {
-			throw new IllegalArgumentException("");
+			throw new IllegalArgumentException("The index must not be negative");
 		}
 
 		if (r.getHeadLenght() != 1) {
@@ -429,6 +458,32 @@ public final class MagicSetImpl {
 	}
 
 	/**
+	 * Creates a magic atom out of an adorned one. To gain a magic atom the
+	 * predicate of the atom must be adorned, otherwise the passed in atom
+	 * will be returned back. The terms of the constructed atom will only
+	 * consist of the bound terms.
+	 * @param a the atom for which to create the magic one
+	 * @return the magic atom, or the passed in atom, if it's predicate
+	 * wasn't adorned.
+	 * @throws NullPointerException if the atom is <code>null</code>
+	 */
+	private static IAtom createMagicAtom(final IAtom a) {
+		if (a == null) {
+			throw new NullPointerException("The atom must not be null");
+		}
+		if (!(a.getPredicate() instanceof IAdornedPredicate)) {
+			return a;
+		}
+		final AdornedPredicate p = (AdornedPredicate) a.getPredicate();
+		final ITuple boundTuple = BASIC.createTuple(getBounds(p, a));
+		final AdornedPredicate magicPredicate = new AdornedPredicate(
+				MAGIC_PREDICATE_PREFIX + p.getPredicateSymbol(), Collections
+						.frequency(Arrays.asList(p.getAdornment()),
+								Adornment.BOUND), p.getAdornment());
+		return BASIC.createAtom(magicPredicate, boundTuple);
+	}
+
+	/**
 	 * <p>
 	 * Creates a magic literal out of an adorned one. The predicate of the
 	 * literal must be adorned. The terms of the literal will only consist of
@@ -450,20 +505,11 @@ public final class MagicSetImpl {
 		if (l == null) {
 			throw new NullPointerException("The literal must not be null");
 		}
-
-
 		// if the literal isn't adorned then there isn't anything to do.
 		if (!(l.getPredicate() instanceof IAdornedPredicate)) {
 			return l;
 		}
-		final AdornedPredicate p = (AdornedPredicate) l.getPredicate();
-
-		final ITuple boundTuple = BASIC.createTuple(getBounds(p, l));
-		final AdornedPredicate magicPredicate = new AdornedPredicate(
-				MAGIC_PREDICATE_PREFIX + p.getPredicateSymbol(), Collections
-						.frequency(Arrays.asList(p.getAdornment()),
-								Adornment.BOUND), p.getAdornment());
-		return BASIC.createLiteral(l.isPositive(), magicPredicate, boundTuple);
+		return BASIC.createLiteral(l.isPositive(), createMagicAtom(l.getAtom()));
 	}
 
 	/**
@@ -549,23 +595,25 @@ public final class MagicSetImpl {
 	 *             signature of the literal predicate
 	 */
 	private static List<ITerm> getBounds(final AdornedPredicate p,
-			final ILiteral l) {
-		if ((p == null) || (l == null)) {
-			throw new NullPointerException(
-					"The adorned predicate or the literal must not be null");
+			final IAtom a) {
+		if (p == null) {
+			throw new NullPointerException("The adorned predicate must not be null");
 		}
-		if (!p.hasSameSignature(l.getPredicate())) {
+		if (a == null) {
+			throw new NullPointerException("The atom must not be null");
+		}
+		if (!p.hasSameSignature(a.getPredicate())) {
 			throw new IllegalArgumentException(
-					"The signatures of the headliteral (" + l.getPredicate()
+					"The signatures of the headliteral (" + a.getPredicate()
 							+ ") and the adorned " + "predicate (" + p
 							+ ") doesn't match");
 		}
 
 		final List<ITerm> bounds = new ArrayList<ITerm>(p.getAdornment().length);
-		final Iterator<ITerm> terms = l.getTuple().getTerms().iterator();
-		for (Adornment a : p.getAdornment()) {
+		final Iterator<ITerm> terms = a.getTuple().getTerms().iterator();
+		for (Adornment ad : p.getAdornment()) {
 			final ITerm t = terms.next();
-			if (a == Adornment.BOUND) {
+			if (ad == Adornment.BOUND) {
 				bounds.add(t);
 			}
 		}
@@ -611,7 +659,7 @@ public final class MagicSetImpl {
 	 * 
 	 * @return the seed
 	 */
-	public IQuery getSeed() {
+	public IAtom getSeed() {
 		return seed;
 	}
 
@@ -623,13 +671,16 @@ public final class MagicSetImpl {
 	 *            to be copied. If no facts are needed it might be {@code null}.
 	 * @return the constructed program
 	 */
-	public IProgram createProgram(final IProgram p) {
+	public IProgram createProgram(final Map<IPredicate, IMixedDatatypeRelation> f) {
 		final Set<IRule> rules = new HashSet<IRule>(rewrittenRules);
 		rules.addAll(magicRules);
 		rules.addAll(remainingRules);
-		return Factory.PROGRAM.createProgram(
-				(p == null) ? Collections.EMPTY_MAP : p.getFacts(), rules,
-				Collections.singleton(seed));
+		final IProgram prog = Factory.PROGRAM.createProgram(
+				f, rules, Collections.singleton(query));
+		if (seed != null) {
+			prog.addFact(seed);
+		}
+		return prog;
 	}
 
 	/**
@@ -697,7 +748,7 @@ public final class MagicSetImpl {
 	 * @throws NullPointerException
 	 *             if one of the collections is {@code null}
 	 */
-	private Set<IRule> filterRemainingRules(final Collection<IRule> nr,
+	private static Set<IRule> filterRemainingRules(final Collection<IRule> nr,
 			final Collection<IAdornedRule> ar) {
 		final Set<IRule> rem = new HashSet<IRule>();
 		for (final IRule n : nr) {
@@ -785,18 +836,27 @@ public final class MagicSetImpl {
 		if ((l0 == null) || (l1 == null)) {
 			throw new NullPointerException("The literals must not be null");
 		}
-
-		// compare the unadorned predicates
-		final IPredicate p0 = (l0.getPredicate() instanceof IAdornedPredicate) ? ((IAdornedPredicate) l0
-				.getPredicate()).getUnadornedPredicate()
-				: l0.getPredicate();
-		final IPredicate p1 = (l1.getPredicate() instanceof IAdornedPredicate) ? ((IAdornedPredicate) l1
-				.getPredicate()).getUnadornedPredicate()
-				: l1.getPredicate();
-		if (!p0.equals(p1)) {
+		if (!isSamePredicate(l0.getPredicate(), l1.getPredicate())) {
 			return false;
 		}
 		// compare the terms
 		return l0.getTuple().getTerms().equals(l1.getTuple().getTerms());
+	}
+
+	/**
+	 * Checks whether two predicates are the same only according to their
+	 * symbol and arity.
+	 * @param p0 the first predicate to check
+	 * @param p1 the second predicate to check
+	 * @return <code>true</code> if the symbol and the arity matches,
+	 * otherswise <code>false</code>
+	 * @throws NullPointerException if one of the predicates is
+	 * <code>null</code>
+	 */
+	private static boolean isSamePredicate(final IPredicate p0, final IPredicate p1) {
+		if ((p0 == null) || (p1 == null)) {
+			System.out.println("The predicates must not be null");
+		}
+		return p0.getPredicateSymbol().equals(p1.getPredicateSymbol()) && (p0.getArity() == p1.getArity());
 	}
 }
