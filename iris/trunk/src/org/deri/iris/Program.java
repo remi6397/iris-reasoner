@@ -67,11 +67,14 @@ import org.deri.iris.terms.ConstructedTerm;
  */
 public class Program implements IProgram{
 
-	private Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
+	/** The facts of this program. */
+	private final Map<Integer, IMixedDatatypeRelation> facts = new HashMap<Integer, IMixedDatatypeRelation>();
 	
-	private Set<IQuery> queries = new HashSet<IQuery>();
+	/** The queries of this program. */
+	private final Set<IQuery> queries = new HashSet<IQuery>();
 	
-	private Set<IRule> rules = new HashSet<IRule>();
+	/** The rules of this program. */
+	private final Set<IRule> rules = new HashSet<IRule>();
 
 	/** The register to hold the information about registered builtins. */
 	private final BuiltinRegister builtinReg = new BuiltinRegister();
@@ -118,25 +121,46 @@ public class Program implements IProgram{
 	 * 			a set of queries to be added into the EDB.
 	 */
 	Program(final Map<IPredicate, IMixedDatatypeRelation> f, final Set<IRule> r, final Set<IQuery> q) {
-		if ((f == null) || (r == null) || (q == null)) {
-			throw new NullPointerException("Input parameters must not be null");
+		if (f != null) {
+			for (final Map.Entry<IPredicate, IMixedDatatypeRelation> e : f.entrySet()) {
+				if (e.getValue().getArity() != e.getKey().getArity()) {
+					throw new IllegalArgumentException("The arity of the predicate (" + 
+							e.getKey().getArity() + ") must match the arity of the relation (" + 
+							e.getValue().getArity() + ")");
+				} else {
+					registerPredicate(e.getKey());
+					facts.put(plainPredicateHash(e.getKey()), e.getValue());
+				}
+			}
 		}
-		
-		for (IPredicate p : f.keySet()){
-			if (f.get(p).getArity() != p.getArity())
-				throw new IllegalArgumentException("Predicate " + p + " is assigned with " +
-						"a relation that has a non-matching arity.");
+		if (r != null) {
+			for (final IRule rule : r) {
+				_addRule(rule);
+			}
 		}
-		for (final IPredicate pred : f.keySet()) {
-			registerPredicate(pred);
+		if (q != null) {
+			for (final IQuery query : q) {
+				_addQuery(query);
+			}
 		}
-		facts = f;
-		for (final IRule rule : r) {
-			_addRule(rule);
+	}
+
+	/**
+	 * Generates a hash of a predicate only based on it's symbol and arity.
+	 * This method was written to enable access to the same relations for
+	 * ordinary predicates and adorned ones.
+	 * @param p the predicate for which to create the hash
+	 * @return the hash
+	 * @throws NullPointerException if the predicate was <code>null</code>
+	 */
+	private static int plainPredicateHash(final IPredicate p) {
+		if (p == null) {
+			throw new NullPointerException("The predicate must not be null");
 		}
-		for (final IQuery query : q) {
-			_addQuery(query);
-		}
+		int res = 17;
+		res = res + 37 * p.getPredicateSymbol().hashCode();
+		res = res + 37 * p.getArity();
+		return res;
 	}
 
 	/**
@@ -153,8 +177,11 @@ public class Program implements IProgram{
 		}
 		WRITE.lock();
 		try {
-			if (!facts.keySet().contains(p)) {
-				facts.put(p, RELATION.getMixedRelation(p.getArity()));
+			if (!predicateCount.keySet().contains(p)) {
+				if (!facts.containsKey(plainPredicateHash(p))) {
+					facts.put(plainPredicateHash(p), 
+							RELATION.getMixedRelation(p.getArity()));
+				}
 				strata.put(p, Integer.valueOf(-1));
 				predicateCount.put(p, Integer.valueOf(0));
 			}
@@ -219,13 +246,14 @@ public class Program implements IProgram{
 		final Set<IPredicate> toRemove = new HashSet<IPredicate>();
 		WRITE.lock();
 		try {
-			for (final IPredicate p : facts.keySet()) {
-				if ((predicateCount.get(p) <= 0) && facts.get(p).isEmpty()) {
+			for (final IPredicate p : predicateCount.keySet()) {
+				if ((predicateCount.get(p) <= 0) && 
+						facts.get(plainPredicateHash(p)).isEmpty()) {
 					toRemove.add(p);
 				}
 			}
 			for (final IPredicate p : toRemove) {
-				facts.remove(p);
+				facts.remove(plainPredicateHash(p));
 				predicateCount.remove(p);
 				strata.remove(p);
 			}
@@ -291,7 +319,7 @@ public class Program implements IProgram{
 		}
 		IPredicate p = a.getPredicate();
 		registerPredicate(p);
-		return this.facts.get(p).add(a.getTuple());
+		return this.facts.get(plainPredicateHash(p)).add(a.getTuple());
 	}
 
 	public boolean addFacts(Set<IAtom> facts) {
@@ -318,7 +346,7 @@ public class Program implements IProgram{
 		}
 		registerPredicate(p);
 		boolean modified = false;
-		final IMixedDatatypeRelation rel = facts.get(p);
+		final IMixedDatatypeRelation rel = facts.get(plainPredicateHash(p));
 		for (final ITuple t : r) {
 			if (!t.isGround()) {
 				throw new IllegalArgumentException("The fact to add " + 
@@ -333,7 +361,7 @@ public class Program implements IProgram{
 		if (a == null) {
 			return false;
 		}
-		return facts.get(a.getPredicate()).remove(a.getTuple());
+		return facts.get(plainPredicateHash(a.getPredicate())).remove(a.getTuple());
 	}
 
 	public boolean removeFacts(Set<IAtom> f) {
@@ -351,7 +379,7 @@ public class Program implements IProgram{
 		if (a == null) {
 			throw new NullPointerException("The fact must not be null");
 		}
-		return this.facts.get(a.getPredicate()).contains(a.getTuple());
+		return this.facts.get(plainPredicateHash(a.getPredicate())).contains(a.getTuple());
 	}
 
 	public boolean hasFacts(IPredicate p) {
@@ -359,23 +387,28 @@ public class Program implements IProgram{
 			throw new NullPointerException("The predicate must not be null");
 		}
 		cleanupPredicates();
-		return facts.keySet().contains(p);
+		return predicateCount.keySet().contains(p);
 	}
 	
 	public Set<IPredicate> getPredicates() {
 		cleanupPredicates();
-		return Collections.unmodifiableSet(facts.keySet());
+		return Collections.unmodifiableSet(predicateCount.keySet());
 	}
 
 	public IMixedDatatypeRelation getFacts(final IPredicate p){
 		if (p == null) {
 			throw new NullPointerException("The predicate must not be null");
 		}
-		return facts.get(p);
+		return facts.get(plainPredicateHash(p));
 	}
 
 	public Map<IPredicate, IMixedDatatypeRelation> getFacts(){
-		return Collections.unmodifiableMap(facts);
+		final Map<IPredicate, IMixedDatatypeRelation> ret = 
+			new HashMap<IPredicate, IMixedDatatypeRelation>();
+		for (final IPredicate p : getPredicates()) {
+			ret.put(p, getFacts(p));
+		}
+		return ret;
 	}
 	
 	/********************************/
