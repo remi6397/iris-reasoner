@@ -54,7 +54,7 @@ import org.jgrapht.Graphs;
  * $Id$
  * </p>
  * 
- * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class PredicateGraph implements IPredicateGraph {
@@ -85,7 +85,28 @@ public class PredicateGraph implements IPredicateGraph {
 	PredicateGraph() {
 	}
 
+	/**
+	 * Constructs a new graph with a given set of rules.
+	 * @param r the rules with which to initialize the graph
+	 */
+	PredicateGraph(final Collection<IRule> r) {
+		if (r != null) {
+			for (final IRule rule : r) {
+				_addRule(rule);
+			}
+		}
+	}
+
 	public void addRule(final IRule rule) {
+		_addRule(rule);
+	}
+
+	/**
+	 * Adds a rule to this graph.
+	 * @param rule the rule to add
+	 * @throws NullPointerException if the rule is <code>null</code>
+	 */
+	private void _addRule(final IRule rule) {
 		if (rule == null) {
 			throw new NullPointerException("The rule must not be null");
 		}
@@ -177,12 +198,10 @@ public class PredicateGraph implements IPredicateGraph {
 			final IPredicate act = todo.iterator().next();
 			todo.remove(act);
 
-			for (final IPredicate depends : (List<IPredicate>) Graphs
-					.predecessorListOf(g, act)) {
-				if (!deps.contains(depends)) {
+			for (final IPredicate depends : Graphs.predecessorListOf(g, act)) {
+				if (deps.add(depends)) {
 					todo.add(depends);
 				}
-				deps.add(depends);
 			}
 		}
 
