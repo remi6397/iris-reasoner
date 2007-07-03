@@ -251,23 +251,23 @@ public class ExtractRelevantRulesTest extends TestCase {
 	}
 
 	/*
-	 * Test method for 'org.deri.iris.evaluation.common.EvaluationUtilities.extractRelevantRulesForEvaluation(Set<IRule>, IQuery)'
+	 * Test method for 'org.deri.iris.evaluation.common.EvaluationUtilities.shrinkRules(Set<IRule>, IQuery)'
 	 */
 	public void testExtractRelevantRulesForEvaluationQ1() {
 
 		Set<IRule> filteredRuleSet = 
-			EvaluationUtilities.extractRelevantRulesForEvaluation(rs, query1);
+			EvaluationUtilities.shrinkRules(rs, query1);
 		assertEquals(resultQuery1,filteredRuleSet);
 	
 	}
 
 	/*
-	 * Test method for 'org.deri.iris.evaluation.common.EvaluationUtilities.extractRelevantRulesForEvaluation(Set<IRule>, IQuery)'
+	 * Test method for 'org.deri.iris.evaluation.common.EvaluationUtilities.shrinkRules(Set<IRule>, IQuery)'
 	 */
 	public void testExtractRelevantRulesForEvaluationQ2() {
 
 		Set<IRule> filteredRuleSet = 
-			EvaluationUtilities.extractRelevantRulesForEvaluation(rs, query2);
+			EvaluationUtilities.shrinkRules(rs, query2);
 	
 		assertEquals(resultQuery2,filteredRuleSet);
 		 
@@ -276,34 +276,34 @@ public class ExtractRelevantRulesTest extends TestCase {
 	}
 	
 	/*
-	 * Test method for 'org.deri.iris.evaluation.common.EvaluationUtilities.extractRelevantRulesForEvaluation(Set<IRule>, IQuery)'
+	 * Test method for 'org.deri.iris.evaluation.common.EvaluationUtilities.shrinkRules(Set<IRule>, IQuery)'
 	 */
 	public void testExtractRelevantRulesForEvaluationQ3() {
 
 		Set<IRule> filteredRuleSet = 
-			EvaluationUtilities.extractRelevantRulesForEvaluation(rs, query3);
+			EvaluationUtilities.shrinkRules(rs, query3);
 		assertEquals(resultQuery3,filteredRuleSet);
 	
 	}
 	
 	/*
-	 * Test method for 'org.deri.iris.evaluation.common.EvaluationUtilities.extractRelevantRulesForEvaluation(Set<IRule>, IQuery)'
+	 * Test method for 'org.deri.iris.evaluation.common.EvaluationUtilities.shrinkRules(Set<IRule>, IQuery)'
 	 */
 	public void testExtractRelevantRulesForEvaluationQ4() {
 
 		Set<IRule> filteredRuleSet = 
-			EvaluationUtilities.extractRelevantRulesForEvaluation(rs, query4);
+			EvaluationUtilities.shrinkRules(rs, query4);
 		assertEquals(resultQuery4, filteredRuleSet);
 	
 	}
 	
 	/*
-	 * Test method for 'org.deri.iris.evaluation.common.EvaluationUtilities.extractRelevantRulesForEvaluation(Set<IRule>, IQuery)'
+	 * Test method for 'org.deri.iris.evaluation.common.EvaluationUtilities.shrinkRules(Set<IRule>, IQuery)'
 	 */
 	public void testExtractRelevantRulesForEvaluationQ5() {
 
 		Set<IRule> filteredRuleSet = 
-			EvaluationUtilities.extractRelevantRulesForEvaluation(rs, query5);
+			EvaluationUtilities.shrinkRules(rs, query5);
 		assertEquals(resultQuery5, filteredRuleSet);
 	
 	}
