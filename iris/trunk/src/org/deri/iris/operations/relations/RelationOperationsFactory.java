@@ -74,11 +74,37 @@ public class RelationOperationsFactory implements IRelationOperationsFactory{
 	
 	public IJoin createSortMergeJoinOperator(final IMixedDatatypeRelation arg0, final IMixedDatatypeRelation arg1, 
 			final int[] indexes, final JoinCondition condition) {
-		return new SortMergeJoin(arg0, arg1, indexes, condition);
+		// FIXME: either the check whether something wron was cut off,
+		// should be removed, or the index arrays should be constructed
+		// from the start on...
+		final int[] copy = new int[arg0.getArity()];
+		System.arraycopy(indexes, 0, copy, 0, copy.length);
+		// checking whether something wrong was cut off
+		for (int i = arg0.getArity(), max = arg1.getArity(); i < max; i++) {
+			if (indexes[i] >= 0) {
+				throw new IllegalArgumentException("cut something wrong off: " + 
+						java.util.Arrays.toString(indexes) + " from: " + arg0.getArity());
+			}
+		}
+		
+		return new SortMergeJoin(arg0, arg1, copy, condition);
 	}
 	public IJoin createSortMergeJoinOperator(IMixedDatatypeRelation r0, IMixedDatatypeRelation r1, 
 			int[] idx, JoinCondition c, int semiJoin) {
-		return new SortMergeJoin(r0, r1, idx, c, semiJoin);
+		// FIXME: either the check whether something wron was cut off,
+		// should be removed, or the index arrays should be constructed
+		// from the start on...
+		final int[] copy = new int[r0.getArity()];
+		System.arraycopy(idx, 0, copy, 0, copy.length);
+		// checking whether something wrong was cut off
+		for (int i = r0.getArity(), max = r0.getArity(); i < max; i++) {
+			if (idx[i] >= 0) {
+				throw new IllegalArgumentException("cut something wrong off: " + 
+						java.util.Arrays.toString(idx) + " from: " + r0.getArity());
+			}
+		}
+		
+		return new SortMergeJoin(r0, r1, copy, c, semiJoin);
 	}
 	
 	public IProjection createProjectionOperator(IMixedDatatypeRelation relation, 
