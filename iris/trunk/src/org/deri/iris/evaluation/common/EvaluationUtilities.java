@@ -1,131 +1,152 @@
-package org.deri.iris.evaluation.common;
-
-import java.util.*;
-import java.util.logging.Logger;
-
-import org.deri.iris.api.basics.*;
-
-/**
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
  * 
- * A class for collecting some functionality that might be helpful for various
- * evaluation methods.
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
  * 
- * @author uwekel
- * @date 30.11.2006
- *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
  */
 
+package org.deri.iris.evaluation.common;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.graph.IPredicateGraph;
+
+/**
+ * <p>
+ * A class for collecting some functionality that might be helpful for various
+ * evaluation methods.
+ * </p>
+ * <p>
+ * $Id: EvaluationUtilities.java,v 1.2 2007-07-03 15:56:32 poettler_ric Exp $
+ * </p>
+ * 
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @author uwekel
+ * @version $Revision: 1.2 $
+ */
 public class EvaluationUtilities {
 
 	/**
-	 * Given a set of (horn) rules and a query, the method extracts the subset of rules
-	 * that are actually relevant for computing answers to the query. 
-	 * The extraction is based on a simple syntactical analysis of query and rules.
-	 * It does not claim to extract the minimal subset of rules, however gets rid of
-	 * obviously irrelevant rules. 
-	 * Computation of the filtered rule set does can be done efficiently and does not harm
-	 * computational performance. 
-	 * 
-	 * The method tries to increase efficiency of evaluation methods that themselves do not
-	 * (explicitly or implicitly) take into account obvious irrelevancy. 
-	 * The algorithm works on predicates, but not on advances criteria such as literals (requires
-	 * unification).
-	 * 
-	 * We expect that for ontologies with large schema, this method is useful, when
-	 * posing queries that only address a very small specific part of the ontology.
-	 * 
-	 * For the standard translation of F-Logic to Datalog (allowing metamodelling) 
-	 * the proposed method might not be useful since only very few predicates are 
-	 * created, but for a different translation (representing classes as predicates instead of instances
-	 * of "metaschema"-predicates) this method might be very effective.
-	 * 
-	 * The methods can be used as pre-computation step before any sort of evaluation or even 
-	 * rewriting of a program. For instance, it might make sense to use it as well before
-	 * doing magic sets transformations. 
-	 * 
-	 * The resulting set contains only objects that occur in <code>ruleSet</code>, it does not
-	 * create copies.
-	 * 
-	 * @param ruleSet - the rule set to be filtered.
-	 * @param query - a query for which answers need to be computed
-	 * @return a subset of rules in <code>ruleSet</code> that contains only rules that are 
-	 * obiously relevant for computing answers to <code>query</code>  
+	 * Shrinks a set of rules to the absolute minimum of needed rules to
+	 * evaluate a given query.
+	 * @param r the rules to shrink
+	 * @param q the query for which to shrink the rules
+	 * @return the minimal set of needed rules
+	 * @throws NullPointerException if the set of rules is <code>null</code>
+	 * @throws NullPointerException if the query is <code>null</code>
 	 */
-	public static Set<IRule> extractRelevantRulesForEvaluation(Set<IRule> ruleSet, IQuery query){
-		Set<IPredicate> relevantPredicates = new LinkedHashSet<IPredicate>();
-
-		// No rules in ruleSet have not classified as being relevant yet
-		Set<IRule> uncertainRules  = new LinkedHashSet<IRule>();
-		uncertainRules.addAll(ruleSet);
-		// System.err.println("#Uncertain rules:" + uncertainRules.size());
-		Set<IRule> relevantRules = new LinkedHashSet<IRule>();
-		
-		
-		for (ILiteral l :  query.getQueryLiterals()) {
-			// every predicate occuring in the query is relevant ...
-			relevantPredicates.add(l.getPredicate()); // predicate relevancy in step 0
+	public static Set<IRule> shrinkRules(final Collection<IRule> r, final IQuery q) {
+		if (r == null) {
+			throw new NullPointerException("The rules must not be null");
 		}
-		
-		boolean finished = false;
-		
-		while (!finished){ // induction: iteration from step n-1 to step n
-			
-			// remember number of relevant predicates before the iteration step
-			int numberOfRelevantPredicates_PreIteration = relevantPredicates.size();
-			
-			Set<IRule> newlyClassifiedRules  = new LinkedHashSet<IRule>();
-			
-			// Find all rules that (a) are uncertain and (b) define a relevant predicate.
-			for (IRule r : uncertainRules ){
-				
-				// System.err.println("Relevant predicates are currently:" + relevantPredicates);
-				
-				boolean ruleClassifiedRelevant = false;
-				for ( Iterator<ILiteral> it = r.getHeadLiterals().iterator(); 
-					  !ruleClassifiedRelevant && it.hasNext(); ){
-					// A rule is classified as relevant iff it defines at least one relevant
-					// predicate (in its head)
-					ruleClassifiedRelevant = relevantPredicates.contains(it.next().getPredicate());
-				}
-				if (ruleClassifiedRelevant) { 
-					// System.err.println("Rule found relevant: " + r);
-					
-					relevantRules.add(r);  // mark rule as being relevant in step n-1
-					// rule is now classified and therefore no longer uncertain.
-					// no need to consider again. 
-					newlyClassifiedRules.add(r); 
-					
-					// The rule now causes all predicates in its body to be relevant
-					for (ILiteral l : r.getBodyLiterals()) {
-						relevantPredicates.add(l.getPredicate()); // mark body predicates as being relevant in step n
-					}
-				}
-				
-			} // loop over all uncertain candidate rules
-			
-			uncertainRules.removeAll(newlyClassifiedRules);
-			
-			// if no change to the relevant predicates during the last iteration happened, 
-			// we are done, since only in this case new rules would be classified 
-			// (fixpoint is reached)
-			
-			if (relevantPredicates.size() == numberOfRelevantPredicates_PreIteration) { 
-				finished = true; 
+		if (q == null) {
+			throw new NullPointerException("The query must not be null");
+		}
+		return getRulesForPredicates(r, getDepends(r, q));
+	}
+
+	/**
+	 * Filters a set of rules so that it only contains rules defining a
+	 * predicate out of a set of predicates.
+	 * @param r the rules to filter
+	 * @param p the predicate for which to filter the rules
+	 * @return the filtered rules
+	 * @throws NullPointerException if the rules are <code>null</code>
+	 * @throws NullPointerException if the predicates are <code>null</code>
+	 */
+	public static Set<IRule> getRulesForPredicates(final Collection<IRule> r, 
+			final Collection<IPredicate> p) {
+		if (r == null) {
+			throw new NullPointerException("The rules must not be null");
+		}
+		if (p == null) {
+			throw new NullPointerException("The predicates must not be null");
+		}
+		final Set<IRule> res = new HashSet<IRule>();
+		for (final IRule rule : r) {
+			if (isRuleDefiningPredicate(rule, p)) {
+				res.add(rule);
 			}
-			
-			// termination is ensured since the set of relevant predicates is bounded by 
-			// the (finite) number of predicates that occur in the finite set of rules.
-			
-		} // loop over all iteration of the classification process
-				
-		// Log how many rules have been eliminated (in total and in percent)
-		
-//		System.err.println("Extracted " + relevantRules.size() + 
-//				" rules as being relevant for the query.\n " +
-//				"Dropped in total " + uncertainRules.size() + 
-//				" rules ("+  (ruleSet.size() > 0 ? (uncertainRules.size()*100.0 / ruleSet.size()) : -1.0) 
-//				+ " %)");
-		
-		return relevantRules;
-	} 
+		}
+		return res;
+	}
+
+	/**
+	 * Determines which predicates must be evaluated to evaluate a given
+	 * query.
+	 * @param r the rules on which to determine on which predicate the query
+	 * depends
+	 * @param q the query for which to check the predicates
+	 * @return the predicates the query depends on
+	 * @throws NullPointerException if the set of rules is <code>null</code>
+	 * @throws NullPointerException if the query is <code>null</code>
+	 */
+	public static Set<IPredicate> getDepends(final Collection<IRule> r, final IQuery q) {
+		if (r == null) {
+			throw new NullPointerException("The rules must not be null");
+		}
+		if (q == null) {
+			throw new NullPointerException("The query must not be null");
+		}
+		// TODO: consider iterating over the rules and collecting the
+		// predicates instead of using a graph (might be faster)
+		final IPredicateGraph pg = org.deri.iris.factory.Factory.GRAPH.createPredicateGraph(r);
+		final Set<IPredicate> depends = new HashSet<IPredicate>();
+		for (final ILiteral l : q.getQueryLiterals()) {
+			depends.add(l.getPredicate());
+			depends.addAll(pg.getDepends(l.getPredicate()));
+		}
+		return depends;
+	}
+
+	/**
+	 * Checks whether a rule defines a given predicate. In other words it
+	 * checks whether the rule got one of the given predicates in it's head.
+	 * @param r the rule to check
+	 * @param p the predicates to check
+	 * @return <code>true</code> if the rule defines one of the given
+	 * predicates
+	 * @throws NullPointerException if the rule is <code>null</code>
+	 * @throws NullPointerException if the predicate set is
+	 * <code>null</code>
+	 */
+	private static boolean isRuleDefiningPredicate(final IRule r, final Collection<IPredicate> p) {
+		if (r == null) {
+			throw new NullPointerException("The rule must not be null");
+		}
+		if (p == null) {
+			throw new NullPointerException("The predicates must not be null");
+		}
+		for (final ILiteral l : r.getHeadLiterals()) {
+			if (p.contains(l.getPredicate())) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
