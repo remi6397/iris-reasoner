@@ -25,18 +25,26 @@
  */
 package org.deri.iris.graph;
 
+import java.util.Collection;
+
+import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.factory.IGraphFactory;
 import org.deri.iris.api.graph.IPredicateGraph;
 
 /**
- * @author richi
+ * <p>
+ * A simple predicate graph implementation.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
  *
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision$
  */
 public class GraphFactory implements IGraphFactory {
 
 	private static final IGraphFactory FACTORY = new GraphFactory();
-	
-	private static final IPredicateGraph GRAPH = new PredicateGraph();
 	
 	private GraphFactory() {
 		// this is a singelton
@@ -47,7 +55,11 @@ public class GraphFactory implements IGraphFactory {
 	}
 	
 	public IPredicateGraph createPredicateGraph() {
-		return GRAPH;
+		return new PredicateGraph();
+	}
+	
+	public IPredicateGraph createPredicateGraph(final Collection<IRule> r) {
+		return new PredicateGraph(r);
 	}
 
 }
