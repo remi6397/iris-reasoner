@@ -158,8 +158,8 @@ public class Program implements IProgram{
 			throw new NullPointerException("The predicate must not be null");
 		}
 		int res = 17;
-		res = res + 37 * p.getPredicateSymbol().hashCode();
-		res = res + 37 * p.getArity();
+		res = res * 37 + p.getPredicateSymbol().hashCode();
+		res = res * 37 + p.getArity();
 		return res;
 	}
 
