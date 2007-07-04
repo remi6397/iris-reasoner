@@ -34,9 +34,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.evaluation.common.IAdornedRule;
 import org.deri.iris.api.terms.ITerm;
@@ -49,12 +49,12 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
  * from Beeri's paper &quot;The Power Of Magic&quot;.
  * </p>
  * <p>
- * $Id: SupplementaryMSImpl.java,v 1.2 2006-09-18 07:52:35 richardpoettler Exp $
+ * $Id: SupplementaryMSImpl.java,v 1.3 2007-07-04 14:11:31 poettler_ric Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2006-09-18 07:52:35 $
+ * @version $Revision: 1.3 $
+ * @date $Date: 2007-07-04 14:11:31 $
  */
 public class SupplementaryMSImpl {
 
@@ -71,7 +71,7 @@ public class SupplementaryMSImpl {
 	private List<IRule> magicRules = new ArrayList<IRule>();
 
 	/** The seed for this program. */
-	private IQuery seed;
+	private IAtom seed;
 
 	/**
 	 * Creates a Supplementary Magic Set out of a magic set.
@@ -482,7 +482,7 @@ public class SupplementaryMSImpl {
 	 * 
 	 * @return the seed
 	 */
-	public IQuery getSeed() {
+	public IAtom getSeed() {
 		return seed;
 	}
 
