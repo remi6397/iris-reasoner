@@ -49,7 +49,8 @@ public class MiscOps {
 	}
 	
 	public static int[] getJoinIndexes(List<IVariable> l0, List<IVariable> l1){
-		int[] indexes = JoinSimple.getInitIndexes(Math.max(l0.size(), l1.size()));
+		int[] indexes = new int[Math.max(l0.size(), l1.size())];
+		java.util.Arrays.fill(indexes, -1);
 		List<Integer> vi = new ArrayList<Integer>();
 		for (int j=0; j<l0.size(); j++) {
 			for (int k=0; k<l1.size(); k++) {
