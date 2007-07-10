@@ -39,7 +39,7 @@ import org.deri.iris.api.terms.concrete.IGDay;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class GDay implements IGDay, Cloneable {
@@ -68,7 +68,7 @@ public class GDay implements IGDay, Cloneable {
 
 	public int compareTo(IGDay o) {
 		if (o == null) {
-			throw new NullPointerException("Can not compare with null");
+			return 1;
 		}
 		return getDay() - o.getDay();
 	}
@@ -89,7 +89,7 @@ public class GDay implements IGDay, Cloneable {
 		return cal.hashCode();
 	}
 
-	protected void setDay(int day) {
+	private void setDay(int day) {
 		cal.set(Calendar.DAY_OF_MONTH, day);
 	}
 
@@ -99,10 +99,6 @@ public class GDay implements IGDay, Cloneable {
 
 	public boolean isGround() {
 		return true;
-	}
-
-	public IGDay getMinValue() {
-		return new GDay(1);
 	}
 
 	public Integer getValue() {

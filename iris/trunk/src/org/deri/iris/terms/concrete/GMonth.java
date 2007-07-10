@@ -39,7 +39,7 @@ import org.deri.iris.api.terms.concrete.IGMonth;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class GMonth implements IGMonth, Cloneable {
@@ -68,7 +68,7 @@ public class GMonth implements IGMonth, Cloneable {
 
 	public int compareTo(IGMonth o) {
 		if (o == null) {
-			throw new NullPointerException("Can not compare with null");
+			return 1;
 		}
 		return getMonth() - o.getMonth();
 	}
@@ -89,7 +89,7 @@ public class GMonth implements IGMonth, Cloneable {
 		return cal.hashCode();
 	}
 
-	protected void setMonth(final int month) {
+	private void setMonth(final int month) {
 		cal.set(Calendar.MONTH, month);
 	}
 
@@ -99,10 +99,6 @@ public class GMonth implements IGMonth, Cloneable {
 
 	public boolean isGround() {
 		return true;
-	}
-
-	public IGMonth getMinValue() {
-		return new GMonth(0);
 	}
 
 	public Integer getValue() {

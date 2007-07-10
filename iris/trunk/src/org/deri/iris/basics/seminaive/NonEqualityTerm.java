@@ -48,10 +48,6 @@ public class NonEqualityTerm implements ITerm{
 		return this.term.isGround();
 	}
 
-	public ITerm getMinValue() {
-		return this.term.getMinValue();
-	}
-
 	public Object getValue() {
 		return this.term.getValue();
 	}

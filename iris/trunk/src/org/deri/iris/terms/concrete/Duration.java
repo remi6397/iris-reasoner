@@ -41,7 +41,7 @@ import org.deri.iris.api.terms.concrete.IDuration;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class Duration implements IDuration, Cloneable {
@@ -146,17 +146,13 @@ public class Duration implements IDuration, Cloneable {
 
 	public int compareTo(IDuration o) {
 		if (o == null) {
-			throw new NullPointerException("Can not compare with null");
+			return 1;
 		}
 		return cal.compareTo(o.getDateTime());
 	}
 
 	public boolean isGround() {
 		return true;
-	}
-
-	public IDuration getMinValue() {
-		return new Duration(0, 0, 0, 0, 0, 0);
 	}
 
 	public Calendar getValue() {

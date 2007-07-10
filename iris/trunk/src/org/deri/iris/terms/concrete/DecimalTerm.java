@@ -34,7 +34,7 @@ import org.deri.iris.api.terms.concrete.IDecimalTerm;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class DecimalTerm implements IDecimalTerm, Cloneable {
@@ -42,7 +42,7 @@ public class DecimalTerm implements IDecimalTerm, Cloneable {
 	private double d = 0d;
 
 	DecimalTerm(final double d) {
-		setValue(d);
+		this.d = d;
 	}
 
 	public void setValue(Double arg) {
@@ -65,6 +65,9 @@ public class DecimalTerm implements IDecimalTerm, Cloneable {
 	}
 
 	public int compareTo(IDecimalTerm o) {
+		if (o == null) {
+			return 1;
+		}
 		return Double.compare(d, o.getValue());
 	}
 
@@ -96,9 +99,5 @@ public class DecimalTerm implements IDecimalTerm, Cloneable {
 	 */
 	public String toString() {
 		return Double.toString(d);
-	}
-
-	public IDecimalTerm getMinValue() {
-		return new DecimalTerm(Double.MIN_VALUE);
 	}
 }

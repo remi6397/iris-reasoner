@@ -38,7 +38,7 @@ import org.deri.iris.api.terms.concrete.IIri;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class Iri implements IIri, Cloneable {
@@ -57,7 +57,7 @@ public class Iri implements IIri, Cloneable {
 	 *             if the string couldn't be parsed to an URI
 	 */
 	Iri(final String str) {
-		setValue(str);
+		_setValue(str);
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class Iri implements IIri, Cloneable {
 	 *             if the uri is null
 	 */
 	Iri(final URI uri) {
-		setValue(uri);
+		_setValue(uri);
 	}
 
 	public Object clone() {
@@ -87,7 +87,7 @@ public class Iri implements IIri, Cloneable {
 
 	public int compareTo(IIri o) {
 		if (o == null) {
-			throw new NullPointerException("Can not compare with null");
+			return 1;
 		}
 		return uri.compareTo(o.getURI());
 	}
@@ -123,6 +123,10 @@ public class Iri implements IIri, Cloneable {
 	 *             if the string couldn't be parsed to an URI
 	 */
 	public void setValue(final String arg) {
+		_setValue(arg);
+	}
+
+	private void _setValue(final String arg) {
 		if (arg == null) {
 			throw new NullPointerException("arg must not be null");
 		}
@@ -143,6 +147,10 @@ public class Iri implements IIri, Cloneable {
 	 *             if the uri is null
 	 */
 	public void setValue(final URI uri) {
+		_setValue(uri);
+	}
+
+	private void _setValue(final URI uri) {
 		if (uri == null) {
 			throw new NullPointerException("The value must not be null");
 		}
@@ -155,9 +163,5 @@ public class Iri implements IIri, Cloneable {
 
 	public boolean isGround() {
 		return true;
-	}
-
-	public IIri getMinValue() {
-		return new Iri("");
 	}
 }

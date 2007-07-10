@@ -43,7 +43,7 @@ import org.deri.iris.api.terms.IVariable;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
  * @version $Revision$
  */
@@ -59,11 +59,13 @@ public class ConstructedTerm implements IConstructedTerm, Cloneable {
 	
 	
 	ConstructedTerm(final String symbol, final Collection<ITerm> terms) {
-		if (symbol == null || terms == null) {
-			throw new IllegalArgumentException("Input parameters must " +
-					"not be null");
+		if (symbol == null) {
+			throw new NullPointerException("The symbol must not be nulL");
 		}
-		setFunctionSymbol(symbol);
+		if (terms == null) {
+			throw new NullPointerException("The terms must not be null");
+		}
+		this.symbol = symbol;
 		this.terms.addAll(terms);
 	}
 
@@ -152,6 +154,9 @@ public class ConstructedTerm implements IConstructedTerm, Cloneable {
 
 	@SuppressWarnings("unchecked")
 	public int compareTo(final IConstructedTerm o) {
+		if (o == null) {
+			return 1;
+		}
 		int result = symbol.compareTo(o.getFunctionSymbol());
 		if (result != 0) {
 			return result;
@@ -190,10 +195,6 @@ public class ConstructedTerm implements IConstructedTerm, Cloneable {
 		} catch (NoSuchMethodException e) {
 			throw new IllegalArgumentException(e);
 		}
-	}
-
-	public IConstructedTerm getMinValue() {
-		return null;
 	}
 
 	public List<ITerm> getValue() {

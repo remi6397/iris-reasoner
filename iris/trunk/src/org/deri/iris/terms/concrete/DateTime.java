@@ -41,7 +41,7 @@ import org.deri.iris.api.terms.concrete.IDateTime;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class DateTime implements IDateTime, Cloneable {
@@ -88,7 +88,7 @@ public class DateTime implements IDateTime, Cloneable {
 
 	public int compareTo(IDateTime o) {
 		if (o == null) {
-			throw new NullPointerException("Can't compare with null");
+			return 1;
 		}
 		return cal.compareTo(o.getDateTime());
 	}
@@ -179,10 +179,6 @@ public class DateTime implements IDateTime, Cloneable {
 
 	public boolean isGround() {
 		return true;
-	}
-
-	public DateTime getMinValue() {
-		return new DateTime(0, 0, 0, 0, 0, 0, 0, 0);
 	}
 
 	public Calendar getValue() {

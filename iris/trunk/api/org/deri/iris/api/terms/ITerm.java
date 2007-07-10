@@ -29,15 +29,22 @@ package org.deri.iris.api.terms;
  * <p>
  * An interface which defines a term. A term is a name for an object
  * in the universe of discourse. There are three types of terms:
- * 
  * <ul>
  * <li> variables</li>
  * <li> constants</li>
  * <li> constructed terms (functional symbols)</li>
  * </ul>
- * 
+ * </p>
+ * <p>
+ * By convention <code>null</code> is the smalles possible term of all types.
+ * So if you compare a term using the compare method you will always recieve
+ * a positive number.
+ * </p>
+ * <p>
+ * $Id: ITerm.java,v 1.13 2007-07-10 12:26:53 poettler_ric Exp $
+ * </p>
  * @author Darko Anicic, DERI Innsbruck
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  */
 
 public interface ITerm<Type extends ITerm, Type0> extends Comparable<Type> {
@@ -65,27 +72,10 @@ public interface ITerm<Type extends ITerm, Type0> extends Comparable<Type> {
 	public void setValue(Type0 t);
 
 	/**
-	 * @deprecated	This method is used in some implementations of 
-	 * 				operations on relations. Use implementations of 
-	 * 				relational operations which do not use this method.
-	 * @return		
-	 * 				Minimal value a term of a certain type (e.g. for an 
-	 * 				Integer this is: 0x80000000). 
-	 */
-	public Type getMinValue();
-
-	/**
 	 * Creates and returns a copy of this object.
 	 * 
 	 * @return	A clone of this instance.
 	 * @throws CloneNotSupportedException
 	 */
 	public Object clone() throws CloneNotSupportedException;
-
-	/**
-	 * Returns a String object representing this term's value.
-	 * 
-	 * @return	A string representation of the value of this term.
-	 */
-	public String toString();
 }

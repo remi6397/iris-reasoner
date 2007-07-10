@@ -36,7 +36,7 @@ import org.deri.iris.api.terms.concrete.ISqName;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class SqName implements ISqName, Cloneable {
@@ -59,7 +59,7 @@ public class SqName implements ISqName, Cloneable {
 	 *             if the string got an invalid format
 	 */
 	public SqName(final String str) {
-		setValue(str);
+		_setValue(str);
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class SqName implements ISqName, Cloneable {
 	 * @throws NullPointerException
 	 *             if the iri is null
 	 */
-	protected void setNamespace(final IIri iri) {
+	private void setNamespace(final IIri iri) {
 		if (iri == null) {
 			throw new NullPointerException("The iri must not be null");
 		}
@@ -120,7 +120,7 @@ public class SqName implements ISqName, Cloneable {
 	 * @throws IllegalArgumentException
 	 *             if the name is an empty string
 	 */
-	protected void setName(final String str) {
+	private void setName(final String str) {
 		if (str == null) {
 			throw new NullPointerException("The srt must not be null");
 		}
@@ -181,6 +181,10 @@ public class SqName implements ISqName, Cloneable {
 	 *             if the string got an invalid format
 	 */
 	public void setValue(final String arg) {
+		_setValue(arg);
+	}
+
+	private void _setValue(final String arg) {
 		if (arg == null) {
 			throw new NullPointerException("arg must not be null");
 		}
@@ -199,7 +203,7 @@ public class SqName implements ISqName, Cloneable {
 
 	public int compareTo(ISqName o) {
 		if (o == null) {
-			throw new NullPointerException("Can not compare with null");
+			return 1;
 		}
 
 		int iResult = getNamespace().compareTo(o.getNamespace());
@@ -211,9 +215,5 @@ public class SqName implements ISqName, Cloneable {
 
 	public boolean isGround() {
 		return true;
-	}
-
-	public ISqName getMinValue() {
-		return new SqName("#0");
 	}
 }
