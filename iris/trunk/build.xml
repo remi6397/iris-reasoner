@@ -30,6 +30,7 @@
 			deprecation="on">
 			<compilerarg value="-Xlint:unchecked" compiler="modern"/>
 			<compilerarg value="-Xlint:unchecked" compiler="classic"/>
+			<exclude name="**/qsq/**" />
 			<include name="**/*.java" />
 		</javac>
 	</target>
@@ -98,6 +99,7 @@
 			deprecation="on">
 			<compilerarg value="-Xlint:unchecked" compiler="modern"/>
 			<compilerarg value="-Xlint:unchecked" compiler="classic"/>
+			<exclude name="**/qsq/**" />
 			<classpath>
 				<path refid="defaultcp"/>
 				<fileset dir="${dir.jar}">
