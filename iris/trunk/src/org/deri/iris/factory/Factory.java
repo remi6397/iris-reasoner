@@ -36,20 +36,18 @@ import org.deri.iris.api.factory.IProgramFactory;
 import org.deri.iris.api.factory.IRelationFactory;
 import org.deri.iris.api.factory.IRelationOperationsFactory;
 import org.deri.iris.api.factory.ITermFactory;
-import org.deri.iris.api.factory.ITupleOperationsFactory;
 import org.deri.iris.basics.BasicFactory;
 import org.deri.iris.builtins.BuiltinsFactory;
 import org.deri.iris.evaluation.EvaluationFactory;
 import org.deri.iris.evaluation.algebra.AlgebraFactory;
 import org.deri.iris.graph.GraphFactory;
 import org.deri.iris.operations.relations.RelationOperationsFactory;
-import org.deri.iris.operations.tuple.TupleOperationsFactory;
 import org.deri.iris.storage.RelationFactory;
 import org.deri.iris.terms.TermFactory;
 import org.deri.iris.terms.concrete.ConcreteFactory;
 
 /**
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
  */
 public class Factory {
@@ -63,9 +61,6 @@ public class Factory {
 	public static final IGraphFactory GRAPH = GraphFactory.getInstance();
 
 	public static final IRelationOperationsFactory RELATION_OPERATION = RelationOperationsFactory
-			.getInstance();
-
-	public static final ITupleOperationsFactory TUPLE_OPERATION = TupleOperationsFactory
 			.getInstance();
 
 	public static final IProgramFactory PROGRAM = ProgramFactory.getInstance();
