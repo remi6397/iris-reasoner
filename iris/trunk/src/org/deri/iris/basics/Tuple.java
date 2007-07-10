@@ -45,24 +45,16 @@ import org.deri.iris.api.terms.IVariable;
  * A simple tuple implementation. This implementation is thread-safe.
  * </p>
  * <p>
- * $Id: Tuple.java,v 1.16 2007-06-21 16:29:48 poettler_ric Exp $
+ * $Id: Tuple.java,v 1.17 2007-07-10 09:47:25 poettler_ric Exp $
  * </p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class Tuple implements ITuple{
 
 	/** The terms stored in this tuple. */
 	private final ITerm[] terms;
-	
-	/**
-	 * Tuples t0 and t1 are duplicates if they have identical terms  
-	 * for each sort index. Used in operations on relations 
-	 * (e.g. for tuple sorting � IndexComparator) to increase the 
-	 * efficiency of the operations.
-	 */
-	private ITuple duplicate = null;
 	
 	/** The Lock to make this object threadsafe. */
 	private final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
@@ -208,24 +200,6 @@ public class Tuple implements ITuple{
 		}
 	}
 
-	public void setDuplicate(ITuple duplicate) {
-		WRITE.lock();
-		try {
-			this.duplicate = duplicate;
-		} finally {
-			WRITE.unlock();
-		}
-	}
-	
-	public ITuple getDuplicate() {
-		READ.lock();
-		try {
-			return this.duplicate;
-		} finally {
-			READ.unlock();
-		}
-	}
-	
 	public int compareTo(ITuple t) {
 		if (t == null) {
 			throw new NullPointerException("Cannot compare with null");
