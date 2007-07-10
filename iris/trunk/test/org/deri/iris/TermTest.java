@@ -42,8 +42,8 @@ public final class TermTest {
 	@SuppressWarnings("unchecked")
 	public static void runTestGetMinValue(ITerm small) {
 		Assert.assertTrue("The smallest value of "
-				+ small.getClass().getSimpleName() + " mmust be smaller than "
-				+ small, small.getMinValue().compareTo(small) < 0);
+				+ small.getClass().getSimpleName() + " mmst be smaller than "
+				+ small, small.compareTo(null) > 0);
 	}
 
 }
