@@ -39,12 +39,12 @@ import org.deri.iris.api.terms.IVariable;
  * relation.
  * </p>
  * <p>
- * $Id: ITuple.java,v 1.11 2007-06-11 12:41:30 poettler_ric Exp $
+ * $Id: ITuple.java,v 1.12 2007-07-10 09:47:23 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 
 public interface ITuple extends Comparable<ITuple> {
@@ -131,22 +131,4 @@ public interface ITuple extends Comparable<ITuple> {
 	 * @return All variables from this tupple.
 	 */
 	public List<IVariable> getAllVariables();
-
-	/**
-	 * Tuples t0 and t1 are duplicates if they have identical terms for each
-	 * index. Used with implementations of relational operations (e.g. for
-	 * sorting tuples with IndexComparator) to increase the efficiency of the
-	 * operations.
-	 * 
-	 * @param duplicate
-	 *            A tuple that will be stored in a list of duplicates for the
-	 *            entire tuple.
-	 * @deprecated a duplicate shouldn't be stored in the tuple
-	 */
-	public void setDuplicate(ITuple duplicate);
-
-	/**
-	 * @deprecated a duplicate shouldn't be stored in the tuple
-	 */
-	public ITuple getDuplicate();
 }
