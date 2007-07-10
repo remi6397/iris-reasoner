@@ -37,7 +37,7 @@ import org.deri.iris.api.terms.concrete.IBase64Binary;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class Base64Binary implements IBase64Binary, Cloneable {
@@ -53,7 +53,7 @@ public class Base64Binary implements IBase64Binary, Cloneable {
 
 	Base64Binary(final String content) {
 		this();
-		setValue(content);
+		_setValue(content);
 	}
 
 	public Object clone() {
@@ -67,7 +67,7 @@ public class Base64Binary implements IBase64Binary, Cloneable {
 
 	public int compareTo(IBase64Binary o) {
 		if(o == null) {
-			throw new NullPointerException("Can not compare with null");
+			return 1;
 		}
 		return content.compareTo(o.getValue());
 	}
@@ -89,6 +89,10 @@ public class Base64Binary implements IBase64Binary, Cloneable {
 	}
 
 	public void setValue(final String content) {
+		_setValue(content);
+	}
+
+	private void _setValue(final String content) {
 		if (PATTERN.matcher(content).matches()) {
 			this.content = content;
 		} else {
@@ -103,9 +107,5 @@ public class Base64Binary implements IBase64Binary, Cloneable {
 
 	public boolean isGround() {
 		return true;
-	}
-
-	public IBase64Binary getMinValue() {
-		return new Base64Binary("");
 	}
 }

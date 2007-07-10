@@ -34,7 +34,7 @@ import org.deri.iris.api.terms.concrete.IFloatTerm;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class FloatTerm implements IFloatTerm, Cloneable {
@@ -80,6 +80,9 @@ public class FloatTerm implements IFloatTerm, Cloneable {
 	}
 
 	public int compareTo(IFloatTerm o) {
+		if (o == null) {
+			return 1;
+		}
 		return Float.compare(f, o.getValue());
 	}
 
@@ -106,9 +109,5 @@ public class FloatTerm implements IFloatTerm, Cloneable {
 	
 	public String toString() {
 		return Float.toString(f);
-	}
-
-	public IFloatTerm getMinValue() {
-		return new FloatTerm(Float.MIN_VALUE);
 	}
 }

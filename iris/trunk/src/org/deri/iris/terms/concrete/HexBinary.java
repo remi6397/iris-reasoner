@@ -37,7 +37,7 @@ import org.deri.iris.api.terms.concrete.IHexBinary;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class HexBinary implements IHexBinary, Cloneable {
@@ -47,7 +47,7 @@ public class HexBinary implements IHexBinary, Cloneable {
 	private String content = "";
 
 	HexBinary(final String content) {
-		setValue(content);
+		_setValue(content);
 	}
 
 	public Object clone() {
@@ -61,7 +61,7 @@ public class HexBinary implements IHexBinary, Cloneable {
 
 	public int compareTo(IHexBinary o) {
 		if (o == null) {
-			throw new NullPointerException("Can not compare with null");
+			return 1;
 		}
 		return getValue().compareTo(o.getValue());
 	}
@@ -83,6 +83,10 @@ public class HexBinary implements IHexBinary, Cloneable {
 	}
 
 	public void setValue(final String arg) {
+		_setValue(arg);
+	}
+
+	private void _setValue(final String arg) {
 		final String sStr = arg.toUpperCase();
 		if (PATTERN.matcher(sStr).matches()) {
 			this.content = sStr;

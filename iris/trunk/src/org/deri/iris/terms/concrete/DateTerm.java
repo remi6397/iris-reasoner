@@ -39,7 +39,7 @@ import org.deri.iris.api.terms.concrete.IDateTerm;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Holger Lausen
  * @version $Revision$
  */
@@ -87,7 +87,7 @@ public class DateTerm implements IDateTerm, Cloneable {
 
 	public int compareTo(IDateTerm o) {
 		if (o == null) {
-			throw new NullPointerException("Can not compare with null");
+			return 1;
 		}
 		int result = 0;
 		if ((result = getYear() - o.getYear()) != 0) {
@@ -97,10 +97,6 @@ public class DateTerm implements IDateTerm, Cloneable {
 			return result;
 		}
 		return getDay() - o.getDay();
-	}
-
-	public DateTerm getMinValue() {
-		return new DateTerm(0, Calendar.JANUARY, 1);
 	}
 
 	public int getMonth() {

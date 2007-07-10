@@ -34,7 +34,7 @@ import org.deri.iris.api.terms.IVariable;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class Variable implements IVariable<IVariable>, Cloneable {
@@ -42,7 +42,7 @@ public class Variable implements IVariable<IVariable>, Cloneable {
 	private String name = "";
 
 	Variable(final String name) {
-		setName(name);
+		this.name = name;
 	}
 
 	public void setName(String name) {
@@ -58,6 +58,9 @@ public class Variable implements IVariable<IVariable>, Cloneable {
 	}
 
 	public int compareTo(IVariable o) {
+		if (o == null) {
+			return 1;
+		}
 		return name.compareTo((String) o.getValue());
 	}
 
@@ -91,10 +94,6 @@ public class Variable implements IVariable<IVariable>, Cloneable {
 	 */
 	public String toString() {
 		return name;
-	}
-
-	public IVariable getMinValue() {
-		return null;
 	}
 
 	public String getValue() {

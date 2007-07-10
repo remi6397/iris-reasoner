@@ -34,7 +34,7 @@ import org.deri.iris.api.terms.concrete.IDoubleTerm;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class DoubleTerm implements IDoubleTerm, Cloneable {
@@ -42,7 +42,7 @@ public class DoubleTerm implements IDoubleTerm, Cloneable {
 	private double d = 0d;
 	
 	DoubleTerm(final double d) {
-		setValue(d);
+		this.d = d;
 	}
 	
 	public void setValue(final Double arg) {
@@ -65,6 +65,9 @@ public class DoubleTerm implements IDoubleTerm, Cloneable {
 	}
 
 	public int compareTo(IDoubleTerm o) {
+		if (o == null) {
+			return 1;
+		}
 		return Double.compare(d, o.getValue());
 	}
 	

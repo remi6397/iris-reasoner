@@ -35,7 +35,7 @@ import org.deri.iris.api.terms.concrete.IIntegerTerm;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Holger Lausen
  * @version $Revision$
  */
@@ -44,7 +44,7 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 	private int i;
 
 	IntegerTerm(int z) {
-		setValue(z);
+		this.i = z;
 	}
 
 	public void setValue(final Integer arg) {
@@ -67,6 +67,9 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 	}
 
 	public int compareTo(IIntegerTerm o) {
+		if (o == null) {
+			return 1;
+		}
 		return Integer.valueOf(i).compareTo(o.getValue());
 	}
 

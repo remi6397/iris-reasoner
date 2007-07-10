@@ -25,7 +25,6 @@
  */
 package org.deri.iris.terms;
 
-import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.IStringTerm;
 
 /**
@@ -35,15 +34,15 @@ import org.deri.iris.api.terms.IStringTerm;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
+public class StringTerm implements IStringTerm<IStringTerm>, Cloneable {
 
 	private String value = "";
 
 	StringTerm(final String value) {
-		setValue(value);
+		this.value = value;
 	}
 
 	public void setValue(String arg) {
@@ -58,8 +57,11 @@ public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
 		return true;
 	}
 
-	public int compareTo(StringTerm o) {
-		return value.compareTo(o.value);
+	public int compareTo(IStringTerm o) {
+		if (o == null) {
+			return 1;
+		}
+		return value.compareTo((String) o.getValue());
 	}
 
 	public int hashCode() {
@@ -90,9 +92,5 @@ public class StringTerm implements IStringTerm<StringTerm>, Cloneable {
 	 */
 	public String toString() {
 		return value;
-	}
-
-	public StringTerm getMinValue() {
-		return new StringTerm("");
 	}
 }

@@ -43,7 +43,7 @@ import org.deri.iris.api.terms.concrete.IGYear;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class GYear implements IGYear, Cloneable {
@@ -72,7 +72,7 @@ public class GYear implements IGYear, Cloneable {
 
 	public int compareTo(IGYear o) {
 		if (o == null) {
-			throw new IllegalArgumentException("Can not compare with null");
+			return 1;
 		}
 		return getYear() - o.getYear();
 	}
@@ -93,7 +93,7 @@ public class GYear implements IGYear, Cloneable {
 		return cal.hashCode();
 	}
 
-	protected void setYear(int year) {
+	private void setYear(int year) {
 		cal.set(Calendar.YEAR, year);
 	}
 
@@ -103,10 +103,6 @@ public class GYear implements IGYear, Cloneable {
 
 	public boolean isGround() {
 		return true;
-	}
-
-	public IGYear getMinValue() {
-		return new GYear(1);
 	}
 
 	public Integer getValue() {

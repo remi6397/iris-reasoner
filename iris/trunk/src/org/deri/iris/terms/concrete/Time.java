@@ -39,10 +39,10 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Simple implementation of ITime.
  * </p>
  * <p>
- * $Id: Time.java,v 1.1 2007-04-05 09:17:19 poettler_ric Exp $
+ * $Id: Time.java,v 1.2 2007-07-10 12:26:54 poettler_ric Exp $
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.1 $
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision: 1.2 $
  */
 public class Time implements ITime, Cloneable {
 
@@ -86,7 +86,7 @@ public class Time implements ITime, Cloneable {
 
 	public int compareTo(ITime o) {
 		if (o == null) {
-			throw new NullPointerException("Can't compare with null");
+			return 1;
 		}
 		return cal.compareTo(o.getTime());
 	}
@@ -162,10 +162,6 @@ public class Time implements ITime, Cloneable {
 
 	public boolean isGround() {
 		return true;
-	}
-
-	public Time getMinValue() {
-		return new Time(0, 0, 0, 0, 0);
 	}
 
 	public Calendar getValue() {

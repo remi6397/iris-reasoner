@@ -35,7 +35,7 @@ import org.deri.iris.api.terms.concrete.IBooleanTerm;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
  * @version $Revision$
  */
@@ -48,7 +48,7 @@ public class BooleanTerm implements IBooleanTerm, Cloneable {
 	 * Constructs a boolean with the value <code>false</code>.
 	 */
 	BooleanTerm() {
-		setValue(false);
+		this(false);
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class BooleanTerm implements IBooleanTerm, Cloneable {
 	 *            the boolean to which to set the value to
 	 */
 	BooleanTerm(final boolean value) {
-		setValue(value);
+		this.value = value;
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class BooleanTerm implements IBooleanTerm, Cloneable {
 		if (value == null) {
 			throw new NullPointerException();
 		}
-		setValue(Boolean.valueOf(value));
+		this.value = Boolean.valueOf(value);
 	}
 
 	public Object clone() {
@@ -135,13 +135,9 @@ public class BooleanTerm implements IBooleanTerm, Cloneable {
 
 	public int compareTo(IBooleanTerm o) {
 		if (o == null) {
-			throw new NullPointerException("Can not compare with null");
+			return 1;
 		}
 		return Boolean.valueOf(value).compareTo(o.getValue());
-	}
-
-	public IBooleanTerm getMinValue() {
-		return new BooleanTerm(false);
 	}
 
 	public void setValue(Boolean t) {

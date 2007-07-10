@@ -39,7 +39,7 @@ import org.deri.iris.api.terms.concrete.IGYearMonth;
  * <p>
  * $Id$
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class GYearMonth implements IGYearMonth, Cloneable {
@@ -68,7 +68,7 @@ public class GYearMonth implements IGYearMonth, Cloneable {
 
 	public int compareTo(IGYearMonth o) {
 		if (o == null) {
-			throw new NullPointerException("Can not compare with null");
+			return 1;
 		}
 		int iResult = getYear() - o.getYear();
 		if (iResult != 0) {
@@ -97,7 +97,7 @@ public class GYearMonth implements IGYearMonth, Cloneable {
 		return cal.hashCode();
 	}
 
-	protected void setYearMonth(final int year, final int month) {
+	private void setYearMonth(final int year, final int month) {
 		cal.set(Calendar.MONTH, month);
 		cal.set(Calendar.YEAR, year);
 	}
