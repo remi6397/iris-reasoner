@@ -1,7 +1,9 @@
 <project name="iris" basedir="." default="jar">
 	
 	<!-- $Id$ -->
-	
+
+	<tstamp/>
+
 	<property file="build.properties">
 	</property>
 
@@ -91,7 +93,6 @@
 				<include name="org/deri/iris/**"/>
 			</packageset>
 		</javadoc>
-		
 	</target>
 
 	<target name="compiletest" description="compiles the test classes" depends="init,jar,preparecompiletest">
@@ -118,9 +119,21 @@
 				</fileset>
 				<dirset dir="${dir.classes.test}"/>
 			</classpath>
-			<formatter type="plain"/>
-			<test name="${file.test}" todir="${dir.test.reports}"/>
+			<formatter type="xml"/>
+			<!-- todo find usefull exclusion pattern -->
+			<batchtest fork="yes" todir="${dir.test.reports}">
+				<fileset dir="${dir.src.test}">
+					<include name="**/*.java" />
+				</fileset>
+			</batchtest>
 		</junit>
+		<mkdir dir="${dir.test.reports}/html" />
+		<junitreport todir="${dir.test.reports}">
+			<fileset dir="${dir.test.reports}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${dir.test.reports}/html" />
+		</junitreport>
 	</target>
 
 	<target name="copyconfig" description="copies the config files" depends="init,prepareclasses">
@@ -140,6 +153,11 @@
 
 	<target name="release" description="packs the release archives"
 		depends="preparerelease,jar,parser,doc">
+		<zip destfile="${file.src.zip}">
+			<zipfileset dir="${dir.src}">
+				<include name="**/*.java"/>
+			</zipfileset>
+		</zip>
 		<zip destfile="${file.release.zip}">
 			<zipfileset dir="${dir.jar}">
 				<include name="**/*.jar"/>
