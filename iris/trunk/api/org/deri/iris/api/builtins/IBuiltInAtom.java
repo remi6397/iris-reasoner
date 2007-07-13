@@ -25,7 +25,6 @@
  */
 package org.deri.iris.api.builtins;
 
-import java.util.List;
 import java.util.Collection;
 
 import org.deri.iris.api.basics.IAtom;
@@ -37,12 +36,12 @@ import org.deri.iris.api.terms.IVariable;
  * Defines a Builtin.
  * </p>
  * <p>
- * $Id: IBuiltInAtom.java,v 1.9 2007-05-21 09:59:19 poettler_ric Exp $
+ * $Id: IBuiltInAtom.java,v 1.10 2007-07-13 09:20:34 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public abstract interface IBuiltInAtom extends IAtom {
 
@@ -67,7 +66,7 @@ public abstract interface IBuiltInAtom extends IAtom {
 	 * For example if you evaluate 
 	 * <code>4 + X = 9</code> you would get back <code>&lt;5&gt;</code>. 
 	 * The only difference are the binary builtins: For a binary builtin 
-	 * if you try to evaluate <code>3 &tl; 4</code> you will get back 
+	 * if you try to evaluate <code>3 &lt; 4</code> you will get back 
 	 * <code>&lt;3, 4&gt;</code>, but if you try to evaluate <code>3 &lt; 2</code> 
 	 * you will get back <code>null</code>.
 	 * </p>
