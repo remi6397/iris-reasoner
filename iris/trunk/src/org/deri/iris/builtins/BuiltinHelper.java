@@ -26,17 +26,13 @@
 package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.CONCRETE;
-import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
 import org.deri.iris.api.terms.concrete.IFloatTerm;
@@ -47,11 +43,11 @@ import org.deri.iris.api.terms.concrete.IIntegerTerm;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.10 2007-05-10 15:58:01 poettler_ric Exp $
+ * $Id: BuiltinHelper.java,v 1.11 2007-07-13 09:12:08 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class BuiltinHelper {
 
@@ -454,5 +450,33 @@ public class BuiltinHelper {
 			res.add(idx0[i], t0[i]);
 		}
 		return res.toArray(new ITerm[res.size()]);
+	}
+
+	/**
+	 * Merges the terms of two tuples. The constants of the first tuple
+	 * will have a highter priority than the constants of the second one.
+	 * @param t0 the first tuple (with the higher priority)
+	 * @param t1 the second tuple
+	 * @return the merged terms
+	 * @throws NullPointerException if one of the tuples is <code>null</code>
+	 * @throws IllegalArgumentException the arities of the tuples doesn't
+	 * match.
+	 * @since 0.4
+	 */
+	public static ITerm[] merge(final ITuple t0, final ITuple t1) {
+		if ((t0 == null) || (t1 == null)) {
+			throw new NullPointerException("The none of the tuples must not be null");
+		}
+		if (t0.getArity() != t1.getArity()) {
+			throw new IllegalArgumentException("The arity of the tuples must match " + 
+					t0.getArity() + " <-> " + t1.getArity());
+		}
+		// calculating the needed term indexes from the submitted tuple
+		int[] outstanding = determineUnground(t0.getTerms());
+		// retrieving the constants of this builin
+		final ITerm[] bCons = getIndexes(t0.getTerms(), 
+				complement(outstanding, t0.getArity()));
+		// putting the term from this builtin and the submitted tuple together
+		return concat(outstanding, getIndexes(t1.getTerms(), outstanding), bCons);
 	}
 }
