@@ -47,9 +47,9 @@ import org.deri.iris.api.terms.IVariable;
  * value, the second is the celsius value.
  * </p>
  * <p>
- * $Id: FahrenheitToCelsiusBuiltin.java,v 1.5 2007-05-21 09:52:16 poettler_ric Exp $
+ * $Id: FahrenheitToCelsiusBuiltin.java,v 1.6 2007-07-13 09:17:07 poettler_ric Exp $
  * </p>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  */
 public class FahrenheitToCelsiusBuiltin extends AbstractBuiltin {
@@ -79,15 +79,8 @@ public class FahrenheitToCelsiusBuiltin extends AbstractBuiltin {
 		if (c == null) {
 			throw new NullPointerException("The collection of terms must not be null");
 		}
-		// determines all positions of this builtin which should be computed
-		int[] outstanding = BuiltinHelper.determineUnground(getTuple().getTerms());
-		// getting the constants of this builtin
-		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple().getTerms(), 
-				BuiltinHelper.complement(outstanding, getTuple().getArity()));
-
-		// concat the terms
-		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
-				BuiltinHelper.getIndexes(c.getTerms(), outstanding), bCons);
+		// merge the terms
+		final ITerm[] complete = BuiltinHelper.merge(getTuple(), c);
 		// determine the messing term positions
 		final int[] missing = BuiltinHelper.determineUnground(Arrays.asList(complete));
 		// run the evaluation

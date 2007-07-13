@@ -109,7 +109,7 @@ public class BooleanTerm implements IBooleanTerm, Cloneable {
 	}
 
 	public String toString() {
-		return this.getClass().getName() + "[value=" + getValue() + "]";
+		return Boolean.toString(value);
 	}
 
 	/**
