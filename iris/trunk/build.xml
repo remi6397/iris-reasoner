@@ -110,6 +110,20 @@
 		</javac>
 	</target>
 
+	<target name="testsingle" description="some people want to run only ONE test" depends="init,jar,compiletest,preparetest">
+		<junit showoutput="true" printsummary="true">
+			<classpath>
+				<path refid="defaultcp"/>
+				<fileset dir="${dir.jar}">
+					<include name="**/*.jar"/>
+				</fileset>
+				<dirset dir="${dir.classes.test}"/>
+			</classpath>
+			<formatter type="plain"/>
+			<test name="${file.test}" todir="${dir.test.reports}" />
+		</junit>
+	</target>
+
 	<target name="test" description="runs junit tests" depends="init,jar,compiletest,preparetest">
 		<junit showoutput="true" printsummary="true">
 			<classpath>
