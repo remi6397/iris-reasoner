@@ -32,8 +32,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 public class IriTest extends TestCase {
 	private static final URI REFERENCE;
@@ -70,21 +70,21 @@ public class IriTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Iri(URISTR), new Iri(URISTR),
+		ObjectTests.runTestEquals(new Iri(URISTR), new Iri(URISTR),
 				new Iri(URISTRMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new Iri(URISTR));
+		ObjectTests.runTestClone(new Iri(URISTR));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new Iri(URISTR), new Iri(URISTR),
+		ObjectTests.runTestCompareTo(new Iri(URISTR), new Iri(URISTR),
 				new Iri(URISTRMORE), new Iri(URISTRMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Iri(URISTR), new Iri(URISTR));
+		ObjectTests.runTestHashCode(new Iri(URISTR), new Iri(URISTR));
 	}
 
 	public static Test suite() {
@@ -92,6 +92,6 @@ public class IriTest extends TestCase {
 	}
 	
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new Iri("a"));
+		TermTests.runTestGetMinValue(new Iri("a"));
 	}
 }

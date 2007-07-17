@@ -29,8 +29,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -66,22 +66,22 @@ public class GMonthDayTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new GMonthDay(MONTH, DAY), new GMonthDay(
+		ObjectTests.runTestEquals(new GMonthDay(MONTH, DAY), new GMonthDay(
 				MONTH, DAY), new GMonthDay(MONTH, DAYMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new GMonthDay(MONTH, DAY));
+		ObjectTests.runTestClone(new GMonthDay(MONTH, DAY));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new GMonthDay(MONTH, DAY), new GMonthDay(
+		ObjectTests.runTestCompareTo(new GMonthDay(MONTH, DAY), new GMonthDay(
 				MONTH, DAY), new GMonthDay(MONTH, DAYMORE), new GMonthDay(
 				MONTH, DAYMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new GMonthDay(MONTH, DAY), new GMonthDay(
+		ObjectTests.runTestHashCode(new GMonthDay(MONTH, DAY), new GMonthDay(
 				MONTH, DAY));
 	}
 
@@ -91,6 +91,6 @@ public class GMonthDayTest extends TestCase {
 	}
 
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new GMonthDay(Calendar.JANUARY, 2));
+		TermTests.runTestGetMinValue(new GMonthDay(Calendar.JANUARY, 2));
 	}
 }

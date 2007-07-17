@@ -35,17 +35,14 @@ import junit.framework.Assert;
  * be checked with junit asserts.
  * </p>
  * <p>
- * $Id$
+ * $Id: ObjectTests.java,v 1.1 2007-07-17 10:12:55 poettler_ric Exp $
  * </p>
- * 
- * @author richi
- * @version $Revision$
- * @date $Date$
- * 
+ * @author Richard Pöttler (richard dot poettler at deri dot org)
+ * @version $Revision: 1.1 $
  */
-public final class ObjectTest {
+public final class ObjectTests {
 
-	private ObjectTest() {
+	private ObjectTests() {
 		// prevent sublassing
 	}
 

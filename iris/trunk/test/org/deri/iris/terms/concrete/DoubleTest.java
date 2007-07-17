@@ -29,8 +29,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -66,26 +66,26 @@ public class DoubleTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new DoubleTerm(BASIC), new DoubleTerm(BASIC),
+		ObjectTests.runTestEquals(new DoubleTerm(BASIC), new DoubleTerm(BASIC),
 				new DoubleTerm(MORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new DoubleTerm(BASIC));
+		ObjectTests.runTestClone(new DoubleTerm(BASIC));
 	}
 
 	public void testCompare() {
-		ObjectTest.runTestCompareTo(new DoubleTerm(BASIC),
+		ObjectTests.runTestCompareTo(new DoubleTerm(BASIC),
 				new DoubleTerm(BASIC), new DoubleTerm(MORE), new DoubleTerm(
 						MORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest
+		ObjectTests
 				.runTestHashCode(new DoubleTerm(BASIC), new DoubleTerm(BASIC));
 	}
 
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new DoubleTerm(Double.MIN_VALUE + 0.0001));
+		TermTests.runTestGetMinValue(new DoubleTerm(Double.MIN_VALUE + 0.0001));
 	}
 }

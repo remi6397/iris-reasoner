@@ -30,8 +30,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 public class HexBinaryTest extends TestCase {
 	private static final String BASIC = "adf3";
@@ -53,22 +53,22 @@ public class HexBinaryTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new HexBinary(BASIC), new HexBinary(
+		ObjectTests.runTestEquals(new HexBinary(BASIC), new HexBinary(
 				BASIC), new HexBinary(BASICMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new HexBinary(BASIC));
+		ObjectTests.runTestClone(new HexBinary(BASIC));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new HexBinary(BASIC),
+		ObjectTests.runTestCompareTo(new HexBinary(BASIC),
 				new HexBinary(BASIC), new HexBinary(BASICMORE),
 				new HexBinary(BASICMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new HexBinary(BASIC), new HexBinary(
+		ObjectTests.runTestHashCode(new HexBinary(BASIC), new HexBinary(
 				BASIC));
 	}
 
@@ -101,6 +101,6 @@ public class HexBinaryTest extends TestCase {
 	}
 	
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new HexBinary("0a"));
+		TermTests.runTestGetMinValue(new HexBinary("0a"));
 	}
 }

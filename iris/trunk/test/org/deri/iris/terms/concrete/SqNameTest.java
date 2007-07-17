@@ -29,8 +29,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 import org.deri.iris.api.terms.concrete.IIri;
 
 public class SqNameTest extends TestCase {
@@ -59,22 +59,22 @@ public class SqNameTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new SqName(SPACE, NAME), new SqName(
+		ObjectTests.runTestEquals(new SqName(SPACE, NAME), new SqName(
 				SPACE, NAME), new SqName(SPACE, NAMEMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new SqName(SPACE, NAME));
+		ObjectTests.runTestClone(new SqName(SPACE, NAME));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new SqName(SPACE, NAME),
+		ObjectTests.runTestCompareTo(new SqName(SPACE, NAME),
 				new SqName(SPACE, NAME), new SqName(SPACE, NAMEMORE),
 				new SqName(SPACE, NAMEMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new SqName(SPACE, NAME), new SqName(
+		ObjectTests.runTestHashCode(new SqName(SPACE, NAME), new SqName(
 				SPACE, NAME));
 	}
 
@@ -83,6 +83,6 @@ public class SqNameTest extends TestCase {
 	}
 	
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new SqName("", "a"));
+		TermTests.runTestGetMinValue(new SqName("", "a"));
 	}
 }

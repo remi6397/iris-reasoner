@@ -44,13 +44,13 @@ import org.deri.iris.api.storage.IRelation;
  * implementations. All tests will be done with tuples of arity 4.
  * </p>
  * <p>
- * $Id: GenericRelationTest.java,v 1.4 2007-05-22 08:29:06 poettler_ric Exp $
+ * $Id: AbstractRelationTest.java,v 1.1 2007-07-17 10:12:56 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.1 $
  */
-public abstract class GenericRelationTest<Type extends IRelation> extends
+public abstract class AbstractRelationTest<Type extends IRelation> extends
 		TestCase {
 
 	private static final ITuple[] allTup = new ITuple[] {
@@ -73,7 +73,7 @@ public abstract class GenericRelationTest<Type extends IRelation> extends
 	/**
 	 * <p>
 	 * In this method the field &quot;{@code r}&quot; of
-	 * {@code GenericRelationTest} must be set. Note: all tests will be done
+	 * {@code AbstractRelationTest} must be set. Note: all tests will be done
 	 * with tuples of arity 4.
 	 * </p>
 	 * <p>

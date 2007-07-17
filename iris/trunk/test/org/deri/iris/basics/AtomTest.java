@@ -37,7 +37,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
+import org.deri.iris.ObjectTests;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
 
@@ -145,17 +145,17 @@ public class AtomTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Atom(PREDICATE, TUPLE), new Atom(
+		ObjectTests.runTestEquals(new Atom(PREDICATE, TUPLE), new Atom(
 				PREDICATE, TUPLE), new Atom(PREDICATE, TUPLEMORE));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Atom(PREDICATE, TUPLE), new Atom(
+		ObjectTests.runTestHashCode(new Atom(PREDICATE, TUPLE), new Atom(
 				PREDICATE, TUPLE));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new Atom(PREDICATE, TUPLE), new Atom(
+		ObjectTests.runTestCompareTo(new Atom(PREDICATE, TUPLE), new Atom(
 				PREDICATE, TUPLE), new Atom(PREDICATE, TUPLEMORE), new Atom(
 				PREDICATEMORE, TUPLE));
 	}

@@ -25,8 +25,8 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 import org.deri.iris.factory.Factory;
 
 import junit.framework.Test;
@@ -66,24 +66,24 @@ public class FloatTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new FloatTerm(BASIC), new FloatTerm(BASIC),
+		ObjectTests.runTestEquals(new FloatTerm(BASIC), new FloatTerm(BASIC),
 				new FloatTerm(MORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new FloatTerm(BASIC));
+		ObjectTests.runTestClone(new FloatTerm(BASIC));
 	}
 
 	public void testCompare() {
-		ObjectTest.runTestCompareTo(new FloatTerm(BASIC), new FloatTerm(BASIC),
+		ObjectTests.runTestCompareTo(new FloatTerm(BASIC), new FloatTerm(BASIC),
 				new FloatTerm(MORE), new FloatTerm(MORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new FloatTerm(BASIC), new FloatTerm(BASIC));
+		ObjectTests.runTestHashCode(new FloatTerm(BASIC), new FloatTerm(BASIC));
 	}
 
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new FloatTerm(Float.MIN_VALUE + 0.0001f));
+		TermTests.runTestGetMinValue(new FloatTerm(Float.MIN_VALUE + 0.0001f));
 	}
 }

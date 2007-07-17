@@ -29,7 +29,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
+import org.deri.iris.ObjectTests;
 
 /**
  * @author richi
@@ -61,21 +61,21 @@ public class PredicateTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Predicate(SYMBOL, ARITY), new Predicate(
+		ObjectTests.runTestEquals(new Predicate(SYMBOL, ARITY), new Predicate(
 				SYMBOL, ARITY), new Predicate(SYMBOL, ARITYMORE));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Predicate(SYMBOL, ARITY), new Predicate(
+		ObjectTests.runTestHashCode(new Predicate(SYMBOL, ARITY), new Predicate(
 				SYMBOL, ARITY));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new Predicate(SYMBOL, ARITY));
+		ObjectTests.runTestClone(new Predicate(SYMBOL, ARITY));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new Predicate(SYMBOL, ARITY),
+		ObjectTests.runTestCompareTo(new Predicate(SYMBOL, ARITY),
 				new Predicate(SYMBOL, ARITY), new Predicate(SYMBOL, ARITYMORE),
 				new Predicate(SYMBOLMORE, ARITY));
 	}

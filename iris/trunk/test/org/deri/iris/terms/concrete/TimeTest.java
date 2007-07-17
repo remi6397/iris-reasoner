@@ -29,8 +29,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -61,22 +61,22 @@ public class TimeTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Time(12, 01, 00, 1, 0),
+		ObjectTests.runTestEquals(new Time(12, 01, 00, 1, 0),
 				new Time(12, 01, 00, 1, 0), new Time(12, 02, 00, 1, 0));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new Time(12, 01, 00, 1, 0),
+		ObjectTests.runTestCompareTo(new Time(12, 01, 00, 1, 0),
 				new Time(11, 01, 00, 0, 0), new Time(11, 02, 00, 0, 0), 
 				new Time(11, 03, 00, 0, 0));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new Time(CALENDAR));
+		ObjectTests.runTestClone(new Time(CALENDAR));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Time(CALENDAR), new Time(
+		ObjectTests.runTestHashCode(new Time(CALENDAR), new Time(
 				CALENDAR));
 	}
 
@@ -86,6 +86,6 @@ public class TimeTest extends TestCase {
 	}
 
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new Time(0, 0, 1));
+		TermTests.runTestGetMinValue(new Time(0, 0, 1));
 	}
 }

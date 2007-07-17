@@ -37,7 +37,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
+import org.deri.iris.ObjectTests;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.terms.ITerm;
 
@@ -104,12 +104,12 @@ public class HeadTest extends TestCase {
 	}
 
 	public static void testEquals() {
-		ObjectTest.runTestEquals(new Head(LITERALS), new Head(LITERALS),
+		ObjectTests.runTestEquals(new Head(LITERALS), new Head(LITERALS),
 				new Head(LITERALS_UNEQ));
 	}
 
 	public static void testHashCode() {
-		ObjectTest.runTestHashCode(new Head(LITERALS), new Head(LITERALS));
+		ObjectTests.runTestHashCode(new Head(LITERALS), new Head(LITERALS));
 	}
 
 }

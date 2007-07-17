@@ -32,7 +32,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
+import org.deri.iris.ObjectTests;
 import org.deri.iris.api.terms.ITerm;
 
 /**
@@ -97,19 +97,19 @@ public class ConstructedTermTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(BASIC, BASIC.clone(), MORE1);
+		ObjectTests.runTestEquals(BASIC, BASIC.clone(), MORE1);
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(BASIC);
+		ObjectTests.runTestClone(BASIC);
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(BASIC, BASIC.clone());
+		ObjectTests.runTestHashCode(BASIC, BASIC.clone());
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(BASIC, (ConstructedTerm) BASIC.clone(),
+		ObjectTests.runTestCompareTo(BASIC, (ConstructedTerm) BASIC.clone(),
 				MORE, MORE1);
 	}
 }

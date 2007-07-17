@@ -29,8 +29,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -65,23 +65,23 @@ public class DurationTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Duration(2000, 1, 1, 12, 01, 00),
+		ObjectTests.runTestEquals(new Duration(2000, 1, 1, 12, 01, 00),
 				new Duration(2000, 1, 1, 12, 01, 00), new Duration(2000, 1, 1,
 						12, 02, 00));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new Duration(2000, 1, 1, 11, 01, 00),
+		ObjectTests.runTestCompareTo(new Duration(2000, 1, 1, 11, 01, 00),
 				new Duration(2000, 1, 1, 11, 01, 00), new Duration(2000, 1, 1,
 						11, 02, 00), new Duration(2000, 1, 1, 11, 03, 00));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new Duration(CALENDAR));
+		ObjectTests.runTestClone(new Duration(CALENDAR));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Duration(CALENDAR), new Duration(
+		ObjectTests.runTestHashCode(new Duration(CALENDAR), new Duration(
 				CALENDAR));
 	}
 
@@ -91,6 +91,6 @@ public class DurationTest extends TestCase {
 	}
 
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new Duration(0, 0, 0, 0, 0, 1));
+		TermTests.runTestGetMinValue(new Duration(0, 0, 0, 0, 0, 1));
 	}
 }

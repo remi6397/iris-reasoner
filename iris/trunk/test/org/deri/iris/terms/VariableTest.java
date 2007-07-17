@@ -29,7 +29,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
+import org.deri.iris.ObjectTests;
 
 /**
  * @author richi
@@ -58,21 +58,21 @@ public class VariableTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Variable(BASIC), new Variable(BASIC),
+		ObjectTests.runTestEquals(new Variable(BASIC), new Variable(BASIC),
 				new Variable(MORE1));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new Variable(BASIC));
+		ObjectTests.runTestClone(new Variable(BASIC));
 	}
 
 	public void testHashCode() {
-		ObjectTest
+		ObjectTests
 				.runTestHashCode(new Variable(BASIC), new Variable(BASIC));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new Variable(BASIC),
+		ObjectTests.runTestCompareTo(new Variable(BASIC),
 				new Variable(BASIC), new Variable(MORE), new Variable(
 						MORE1));
 	}

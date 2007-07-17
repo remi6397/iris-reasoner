@@ -45,17 +45,17 @@ import org.deri.iris.api.basics.ITuple;
  * <p>
  * Here we are only testing some special cases (handling of various datatypes), 
  * since the main functionality should be tested in the 
- * <code>GenericRelationTest</code>.
+ * <code>AbstractRelationTest</code>.
  * </p>
  * <p>
- * $Id: MixedDatatypeRelationTest.java,v 1.1 2007-05-30 08:51:53 poettler_ric Exp $
+ * $Id: MixedDatatypeRelationTest.java,v 1.2 2007-07-17 10:12:56 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class MixedDatatypeRelationTest extends
-		GenericRelationTest<MixedDatatypeRelation> {
+		AbstractRelationTest<MixedDatatypeRelation> {
 
 	private static final ITuple[] tups = new ITuple[]{
 		BASIC.createTuple(CONCRETE.createInteger(1), TERM.createString("b"), CONCRETE.createIri("http://aaa"), CONCRETE.createDouble(2d)), 
