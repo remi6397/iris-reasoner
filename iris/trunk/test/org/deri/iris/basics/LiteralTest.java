@@ -37,7 +37,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
+import org.deri.iris.ObjectTests;
 import org.deri.iris.api.terms.ITerm;
 
 /**
@@ -145,29 +145,29 @@ public class LiteralTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Literal(NEGATIVE, BASIC.createAtom(
+		ObjectTests.runTestEquals(new Literal(NEGATIVE, BASIC.createAtom(
 				PREDICATE, BASIC.createTuple(TERMS))), new Literal(NEGATIVE, BASIC.createAtom(
 				PREDICATE, BASIC.createTuple(TERMS))), new Literal(BASIC.createAtom(PREDICATE,
 				BASIC.createTuple(TERMSMORE))));
-		ObjectTest.runTestEquals(new Literal(NEGATIVE, BASIC.createAtom(
+		ObjectTests.runTestEquals(new Literal(NEGATIVE, BASIC.createAtom(
 				PREDICATE, BASIC.createTuple(TERMS))), new Literal(NEGATIVE, BASIC.createAtom(
 				PREDICATE, BASIC.createTuple(TERMS))), new Literal(!NEGATIVE, BASIC.createAtom(
 				PREDICATE, BASIC.createTuple(TERMS))));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Literal(NEGATIVE, BASIC.createAtom(
+		ObjectTests.runTestHashCode(new Literal(NEGATIVE, BASIC.createAtom(
 				PREDICATE, BASIC.createTuple(TERMS))), new Literal(NEGATIVE, BASIC.createAtom(
 				PREDICATE, BASIC.createTuple(TERMS))));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new Literal(BASIC.createAtom(PREDICATE,
+		ObjectTests.runTestCompareTo(new Literal(BASIC.createAtom(PREDICATE,
 				BASIC.createTuple(TERMS))), new Literal(BASIC.createAtom(PREDICATE, 
 				BASIC.createTuple(TERMS))),
 				new Literal(BASIC.createAtom(PREDICATE, BASIC.createTuple(TERMSMORE))),
 				new Literal(BASIC.createAtom(PREDICATEMORE, BASIC.createTuple(TERMS))));
-		ObjectTest.runTestCompareTo(new Literal(NEGATIVE, BASIC.createAtom(
+		ObjectTests.runTestCompareTo(new Literal(NEGATIVE, BASIC.createAtom(
 				PREDICATE, BASIC.createTuple(TERMS))), new Literal(NEGATIVE, BASIC.createAtom(
 				PREDICATE, BASIC.createTuple(TERMS))), new Literal(NEGATIVE, BASIC.createAtom(
 				PREDICATE, BASIC.createTuple(TERMSMORE))), new Literal(BASIC.createAtom(PREDICATE,

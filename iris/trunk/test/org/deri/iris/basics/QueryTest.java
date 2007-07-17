@@ -36,7 +36,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
+import org.deri.iris.ObjectTests;
 import org.deri.iris.api.basics.ILiteral;
 
 /**
@@ -94,13 +94,13 @@ public class QueryTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Query(BODY), new Query(BODY), new Query(
+		ObjectTests.runTestEquals(new Query(BODY), new Query(BODY), new Query(
 				BODYMORE));
-		ObjectTest.runTestEquals(new Query(BODY), new Query(BODY), new Query(
+		ObjectTests.runTestEquals(new Query(BODY), new Query(BODY), new Query(
 				null));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Query(BODY), new Query(BODY));
+		ObjectTests.runTestHashCode(new Query(BODY), new Query(BODY));
 	}
 }

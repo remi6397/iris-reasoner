@@ -33,14 +33,14 @@ import junit.framework.TestSuite;
  * Tests the Allways indexed relation.
  * </p>
  * <p>
- * $Id: AlwaysIndexedRelationTest.java,v 1.1 2007-02-16 09:02:38 poettler_ric Exp $
+ * $Id: AlwaysIndexedRelationTest.java,v 1.2 2007-07-17 10:12:56 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class AlwaysIndexedRelationTest extends
-		GenericRelationTest<AlwaysIndexedRelation> {
+		AbstractRelationTest<AlwaysIndexedRelation> {
 
 	public static Test suite() {
 		return new TestSuite(AlwaysIndexedRelationTest.class,

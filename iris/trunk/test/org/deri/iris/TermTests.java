@@ -30,12 +30,18 @@ import junit.framework.Assert;
 import org.deri.iris.api.terms.ITerm;
 
 /**
- * @author richi
- * 
+ * <p>
+ * Static test collection for terms.
+ * </p>
+ * <p>
+ * $Id: TermTests.java,v 1.1 2007-07-17 10:12:55 poettler_ric Exp $
+ * </p>
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision: 1.1 $
  */
-public final class TermTest {
+public final class TermTests {
 
-	private TermTest() {
+	private TermTests() {
 		// prevent subclassing
 	}
 

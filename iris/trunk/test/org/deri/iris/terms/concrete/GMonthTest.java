@@ -29,8 +29,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -62,22 +62,22 @@ public class GMonthTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new GMonth(MONTH), new GMonth(MONTH),
+		ObjectTests.runTestEquals(new GMonth(MONTH), new GMonth(MONTH),
 				new GMonth(MONTHMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new GMonth(MONTH));
+		ObjectTests.runTestClone(new GMonth(MONTH));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new GMonth(MONTH),
+		ObjectTests.runTestCompareTo(new GMonth(MONTH),
 				new GMonth(MONTH), new GMonth(MONTHMORE),
 				new GMonth(MONTHMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest
+		ObjectTests
 				.runTestHashCode(new GMonth(MONTH), new GMonth(MONTH));
 	}
 
@@ -86,6 +86,6 @@ public class GMonthTest extends TestCase {
 	}
 	
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new GMonth(1));
+		TermTests.runTestGetMinValue(new GMonth(1));
 	}
 }

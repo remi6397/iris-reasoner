@@ -29,8 +29,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -61,21 +61,21 @@ public class GYearTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new GYear(YEAR), new GYear(YEAR),
+		ObjectTests.runTestEquals(new GYear(YEAR), new GYear(YEAR),
 				new GYear(YEARMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new GYear(YEAR));
+		ObjectTests.runTestClone(new GYear(YEAR));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new GYear(YEAR), new GYear(YEAR),
+		ObjectTests.runTestCompareTo(new GYear(YEAR), new GYear(YEAR),
 				new GYear(YEARMORE), new GYear(YEARMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new GYear(YEAR), new GYear(YEAR));
+		ObjectTests.runTestHashCode(new GYear(YEAR), new GYear(YEAR));
 	}
 
 	public static Test suite() {
@@ -83,6 +83,6 @@ public class GYearTest extends TestCase {
 	}
 	
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new GYear(2));
+		TermTests.runTestGetMinValue(new GYear(2));
 	}
 }

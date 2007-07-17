@@ -31,8 +31,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 public class DateTest extends TestCase {
 	public void testBasic() {
@@ -45,23 +45,23 @@ public class DateTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new DateTerm(2000, 1, 1), new DateTerm(2000,
+		ObjectTests.runTestEquals(new DateTerm(2000, 1, 1), new DateTerm(2000,
 				1, 1), new DateTerm(2000, 1, 2));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new DateTerm(2000, Calendar.JANUARY, 31),
+		ObjectTests.runTestCompareTo(new DateTerm(2000, Calendar.JANUARY, 31),
 				new DateTerm(2000, Calendar.JANUARY, 31), new DateTerm(2000,
 						Calendar.FEBRUARY, 1), new DateTerm(2000,
 						Calendar.FEBRUARY, 2));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new DateTerm(2005, Calendar.MARCH, 10));
+		ObjectTests.runTestClone(new DateTerm(2005, Calendar.MARCH, 10));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new DateTerm(2005, Calendar.MARCH, 10),
+		ObjectTests.runTestHashCode(new DateTerm(2005, Calendar.MARCH, 10),
 				new DateTerm(2005, Calendar.MARCH, 10));
 	}
 
@@ -70,6 +70,6 @@ public class DateTest extends TestCase {
 	}
 
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new DateTerm(0, Calendar.JANUARY, 2));
+		TermTests.runTestGetMinValue(new DateTerm(0, Calendar.JANUARY, 2));
 	}
 }

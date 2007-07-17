@@ -38,7 +38,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
+import org.deri.iris.ObjectTests;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
@@ -150,14 +150,14 @@ public class TupleTest extends TestCase {
 		// Correct it!
 		// something has changed MUTABLE in meantime!
 		MUTABLE.setTerms(TERMS);
-		ObjectTest.runTestEquals(REFERENCE, MUTABLE, MORE);
+		ObjectTests.runTestEquals(REFERENCE, MUTABLE, MORE);
 	}
 	
 	public void testCompareTo() {
 		// Correct it!
 		// something has changed MUTABLE in meantime!
 		MUTABLE.setTerms(TERMS);
-		ObjectTest.runTestCompareTo(REFERENCE, MUTABLE, MORE,
+		ObjectTests.runTestCompareTo(REFERENCE, MUTABLE, MORE,
 				EVENMORE);
 	}
 	
@@ -165,7 +165,7 @@ public class TupleTest extends TestCase {
 		// Correct it!
 		// something has changed MUTABLE in meantime!
 		MUTABLE.setTerms(TERMS);
-		ObjectTest.runTestHashCode(REFERENCE, MUTABLE);
+		ObjectTests.runTestHashCode(REFERENCE, MUTABLE);
 	}
 	
 	public void testVariables() {

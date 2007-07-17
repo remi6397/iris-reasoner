@@ -29,8 +29,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -61,21 +61,21 @@ public class GDayTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new GDay(DAY), new GDay(DAY),
+		ObjectTests.runTestEquals(new GDay(DAY), new GDay(DAY),
 				new GDay(DAYMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new GDay(DAY));
+		ObjectTests.runTestClone(new GDay(DAY));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new GDay(DAY), new GDay(DAY), new GDay(
+		ObjectTests.runTestCompareTo(new GDay(DAY), new GDay(DAY), new GDay(
 				DAYMORE), new GDay(DAYMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new GDay(DAY), new GDay(DAY));
+		ObjectTests.runTestHashCode(new GDay(DAY), new GDay(DAY));
 	}
 
 	public static Test suite() {
@@ -83,6 +83,6 @@ public class GDayTest extends TestCase {
 	}
 
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new GDay(2));
+		TermTests.runTestGetMinValue(new GDay(2));
 	}
 }

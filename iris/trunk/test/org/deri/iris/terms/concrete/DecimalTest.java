@@ -25,8 +25,8 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 import org.deri.iris.factory.Factory;
 
 import junit.framework.Test;
@@ -67,25 +67,25 @@ public class DecimalTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new DecimalTerm(BASIC),
+		ObjectTests.runTestEquals(new DecimalTerm(BASIC),
 				new DecimalTerm(BASIC), new DecimalTerm(MORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new DecimalTerm(BASIC));
+		ObjectTests.runTestClone(new DecimalTerm(BASIC));
 	}
 
 	public void testCompare() {
-		ObjectTest.runTestCompareTo(new DecimalTerm(BASIC), new DecimalTerm(
+		ObjectTests.runTestCompareTo(new DecimalTerm(BASIC), new DecimalTerm(
 				BASIC), new DecimalTerm(MORE), new DecimalTerm(MORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new DecimalTerm(BASIC), new DecimalTerm(
+		ObjectTests.runTestHashCode(new DecimalTerm(BASIC), new DecimalTerm(
 				BASIC));
 	}
 
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new DecimalTerm(Double.MIN_VALUE + 0.0001));
+		TermTests.runTestGetMinValue(new DecimalTerm(Double.MIN_VALUE + 0.0001));
 	}
 }

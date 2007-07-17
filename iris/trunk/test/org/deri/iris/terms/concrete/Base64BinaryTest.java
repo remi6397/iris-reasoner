@@ -25,8 +25,8 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
@@ -53,22 +53,22 @@ public class Base64BinaryTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Base64Binary(BASIC),
+		ObjectTests.runTestEquals(new Base64Binary(BASIC),
 				new Base64Binary(BASIC), new Base64Binary(BASICMORE));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new Base64Binary(BASIC));
+		ObjectTests.runTestClone(new Base64Binary(BASIC));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new Base64Binary(BASIC),
+		ObjectTests.runTestCompareTo(new Base64Binary(BASIC),
 				new Base64Binary(BASIC), new Base64Binary(BASICMORE),
 				new Base64Binary(BASICMORE1));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Base64Binary(BASIC),
+		ObjectTests.runTestHashCode(new Base64Binary(BASIC),
 				new Base64Binary(BASIC));
 	}
 
@@ -100,6 +100,6 @@ public class Base64BinaryTest extends TestCase {
 	}
 	
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new Base64Binary("0A=="));
+		TermTests.runTestGetMinValue(new Base64Binary("0A=="));
 	}
 }

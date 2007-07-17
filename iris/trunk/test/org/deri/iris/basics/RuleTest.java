@@ -37,7 +37,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTest;
+import org.deri.iris.ObjectTests;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
@@ -100,16 +100,16 @@ public class RuleTest extends TestCase {
 	}
 	
 	public void testEquals() {
-		ObjectTest.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
+		ObjectTests.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
 				new Rule(null, BODY));
-		ObjectTest.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
+		ObjectTests.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
 				new Rule(HEAD, new Body(HEAD.getHeadLiterals())));
-		ObjectTest.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
+		ObjectTests.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
 				new Rule(new Head(BODY.getBodyLiterals()), BODY));
 	}
 
 	public void testHashCode() {
-		ObjectTest.runTestHashCode(new Rule(HEAD, BODY), new Rule(HEAD, BODY));
+		ObjectTests.runTestHashCode(new Rule(HEAD, BODY), new Rule(HEAD, BODY));
 	}
 
 	/*

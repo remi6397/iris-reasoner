@@ -25,8 +25,8 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.ObjectTest;
-import org.deri.iris.TermTest;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -43,21 +43,21 @@ public class BooleanTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTest.runTestEquals(new BooleanTerm(true), new BooleanTerm(true),
+		ObjectTests.runTestEquals(new BooleanTerm(true), new BooleanTerm(true),
 				new BooleanTerm(false));
 	}
 
 	public void testClone() {
-		ObjectTest.runTestClone(new BooleanTerm(true));
+		ObjectTests.runTestClone(new BooleanTerm(true));
 	}
 
 	public void testCompareTo() {
-		ObjectTest.runTestCompareTo(new BooleanTerm(false), new BooleanTerm(
+		ObjectTests.runTestCompareTo(new BooleanTerm(false), new BooleanTerm(
 				false), new BooleanTerm(true));
 	}
 
 	public void testHashCode() {
-		ObjectTest
+		ObjectTests
 				.runTestHashCode(new BooleanTerm(true), new BooleanTerm(true));
 	}
 
@@ -67,6 +67,6 @@ public class BooleanTest extends TestCase {
 	}
 
 	public void testGetMinValue() {
-		TermTest.runTestGetMinValue(new BooleanTerm(true));
+		TermTests.runTestGetMinValue(new BooleanTerm(true));
 	}
 }
