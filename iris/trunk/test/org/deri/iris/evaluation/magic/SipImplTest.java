@@ -52,11 +52,11 @@ import org.deri.iris.graph.LabeledEdge;
  * Runns various test on the sip.
  * </p>
  * <p>
- * $Id: SipImplTest.java,v 1.3 2007-04-18 13:33:49 poettler_ric Exp $
+ * $Id: SipImplTest.java,v 1.4 2007-07-17 13:54:51 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class SipImplTest extends TestCase {
 
@@ -150,15 +150,17 @@ public class SipImplTest extends TestCase {
 				.getEdges()));
 	}
 
-	public void testBuiltinSip() {
+	public void testEqualBuiltinSip() {
 		// builtins are at the moment not handeled correctly
 		final Set<LabeledEdge<ILiteral, Set<IVariable>>> e2 = new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
 		e2.add(createEdge(createLiteral("rsg", "X", "Y"), createLiteral("up",
 				"X", "X1"), createVarList("X")));
 		e2.add(createEdge(createLiteral("up", "X", "X1"), createLiteral("rsg",
 				"Y1", "X1"), createVarList("X", "X1")));
-		e2.add(createEdge(createLiteral("rsg", "Y1", "X1"), createLiteral(
-				"down", "Y1", "Y"), createVarList("X", "X1", "Y1")));
+		e2.add(createEdge(createLiteral("rsg", "Y1", "X1"), 
+					BASIC.createLiteral(true, 
+						BUILTIN.createEqual(TERM.createVariable("Y1"), TERM.createVariable("Y"))),
+					createVarList("X", "X1", "Y1")));
 
 		assertEquals("The number of edges doesn't match", e2.size(), sipBuiltin
 				.getEdges().size());
