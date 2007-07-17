@@ -41,6 +41,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
@@ -62,11 +63,11 @@ import org.deri.iris.MiscHelper;
  * Tests the magic sets.
  * </p>
  * <p>
- * $Id: MagicTest.java,v 1.2 2007-04-16 14:59:44 poettler_ric Exp $
+ * $Id: MagicTest.java,v 1.3 2007-07-17 14:14:13 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class MagicTest extends TestCase {
 
@@ -243,8 +244,7 @@ public class MagicTest extends TestCase {
 	public void testSeed0() {
 		IPredicate p = new AdornedProgram.AdornedPredicate("magic_sg", 1,
 				new Adornment[] { Adornment.BOUND, Adornment.FREE });
-		final IQuery ref = BASIC.createQuery(BASIC.createLiteral(true, p, BASIC
-				.createTuple(TERM.createString("john"))));
+		final IAtom ref = BASIC.createAtom(p, BASIC.createTuple(TERM.createString("john")));
 		assertEquals("The seed wasn't constructed correctly", ref, ms0
 				.getSeed());
 	}
@@ -256,9 +256,9 @@ public class MagicTest extends TestCase {
 		IPredicate p = new AdornedProgram.AdornedPredicate("magic_a", 2,
 				new Adornment[] { Adornment.BOUND, Adornment.BOUND,
 						Adornment.FREE });
-		final IQuery ref = BASIC.createQuery(BASIC.createLiteral(true, p, BASIC
+		final IAtom ref = BASIC.createAtom(p, BASIC
 				.createTuple(TERM.createString("john"), TERM
-						.createString("mary"))));
+						.createString("mary")));
 		assertEquals("The seed wasn't constructed correctly", ref, ms1
 				.getSeed());
 	}
