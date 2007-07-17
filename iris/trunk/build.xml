@@ -138,6 +138,8 @@
 			<batchtest fork="yes" todir="${dir.test.reports}">
 				<fileset dir="${dir.src.test}">
 					<include name="**/*Test.java" />
+					<exclude name="**/Abstract*Test.java" />
+					<exclude name="**/qsq/**" />
 				</fileset>
 			</batchtest>
 		</junit>
