@@ -4,8 +4,7 @@
 
 	<tstamp/>
 
-	<property file="build.properties">
-	</property>
+	<property file="build.properties"/>
 
 	<path id="sablecccp">
 		<fileset dir="${dir.lib}">
