@@ -25,8 +25,8 @@ if( !file_exists( $filelocation ) ) {
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
   <head>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
-    <link rel="stylesheet" type="text/css" href="bluehaze.css" title="Blue Haze stylesheet" />
-    <link rel="stylesheet" type="text/css" href="color-scheme.css" title="Blue Haze stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/bluehaze.css" />
+    <link rel="stylesheet" type="text/css" href="/color-scheme.css" />
     <title>IRIS Reasoner</title>
   </head>
 
@@ -47,40 +47,46 @@ if( !file_exists( $filelocation ) ) {
 
     <div class="sideBox LHS">
       <div>overview</div>
-        <a href="download">download</a>
-        <a href="license">license</a>
-        <a href="team">team</a>
+        <a href="/download">download</a>
+        <a href="/license">license</a>
+        <a href="/team">team</a>
     </div>
 
     <div class="sideBox LHS">
       <div>snapshot</div>
-		<a href="snapshot">download</a>
-        <a href="snapshot/javadoc">java doc</a>
-		<a href="snapshot/junit_report">test reults</a><!--
+		<a href="/snapshot">download</a>
+        <a href="/snapshot/javadoc">java doc</a>
+		<a href="/snapshot/junit_report">test reults</a><!--
         <a href="source">source code</a>
         
         <a href="history">release history</a>
         <a href="guide">user guide</a>-->
     </div>
     
-    <div class="LHS" style="margin-top:30px">
-    <SCRIPT type='text/javascript' language='JavaScript' src='http://www.ohloh.net/projects/6238;badge_js'></SCRIPT>
+    <div class="sideBox LHS">
+      <div>IRIS in action</div>
+		<a href="http://tools.deri.org/rdfs-reasoner/">RDFS Reasoner</a>
+        <a href="http://tools.deri.org/wsml2reasoner/">wsml2reasoner</a>
+		<!--
+        <a href="source">source code</a>
+        
+        <a href="history">release history</a>
+        <a href="guide">user guide</a>-->
     </div>
     
      <!-- ###### Body Text ###### -->
 
     <div id="bodyText">
 <?php
-
-include( $filelocation );
+	include( $filelocation );
 
 ?>
         </div>  
     
     <!-- ###### Footer ###### -->
 
-    <div id="footer">
-            
+    <div id="footer"><center>
+    <SCRIPT type='text/javascript' language='JavaScript' src='http://www.ohloh.net/projects/6238;badge_js'></SCRIPT></center>
     </div>
   </body>
 </html> 
