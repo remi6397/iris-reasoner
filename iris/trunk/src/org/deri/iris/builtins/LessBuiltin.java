@@ -47,18 +47,18 @@ import org.deri.iris.factory.Factory;
  * IntegerTerm data type.
  * </p>
  * <p>
- * $Id: LessBuiltin.java,v 1.10 2007-06-22 07:08:43 poettler_ric Exp $
+ * $Id: LessBuiltin.java,v 1.11 2007-07-25 08:16:56 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class LessBuiltin extends AbstractBuiltin {
 
 	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = Factory.BASIC.createBuiltinPredicate(
+	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate(
 			"LESS", 2);
 
 	/**

@@ -36,12 +36,12 @@ package org.deri.iris.api.basics;
  * predicate.
  * </p>
  * <p>
- * $Id: IPredicate.java,v 1.6 2007-06-20 12:20:00 poettler_ric Exp $
+ * $Id: IPredicate.java,v 1.7 2007-07-25 08:16:56 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 
 public interface IPredicate extends Comparable<IPredicate> {
@@ -60,13 +60,4 @@ public interface IPredicate extends Comparable<IPredicate> {
 	 * @return The arity.
 	 */
 	public int getArity();
-
-	/**
-	 * <p>
-	 * Checks whether the predicate is a built-in predicate.
-	 * </p>
-	 * 
-	 * @return True if the predicate is a built-in predicate; otherwise false.
-	 */
-	public boolean isBuiltIn();
 }

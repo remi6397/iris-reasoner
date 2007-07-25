@@ -61,11 +61,11 @@ import org.jgrapht.graph.SimpleDirectedGraph;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.19 2007-04-18 14:16:08 poettler_ric Exp $
+ * $Id: SIPImpl.java,v 1.20 2007-07-25 08:16:57 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public final class SIPImpl implements ISip {
 	/**
@@ -368,7 +368,7 @@ public final class SIPImpl implements ISip {
 			return Collections.EMPTY_MAP;
 		}
 		ILiteral lit;
-		for (lit = rule.getBodyLiteral(newPos); lit.getPredicate().isBuiltIn(); lit = rule
+		for (lit = rule.getBodyLiteral(newPos); lit.getAtom().isBuiltin(); lit = rule
 				.getBodyLiteral(newPos++)) {
 			if (newPos >= rLength) {
 				return Collections.EMPTY_MAP;
@@ -799,10 +799,10 @@ public final class SIPImpl implements ISip {
 	 * The label of the edge will be <code>new HashSet<IVariable>()</code>.
 	 * </p>
 	 * <p>
-	 * $Id: SIPImpl.java,v 1.19 2007-04-18 14:16:08 poettler_ric Exp $
+	 * $Id: SIPImpl.java,v 1.20 2007-07-25 08:16:57 poettler_ric Exp $
 	 * </p>
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.19 $
+	 * @version $Revision: 1.20 $
 	 * @since 0.3
 	 */
 	private static class SipEdgeFactory implements EdgeFactory<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> {

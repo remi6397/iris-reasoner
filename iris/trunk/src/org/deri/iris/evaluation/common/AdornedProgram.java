@@ -53,11 +53,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.23 2007-06-20 13:39:21 poettler_ric Exp $
+ * $Id: AdornedProgram.java,v 1.24 2007-07-25 08:16:57 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  */
 public class AdornedProgram implements IAdornedProgram {
 
@@ -568,8 +568,7 @@ public class AdornedProgram implements IAdornedProgram {
 			}
 			return (pred.getArity() == p.getArity())
 					&& (pred.getPredicateSymbol()
-							.equals(p.getPredicateSymbol()))
-					&& (p.isBuiltIn() == pred.isBuiltIn());
+							.equals(p.getPredicateSymbol()));
 		}
 
 		public IPredicate getUnadornedPredicate() {
@@ -588,10 +587,6 @@ public class AdornedProgram implements IAdornedProgram {
 
 		public String getPredicateSymbol() {
 			return p.getPredicateSymbol();
-		}
-
-		public boolean isBuiltIn() {
-			return p.isBuiltIn();
 		}
 
 		public int compareTo(IPredicate o) {
@@ -640,8 +635,8 @@ public class AdornedProgram implements IAdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.23 $
-	 * @date $Date: 2007-06-20 13:39:21 $
+	 * @version $Revision: 1.24 $
+	 * @date $Date: 2007-07-25 08:16:57 $
 	 */
 	public static class AdornedRule implements IAdornedRule {
 		/** The inner rule represented by this object */

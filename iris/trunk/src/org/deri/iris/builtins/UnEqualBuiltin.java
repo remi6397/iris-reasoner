@@ -40,16 +40,16 @@ import org.deri.iris.factory.Factory;
  * Builtin to compare two terms for unequality.
  * </p>
  * <p>
- * $Id: UnEqualBuiltin.java,v 1.11 2007-06-22 07:08:43 poettler_ric Exp $
+ * $Id: UnEqualBuiltin.java,v 1.12 2007-07-25 08:16:57 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class UnEqualBuiltin extends AbstractBuiltin {
 
 	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = Factory.BASIC.createBuiltinPredicate(
+	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate(
 			"UNEQUAL", 2);
 
 	/**

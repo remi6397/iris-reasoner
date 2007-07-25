@@ -39,8 +39,15 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
 /**
- * @author richi
+ * <p>
+ * Represents a datalog rule.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
  *
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision$
  */
 public class Rule implements IRule {
 	
@@ -77,7 +84,7 @@ public class Rule implements IRule {
 		Iterator it = literals.iterator();
 		while (it.hasNext()) {
 			ILiteral lit = (ILiteral) it.next();
-			if (!lit.getPredicate().isBuiltIn() && lit.isPositive() && !lit.isGround())
+			if (!lit.getAtom().isBuiltin() && lit.isPositive() && !lit.isGround())
 				for(ITerm litTerm : lit.getTuple().getTerms()) {
 					if (!litTerm.isGround()) {
 						varsLimited.put((IVariable)litTerm, Boolean.TRUE);
@@ -98,7 +105,7 @@ public class Rule implements IRule {
 			
 				ILiteral lit = (ILiteral) it.next();
 
-				if(lit.getPredicate().isBuiltIn()) {
+				if(lit.getAtom().isBuiltin()) {
 					if(lit.getPredicate().getPredicateSymbol() == "UNEQUAL" && !lit.isPositive())
 						negNEBuiltin = true; // NE builtin case: !( % != %)
 

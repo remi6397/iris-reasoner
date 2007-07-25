@@ -44,11 +44,11 @@ import org.deri.iris.api.terms.ITerm;
  * such as predicates, atoms, rules, queries etc.
  * </p>
  * <p>
- * $Id: IBasicFactory.java,v 1.13 2007-05-03 12:11:47 darko_anicic Exp $
+ * $Id: IBasicFactory.java,v 1.14 2007-07-25 08:16:56 poettler_ric Exp $
  * </p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public interface IBasicFactory {
 
@@ -93,7 +93,6 @@ public interface IBasicFactory {
 	public ITuple createMinimalTuple(List<ITerm> terms);
 	
 	public IPredicate createPredicate(String symbol, int arity);
-	public IPredicate createBuiltinPredicate(String symbol, int arity);
 	
 	public IQuery createQuery(ILiteral... literals);
 	public IQuery createQuery(List<ILiteral> literals);

@@ -115,10 +115,6 @@ public class BasicFactory implements IBasicFactory {
 		return new Predicate(symbol, arity);
 	}
 
-	public IPredicate createBuiltinPredicate(String symbol, int arity) {
-		return new Predicate(symbol, arity, true);
-	}
-
 	public IQuery createQuery(ILiteral... literals) {
 		return new Query(createBody(literals));
 	}
