@@ -44,21 +44,10 @@ public class Predicate implements IPredicate, Cloneable {
 
 	private final String symbol;
 
-	private final boolean builtin;
-
 	private final int arity;
 	
-	private int stratum;
-
 	Predicate(final String symbol, final int arity) {
 		this.symbol = symbol;
-		this.builtin = false;
-		this.arity = arity;
-	}
-
-	Predicate(final String symbol, final int arity, boolean isBuiltin) {
-		this.symbol = symbol;
-		this.builtin = isBuiltin;
 		this.arity = arity;
 	}
 
@@ -70,13 +59,8 @@ public class Predicate implements IPredicate, Cloneable {
 		return arity;
 	}
 
-	public boolean isBuiltIn() {
-		return builtin;
-	}
-
 	public int hashCode() {
 		int result = 17;
-		result = result * 37 + (builtin ? 0 : 1);
 		result = result * 37 + arity;
 		result = result * 37 + symbol.hashCode();
 		return result;
@@ -99,8 +83,7 @@ public class Predicate implements IPredicate, Cloneable {
 			return false;
 		}
 		Predicate p = (Predicate) o;
-		return (builtin == p.builtin) && symbol.equals(p.symbol)
-				&& (arity == p.arity);
+		return symbol.equals(p.symbol) && (arity == p.arity);
 	}
 
 	public int compareTo(IPredicate o) {
@@ -109,10 +92,6 @@ public class Predicate implements IPredicate, Cloneable {
 			return res;
 		}
 		if ((res = arity - o.getArity()) != 0) {
-			return res;
-		}
-		if ((res = Boolean.valueOf(builtin).compareTo(
-				Boolean.valueOf(o.isBuiltIn()))) != 0) {
 			return res;
 		}
 		return 0;

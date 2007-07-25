@@ -42,16 +42,16 @@ import org.deri.iris.api.terms.IVariable;
  * variable be left for computation, otherwise an exception will be thrown.
  * </p>
  * <p>
- * $Id: AddBuiltin.java,v 1.11 2007-06-22 07:08:43 poettler_ric Exp $
+ * $Id: AddBuiltin.java,v 1.12 2007-07-25 08:16:56 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class AddBuiltin extends AbstractBuiltin {
 
 	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = BASIC.createBuiltinPredicate(
+	private static final IPredicate PREDICATE = BASIC.createPredicate(
 			"ADD", 3);
 
 	/**

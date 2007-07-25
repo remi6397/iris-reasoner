@@ -38,11 +38,11 @@ import junit.framework.TestSuite;
  * Tests for the greater builtin.
  * </p>
  * <p>
- * $Id: GreaterBuiltinTest.java,v 1.3 2007-05-10 07:01:16 poettler_ric Exp $
+ * $Id: GreaterBuiltinTest.java,v 1.4 2007-07-25 08:16:57 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class GreaterBuiltinTest extends TestCase {
 
@@ -80,7 +80,7 @@ public class GreaterBuiltinTest extends TestCase {
 
 	public void test_isBuiltin() {
 		assertTrue("buitin predicates should be identifiable as builtins", (new GreaterBuiltin(CONCRETE
-				.createInteger(2), CONCRETE.createInteger(5)).getPredicate().isBuiltIn()));
+				.createInteger(2), CONCRETE.createInteger(5)).isBuiltin()));
 	}
 
 }

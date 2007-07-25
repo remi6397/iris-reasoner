@@ -60,8 +60,8 @@ import org.deri.iris.operations.relations.JoinCondition;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic, DERI Innsbruck
- * @date $Date: 2007-01-25 15:05:35 $
- * @version $Id: Rule2RelationTest.java,v 1.8 2007-01-25 15:05:35 darko Exp $
+ * @date $Date: 2007-07-25 08:16:57 $
+ * @version $Id: Rule2RelationTest.java,v 1.9 2007-07-25 08:16:57 poettler_ric Exp $
  */
 public class Rule2RelationTest extends TestCase {
 
@@ -125,7 +125,7 @@ public class Rule2RelationTest extends TestCase {
 		// result
 		HashMap<IPredicate, IComponent> result = new HashMap<IPredicate, IComponent>();
 		// head
-		IRelationDescriptor tree = ALGEBRA.createRelationDescriptor(true, BASIC.createBuiltinPredicate("s", 2));
+		IRelationDescriptor tree = ALGEBRA.createRelationDescriptor(true, BASIC.createPredicate("s", 2));
 		List<IVariable> vars = new ArrayList<IVariable>();
 		vars.add(TERM.createVariable("X"));
 		vars.add(TERM.createVariable("Y"));
@@ -200,7 +200,7 @@ public class Rule2RelationTest extends TestCase {
 		IProjectionDescriptor proj = ALGEBRA.createProjectionDescriptor(index);
 		proj.addVariables(vars);
 		IJoinDescriptor join = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
-		IRelationDescriptor rule = ALGEBRA.createRelationDescriptor(true, BASIC.createBuiltinPredicate("r", 2));
+		IRelationDescriptor rule = ALGEBRA.createRelationDescriptor(true, BASIC.createPredicate("r", 2));
 		vars = new ArrayList<IVariable>();
 		vars.add(TERM.createVariable("Z"));
 		vars.add(TERM.createVariable("Y"));

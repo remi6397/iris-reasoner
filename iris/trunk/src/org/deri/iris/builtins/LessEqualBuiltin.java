@@ -44,16 +44,16 @@ import org.deri.iris.factory.Factory;
  * equal.
  * </p>
  * <p>
- * $Id: LessEqualBuiltin.java,v 1.10 2007-06-22 07:08:43 poettler_ric Exp $
+ * $Id: LessEqualBuiltin.java,v 1.11 2007-07-25 08:16:56 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class LessEqualBuiltin extends AbstractBuiltin {
 
 	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = Factory.BASIC.createBuiltinPredicate(
+	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate(
 			"LESS_EQUAL", 2);
 
 	/**
