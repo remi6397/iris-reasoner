@@ -52,11 +52,11 @@ import org.deri.iris.graph.LabeledEdge;
  * Runns various test on the sip.
  * </p>
  * <p>
- * $Id: SipImplTest.java,v 1.4 2007-07-17 13:54:51 poettler_ric Exp $
+ * $Id: SipImplTest.java,v 1.5 2007-07-25 08:38:52 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class SipImplTest extends TestCase {
 
@@ -168,27 +168,32 @@ public class SipImplTest extends TestCase {
 				.containsAll(sipBuiltin.getEdges()));
 	}
 
-	public void testLiteralOrder() {
+	public void testLiteralOrder0() {
 		// a(X, Y) :- not b(X, Y1), c(Y1, X1), d(X1, Y)
 		// a(john, Y)
 		final ILiteral not_b = createLiteral("b", "X", "Y1");
 		not_b.setPositive(false);
-		final IRule r0 = BASIC.createRule(BASIC.createHead(createLiteral("a",
-				"X", "Y")), BASIC.createBody(not_b, createLiteral("c", "Y1",
-				"X1"), createLiteral("d", "X1", "Y")));
-		final IRule r0_ref = BASIC.createRule(BASIC.createHead(createLiteral(
-				"a", "X", "Y")), BASIC.createBody(
-				createLiteral("c", "Y1", "X1"), createLiteral("d", "X1", "Y"),
-				not_b));
-		assertEquals("The sorting order isn't correct", r0_ref, SIPImpl.orderLiterals(r0, Collections
+		final IRule r = BASIC.createRule(
+				BASIC.createHead(createLiteral("a", "X", "Y")), 
+				BASIC.createBody(not_b, createLiteral("c", "Y1", "X1"), createLiteral("d", "X1", "Y")));
+		final IRule r_ref = BASIC.createRule(
+				BASIC.createHead(createLiteral( "a", "X", "Y")), 
+				BASIC.createBody( createLiteral("c", "Y1", "X1"), createLiteral("d", "X1", "Y"), not_b));
+		assertEquals("The sorting order isn't correct", r_ref, SIPImpl.orderLiterals(r, Collections
 				.singleton(TERM.createVariable("X"))));
+	}
+
+	public void testLiteralOrder1() {
 		// a(X, Y) :- b(X, Y1), Y1 > X1, d(X1, Y)
 		// a(john, Y)
-		// final ILiteral eq = BASIC.createLiteral(true, BUILTIN.createGreater(
-		// TERM.createVariable("X1"), TERM.createVariable("Y1")));
-		// final IRule r1 = BASIC.createRule(BASIC.createHead(createLiteral("a",
-		// "X", "Y")), BASIC.createBody(createLiteral("b", "X", "Y1"), eq,
-		// createLiteral("d", "X1", "Y")));
+		final ILiteral gt = BASIC.createLiteral(true, BUILTIN.createGreater( TERM.createVariable("X1"), TERM.createVariable("Y1")));
+		final IRule r = BASIC.createRule(
+				BASIC.createHead( createLiteral("a", "X", "Y")), 
+				BASIC.createBody(createLiteral("b", "X", "Y1"), gt, createLiteral("d", "X1", "Y")));
+		final IRule r_ref = BASIC.createRule(
+				BASIC.createHead( createLiteral("a", "X", "Y")), 
+				BASIC.createBody(createLiteral("b", "X", "Y1"), gt, createLiteral("d", "X1", "Y")));
+		assertEquals("The sorting order isn't correct", r_ref, SIPImpl.orderLiterals(r, Collections.singleton(TERM.createVariable("X"))));
 	}
 
 	/**
