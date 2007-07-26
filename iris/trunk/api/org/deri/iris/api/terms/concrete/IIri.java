@@ -26,7 +26,7 @@
 package org.deri.iris.api.terms.concrete;
 
 import java.net.URI;
-import org.deri.iris.api.terms.IStringTerm;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -36,7 +36,7 @@ import org.deri.iris.api.terms.IStringTerm;
  * 
  * @author Richard Pöttler
  */
-public interface IIri extends IStringTerm<IIri> {
+public interface IIri extends ITerm<IIri, String> {
 	
 	/**
 	 * Returns the URI.

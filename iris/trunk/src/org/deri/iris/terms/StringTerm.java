@@ -37,7 +37,7 @@ import org.deri.iris.api.terms.IStringTerm;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class StringTerm implements IStringTerm<IStringTerm>, Cloneable {
+public class StringTerm implements IStringTerm, Cloneable {
 
 	private String value = "";
 

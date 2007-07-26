@@ -25,7 +25,8 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import org.deri.iris.api.terms.IStringTerm;
+import org.deri.iris.api.terms.ITerm;
+
 
 /**
  * <p>
@@ -47,13 +48,13 @@ import org.deri.iris.api.terms.IStringTerm;
  * </p>
  * <pre>
  *      Created on 04.04.2006
- *      Committed by $Author: darko $
+ *      Committed by $Author: poettler_ric $
  *      $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/IBase64Binary.java,v $,
  * </pre>
  * 
  * @author Richard Pöttler AuthorLastName
  * 
- * @version $Revision: 1.4 $ $Date: 2007-01-22 16:08:52 $
+ * @version $Revision: 1.5 $ $Date: 2007-07-26 09:49:17 $
  */
-public interface IBase64Binary extends IStringTerm<IBase64Binary> {
+public interface IBase64Binary extends ITerm<IBase64Binary, String> {
 }
