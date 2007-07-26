@@ -25,7 +25,7 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import org.deri.iris.api.terms.IStringTerm;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -45,13 +45,13 @@ import org.deri.iris.api.terms.IStringTerm;
  * </p>
  * <pre>
  *    Created on 04.04.2006
- *    Committed by $Author: darko $
+ *    Committed by $Author: poettler_ric $
  *    $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/IHexBinary.java,v $,
  * </pre>
  * 
  * @author Richard Pöttler
  * 
- * @version $Revision: 1.3 $ $Date: 2007-01-22 16:11:19 $
+ * @version $Revision: 1.4 $ $Date: 2007-07-26 09:49:17 $
  */
-public interface IHexBinary extends IStringTerm<IHexBinary> {
+public interface IHexBinary extends ITerm<IHexBinary, String> {
 }

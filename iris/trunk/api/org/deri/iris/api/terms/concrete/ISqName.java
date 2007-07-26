@@ -25,7 +25,7 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import org.deri.iris.api.terms.IStringTerm;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -34,7 +34,7 @@ import org.deri.iris.api.terms.IStringTerm;
  * 
  * @author Richard Pöttler
  */
-public interface ISqName extends IStringTerm<ISqName> {
+public interface ISqName extends ITerm<ISqName, String> {
 	
 	/**
 	 * Returns the namespace.
