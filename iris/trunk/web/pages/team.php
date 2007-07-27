@@ -9,6 +9,7 @@
 <dt>Scientific, Support and Integration Acivities</dt>
 <dd><a href="http://www.deri.at/about/team/details/cristina-feier/">Cristina Feier</a><br/>
 <a href="http://www.uwekeller.net/">Uwe Keller</a><br/>
+<a href="http://www.deri.at/about/team/details/nathalie-steinmetz/">Nathalie Steinmetz</a><br/>
 <a href="http://www.holgerlausen.net/">Holger Lausen</a><br/>
 </dd>
 
