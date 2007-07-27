@@ -6,7 +6,7 @@
 <a href="http://www.deri.at/about/team/details/florian-fischer/">Florian Fischer</a><br/>
 </dd>
 
-<dt>Scientific, Support and Integration Acivities</dt>
+<dt>Scientific, Support and Integration Activities</dt>
 <dd><a href="http://www.deri.at/about/team/details/cristina-feier/">Cristina Feier</a><br/>
 <a href="http://www.uwekeller.net/">Uwe Keller</a><br/>
 <a href="http://www.deri.at/about/team/details/nathalie-steinmetz/">Nathalie Steinmetz</a><br/>

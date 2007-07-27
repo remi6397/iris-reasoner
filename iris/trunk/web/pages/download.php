@@ -3,23 +3,23 @@
 
 <h1>Download</h1>
 
-<p>IRIS releases is available at <a href="http://sourceforge.net/project/platformdownload.php?group_id=167309">sourceforge</a>.</p>
+<p>IRIS releases are available at <a href="http://sourceforge.net/project/platformdownload.php?group_id=167309">sourceforge</a>.</p>
 
 <h2>Release History</h2>
 <p><b>v0.3</b> 2007-06-15</p> 
 <ul>
-	<li>enabled multible programs per vm</li>
+	<li>enabled multiple programs per vm</li>
 </ul>
 
 <p><b>v0.2</b> 2007-02-09</p> 
 <ul>
-	<li>Support for all data types supported by WSML</li>
-	<li>A numbr of built-ins implemented</li>
+	<li>support for all data types supported by WSML</li>
+	<li>a number of built-ins implemented</li>
 	<li>added the IndexingOnTheFlyRelation and corresponding implementations</li>
-	<li>Added the IRelationFactory interface</li>
+	<li>added the IRelationFactory interface</li>
 	<li>modified the IBuiltinInterface</li>
 	<li>reimplemented the Complementor class</li>
-	<li>added the possibility to make custom builitns</li>
+	<li>added the possibility to make custom built-ins</li>
 	<li>bugfixes</li>
 </ul>
 
