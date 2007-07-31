@@ -216,6 +216,48 @@ public class LessBuiltinEvaluationTest extends TestCase {
 		executeTest(pr, res);
 	}
 	
+	public void testEvaluate3() {
+		// constructing the rules
+		Set<IRule> rules = new HashSet<IRule>(3);
+		// p(?X,?Y) :- s(?X,?Y), less(?X,?Y).
+		IHead h = Factory.BASIC.createHead(createLiteral("p", "X", "Y"));
+		IBody b = Factory.BASIC.createBody(
+				createLiteral("s", "X", "Y"),
+				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
+				createLess(
+						TERM.createVariable("X"),
+						TERM.createVariable("Y"))));
+		
+		IRule r = Factory.BASIC.createRule(h, b);
+		rules.add(r);
+
+		// create facts
+		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
+		// s(1,1), s(9,2), s(2,9)
+		IPredicate p = Factory.BASIC.createPredicate("s", 2);
+		IMixedDatatypeRelation rel = RELATION.getMixedRelation(1);
+		rel = RELATION.getMixedRelation(2);
+		rel.add(BASIC.createTuple(BASIC.createTuple(CONCRETE.createDate(2000, 5, 10), CONCRETE.createDate(2000, 5, 12))));
+		rel.add(BASIC.createTuple(BASIC.createTuple(CONCRETE.createDate(2001, 5, 10), CONCRETE.createDate(2000, 5, 10))));
+		rel.add(BASIC.createTuple(BASIC.createTuple(CONCRETE.createDate(2000, 4, 10), CONCRETE.createDate(2000, 5, 12))));
+		facts.put(p, rel);
+
+		IQuery q = Factory.BASIC.createQuery(createLiteral("p", "X", "Y"));
+		Set<IQuery> queries = new HashSet<IQuery>(1);
+		queries.add(q);
+		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
+		
+		// Result: p =
+		// (org.deri.iris.terms.concrete.DateTerm[year=2000,month=4,day=5], org.deri.iris.terms.concrete.DateTerm[year=2000,month=5,day=5])
+		// (org.deri.iris.terms.concrete.DateTerm[year=2000,month=5,day=5], org.deri.iris.terms.concrete.DateTerm[year=2000,month=5,day=5])
+		IMixedDatatypeRelation res = RELATION.getMixedRelation(2);
+		res.add(BASIC.createTuple(CONCRETE.createDate(2000, 5, 10), CONCRETE.createDate(2000, 5, 12)));
+		res.add(BASIC.createTuple(CONCRETE.createDate(2000, 4, 10), CONCRETE.createDate(2000, 5, 12)));
+		
+		System.out.println("******** TEST 3: ********");
+		executeTest(pr, res);
+	}
+	
 	/**
 	 * Creates a positive literal out of a predicate name and a set of variable
 	 * strings.
