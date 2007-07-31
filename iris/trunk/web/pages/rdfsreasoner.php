@@ -26,4 +26,8 @@ representation.
 entailment regimes and allows WSML conjunctive queries as queries.
 </p>
 
+<h2>Download</h2>
 
+<p>You can download a combined package containing both the RDFS Reasoner 
+framework and IRIS at the <a href="http://tools.deri.org/rdfs-reasoner/v0.1/">
+RDFS Reasoner website</a>.

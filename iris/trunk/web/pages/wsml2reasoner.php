@@ -35,4 +35,10 @@ that WSML supports.</p>
 <p>WSML2Reasoner and IRIS can thus be used together as framework for 
 reasoning with WSML rule-based languages.</p>
 
+<h2>Download</h2>
 
+<p>You can download a combined package containing both the WSML2Reasoner 
+framework and IRIS at the WSML2Reasoner website: <a 
+href="http://tools.deri.org/wsml2reasoner/releases/index.html">
+WSML2Reasoner Releases</a>.
+</p>
