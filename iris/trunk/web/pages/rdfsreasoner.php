@@ -13,7 +13,7 @@ that the embeddings of simple, RDF and RDFS entailment fall in the
 Datalog fragment of F-Logic.
 </p>
 
-<h2>RDFS Reasoner and IRIS<h2>
+<h2>RDFS Reasoner and IRIS</h2>
 
 <p>The RDFS Reasoner translates ontology descriptions in RDFS to 
 F-Logic molecules and rules. It uses IRIS as underlying generic 
