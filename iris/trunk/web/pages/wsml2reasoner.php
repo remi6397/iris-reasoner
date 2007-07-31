@@ -18,7 +18,7 @@ and then uses facades that mediate between this Datalog representation
 and the internal representation specific to the single reasoning engines.
 </p>
 
-<h2>WSML2Reasoner and IRIS<h2>
+<h2>WSML2Reasoner and IRIS</h2>
 
 <p>WSML2Reasoner supports currently three external reasoning engines for 
 rule-based WSML variants:</p>
