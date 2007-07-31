@@ -57,7 +57,7 @@ if( !file_exists( $filelocation ) ) {
       <div>nightly build</div>
 		<a href="/nightly_build">overview</a>
         <a href="/snapshot/javadoc">java doc</a>
-		<a href="/snapshot/junit_report">test reults</a><!--
+		<a href="/snapshot/junit_report">test results</a><!--
         <a href="source">source code</a>
         
         <a href="history">release history</a>

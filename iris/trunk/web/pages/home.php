@@ -16,9 +16,12 @@ but also can be used in many other contexts. See below for the
 use cases we know of</p>
 
 <ul>
-	<li><a href="http://tools.deri.org/wsml2reasoner/">WSML Reasoner</a></li>
-	<li><a href="http://tools.deri.org/rdfs-reasoner/">RDFS Reasoner</a></li>
+	<li><a href="wsml2reasoner">WSML Reasoner</a></li>
+	<li><a href="rdfsreasoner">RDFS Reasoner</a></li>
 </ul>
+
+If you are using IRIS in another context, please inform us and we will 
+be pleased to denote your application on this website. 
 
 <h2>News</h2>
 <p><tt>2007-07-13</tt> We have created an initial draft of our web site and introduced a <a href="snapshot">daily build</a> system</p>
