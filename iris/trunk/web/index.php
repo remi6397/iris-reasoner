@@ -66,8 +66,8 @@ if( !file_exists( $filelocation ) ) {
     
     <div class="sideBox LHS">
       <div>IRIS in action</div>
-		<a href="http://tools.deri.org/rdfs-reasoner/">RDFS Reasoner</a>
-        <a href="http://tools.deri.org/wsml2reasoner/">wsml2reasoner</a>
+		<a href="rdfsreasoner">RDFS Reasoner</a>
+        <a href="wsml2reasoner">wsml2reasoner</a>
 		<!--
         <a href="source">source code</a>
         
