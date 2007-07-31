@@ -48,13 +48,14 @@ if( !file_exists( $filelocation ) ) {
     <div class="sideBox LHS">
       <div>overview</div>
         <a href="/download">download</a>
+        <a href="/foundations">foundations</a>
         <a href="/license">license</a>
         <a href="/team">team</a>
     </div>
 
     <div class="sideBox LHS">
-      <div>snapshot</div>
-		<a href="/snapshot">download</a>
+      <div>nightly build</div>
+		<a href="/nightly_build">overview</a>
         <a href="/snapshot/javadoc">java doc</a>
 		<a href="/snapshot/junit_report">test reults</a><!--
         <a href="source">source code</a>

@@ -6,12 +6,12 @@
 <p>IRIS releases are available at <a href="http://sourceforge.net/project/platformdownload.php?group_id=167309">sourceforge</a>.</p>
 
 <h2>Release History</h2>
-<p><b>v0.3</b> 2007-06-15</p> 
+<p><b><a href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=516287">v0.3</a></b> 2007-06-15</p> 
 <ul>
 	<li>enabled multiple programs per vm</li>
 </ul>
 
-<p><b>v0.2</b> 2007-02-09</p> 
+<p><b><a href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=485199">v0.2</a></b> 2007-02-09</p> 
 <ul>
 	<li>support for all data types supported by WSML</li>
 	<li>a number of built-ins implemented</li>
@@ -23,7 +23,7 @@
 	<li>bugfixes</li>
 </ul>
 
-<p><b>v0.1</b> 2007-02-08</p> 
+<p><b><a href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=484835">v0.1</a></b> 2007-02-08</p> 
 <ul><li>initial release</li></ul>
 
 <h2>Daily Snapshot</h2>
