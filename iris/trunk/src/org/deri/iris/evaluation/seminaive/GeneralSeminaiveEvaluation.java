@@ -66,7 +66,10 @@ public abstract class GeneralSeminaiveEvaluation implements IBottomUpEvaluator {
 	protected IResultSet results = null;
 	
 	GeneralSeminaiveEvaluation(final IExpressionEvaluator e, final IProgram p) {
-
+		if ((e == null) || (p == null)) {
+			throw new NullPointerException(
+					"The expression evaluator and the program must not be null");
+		}
 		this.method = e;
 		this.p = p;
 		this.rr = new Rule2Relation();
