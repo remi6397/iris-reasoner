@@ -25,12 +25,16 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
+import static org.deri.iris.factory.Factory.RELATION;
+
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.evaluation.MiscOps;
@@ -64,9 +68,11 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 		 * of the ITree
 		 */
 		boolean newTupleAdded = false, cont = true;
+		// A realtion with newly derived tuples
 		IMixedDatatypeRelation p = null;
+		// A map of IDB predicates and their incremental relations
 		Map<IPredicate, IMixedDatatypeRelation> aq = new HashMap<IPredicate, IMixedDatatypeRelation>();
-		IMixedDatatypeRelation tempRel = null;
+		// A set of IDB predicates for a given stratum w.r.t the logig program
 		Set<IPredicate> preds = null;
 		
 		/** Evaluate rules */
@@ -85,12 +91,9 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 			for (final IPredicate pr : preds) {
 				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
 				p = method.evaluate(this.idbMap.get(pr), this.p);
-				if(this.p.getFacts(pr) != null && 
-						! this.p.getFacts(pr).containsAll(p)){
-				
-					aq.put(pr, p);
-					this.p.addFacts(pr, p);
-				}
+				if(! aq.containsKey(pr)) aq.put(pr, RELATION.getMixedRelation(p.getArity()));
+				this.p.addFacts(pr, p);
+				aq.get(pr).addAll(this.p.getFacts(pr));
 			}
 			/**
 			 * <p>Algorithm:</p>
@@ -118,11 +121,12 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 					if(this.p.getFacts(pr) != null && 
 							! this.p.getFacts(pr).containsAll(p)){
 						
-						p.removeAll(this.p.getFacts(pr));
+						removeDeducedTuples(p, this.p.getFacts(pr));
 						aq.put(pr, p);
 						this.p.addFacts(pr, p);
 						newTupleAdded = true;
 					}else{
+						if(aq.get(pr) != null) aq.get(pr).clear(); 
 						newTupleAdded = false;
 					}
 					cont = cont || newTupleAdded;
@@ -130,5 +134,24 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 			}
 		}
 		return true;
+	}
+	
+	/**<p>
+	 * Removes tuples from the last iteration that have already been deduced 
+	 * (in the previous iterations)
+	 * </p>
+	 * <p>
+	 * It seems that use of the removeDeducedTuples method is more efficient than: 
+	 * p.removeAll(this.p.getFacts(pr));
+	 * However this statement needs to be checked more carefully (once tests for performance are done).
+	 * </p>
+	 * @param r0	Relation containing tuples derived during the last iteration. 
+	 * @param r1	Relation containing tuples derived during the previous iteration .
+	 */
+	private void removeDeducedTuples(IMixedDatatypeRelation r0, IMixedDatatypeRelation r1){
+		Iterator<ITuple> it = r0.iterator();
+		while(it.hasNext()){
+			if(r1.contains(it.next())) it.remove();
+		}
 	}
 }
