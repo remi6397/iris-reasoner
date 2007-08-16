@@ -71,11 +71,9 @@ public class JoinTest1 extends TestCase {
 		IMixedDatatypeRelation result0 = joinOperator.join();
 		IMixedDatatypeRelation result1 = joinSimpleOperator.join();
 		
-		Assert.assertNotSame("Join and JoinSimple doesn't produce the same result"
-				+ ", when two copies of the same relatation are provided as" +
-						" join parameters (bug in process of duplicates handling" +
-						" (in IndexComparator of Join)", 
-						result0.size(), result1.size());
+		Assert.assertEquals("Join and JoinSimple should produce the same result"
+						+ ", when two copies of the same relatation are provided as join parameters", 
+								result0.size(), result1.size());
 	}
 	
 	/**
