@@ -145,6 +145,11 @@ public class SelectionStringTest extends TestCase {
 		assertResults(result, e);
 	}
 
+	/**
+	 * FIXME: A tuple containing null terms and used as a selection pattern makes 
+	 * problem in the java.util.SortedSet.tailSet. Namely comparison with 
+	 * null elements cannot be performed.
+	 */
 	public void testSelect_ddnn_0() {
 		final List<ITuple> e = new ArrayList<ITuple>();
 		e.add(MiscHelper.createTuple("d", "d", "d", "d"));
