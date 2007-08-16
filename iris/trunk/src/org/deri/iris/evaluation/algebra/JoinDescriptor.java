@@ -52,21 +52,32 @@ public class JoinDescriptor extends Component implements IJoinDescriptor{
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(ComponentType.JOIN);
-		buffer.append("{");
-		for (int i = 0; i < this.getVariables().size(); i++) {
-			buffer.append(this.getVariables().get(i).toString());
-			buffer.append(", ");
-		}
-		buffer.delete(buffer.length() - 2, buffer.length());
-		buffer.append("}");
 		buffer.append("<" + this.condition + ">");
-		for(int i = 0; i < this.getChildren().size(); i++){
-			buffer.append("\n{(");
-			buffer.append(this.getChildren().get(i));
-			buffer.append(", ");
+		
+		boolean first = true;
+		buffer.append('[');
+		for (int i = 0; i < this.getVariables().size(); i++) {
+			if ( first )
+				first = false;
+			else
+				buffer.append(", ");
+			buffer.append(this.getVariables().get(i).toString());
 		}
-		buffer.delete(buffer.length() - 2, buffer.length());
-		buffer.append(")}");
+		buffer.append(']');
+		
+		buffer.append('{');
+		//buffer.delete(buffer.length() - 1, buffer.length());
+		first = true;
+		for(int i = 0; i < this.getChildren().size(); i++){
+			if ( first )
+				first = false;
+			else
+				buffer.append(", ");
+			buffer.append('\n');
+			buffer.append(this.getChildren().get(i));
+		}
+		buffer.append('}');
+
 		return buffer.toString();
 	}
 }
