@@ -164,7 +164,7 @@ public class GeneralSelection implements ISelection {
 				.indexOn(sortPatternIndexes());
 		// Extract sub relations w.r.t different datatypes
 		subRels = tmpRel.separatedTailSet(this.pattern);
-
+		
 		Iterator<SortedSet<ITuple>> subRelIt = this.subRels.iterator();
 		while (subRelIt.hasNext()) {
 			SortedSet<ITuple> st = subRelIt.next();
@@ -216,23 +216,29 @@ public class GeneralSelection implements ISelection {
 			boolean toAdd = true;
 			it = selIndexes.keySet().iterator();
 			while (it.hasNext()) {
-				posIterator = selIndexes.get(it.next()).iterator();
+				int key = it.next();
+				posIterator = selIndexes.get(key).iterator();
 				if (posIterator.hasNext())
 					t = tup.getTerm(posIterator.next());
 				while (posIterator.hasNext()) {
-					if (!t.equals(tup.getTerm(posIterator.next()))) {
-						toAdd = false;
-						break;
+					if(key > 0){
+						if (!t.equals(tup.getTerm(posIterator.next()))) {
+							toAdd = false;
+							break;
+						}
+					} else {
+						if (t.equals(tup.getTerm(posIterator.next()))) {
+							toAdd = false;
+							break;
+						}
 					}
 				}
-				if (!toAdd)
-					break;
+				if (!toAdd) break;
 			}
 			// Put qualified tuples in the result of the selection operation.
 			if (toAdd)
 				result.add(tup);
 		}
-
 		return result;
 	}
 
