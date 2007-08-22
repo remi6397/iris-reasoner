@@ -61,9 +61,31 @@ public interface IConcreteFactory {
 
 	public IBooleanTerm createBoolean(final boolean b);
 
+	/**
+	 * Creates a datetime object with a given timezone.
+	 * @param year the years
+	 * @param month the months (starting at <code>0</code>)
+	 * @param day day of the month
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the seconds
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if, the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
 	public IDateTime createDateTime(final int year, final int month,
 			final int day, final int hour, final int minute, final int second,
 			final int tzHour, final int tzMinute);
+	/**
+	 * Creates a datetime object. The timezone will be set to GMT.
+	 * @param year the years
+	 * @param month the months (starting at <code>0</code>)
+	 * @param day day of the month
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the seconds
+	 */
 	public IDateTime createDateTime(final int year, final int month,
 			final int day, final int hour, final int minute, final int second);
 
@@ -72,13 +94,15 @@ public interface IConcreteFactory {
 	 * @param hour the hours
 	 * @param minute the minutes
 	 * @param second the seconds
-	 * @param tzHour the timezone hours
-	 * @param tzMinute the timezone minutes
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if, the tzHour and tzMinute
+	 * wheren't both positive, or negative
 	 */
 	public ITime createTime(final int hour, final int minute, final int second, final int tzHour, final int tzMinute);
 
 	/**
-	 * Creates a time object.
+	 * Creates a time object. The timezone will be set to GMT.
 	 * @param hour the hours
 	 * @param minute the minutes
 	 * @param second the seconds
