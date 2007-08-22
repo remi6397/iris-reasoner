@@ -94,4 +94,34 @@ public class DateTimeTest extends TestCase {
 	public void testGetMinValue() {
 		TermTests.runTestGetMinValue(new DateTime(0, 0, 0, 0, 0, 1));
 	}
+
+	/**
+	 * <p>
+	 * This test checks whether it is possible to specify inconsisntent
+	 * timezones. E.g. a timezone with positive hours and negative minutes.
+	 * </p>
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1778705&group_id=167309&atid=842434">bug #1778705: it is possible to specify inconsistent timezones</a>
+	 */
+	public void testConsistentTimezones() {
+		try {
+			new DateTime(2000, 0, 1, 0, 0, 0, -1, 1);
+			fail("It is possible to create a datetime with a negative tzHour and positive tzMinute");
+		} catch (IllegalArgumentException e) {
+		}
+
+		try {
+			new DateTime(2000, 0, 1, 0, 0, 0, 1, -1);
+			fail("It is possible to create a datetime with a positive tzHour and negative tzMinute");
+		} catch (IllegalArgumentException e) {
+		}
+
+		// the following should be possible
+		new DateTime(2000, 0, 1, 0, 0, 0, 0, 0);
+		new DateTime(2000, 0, 1, 0, 0, 0, 1, 0);
+		new DateTime(2000, 0, 1, 0, 0, 0, 0, 1);
+		new DateTime(2000, 0, 1, 0, 0, 0, 1, 1);
+		new DateTime(2000, 0, 1, 0, 0, 0, -1, 0);
+		new DateTime(2000, 0, 1, 0, 0, 0, 0, -1);
+		new DateTime(2000, 0, 1, 0, 0, 0, -1, -1);
+	}
 }
