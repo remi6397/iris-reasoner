@@ -46,11 +46,24 @@ import org.deri.iris.api.terms.concrete.IDateTime;
  */
 public class DateTime implements IDateTime, Cloneable {
 
+	/** SimpleDateFormat to parse the datetime. */
 	private static final SimpleDateFormat FORMAT = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssz");
 
+	/** Milliseconds per hour. */
+	private static final int MILLIS_PER_HOUR = 1000 * 60 * 60;
+
+	/** Milliseconds per minute. */
+	private static final int MILLIS_PER_MINUTE = 1000 * 60;
+
+	/** The internal calendar holding the time. */
 	private Calendar cal;
 
+	/**
+	 * Constructs a new datetime object taking all needed parameters out of a
+	 * given calendar.
+	 * @param cal the calendar holding the data
+	 */
 	DateTime(final Calendar cal) {
 		this(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal
 				.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.HOUR_OF_DAY), cal
@@ -59,16 +72,44 @@ public class DateTime implements IDateTime, Cloneable {
 						.getTimeZone()));
 	}
 
+	/**
+	 * Constructs a new time object. With the <code>tzHour</code> and
+	 * <code>tzMinute</code> set to <code>0</code>.
+	 * @param year the year
+	 * @param month the month (starting at <code>0</code>)
+	 * @param day day of the month
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the seconds
+	 */
 	DateTime(int year, int month, int day, int hour, int minute, int second) {
 		this(year, month, day, hour, minute, second, 0, 0);
 	}
 
+	/**
+	 * Constructs a new datetime object with a given timezone.
+	 * @param year the year
+	 * @param month the month (starting at <code>0</code>)
+	 * @param day day of the month
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the seconds
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
 	DateTime(int year, int month, int day, int hour, int minute, int second,
 			int tzHour, int tzMinute) {
+		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0))) {
+			throw new IllegalArgumentException("Both, the timezone hours and " + 
+					"minutes must be negative, or positive, but were " + 
+					tzHour + " and " + tzMinute);
+		}
 
-		final String timezone = "GMT" + ((tzHour >= 0) ? "+" : "-")
-				+ ((tzHour < 10) ? "0" : "") + tzHour + ":"
-				+ ((tzMinute < 10) ? "0" : "") + tzMinute;
+		final String timezone = "GMT" + 
+			(((tzHour >= 0) && (tzMinute >= 0)) ? "+" : "-") + Math.abs(tzHour) + ":" + 
+			((Math.abs(tzMinute) < 10) ? "0" : "") + Math.abs(tzMinute);
 
 		cal = new GregorianCalendar(TimeZone.getTimeZone(timezone));
 		cal.clear();
@@ -150,11 +191,11 @@ public class DateTime implements IDateTime, Cloneable {
 	}
 
 	protected static int getTimeZoneHour(final TimeZone tz) {
-		return tz.getRawOffset() / 3600000;
+		return tz.getRawOffset() / MILLIS_PER_HOUR;
 	}
 
 	protected static int getTimeZoneMinute(final TimeZone tz) {
-		return Math.abs((tz.getRawOffset() % 3600000) / 60000);
+		return (tz.getRawOffset() % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE;
 	}
 
 	/**
