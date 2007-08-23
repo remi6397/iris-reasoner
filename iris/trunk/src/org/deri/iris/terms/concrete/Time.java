@@ -39,16 +39,19 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Simple implementation of ITime.
  * </p>
  * <p>
- * $Id: Time.java,v 1.3 2007-08-22 14:12:13 poettler_ric Exp $
+ * $Id: Time.java,v 1.4 2007-08-23 09:48:10 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class Time implements ITime, Cloneable {
 
 	/** SimpleDateFormat to parse the time. */
 	private static final SimpleDateFormat FORMAT = new SimpleDateFormat(
 			"HH:mm:ssz");
+
+	/** Format for the {@link #toString()} method. The format is 'hh:mm:ss&lt;timezondediff&gt;'. */
+	private static final String TOSTRING_FORMAT = "%tT%tz";
 
 	/** Milliseconds per hour. */
 	private static final int MILLIS_PER_HOUR = 1000 * 60 * 60;
@@ -163,8 +166,7 @@ public class Time implements ITime, Cloneable {
 	}
 
 	public String toString() {
-		return getHour() + ":" + getMinute() + ":" + getSecond() + " " + 
-			cal.getTimeZone().getDisplayName();
+		return String.format(TOSTRING_FORMAT, cal, cal);
 	}
 
 	protected static int getTimeZoneHour(final TimeZone tz) {

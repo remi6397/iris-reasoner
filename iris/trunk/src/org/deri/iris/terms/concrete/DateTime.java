@@ -50,6 +50,9 @@ public class DateTime implements IDateTime, Cloneable {
 	private static final SimpleDateFormat FORMAT = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssz");
 
+	/** Format for the {@link #toString()} method. The format is 'yyyy-mm-dd'T'hh:mm:ss&lt;timezondediff&gt;'. */
+	private static final String TOSTRING_FORMAT = "%tFT%tT%tz";
+
 	/** Milliseconds per hour. */
 	private static final int MILLIS_PER_HOUR = 1000 * 60 * 60;
 
@@ -186,8 +189,7 @@ public class DateTime implements IDateTime, Cloneable {
 	}
 
 	public String toString() {
-		return getYear() + "." + getMonth() + "." + getDay() + " " + getHour()
-				+ ":" + getMinute() + ":" + getSecond();
+		return String.format(TOSTRING_FORMAT, cal, cal, cal);
 	}
 
 	protected static int getTimeZoneHour(final TimeZone tz) {

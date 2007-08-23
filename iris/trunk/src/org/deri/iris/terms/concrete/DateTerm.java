@@ -45,6 +45,10 @@ import org.deri.iris.api.terms.concrete.IDateTerm;
  */
 public class DateTerm implements IDateTerm, Cloneable {
 
+	/** Format for the {@link #toString()} method. The format is 'yyyy-mm-dd'. */
+	private static final String TOSTRING_FORMAT = "%tF";
+
+	/** The internal calendar holding the time. */
 	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 
 	DateTerm(int year, int month, int day) {
@@ -76,9 +80,7 @@ public class DateTerm implements IDateTerm, Cloneable {
 	}
 
 	public String toString() {
-		return getClass().getName() + "[year=" + cal.get(Calendar.YEAR)
-				+ ",month=" + cal.get(Calendar.MONTH) + ",day="
-				+ Calendar.DAY_OF_MONTH + "]";
+		return String.format(TOSTRING_FORMAT, cal);
 	}
 
 	public boolean isGround() {
