@@ -53,15 +53,16 @@ import org.deri.iris.compiler.Parser;
 import org.deri.iris.factory.Factory;
 
 /**
+ * 
  * <p>
  * Tests for the datalog parser.
  * </p>
  * <p>
- * $Id: ParserTest.java,v 1.6 2007-04-13 06:55:51 poettler_ric Exp $
+ * $Id: ParserTest.java,v 1.7 2007-08-23 11:01:54 bazbishop237 Exp $
  * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class ParserTest extends TestCase {
 
