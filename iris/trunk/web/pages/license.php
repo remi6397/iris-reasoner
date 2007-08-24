@@ -1,6 +1,6 @@
 <h1>License</h1>
 
-<p>IRIS is available under LGPL license.</p>
+<p>IRIS is available under the LGPL license.</p>
 
 <pre style="background-color:#eee; border:solid 1px black; width:550px; padding:5px;">GNU LESSER GENERAL PUBLIC LICENSE
                Version 2.1, February 1999
