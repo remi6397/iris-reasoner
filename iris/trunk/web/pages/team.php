@@ -1,7 +1,9 @@
 <h1>Team</h1>
 
 <dt>Active Committers</dt>
-<dd><a href="http://darko.anicic.googlepages.com/">Darko Anicic</a> (lead)<br/>
+<dd>
+<a href="http://darko.anicic.googlepages.com/">Darko Anicic</a><br/>
+<a href="http://www.deri.at/about/team/details/barry-bishop/">Barry Bishop</a><br/>
 <a href="http://www.deri.at/about/team/details/richard-poettler/">Richard P&ouml;ttler</a><br/>
 <a href="http://www.deri.at/about/team/details/florian-fischer/">Florian Fischer</a><br/>
 </dd>
