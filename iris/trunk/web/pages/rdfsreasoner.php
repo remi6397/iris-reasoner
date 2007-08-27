@@ -22,12 +22,13 @@ mediates between its internal representation and the IRIS specific
 representation.
 </p>
 
-<p>The RDFS Reasoner currently supports the simple, RDF and RDFS 
-entailment regimes and allows WSML conjunctive queries as queries.
+<p>The RDFS Reasoner currently supports the simple, RDF, RDFS and 
+extensional RDFS (eRDFS) entailment regimes and allows WSML 
+conjunctive queries as queries.
 </p>
 
 <h2>Download</h2>
 
 <p>You can download a combined package containing both the RDFS Reasoner 
-framework and IRIS at the <a href="http://tools.deri.org/rdfs-reasoner/v0.1/">
+framework and IRIS at the <a href="http://tools.deri.org/rdfs-reasoner/v0.2/">
 RDFS Reasoner website</a>.
