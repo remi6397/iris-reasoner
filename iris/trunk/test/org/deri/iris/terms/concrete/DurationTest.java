@@ -25,10 +25,6 @@
  */
 package org.deri.iris.terms.concrete;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-
 import org.deri.iris.ObjectTests;
 import org.deri.iris.TermTests;
 
@@ -37,52 +33,40 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class DurationTest extends TestCase {
-	private static final Calendar CALENDAR = new GregorianCalendar(TimeZone
-			.getTimeZone("GMT+1"));
 
-	private static final String SREFERENCE = "2005-03-10T13:56:00GMT+01:00";
-
-	static {
-		CALENDAR.clear();
-		CALENDAR.set(2005, Calendar.MARCH, 10, 13, 56, 00);
-	}
+	private static final int DAYS = 10;
+	private static final int HOURS = 5;
+	private static final int MINUTES = 15;
+	private static final int SECONDS = 45;
 
 	public void testBasic() {
-		DateTime dt = DateTime.parse(SREFERENCE);
-
-		assertEquals("Something wrong with getYear", 2005, dt.getYear());
-		assertEquals("Something wrong with getMonth", Calendar.MARCH, dt
-				.getMonth());
-		assertEquals("Something wrong with getDay", 10, dt.getDay());
-		assertEquals("Something wrong with getHour", 13, dt.getHour());
-		assertEquals("Something wrong with getMinute", 56, dt.getMinute());
-		assertEquals("Something wrong with getSecond", 00, dt.getSecond());
-
-		DateTime dt0 = new DateTime(2005, Calendar.MARCH, 10, 13, 56, 0, 1, 0);
-		assertEquals("Something wrong with setting or equals", dt, dt0);
-		dt0 = new DateTime(CALENDAR);
-		assertEquals("Something wrong with setting or equals", dt, dt0);
+		final Duration REF = new Duration(DAYS, HOURS, MINUTES, SECONDS);
+		assertEquals(DAYS, REF.getDay());
+		assertEquals(HOURS, REF.getHour());
+		assertEquals(MINUTES, REF.getMinute());
+		assertEquals(SECONDS, REF.getSecond());
 	}
 
 	public void testEquals() {
-		ObjectTests.runTestEquals(new Duration(2000, 1, 1, 12, 01, 00),
-				new Duration(2000, 1, 1, 12, 01, 00), new Duration(2000, 1, 1,
-						12, 02, 00));
+		ObjectTests.runTestEquals(new Duration(DAYS, HOURS, MINUTES, SECONDS), 
+				new Duration(DAYS, HOURS, MINUTES, SECONDS), 
+				new Duration(DAYS, HOURS, MINUTES, SECONDS + 1));
 	}
 
 	public void testCompareTo() {
-		ObjectTests.runTestCompareTo(new Duration(2000, 1, 1, 11, 01, 00),
-				new Duration(2000, 1, 1, 11, 01, 00), new Duration(2000, 1, 1,
-						11, 02, 00), new Duration(2000, 1, 1, 11, 03, 00));
+		ObjectTests.runTestCompareTo(new Duration(DAYS, HOURS, MINUTES, SECONDS), 
+				new Duration(DAYS, HOURS, MINUTES, SECONDS), 
+				new Duration(DAYS, HOURS, MINUTES, SECONDS + 1), 
+				new Duration(DAYS, HOURS, MINUTES, SECONDS + 2));
 	}
 
 	public void testClone() {
-		ObjectTests.runTestClone(new Duration(CALENDAR));
+		ObjectTests.runTestClone(new Duration(DAYS, HOURS, MINUTES, SECONDS));
 	}
 
 	public void testHashCode() {
-		ObjectTests.runTestHashCode(new Duration(CALENDAR), new Duration(
-				CALENDAR));
+		ObjectTests.runTestHashCode(new Duration(DAYS, HOURS, MINUTES, SECONDS), 
+				new Duration(DAYS, HOURS, MINUTES, SECONDS));
 	}
 
 	public static Test suite() {
@@ -91,6 +75,6 @@ public class DurationTest extends TestCase {
 	}
 
 	public void testGetMinValue() {
-		TermTests.runTestGetMinValue(new Duration(0, 0, 0, 0, 0, 1));
+		TermTests.runTestGetMinValue(new Duration(0, 0, 0, 1));
 	}
 }

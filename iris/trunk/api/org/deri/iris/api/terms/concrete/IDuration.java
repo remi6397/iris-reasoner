@@ -25,49 +25,23 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import java.util.Calendar;
-
 import org.deri.iris.api.terms.ITerm;
 
 /**
- * 
+ * <p>
  * This is a interface to represent durations from seconds up to years.
+ * </p>
  * <p>
  * Remark: IRIS supports datatypes according to the standard 
  * specification for primitive XML Schema datatypes.
  * </p>
- * <pre>
- * Created on 11.04.2006
- * Committed by $Author: darko $
- * $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/IDuration.java,v $,
- * </pre>
- *
- * @author Richard Pöttler
- *
- * @version $Revision: 1.4 $ $Date: 2007-01-22 16:09:59 $
+ * <p>
+ * $Id: IDuration.java,v 1.5 2007-08-30 15:47:34 poettler_ric Exp $
+ * </p>
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision: 1.5 $
  */
-public interface IDuration extends ITerm<IDuration, Calendar> {
-	/**
-	 * Returns the corresponding Calendar object.
-	 * 
-	 * @return the Calendar object
-	 */
-	public abstract Calendar getDateTime();
-
-	/**
-	 * Returns the years.
-	 * 
-	 * @return the years
-	 */
-	public abstract int getYear();
-
-	/**
-	 * Returns the months
-	 * 
-	 * @return the months
-	 */
-	public abstract int getMonth();
-
+public interface IDuration extends ITerm<IDuration, Long> {
 	/**
 	 * Returns the days
 	 * 

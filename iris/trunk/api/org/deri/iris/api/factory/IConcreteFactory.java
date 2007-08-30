@@ -115,8 +115,21 @@ public interface IConcreteFactory {
 
 	public IDoubleTerm createDouble(final double d);
 
-	public IDuration createDuration(final int year, final int month,
-			final int day, final int hour, final int minute, final int second);
+	/**
+	 * Constructs a new duration.
+	 * @param day the dayspan
+	 * @param hour the hourspan
+	 * @param minute the minutespan
+	 * @param second the secondspan
+	 */
+	public IDuration createDuration(final int day, final int hour, final int minute, final int second);
+
+	/**
+	 * Contructs a new duration out of a given amount of milliseconds. The
+	 * milliseconds will be round down to the next second.
+	 * @param millis the millisecondspan
+	 */
+	public IDuration createDuration(final long millis);
 
 	public IFloatTerm createFloat(final float f);
 
