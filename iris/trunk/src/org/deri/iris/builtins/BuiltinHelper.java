@@ -28,33 +28,48 @@ package org.deri.iris.builtins;
 import static org.deri.iris.factory.Factory.CONCRETE;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.concrete.IDateTerm;
+import org.deri.iris.api.terms.concrete.IDateTime;
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
+import org.deri.iris.api.terms.concrete.IDuration;
 import org.deri.iris.api.terms.concrete.IFloatTerm;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
+import org.deri.iris.api.terms.concrete.ITime;
 
 /**
  * <p>
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.11 2007-07-13 09:12:08 poettler_ric Exp $
+ * $Id: BuiltinHelper.java,v 1.12 2007-08-30 16:19:49 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class BuiltinHelper {
 
-	/** Empty tuple (with arity 0) to avoid some timeconsuming creation of
-	 * tuples. */
+	/** 
+	 * Empty tuple (with arity 0) to avoid some timeconsuming creation of
+	 * tuples. 
+	 */
 	public static final ITuple EMPTY_TUPLE = 
 		org.deri.iris.factory.Factory.BASIC.createTuple(0);
+
+	/** Milliseconds per hour. */
+	private static final int MILLIS_PER_HOUR = 1000 * 60 * 60;
+
+	/** Milliseconds per minute. */
+	private static final int MILLIS_PER_MINUTE = 1000 * 60;
 
 	private BuiltinHelper() {
 		// prevent subclassing
@@ -166,28 +181,129 @@ public class BuiltinHelper {
 	}
 
 	/**
+	 * Extracts the hours out of a timezone.
+	 * @param tz the timezone
+	 * @return the hours
+	 * @throws NullPointerException if the timezone is <code>null</code>
+	 */
+	private static int getTimeZoneHour(final TimeZone tz) {
+		if (tz == null) {
+			throw new NullPointerException("The timezone must not be null");
+		}
+		return tz.getRawOffset() / MILLIS_PER_HOUR;
+	}
+
+	/**
+	 * Extracts the minutes out of a timezone.
+	 * @param tz the timezone
+	 * @return the minutes
+	 * @throws NullPointerException if the timezone is <code>null</code>
+	 */
+	private static int getTimeZoneMinute(final TimeZone tz) {
+		if (tz == null) {
+			throw new NullPointerException("The timezone must not be null");
+		}
+		return (tz.getRawOffset() % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE;
+	}
+
+	/**
+	 * Creates a duration out of a given amount of milliseconds.
+	 * @param millis the milliseconds for which to create the duration
+	 * @return the duration
+	 */
+	private static IDuration createDuration(final long millis) {
+		return CONCRETE.createDuration(millis);
+	}
+
+	/**
+	 * Creates a time out of a given amount of milliseconds.
+	 * @param millis the milliseconds for which to create the duration
+	 * @param zone the timezone the resulting time should have. if
+	 * <code>null</code> GMT will be set.
+	 * @return the time
+	 */
+	private static ITime createTime(final long millis, final TimeZone zone) {
+		final Calendar cal = new GregorianCalendar(zone);
+		cal.setTimeInMillis(millis);
+		return CONCRETE.createTime(cal.get(Calendar.HOUR_OF_DAY), 
+				cal.get(Calendar.MINUTE), 
+				cal.get(Calendar.SECOND),
+				(zone == null) ? 0 : getTimeZoneHour(zone), 
+				(zone == null) ? 0 : getTimeZoneMinute(zone));
+	}
+
+	/**
+	 * Creates a datetime out of a given amount of milliseconds.
+	 * @param millis the milliseconds for which to create the duration
+	 * @param zone the timezone the resulting time should have. if
+	 * <code>null</code> GMT will be set.
+	 * @return the datetime
+	 */
+	private static IDateTime createDateTime(final long millis, final TimeZone zone) {
+		final Calendar cal = new GregorianCalendar(zone);
+		cal.setTimeInMillis(millis);
+		return CONCRETE.createDateTime(cal.get(Calendar.YEAR), 
+				cal.get(Calendar.MONTH), 
+				cal.get(Calendar.DAY_OF_MONTH), 
+				cal.get(Calendar.HOUR_OF_DAY), 
+				cal.get(Calendar.MINUTE), 
+				cal.get(Calendar.SECOND),
+				(zone == null) ? 0 : getTimeZoneHour(zone), 
+				(zone == null) ? 0 : getTimeZoneMinute(zone));
+	}
+
+	/**
+	 * Creates a date out of a given amount of milliseconds.
+	 * @param millis the milliseconds for which to create the duration
+	 * @return the date
+	 */
+	private static IDateTerm createDate(final long millis) {
+		final Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+		cal.setTimeInMillis(millis);
+		return CONCRETE.createDate(cal.get(Calendar.YEAR), 
+				cal.get(Calendar.MONTH), 
+				cal.get(Calendar.DAY_OF_MONTH));
+	}
+
+	/**
 	 * <p>
 	 * Produces the sum of two terms. The resulting term will be of the most accurate
 	 * type of the submitted ones.
-	 * </p>
-	 * <p>
-	 * At the moment only INumericTerms are supported.
 	 * </p>
 	 * @param t0 the first summand
 	 * @param t1 the second summand
 	 * @return the sum
 	 * @throws NullPointerException if one of the terms is <code>null</code>
-	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
+	 * @throws IllegalArgumentException if the operation couldn't be applied
+	 * to the terms
 	 */
 	public static ITerm add(final ITerm t0, final ITerm t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
-		if(!(t0 instanceof INumericTerm) || !(t1 instanceof INumericTerm)) {
-			throw new IllegalArgumentException("The terms must be INumericTermS, but were " + 
-					t0.getClass().getName() + " and " + t1.getClass().getName());
+		if((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm)) { // number + number = number
+			return toAccuratest(getDouble((INumericTerm) t0) + getDouble((INumericTerm) t1), t0, t1);
+		} else if ((t0 instanceof IDateTime) && (t1 instanceof IDuration)) { // datetime + duration = datetime
+			final Calendar cal0 = ((IDateTime) t0).getValue();
+			return createDateTime(cal0.getTimeInMillis() + ((IDuration) t1).getValue(), cal0.getTimeZone());
+		} else if ((t0 instanceof IDuration) && (t1 instanceof IDateTime)) { // duration + datetime = datetime
+			final Calendar cal1 = ((IDateTime) t1).getValue();
+			return createDateTime(((IDuration) t0).getValue() + cal1.getTimeInMillis(), cal1.getTimeZone());
+		} else if ((t0 instanceof IDateTerm) && (t1 instanceof IDuration)) { // date + duration = date
+			return createDate(((IDateTerm) t0).getValue().getTimeInMillis() + ((IDuration) t1).getValue());
+		} else if ((t0 instanceof IDuration) && (t1 instanceof IDateTerm)) { // duration + date = date
+			return createDate(((IDuration) t0).getValue() + ((IDateTerm) t1).getValue().getTimeInMillis());
+		} else if ((t0 instanceof ITime) && (t1 instanceof IDuration)) { // time + duration = time
+			final Calendar cal0 = ((ITime) t0).getValue();
+			return createTime(cal0.getTimeInMillis() + ((IDuration) t1).getValue(), cal0.getTimeZone());
+		} else if ((t0 instanceof IDuration) && (t1 instanceof ITime)) { // duration + time = time
+			final Calendar cal1 = ((ITime) t1).getValue();
+			return createTime(((IDuration) t0).getValue() + cal1.getTimeInMillis(), cal1.getTimeZone());
+		} else if ((t0 instanceof IDuration) && (t1 instanceof IDuration)) { // duration + duration = duration
+			return createDuration(((IDuration) t0).getValue() + ((IDuration) t1).getValue());
 		}
-		return toAccuratest(getDouble((INumericTerm) t0) + getDouble((INumericTerm) t1), t0, t1);
+		throw new IllegalArgumentException("The add operatoin on " + t0.getClass().getName() + 
+				" and " + t1.getClass().getName() + " is not possible");
 	}
 
 	/**
@@ -195,24 +311,38 @@ public class BuiltinHelper {
 	 * Produces the difference of two terms. The resulting term will be of the most accurate
 	 * type of the submitted ones.
 	 * </p>
-	 * <p>
-	 * At the moment only INumericTerms are supported.
-	 * </p>
 	 * @param t0 the minuend
 	 * @param t1 the subtrahend
 	 * @return the differnece
 	 * @throws NullPointerException if one of the terms is <code>null</code>
-	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
+	 * @throws IllegalArgumentException if the operation couldn't be applied
+	 * to the terms
 	 */
 	public static ITerm subtract(final ITerm t0, final ITerm t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
-		if(!(t0 instanceof INumericTerm) || !(t1 instanceof INumericTerm)) {
-			throw new IllegalArgumentException("The terms must be INumericTermS, but were " + 
-					t0.getClass().getName() + " and " + t1.getClass().getName());
+		if((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm)) { // numer - number = number
+			return toAccuratest(getDouble((INumericTerm) t0) - getDouble((INumericTerm) t1), t0, t1);
+		} else if ((t0 instanceof IDateTime) && (t1 instanceof IDateTime)) { // datetime - datetime = duration
+			return createDuration(((IDateTime) t0).getValue().getTimeInMillis() - ((IDateTime) t1).getValue().getTimeInMillis());
+		} else if ((t0 instanceof IDateTime) && (t1 instanceof IDuration)) { // datetime - duration = datetime
+			final Calendar cal0 = ((IDateTime) t0).getValue();
+			return createDateTime(cal0.getTimeInMillis() - ((IDuration) t1).getValue(), cal0.getTimeZone());
+		} else if ((t0 instanceof IDateTerm) && (t1 instanceof IDateTerm)) { // date - date = duration
+			return createDuration(((IDateTerm) t0).getValue().getTimeInMillis() - ((IDateTerm) t1).getValue().getTimeInMillis());
+		} else if ((t0 instanceof IDateTerm) && (t1 instanceof IDuration)) { // date - duration = date
+			return createDate(((IDateTerm) t0).getValue().getTimeInMillis() - ((IDuration) t1).getValue());
+		} else if ((t0 instanceof ITime) && (t1 instanceof ITime)) { // time - time = duration
+			return createDuration(((ITime) t0).getValue().getTimeInMillis() - ((ITime) t1).getValue().getTimeInMillis());
+		} else if ((t0 instanceof ITime) && (t1 instanceof IDuration)) { // time - duration = time
+			final Calendar cal0 = ((ITime) t0).getValue();
+			return createTime(cal0.getTimeInMillis() - ((IDuration) t1).getValue(), cal0.getTimeZone());
+		} else if ((t0 instanceof IDuration) && (t1 instanceof IDuration)) { // duration - duration
+			return createDuration(((IDuration) t0).getValue() - ((IDuration) t1).getValue());
 		}
-		return toAccuratest(getDouble((INumericTerm) t0) - getDouble((INumericTerm) t1), t0, t1);
+		throw new IllegalArgumentException("The subtract operatoin on " + t0.getClass().getName() + 
+				" and " + t1.getClass().getName() + "is not possible");
 	}
 
 	/**
