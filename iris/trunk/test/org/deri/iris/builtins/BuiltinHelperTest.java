@@ -29,23 +29,28 @@ import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.Arrays;
+import java.util.Calendar;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.concrete.IDateTerm;
+import org.deri.iris.api.terms.concrete.IDateTime;
+import org.deri.iris.api.terms.concrete.IDuration;
+import org.deri.iris.api.terms.concrete.ITime;
 import org.deri.iris.api.terms.INumericTerm;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
  * Tests the <code>BuiltinHelper</code>.
  * </p>
  * <p>
- * $Id: BuiltinHelperTest.java,v 1.1 2007-05-10 14:36:24 poettler_ric Exp $
+ * $Id: BuiltinHelperTest.java,v 1.2 2007-08-30 16:19:50 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class BuiltinHelperTest extends TestCase {
 
@@ -436,5 +441,133 @@ public class BuiltinHelperTest extends TestCase {
 				Arrays.hashCode(BuiltinHelper.concat(new int[]{}, new ITerm[]{}, new ITerm[]{I_5, I_10})));
 		assertEquals(Arrays.hashCode(new ITerm[]{I_2, F_2}), 
 				Arrays.hashCode(BuiltinHelper.concat(new int[]{0, 1}, new ITerm[]{I_2, F_2}, new ITerm[]{})));
+	}
+
+	/**
+	 * Tests the subtraction of dates.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1773182&group_id=167309&atid=842437">bug# 1773182: Add subtraction builtin for dateTime</a>
+	 */
+	public void testDatesSubtract() {
+		final IDuration d1 = CONCRETE.createDuration(1, 0, 0, 0);
+		final IDuration h1 = CONCRETE.createDuration(0, 1, 0, 0);
+		final IDuration m1 = CONCRETE.createDuration(0, 0, 1, 0);
+		final IDuration s1 = CONCRETE.createDuration(0, 0, 0, 1);
+		final IDuration h1m1s1 = CONCRETE.createDuration(0, 1, 1, 1);
+
+		final IDateTime y2000m3d5h12m15s10 = CONCRETE.createDateTime(2000, Calendar.MARCH, 5, 12, 15, 10);
+		final IDateTime y2000m3d4h12m15s10 = CONCRETE.createDateTime(2000, Calendar.MARCH, 4, 12, 15, 10);
+		assertEquals("something wrong with datetime - duration.", y2000m3d4h12m15s10, 
+				BuiltinHelper.subtract(y2000m3d5h12m15s10, d1));
+		assertEquals("something wrong with datetime - datetime.", d1, 
+				BuiltinHelper.subtract(y2000m3d5h12m15s10, y2000m3d4h12m15s10));
+
+		final IDateTerm y2000m3d5 = CONCRETE.createDate(2000, Calendar.MARCH, 5);
+		final IDateTerm y2000m3d4 = CONCRETE.createDate(2000, Calendar.MARCH, 4);
+		assertEquals("something wrong with date - duration.", y2000m3d4, 
+				BuiltinHelper.subtract(y2000m3d5, d1));
+		assertEquals("something wrong with date - date.", d1, 
+				BuiltinHelper.subtract(y2000m3d5, y2000m3d4));
+
+		final ITime h12m15s10 = CONCRETE.createTime(12, 15, 10);
+		final ITime h13m16s11 = CONCRETE.createTime(13, 16, 11);
+		assertEquals("something wrong with time - duration.", h12m15s10, 
+				BuiltinHelper.subtract(h13m16s11, h1m1s1));
+		assertEquals("something wrong with time - time.", h1m1s1, 
+				BuiltinHelper.subtract(h13m16s11, h12m15s10));
+
+		assertEquals("somethond wrong with duration - duration.", 
+				CONCRETE.createDuration(0, 22, 58, 59), BuiltinHelper.subtract(d1, h1m1s1));
+
+		// test taking from the next bigger position
+		final IDateTime fromDT = CONCRETE.createDateTime(2000, Calendar.JANUARY, 1, 0, 0, 0);
+		assertEquals("Shifting of the possitions with one second works not properly with datetimes",
+				CONCRETE.createDateTime(1999, Calendar.DECEMBER, 31, 23, 59, 59), 
+				BuiltinHelper.subtract(fromDT, s1));
+		assertEquals("Shifting of the possitions with one minute works not properly with datetimes",
+				CONCRETE.createDateTime(1999, Calendar.DECEMBER, 31, 23, 59, 00), 
+				BuiltinHelper.subtract(fromDT, m1));
+		assertEquals("Shifting of the possitions with one hour works not properly with datetimes",
+				CONCRETE.createDateTime(1999, Calendar.DECEMBER, 31, 23, 00, 00), 
+				BuiltinHelper.subtract(fromDT, h1));
+		assertEquals("Shifting of the possitions with one day works not properly with datetimes", 
+				CONCRETE.createDateTime(1999, Calendar.DECEMBER, 31, 00, 00, 00), 
+				BuiltinHelper.subtract(fromDT, d1));
+
+		final IDateTerm fromD = CONCRETE.createDate(2000, Calendar.JANUARY, 1);
+		assertEquals("Shifting of the possitions with one day works not properly with dates", 
+				CONCRETE.createDate(1999, Calendar.DECEMBER, 31), 
+				BuiltinHelper.subtract(fromD, d1));
+
+		final ITime fromT = CONCRETE.createTime(0, 0, 0);
+		assertEquals("Shifting of the possitions with one second works not properly with times",
+				CONCRETE.createTime(23, 59, 59), BuiltinHelper.subtract(fromT, s1));
+		assertEquals("Shifting of the possitions with one minute works not properly with times",
+				CONCRETE.createTime(23, 59, 00), BuiltinHelper.subtract(fromT, m1));
+		assertEquals("Shifting of the possitions with one hour works not properly with times",
+				CONCRETE.createTime(23, 00, 00), BuiltinHelper.subtract(fromT, h1));
+	}
+
+	/**
+	 * Tests the addition of dates.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1773182&group_id=167309&atid=842437">bug# 1773182: Add subtraction builtin for dateTime</a>
+	 */
+	public void testDatesAdd() {
+		final IDuration d1 = CONCRETE.createDuration(1, 0, 0, 0);
+		final IDuration h1 = CONCRETE.createDuration(0, 1, 0, 0);
+		final IDuration m1 = CONCRETE.createDuration(0, 0, 1, 0);
+		final IDuration s1 = CONCRETE.createDuration(0, 0, 0, 1);
+		final IDuration h1m1s1 = CONCRETE.createDuration(0, 1, 1, 1);
+
+		final IDateTime y2000m3d5h12m15s10 = CONCRETE.createDateTime(2000, Calendar.MARCH, 5, 12, 15, 10);
+		final IDateTime y2000m3d4h12m15s10 = CONCRETE.createDateTime(2000, Calendar.MARCH, 4, 12, 15, 10);
+		assertEquals("something wrong with datetime + duration.", y2000m3d5h12m15s10, 
+				BuiltinHelper.add(y2000m3d4h12m15s10, d1));
+		assertEquals("something wrong with duration + datetime.", y2000m3d5h12m15s10, 
+				BuiltinHelper.add(d1, y2000m3d4h12m15s10));
+
+		final IDateTerm y2000m3d5 = CONCRETE.createDate(2000, Calendar.MARCH, 5);
+		final IDateTerm y2000m3d4 = CONCRETE.createDate(2000, Calendar.MARCH, 4);
+		assertEquals("something wrong with date + duration.", y2000m3d5, 
+				BuiltinHelper.add(y2000m3d4, d1));
+		assertEquals("something wrong with duration + date.", y2000m3d5, 
+				BuiltinHelper.add(d1, y2000m3d4));
+
+		final ITime h12m15s10 = CONCRETE.createTime(12, 15, 10);
+		final ITime h13m16s11 = CONCRETE.createTime(13, 16, 11);
+		assertEquals("something wrong with time + duration.", h13m16s11, 
+				BuiltinHelper.add(h12m15s10, h1m1s1));
+		assertEquals("something wrong with duration + time.", h13m16s11, 
+				BuiltinHelper.add(h1m1s1, h12m15s10));
+
+		assertEquals("somethond wrong with duration + duration.", 
+				CONCRETE.createDuration(1, 1, 1, 1), BuiltinHelper.add(d1, h1m1s1));
+
+		// test shifting of the next bigger position
+		final IDateTime resultDT = CONCRETE.createDateTime(2000, Calendar.JANUARY, 1, 0, 0, 0);
+		assertEquals("Shifting of the possitions with one second works not properly with datetimes",
+				resultDT, BuiltinHelper.add(
+					CONCRETE.createDateTime(1999, Calendar.DECEMBER, 31, 23, 59, 59), s1));
+		assertEquals("Shifting of the possitions with one minute works not properly with datetimes",
+				resultDT, BuiltinHelper.add(
+					CONCRETE.createDateTime(1999, Calendar.DECEMBER, 31, 23, 59, 00), m1));
+		assertEquals("Shifting of the possitions with one hour works not properly with datetimes",
+				resultDT, BuiltinHelper.add(
+					CONCRETE.createDateTime(1999, Calendar.DECEMBER, 31, 23, 00, 00), h1));
+		assertEquals("Shifting of the possitions with one day works not properly with datetimes", 
+				resultDT, BuiltinHelper.add(
+					CONCRETE.createDateTime(1999, Calendar.DECEMBER, 31, 00, 00, 00), d1));
+
+		final IDateTerm resultD = CONCRETE.createDate(2000, Calendar.JANUARY, 1);
+		assertEquals("Shifting of the possitions with one day works not properly with dates", 
+				resultD, BuiltinHelper.add(
+					CONCRETE.createDate(1999, Calendar.DECEMBER, 31), d1));
+
+		final ITime resultT = CONCRETE.createTime(0, 0, 0);
+		assertEquals("Shifting of the possitions with one second works not properly with times",
+				resultT, BuiltinHelper.add(CONCRETE.createTime(23, 59, 59), s1));
+		assertEquals("Shifting of the possitions with one minute works not properly with times",
+				resultT, BuiltinHelper.add(CONCRETE.createTime(23, 59, 00), m1));
+		assertEquals("Shifting of the possitions with one hour works not properly with times",
+				resultT, BuiltinHelper.add(CONCRETE.createTime(23, 00, 00), h1));
 	}
 }
