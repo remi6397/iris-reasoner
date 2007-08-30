@@ -58,11 +58,11 @@ import org.deri.iris.factory.Factory;
  * Tests for the datalog parser.
  * </p>
  * <p>
- * $Id: ParserTest.java,v 1.7 2007-08-23 11:01:54 bazbishop237 Exp $
+ * $Id: ParserTest.java,v 1.8 2007-08-30 15:47:34 poettler_ric Exp $
  * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class ParserTest extends TestCase {
 
@@ -210,7 +210,7 @@ public class ParserTest extends TestCase {
 			"double(_double(4.67)). \n" + 
 			"float(_float(4.67)). \n" + 
 			"date(_date(2007, 2, 6)). \n" + 
-			"duration(_duration(2007, 2, 6, 12, 45, 11)). \n" + 
+			"duration(_duration(6, 12, 45, 11)). \n" + 
 			"datetimes(_datetime(2007, 2, 6, 12, 45, 11)). \n" + 
 			"datetimel(_datetime(2007, 2, 6, 12, 45, 11, 1, 30)). \n" + 
 			"times(_time(12, 45, 11)). \n" + 
@@ -270,7 +270,7 @@ public class ParserTest extends TestCase {
 		assertTrue("Could not find the date", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDate(2007, 2, 6))));
 		// asserting the duration
 		pred = BASIC.createPredicate("duration", 1);
-		assertTrue("Could not find the duration", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDuration(2007, 2, 6, 12, 45, 11))));
+		assertTrue("Could not find the duration", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDuration(6, 12, 45, 11))));
 		// asserting the short datetime
 		pred = BASIC.createPredicate("datetimes", 1);
 		assertTrue("Could not find the short datetime", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createDateTime(2007, 2, 6, 12, 45, 11))));
