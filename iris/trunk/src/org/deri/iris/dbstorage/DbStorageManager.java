@@ -495,6 +495,33 @@ public class DbStorageManager {
 					String date=xmlCal.toXMLFormat();
 					stmt.setString(2 * i + 1, date);
 				}
+				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.DateTime){
+					GregorianCalendar cal=(GregorianCalendar)t.getTerm(i).getValue();
+					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), 
+                            cal.get(Calendar.MONTH), 
+                            cal.get(Calendar.DAY_OF_MONTH), 
+                            cal.get(Calendar.HOUR_OF_DAY),
+                            cal.get(Calendar.MINUTE),
+                            cal.get(Calendar.SECOND),
+                            cal.get(Calendar.ZONE_OFFSET)/60000);
+					String date=xmlCal.toXMLFormat();
+					stmt.setString(2 * i + 1, date);
+				}
+				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.Time){
+					GregorianCalendar cal=(GregorianCalendar)t.getTerm(i).getValue();
+					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendarDate(cal.get(Calendar.HOUR_OF_DAY), 
+                            cal.get(Calendar.MINUTE), 
+                            cal.get(Calendar.SECOND), 
+                            cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
+					String date=xmlCal.toXMLFormat();
+					stmt.setString(2 * i + 1, date);
+				}
+				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.GMonthDay){
+                    stmt.setString(2 * i + 1, t.getTerm(i).getMonth()+";"t.getTerm(i).getDay());
+                }
+				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.GYearMonth){
+                    stmt.setString(2 * i + 1, t.getTerm(i).getYear()+";"t.getTerm(i).getMonth());
+                }
 				else {
 				stmt.setString(2 * i + 1, t.getTerm(i).getValue()
 						.toString());
@@ -644,40 +671,46 @@ public class DbStorageManager {
 						XMLGregorianCalendar cal=xmlFactory.newXMLGregorianCalendar(termValue);
                         term=CONCRETE.createDate(cal.getYear(), cal.getMonth(), cal.getDay());
 					}
-					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.DateTime")){
-                        DateTime is written using the toString method of a Calendar object!!!
-						term=CONCRETE.createDateTime(termValue);
-					} */
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.DateTime")){
+						XMLGregorianCalendar cal=xmlFactory.newXMLGregorianCalendar(termValue);
+                        term=CONCRETE.createDate(cal.getYear(), 
+                                cal.getMonth(), 
+                                cal.getDay(), 
+                                cal.getHour(), 
+                                cal.getMinute(), 
+                                cal.getSecond()+cal.getFractionalSecond(), 
+                                cal.getTimezone()/60, 
+                                cal.getTimezone()%60);
+					} 
 					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.DecimalTerm")){
 						term=CONCRETE.createDecimal(Double.parseDouble(termValue));
 					} 
 					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.DoubleTerm")){
 						term=CONCRETE.createDouble(Double.parseDouble(termValue));
 					} 
-					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Duration")){
-                        Duration is written using the toString method of a Calendar object!!!
-						term=CONCRETE.create(termValue);
-					} */
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Duration")){
+						term=CONCRETE.createDuration(Long.parseLong(termValue));
+					}
 					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.FloatTerm")){
 						term=CONCRETE.createFloat(Float.parseFloat(termValue));
 					} 
 					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GDay")){
 						term=CONCRETE.createGDay(Integer.parseInt(termValue));
 					} 
-					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GMonthDay")){
-                        GMonthDay is written using the toString method of an Integer[], the result is unreadable
-						term=CONCRETE.create(termValue);
-					} */
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GMonthDay")){
+                        String[] month_day=termValue.split(";", 0);
+						term=CONCRETE.createGMonthDay(Integer.parseInt(month_day[0]),Integer.parseInt(month_day[1]));
+					}
 					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GMonth")){
 						term=CONCRETE.createGMonth(Integer.parseInt(termValue));
 					} 
 					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GYear")){
 						term=CONCRETE.createGYear(Integer.parseInt(termValue));
 					} 
-					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GYearMonth")){
-                        GYearMonth is written using the toString method of an Integer[], the result is unreadable
-						term=CONCRETE.create(termValue);
-					} */
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GYearMonth")){
+                        String[] year_month=termValue.split(";", 0);
+						term=CONCRETE.createGMonthDay(Integer.parseInt(year_month[0]),Integer.parseInt(year_month[1]));
+					} 
 					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.HexBinary")){
 						term=CONCRETE.createHexBinary(termValue);
 					} 
@@ -687,10 +720,14 @@ public class DbStorageManager {
 					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.SqName")){
 						term=CONCRETE.createSqName(termValue);
 					} 
-					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Time")){
-                        // Time is written using the toString method of a Calendar object!!!
-						// term=CONCRETE.create(termValue);
-					} */
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Time")){
+						XMLGregorianCalendar cal=xmlFactory.newXMLGregorianCalendar(termValue);
+                        term=CONCRETE.createTime(cal.getHour(), 
+                                cal.getMinute(), 
+                                cal.getSecond()+cal.getFractionalSecond(), 
+                                cal.getTimezone()/60, 
+                                cal.getTimezone()%60);
+					}
 
                     else throw new DbStorageManagerException("unsupported term");
 					
