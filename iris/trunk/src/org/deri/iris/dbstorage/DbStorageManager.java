@@ -10,10 +10,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
@@ -33,6 +38,8 @@ public class DbStorageManager {
 
 	private static IBasicFactory bFactory=BasicFactory.getInstance();
 	
+	private static DatatypeFactory xmlFactory;
+	
 	private static String REFERENCETABLENAME = "referenceTable";
 
 	private Connection con = null;
@@ -47,6 +54,7 @@ public class DbStorageManager {
 		conf = confilePath;
 		try {
 			con = createConnection(conf);
+			xmlFactory=DatatypeFactory.newInstance();
 			if (!existsTable(REFERENCETABLENAME))
 				createPredicateReferenceTable();
 		} catch (Exception e) {
@@ -233,7 +241,7 @@ public class DbStorageManager {
 		}
 	}
 
-	public IMixedDatatypeRelation computeIMixedDatatypeRealtion(IPredicate p,String SqlQuery) throws DbStorageManagerException {
+	public IMixedDatatypeRelation computeIMixedDatatypeRelation(IPredicate p,String SqlQuery) throws DbStorageManagerException {
 		IMixedDatatypeRelation rel=RELATION.getMixedRelation(p.getArity());
 		Statement stmt=null;
 		ResultSet rs=null;
@@ -481,8 +489,16 @@ public class DbStorageManager {
 			stmt = con.prepareStatement(sqlStatement);
 
 			for (int i = 0; i < t.getArity(); i++) {
+				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.DateTerm){
+					GregorianCalendar cal=(GregorianCalendar)t.getTerm(i).getValue();
+					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
+					String date=xmlCal.toXMLFormat();
+					stmt.setString(2 * i + 1, date);
+				}
+				else {
 				stmt.setString(2 * i + 1, t.getTerm(i).getValue()
 						.toString());
+				}
 				stmt.setString(2 * i + 2,t.getTerm(i).getClass().getCanonicalName()); /* TODO improve this */
 			}
 		} catch (SQLException e) {
@@ -618,60 +634,60 @@ public class DbStorageManager {
 					else if(termType.equalsIgnoreCase("org.deri.iris.terms.StringTerm")){
 						term=TERM.createString(termValue);
 					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.Base64Binary")){
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Base64Binary")){
 						term=CONCRETE.createBase64Binary(termValue);
 					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.BooleanTerm")){
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.BooleanTerm")){
 						term=CONCRETE.createBoolean(Boolean.parseBoolean(termValue));
 					} 
-					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.DateTerm")){
-                        DateTerm is written using the toString method of a Calendar object!!!
-						term=CONCRETE.create(termValue);
-					}*/ 
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.DateTerm")){
+						XMLGregorianCalendar cal=xmlFactory.newXMLGregorianCalendar(termValue);
+                        term=CONCRETE.createDate(cal.getYear(), cal.getMonth(), cal.getDay());
+					}
 					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.DateTime")){
                         DateTime is written using the toString method of a Calendar object!!!
 						term=CONCRETE.createDateTime(termValue);
 					} */
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.DecimalTerm")){
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.DecimalTerm")){
 						term=CONCRETE.createDecimal(Double.parseDouble(termValue));
 					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.DoubleTerm")){
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.DoubleTerm")){
 						term=CONCRETE.createDouble(Double.parseDouble(termValue));
 					} 
-					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.Duration")){
+					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Duration")){
                         Duration is written using the toString method of a Calendar object!!!
 						term=CONCRETE.create(termValue);
 					} */
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.FloatTerm")){
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.FloatTerm")){
 						term=CONCRETE.createFloat(Float.parseFloat(termValue));
 					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.GDay")){
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GDay")){
 						term=CONCRETE.createGDay(Integer.parseInt(termValue));
 					} 
-					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.GMonthDay")){
+					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GMonthDay")){
                         GMonthDay is written using the toString method of an Integer[], the result is unreadable
 						term=CONCRETE.create(termValue);
 					} */
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.GMonth")){
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GMonth")){
 						term=CONCRETE.createGMonth(Integer.parseInt(termValue));
 					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.GYear")){
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GYear")){
 						term=CONCRETE.createGYear(Integer.parseInt(termValue));
 					} 
-					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.GYearMonth")){
+					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GYearMonth")){
                         GYearMonth is written using the toString method of an Integer[], the result is unreadable
 						term=CONCRETE.create(termValue);
 					} */
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.HexBinary")){
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.HexBinary")){
 						term=CONCRETE.createHexBinary(termValue);
 					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.IntegerTerm")){
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.IntegerTerm")){
 						term=CONCRETE.createInteger(Integer.parseInt(termValue));
 					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.SqName")){
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.SqName")){
 						term=CONCRETE.createSqName(termValue);
 					} 
-					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.Time")){
+					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Time")){
                         // Time is written using the toString method of a Calendar object!!!
 						// term=CONCRETE.create(termValue);
 					} */
