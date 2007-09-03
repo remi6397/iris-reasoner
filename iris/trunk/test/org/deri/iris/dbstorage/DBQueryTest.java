@@ -60,9 +60,7 @@ public class DBQueryTest extends TestCase {
 		if (tableName==null) return;
 		IPredicate p=bFactory.createPredicate(SYMBOL, ARITY);
 		String sqlQuery="SELECT term1, termType1, term2, termType2 FROM "+tableName+";";
-		IMixedDatatypeRelation rel=dbm.computeIMixedDatatypeRealtion(p, sqlQuery);
-		System.out.println(rel.toString());
-		rel=dbm.computeIMixedDatatypeRealtion(p, sqlQuery);
+		IMixedDatatypeRelation rel=dbm.computeIMixedDatatypeRelation(p, sqlQuery);
 		System.out.println(rel.toString());
 	}
 
