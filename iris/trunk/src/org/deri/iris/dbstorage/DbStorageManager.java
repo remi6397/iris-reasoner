@@ -29,7 +29,6 @@ import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.TERM;
 import static org.deri.iris.factory.Factory.CONCRETE;
 
-
 public class DbStorageManager {
 
 	private static IBasicFactory bFactory=BasicFactory.getInstance();
@@ -612,15 +611,75 @@ public class DbStorageManager {
 					ITerm term=null;
 					if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Iri")){
 						term=CONCRETE.createIri(termValue);
-					} else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.IntegerTerm")){
+					} 
+                    else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.IntegerTerm")){
 						term=CONCRETE.createInteger(Integer.parseInt(termValue));
 					}
 					else if(termType.equalsIgnoreCase("org.deri.iris.terms.StringTerm")){
 						term=TERM.createString(termValue);
-					} else throw new DbStorageManagerException("unsupported term");
-					if(term!=null) terms.add(term);
+					} 
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.Base64Binary")){
+						term=CONCRETE.createBase64Binary(termValue);
+					} 
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.BooleanTerm")){
+						term=CONCRETE.createBoolean(Boolean.parseBoolean(termValue));
+					} 
+					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.DateTerm")){
+                        DateTerm is written using the toString method of a Calendar object!!!
+						term=CONCRETE.create(termValue);
+					}*/ 
+					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.DateTime")){
+                        DateTime is written using the toString method of a Calendar object!!!
+						term=CONCRETE.createDateTime(termValue);
+					} */
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.DecimalTerm")){
+						term=CONCRETE.createDecimal(Double.parseDouble(termValue));
+					} 
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.DoubleTerm")){
+						term=CONCRETE.createDouble(Double.parseDouble(termValue));
+					} 
+					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.Duration")){
+                        Duration is written using the toString method of a Calendar object!!!
+						term=CONCRETE.create(termValue);
+					} */
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.FloatTerm")){
+						term=CONCRETE.createFloat(Float.parseFloat(termValue));
+					} 
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.GDay")){
+						term=CONCRETE.createGDay(Integer.parseInt(termValue));
+					} 
+					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.GMonthDay")){
+                        GMonthDay is written using the toString method of an Integer[], the result is unreadable
+						term=CONCRETE.create(termValue);
+					} */
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.GMonth")){
+						term=CONCRETE.createGMonth(Integer.parseInt(termValue));
+					} 
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.GYear")){
+						term=CONCRETE.createGYear(Integer.parseInt(termValue));
+					} 
+					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.GYearMonth")){
+                        GYearMonth is written using the toString method of an Integer[], the result is unreadable
+						term=CONCRETE.create(termValue);
+					} */
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.HexBinary")){
+						term=CONCRETE.createHexBinary(termValue);
+					} 
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.IntegerTerm")){
+						term=CONCRETE.createInteger(Integer.parseInt(termValue));
+					} 
+					else if(termType.equalsIgnoreCase("org.deri.iris.terms.SqName")){
+						term=CONCRETE.createSqName(termValue);
+					} 
+					/*else if(termType.equalsIgnoreCase("org.deri.iris.terms.Time")){
+                        // Time is written using the toString method of a Calendar object!!!
+						// term=CONCRETE.create(termValue);
+					} */
+
+                    else throw new DbStorageManagerException("unsupported term");
+					
+                    if(term!=null) terms.add(term);
 					else throw new DbStorageManagerException("term cannot be null");
-					// TODO add missing term types
 				}
 				rel.add(bFactory.createTuple(terms));
 			}
