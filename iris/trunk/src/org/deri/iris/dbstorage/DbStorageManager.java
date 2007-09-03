@@ -25,6 +25,8 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.factory.IBasicFactory;
 import org.deri.iris.basics.BasicFactory;
+import org.deri.iris.terms.concrete.GMonthDay;
+import org.deri.iris.terms.concrete.GYearMonth;
 
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
@@ -492,35 +494,34 @@ public class DbStorageManager {
 				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.DateTerm){
 					GregorianCalendar cal=(GregorianCalendar)t.getTerm(i).getValue();
 					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
-					String date=xmlCal.toXMLFormat();
-					stmt.setString(2 * i + 1, date);
+					stmt.setString(2 * i + 1, xmlCal.toXMLFormat());
 				}
 				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.DateTime){
 					GregorianCalendar cal=(GregorianCalendar)t.getTerm(i).getValue();
-					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), 
+					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendar(cal.get(Calendar.YEAR), 
                             cal.get(Calendar.MONTH), 
                             cal.get(Calendar.DAY_OF_MONTH), 
                             cal.get(Calendar.HOUR_OF_DAY),
                             cal.get(Calendar.MINUTE),
                             cal.get(Calendar.SECOND),
-                            cal.get(Calendar.ZONE_OFFSET)/60000);
-					String date=xmlCal.toXMLFormat();
-					stmt.setString(2 * i + 1, date);
+                            cal.get(Calendar.MILLISECOND),
+                            cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
+					stmt.setString(2 * i + 1, xmlCal.toXMLFormat());
 				}
 				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.Time){
 					GregorianCalendar cal=(GregorianCalendar)t.getTerm(i).getValue();
-					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendarDate(cal.get(Calendar.HOUR_OF_DAY), 
+					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendarTime(cal.get(Calendar.HOUR_OF_DAY), 
                             cal.get(Calendar.MINUTE), 
-                            cal.get(Calendar.SECOND), 
+                            cal.get(Calendar.SECOND),
+                            cal.get(Calendar.MILLISECOND),
                             cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
-					String date=xmlCal.toXMLFormat();
-					stmt.setString(2 * i + 1, date);
+					stmt.setString(2 * i + 1, xmlCal.toXMLFormat());
 				}
 				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.GMonthDay){
-                    stmt.setString(2 * i + 1, t.getTerm(i).getMonth()+";"t.getTerm(i).getDay());
+                    stmt.setString(2 * i + 1, ((GMonthDay)t.getTerm(i)).getMonth()+";"+((GMonthDay)t.getTerm(i)).getDay());
                 }
 				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.GYearMonth){
-                    stmt.setString(2 * i + 1, t.getTerm(i).getYear()+";"t.getTerm(i).getMonth());
+                    stmt.setString(2 * i + 1, ((GYearMonth)t.getTerm(i)).getYear()+";"+((GYearMonth)t.getTerm(i)).getMonth());
                 }
 				else {
 				stmt.setString(2 * i + 1, t.getTerm(i).getValue()
@@ -673,12 +674,12 @@ public class DbStorageManager {
 					}
 					else if(termType.equalsIgnoreCase("org.deri.iris.terms.DateTime")){
 						XMLGregorianCalendar cal=xmlFactory.newXMLGregorianCalendar(termValue);
-                        term=CONCRETE.createDate(cal.getYear(), 
+                        term=CONCRETE.createDateTime(cal.getYear(), 
                                 cal.getMonth(), 
                                 cal.getDay(), 
                                 cal.getHour(), 
                                 cal.getMinute(), 
-                                cal.getSecond()+cal.getFractionalSecond(), 
+                                cal.getSecond(), 
                                 cal.getTimezone()/60, 
                                 cal.getTimezone()%60);
 					} 
@@ -724,7 +725,7 @@ public class DbStorageManager {
 						XMLGregorianCalendar cal=xmlFactory.newXMLGregorianCalendar(termValue);
                         term=CONCRETE.createTime(cal.getHour(), 
                                 cal.getMinute(), 
-                                cal.getSecond()+cal.getFractionalSecond(), 
+                                cal.getSecond(), 
                                 cal.getTimezone()/60, 
                                 cal.getTimezone()%60);
 					}
