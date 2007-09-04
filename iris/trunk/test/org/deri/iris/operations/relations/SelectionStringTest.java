@@ -145,11 +145,6 @@ public class SelectionStringTest extends TestCase {
 		assertResults(result, e);
 	}
 
-	/**
-	 * FIXME: A tuple containing null terms and used as a selection pattern makes 
-	 * problem in the java.util.SortedSet.tailSet. Namely comparison with 
-	 * null elements cannot be performed.
-	 */
 	public void testSelect_ddnn_0() {
 		final List<ITuple> e = new ArrayList<ITuple>();
 		e.add(MiscHelper.createTuple("d", "d", "d", "d"));
@@ -182,8 +177,8 @@ public class SelectionStringTest extends TestCase {
 	
 	/**
 	 * Select tuples which do not have term "a"
-	 * at its first position and term "d" at fourth
-	 * position but have term "d" at the second position.
+	 * at its first and fourth position
+	 * but have term "d" at the second position.
 	 */
 	public void testSelect_notEqAndEq_0() {
 		final List<ITuple> e = new ArrayList<ITuple>();
