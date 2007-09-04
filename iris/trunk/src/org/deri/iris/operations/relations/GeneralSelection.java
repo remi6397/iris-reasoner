@@ -26,6 +26,7 @@
 
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.RELATION;
 
 import java.util.Arrays;
@@ -42,6 +43,7 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.basics.seminaive.NonEqualityTerm;
 
 /**
  * <p>
@@ -149,7 +151,7 @@ public class GeneralSelection implements ISelection {
 
 	/**
 	 * <p>
-	 * Case PATTERN: ?X = 'a', ?Y = 'b'.
+	 * Case PATTERN: ?X = 'a', ?Y = 'b', ?Z != 'c'.
 	 * </p>
 	 * @return Selected tuples based on a given condition
 	 */
@@ -158,13 +160,16 @@ public class GeneralSelection implements ISelection {
 				.getArity());
 		ITuple tup = null;
 		Iterator<Integer> posIterator = null;
-
-		// Sort the input relation on required indexes
-		IMixedDatatypeRelation tmpRel = this.relation
-				.indexOn(sortPatternIndexes());
-		// Extract sub relations w.r.t different datatypes
-		subRels = tmpRel.separatedTailSet(this.pattern);
+		Iterator<Integer> negIterator = null;
+		ITuple[] pts = getPosAndNegPattern();
 		
+		// Sort the input relation on required indexes
+		IMixedDatatypeRelation tmpRel = 
+			this.relation.indexOn(sortPatternIndexes(pts[0]));
+		// Extract sub relations w.r.t different datatypes
+		subRels = tmpRel.separatedTailSet(pts[0]);
+		
+		boolean hasPosOnly = containsOnlyNull(getPosAndNegPattern()[1]);
 		Iterator<SortedSet<ITuple>> subRelIt = this.subRels.iterator();
 		while (subRelIt.hasNext()) {
 			SortedSet<ITuple> st = subRelIt.next();
@@ -172,8 +177,10 @@ public class GeneralSelection implements ISelection {
 			// selection condition.
 			final SortedSet<ITuple> tailRel = st.tailSet(this.pattern);
 			Iterator<ITuple> it = tailRel.iterator();
-			Map<Integer, ITerm> selMap = getSelectionMap();
-
+			Map<Integer, ITerm> selMap = getSelectionMap(pts[0]);
+			Map<Integer, ITerm> selNegMap = null;
+			if(! hasPosOnly) selNegMap = getSelectionMap(pts[1]);
+			
 			// Scan the SortedSet until the selection condition is no longer
 			// satisfied.
 			while (it.hasNext()) {
@@ -185,6 +192,16 @@ public class GeneralSelection implements ISelection {
 					if (!tup.getTerm(i).equals(selMap.get(i))) {
 						toAdd = false;
 						break;
+					}
+				}
+				if(! hasPosOnly){
+					negIterator = selNegMap.keySet().iterator();
+					while (negIterator.hasNext()) {
+						Integer i = negIterator.next();
+						if (tup.getTerm(i).equals(selNegMap.get(i))) {
+							toAdd = false;
+							break;
+						}
 					}
 				}
 				// Put qualified tuples in the result of the selection
@@ -277,10 +294,10 @@ public class GeneralSelection implements ISelection {
 		return indexes;
 	}
 
-	private Map<Integer, ITerm> getSelectionMap() {
+	private Map<Integer, ITerm> getSelectionMap(ITuple pattern) {
 		Map<Integer, ITerm> selMap = new TreeMap<Integer, ITerm>();
 		Integer i = 0;
-		for (ITerm t : this.pattern.getTerms()) {
+		for (ITerm t : pattern.getTerms()) {
 			if (t != null)
 				selMap.put(i, t);
 			i++;
@@ -294,19 +311,52 @@ public class GeneralSelection implements ISelection {
 	 * w.r.t the ongoing select operation that needs to be performed.
 	 * </p>
 	 * 
+	 * @param pattern	Selection pattern
 	 * @return array with the sort indexes required for the ongoing select
 	 *         operation based on pattern case.
 	 */
-	private Integer[] sortPatternIndexes() {
-		final Integer[] res = new Integer[this.pattern.getArity()];
+	private Integer[] sortPatternIndexes(ITuple pattern) {
+		final Integer[] res = new Integer[pattern.getArity()];
 		Arrays.fill(res, 0);
 		int j = 1;
-		for (int i = 0; i < this.pattern.getTerms().size(); i++) {
-			if (this.pattern.getTerm(i) != null) {
+		for (int i = 0; i < pattern.getTerms().size(); i++) {
+			if (pattern.getTerm(i) != null) {
 				res[i] = j;
 				j++;
 			}
 		}
 		return res;
+	}
+	
+	private ITuple[] getPosAndNegPattern() {
+		ITuple posTup = BASIC.createTuple(this.pattern);
+		ITuple negTup = BASIC.createTuple(this.pattern);
+		int index = 0;
+		
+		for(ITerm t : this.pattern.getTerms()){
+			if(t instanceof NonEqualityTerm){
+				posTup.setTerm(index, null);
+				negTup.setTerm(index, ((NonEqualityTerm)t).getTerm());
+			}else{
+				negTup.setTerm(index, null);
+				posTup.setTerm(index, t);
+			}
+			index++;
+		}
+		return new ITuple[]{posTup, negTup};
+	}
+	
+	private boolean containsOnlyNull(ITuple tup){
+		if (tup == null) {
+			throw new IllegalArgumentException(
+					"Provide non null value for tuple used as " +
+					"a selection pattern in GeneralSelection");
+		}
+		for(ITerm t : tup.getTerms()){
+			if(t != null){
+				return false;
+			}
+		}
+		return true;
 	}
 }
