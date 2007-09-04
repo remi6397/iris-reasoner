@@ -71,7 +71,12 @@ public final class MiscHelper {
 	public static ITuple createTuple(final String... s) {
 		List<ITerm> termList = new LinkedList<ITerm>();
 		for (String str : s) {
-			termList.add(TERM.createString(str));
+			if(str != null){
+				termList.add(TERM.createString(str));
+			} else {
+				termList.add(null);
+			}
+		
 		}
 		return BASIC.createTuple(termList);
 	}
