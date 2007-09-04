@@ -257,15 +257,8 @@ public class DbStorageManager {
 					String termValue=rs.getString(2*i+1);
 					String termType=rs.getString(2*i+2);
 					ITerm term=null;
-					if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Iri")){
-						term=CONCRETE.createIri(termValue);
-					} else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.IntegerTerm")){
-						term=CONCRETE.createInteger(Integer.parseInt(termValue));
-					}
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.StringTerm")){
-						term=TERM.createString(termValue);
-					} else throw new DbStorageManagerException("unsupported term");
-					if(term!=null) terms.add(term);
+					term=serializedStringToTerm(termType, termValue);
+                    if(term!=null) terms.add(term);
 					else throw new DbStorageManagerException("term cannot be null");
 					// TODO add missing term types
 				}
@@ -286,7 +279,7 @@ public class DbStorageManager {
 
 	}
 
-	public boolean isPredicateRegistered(IPredicate p)
+    public boolean isPredicateRegistered(IPredicate p)
 			throws DbStorageManagerException {
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -653,85 +646,7 @@ public class DbStorageManager {
 					String termValue=rs.getString("term"+(i+1));
 					String termType=rs.getString("termType"+(i+1));
 					ITerm term=null;
-					if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Iri")){
-						term=CONCRETE.createIri(termValue);
-					} 
-                    else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.IntegerTerm")){
-						term=CONCRETE.createInteger(Integer.parseInt(termValue));
-					}
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.StringTerm")){
-						term=TERM.createString(termValue);
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Base64Binary")){
-						term=CONCRETE.createBase64Binary(termValue);
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.BooleanTerm")){
-						term=CONCRETE.createBoolean(Boolean.parseBoolean(termValue));
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.DateTerm")){
-						XMLGregorianCalendar cal=xmlFactory.newXMLGregorianCalendar(termValue);
-                        term=CONCRETE.createDate(cal.getYear(), cal.getMonth(), cal.getDay());
-					}
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.DateTime")){
-						XMLGregorianCalendar cal=xmlFactory.newXMLGregorianCalendar(termValue);
-                        term=CONCRETE.createDateTime(cal.getYear(), 
-                                cal.getMonth(), 
-                                cal.getDay(), 
-                                cal.getHour(), 
-                                cal.getMinute(), 
-                                cal.getSecond(), 
-                                cal.getTimezone()/60, 
-                                cal.getTimezone()%60);
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.DecimalTerm")){
-						term=CONCRETE.createDecimal(Double.parseDouble(termValue));
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.DoubleTerm")){
-						term=CONCRETE.createDouble(Double.parseDouble(termValue));
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Duration")){
-						term=CONCRETE.createDuration(Long.parseLong(termValue));
-					}
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.FloatTerm")){
-						term=CONCRETE.createFloat(Float.parseFloat(termValue));
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GDay")){
-						term=CONCRETE.createGDay(Integer.parseInt(termValue));
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GMonthDay")){
-                        String[] month_day=termValue.split(";", 0);
-						term=CONCRETE.createGMonthDay(Integer.parseInt(month_day[0]),Integer.parseInt(month_day[1]));
-					}
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GMonth")){
-						term=CONCRETE.createGMonth(Integer.parseInt(termValue));
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GYear")){
-						term=CONCRETE.createGYear(Integer.parseInt(termValue));
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GYearMonth")){
-                        String[] year_month=termValue.split(";", 0);
-						term=CONCRETE.createGMonthDay(Integer.parseInt(year_month[0]),Integer.parseInt(year_month[1]));
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.HexBinary")){
-						term=CONCRETE.createHexBinary(termValue);
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.IntegerTerm")){
-						term=CONCRETE.createInteger(Integer.parseInt(termValue));
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.SqName")){
-						term=CONCRETE.createSqName(termValue);
-					} 
-					else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Time")){
-						XMLGregorianCalendar cal=xmlFactory.newXMLGregorianCalendar(termValue);
-                        term=CONCRETE.createTime(cal.getHour(), 
-                                cal.getMinute(), 
-                                cal.getSecond(), 
-                                cal.getTimezone()/60, 
-                                cal.getTimezone()%60);
-					}
-
-                    else throw new DbStorageManagerException("unsupported term");
-					
+					term=serializedStringToTerm(termType, termValue);
                     if(term!=null) terms.add(term);
 					else throw new DbStorageManagerException("term cannot be null");
 				}
@@ -751,4 +666,89 @@ public class DbStorageManager {
 		}
 
 	}
+
+    private ITerm serializedStringToTerm(String termType, String termValue) throws DbStorageManagerException {
+        ITerm term=null;
+        if ((termValue==null)||(termType=="")) return (ITerm)null;
+        if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Iri")){
+            term=CONCRETE.createIri(termValue);
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.IntegerTerm")){
+            term=CONCRETE.createInteger(Integer.parseInt(termValue));
+        }
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.StringTerm")){
+            term=TERM.createString(termValue);
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Base64Binary")){
+            term=CONCRETE.createBase64Binary(termValue);
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.BooleanTerm")){
+            term=CONCRETE.createBoolean(Boolean.parseBoolean(termValue));
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.DateTerm")){
+            XMLGregorianCalendar cal=xmlFactory.newXMLGregorianCalendar(termValue);
+            term=CONCRETE.createDate(cal.getYear(), cal.getMonth(), cal.getDay());
+        }
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.DateTime")){
+            XMLGregorianCalendar cal=xmlFactory.newXMLGregorianCalendar(termValue);
+            term=CONCRETE.createDateTime(cal.getYear(), 
+                    cal.getMonth(), 
+                    cal.getDay(), 
+                    cal.getHour(), 
+                    cal.getMinute(), 
+                    cal.getSecond(), 
+                    cal.getTimezone()/60, 
+                    cal.getTimezone()%60);
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.DecimalTerm")){
+            term=CONCRETE.createDecimal(Double.parseDouble(termValue));
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.DoubleTerm")){
+            term=CONCRETE.createDouble(Double.parseDouble(termValue));
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Duration")){
+            term=CONCRETE.createDuration(Long.parseLong(termValue));
+        }
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.FloatTerm")){
+            term=CONCRETE.createFloat(Float.parseFloat(termValue));
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GDay")){
+            term=CONCRETE.createGDay(Integer.parseInt(termValue));
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GMonthDay")){
+            String[] month_day=termValue.split(";", 0);
+            term=CONCRETE.createGMonthDay(Integer.parseInt(month_day[0]),Integer.parseInt(month_day[1]));
+        }
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GMonth")){
+            term=CONCRETE.createGMonth(Integer.parseInt(termValue));
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GYear")){
+            term=CONCRETE.createGYear(Integer.parseInt(termValue));
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.GYearMonth")){
+            String[] year_month=termValue.split(";", 0);
+            term=CONCRETE.createGMonthDay(Integer.parseInt(year_month[0]),Integer.parseInt(year_month[1]));
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.HexBinary")){
+            term=CONCRETE.createHexBinary(termValue);
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.IntegerTerm")){
+            term=CONCRETE.createInteger(Integer.parseInt(termValue));
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.SqName")){
+            term=CONCRETE.createSqName(termValue);
+        } 
+        else if(termType.equalsIgnoreCase("org.deri.iris.terms.concrete.Time")){
+            XMLGregorianCalendar cal=xmlFactory.newXMLGregorianCalendar(termValue);
+            term=CONCRETE.createTime(cal.getHour(), 
+                    cal.getMinute(), 
+                    cal.getSecond(), 
+                    cal.getTimezone()/60, 
+                    cal.getTimezone()%60);
+        }
+        else throw new DbStorageManagerException("unsupported term");
+        return term;
+    }
+    
+
 }
