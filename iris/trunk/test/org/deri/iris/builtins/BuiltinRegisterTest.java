@@ -34,10 +34,10 @@ import junit.framework.TestSuite;
  * Tests for the <code>BuiltinRegister</code>.
  * </p>
  * <p>
- * $Id: BuiltinRegisterTest.java,v 1.1 2007-09-05 09:37:15 poettler_ric Exp $
+ * $Id: BuiltinRegisterTest.java,v 1.2 2007-09-05 10:40:57 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class BuiltinRegisterTest extends TestCase {
 
@@ -74,7 +74,7 @@ public class BuiltinRegisterTest extends TestCase {
 		// test the less-equal builtin
 		checkRegisteredBuiltin("LESS_EQUAL", org.deri.iris.builtins.LessEqualBuiltin.class, 2);
 		// test the greather-than builtin
-		checkRegisteredBuiltin("GREATR", org.deri.iris.builtins.GreaterBuiltin.class, 2);
+		checkRegisteredBuiltin("GREATER", org.deri.iris.builtins.GreaterBuiltin.class, 2);
 		// test the greather-equal builtin
 		checkRegisteredBuiltin("GREATER_EQUAL", org.deri.iris.builtins.GreaterEqualBuiltin.class, 2);
 
