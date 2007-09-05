@@ -15,9 +15,9 @@ public class Demo
 	 */
 	public static void main( String[] args )
 	{
-		if ( args.length < 2 )
+		if ( args.length < 3 )
 		{
-			System.out.println( "Usage: java org.deri.iris.FunctionalTest <datalog_program> [1|2|3]" );
+			System.out.println( "Usage: java org.deri.iris.FunctionalTest <datalog_program> [1|2|3] max_evaluation_time(ms)" );
 			System.out.println( "where 1=naive, 2=semi-naive, 3=magic-sets" ); 
 		}
 		else
@@ -25,14 +25,55 @@ public class Demo
 			String program = args[ 0 ];
 			
 			int eval = Integer.parseInt( args[ 1 ] );
+			int maxTime = Integer.parseInt( args[ 2 ] );
 			
+			if ( maxTime < 1 )
+				maxTime = 1000;
+			
+			execute( program, eval, maxTime );
+		}
+	}
+	
+	private static void execute( String program, int evaluationStrategy, int maxTime )
+	{
+		Thread t = new Thread( new ExecutionTask( program, evaluationStrategy ), "Evaluation task" );
+
+		t.setPriority( Thread.MIN_PRIORITY );
+		t.start();
+		
+		try
+		{
+			Thread.sleep( maxTime );
+		}
+		catch( InterruptedException e )
+		{
+		}
+		
+		if ( t.isAlive() )
+		{
+			t.stop();
+			System.out.println( "Timeout exceeded: " + maxTime + "ms" );
+		}
+	}
+	
+	static class ExecutionTask implements Runnable
+	{
+		ExecutionTask( String program, int evaluationStrategy )
+		{
+			this.program = program;
+			this.evaluationStrategy = evaluationStrategy;
+		}
+		
+		@Override
+        public void run()
+        {
 			try
 			{
 				Map<IPredicate, IMixedDatatypeRelation> results;
 				
 				long t = -System.currentTimeMillis();
 				
-				switch( eval )
+				switch( evaluationStrategy )
 				{
 				case 1:
 					System.out.println( "Naive evaluation" );
@@ -58,6 +99,9 @@ public class Demo
 			{
 				System.out.println( "Evaluation failed with exception: " + e.toString() );
 			}
-		}
+        }
+		
+		private String program;
+		private int evaluationStrategy;
 	}
 }
