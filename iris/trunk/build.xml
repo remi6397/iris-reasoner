@@ -117,6 +117,7 @@
 					<include name="**/*.jar"/>
 				</fileset>
 				<dirset dir="${dir.classes.test}"/>
+				<dirset dir="${dir.src}"/>
 			</classpath>
 			<formatter type="plain"/>
 			<test name="${file.test}" todir="${dir.test.reports}" />
@@ -131,6 +132,7 @@
 					<include name="**/*.jar"/>
 				</fileset>
 				<dirset dir="${dir.classes.test}"/>
+				<dirset dir="${dir.src}"/>
 			</classpath>
 			<formatter type="xml"/>
 			<!-- todo find usefull exclusion pattern -->
@@ -153,7 +155,7 @@
 	</target>
 
 	<target name="copyconfig" description="copies the config files" depends="init,prepareclasses">
-		<copy todir="${dir.classes}">
+		<copy todir="${dir.classes}" flatten="true">
 			<fileset dir="${basedir}">
 				<include name="**/*.load"/>
 				<include name="**/*.properties"/>
