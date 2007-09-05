@@ -98,11 +98,11 @@ public class ExecutionHelper
 		
 		for( IPredicate pr : m.keySet() )
 		{
-			result.append( pr.toString() ).append( '\n' );
+			result.append( pr.toString() ).append( "\r\n" );
 			
 			for( ITuple t : m.get( pr ) )
 			{
-				result.append( t.toString() ).append( '\n' );
+				result.append( t.toString() ).append( "\r\n" );
 			}
     	}
 
