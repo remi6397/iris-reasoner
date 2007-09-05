@@ -1,0 +1,16 @@
+org.deri.iris.builtins.AddBuiltin
+org.deri.iris.builtins.DivideBuiltin
+org.deri.iris.builtins.EqualBuiltin
+org.deri.iris.builtins.GreaterBuiltin
+org.deri.iris.builtins.GreaterEqualBuiltin
+org.deri.iris.builtins.IsBooleanBuiltin
+org.deri.iris.builtins.IsDateBuiltin
+org.deri.iris.builtins.IsDateTimeBuiltin
+org.deri.iris.builtins.IsDecimalBuiltin
+org.deri.iris.builtins.IsIntegerBuiltin
+org.deri.iris.builtins.IsStringBuiltin
+org.deri.iris.builtins.LessBuiltin
+org.deri.iris.builtins.LessEqualBuiltin
+org.deri.iris.builtins.MultiplyBuiltin
+org.deri.iris.builtins.SubtractBuiltin
+org.deri.iris.builtins.UnEqualBuiltin

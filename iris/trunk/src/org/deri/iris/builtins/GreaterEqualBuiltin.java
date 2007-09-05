@@ -44,11 +44,11 @@ import org.deri.iris.factory.Factory;
  * equal.
  * </p>
  * <p>
- * $Id: GreaterEqualBuiltin.java,v 1.11 2007-07-25 08:16:56 poettler_ric Exp $
+ * $Id: GreaterEqualBuiltin.java,v 1.12 2007-09-05 09:37:15 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class GreaterEqualBuiltin extends AbstractBuiltin {
 
@@ -105,5 +105,9 @@ public class GreaterEqualBuiltin extends AbstractBuiltin {
 		final List<IVariable> var = getTuple().getAllVariables();
 		var.removeAll(v);
 		return var.isEmpty();
+	}
+
+	public static IPredicate getBuiltinPredicate() {
+		return PREDICATE;
 	}
 }

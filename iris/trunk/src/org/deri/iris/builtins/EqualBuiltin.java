@@ -42,13 +42,13 @@ import org.deri.iris.api.terms.IVariable;
  * Builtin to compare two terms for equality.
  * </p>
  * <p>
- * $Id: EqualBuiltin.java,v 1.12 2007-07-25 08:16:56 poettler_ric Exp $
+ * $Id: EqualBuiltin.java,v 1.13 2007-09-05 09:37:15 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class EqualBuiltin extends AbstractBuiltin {
 
@@ -121,5 +121,9 @@ public class EqualBuiltin extends AbstractBuiltin {
 		final List<IVariable> var = getTuple().getAllVariables();
 		var.removeAll(v);
 		return var.size() <= 1;
+	}
+
+	public static IPredicate getBuiltinPredicate() {
+		return PREDICATE;
 	}
 }
