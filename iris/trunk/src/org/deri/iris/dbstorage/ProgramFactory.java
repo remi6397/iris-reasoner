@@ -42,16 +42,16 @@ import org.deri.iris.api.storage.IRelation;
  * A simple IProgramFactory implementation.
  * </p>
  * <p>
- * $Id: ProgramFactory.java,v 1.1 2007-07-29 10:45:48 fefacca Exp $
+ * $Id: ProgramFactory.java,v 1.2 2007-09-05 22:19:40 fefacca Exp $
  * </p>
  * @author Francisco Garcia
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ProgramFactory implements IProgramFactory {
 	private static final IProgramFactory FACTORY = new ProgramFactory();
-	private static String conf=null;
+	private static Map conf=null;
 	
 	private ProgramFactory() {
 		// this is a singelton
@@ -69,7 +69,7 @@ public class ProgramFactory implements IProgramFactory {
 		return new Program(f, r, q);
 	}
 	
-	public void setDbConfigurationFile(String conf){
+	public void setDbConfigurationFile(Map conf){
 		this.conf=conf;
 	}
 }
