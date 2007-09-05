@@ -62,12 +62,12 @@ import java.sql.SQLException;
  * This implementaion is thread-save.
  * </p>
  * <p>
- * $Id: Program.java,v 1.1 2007-07-29 10:45:49 fefacca Exp $
+ * $Id: Program.java,v 1.2 2007-09-05 22:19:40 fefacca Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Program implements IProgram {
 
@@ -110,7 +110,7 @@ public class Program implements IProgram {
 	 * Creates an empty extensional database (knowledge base) ready to be filled
 	 * up with facts, rules and queries.
 	 */
-	Program(String conf) {
+	Program(Map conf) {
 		try {
 			dbm = new DbStorageManager(conf);
 		} catch (DbStorageManagerException e) {

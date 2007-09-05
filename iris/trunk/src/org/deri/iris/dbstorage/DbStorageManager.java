@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,9 +52,8 @@ public class DbStorageManager {
 	/*private static Logger logger = Logger
 			.getLogger(org.deri.iris.dbstorage.DbStorageManager.class.getName());*/
 
-	public DbStorageManager(String confilePath)
+	public DbStorageManager(Map conf)
 			throws DbStorageManagerException {
-		conf = confilePath;
 		try {
 			con = createConnection(conf);
 			xmlFactory=DatatypeFactory.newInstance();
@@ -132,7 +132,7 @@ public class DbStorageManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		String query = "SELECT predicateTable FROM " + REFERENCETABLENAME
-				+ " WHERE predicateSymbol='" + predicateSymbol+"' AND predicateArity="+predicateArity+";";
+				+ " WHERE predicateSymbol='" + predicateSymbol+"' AND predicateArity="+predicateArity;
 		try {
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(query);
@@ -144,8 +144,8 @@ public class DbStorageManager {
 			throw new DbStorageManagerException(e);
 		} finally {
 			try {
-				rs.close();
-				stmt.close();
+				if(rs!=null) rs.close();
+				if(stmt!=null) stmt.close();
 			} catch (SQLException e) {
 				// silent exception
 			}
@@ -156,7 +156,7 @@ public class DbStorageManager {
 			throws SQLException {
 		PreparedStatement stmt = null;
 		String sqlStatement = "INSERT INTO " + REFERENCETABLENAME
-				+ " VALUES (?, ?, ?, ?);";
+				+ " VALUES (?, ?, ?, ?)";
 		stmt = con.prepareStatement(sqlStatement);
 		stmt.setString(1, p.getPredicateSymbol());
 		if (p.getArity() > 0)
@@ -184,7 +184,7 @@ public class DbStorageManager {
 			throws SQLException {
 		PreparedStatement stmt = null;
 		String sqlStatement = "DELETE FROM " + REFERENCETABLENAME
-				+ " WHERE predicateTable=?;";
+				+ " WHERE predicateTable=?";
 		stmt = con.prepareStatement(sqlStatement);
 		stmt.setString(1, this.getTableName(p));
 		try {
@@ -269,8 +269,8 @@ public class DbStorageManager {
 			throw new DbStorageManagerException(e);
 		} finally{
 			try {
-				rs.close();
-				stmt.close();
+				if(rs!=null) rs.close();
+				if(stmt!=null) stmt.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 				// silent exception
@@ -365,7 +365,7 @@ public class DbStorageManager {
 					if (i < p.getArity() - 1)
 						tableSQL += ", ";
 				}
-				tableSQL += ")\n);";
+				tableSQL += ")\n)";
 				stmt.executeUpdate(tableSQL);
 				for (int i = 0; i < p.getArity(); i++) {
 					stmt.executeUpdate("CREATE INDEX term" + (i + 1) + "_"
@@ -431,23 +431,22 @@ public class DbStorageManager {
 		}
 	}
 
-	private Connection createConnection(String confile)
+	private Connection createConnection(Map conf)
 			throws ClassNotFoundException, FileNotFoundException, IOException,
 			SQLException {
-		Properties conf = new Properties();
 		String dburl = null;
 		String dbuser = null;
 		String dbpassword = null;
 		String dbclass = null;
-		conf.load(new FileInputStream(confile));
-		if (conf.containsKey("dburl"))
-			dburl = conf.getProperty("dburl");
-		if (conf.containsKey("dbuser"))
-			dbuser = conf.getProperty("dbuser");
-		if (conf.containsKey("dbpassword"))
-			dbpassword = conf.getProperty("dbpassword");
-		if (conf.containsKey("dbclass"))
-			dbclass = conf.getProperty("dbclass");
+		
+		if (conf.containsKey("DB_URL"))
+			dburl = (String)conf.get("DB_URL");
+		if (conf.containsKey("DB_USER"))
+			dbuser = (String)conf.get("DB_USER");
+		if (conf.containsKey("DB_PASSWORD"))
+			dbpassword = (String)conf.get("DB_PASSWORD");
+		if (conf.containsKey("DB_CLASS"))
+			dbclass = (String)conf.get("DB_CLASS");
 		Class.forName(dbclass);
 
 		return DriverManager.getConnection(dburl, dbuser, dbpassword);
@@ -479,7 +478,8 @@ public class DbStorageManager {
 			if (i < t.getArity() - 1)
 				sqlStatement += ", ";
 		}
-		sqlStatement += ");";
+		//sqlStatement += ");";
+		sqlStatement += ")";
 		try {
 			stmt = con.prepareStatement(sqlStatement);
 
@@ -489,7 +489,7 @@ public class DbStorageManager {
 					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
 					stmt.setString(2 * i + 1, xmlCal.toXMLFormat());
 				}
-				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.DateTime){
+				else if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.DateTime){
 					GregorianCalendar cal=(GregorianCalendar)t.getTerm(i).getValue();
 					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendar(cal.get(Calendar.YEAR), 
                             cal.get(Calendar.MONTH), 
@@ -501,7 +501,7 @@ public class DbStorageManager {
                             cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
 					stmt.setString(2 * i + 1, xmlCal.toXMLFormat());
 				}
-				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.Time){
+				else if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.Time){
 					GregorianCalendar cal=(GregorianCalendar)t.getTerm(i).getValue();
 					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendarTime(cal.get(Calendar.HOUR_OF_DAY), 
                             cal.get(Calendar.MINUTE), 
@@ -510,10 +510,10 @@ public class DbStorageManager {
                             cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
 					stmt.setString(2 * i + 1, xmlCal.toXMLFormat());
 				}
-				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.GMonthDay){
+				else if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.GMonthDay){
                     stmt.setString(2 * i + 1, ((GMonthDay)t.getTerm(i)).getMonth()+";"+((GMonthDay)t.getTerm(i)).getDay());
                 }
-				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.GYearMonth){
+				else if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.GYearMonth){
                     stmt.setString(2 * i + 1, ((GYearMonth)t.getTerm(i)).getYear()+";"+((GYearMonth)t.getTerm(i)).getMonth());
                 }
 				else {
@@ -556,7 +556,7 @@ public class DbStorageManager {
 			if (i < a.getTuple().getArity() - 1)
 				sqlStatement += "AND ";
 		}
-		sqlStatement += ";";
+		//sqlStatement += ";";
 		try {
 			stmt = con.prepareStatement(sqlStatement);
 
@@ -605,7 +605,7 @@ public class DbStorageManager {
 			if (i < t.getArity() - 1)
 				sqlStatement += " AND ";
 		}
-		sqlStatement += ";";
+		//sqlStatement += ";";
 		try {
 			stmt = con.prepareStatement(sqlStatement);
 
