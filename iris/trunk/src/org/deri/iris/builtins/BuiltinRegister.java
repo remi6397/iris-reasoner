@@ -56,10 +56,10 @@ import org.deri.iris.api.basics.IPredicate;
  * classname of the builtin to register.
  * </p>
  * <p>
- * $Id: BuiltinRegister.java,v 1.4 2007-09-05 14:08:10 poettler_ric Exp $
+ * $Id: BuiltinRegister.java,v 1.5 2007-09-05 16:04:23 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public final class BuiltinRegister {
 
@@ -101,7 +101,7 @@ public final class BuiltinRegister {
 	private void registerFromResource(final String res, final boolean mandatory) {
 		assert res != null: "The resource must not be null";
 
-		final InputStream is = ClassLoader.getSystemResourceAsStream(res);
+		final InputStream is = getClass().getClassLoader().getSystemResourceAsStream(res);
 		if (is != null) {
 			final BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			try {
