@@ -56,15 +56,21 @@ import org.deri.iris.api.basics.IPredicate;
  * classname of the builtin to register.
  * </p>
  * <p>
- * $Id: BuiltinRegister.java,v 1.2 2007-04-11 12:07:37 poettler_ric Exp $
+ * $Id: BuiltinRegister.java,v 1.3 2007-09-05 09:37:15 poettler_ric Exp $
  * </p>
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.2 $
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision: 1.3 $
  */
 public final class BuiltinRegister {
 
 	/** The Logger for this class. */
 	private static final Logger LOGGER = Logger.getLogger(BuiltinRegister.class);
+
+	/** The resource name of the custom builtins. */
+	private static final String CUSTOM_BUILTINS_FILE = "builtins.load";
+
+	/** The resource name of the core builtins. */
+	private static final String CORE_BUILTINS_FILE = "core.builtins.load";
 
 	/** Holding all the information about the builtins.
 	 * <ul>
@@ -77,13 +83,27 @@ public final class BuiltinRegister {
 
 	/**
 	 * Constructs a new builtin register. This constructor also reads the
-	 * builtins.load file from the classpath.
+	 * builtins.load file from the classpath. A builtin with the same
+	 * name as a core builtin wont be registered.
 	 */
 	public BuiltinRegister() {
-		final InputStream is = BuiltinRegister.class.getResourceAsStream("builtins.load");
-		BufferedReader br = null;
+		registerFromResource(CUSTOM_BUILTINS_FILE, false);
+		registerFromResource(CORE_BUILTINS_FILE, true);
+	}
+
+	/**
+	 * Tries to register the builtis from a given resource. Already existing
+	 * builtins in the register will be overwritten.
+	 * @param res the resource name from where to load the builtins
+	 * @param mandatory <code>true</code> if it is mandatory, that this file
+	 * can be located, otherwise <code>false</code>
+	 */
+	private void registerFromResource(final String res, final boolean mandatory) {
+		assert res != null: "The resource must not be null";
+
+		final InputStream is = BuiltinRegister.class.getResourceAsStream(res);
 		if (is != null) {
-			br = new BufferedReader(new InputStreamReader(is));
+			final BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			try {
 				String line;
 				while ((line = br.readLine()) != null) {
@@ -94,29 +114,28 @@ public final class BuiltinRegister {
 					}
 				}
 			} catch (IOException e) {
-				LOGGER.warn("Error while reading the builtins.load file", e);
+				LOGGER.warn("Error while reading the " + res + " file", e);
 			} finally {
-				if (br != null) {
-					try {
-						br.close();
-					} catch (IOException e) {
-						LOGGER.warn("Couldn't close the builtins.load file", e);
-					}
+				try {
+					br.close();
+				} catch (IOException e) {
+					LOGGER.warn("Couldn't close the " + res + " file", e);
 				}
 			}
+		} else if (mandatory) {
+			LOGGER.error("Couldn't locate the resource " + res);
 		}
 	}
 
 	/**
 	 * Registers a single builtin. This method searches for the
 	 * &quot;<code>getBuiltinPredicate</code>&quot; method and ivokes it.
+	 * Already registered builtins will be overwritten.
 	 * @param c the builtinclass to register
-	 * @throws NullPointerException if the class is <code>null</code>
 	 */
 	private void privRegisterBuiltin(final Class c) {
-		if (c == null) {
-			throw new NullPointerException("The class must not be null");
-		}
+		assert c != null: "The class must not be null";
+
 		try {
 			final RegisterEntry ent = new RegisterEntry(c, 
 					(IPredicate) c.getMethod("getBuiltinPredicate").invoke(null));
