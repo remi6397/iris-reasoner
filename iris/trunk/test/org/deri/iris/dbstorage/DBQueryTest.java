@@ -90,8 +90,15 @@ public class DBQueryTest extends TestCase {
 		System.out.println("Created Connection");
 		
 		String enc = System.getProperty("file.encoding");
-		InputStream sql = new
-		BufferedInputStream(DBQueryTest.class.getResourceAsStream("/org/deri/iris/dbstorage/reasoner.sql"));
+		
+		InputStream sqlIn = DBQueryTest.class.getClassLoader().getResourceAsStream("org/deri/iris/dbstorage/reasoner.sql");
+
+		if ( sqlIn == null )
+		{
+			fail( "Can't read the reasoner.sql file" );
+		}
+		
+		InputStream sql = new BufferedInputStream( sqlIn );
 
 		ij.runScript(con, sql, enc, System.out, enc);
 		
