@@ -64,7 +64,7 @@ public class Demo
 			this.evaluationStrategy = evaluationStrategy;
 		}
 		
-		@Override
+//		@Override
         public void run()
         {
 			try
