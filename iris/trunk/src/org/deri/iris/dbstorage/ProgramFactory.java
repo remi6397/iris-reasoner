@@ -42,12 +42,12 @@ import org.deri.iris.api.storage.IRelation;
  * A simple IProgramFactory implementation.
  * </p>
  * <p>
- * $Id: ProgramFactory.java,v 1.2 2007-09-05 22:19:40 fefacca Exp $
+ * $Id: ProgramFactory.java,v 1.3 2007-09-06 00:07:06 fefacca Exp $
  * </p>
  * @author Francisco Garcia
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ProgramFactory implements IProgramFactory {
 	private static final IProgramFactory FACTORY = new ProgramFactory();
@@ -66,7 +66,7 @@ public class ProgramFactory implements IProgramFactory {
 	}
 	
 	public IProgram createProgram(Map<IPredicate, IMixedDatatypeRelation> f, Set<IRule> r, Set<IQuery> q) {
-		return new Program(f, r, q);
+		return new Program(conf,f, r, q);
 	}
 	
 	public void setDbConfigurationFile(Map conf){

@@ -308,7 +308,7 @@ public class DbStorageManager {
 		String query="SELECT * FROM "+getTableName(p);
 		try {
 			stmt=con.createStatement();
-			return stmt.executeQuery(query).next();
+			return !stmt.executeQuery(query).next();
 		} catch (SQLException e) {
 			throw new DbStorageManagerException(e);
 		} finally {

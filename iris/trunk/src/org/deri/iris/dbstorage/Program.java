@@ -62,12 +62,12 @@ import java.sql.SQLException;
  * This implementaion is thread-save.
  * </p>
  * <p>
- * $Id: Program.java,v 1.2 2007-09-05 22:19:40 fefacca Exp $
+ * $Id: Program.java,v 1.3 2007-09-06 00:07:06 fefacca Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class Program implements IProgram {
 
@@ -130,8 +130,13 @@ public class Program implements IProgram {
 	 * @param q
 	 *            a set of queries to be added into the EDB.
 	 */
-	Program(final Map<IPredicate, IMixedDatatypeRelation> f,
+	Program(Map conf, final Map<IPredicate, IMixedDatatypeRelation> f,
 			final Set<IRule> r, final Set<IQuery> q) {
+		try {
+			dbm = new DbStorageManager(conf);
+		} catch (DbStorageManagerException e) {
+			throw new RuntimeException(e);
+		}
 		if (f != null) {
 			for (final Map.Entry<IPredicate, IMixedDatatypeRelation> e : f
 					.entrySet()) {
