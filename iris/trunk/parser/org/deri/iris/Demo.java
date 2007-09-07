@@ -41,12 +41,17 @@ public class Demo
 		t.setPriority( Thread.MIN_PRIORITY );
 		t.start();
 		
-		try
+		long maxCurrentTime = System.currentTimeMillis() + maxTime;
+		
+		while(t.isAlive() && System.currentTimeMillis() < maxCurrentTime)
 		{
-			Thread.sleep( maxTime );
-		}
-		catch( InterruptedException e )
-		{
+			try
+			{
+				Thread.sleep(10);
+			}
+			catch( InterruptedException e )
+			{
+			}
 		}
 		
 		if ( t.isAlive() )
