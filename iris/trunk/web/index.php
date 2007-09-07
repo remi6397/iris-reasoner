@@ -8,8 +8,8 @@ $selffilename = str_replace( 'index.php', '', $_SERVER['SCRIPT_FILENAME'] );
 
 if( $_SERVER['REQUEST_URI'] == $selfdir ) // index.php should not be callable to make it independend of how it is implemented (asp/html/php/...): || $_SERVER['REQUEST_URI'] == $selfdir . 'index.php' )
     $_SERVER['REQUEST_URI'] = $selfdir . 'home';
-
-$filelocation = str_replace( $selfdir, $selffilename . $location .'/', $_SERVER['REQUEST_URI'] ) . '.php';
+$URL = str_replace("?".$_SERVER['QUERY_STRING'],"",$_SERVER['REQUEST_URI']);
+$filelocation = str_replace( $selfdir, $selffilename . $location .'/', $URL ) . '.php';
 
 if( !file_exists( $filelocation ) ) {
     header('HTTP/1.1 404 Not Found');
@@ -66,6 +66,7 @@ if( !file_exists( $filelocation ) ) {
     
     <div class="sideBox LHS">
       <div>IRIS in action</div>
+        <a href="demo">online demo</a>
 		<a href="rdfsreasoner">RDFS Reasoner</a>
         <a href="wsml2reasoner">wsml2reasoner</a>
 		<!--
