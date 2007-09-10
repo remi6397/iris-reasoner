@@ -1,10 +1,10 @@
 <project name="iris" basedir="." default="jar">
-	
+
 	<!-- $Id$ -->
 
-	<tstamp/>
+	<tstamp />
 
-	<property file="build.properties"/>
+	<property file="build.properties" />
 
 	<path id="sablecccp">
 		<fileset dir="${dir.lib}">
@@ -27,10 +27,9 @@
 	</target>
 
 	<target name="compile" description="compiles all the class files" depends="init,prepareclasses">
-		<javac srcdir="${dir.api}:${dir.src}" classpathref="defaultcp" destdir="${dir.classes}"
-			deprecation="on">
-			<compilerarg value="-Xlint:unchecked" compiler="modern"/>
-			<compilerarg value="-Xlint:unchecked" compiler="classic"/>
+		<javac srcdir="${dir.api}:${dir.src}" classpathref="defaultcp" destdir="${dir.classes}" deprecation="on">
+			<compilerarg value="-Xlint:unchecked" compiler="modern" />
+			<compilerarg value="-Xlint:unchecked" compiler="classic" />
 			<exclude name="**/qsq/**" />
 			<include name="**/*.java" />
 		</javac>
@@ -44,21 +43,21 @@
 		<!-- copy the remaining java sources -->
 		<copy todir="${dir.sablecc.src}">
 			<fileset dir="${dir.sablecc.grammar}">
-				<include name="**/*.java"/>
+				<include name="**/*.java" />
 			</fileset>
 		</copy>
 		<!-- compile the classes -->
 		<javac srcdir="${dir.sablecc.src}" destdir="${dir.sablecc.src}">
 			<classpath>
-				<pathelement path="${file.jar.main}"/>
-				<path refid="defaultcp"/>
+				<pathelement path="${file.jar.main}" />
+				<path refid="defaultcp" />
 			</classpath>
 			<include name="**/*.java" />
 		</javac>
 		<!-- delete the java files -->
 		<delete>
 			<fileset dir="${dir.sablecc.src}">
-				<include name="**/*.java"/>
+				<include name="**/*.java" />
 			</fileset>
 		</delete>
 		<!-- generate the jar file -->
@@ -66,8 +65,7 @@
 	</target>
 
 	<target name="doc" description="generates the javadoc" depends="init,preparedoc">
-		<javadoc destdir="${dir.javadoc}"
-			link="http://java.sun.com/j2se/1.5.0/docs/api/">
+		<javadoc destdir="${dir.javadoc}" link="http://java.sun.com/j2se/1.5.0/docs/api/">
 			<fileset dir="${dir.api}">
 				<include name="**/*.java" />
 			</fileset>
@@ -79,47 +77,54 @@
 			</fileset>
 		</javadoc>
 	</target>
-	
+
 	<target name="doccheck" description="checks the documentation of the project" depends="init,preparedoccheck">
 		<javadoc destdir="${dir.doccheck}">
 			<doclet name="com.sun.tools.doclets.doccheck.DocCheck" path="${jar.doccheck}">
-				<param name="-title" value="IRIS"/>
+				<param name="-title" value="IRIS" />
 			</doclet>
 			<packageset dir="${dir.api}">
-				<include name="org/deri/iris/**"/>
+				<include name="org/deri/iris/**" />
 			</packageset>
 			<packageset dir="${dir.src}">
-				<include name="org/deri/iris/**"/>
+				<include name="org/deri/iris/**" />
 			</packageset>
 		</javadoc>
 	</target>
 
 	<target name="compiletest" description="compiles the test classes" depends="init,jar,preparecompiletest">
-		<javac srcdir="${dir.src.test}" destdir="${dir.classes.test}" 
-			deprecation="on">
-			<compilerarg value="-Xlint:unchecked" compiler="modern"/>
-			<compilerarg value="-Xlint:unchecked" compiler="classic"/>
+		<javac srcdir="${dir.src.test}" destdir="${dir.classes.test}" deprecation="on">
+			<compilerarg value="-Xlint:unchecked" compiler="modern" />
+			<compilerarg value="-Xlint:unchecked" compiler="classic" />
+			<include name="**/*.sql" />
+			<include name="**/*.java" />
 			<exclude name="**/qsq/**" />
 			<classpath>
-				<path refid="defaultcp"/>
+				<path refid="defaultcp" />
 				<fileset dir="${dir.jar}">
-					<include name="**/*.jar"/>
+					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
 		</javac>
+		<copy todir="${dir.classes.test}" flatten="false">
+			<fileset dir="${dir.src.test}">
+				<include name="**/*.sql" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="testsingle" description="some people want to run only ONE test" depends="init,jar,compiletest,preparetest">
 		<junit showoutput="true" printsummary="true">
 			<classpath>
-				<path refid="defaultcp"/>
+				<path refid="defaultcp" />
 				<fileset dir="${dir.jar}">
-					<include name="**/*.jar"/>
+					<include name="**/*.jar" />
 				</fileset>
-				<dirset dir="${dir.classes.test}"/>
-				<dirset dir="${dir.src}"/>
+				<dirset dir="${dir.classes.test}" />
+				<dirset dir="${dir.src}" />
 			</classpath>
-			<formatter type="plain"/>
+			<formatter type="plain" />
 			<test name="${file.test}" todir="${dir.test.reports}" />
 		</junit>
 	</target>
@@ -127,14 +132,14 @@
 	<target name="test" description="runs junit tests" depends="init,jar,compiletest,preparetest">
 		<junit showoutput="true" printsummary="true">
 			<classpath>
-				<path refid="defaultcp"/>
+				<path refid="defaultcp" />
 				<fileset dir="${dir.jar}">
-					<include name="**/*.jar"/>
+					<include name="**/*.jar" />
 				</fileset>
-				<dirset dir="${dir.classes.test}"/>
-				<dirset dir="${dir.src}"/>
+				<dirset dir="${dir.classes.test}" />
+				<dirset dir="${dir.src}" />
 			</classpath>
-			<formatter type="xml"/>
+			<formatter type="xml" />
 			<!-- todo find usefull exclusion pattern -->
 			<batchtest fork="yes" todir="${dir.test.reports}">
 				<fileset dir="${dir.src.test}">
@@ -157,64 +162,56 @@
 	<target name="copyconfig" description="copies the config files" depends="init,prepareclasses">
 		<copy todir="${dir.classes}" flatten="true">
 			<fileset dir="${basedir}">
-				<include name="**/*.load"/>
-				<include name="**/*.properties"/>
-				<exclude name="build.properties"/>
+				<include name="**/*.load" />
+				<include name="**/*.properties" />
+				<exclude name="build.properties" />
 			</fileset>
 		</copy>
 	</target>
 
-	<target name="jar" description="creates the jar file"
-		depends="init,compile,copyconfig,preparejar">
+	<target name="jar" description="creates the jar file" depends="init,compile,copyconfig,preparejar">
 		<jar basedir="${dir.classes}" destfile="${file.jar.main}" index="true" />
 	</target>
 
-	<target name="release" description="packs the release archives"
-		depends="preparerelease,jar,parser,doc">
+	<target name="release" description="packs the release archives" depends="preparerelease,jar,parser,doc">
 		<zip destfile="${file.src.zip}">
 			<zipfileset dir="${dir.src}">
-				<include name="**/*.java"/>
+				<include name="**/*.java" />
 			</zipfileset>
 		</zip>
 		<zip destfile="${file.release.zip}">
 			<zipfileset dir="${dir.jar}">
-				<include name="**/*.jar"/>
+				<include name="**/*.jar" />
 			</zipfileset>
-			<zipfileset dir="${dir.lib}/ext/log4j"
-				prefix="lib/log4j"/>
-			<zipfileset dir="${dir.lib}/ext/jgrapht"
-				prefix="lib/jgrapht"/>
-			<zipfileset dir="${dir.javadoc}" prefix="doc/javadoc"/>
+			<zipfileset dir="${dir.lib}/ext/log4j" prefix="lib/log4j" />
+			<zipfileset dir="${dir.lib}/ext/jgrapht" prefix="lib/jgrapht" />
+			<zipfileset dir="${dir.javadoc}" prefix="doc/javadoc" />
 			<zipfileset dir="doc" prefix="doc">
-				<include name="**/*"/>
+				<include name="**/*" />
 			</zipfileset>
 			<zipfileset dir="${basedir}">
-				<include name="LICENSE.txt"/>
-				<include name="ChangeLog"/>
+				<include name="LICENSE.txt" />
+				<include name="ChangeLog" />
 			</zipfileset>
 		</zip>
 		<tar destfile="${dir.release}/release.tar">
 			<tarfileset dir="${dir.jar}">
-				<include name="**/*.jar"/>
+				<include name="**/*.jar" />
 			</tarfileset>
-			<tarfileset dir="${dir.lib}/ext/log4j"
-				prefix="lib/log4j"/>
-			<tarfileset dir="${dir.lib}/ext/jgrapht"
-				prefix="lib/jgrapht"/>
-			<tarfileset dir="${dir.javadoc}" prefix="doc/javadoc"/>
+			<tarfileset dir="${dir.lib}/ext/log4j" prefix="lib/log4j" />
+			<tarfileset dir="${dir.lib}/ext/jgrapht" prefix="lib/jgrapht" />
+			<tarfileset dir="${dir.javadoc}" prefix="doc/javadoc" />
 			<tarfileset dir="doc" prefix="doc">
-				<include name="**/*"/>
+				<include name="**/*" />
 			</tarfileset>
 			<tarfileset dir="${basedir}">
-				<include name="LICENSE.txt"/>
-				<include name="ChangeLog"/>
+				<include name="LICENSE.txt" />
+				<include name="ChangeLog" />
 			</tarfileset>
 		</tar>
-		<gzip src="${dir.release}/release.tar"
-			destfile="${file.release.gz}"/>
-		<bzip2 src="${dir.release}/release.tar"
-			destfile="${file.release.bz2}"/>
-		<delete file="${dir.release}/release.tar"/>
+		<gzip src="${dir.release}/release.tar" destfile="${file.release.gz}" />
+		<bzip2 src="${dir.release}/release.tar" destfile="${file.release.bz2}" />
+		<delete file="${dir.release}/release.tar" />
 	</target>
 
 	<target name="delclasses" description="deletes only the class files" depends="init">
@@ -243,21 +240,21 @@
 	<target name="preparejar" depends="init">
 		<mkdir dir="${dir.jar}" />
 	</target>
-	
+
 	<target name="preparedoccheck" depends="init">
-		<mkdir dir="${dir.build}/doccheck"/>
+		<mkdir dir="${dir.build}/doccheck" />
 	</target>
-	
+
 	<target name="preparetest" depends="init">
-		<mkdir dir="${dir.test.reports}"/>
+		<mkdir dir="${dir.test.reports}" />
 	</target>
-	
+
 	<target name="preparecompiletest" depends="init">
-		<mkdir dir="${dir.classes.test}"/>
+		<mkdir dir="${dir.classes.test}" />
 	</target>
-	
+
 	<target name="preparerelease" depends="init">
-		<mkdir dir="${dir.release}"/>
+		<mkdir dir="${dir.release}" />
 	</target>
 
 </project>
