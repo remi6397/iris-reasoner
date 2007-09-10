@@ -1,6 +1,5 @@
 package org.deri.iris.dbstorage;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,9 +13,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -31,7 +27,6 @@ import org.deri.iris.terms.concrete.GYearMonth;
 
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.IVariable;
 
 import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.TERM;
@@ -47,11 +42,6 @@ public class DbStorageManager {
 
 	private Connection con = null;
 
-	private String conf = null;
-
-	/*private static Logger logger = Logger
-			.getLogger(org.deri.iris.dbstorage.DbStorageManager.class.getName());*/
-
 	public DbStorageManager(Map conf)
 			throws DbStorageManagerException {
 		try {
@@ -64,7 +54,7 @@ public class DbStorageManager {
 		}
 	}
 
-	public void destroy(Boolean cleanDatabaseFlag)
+	public void destroy(boolean cleanDatabaseFlag)
 			throws DbStorageManagerException {
 		try {
 			if (cleanDatabaseFlag)
@@ -72,9 +62,9 @@ public class DbStorageManager {
 
 		} finally {
 			try {
-				con.close();
+				if(con!=null) con.close();
 			} catch (SQLException e) {
-				/* silent exception */
+				throw new DbStorageManagerException(e);
 			}
 		}
 	}
@@ -103,40 +93,46 @@ public class DbStorageManager {
 	private String getTableName(IPredicate p) {
 		String tableName = "table" + plainPredicateHash(p);
 		if (tableName.indexOf("-") > 0)
-			tableName = tableName.replaceAll("-", "");
+			tableName = tableName.replaceAll("-", "_");
 		return tableName;
 	}
 
-	/*
-	 * do we need to store references between predicates and tables names?! for
-	 * now we don't since table names are computed using the predicate hash
-	 */
-
 	private void createPredicateReferenceTable() throws SQLException {
 		Statement stmt = null;
-		String referenceTable = "CREATE TABLE " + REFERENCETABLENAME + " (\n"
+		StringBuilder  referenceTable = new StringBuilder("CREATE TABLE " + REFERENCETABLENAME + " (\n"
 				+ " predicateSymbol VARCHAR(255) NOT NULL,\n"
 				+ " predicateTable VARCHAR(255),\n"
 				+ " predicateArity INT  NOT NULL,\n"
 				+ " predicateHash INT  NOT NULL,\n"
-				+ " PRIMARY KEY (predicateSymbol,predicateArity)\n" + ")";
+				+ " PRIMARY KEY (predicateSymbol,predicateArity)\n" + ")");
 		try {
 			stmt = con.createStatement();
-			stmt.executeUpdate(referenceTable);
+			stmt.executeUpdate(referenceTable.toString());
 		} finally {
-			stmt.close();
+			if(stmt!=null) stmt.close();
 		}
 	}
 	
+	/**
+	 * Return the table name for the given predicateSymbol and arity
+	 * 
+	 * @param predicateSymbol
+	 *             the predicate symbol for which we are searching the table name
+	 * @param arity
+	 *             the predicate airty for which we are searching the table name
+	 * @return the table name or null if a table for the given predicateSymbol and arity
+	 *         does not exist
+	 * @throws DbStorageManagerException      
+	 */
 	public String getTable(String predicateSymbol, int predicateArity) throws DbStorageManagerException{
 		Statement stmt = null;
 		ResultSet rs = null;
-		String query = "SELECT predicateTable FROM " + REFERENCETABLENAME
-				+ " WHERE predicateSymbol='" + predicateSymbol+"' AND predicateArity="+predicateArity;
+		StringBuilder query =  new StringBuilder("SELECT predicateTable FROM " + REFERENCETABLENAME
+				+ " WHERE predicateSymbol='" + predicateSymbol+"' AND predicateArity="+predicateArity);
 		try {
 			stmt = con.createStatement();
-			rs = stmt.executeQuery(query);
-			while (rs.next()){
+			rs = stmt.executeQuery(query.toString());
+			if (rs.next()){
 				return rs.getString("predicateTable");
 			}
 			return null;
@@ -147,7 +143,7 @@ public class DbStorageManager {
 				if(rs!=null) rs.close();
 				if(stmt!=null) stmt.close();
 			} catch (SQLException e) {
-				// silent exception
+				throw new DbStorageManagerException(e);
 			}
 		}
 	}
@@ -162,21 +158,16 @@ public class DbStorageManager {
 		if (p.getArity() > 0)
 			stmt.setString(2, this.getTableName(p));
 		else
-			stmt.setString(2, "");
+			stmt.setString(2, null);
 		stmt.setInt(3, p.getArity());
 		stmt.setInt(4, plainPredicateHash(p));
 		try {
 			stmt.execute();
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
 			return false;
-		} finally {
-			try {
-				stmt.close();
-			} catch (SQLException e) {
-				/* silent exception */
-			}
+		} finally {			
+				if(stmt!=null) stmt.close();
 		}
 	}
 
@@ -191,24 +182,20 @@ public class DbStorageManager {
 			return stmt.execute();
 		} catch (SQLException e) {
 			return false;
-		} finally {
-			try {
-				stmt.close();
-			} catch (SQLException e) {
-				/* silent exception */
-			}
+		} finally {			
+				if(stmt!=null) stmt.close();
 		}
 	}
 
 	private boolean existsTable(String tableName) throws SQLException {
 		Statement stmt = con.createStatement();
 		try {
-			stmt.executeQuery("SELECT * FROM " + tableName);
+			stmt.executeQuery("SELECT count(*) FROM " + tableName);
 			return true;
 		} catch (SQLException e) {
 			return false;
 		} finally {
-			stmt.close();
+			if(stmt!=null) stmt.close();
 		}
 	}
 
@@ -230,15 +217,16 @@ public class DbStorageManager {
 				deleteStmt.executeUpdate("DELETE FROM " + REFERENCETABLENAME
 						+ " WHERE predicateHash=" + hashValue);
 			}
+			con.commit();
 		} catch (SQLException e) {
 			throw new DbStorageManagerException(e);
 		} finally {
 			try {
 				con.setAutoCommit(true);
-				rs.close();
-				stmt.close();
+				if(rs!=null) rs.close();
+				if(stmt!=null) stmt.close();
 			} catch (SQLException e) {
-				/* silent exception */
+				throw new DbStorageManagerException(e);
 			}
 		}
 	}
@@ -247,20 +235,22 @@ public class DbStorageManager {
 		IMixedDatatypeRelation rel=RELATION.getMixedRelation(p.getArity());
 		Statement stmt=null;
 		ResultSet rs=null;
-		if(p.getArity()==0) return rel;
+		if(p.getArity()==0)
+			return rel;
 		try {
 			stmt=con.createStatement();
 			rs=stmt.executeQuery(SqlQuery);
 			while(rs.next()){
 				List<ITerm> terms=new ArrayList<ITerm>();
 				for(int i=0; i<p.getArity(); i++){
-					String termValue=rs.getString(2*i+1);
-					String termType=rs.getString(2*i+2);
+					int valueColumn=2 * i + 1;
+					int typeColumn=2 * i + 2;
+					String termValue=rs.getString(valueColumn);
+					String termType=rs.getString(typeColumn);
 					ITerm term=null;
 					term=serializedStringToTerm(termType, termValue);
                     if(term!=null) terms.add(term);
-					else throw new DbStorageManagerException("term cannot be null");
-					// TODO add missing term types
+					else throw new DbStorageManagerException("term cannot be null");					
 				}
 				rel.add(bFactory.createTuple(terms));
 			}
@@ -272,8 +262,7 @@ public class DbStorageManager {
 				if(rs!=null) rs.close();
 				if(stmt!=null) stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
-				// silent exception
+				throw new DbStorageManagerException(e);
 			}
 		}
 
@@ -293,29 +282,29 @@ public class DbStorageManager {
 			throw new DbStorageManagerException(e);
 		} finally {
 			try {
-				rs.close();
-				stmt.close();
+				if(rs!=null) rs.close();
+				if(stmt!=null) stmt.close();
 			} catch (SQLException e) {
-				// silent exception
+				throw new DbStorageManagerException(e);
 			}
 		}
 	}
 	
-	public boolean emptyPredicate(IPredicate p) throws DbStorageManagerException{
+	public boolean isEmptyPredicate(IPredicate p) throws DbStorageManagerException{
 		if(p.getArity()==0) return false;
 		if(!isPredicateRegistered(p)) return true;
 		Statement stmt = null;
-		String query="SELECT * FROM "+getTableName(p);
+		String query="SELECT count(*) FROM "+getTableName(p);
 		try {
 			stmt=con.createStatement();
 			return !stmt.executeQuery(query).next();
 		} catch (SQLException e) {
 			throw new DbStorageManagerException(e);
 		} finally {
-			try {
-				stmt.close();
+			try {			
+				if(stmt!=null) stmt.close();
 			} catch (SQLException e) {
-				// silent exception
+				throw new DbStorageManagerException(e);
 			}
 		}
 	}
@@ -333,7 +322,7 @@ public class DbStorageManager {
 	public boolean registerPredicate(IPredicate p)
 			throws DbStorageManagerException {
 		Statement stmt = null;
-
+		
 		try {
 			if (!isPredicateRegistered(p))
 				addPredicateToReferenceTable(p);
@@ -347,39 +336,33 @@ public class DbStorageManager {
 		String tableName = getTableName(p);
 		try {
 			if (existsTable(tableName)) {
-				/*logger.log(Level.WARNING, "The table " + tableName
-						+ " already exists");
-				*/return false;
+				return false;
 			} else {
-
 				con.setAutoCommit(false);
-				String tableSQL = "CREATE TABLE " + tableName + " (\n";
+				StringBuilder tableSQL=new StringBuilder();
+				tableSQL.append("CREATE TABLE " + tableName + " (\n");
 				for (int i = 0; i < p.getArity(); i++) {
-					tableSQL += " term" + (i + 1) + " VARCHAR(255) NOT NULL,\n";
-					tableSQL += " termType" + (i + 1)
-							+ " VARCHAR(255) NOT NULL,\n";
+					int termPosition=i+1;
+					tableSQL.append(" term" + termPosition + " VARCHAR(255) NOT NULL,\n");
+					tableSQL.append(" termType" + termPosition
+							+ " VARCHAR(255) NOT NULL,\n");
 				}
-				tableSQL += " PRIMARY KEY (";
+				tableSQL.append(" PRIMARY KEY (");
 				for (int i = 0; i < p.getArity(); i++) {
-					tableSQL += "term" + (i + 1)+", termType" + (i + 1);
+					int termPosition=i+1;
+					tableSQL.append("term" + termPosition+", termType" + termPosition);
 					if (i < p.getArity() - 1)
-						tableSQL += ", ";
+						tableSQL.append(", ");
 				}
-				tableSQL += ")\n)";
-				stmt.executeUpdate(tableSQL);
+				tableSQL.append(")\n)");
+				stmt.executeUpdate(tableSQL.toString());
 				for (int i = 0; i < p.getArity(); i++) {
-					stmt.executeUpdate("CREATE INDEX term" + (i + 1) + "_"
+					int termPosition=i+1;
+					stmt.executeUpdate("CREATE INDEX term" + termPosition + "_"
 							+ tableName + "_idx ON " + tableName + " (term"
-							+ (i + 1) + ")");
+							+ termPosition + ")");
 				}
-//				logger.log(Level.INFO, "SQL Statement the table " + tableName
-//						+ ":\n" + tableSQL);
-
 				con.commit();
-//				logger.log(Level.INFO, "The table " + tableName
-//						+ " for predicate " + p.getPredicateSymbol()
-//						+ " with arity " + p.getArity()
-//						+ " was created and registered");
 				return true;
 			}
 		} catch (SQLException sqle) {
@@ -387,9 +370,9 @@ public class DbStorageManager {
 		} finally {
 			try {
 				con.setAutoCommit(true);
-				stmt.close();
+				if(stmt!=null) stmt.close();
 			} catch (SQLException e) {
-				/* silent exception */
+				throw new DbStorageManagerException(e);
 			}
 		}
 	}
@@ -414,19 +397,19 @@ public class DbStorageManager {
 		}
 		String tableName = getTableName(p);
 		try {
+			con.setAutoCommit(false);
 			stmt.executeUpdate("DROP TABLE " + tableName);
 			removePredicateFromReferenceTable(p);
-//			logger.log(Level.INFO, "The table " + tableName + " was removed");
+			con.commit();
 			return true;
 		} catch (SQLException e) {
-//			logger.log(Level.SEVERE, "The table " + tableName
-//					+ " doesn't exist");
 			return false;
 		} finally {
 			try {
-				stmt.close();
+				con.setAutoCommit(true);
+				if(stmt!=null) stmt.close();
 			} catch (SQLException e) {
-				/* silent exception */
+				throw new DbStorageManagerException(e);
 			}
 		}
 	}
@@ -456,8 +439,6 @@ public class DbStorageManager {
 		return con;
 	}
 
-	/* TODO agree with darko on what to store for the datatype */
-
 	public boolean addFact(IAtom a) throws DbStorageManagerException {
 
 		return this.addTuple(a.getTuple(), a.getPredicate());
@@ -472,55 +453,21 @@ public class DbStorageManager {
 			return true;
 		if(hasFact(t, p)) return true;
 		PreparedStatement stmt = null;
-		String sqlStatement = "INSERT INTO " + tableName + " VALUES (";
+		StringBuilder sqlStatement =  new StringBuilder("INSERT INTO " + tableName + " VALUES (");
 		for (int i = 0; i < t.getArity(); i++) {
-			sqlStatement += "?, ?";
+			sqlStatement.append("?, ?");
 			if (i < t.getArity() - 1)
-				sqlStatement += ", ";
+				sqlStatement.append(", ");
 		}
-		//sqlStatement += ");";
-		sqlStatement += ")";
+		sqlStatement.append(")");
 		try {
-			stmt = con.prepareStatement(sqlStatement);
+			stmt = con.prepareStatement(sqlStatement.toString());
 
 			for (int i = 0; i < t.getArity(); i++) {
-				if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.DateTerm){
-					GregorianCalendar cal=(GregorianCalendar)t.getTerm(i).getValue();
-					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
-					stmt.setString(2 * i + 1, xmlCal.toXMLFormat());
-				}
-				else if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.DateTime){
-					GregorianCalendar cal=(GregorianCalendar)t.getTerm(i).getValue();
-					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendar(cal.get(Calendar.YEAR), 
-                            cal.get(Calendar.MONTH), 
-                            cal.get(Calendar.DAY_OF_MONTH), 
-                            cal.get(Calendar.HOUR_OF_DAY),
-                            cal.get(Calendar.MINUTE),
-                            cal.get(Calendar.SECOND),
-                            cal.get(Calendar.MILLISECOND),
-                            cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
-					stmt.setString(2 * i + 1, xmlCal.toXMLFormat());
-				}
-				else if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.Time){
-					GregorianCalendar cal=(GregorianCalendar)t.getTerm(i).getValue();
-					XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendarTime(cal.get(Calendar.HOUR_OF_DAY), 
-                            cal.get(Calendar.MINUTE), 
-                            cal.get(Calendar.SECOND),
-                            cal.get(Calendar.MILLISECOND),
-                            cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
-					stmt.setString(2 * i + 1, xmlCal.toXMLFormat());
-				}
-				else if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.GMonthDay){
-                    stmt.setString(2 * i + 1, ((GMonthDay)t.getTerm(i)).getMonth()+";"+((GMonthDay)t.getTerm(i)).getDay());
-                }
-				else if(t.getTerm(i) instanceof org.deri.iris.terms.concrete.GYearMonth){
-                    stmt.setString(2 * i + 1, ((GYearMonth)t.getTerm(i)).getYear()+";"+((GYearMonth)t.getTerm(i)).getMonth());
-                }
-				else {
-				stmt.setString(2 * i + 1, t.getTerm(i).getValue()
-						.toString());
-				}
-				stmt.setString(2 * i + 2,t.getTerm(i).getClass().getCanonicalName()); /* TODO improve this */
+				int valueColumn=2 * i + 1;
+				int typeColumn=2 * i + 2;
+				stmt.setString(valueColumn,serializeTermToString(t.getTerm(i)));
+				stmt.setString(typeColumn,t.getTerm(i).getClass().getCanonicalName());
 			}
 		} catch (SQLException e) {
 			throw new DbStorageManagerException(e);
@@ -530,13 +477,11 @@ public class DbStorageManager {
 			return true;
 		} catch (SQLException e) {
 			return true;
-			// TODO check why there are dublicate unique constraint violation
-			//throw new DbStorageManagerException(e);
 		} finally {
 			try {
-				stmt.close();
+				if(stmt!=null) stmt.close();
 			} catch (SQLException e) {
-				/* silent exception */
+				throw new DbStorageManagerException(e);
 			}
 		}
 
@@ -550,26 +495,27 @@ public class DbStorageManager {
 		if (a.getTuple().getTerms().isEmpty())
 			return true;
 		PreparedStatement stmt = null;
-		String sqlStatement = "DELETE FROM " + tableName + " WHERE ";
+		StringBuilder sqlStatement = new StringBuilder("DELETE FROM " + tableName + " WHERE ");
 		for (int i = 0; i < a.getTuple().getArity(); i++) {
-			sqlStatement +="term"+(i+1)+"= ? AND termType"+(i+1)+"= ?";
+			int termPosition=i+1;
+			sqlStatement.append("term"+termPosition+"= ? AND termType"+termPosition+"= ?");
 			if (i < a.getTuple().getArity() - 1)
-				sqlStatement += "AND ";
+				sqlStatement.append("AND ");
 		}
-		//sqlStatement += ";";
 		try {
-			stmt = con.prepareStatement(sqlStatement);
+			stmt = con.prepareStatement(sqlStatement.toString());
 
 			for (int i = 0; i < a.getTuple().getArity(); i++) {
-				stmt.setString(2*i + 1, a.getTuple().getTerm(i).getValue()						
-						.toString());
-				stmt.setString(2*i + 2, a.getTuple().getTerm(i).getValue().getClass().getCanonicalName()); //TODO improve this
+				int valueColumn=2 * i + 1;
+				int typeColumn=2 * i + 2;
+				stmt.setString(valueColumn,serializeTermToString(a.getTuple().getTerm(i)));
+				stmt.setString(typeColumn, a.getTuple().getTerm(i).getValue().getClass().getCanonicalName()); //TODO improve this
 			}
 		} catch (SQLException e) {
 			throw new DbStorageManagerException(e);
 		}
 		try {
-			boolean test = stmt.execute();
+			stmt.execute();
 			return true;
 		} catch (SQLException e) {
 			if (e.getMessage().indexOf("constraint") > 0
@@ -579,9 +525,9 @@ public class DbStorageManager {
 				throw new DbStorageManagerException(e);
 		} finally {
 			try {
-				stmt.close();
+				if(stmt!=null) stmt.close();
 			} catch (SQLException e) {
-				/* silent exception */
+				throw new DbStorageManagerException(e);
 			}
 		}
 
@@ -599,20 +545,21 @@ public class DbStorageManager {
 		if (t.getTerms().isEmpty())
 			return true;
 		PreparedStatement stmt = null;
-		String sqlStatement = "SELECT * FROM " + tableName + " WHERE ";
+		StringBuilder sqlStatement = new StringBuilder("SELECT * FROM " + tableName + " WHERE ");
 		for (int i = 0; i < t.getArity(); i++) {
-			sqlStatement +="term"+(i+1)+"= ? AND termType"+(i+1)+"= ?";
+			int termPosition=i+1;
+			sqlStatement.append("term"+termPosition+"= ? AND termType"+termPosition+"= ?");
 			if (i < t.getArity() - 1)
-				sqlStatement += " AND ";
+				sqlStatement.append(" AND ");
 		}
-		//sqlStatement += ";";
 		try {
-			stmt = con.prepareStatement(sqlStatement);
+			stmt = con.prepareStatement(sqlStatement.toString());
 
 			for (int i = 0; i < t.getArity(); i++) {
-				stmt.setString(2*i + 1, t.getTerm(i).getValue()
-						.toString());
-				stmt.setString(2*i + 2, t.getTerm(i).getValue().getClass().getCanonicalName());//TODO improve this
+				int valueColumn=2 * i + 1;
+				int typeColumn=2 * i + 2;
+				stmt.setString(valueColumn,serializeTermToString(t.getTerm(i)));
+				stmt.setString(typeColumn, t.getTerm(i).getValue().getClass().getCanonicalName());
 			}
 		} catch (SQLException e) {
 			throw new DbStorageManagerException(e);
@@ -623,9 +570,9 @@ public class DbStorageManager {
 				throw new DbStorageManagerException(e);
 		} finally {
 			try {
-				stmt.close();
+				if(stmt!=null) stmt.close();
 			} catch (SQLException e) {
-				/* silent exception */
+				throw new DbStorageManagerException(e);
 			}
 		}
 
@@ -636,15 +583,17 @@ public class DbStorageManager {
 		String sqlStatement = "SELECT * FROM " + this.getTableName(p);
 		Statement stmt=null;
 		ResultSet rs=null;
-		if(p.getArity()==0) return rel;
+		if(p.getArity()==0)
+			return rel;
 		try {
 			stmt=con.createStatement();
 			rs=stmt.executeQuery(sqlStatement);
 			while(rs.next()){
 				List<ITerm> terms=new ArrayList<ITerm>();
 				for(int i=0; i<p.getArity(); i++){
-					String termValue=rs.getString("term"+(i+1));
-					String termType=rs.getString("termType"+(i+1));
+					int termPosition=i+1;
+					String termValue=rs.getString("term"+termPosition);
+					String termType=rs.getString("termType"+termPosition);
 					ITerm term=null;
 					term=serializedStringToTerm(termType, termValue);
                     if(term!=null) terms.add(term);
@@ -657,14 +606,51 @@ public class DbStorageManager {
 			throw new DbStorageManagerException(e);
 		} finally{
 			try {
-				rs.close();
-				stmt.close();
+				if(rs!=null) rs.close();
+				if(stmt!=null) stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
-				// silent exception
+				throw new DbStorageManagerException(e);
 			}
 		}
 
+	}
+	
+	private String serializeTermToString(ITerm t){
+		if(t instanceof org.deri.iris.terms.concrete.DateTerm){
+			GregorianCalendar cal=(GregorianCalendar)t.getValue();
+			XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
+			return xmlCal.toXMLFormat();
+		}
+		else if(t instanceof org.deri.iris.terms.concrete.DateTime){
+			GregorianCalendar cal=(GregorianCalendar)t.getValue();
+			XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendar(cal.get(Calendar.YEAR), 
+                    cal.get(Calendar.MONTH), 
+                    cal.get(Calendar.DAY_OF_MONTH), 
+                    cal.get(Calendar.HOUR_OF_DAY),
+                    cal.get(Calendar.MINUTE),
+                    cal.get(Calendar.SECOND),
+                    cal.get(Calendar.MILLISECOND),
+                    cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
+			return xmlCal.toXMLFormat();
+		}
+		else if(t instanceof org.deri.iris.terms.concrete.Time){
+			GregorianCalendar cal=(GregorianCalendar)t.getValue();
+			XMLGregorianCalendar xmlCal=xmlFactory.newXMLGregorianCalendarTime(cal.get(Calendar.HOUR_OF_DAY), 
+                    cal.get(Calendar.MINUTE), 
+                    cal.get(Calendar.SECOND),
+                    cal.get(Calendar.MILLISECOND),
+                    cal.get(Calendar.ZONE_OFFSET)/(60*60*1000));
+			return xmlCal.toXMLFormat();
+		}
+		else if(t instanceof org.deri.iris.terms.concrete.GMonthDay){
+			return ((GMonthDay)t).getMonth()+";"+((GMonthDay)t).getDay();
+        }
+		else if(t instanceof org.deri.iris.terms.concrete.GYearMonth){
+			return ((GYearMonth)t).getYear()+";"+((GYearMonth)t).getMonth();
+        }
+		else {
+			return t.getValue().toString();
+		}
 	}
 
     private ITerm serializedStringToTerm(String termType, String termValue) throws DbStorageManagerException {

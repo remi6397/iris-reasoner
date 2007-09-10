@@ -25,13 +25,9 @@
  */
 package org.deri.iris.dbstorage;
 
-import static org.deri.iris.factory.Factory.RELATION;
-import static org.deri.iris.factory.Factory.RELATION_OPERATION;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -46,12 +42,10 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.terms.ConstructedTerm;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -62,20 +56,17 @@ import java.sql.SQLException;
  * This implementaion is thread-save.
  * </p>
  * <p>
- * $Id: Program.java,v 1.3 2007-09-06 00:07:06 fefacca Exp $
+ * $Id: Program.java,v 1.4 2007-09-10 10:31:56 fefacca Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class Program implements IProgram {
 
 	private DbStorageManager dbm = null;
-
-	/** The facts of this program. */
-	//private final Map<Integer, IMixedDatatypeRelation> facts = new HashMap<Integer, IMixedDatatypeRelation>();
-
+	
 	/** The queries of this program. */
 	private final Set<IQuery> queries = new HashSet<IQuery>();
 
@@ -162,27 +153,6 @@ public class Program implements IProgram {
 				_addQuery(query);
 			}
 		}
-	}
-
-	/**
-	 * Generates a hash of a predicate only based on it's symbol and arity. This
-	 * method was written to enable access to the same relations for ordinary
-	 * predicates and adorned ones.
-	 * 
-	 * @param p
-	 *            the predicate for which to create the hash
-	 * @return the hash
-	 * @throws NullPointerException
-	 *             if the predicate was <code>null</code>
-	 */
-	private static int plainPredicateHash(final IPredicate p) {
-		if (p == null) {
-			throw new NullPointerException("The predicate must not be null");
-		}
-		int res = 17;
-		res = res * 37 + p.getPredicateSymbol().hashCode();
-		res = res * 37 + p.getArity();
-		return res;
 	}
 
 	/**
@@ -280,7 +250,7 @@ public class Program implements IProgram {
 		try {
 			for (final IPredicate p : predicateCount.keySet()) {
 				if ((predicateCount.get(p) <= 0)
-						&& dbm.emptyPredicate(p)) {
+						&& dbm.isEmptyPredicate(p)) {
 					toRemove.add(p);
 				}
 			}
@@ -364,8 +334,6 @@ public class Program implements IProgram {
 		} catch (DbStorageManagerException e) {
 			throw new RuntimeException(e);
 		}
-
-		//return this.facts.get(plainPredicateHash(p)).add(a.getTuple());
 	}
 
 	/* modified db commit only after parsing all facts */
@@ -383,8 +351,7 @@ public class Program implements IProgram {
 			dbm.getConnection().commit();
 			dbm.getConnection().setAutoCommit(true);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//	silent exception
 		}
 		return added;
 	}
@@ -696,8 +663,7 @@ public class Program implements IProgram {
 			// take care it deletes all the data in the db!
 			dbm.clear();
 		} catch (DbStorageManagerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//	silent exception
 		}
 	}
 
