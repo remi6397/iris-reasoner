@@ -26,9 +26,10 @@
 
 package org.deri.iris.terms.concrete;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.concrete.IGYearMonth;
 
@@ -44,21 +45,58 @@ import org.deri.iris.api.terms.concrete.IGYearMonth;
  */
 public class GYearMonth implements IGYearMonth, Cloneable {
 
-	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+	/** Factory used to create the xml durations. */
+	private static final DatatypeFactory FACTORY;
 
-	GYearMonth(final Calendar calendar) {
-		this(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
+	/** The inner calendar object. */
+	private XMLGregorianCalendar date;
+
+	static {
+		// creating the factory
+		DatatypeFactory tmp = null;
+		try {
+			tmp = DatatypeFactory.newInstance();
+		} catch (DatatypeConfigurationException e) {
+			throw new IllegalArgumentException(
+					"Couldn't create the factory for the yearmonth", e);
+		}
+		FACTORY = tmp;
 	}
 
+	/**
+	 * Creates a new yearmonth. The timezone will be set to GMT.
+	 * @param year the year
+	 * @param month the month (1-12)
+	 */
 	GYearMonth(final int year, final int month) {
-		cal.clear();
-		setYearMonth(year, month);
+		this(year, month, 0, 0);
 	}
+
+	/**
+	 * Creates a new yearmonth within the given timezone.
+	 * @param year the year
+	 * @param month the month (1-12)
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	GYearMonth(final int year, final int month, final int tzHour, final int tzMinute) {
+		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0))) {
+			throw new IllegalArgumentException("Both, the timezone hours and " + 
+					"minutes must be negative, or positive, but were " + 
+					tzHour + " and " + tzMinute);
+		}
+
+		date = FACTORY.newXMLGregorianCalendarDate(year, 
+				month, 
+				DatatypeConstants.FIELD_UNDEFINED, 
+				tzHour * 60 + tzMinute); }
 
 	public Object clone() {
 		try {
 			GYearMonth gm = (GYearMonth) super.clone();
-			gm.cal = (Calendar) cal.clone();
+			gm.date = (XMLGregorianCalendar) date.clone();
 			return gm;
 		} catch (CloneNotSupportedException e) {
 			assert false : "Object is always cloneable";
@@ -78,46 +116,35 @@ public class GYearMonth implements IGYearMonth, Cloneable {
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof GYearMonth)) {
+		if (!(obj instanceof IGYearMonth)) {
 			return false;
 		}
-		GYearMonth monthyear = (GYearMonth) obj;
+		IGYearMonth monthyear = (IGYearMonth) obj;
 		return ((monthyear.getMonth() == getMonth()) && (monthyear.getYear() == getYear()));
 	}
 
 	public int getMonth() {
-		return cal.get(Calendar.MONTH);
+		return date.getMonth();
 	}
 
 	public int getYear() {
-		return cal.get(Calendar.YEAR);
+		return date.getYear();
 	}
 
 	public int hashCode() {
-		return cal.hashCode();
-	}
-
-	private void setYearMonth(final int year, final int month) {
-		cal.set(Calendar.MONTH, month);
-		cal.set(Calendar.YEAR, year);
+		return date.hashCode();
 	}
 
 	public String toString() {
-		return getClass().getName() + "[year=" + getYear() + ",month="
-				+ getMonth() + "]";
+		return date.toString();
 	}
 
 	public boolean isGround() {
 		return true;
 	}
 
-	public IGYearMonth getMinValue() {
-		// TODO: maybe year should be negative
-		return new GYearMonth(1, 1);
-	}
-
 	public Integer[] getValue() {
-		return new Integer[] { cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) };
+		return new Integer[]{date.getYear(), date.getMonth()};
 	}
 
 	public void setValue(Integer[] t) {
@@ -128,7 +155,7 @@ public class GYearMonth implements IGYearMonth, Cloneable {
 			throw new IllegalArgumentException(
 					"The array must contain at least 2 fields");
 		}
-		cal.set(Calendar.YEAR, t[0]);
-		cal.set(Calendar.MONTH, t[1]);
+		date.setYear(t[0]);
+		date.setMonth(t[1]);
 	}
 }

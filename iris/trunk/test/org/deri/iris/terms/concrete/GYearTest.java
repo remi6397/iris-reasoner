@@ -25,10 +25,6 @@
  */
 package org.deri.iris.terms.concrete;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-
 import org.deri.iris.ObjectTests;
 import org.deri.iris.TermTests;
 
@@ -37,32 +33,18 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class GYearTest extends TestCase {
-	private static final Calendar REFERENCE = new GregorianCalendar(TimeZone
-			.getTimeZone("GMT"));
 
 	private static final int YEAR = 2005;
 
-	private static final int YEARMORE = 2006;
-
-	private static final int YEARMORE1 = 2007;
-	static {
-		REFERENCE.clear();
-		REFERENCE.set(Calendar.YEAR, YEAR);
-	}
-
 	public void testBasic() {
-		final GYear D_REFERENCE = new GYear(YEAR);
+		final GYear gyear = new GYear(YEAR);
 
-		assertEquals("Somethin wrong with constructor", D_REFERENCE,
-				new GYear(YEAR));
-		assertEquals("Somethin wrong with constructor", D_REFERENCE,
-				new GYear(REFERENCE));
-		assertEquals("Somethin wrong with getYear", YEAR, D_REFERENCE.getYear());
+		assertEquals("Something wrong with getYear", YEAR, gyear.getYear());
 	}
 
 	public void testEquals() {
 		ObjectTests.runTestEquals(new GYear(YEAR), new GYear(YEAR),
-				new GYear(YEARMORE));
+				new GYear(YEAR + 1));
 	}
 
 	public void testClone() {
@@ -71,7 +53,7 @@ public class GYearTest extends TestCase {
 
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new GYear(YEAR), new GYear(YEAR),
-				new GYear(YEARMORE), new GYear(YEARMORE1));
+				new GYear(YEAR + 1), new GYear(YEAR + 2));
 	}
 
 	public void testHashCode() {
@@ -84,5 +66,35 @@ public class GYearTest extends TestCase {
 	
 	public void testGetMinValue() {
 		TermTests.runTestGetMinValue(new GYear(2));
+	}
+
+	/**
+	 * <p>
+	 * This test checks whether it is possible to specify inconsisntent
+	 * timezones. E.g. a timezone with positive hours and negative minutes.
+	 * </p>
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1778705&group_id=167309&atid=842434">bug #1778705: it is possible to specify inconsistent timezones</a>
+	 */
+	public void testConsistentTimezones() {
+		try {
+			new GYear(2000, -1, 1);
+			fail("It is possible to create a year with a negative tzHour and positive tzMinute");
+		} catch (IllegalArgumentException e) {
+		}
+
+		try {
+			new GYear(2000, 1, -1);
+			fail("It is possible to create a year with a positive tzHour and negative tzMinute");
+		} catch (IllegalArgumentException e) {
+		}
+
+		// the following should be possible
+		new GYear(2000, 0, 0);
+		new GYear(2000, 1, 0);
+		new GYear(2000, 0, 1);
+		new GYear(2000, 1, 1);
+		new GYear(2000, -1, 0);
+		new GYear(2000, 0, -1);
+		new GYear(2000, -1, -1);
 	}
 }

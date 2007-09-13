@@ -25,10 +25,6 @@
  */
 package org.deri.iris.terms.concrete;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-
 import org.deri.iris.ObjectTests;
 import org.deri.iris.TermTests;
 
@@ -37,33 +33,18 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class GMonthTest extends TestCase {
-	private static final int MONTH = Calendar.MARCH;
 
-	private static final int MONTHMORE = Calendar.APRIL;
-
-	private static final int MONTHMORE1 = Calendar.MAY;
-
-	private static final Calendar REFERENCE = new GregorianCalendar(TimeZone
-			.getTimeZone("GMT"));
-
-	static {
-		REFERENCE.clear();
-		REFERENCE.set(Calendar.MONTH, MONTH);
-	}
+	private static final int MONTH = 3;
 
 	public void testBasic() {
-		GMonth basic = new GMonth(MONTH);
+		final GMonth gmonth = new GMonth(MONTH);
 
-		assertEquals("Somethin wrong with constructor", basic, new GMonth(
-				MONTH));
-		assertEquals("Somethin wrong with constructor", basic, new GMonth(
-				REFERENCE));
-		assertEquals("Somethin wrong with getMonth", MONTH, basic.getMonth());
+		assertEquals("Something wrong with getMonth", MONTH, gmonth.getMonth());
 	}
 
 	public void testEquals() {
 		ObjectTests.runTestEquals(new GMonth(MONTH), new GMonth(MONTH),
-				new GMonth(MONTHMORE));
+				new GMonth(MONTH + 1));
 	}
 
 	public void testClone() {
@@ -72,8 +53,8 @@ public class GMonthTest extends TestCase {
 
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new GMonth(MONTH),
-				new GMonth(MONTH), new GMonth(MONTHMORE),
-				new GMonth(MONTHMORE1));
+				new GMonth(MONTH), new GMonth(MONTH + 1),
+				new GMonth(MONTH + 2));
 	}
 
 	public void testHashCode() {
@@ -87,5 +68,49 @@ public class GMonthTest extends TestCase {
 	
 	public void testGetMinValue() {
 		TermTests.runTestGetMinValue(new GMonth(1));
+	}
+
+	/**
+	 * <p>
+	 * This test checks whether it is possible to specify inconsisntent
+	 * timezones. E.g. a timezone with positive hours and negative minutes.
+	 * </p>
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1778705&group_id=167309&atid=842434">bug #1778705: it is possible to specify inconsistent timezones</a>
+	 */
+	public void testConsistentTimezones() {
+		try {
+			new GMonth(1, -1, 1);
+			fail("It is possible to create a month with a negative tzHour and positive tzMinute");
+		} catch (IllegalArgumentException e) {
+		}
+
+		try {
+			new GMonth(1, 1, -1);
+			fail("It is possible to create a month with a positive tzHour and negative tzMinute");
+		} catch (IllegalArgumentException e) {
+		}
+
+		// the following should be possible
+		new GMonth(1, 0, 0);
+		new GMonth(1, 1, 0);
+		new GMonth(1, 0, 1);
+		new GMonth(1, 1, 1);
+		new GMonth(1, -1, 0);
+		new GMonth(1, 0, -1);
+		new GMonth(1, -1, -1);
+	}
+
+	/**
+	 * <p>
+	 * Chechs whether the months are handeled correctly. The months should
+	 * count from 1-12.
+	 * </p>
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1792385&group_id=167309&atid=842434">bug #1792385: GMonth datatype handles months incorrectly</a>
+	 */
+	public void testCorrectMonthBehaviour() {
+		final GMonth m1 = new GMonth(1);
+		// if mounthts woule be from 0 - 11 this would shift to month 0
+		final GMonth m12 = new GMonth(12);
+		assertTrue(m1 + " must be smaller than " + m12, m1.compareTo(m12) < 0);
 	}
 }

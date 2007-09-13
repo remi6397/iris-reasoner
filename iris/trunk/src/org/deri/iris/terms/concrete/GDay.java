@@ -26,9 +26,10 @@
 
 package org.deri.iris.terms.concrete;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.concrete.IGDay;
 
@@ -44,21 +45,57 @@ import org.deri.iris.api.terms.concrete.IGDay;
  */
 public class GDay implements IGDay, Cloneable {
 
-	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));;
+	/** Factory used to create the xml durations. */
+	private static final DatatypeFactory FACTORY;
 
-	GDay(final Calendar calendar) {
-		this(calendar.get(Calendar.DAY_OF_MONTH));
+	/** The inner calendar object. */
+	private XMLGregorianCalendar date;
+
+	static {
+		// creating the factory
+		DatatypeFactory tmp = null;
+		try {
+			tmp = DatatypeFactory.newInstance();
+		} catch (DatatypeConfigurationException e) {
+			throw new IllegalArgumentException(
+					"Couldn't create the factory for the year", e);
+		}
+		FACTORY = tmp;
 	}
 
+	/**
+	 * Creates a new day. The timezone will be set to GMT.
+	 * @param day the day
+	 */
 	GDay(final int day) {
-		cal.clear();
-		setDay(day);
+		this(day, 0, 0);
+	}
+
+	/**
+	 * Creates a new day within the given timezone.
+	 * @param day the day
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	GDay(final int day, final int tzHour, final int tzMinute) {
+		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0))) {
+			throw new IllegalArgumentException("Both, the timezone hours and " + 
+					"minutes must be negative, or positive, but were " + 
+					tzHour + " and " + tzMinute);
+		}
+
+		date = FACTORY.newXMLGregorianCalendarDate(DatatypeConstants.FIELD_UNDEFINED,
+				DatatypeConstants.FIELD_UNDEFINED, 
+				day, 
+				tzHour * 60 + tzMinute);
 	}
 
 	public Object clone() {
 		try {
 			GDay gi = (GDay) super.clone();
-			gi.cal = (Calendar) cal.clone();
+			gi.date = (XMLGregorianCalendar) date.clone();
 			return gi;
 		} catch (CloneNotSupportedException e) {
 			assert false : "Object is always cloneable";
@@ -74,27 +111,23 @@ public class GDay implements IGDay, Cloneable {
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof GDay)) {
+		if (!(obj instanceof IGDay)) {
 			return false;
 		}
-		GDay gi = (GDay) obj;
+		IGDay gi = (IGDay) obj;
 		return getDay() == gi.getDay();
 	}
 
 	public int getDay() {
-		return cal.get(Calendar.DAY_OF_MONTH);
+		return date.getDay();
 	}
 
 	public int hashCode() {
-		return cal.hashCode();
-	}
-
-	private void setDay(int day) {
-		cal.set(Calendar.DAY_OF_MONTH, day);
+		return date.hashCode();
 	}
 
 	public String toString() {
-		return getClass().getName() + "[day=" + getDay() + "]";
+		return date.toString();
 	}
 
 	public boolean isGround() {
@@ -102,13 +135,13 @@ public class GDay implements IGDay, Cloneable {
 	}
 
 	public Integer getValue() {
-		return cal.get(Calendar.DAY_OF_MONTH);
+		return date.getDay();
 	}
 
 	public void setValue(Integer t) {
 		if (t == null) {
 			throw new IllegalArgumentException("The value must not be null");
 		}
-		cal.set(Calendar.DAY_OF_MONTH, t);
+		date.setDay(t);
 	}
 }
