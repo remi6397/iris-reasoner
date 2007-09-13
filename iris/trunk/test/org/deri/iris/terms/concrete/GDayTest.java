@@ -25,10 +25,6 @@
  */
 package org.deri.iris.terms.concrete;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-
 import org.deri.iris.ObjectTests;
 import org.deri.iris.TermTests;
 
@@ -39,30 +35,15 @@ import junit.framework.TestSuite;
 public class GDayTest extends TestCase {
 	private static final int DAY = 13;
 
-	private static final int DAYMORE = 14;
-
-	private static final int DAYMORE1 = 15;
-
-	private static final Calendar REFERENCE = new GregorianCalendar(TimeZone
-			.getTimeZone("GMT"));
-
-	static {
-		REFERENCE.clear();
-		REFERENCE.set(Calendar.DAY_OF_MONTH, DAY);
-	}
-
 	public void testBasic() {
-		final GDay equal = new GDay(DAY);
+		final GDay gday = new GDay(DAY);
 
-		assertEquals("Somethin wrong with constructor", equal, new GDay(DAY));
-		assertEquals("Somethin wrong with constructor", equal, new GDay(
-				REFERENCE));
-		assertEquals("Somethin wrong with getDay", DAY, equal.getDay());
+		assertEquals("Something wrong with getDay", DAY, gday.getDay());
 	}
 
 	public void testEquals() {
 		ObjectTests.runTestEquals(new GDay(DAY), new GDay(DAY),
-				new GDay(DAYMORE));
+				new GDay(DAY + 1));
 	}
 
 	public void testClone() {
@@ -71,7 +52,7 @@ public class GDayTest extends TestCase {
 
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new GDay(DAY), new GDay(DAY), new GDay(
-				DAYMORE), new GDay(DAYMORE1));
+				DAY + 1), new GDay(DAY + 2));
 	}
 
 	public void testHashCode() {
@@ -84,5 +65,35 @@ public class GDayTest extends TestCase {
 
 	public void testGetMinValue() {
 		TermTests.runTestGetMinValue(new GDay(2));
+	}
+
+	/**
+	 * <p>
+	 * This test checks whether it is possible to specify inconsisntent
+	 * timezones. E.g. a timezone with positive hours and negative minutes.
+	 * </p>
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1778705&group_id=167309&atid=842434">bug #1778705: it is possible to specify inconsistent timezones</a>
+	 */
+	public void testConsistentTimezones() {
+		try {
+			new GDay(1, -1, 1);
+			fail("It is possible to create a day with a negative tzHour and positive tzMinute");
+		} catch (IllegalArgumentException e) {
+		}
+
+		try {
+			new GDay(1, 1, -1);
+			fail("It is possible to create a day with a positive tzHour and negative tzMinute");
+		} catch (IllegalArgumentException e) {
+		}
+
+		// the following should be possible
+		new GDay(1, 0, 0);
+		new GDay(1, 1, 0);
+		new GDay(1, 0, 1);
+		new GDay(1, 1, 1);
+		new GDay(1, -1, 0);
+		new GDay(1, 0, -1);
+		new GDay(1, -1, -1);
 	}
 }

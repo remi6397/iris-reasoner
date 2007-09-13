@@ -26,9 +26,10 @@
 
 package org.deri.iris.terms.concrete;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.concrete.IGYear;
 
@@ -48,21 +49,57 @@ import org.deri.iris.api.terms.concrete.IGYear;
  */
 public class GYear implements IGYear, Cloneable {
 
-	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+	/** Factory used to create the xml durations. */
+	private static final DatatypeFactory FACTORY;
 
-	GYear(final Calendar calendar) {
-		this(calendar.get(Calendar.YEAR));
+	/** The inner calendar object. */
+	private XMLGregorianCalendar date;
+
+	static {
+		// creating the factory
+		DatatypeFactory tmp = null;
+		try {
+			tmp = DatatypeFactory.newInstance();
+		} catch (DatatypeConfigurationException e) {
+			throw new IllegalArgumentException(
+					"Couldn't create the factory for the year", e);
+		}
+		FACTORY = tmp;
 	}
 
+	/**
+	 * Creates a new year. The zimezone will be set to GMT.
+	 * @param year the year
+	 */
 	public GYear(final int year) {
-		cal.clear();
-		setYear(year);
+		this(year, 0, 0);
+	}
+
+	/**
+	 * Creates a new year within the given timezone.
+	 * @param year the year
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	public GYear(final int year, final int tzHour, final int tzMinute) {
+		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0))) {
+			throw new IllegalArgumentException("Both, the timezone hours and " + 
+					"minutes must be negative, or positive, but were " + 
+					tzHour + " and " + tzMinute);
+		}
+
+		date = FACTORY.newXMLGregorianCalendarDate(year, 
+				DatatypeConstants.FIELD_UNDEFINED, 
+				DatatypeConstants.FIELD_UNDEFINED, 
+				tzHour * 60 + tzMinute);
 	}
 
 	public Object clone() {
 		try {
 			GYear gy = (GYear) super.clone();
-			gy.cal = (Calendar) cal.clone();
+			gy.date = (XMLGregorianCalendar) date.clone();
 			return gy;
 		} catch (CloneNotSupportedException e) {
 			assert false : "Object is always cloneable";
@@ -78,27 +115,23 @@ public class GYear implements IGYear, Cloneable {
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof GYear)) {
+		if (!(obj instanceof IGYear)) {
 			return false;
 		}
-		GYear gy = (GYear) obj;
+		IGYear gy = (IGYear) obj;
 		return gy.getYear() == getYear();
 	}
 
 	public int getYear() {
-		return cal.get(Calendar.YEAR);
+		return date.getYear();
 	}
 
 	public int hashCode() {
-		return cal.hashCode();
-	}
-
-	private void setYear(int year) {
-		cal.set(Calendar.YEAR, year);
+		return date.hashCode();
 	}
 
 	public String toString() {
-		return getClass().getName() + "[year=" + getYear() + "]";
+		return date.toString();
 	}
 
 	public boolean isGround() {
@@ -106,13 +139,13 @@ public class GYear implements IGYear, Cloneable {
 	}
 
 	public Integer getValue() {
-		return cal.get(Calendar.YEAR);
+		return date.getYear();
 	}
 
 	public void setValue(Integer t) {
 		if (t == null) {
 			throw new IllegalArgumentException("The value must not be null");
 		}
-		cal.set(Calendar.YEAR, t);
+		date.setYear(t);
 	}
 }

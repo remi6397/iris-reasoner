@@ -26,9 +26,10 @@
 
 package org.deri.iris.terms.concrete;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.concrete.IGMonthDay;
 
@@ -44,21 +45,60 @@ import org.deri.iris.api.terms.concrete.IGMonthDay;
  */
 public class GMonthDay implements IGMonthDay, Cloneable {
 
-	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+	/** Factory used to create the xml durations. */
+	private static final DatatypeFactory FACTORY;
 
-	GMonthDay(final Calendar calendar) {
-		this(calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+	/** The inner calendar object. */
+	private XMLGregorianCalendar date;
+
+	static {
+		// creating the factory
+		DatatypeFactory tmp = null;
+		try {
+			tmp = DatatypeFactory.newInstance();
+		} catch (DatatypeConfigurationException e) {
+			throw new IllegalArgumentException(
+					"Couldn't create the factory for the monthday", e);
+		}
+		FACTORY = tmp;
 	}
 
+	/**
+	 * Creates a new monthday. The timezone will be GMT.
+	 * @param month the month (1-12)
+	 * @param day the day
+	 */
 	GMonthDay(final int month, final int day) {
-		cal.clear();
-		setMonthDay(month, day);
+		this(month, day, 0, 0);
+	}
+
+	/**
+	 * Creates a new monthday within the given timezone.
+	 * @param month the month (1-12)
+	 * @param day the day
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	GMonthDay(final int month, final int day, final int tzHour, final int tzMinute) {
+		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0))) {
+			throw new IllegalArgumentException("Both, the timezone hours and " + 
+					"minutes must be negative, or positive, but were " + 
+					tzHour + " and " + tzMinute);
+		}
+
+		date = FACTORY.newXMLGregorianCalendarDate(
+				DatatypeConstants.FIELD_UNDEFINED, 
+				month, 
+				day, 
+				tzHour * 60 + tzMinute);
 	}
 
 	public Object clone() {
 		try {
 			GMonthDay clone = (GMonthDay) super.clone();
-			clone.cal = (Calendar) cal.clone();
+			clone.date = (XMLGregorianCalendar) date.clone();
 			return clone;
 		} catch (CloneNotSupportedException e) {
 			assert false : "Object is always cloneable";
@@ -78,33 +118,27 @@ public class GMonthDay implements IGMonthDay, Cloneable {
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof GMonthDay)) {
+		if (!(obj instanceof IGMonthDay)) {
 			return false;
 		}
-		GMonthDay monthday = (GMonthDay) obj;
+		IGMonthDay monthday = (IGMonthDay) obj;
 		return ((monthday.getDay() == getDay()) && (monthday.getMonth() == getMonth()));
 	}
 
 	public int getDay() {
-		return cal.get(Calendar.DAY_OF_MONTH);
+		return date.getDay();
 	}
 
 	public int getMonth() {
-		return cal.get(Calendar.MONTH);
+		return date.getMonth();
 	}
 
 	public int hashCode() {
-		return cal.hashCode();
-	}
-
-	private void setMonthDay(int month, int day) {
-		cal.set(Calendar.DAY_OF_MONTH, day);
-		cal.set(Calendar.MONTH, month);
+		return date.hashCode();
 	}
 
 	public String toString() {
-		return getClass().getName() + "[month=" + getMonth() + ",day="
-				+ getDay() + "]";
+		return date.toString();
 	}
 
 	public boolean isGround() {
@@ -112,8 +146,7 @@ public class GMonthDay implements IGMonthDay, Cloneable {
 	}
 
 	public Integer[] getValue() {
-		return new Integer[] { cal.get(Calendar.MONTH),
-				cal.get(Calendar.DAY_OF_MONTH) };
+		return new Integer[]{date.getMonth(), date.getDay()};
 	}
 
 	public void setValue(Integer[] t) {
@@ -124,7 +157,7 @@ public class GMonthDay implements IGMonthDay, Cloneable {
 			throw new IllegalArgumentException(
 					"The array must contain at least 2 fields");
 		}
-		cal.set(Calendar.MONTH, t[0]);
-		cal.set(Calendar.DAY_OF_MONTH, t[1]);
+		date.setMonth(t[0]);
+		date.setDay(t[1]);
 	}
 }

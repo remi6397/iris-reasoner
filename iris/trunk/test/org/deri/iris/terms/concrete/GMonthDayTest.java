@@ -25,10 +25,6 @@
  */
 package org.deri.iris.terms.concrete;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-
 import org.deri.iris.ObjectTests;
 import org.deri.iris.TermTests;
 
@@ -39,35 +35,18 @@ import junit.framework.TestSuite;
 public class GMonthDayTest extends TestCase {
 	private static final int DAY = 13;
 
-	private static final int DAYMORE = 14;
-
-	private static final int DAYMORE1 = 15;
-
-	private static final int MONTH = Calendar.FEBRUARY;
-
-	private static final Calendar REFERENCE = new GregorianCalendar(TimeZone
-			.getTimeZone("GMT"));
-
-	static {
-		REFERENCE.clear();
-		REFERENCE.set(Calendar.DAY_OF_MONTH, DAY);
-		REFERENCE.set(Calendar.MONTH, MONTH);
-	}
+	private static final int MONTH = 2;
 
 	public void testBasic() {
-		final GMonthDay basic = new GMonthDay(MONTH, DAY);
+		final GMonthDay monthday = new GMonthDay(MONTH, DAY);
 
-		assertEquals("Somethin wrong with constructor", basic, new GMonthDay(
-				MONTH, DAY));
-		assertEquals("Somethin wrong with constructor", basic, new GMonthDay(
-				REFERENCE));
-		assertEquals("Somethin wrong with getDay", DAY, basic.getDay());
-		assertEquals("Somethin wrong with getMonth", MONTH, basic.getMonth());
+		assertEquals("Something wrong with getMonth", MONTH, monthday.getMonth());
+		assertEquals("Something wrong with getDay", DAY, monthday.getDay());
 	}
 
 	public void testEquals() {
 		ObjectTests.runTestEquals(new GMonthDay(MONTH, DAY), new GMonthDay(
-				MONTH, DAY), new GMonthDay(MONTH, DAYMORE));
+				MONTH, DAY), new GMonthDay(MONTH, DAY + 1));
 	}
 
 	public void testClone() {
@@ -76,8 +55,8 @@ public class GMonthDayTest extends TestCase {
 
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new GMonthDay(MONTH, DAY), new GMonthDay(
-				MONTH, DAY), new GMonthDay(MONTH, DAYMORE), new GMonthDay(
-				MONTH, DAYMORE1));
+				MONTH, DAY), new GMonthDay(MONTH, DAY + 1), new GMonthDay(
+				MONTH, DAY + 2));
 	}
 
 	public void testHashCode() {
@@ -91,6 +70,50 @@ public class GMonthDayTest extends TestCase {
 	}
 
 	public void testGetMinValue() {
-		TermTests.runTestGetMinValue(new GMonthDay(Calendar.JANUARY, 2));
+		TermTests.runTestGetMinValue(new GMonthDay(1, 2));
+	}
+
+	/**
+	 * <p>
+	 * This test checks whether it is possible to specify inconsisntent
+	 * timezones. E.g. a timezone with positive hours and negative minutes.
+	 * </p>
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1778705&group_id=167309&atid=842434">bug #1778705: it is possible to specify inconsistent timezones</a>
+	 */
+	public void testConsistentTimezones() {
+		try {
+			new GMonthDay(1, 1, -1, 1);
+			fail("It is possible to create a monthday with a negative tzHour and positive tzMinute");
+		} catch (IllegalArgumentException e) {
+		}
+
+		try {
+			new GMonthDay(1, 1, 1, -1);
+			fail("It is possible to create a monthday with a positive tzHour and negative tzMinute");
+		} catch (IllegalArgumentException e) {
+		}
+
+		// the following should be possible
+		new GMonthDay(1, 1, 0, 0);
+		new GMonthDay(1, 1, 1, 0);
+		new GMonthDay(1, 1, 0, 1);
+		new GMonthDay(1, 1, 1, 1);
+		new GMonthDay(1, 1, -1, 0);
+		new GMonthDay(1, 1, 0, -1);
+		new GMonthDay(1, 1, -1, -1);
+	}
+
+	/**
+	 * <p>
+	 * Chechs whether the months are handeled correctly. The months should
+	 * count from 1-12.
+	 * </p>
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1792385&group_id=167309&atid=842434">bug #1792385: GMonthDay datatype handles months incorrectly</a>
+	 */
+	public void testCorrectMonthBehaviour() {
+		final GMonthDay m1d1 = new GMonthDay(1, 1);
+		// if mounthts woule be from 0 - 11 this would shift to 0
+		final GMonthDay m12d1 = new GMonthDay(12, 1);
+		assertTrue(m1d1 + " must be smaller than " + m12d1, m1d1.compareTo(m12d1) < 0);
 	}
 }
