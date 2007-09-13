@@ -25,7 +25,7 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import java.util.Calendar;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.ITerm;
 
@@ -37,11 +37,14 @@ import org.deri.iris.api.terms.ITerm;
  * Remark: IRIS supports datatypes according to the standard 
  * specification for primitive XML Schema datatypes.
  * </p>
+ * <p>
+ * $Id$
+ * </p>
  * 
- * @author richi
- *
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision$
  */
-public interface IDateTerm extends ITerm<IDateTerm, Calendar> {
+public interface IDateTerm extends ITerm<IDateTerm, XMLGregorianCalendar> {
 	
 	/**
 	 * Returns the month of the year.

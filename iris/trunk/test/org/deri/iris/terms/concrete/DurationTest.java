@@ -25,6 +25,10 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
 import org.deri.iris.ObjectTests;
 import org.deri.iris.TermTests;
 
@@ -34,39 +38,51 @@ import junit.framework.TestSuite;
 
 public class DurationTest extends TestCase {
 
-	private static final int DAYS = 10;
-	private static final int HOURS = 5;
-	private static final int MINUTES = 15;
-	private static final int SECONDS = 45;
+	private static final int YEAR = 1;
+
+	private static final int MONTH = 2;
+
+	private static final int DAY = 3;
+
+	private static final int HOUR = 4;
+
+	private static final int MINUTE = 5;
+
+	private static final int SECOND = 6;
+
+	private static final int MILLISECOND = 7;
 
 	public void testBasic() {
-		final Duration REF = new Duration(DAYS, HOURS, MINUTES, SECONDS);
-		assertEquals(DAYS, REF.getDay());
-		assertEquals(HOURS, REF.getHour());
-		assertEquals(MINUTES, REF.getMinute());
-		assertEquals(SECONDS, REF.getSecond());
+		final Duration d = new Duration(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLISECOND);
+
+		assertEquals("Something wrong with getYear", YEAR, d.getYear());
+		assertEquals("Something wrong with getMonth", MONTH, d.getMonth());
+		assertEquals("Something wrong with getDay", DAY, d.getDay());
+		assertEquals("Something wrong with getHour", HOUR, d.getHour());
+		assertEquals("Something wrong with getMinute", MINUTE, d.getMinute());
+		assertEquals("Something wrong with getSecond", SECOND, d.getSecond());
+		assertEquals("Something wrong with getMillisecond", MILLISECOND, d.getMillisecond());
 	}
 
 	public void testEquals() {
-		ObjectTests.runTestEquals(new Duration(DAYS, HOURS, MINUTES, SECONDS), 
-				new Duration(DAYS, HOURS, MINUTES, SECONDS), 
-				new Duration(DAYS, HOURS, MINUTES, SECONDS + 1));
+		ObjectTests.runTestEquals(new Duration(2000, 1, 1, 12, 01, 00),
+				new Duration(2000, 1, 1, 12, 01, 00), new Duration(2000, 1, 1,
+						12, 02, 00));
 	}
 
 	public void testCompareTo() {
-		ObjectTests.runTestCompareTo(new Duration(DAYS, HOURS, MINUTES, SECONDS), 
-				new Duration(DAYS, HOURS, MINUTES, SECONDS), 
-				new Duration(DAYS, HOURS, MINUTES, SECONDS + 1), 
-				new Duration(DAYS, HOURS, MINUTES, SECONDS + 2));
+		ObjectTests.runTestCompareTo(new Duration(2000, 1, 1, 11, 01, 00),
+				new Duration(2000, 1, 1, 11, 01, 00), new Duration(2000, 1, 1,
+						11, 02, 00), new Duration(2000, 1, 1, 11, 03, 00));
 	}
 
 	public void testClone() {
-		ObjectTests.runTestClone(new Duration(DAYS, HOURS, MINUTES, SECONDS));
+		// this the underlying duration object is not cloneable
 	}
 
 	public void testHashCode() {
-		ObjectTests.runTestHashCode(new Duration(DAYS, HOURS, MINUTES, SECONDS), 
-				new Duration(DAYS, HOURS, MINUTES, SECONDS));
+		ObjectTests.runTestHashCode(new Duration(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLISECOND), 
+				new Duration(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLISECOND));
 	}
 
 	public static Test suite() {
@@ -75,6 +91,6 @@ public class DurationTest extends TestCase {
 	}
 
 	public void testGetMinValue() {
-		TermTests.runTestGetMinValue(new Duration(0, 0, 0, 1));
+		TermTests.runTestGetMinValue(new Duration(0, 0, 0, 0, 0, 1));
 	}
 }

@@ -37,47 +37,45 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class TimeTest extends TestCase {
-	private static final Calendar CALENDAR = new GregorianCalendar(TimeZone
-			.getTimeZone("GMT+1"));
 
-	private static final String SREFERENCE = "13:56:00GMT+01:00";
+	private static final int HOUR = 13;
 
-	static {
-		CALENDAR.clear();
-		CALENDAR.set(0, 0, 0, 13, 56, 00);
-	}
+	private static final int MINUTE = 56;
+
+	private static final int SECOND = 0;
+
+	private static final int TZ_HOUR = 1;
+
+	private static final int TZ_MINUTE = 0;
 
 	public void testBasic() {
-		Time t = Time.parse(SREFERENCE);
+		final Time t = new Time(HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE);
 
-		assertEquals("Something wrong with getHour", 13, t.getHour());
-		assertEquals("Something wrong with getMinute", 56, t.getMinute());
-		assertEquals("Something wrong with getSecond", 00, t.getSecond());
-
-		Time t0 = new Time(13, 56, 0, 1, 0);
-		assertEquals("Something wrong with setting or equals", t, t0);
-		t0 = new Time(CALENDAR);
-		assertEquals("Something wrong with setting or equals", t, t0);
+		assertEquals("Something wrong with getHour", HOUR, t.getHour());
+		assertEquals("Something wrong with getMinute", MINUTE, t.getMinute());
+		assertEquals("Something wrong with getSecond", SECOND, t.getSecond());
 	}
 
 	public void testEquals() {
-		ObjectTests.runTestEquals(new Time(12, 01, 00, 1, 0),
-				new Time(12, 01, 00, 1, 0), new Time(12, 02, 00, 1, 0));
+		ObjectTests.runTestEquals(new Time(HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE),
+				new Time(HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE), 
+				new Time(HOUR, MINUTE, SECOND + 1, TZ_HOUR, TZ_MINUTE));
 	}
 
 	public void testCompareTo() {
-		ObjectTests.runTestCompareTo(new Time(12, 01, 00, 1, 0),
-				new Time(11, 01, 00, 0, 0), new Time(11, 02, 00, 0, 0), 
-				new Time(11, 03, 00, 0, 0));
+		ObjectTests.runTestCompareTo(new Time(HOUR - 1, MINUTE, SECOND, TZ_HOUR - 1, TZ_MINUTE),
+				new Time(HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE), 
+				new Time(HOUR, MINUTE, SECOND + 1, TZ_HOUR, TZ_MINUTE), 
+				new Time(HOUR, MINUTE, SECOND + 2, TZ_HOUR, TZ_MINUTE));
 	}
 
 	public void testClone() {
-		ObjectTests.runTestClone(new Time(CALENDAR));
+		ObjectTests.runTestClone(new Time(HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE));
 	}
 
 	public void testHashCode() {
-		ObjectTests.runTestHashCode(new Time(CALENDAR), new Time(
-				CALENDAR));
+		ObjectTests.runTestHashCode(new Time(HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE), 
+				new Time(HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE));
 	}
 
 	public static Test suite() {

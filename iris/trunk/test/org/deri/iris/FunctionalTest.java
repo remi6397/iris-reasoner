@@ -580,8 +580,7 @@ public class FunctionalTest extends TestCase
 			"p( 'a', _gyear( 5 ) )." +
 			"p( 'a', _gmonth( 4 ) )." +
 			"p( 'a', _gday( 3 ) )." +
-			// TODO Change when duration gets its years and months back again.
-			"p( 'a', _duration( 3, 4, 5, 6) )." +
+			"p( 'a', _duration( 1, 2, 3, 4, 5, 6) )." +
 			"p( 'a', _time( 1, 1, 1 ) )." +
 			"p( 'a', _date( 2001, 8, 1 ) )." +
 			"p( 'a', _datetime(2000,1,1,2,2,2) ).";

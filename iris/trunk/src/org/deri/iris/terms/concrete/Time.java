@@ -26,11 +26,12 @@
 
 package org.deri.iris.terms.concrete;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.math.BigDecimal;
 import java.util.TimeZone;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.concrete.ITime;
 
@@ -39,39 +40,35 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Simple implementation of ITime.
  * </p>
  * <p>
- * $Id: Time.java,v 1.4 2007-08-23 09:48:10 poettler_ric Exp $
+ * $Id: Time.java,v 1.5 2007-09-13 15:20:37 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class Time implements ITime, Cloneable {
 
-	/** SimpleDateFormat to parse the time. */
-	private static final SimpleDateFormat FORMAT = new SimpleDateFormat(
-			"HH:mm:ssz");
+	/** Factory used to create the xml durations. */
+	private static final DatatypeFactory FACTORY;
 
-	/** Format for the {@link #toString()} method. The format is 'hh:mm:ss&lt;timezondediff&gt;'. */
-	private static final String TOSTRING_FORMAT = "%tT%tz";
-
-	/** Milliseconds per hour. */
-	private static final int MILLIS_PER_HOUR = 1000 * 60 * 60;
+	/** The inner calendar object. */
+	private XMLGregorianCalendar time;
 
 	/** Milliseconds per minute. */
 	private static final int MILLIS_PER_MINUTE = 1000 * 60;
 
-	/** The internal calendar holding the time. */
-	private Calendar cal;
+	/** Milliseconds per hour. */
+	private static final int MILLIS_PER_HOUR = MILLIS_PER_MINUTE * 60;
 
-	/**
-	 * Constructs a new time object taking all needed parameters out of a
-	 * given calendar.
-	 * @param cal the calendar holding the data
-	 */
-	Time(final Calendar cal) {
-		this(cal.get(Calendar.HOUR_OF_DAY), cal
-			.get(Calendar.MINUTE), cal.get(Calendar.SECOND),
-			getTimeZoneHour(cal.getTimeZone()),
-			getTimeZoneMinute(cal .getTimeZone()));
+	static {
+		// creating the factory
+		DatatypeFactory tmp = null;
+		try {
+			tmp = DatatypeFactory.newInstance();
+		} catch (DatatypeConfigurationException e) {
+			throw new IllegalArgumentException(
+					"Couldn't create the factory for the time", e);
+		}
+		FACTORY = tmp;
 	}
 
 	/**
@@ -82,11 +79,11 @@ public class Time implements ITime, Cloneable {
 	 * @param second the seconds
 	 */
 	Time(int hour, int minute, int second) {
-		this(hour, minute, second, 0, 0);
+		this(hour, minute, second, 0, 0, 0);
 	}
 
 	/**
-	 * Constructs a new time object with a given timezone.
+	 * Constructs a new time object. Within the given timezone.
 	 * @param hour the hours
 	 * @param minute the minutes
 	 * @param second the seconds
@@ -95,26 +92,40 @@ public class Time implements ITime, Cloneable {
 	 * @throws IllegalArgumentException if, the tzHour and tzMinute
 	 * wheren't both positive, or negative
 	 */
-	Time(int hour, int minute, int second, int tzHour, int tzMinute) {
+	Time(int hour, int minute, int second, final int tzHour, final int tzMinute) {
+		this(hour, minute, second, 0, tzHour, tzMinute);
+	}
+
+	/**
+	 * Constructs a new time object with a given timezone.
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the seconds
+	 * @param millisecond the milliseconds
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if, the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	Time(final int hour, final int minute, final int second, final int millisecond, 
+			final int tzHour, final int tzMinute) {
 		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0))) {
 			throw new IllegalArgumentException("Both, the timezone hours and " + 
 					"minutes must be negative, or positive, but were " + 
 					tzHour + " and " + tzMinute);
 		}
 
-		final String timezone = "GMT" + 
-			(((tzHour >= 0) && (tzMinute >= 0)) ? "+" : "-") + Math.abs(tzHour) + ":" + 
-			((Math.abs(tzMinute) < 10) ? "0" : "") + Math.abs(tzMinute);
-
-		cal = new GregorianCalendar(TimeZone.getTimeZone(timezone));
-		cal.clear();
-		cal.set(0, 0, 0, hour, minute, second);
+		time = FACTORY.newXMLGregorianCalendarTime(hour, 
+				minute, 
+				second, 
+				new BigDecimal(millisecond / 1000l),
+				tzHour * 60 + tzMinute);
 	}
 
 	public Object clone() {
 		try {
 			Time dt = (Time) super.clone();
-			dt.cal = (Calendar) cal.clone();
+			dt.time = (XMLGregorianCalendar) time.clone();
 			return dt;
 		} catch (CloneNotSupportedException e) {
 			assert false : "Object is always cloneable";
@@ -126,7 +137,7 @@ public class Time implements ITime, Cloneable {
 		if (o == null) {
 			return 1;
 		}
-		return cal.compareTo(o.getTime());
+		return time.compare(o.getValue());
 	}
 
 	public boolean equals(final Object obj) {
@@ -134,83 +145,62 @@ public class Time implements ITime, Cloneable {
 			return false;
 		}
 		Time dx = (Time) obj;
-		return (dx.getHour() == this.getHour())
-				&& (dx.getMinute() == this.getMinute())
-				&& (dx.getSecond() == this.getSecond())
-				&& (dx.getTimeZone().getRawOffset() == this.getTimeZone()
-						.getRawOffset());
-	}
-
-	public Calendar getTime() {
-		return (Calendar) cal.clone();
+		return time.equals(dx.getValue());
 	}
 
 	public int getHour() {
-		return cal.get(Calendar.HOUR_OF_DAY);
+		return time.getHour();
 	}
 
 	public int getMinute() {
-		return cal.get(Calendar.MINUTE);
+		return time.getMinute();
 	}
 
 	public int getSecond() {
-		return cal.get(Calendar.SECOND);
+		return time.getSecond();
+	}
+
+	public int getMillisecond() {
+		return time.getMillisecond();
 	}
 
 	public TimeZone getTimeZone() {
-		return cal.getTimeZone();
+		return time.getTimeZone(0);
 	}
 
 	public int hashCode() {
-		return cal.hashCode();
+		return time.hashCode();
 	}
 
 	public String toString() {
-		return String.format(TOSTRING_FORMAT, cal, cal);
+		return time.toString();
 	}
 
 	protected static int getTimeZoneHour(final TimeZone tz) {
+		assert tz != null: "The timezone must not be null";
+
 		return tz.getRawOffset() / MILLIS_PER_HOUR;
 	}
 
 	protected static int getTimeZoneMinute(final TimeZone tz) {
-		return (tz.getRawOffset() % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE;
-	}
+		assert tz != null: "The timezone must not be null";
 
-	/**
-	 * Parses a String to a Date object. The format must be
-	 * "HH:mm:ssz".
-	 * 
-	 * @param str
-	 *            the String to parse
-	 * @see SimpleDateFormat
-	 */
-	public static Time parse(String str) {
-		try {
-			Calendar cal = new GregorianCalendar();
-			cal.setTime(FORMAT.parse(str));
-			return new Time(cal);
-		} catch (ParseException e) {
-			throw new IllegalArgumentException("Wasn't able to parse: " + str
-					+ ". The String must have the format: "
-					+ FORMAT.toPattern());
-		}
+		return (tz.getRawOffset() % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE;
 	}
 
 	public boolean isGround() {
 		return true;
 	}
 
-	public Calendar getValue() {
-		// TODO shouldn't a copy be returned?
-		return cal;
+	public XMLGregorianCalendar getValue() {
+		return (XMLGregorianCalendar) time.clone();
 	}
 
-	public void setValue(Calendar t) {
+	public void setValue(final XMLGregorianCalendar t) {
 		// TODO shouldn't a copy be made?
 		if (t == null) {
 			throw new IllegalArgumentException("The value must not be null");
 		}
-		cal = t;
+		time = t;
 	}
 }

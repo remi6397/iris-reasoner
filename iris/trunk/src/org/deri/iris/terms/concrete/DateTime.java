@@ -26,11 +26,13 @@
 
 package org.deri.iris.terms.concrete;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.TimeZone;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.concrete.IDateTime;
 
@@ -46,33 +48,48 @@ import org.deri.iris.api.terms.concrete.IDateTime;
  */
 public class DateTime implements IDateTime, Cloneable {
 
-	/** SimpleDateFormat to parse the datetime. */
-	private static final SimpleDateFormat FORMAT = new SimpleDateFormat(
-			"yyyy-MM-dd'T'HH:mm:ssz");
+	/** Factory used to create the xml durations. */
+	private static final DatatypeFactory FACTORY;
 
-	/** Format for the {@link #toString()} method. The format is 'yyyy-mm-dd'T'hh:mm:ss&lt;timezondediff&gt;'. */
-	private static final String TOSTRING_FORMAT = "%tFT%tT%tz";
-
-	/** Milliseconds per hour. */
-	private static final int MILLIS_PER_HOUR = 1000 * 60 * 60;
+	/** The inner calendar object. */
+	private XMLGregorianCalendar datetime;
 
 	/** Milliseconds per minute. */
 	private static final int MILLIS_PER_MINUTE = 1000 * 60;
 
-	/** The internal calendar holding the time. */
-	private Calendar cal;
+	/** Milliseconds per hour. */
+	private static final int MILLIS_PER_HOUR = MILLIS_PER_MINUTE * 60;
+
+	static {
+		// creating the factory
+		DatatypeFactory tmp = null;
+		try {
+			tmp = DatatypeFactory.newInstance();
+		} catch (DatatypeConfigurationException e) {
+			throw new IllegalArgumentException(
+					"Couldn't create the factory for the datetime", e);
+		}
+		FACTORY = tmp;
+	}
 
 	/**
-	 * Constructs a new datetime object taking all needed parameters out of a
-	 * given calendar.
-	 * @param cal the calendar holding the data
+	 * Constructs a new time object. With the <code>tzHour</code> and
+	 * <code>tzMinute</code> set to <code>0</code>.
+	 * @param year the year
+	 * @param month the month (1-12)
+	 * @param day day of the month
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the seconds
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if the tzHour and tzMinute
+	 * wheren't both positive, or negative
 	 */
-	DateTime(final Calendar cal) {
-		this(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal
-				.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.HOUR_OF_DAY), cal
-				.get(Calendar.MINUTE), cal.get(Calendar.SECOND),
-				getTimeZoneHour(cal.getTimeZone()), getTimeZoneMinute(cal
-						.getTimeZone()));
+	DateTime(final int year, final int month, final int day, 
+			final int hour, final int minute, final int second,
+			final int tzHour, final int tzMinute) {
+		this(year, month, day, hour, minute, second, 0, tzHour, tzMinute);
 	}
 
 	/**
@@ -85,8 +102,9 @@ public class DateTime implements IDateTime, Cloneable {
 	 * @param minute the minutes
 	 * @param second the seconds
 	 */
-	DateTime(int year, int month, int day, int hour, int minute, int second) {
-		this(year, month, day, hour, minute, second, 0, 0);
+	DateTime(final int year, final int month, final int day, 
+			final int hour, final int minute, final int second) {
+		this(year, month, day, hour, minute, second, 0, 0, 0);
 	}
 
 	/**
@@ -97,32 +115,36 @@ public class DateTime implements IDateTime, Cloneable {
 	 * @param hour the hours
 	 * @param minute the minutes
 	 * @param second the seconds
+	 * @param millisecond the milliseconds
 	 * @param tzHour the timezone hours (relative to GMT)
 	 * @param tzMinute the timezone minutes (relative to GMT)
 	 * @throws IllegalArgumentException if the tzHour and tzMinute
 	 * wheren't both positive, or negative
 	 */
-	DateTime(int year, int month, int day, int hour, int minute, int second,
-			int tzHour, int tzMinute) {
+	DateTime(final int year, final int month, final int day, 
+			final int hour, final int minute, final int second, final int millisecond, 
+			final int tzHour, final int tzMinute) {
 		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0))) {
 			throw new IllegalArgumentException("Both, the timezone hours and " + 
 					"minutes must be negative, or positive, but were " + 
 					tzHour + " and " + tzMinute);
 		}
 
-		final String timezone = "GMT" + 
-			(((tzHour >= 0) && (tzMinute >= 0)) ? "+" : "-") + Math.abs(tzHour) + ":" + 
-			((Math.abs(tzMinute) < 10) ? "0" : "") + Math.abs(tzMinute);
-
-		cal = new GregorianCalendar(TimeZone.getTimeZone(timezone));
-		cal.clear();
-		cal.set(year, month, day, hour, minute, second);
+		datetime = FACTORY.newXMLGregorianCalendar(
+				BigInteger.valueOf((long) year), 
+				month, 
+				day, 
+				hour, 
+				minute, 
+				second, 
+				new BigDecimal(millisecond / 1000l), 
+				tzHour * 60 + tzMinute);
 	}
 
 	public Object clone() {
 		try {
 			DateTime dt = (DateTime) super.clone();
-			dt.cal = (Calendar) cal.clone();
+			dt.datetime = (XMLGregorianCalendar) datetime.clone();
 			return dt;
 		} catch (CloneNotSupportedException e) {
 			assert false : "Object is always cloneable";
@@ -134,7 +156,7 @@ public class DateTime implements IDateTime, Cloneable {
 		if (o == null) {
 			return 1;
 		}
-		return cal.compareTo(o.getDateTime());
+		return datetime.compare(o.getValue());
 	}
 
 	public boolean equals(final Object obj) {
@@ -142,54 +164,47 @@ public class DateTime implements IDateTime, Cloneable {
 			return false;
 		}
 		DateTime dx = (DateTime) obj;
-		return (dx.getYear() == this.getYear())
-				&& (dx.getMonth() == this.getMonth())
-				&& (dx.getDay() == this.getDay())
-				&& (dx.getHour() == this.getHour())
-				&& (dx.getMinute() == this.getMinute())
-				&& (dx.getSecond() == this.getSecond())
-				&& (dx.getTimeZone().getRawOffset() == this.getTimeZone()
-						.getRawOffset());
-	}
-
-	public Calendar getDateTime() {
-		return (Calendar) cal.clone();
+		return datetime.equals(dx.getValue());
 	}
 
 	public int getDay() {
-		return cal.get(Calendar.DAY_OF_MONTH);
+		return datetime.getDay();
 	}
 
 	public int getHour() {
-		return cal.get(Calendar.HOUR_OF_DAY);
+		return datetime.getHour();
 	}
 
 	public int getMinute() {
-		return cal.get(Calendar.MINUTE);
+		return datetime.getMinute();
 	}
 
 	public int getMonth() {
-		return cal.get(Calendar.MONTH);
+		return datetime.getMonth();
 	}
 
 	public int getSecond() {
-		return cal.get(Calendar.SECOND);
+		return datetime.getSecond();
 	}
 
 	public TimeZone getTimeZone() {
-		return cal.getTimeZone();
+		return datetime.getTimeZone(0);
 	}
 
 	public int getYear() {
-		return cal.get(Calendar.YEAR);
+		return datetime.getYear();
+	}
+
+	public int getMillisecond() {
+		return datetime.getMillisecond();
 	}
 
 	public int hashCode() {
-		return cal.hashCode();
+		return datetime.hashCode();
 	}
 
 	public String toString() {
-		return String.format(TOSTRING_FORMAT, cal, cal, cal);
+		return datetime.toString();
 	}
 
 	protected static int getTimeZoneHour(final TimeZone tz) {
@@ -200,40 +215,19 @@ public class DateTime implements IDateTime, Cloneable {
 		return (tz.getRawOffset() % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE;
 	}
 
-	/**
-	 * Parses a String to a Date object. The format must be
-	 * "yyyy-MM-dd'T'HH:mm:ssz".
-	 * 
-	 * @param str
-	 *            the String to parse
-	 * @see SimpleDateFormat
-	 */
-	public static DateTime parse(String str) {
-		try {
-			Calendar cal = new GregorianCalendar();
-			cal.setTime(FORMAT.parse(str));
-			return new DateTime(cal);
-		} catch (ParseException e) {
-			throw new IllegalArgumentException("Wasn't able to parse: " + str
-					+ ". The String must have the format: "
-					+ FORMAT.toPattern());
-		}
-	}
-
 	public boolean isGround() {
 		return true;
 	}
 
-	public Calendar getValue() {
-		// TODO shouldn't a copy be returned?
-		return cal;
+	public XMLGregorianCalendar getValue() {
+		return (XMLGregorianCalendar) datetime.clone();
 	}
 
-	public void setValue(Calendar t) {
+	public void setValue(XMLGregorianCalendar t) {
 		// TODO shouldn't a copy be made?
 		if (t == null) {
 			throw new IllegalArgumentException("The value must not be null");
 		}
-		cal = t;
+		datetime = t;
 	}
 }

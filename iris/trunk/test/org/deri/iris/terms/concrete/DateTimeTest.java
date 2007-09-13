@@ -25,10 +25,6 @@
  */
 package org.deri.iris.terms.concrete;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-
 import org.deri.iris.ObjectTests;
 import org.deri.iris.TermTests;
 
@@ -37,53 +33,57 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class DateTimeTest extends TestCase {
-	private static final Calendar CALENDAR = new GregorianCalendar(TimeZone
-			.getTimeZone("GMT+1"));
 
-	private static final String SREFERENCE = "2005-03-10T13:56:00GMT+01:00";
+	private static final int YEAR = 2005;
 
-	static {
-		CALENDAR.clear();
-		CALENDAR.set(2005, Calendar.MARCH, 10, 13, 56, 00);
-	}
+	private static final int MONTH = 3;
+
+	private static final int DAY = 10;
+
+	private static final int HOUR = 13;
+
+	private static final int MINUTE = 56;
+
+	private static final int SECOND = 0;
+
+	private static final int TZ_HOUR = 1;
+
+	private static final int TZ_MINUTE = 0;
 
 	public void testBasic() {
-		DateTime dt = DateTime.parse(SREFERENCE);
+		final DateTime dt = new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE);
 
-		assertEquals("Something wrong with getYear", 2005, dt.getYear());
-		assertEquals("Something wrong with getMonth", Calendar.MARCH, dt
-				.getMonth());
-		assertEquals("Something wrong with getDay", 10, dt.getDay());
-		assertEquals("Something wrong with getHour", 13, dt.getHour());
-		assertEquals("Something wrong with getMinute", 56, dt.getMinute());
-		assertEquals("Something wrong with getSecond", 00, dt.getSecond());
+		assertEquals("Something wrong with getYear", YEAR, dt.getYear());
+		assertEquals("Something wrong with getMonth", MONTH, dt .getMonth());
+		assertEquals("Something wrong with getDay", DAY, dt.getDay());
+		assertEquals("Something wrong with getHour", HOUR, dt.getHour());
+		assertEquals("Something wrong with getMinute", MINUTE, dt.getMinute());
+		assertEquals("Something wrong with getSecond", SECOND, dt.getSecond());
 
-		DateTime dt0 = new DateTime(2005, Calendar.MARCH, 10, 13, 56, 0, 1, 0);
-		assertEquals("Something wrong with setting or equals", dt, dt0);
-		dt0 = new DateTime(CALENDAR);
+		DateTime dt0 = new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE);
 		assertEquals("Something wrong with setting or equals", dt, dt0);
 	}
 
 	public void testEquals() {
-		ObjectTests.runTestEquals(new DateTime(2000, 1, 1, 12, 01, 00, 1, 0),
-				new DateTime(2000, 1, 1, 12, 01, 00, 1, 0), new DateTime(2000,
-						1, 1, 12, 02, 00, 1, 0));
+		ObjectTests.runTestEquals(new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE),
+				new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE),
+				new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND + 1, TZ_HOUR, TZ_MINUTE));
 	}
 
 	public void testCompareTo() {
-		ObjectTests.runTestCompareTo(new DateTime(2000, 1, 1, 12, 01, 00, 1, 0),
-				new DateTime(2000, 1, 1, 11, 01, 00, 0, 0), new DateTime(2000,
-						1, 1, 11, 02, 00, 0, 0), new DateTime(2000, 1, 1, 11,
-						03, 00, 0, 0));
+		ObjectTests.runTestCompareTo(new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE), 
+				new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE), 
+				new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND + 1, TZ_HOUR, TZ_MINUTE), 
+				new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND + 2, TZ_HOUR, TZ_MINUTE));
 	}
 
 	public void testClone() {
-		ObjectTests.runTestClone(new DateTime(CALENDAR));
+		ObjectTests.runTestClone(new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE));
 	}
 
 	public void testHashCode() {
-		ObjectTests.runTestHashCode(new DateTime(CALENDAR), new DateTime(
-				CALENDAR));
+		ObjectTests.runTestHashCode(new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE), 
+				new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE));
 	}
 
 	public static Test suite() {
@@ -92,7 +92,8 @@ public class DateTimeTest extends TestCase {
 	}
 
 	public void testGetMinValue() {
-		TermTests.runTestGetMinValue(new DateTime(0, 0, 0, 0, 0, 1));
+		// somehow the year, month and day must not be 0...
+		TermTests.runTestGetMinValue(new DateTime(1, 1, 1, 0, 0, 1));
 	}
 
 	/**
@@ -104,24 +105,38 @@ public class DateTimeTest extends TestCase {
 	 */
 	public void testConsistentTimezones() {
 		try {
-			new DateTime(2000, 0, 1, 0, 0, 0, -1, 1);
+			new DateTime(2000, 1, 1, 0, 0, 0, -1, 1);
 			fail("It is possible to create a datetime with a negative tzHour and positive tzMinute");
 		} catch (IllegalArgumentException e) {
 		}
 
 		try {
-			new DateTime(2000, 0, 1, 0, 0, 0, 1, -1);
+			new DateTime(2000, 1, 1, 0, 0, 0, 1, -1);
 			fail("It is possible to create a datetime with a positive tzHour and negative tzMinute");
 		} catch (IllegalArgumentException e) {
 		}
 
 		// the following should be possible
-		new DateTime(2000, 0, 1, 0, 0, 0, 0, 0);
-		new DateTime(2000, 0, 1, 0, 0, 0, 1, 0);
-		new DateTime(2000, 0, 1, 0, 0, 0, 0, 1);
-		new DateTime(2000, 0, 1, 0, 0, 0, 1, 1);
-		new DateTime(2000, 0, 1, 0, 0, 0, -1, 0);
-		new DateTime(2000, 0, 1, 0, 0, 0, 0, -1);
-		new DateTime(2000, 0, 1, 0, 0, 0, -1, -1);
+		new DateTime(2000, 1, 1, 0, 0, 0, 0, 0);
+		new DateTime(2000, 1, 1, 0, 0, 0, 1, 0);
+		new DateTime(2000, 1, 1, 0, 0, 0, 0, 1);
+		new DateTime(2000, 1, 1, 0, 0, 0, 1, 1);
+		new DateTime(2000, 1, 1, 0, 0, 0, -1, 0);
+		new DateTime(2000, 1, 1, 0, 0, 0, 0, -1);
+		new DateTime(2000, 1, 1, 0, 0, 0, -1, -1);
+	}
+
+	/**
+	 * <p>
+	 * Chechs whether the months are handeled correctly. The months should
+	 * count from 1-12.
+	 * </p>
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1792385&group_id=167309&atid=842434">bug #1792385: DateTime datatype handles months incorrectly</a>
+	 */
+	public void testCorrectMonthBehaviour() {
+		final DateTime y2000m1d1 = new DateTime(2000, 1, 1, 0, 0, 0);
+		// if mounthts woule be from 0 - 11 this would shift to year 2001
+		final DateTime y2000m12d1 = new DateTime(2000, 12, 1, 0, 0, 0);
+		assertTrue(y2000m1d1 + " must be smaller than " + y2000m12d1, y2000m1d1.compareTo(y2000m12d1) < 0);
 	}
 }
