@@ -25,9 +25,12 @@
  */
 package org.deri.iris.api.terms.concrete;
 
+import javax.xml.datatype.Duration;
+
 import org.deri.iris.api.terms.ITerm;
 
 /**
+ * 
  * <p>
  * This is a interface to represent durations from seconds up to years.
  * </p>
@@ -36,12 +39,26 @@ import org.deri.iris.api.terms.ITerm;
  * specification for primitive XML Schema datatypes.
  * </p>
  * <p>
- * $Id: IDuration.java,v 1.5 2007-08-30 15:47:34 poettler_ric Exp $
+ * $Id: IDuration.java,v 1.6 2007-09-13 15:20:36 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
-public interface IDuration extends ITerm<IDuration, Long> {
+public interface IDuration extends ITerm<IDuration, Duration> {
+	/**
+	 * Returns the years.
+	 * 
+	 * @return the years
+	 */
+	public abstract int getYear();
+
+	/**
+	 * Returns the months
+	 * 
+	 * @return the months
+	 */
+	public abstract int getMonth();
+
 	/**
 	 * Returns the days
 	 * 
@@ -69,4 +86,10 @@ public interface IDuration extends ITerm<IDuration, Long> {
 	 * @return the seconds
 	 */
 	public abstract int getSecond();
+
+	/**
+	 * Returns the milliseconds.
+	 * @return the milliseconds
+	 */
+	public abstract int getMillisecond();
 }

@@ -25,8 +25,9 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import java.util.Calendar;
 import java.util.TimeZone;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.ITerm;
 
@@ -44,22 +45,15 @@ import org.deri.iris.api.terms.ITerm;
  * 
  * <pre>
  *       Created on 06.04.2006
- *       Committed by $Author: darko $
+ *       Committed by $Author: poettler_ric $
  *       $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/IDateTime.java,v $,
  * </pre>
  * 
  * @author Richard Pöttler
  * 
- * @version $Revision: 1.5 $ $Date: 2007-01-22 16:09:20 $
+ * @version $Revision: 1.6 $ $Date: 2007-09-13 15:20:36 $
  */
-public interface IDateTime extends ITerm<IDateTime, Calendar> {
-	/**
-	 * Returns a copy of this Calendar object.
-	 * 
-	 * @return the Calendar object
-	 */
-	public abstract Calendar getDateTime();
-
+public interface IDateTime extends ITerm<IDateTime, XMLGregorianCalendar> {
 	/**
 	 * Returns the year.
 	 * 
@@ -101,6 +95,12 @@ public interface IDateTime extends ITerm<IDateTime, Calendar> {
 	 * @return the seconds
 	 */
 	public abstract int getSecond();
+
+	/**
+	 * Returns the milliseconds of the second.
+	 * @return the milliseconds
+	 */
+	public abstract int getMillisecond();
 
 	/**
 	 * Returns the Timezone

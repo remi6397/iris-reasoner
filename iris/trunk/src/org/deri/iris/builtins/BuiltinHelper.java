@@ -33,6 +33,9 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import javax.xml.datatype.Duration;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
@@ -50,11 +53,11 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.12 2007-08-30 16:19:49 poettler_ric Exp $
+ * $Id: BuiltinHelper.java,v 1.13 2007-09-13 15:20:37 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class BuiltinHelper {
 
@@ -65,11 +68,16 @@ public class BuiltinHelper {
 	public static final ITuple EMPTY_TUPLE = 
 		org.deri.iris.factory.Factory.BASIC.createTuple(0);
 
-	/** Milliseconds per hour. */
-	private static final int MILLIS_PER_HOUR = 1000 * 60 * 60;
+	/** 
+	 * Calendar with all fields set to 0. Used to get the milliseconds out
+	 * of a {@link javax.xml.datatype.Duration} object.
+	 */
+	private static final Calendar ZERO;
 
-	/** Milliseconds per minute. */
-	private static final int MILLIS_PER_MINUTE = 1000 * 60;
+	static {
+		ZERO = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+		ZERO.clear();
+	}
 
 	private BuiltinHelper() {
 		// prevent subclassing
@@ -181,32 +189,6 @@ public class BuiltinHelper {
 	}
 
 	/**
-	 * Extracts the hours out of a timezone.
-	 * @param tz the timezone
-	 * @return the hours
-	 * @throws NullPointerException if the timezone is <code>null</code>
-	 */
-	private static int getTimeZoneHour(final TimeZone tz) {
-		if (tz == null) {
-			throw new NullPointerException("The timezone must not be null");
-		}
-		return tz.getRawOffset() / MILLIS_PER_HOUR;
-	}
-
-	/**
-	 * Extracts the minutes out of a timezone.
-	 * @param tz the timezone
-	 * @return the minutes
-	 * @throws NullPointerException if the timezone is <code>null</code>
-	 */
-	private static int getTimeZoneMinute(final TimeZone tz) {
-		if (tz == null) {
-			throw new NullPointerException("The timezone must not be null");
-		}
-		return (tz.getRawOffset() % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE;
-	}
-
-	/**
 	 * Creates a duration out of a given amount of milliseconds.
 	 * @param millis the milliseconds for which to create the duration
 	 * @return the duration
@@ -216,53 +198,71 @@ public class BuiltinHelper {
 	}
 
 	/**
-	 * Creates a time out of a given amount of milliseconds.
-	 * @param millis the milliseconds for which to create the duration
-	 * @param zone the timezone the resulting time should have. if
-	 * <code>null</code> GMT will be set.
-	 * @return the time
-	 */
-	private static ITime createTime(final long millis, final TimeZone zone) {
-		final Calendar cal = new GregorianCalendar(zone);
-		cal.setTimeInMillis(millis);
-		return CONCRETE.createTime(cal.get(Calendar.HOUR_OF_DAY), 
-				cal.get(Calendar.MINUTE), 
-				cal.get(Calendar.SECOND),
-				(zone == null) ? 0 : getTimeZoneHour(zone), 
-				(zone == null) ? 0 : getTimeZoneMinute(zone));
-	}
-
-	/**
-	 * Creates a datetime out of a given amount of milliseconds.
-	 * @param millis the milliseconds for which to create the duration
-	 * @param zone the timezone the resulting time should have. if
-	 * <code>null</code> GMT will be set.
+	 * Creates a datetime object out of a <code>XMLGregorianCalendar</code>.
+	 * @param dt the <code>XMLGregorianCalendar</code>
 	 * @return the datetime
 	 */
-	private static IDateTime createDateTime(final long millis, final TimeZone zone) {
-		final Calendar cal = new GregorianCalendar(zone);
-		cal.setTimeInMillis(millis);
-		return CONCRETE.createDateTime(cal.get(Calendar.YEAR), 
-				cal.get(Calendar.MONTH), 
-				cal.get(Calendar.DAY_OF_MONTH), 
-				cal.get(Calendar.HOUR_OF_DAY), 
-				cal.get(Calendar.MINUTE), 
-				cal.get(Calendar.SECOND),
-				(zone == null) ? 0 : getTimeZoneHour(zone), 
-				(zone == null) ? 0 : getTimeZoneMinute(zone));
+	private static IDateTime createDateTime(final XMLGregorianCalendar dt) {
+		assert dt != null: "The datetime must not be null";
+
+		return CONCRETE.createDateTime(dt.getYear(), 
+				dt.getMonth(), 
+				dt.getDay(), 
+				dt.getHour(), 
+				dt.getMinute(), 
+				dt.getSecond(),
+				dt.getMillisecond(), 
+				dt.getTimezone() / 60,
+				dt.getTimezone() % 60);
 	}
 
 	/**
-	 * Creates a date out of a given amount of milliseconds.
-	 * @param millis the milliseconds for which to create the duration
+	 * Creates a date object out of a <code>XMLGregorianCalendar</code>.
+	 * @param dt the <code>XMLGregorianCalendar</code>
 	 * @return the date
 	 */
-	private static IDateTerm createDate(final long millis) {
-		final Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-		cal.setTimeInMillis(millis);
-		return CONCRETE.createDate(cal.get(Calendar.YEAR), 
-				cal.get(Calendar.MONTH), 
-				cal.get(Calendar.DAY_OF_MONTH));
+	private static IDateTerm createDate(final XMLGregorianCalendar dt) {
+		assert dt != null: "The date must not be null";
+
+		return CONCRETE.createDate(dt.getYear(), 
+				dt.getMonth(), 
+				dt.getDay(), 
+				dt.getTimezone() / 60,
+				dt.getTimezone() % 60);
+	}
+
+	/**
+	 * Creates a time object out of a <code>XMLGregorianCalendar</code>.
+	 * @param dt the <code>XMLGregorianCalendar</code>
+	 * @return the time
+	 */
+	private static ITime createTime(final XMLGregorianCalendar dt) {
+		assert dt != null: "The time must not be null";
+
+		return CONCRETE.createTime(dt.getHour(), 
+				dt.getMinute(), 
+				dt.getSecond(),
+				dt.getMillisecond(), 
+				dt.getTimezone() / 60,
+				dt.getTimezone() % 60);
+	}
+
+	/**
+	 * Creates a duration object out of a <code>Duration</code>.
+	 * @param dt the <code>Duration</code>
+	 * @return the duration
+	 */
+	private static IDuration createDuration(final Duration d) {
+		assert d != null: "The duration must not be null";
+
+		return CONCRETE.createDuration(d.getSign() >= 0,
+				d.getYears(), 
+				d.getMonths(), 
+				d.getDays(), 
+				d.getHours(), 
+				d.getMinutes(), 
+				d.getSeconds(),
+				(int) d.getTimeInMillis(ZERO) % 1000);
 	}
 
 	/**
@@ -284,23 +284,33 @@ public class BuiltinHelper {
 		if((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm)) { // number + number = number
 			return toAccuratest(getDouble((INumericTerm) t0) + getDouble((INumericTerm) t1), t0, t1);
 		} else if ((t0 instanceof IDateTime) && (t1 instanceof IDuration)) { // datetime + duration = datetime
-			final Calendar cal0 = ((IDateTime) t0).getValue();
-			return createDateTime(cal0.getTimeInMillis() + ((IDuration) t1).getValue(), cal0.getTimeZone());
+			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTime) t0).getValue().clone();
+			cal0.add(((IDuration) t1).getValue());
+			return createDateTime(cal0);
 		} else if ((t0 instanceof IDuration) && (t1 instanceof IDateTime)) { // duration + datetime = datetime
-			final Calendar cal1 = ((IDateTime) t1).getValue();
-			return createDateTime(((IDuration) t0).getValue() + cal1.getTimeInMillis(), cal1.getTimeZone());
+			final XMLGregorianCalendar cal1 = (XMLGregorianCalendar) ((IDateTime) t1).getValue().clone();
+			cal1.add(((IDuration) t0).getValue());
+			return createDateTime(cal1);
 		} else if ((t0 instanceof IDateTerm) && (t1 instanceof IDuration)) { // date + duration = date
-			return createDate(((IDateTerm) t0).getValue().getTimeInMillis() + ((IDuration) t1).getValue());
+			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTerm) t0).getValue().clone();
+			cal0.add(((IDuration) t1).getValue());
+			return createDate(cal0);
 		} else if ((t0 instanceof IDuration) && (t1 instanceof IDateTerm)) { // duration + date = date
-			return createDate(((IDuration) t0).getValue() + ((IDateTerm) t1).getValue().getTimeInMillis());
+			final XMLGregorianCalendar cal1 = (XMLGregorianCalendar) ((IDateTerm) t1).getValue().clone();
+			cal1.add(((IDuration) t0).getValue());
+			return createDate(cal1);
 		} else if ((t0 instanceof ITime) && (t1 instanceof IDuration)) { // time + duration = time
-			final Calendar cal0 = ((ITime) t0).getValue();
-			return createTime(cal0.getTimeInMillis() + ((IDuration) t1).getValue(), cal0.getTimeZone());
+			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((ITime) t0).getValue().clone();
+			cal0.add(((IDuration) t1).getValue());
+			return createTime(cal0);
 		} else if ((t0 instanceof IDuration) && (t1 instanceof ITime)) { // duration + time = time
-			final Calendar cal1 = ((ITime) t1).getValue();
-			return createTime(((IDuration) t0).getValue() + cal1.getTimeInMillis(), cal1.getTimeZone());
+			final XMLGregorianCalendar cal1 = (XMLGregorianCalendar) ((ITime) t1).getValue().clone();
+			cal1.add(((IDuration) t0).getValue());
+			return createTime(cal1);
 		} else if ((t0 instanceof IDuration) && (t1 instanceof IDuration)) { // duration + duration = duration
-			return createDuration(((IDuration) t0).getValue() + ((IDuration) t1).getValue());
+			final Duration d0 = ((IDuration) t0).getValue();
+			final Duration d1 = ((IDuration) t1).getValue();
+			return createDuration(d0.add(d1));
 		}
 		throw new IllegalArgumentException("The add operatoin on " + t0.getClass().getName() + 
 				" and " + t1.getClass().getName() + " is not possible");
@@ -325,21 +335,33 @@ public class BuiltinHelper {
 		if((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm)) { // numer - number = number
 			return toAccuratest(getDouble((INumericTerm) t0) - getDouble((INumericTerm) t1), t0, t1);
 		} else if ((t0 instanceof IDateTime) && (t1 instanceof IDateTime)) { // datetime - datetime = duration
-			return createDuration(((IDateTime) t0).getValue().getTimeInMillis() - ((IDateTime) t1).getValue().getTimeInMillis());
+			final XMLGregorianCalendar cal0 = ((IDateTime) t0).getValue();
+			final XMLGregorianCalendar cal1 = ((IDateTime) t1).getValue();
+			return createDuration(cal0.toGregorianCalendar().getTimeInMillis() - cal1.toGregorianCalendar().getTimeInMillis());
 		} else if ((t0 instanceof IDateTime) && (t1 instanceof IDuration)) { // datetime - duration = datetime
-			final Calendar cal0 = ((IDateTime) t0).getValue();
-			return createDateTime(cal0.getTimeInMillis() - ((IDuration) t1).getValue(), cal0.getTimeZone());
+			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTime) t0).getValue().clone();
+			cal0.add(((IDuration) t1).getValue().negate());
+			return createDateTime(cal0);
 		} else if ((t0 instanceof IDateTerm) && (t1 instanceof IDateTerm)) { // date - date = duration
-			return createDuration(((IDateTerm) t0).getValue().getTimeInMillis() - ((IDateTerm) t1).getValue().getTimeInMillis());
+			final XMLGregorianCalendar cal0 = ((IDateTerm) t0).getValue();
+			final XMLGregorianCalendar cal1 = ((IDateTerm) t1).getValue();
+			return createDuration(cal0.toGregorianCalendar().getTimeInMillis() - cal1.toGregorianCalendar().getTimeInMillis());
 		} else if ((t0 instanceof IDateTerm) && (t1 instanceof IDuration)) { // date - duration = date
-			return createDate(((IDateTerm) t0).getValue().getTimeInMillis() - ((IDuration) t1).getValue());
+			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTerm) t0).getValue().clone();
+			cal0.add(((IDuration) t1).getValue().negate());
+			return createDate(cal0);
 		} else if ((t0 instanceof ITime) && (t1 instanceof ITime)) { // time - time = duration
-			return createDuration(((ITime) t0).getValue().getTimeInMillis() - ((ITime) t1).getValue().getTimeInMillis());
+			final XMLGregorianCalendar cal0 = ((ITime) t0).getValue();
+			final XMLGregorianCalendar cal1 = ((ITime) t1).getValue();
+			return createDuration(cal0.toGregorianCalendar().getTimeInMillis() - cal1.toGregorianCalendar().getTimeInMillis());
 		} else if ((t0 instanceof ITime) && (t1 instanceof IDuration)) { // time - duration = time
-			final Calendar cal0 = ((ITime) t0).getValue();
-			return createTime(cal0.getTimeInMillis() - ((IDuration) t1).getValue(), cal0.getTimeZone());
+			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((ITime) t0).getValue().clone();
+			cal0.add(((IDuration) t1).getValue().negate());
+			return createTime(cal0);
 		} else if ((t0 instanceof IDuration) && (t1 instanceof IDuration)) { // duration - duration
-			return createDuration(((IDuration) t0).getValue() - ((IDuration) t1).getValue());
+			final Duration d0 = ((IDuration) t0).getValue();
+			final Duration d1 = ((IDuration) t1).getValue();
+			return createDuration(d0.add(d1.negate()));
 		}
 		throw new IllegalArgumentException("The subtract operatoin on " + t0.getClass().getName() + 
 				" and " + t1.getClass().getName() + "is not possible");

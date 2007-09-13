@@ -683,6 +683,7 @@ public class DbStorageManager {
                     cal.getHour(), 
                     cal.getMinute(), 
                     cal.getSecond(), 
+		    cal.getMillisecond(), 
                     cal.getTimezone()/60, 
                     cal.getTimezone()%60);
         } 
@@ -729,6 +730,7 @@ public class DbStorageManager {
             term=CONCRETE.createTime(cal.getHour(), 
                     cal.getMinute(), 
                     cal.getSecond(), 
+		    cal.getMillisecond(), 
                     cal.getTimezone()/60, 
                     cal.getTimezone()%60);
         }

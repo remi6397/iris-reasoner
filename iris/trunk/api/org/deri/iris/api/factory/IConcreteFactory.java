@@ -64,7 +64,7 @@ public interface IConcreteFactory {
 	/**
 	 * Creates a datetime object with a given timezone.
 	 * @param year the years
-	 * @param month the months (starting at <code>0</code>)
+	 * @param month the months (1-12)
 	 * @param day day of the month
 	 * @param hour the hours
 	 * @param minute the minutes
@@ -74,13 +74,32 @@ public interface IConcreteFactory {
 	 * @throws IllegalArgumentException if, the tzHour and tzMinute
 	 * wheren't both positive, or negative
 	 */
-	public IDateTime createDateTime(final int year, final int month,
-			final int day, final int hour, final int minute, final int second,
+	public IDateTime createDateTime(final int year, final int month, final int day, 
+			final int hour, final int minute, final int second,
 			final int tzHour, final int tzMinute);
+
+	/**
+	 * Creates a datetime object with a given timezone.
+	 * @param year the years
+	 * @param month the months (1-12)
+	 * @param day day of the month
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the seconds
+	 * @param millisecond the milliseconds
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if, the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	public IDateTime createDateTime(final int year, final int month, final int day, 
+			final int hour, final int minute, final int second, final int millisecond, 
+			final int tzHour, final int tzMinute);
+
 	/**
 	 * Creates a datetime object. The timezone will be set to GMT.
 	 * @param year the years
-	 * @param month the months (starting at <code>0</code>)
+	 * @param month the months (1-12)
 	 * @param day day of the month
 	 * @param hour the hours
 	 * @param minute the minutes
@@ -99,7 +118,22 @@ public interface IConcreteFactory {
 	 * @throws IllegalArgumentException if, the tzHour and tzMinute
 	 * wheren't both positive, or negative
 	 */
-	public ITime createTime(final int hour, final int minute, final int second, final int tzHour, final int tzMinute);
+	public ITime createTime(final int hour, final int minute, final int second, 
+			final int tzHour, final int tzMinute);
+
+	/**
+	 * Creates a time object with a given timezone.
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the seconds
+	 * @param millisecond the milliseconds
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if, the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	public ITime createTime(final int hour, final int minute, final int second, final int millisecond, 
+			final int tzHour, final int tzMinute);
 
 	/**
 	 * Creates a time object. The timezone will be set to GMT.
@@ -109,7 +143,26 @@ public interface IConcreteFactory {
 	 */
 	public ITime createTime(final int hour, final int minute, final int second);
 
+	/**
+	 * Creates a new date object. The timezone will be set to GMT.
+	 * @param year the year
+	 * @param month the mont (1-12)
+	 * @param day the day
+	 */
 	public IDateTerm createDate(final int year, final int month, final int day);
+
+	/**
+	 * Creates a new date object within the given timezone.
+	 * @param year the year
+	 * @param month the mont (1-12)
+	 * @param day the day
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if, the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	public IDateTerm createDate(final int year, final int month, final int day, 
+			final int tzHour, final int tzMinute);
 
 	public IDecimalTerm createDecimal(final double d);
 
@@ -117,12 +170,64 @@ public interface IConcreteFactory {
 
 	/**
 	 * Constructs a new duration.
+	 * @param year the yearspan
+	 * @param month the monthspa (1-12)
 	 * @param day the dayspan
 	 * @param hour the hourspan
 	 * @param minute the minutespan
 	 * @param second the secondspan
+	 * @throws IllegalArgumentException if the year is negative
+	 * @throws IllegalArgumentException if the month is negative
+	 * @throws IllegalArgumentException if the day is negative
+	 * @throws IllegalArgumentException if the hour is negative
+	 * @throws IllegalArgumentException if the minute is negative
+	 * @throws IllegalArgumentException if the second is negative
+	 * @throws IllegalArgumentException if the millisecond is negative
 	 */
-	public IDuration createDuration(final int day, final int hour, final int minute, final int second);
+	public IDuration createDuration(final int year, final int month, final int day, 
+			final int hour, final int minute, final int second);
+
+	/**
+	 * Constructs a new duration.
+	 * @param year the yearspan
+	 * @param month the monthspa (1-12)
+	 * @param day the dayspan
+	 * @param hour the hourspan
+	 * @param minute the minutespan
+	 * @param second the secondspan
+	 * @param millisecond the millisecondspan
+	 * @throws IllegalArgumentException if the year is negative
+	 * @throws IllegalArgumentException if the month is negative
+	 * @throws IllegalArgumentException if the day is negative
+	 * @throws IllegalArgumentException if the hour is negative
+	 * @throws IllegalArgumentException if the minute is negative
+	 * @throws IllegalArgumentException if the second is negative
+	 * @throws IllegalArgumentException if the millisecond is negative
+	 */
+	public IDuration createDuration(final int year, final int month, final int day, 
+			final int hour, final int minute, final int second, final int millisecond);
+
+	/**
+	 * Constructs a new duration.
+	 * @param positive <code>true</code>if the duration is positive,
+	 * otherwise <code>false</code>
+	 * @param year the yearspan
+	 * @param month the monthspa (1-12)
+	 * @param day the dayspan
+	 * @param hour the hourspan
+	 * @param minute the minutespan
+	 * @param second the secondspan
+	 * @param millisecond the millisecondspan
+	 * @throws IllegalArgumentException if the year is negative
+	 * @throws IllegalArgumentException if the month is negative
+	 * @throws IllegalArgumentException if the day is negative
+	 * @throws IllegalArgumentException if the hour is negative
+	 * @throws IllegalArgumentException if the minute is negative
+	 * @throws IllegalArgumentException if the second is negative
+	 * @throws IllegalArgumentException if the millisecond is negative
+	 */
+	public IDuration createDuration(final boolean positive, final int year, final int month, final int day, 
+			final int hour, final int minute, final int second, final int millisecond);
 
 	/**
 	 * Contructs a new duration out of a given amount of milliseconds. The

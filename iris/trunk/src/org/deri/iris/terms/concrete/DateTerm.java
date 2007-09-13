@@ -26,9 +26,11 @@
 
 package org.deri.iris.terms.concrete;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
+
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.concrete.IDateTerm;
 
@@ -40,26 +42,65 @@ import org.deri.iris.api.terms.concrete.IDateTerm;
  * $Id$
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @author Holger Lausen
  * @version $Revision$
  */
 public class DateTerm implements IDateTerm, Cloneable {
 
-	/** Format for the {@link #toString()} method. The format is 'yyyy-mm-dd'. */
-	private static final String TOSTRING_FORMAT = "%tF";
+	/** Factory used to create the xml durations. */
+	private static final DatatypeFactory FACTORY;
 
-	/** The internal calendar holding the time. */
-	private Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+	/** The inner calendar object. */
+	private XMLGregorianCalendar date;
 
-	DateTerm(int year, int month, int day) {
-		cal.clear();
-		cal.set(year, month, day);
+	static {
+		// creating the factory
+		DatatypeFactory tmp = null;
+		try {
+			tmp = DatatypeFactory.newInstance();
+		} catch (DatatypeConfigurationException e) {
+			throw new IllegalArgumentException(
+					"Couldn't create the factory for the date", e);
+		}
+		FACTORY = tmp;
+	}
+
+	/**
+	 * Constructs a new date within the given timezone.
+	 * @param year the year
+	 * @param month the month (1-12)
+	 * @param day the day
+	 * @param tzHour the timezone hours
+	 * @param tzMinute the timezone minutes
+	 * @throws IllegalArgumentException if the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	DateTerm(final int year, final int month, final int day, 
+			final int tzHour, final int tzMinute) {
+		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0))) {
+			throw new IllegalArgumentException("Both, the timezone hours and " + 
+					"minutes must be negative, or positive, but were " + 
+					tzHour + " and " + tzMinute);
+		}
+
+		date = FACTORY.newXMLGregorianCalendarDate(year, month, day, tzHour * 60 + tzMinute);
+	}
+
+	/**
+	 * Constructs a new date within the GMT timezone.
+	 * @param year the year
+	 * @param month the month (1-12)
+	 * @param day the day
+	 * @throws IllegalArgumentException if the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	DateTerm(final int year, final int month, final int day) {
+		this(year, month, day, 0, 0);
 	}
 
 	public Object clone() {
 		try {
 			DateTerm dt = (DateTerm) super.clone();
-			dt.cal = (Calendar) cal.clone();
+			dt.date = (XMLGregorianCalendar) date.clone();
 			return dt;
 		} catch (CloneNotSupportedException e) {
 			assert false : "Object is always cloneable";
@@ -72,15 +113,15 @@ public class DateTerm implements IDateTerm, Cloneable {
 			return false;
 		}
 		DateTerm dt = (DateTerm) obj;
-		return cal.equals(dt.cal);
+		return date.equals(dt.date);
 	}
 
 	public int hashCode() {
-		return cal.hashCode();
+		return date.hashCode();
 	}
 
 	public String toString() {
-		return String.format(TOSTRING_FORMAT, cal);
+		return date.toString();
 	}
 
 	public boolean isGround() {
@@ -91,39 +132,29 @@ public class DateTerm implements IDateTerm, Cloneable {
 		if (o == null) {
 			return 1;
 		}
-		int result = 0;
-		if ((result = getYear() - o.getYear()) != 0) {
-			return result;
-		}
-		if ((result = getMonth() - o.getMonth()) != 0) {
-			return result;
-		}
-		return getDay() - o.getDay();
+		return date.compare(o.getValue());
 	}
 
 	public int getMonth() {
-		return cal.get(Calendar.MONTH);
+		return date.getMonth();
 	}
 
 	public int getYear() {
-		return cal.get(Calendar.YEAR);
+		return date.getYear();
 	}
 
 	public int getDay() {
-		return cal.get(Calendar.DAY_OF_MONTH);
+		return date.getDay();
 	}
 
-	public Calendar getValue() {
-		// TODO: shouldn't a copy be returned?
-		return cal;
+	public XMLGregorianCalendar getValue() {
+		return (XMLGregorianCalendar) date.clone();
 	}
 
-	public void setValue(Calendar t) {
+	public void setValue(final XMLGregorianCalendar t) {
 		if (t == null) {
 			throw new NullPointerException("The value must not be null");
 		}
-		cal.set(Calendar.YEAR, t.get(Calendar.YEAR));
-		cal.set(Calendar.MONTH, t.get(Calendar.MONTH));
-		cal.set(Calendar.DAY_OF_MONTH, t.get(Calendar.DAY_OF_MONTH));
+		date = t;
 	}
 }

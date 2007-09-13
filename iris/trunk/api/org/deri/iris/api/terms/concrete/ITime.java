@@ -25,8 +25,9 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import java.util.Calendar;
 import java.util.TimeZone;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.ITerm;
 
@@ -42,20 +43,13 @@ import org.deri.iris.api.terms.ITerm;
  * <code>ATTENTION: set the correct timezone</code>
  * </p>
  * <p>
- * $Id: ITime.java,v 1.1 2007-04-05 09:17:19 poettler_ric Exp $
+ * $Id: ITime.java,v 1.2 2007-09-13 15:20:36 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
-public interface ITime extends ITerm<ITime, Calendar> {
-	/**
-	 * Returns a copy of this Calendar object.
-	 * 
-	 * @return the Calendar object
-	 */
-	public abstract Calendar getTime();
-
+public interface ITime extends ITerm<ITime, XMLGregorianCalendar> {
 	/**
 	 * Returns the hour of the day.
 	 * 
@@ -64,7 +58,7 @@ public interface ITime extends ITerm<ITime, Calendar> {
 	public abstract int getHour();
 
 	/**
-	 * Returns the minute of the hour
+	 * Returns the minute of the hour.
 	 * 
 	 * @return the minutes
 	 */
@@ -78,9 +72,15 @@ public interface ITime extends ITerm<ITime, Calendar> {
 	public abstract int getSecond();
 
 	/**
-	 * Returns the Timezone
+	 * Returns the Timezone.
 	 * 
 	 * @return the timezone
 	 */
 	public abstract TimeZone getTimeZone();
+
+	/**
+	 * Returns the milliseconds of the second.
+	 * @return the milliseconds
+	 */
+	public abstract int getMillisecond();
 }
