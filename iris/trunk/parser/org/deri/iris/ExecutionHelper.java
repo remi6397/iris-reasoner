@@ -98,7 +98,7 @@ public class ExecutionHelper
 		
 		for( IPredicate pr : m.keySet() )
 		{
-			result.append( pr.toString() ).append( "\r\n" );
+			result.append( pr.getPredicateSymbol() ).append( "[" ).append( pr.getArity() ).append( "]" ).append( "\r\n" );
 			
 			for( ITuple t : m.get( pr ) )
 			{
