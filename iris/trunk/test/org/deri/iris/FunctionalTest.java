@@ -1,3 +1,26 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions.
+ * 
+ * Copyright (C) 2007 Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
 package org.deri.iris;
 
 import java.util.HashMap;
@@ -9,16 +32,15 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.basics.BasicFactory;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.factory.Factory;
 import junit.framework.TestCase;
 
 public class FunctionalTest extends TestCase
 {
-	protected void setUp() throws Exception
-	{
-	}
-
+	public static final boolean PRINT_RESULTS = false;
+	
 	/**
 	 * Test that a simple logic program of predicate logic is correctly
 	 * evaluated.
@@ -37,6 +59,26 @@ public class FunctionalTest extends TestCase
 		evaluateWithAllStrategies( program, expectedResults );
 	}
 	
+	/**
+	 * Test that a query with more than one predicate is correctly
+	 * evaluated.
+	 * TODO Semi-naive with Magic Sets evaluation is expected to fail, because
+	 * this strategy can not currently have multiple predicates a rule.
+	 * @throws Exception 
+	 */
+	public void testQueryWithMultiplePredicates() throws Exception
+	{
+		String program =
+			"p( _datetime(2000,1,1,2,2,2) )." +
+			"p( _datetime(2000,12,1,2,2,2) )." +
+			"?- p( ?X ), p( ?Y ), ?X < ?Y.";
+		
+		String expectedResults =
+			"p( _datetime(2000,1,1,2,2,2), _datetime(2000,12,1,2,2,2) ).";
+		
+		evaluateWithAllStrategies( program, expectedResults );
+	}
+		
 	/**
 	 * Check that a rule containing a negated sub-goal that has a variable that
 	 * is not in the rule head can still be evaluated.
@@ -1044,42 +1086,35 @@ public class FunctionalTest extends TestCase
 	}
 	
 	/**
-	 * Check that a long chain of rules can be correctly evaluated.
+	 * Check that a long chain of rules can be correctly evaluated, i.e. a implies b,
+	 * b implies c, c implies d, etc.
+	 * We do this here for a 'chain' of 676 rules.
 	 * @throws Exception
 	 */
 	public void testLongChainOfRules() throws Exception
 	{
-		String program =
-			"a('a','b')." +
-			"b(?x,?y) :- a(?x,?y)." +
-			"c(?x,?y) :- b(?x,?y)." +
-			"d(?x,?y) :- c(?x,?y)." +
-			"e(?x,?y) :- d(?x,?y)." +
-			"f(?x,?y) :- e(?x,?y)." +
-			"g(?x,?y) :- f(?x,?y)." +
-			"h(?x,?y) :- g(?x,?y)." +
-			"i(?x,?y) :- h(?x,?y)." +
-			"j(?x,?y) :- i(?x,?y)." +
-			"k(?x,?y) :- j(?x,?y)." +
-			"l(?x,?y) :- k(?x,?y)." +
-			"m(?x,?y) :- l(?x,?y)." +
-			"n(?x,?y) :- m(?x,?y)." +
-			"o(?x,?y) :- n(?x,?y)." +
-			"p(?x,?y) :- o(?x,?y)." +
-			"q(?x,?y) :- p(?x,?y)." +
-			"r(?x,?y) :- q(?x,?y)." +
-			"s(?x,?y) :- r(?x,?y)." +
-			"t(?x,?y) :- s(?x,?y)." +
-			"u(?x,?y) :- t(?x,?y)." +
-			"v(?x,?y) :- u(?x,?y)." +
-			"w(?x,?y) :- v(?x,?y)." +
-			"x(?x,?y) :- w(?x,?y)." +
-			"y(?x,?y) :- x(?x,?y)." +
-			"z(?x,?y) :- y(?x,?y)." +
-			"?-z(?x,?y).";
-		String expectedResults = "z('a','b').";
-
-		fail( "This program takes a VERY LONG TIME to evaluate with anything other than 'naive' evaluation." );
+		StringBuilder buffer = new StringBuilder();
+		
+		String lastName = "first";
+		
+		buffer.append( lastName ).append( "('a','b')." ).append( lastName ).append( "(1,2)." );
+		
+		for ( char i = 'a'; i <= 'z'; ++i )
+		{
+			for ( char j = 'a'; j <= 'z'; ++j )
+			{
+				String nextName = "" + i + j;
+				
+				buffer.append( nextName ).append( "(?X,?Y ) :- " ).append( lastName ).append( "(?X,?Y )." );
+				
+				lastName = nextName;
+			}
+		}
+		buffer.append( "?- zz(?x,?y)." );
+		
+		String program = buffer.toString();
+		String expectedResults = "zz('a','b').zz(1,2).";
+		
 		evaluateWithAllStrategies( program, expectedResults );
 	}
 	
@@ -1100,7 +1135,8 @@ public class FunctionalTest extends TestCase
 	 * Evaluate the given logic program with all evaluation strategies and ensure that
 	 * each fails with the expected exception. 
 	 * @param program The logic program
-	 * @param expectedExceptionClass The exception class object expected. 
+	 * @param expectedExceptionClass The exception class object expected or null for an
+	 * unknown exception type. 
 	 */
 	private void checkFailureWithAllStrategies( String program, Class expectedExceptionClass )
 	{
@@ -1152,38 +1188,56 @@ public class FunctionalTest extends TestCase
 	 * @param correct
 	 * @throws Exception
 	 */
-	public void checkResults( Map<IPredicate, IMixedDatatypeRelation> test, String correct, String evaluationStrategy ) throws Exception
+	public void checkResults( Map<IPredicate, IMixedDatatypeRelation> actual, String expected, String evaluationStrategy ) throws Exception
 	{
 		Map<IPredicate, IMixedDatatypeRelation> f = new HashMap<IPredicate, IMixedDatatypeRelation>();
 		Set<IRule> r = new HashSet<IRule>();
 		Set<IQuery> q = new HashSet<IQuery>();
 
 		IProgram p = Factory.PROGRAM.createProgram( f, r, q );
-		Parser.parse( correct, p );
+		Parser.parse( expected, p );
 
-		IMixedDatatypeRelation r0 = null;
-		IMixedDatatypeRelation r1 = null;
-		
+		if ( PRINT_RESULTS )
+			System.out.println( ExecutionHelper.resultsTostring( actual ) );
+
 		for( IPredicate pr : p.getPredicates() )
 		{
-			r0 = p.getFacts().get( pr );
-			r1 = test.get( pr );
+			IMixedDatatypeRelation expectedPredicate = p.getFacts( pr );
 			
-			if ( r0 != null && r1 == null )
+			IMixedDatatypeRelation actualPredicate = actual.get( pr );
+			
+			// TODO
+			// Strange behaviour - the arity of the predicate that indexes the relation
+			// that is the result of a query is very hard to predict, i.e. it might
+			// not have the same arity as the relations! Try expected or zero...
+			
+			if ( actualPredicate == null )
+			{
+				IPredicate tempPred = makePredicate( pr.getPredicateSymbol(), 0 );
+			
+				actualPredicate = actual.get( tempPred );
+			}
+			
+			if ( expectedPredicate != null && actualPredicate == null )
 				fail();
 
-			if ( r0 == null && r1 != null )
+			if ( expectedPredicate == null && actualPredicate != null )
 				fail();
 			
-			if ( r0 != null )
+			if ( expectedPredicate != null )
 			{
 				assertEquals( evaluationStrategy + ": Each relation must have the same number of tuples",
-								r0.size(), r1.size() );
+								expectedPredicate.size(), actualPredicate.size() );
 				assertTrue( evaluationStrategy + ": The output relation must contain all expected tuples",
-								r0.containsAll( r1 ) );
+								expectedPredicate.containsAll( actualPredicate ) );
 				assertTrue( evaluationStrategy + ": The expected relation must contain all out tuples",
-								r1.containsAll( r0 ) );
+								actualPredicate.containsAll( expectedPredicate ) );
 			}
 		}
+	}
+
+	IPredicate makePredicate( String symbol, int arity )
+	{
+		return BasicFactory.getInstance().createPredicate( symbol, arity );
 	}
 }
