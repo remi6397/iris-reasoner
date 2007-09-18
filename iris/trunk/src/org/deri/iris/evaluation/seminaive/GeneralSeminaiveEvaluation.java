@@ -55,7 +55,7 @@ public abstract class GeneralSeminaiveEvaluation implements IBottomUpEvaluator {
 	
 	protected IExpressionEvaluator method;
 
-	protected IProgram p;
+	protected IProgram mProgram;
 	
 	/** Translator to the relational algebra model. */
 	protected Rule2Relation rr = null;
@@ -71,9 +71,9 @@ public abstract class GeneralSeminaiveEvaluation implements IBottomUpEvaluator {
 					"The expression evaluator and the program must not be null");
 		}
 		this.method = e;
-		this.p = p;
+		mProgram = p;
 		this.rr = new Rule2Relation();
-		this.idbMap = rr.translateRules(this.p.getRules());
+		this.idbMap = rr.translateRules(mProgram.getRules());
 		this.results = Factory.EVALUATION.createResultSet();
 	}
 	
@@ -84,7 +84,7 @@ public abstract class GeneralSeminaiveEvaluation implements IBottomUpEvaluator {
 		/** EVAL (pi, R1,..., Rk, Q1,..., Qm); */
 		this.results.getResults().put(
 				q.getQueryLiteral(0).getPredicate(), 
-				this.method.evaluate(this.rr.translateQuery(q), this.p));
+				this.method.evaluate(this.rr.translateQuery(q), mProgram));
 		
 		return true;
 	}
@@ -100,7 +100,7 @@ public abstract class GeneralSeminaiveEvaluation implements IBottomUpEvaluator {
 							entry.getKey().getPredicateSymbol(), 
 							entry.getValue().getVariables().size()),
 					//entry.getKey(), 
-					this.method.evaluate(entry.getValue(), this.p));
+					this.method.evaluate(entry.getValue(), mProgram));
 		}	
 		return true;
 	}

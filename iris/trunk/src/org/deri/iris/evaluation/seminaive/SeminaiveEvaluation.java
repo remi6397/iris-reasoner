@@ -25,8 +25,6 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
-import static org.deri.iris.factory.Factory.RELATION;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -62,74 +60,93 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 		super(e, program);
 	}
 
-	public boolean evaluate() {
-		/**
-		 * Input: IDB --> pi = ITree; Relevants Rs for each IDB are the leaves
-		 * of the ITree
-		 */
-		boolean newTupleAdded = false, cont = true;
-		// A realtion with newly derived tuples
-		IMixedDatatypeRelation p = null;
-		// A map of IDB predicates and their incremental relations
-		Map<IPredicate, IMixedDatatypeRelation> aq = new HashMap<IPredicate, IMixedDatatypeRelation>();
-		// A set of IDB predicates for a given stratum w.r.t the logig program
-		Set<IPredicate> preds = null;
-		
-		/** Evaluate rules */
-		for (int i = 1, maxStrat = MiscOps.getMaxStratum(this.p, this.idbMap.keySet()); 
-				i <= maxStrat; i++) {
-			preds = MiscOps.getPredicatesOfStratum(this.p, this.idbMap.keySet(), i);
+	/**
+	 * Algorithm from Ullman, Principles of Database and Knowledge-base Systems, page 127
+	 */
+	public boolean evaluate()
+	{
+		// Evaluate all the rules one stratum at a time
+		for (int i = 1, maxStrat = MiscOps.getMaxStratum(mProgram, this.idbMap.keySet()); 
+				i <= maxStrat; i++)
+		{
+			// A map of IDB predicates and their incremental relations
+			Map<IPredicate, IMixedDatatypeRelation> dP = new HashMap<IPredicate, IMixedDatatypeRelation>();
+			
+			// All head predicates of each rule
+			Set<IPredicate> preds = MiscOps.getPredicatesOfStratum(mProgram, this.idbMap.keySet(), i);
+			
 			/**
 			 * <p>Algorithm:</p>
 			 * <p>
-			 * for i := 1 to m do begin 
-			 * 	APi := EVAL(pi, R1,...,Rk,0,...0); 
-			 * 	Pi := APi; 
-			 * end;
+			 * 		for i := 1 to m 
+			 * 			dPi := EVAL(pi, R1,...,Rk,0,...0); 
+			 * 			Pi := dPi; 
 			 * </p>
 			 */
-			for (final IPredicate pr : preds) {
-				// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-				p = method.evaluate(this.idbMap.get(pr), this.p);
-				if(! aq.containsKey(pr)) aq.put(pr, RELATION.getMixedRelation(p.getArity()));
-				this.p.addFacts(pr, p);
-				aq.get(pr).addAll(this.p.getFacts(pr));
+			for( final IPredicate pr : preds )
+			{
+				IMixedDatatypeRelation dPi = method.evaluate( idbMap.get( pr ), mProgram );
+				
+				//dP.put( pr, RELATION.getMixedRelation( dPi.getArity() ) );
+				
+				/*
+				dP.put( pr, dPi ); // On its own, this line breaks testTransitiveClosure()
+				
+				IMixedDatatypeRelation programFacts = mProgram.getFacts(pr);
+				programFacts.addAll( dPi );
+				dPi.addAll( programFacts );
+				*/
+				
+				mProgram.addFacts( pr, dPi );
 			}
 			/**
 			 * <p>Algorithm:</p>
 			 * <p>
-			 * repeat 
-			 * 	for i := 1 to m do 
-			 * 		AQ := APi; 
-			 * 	for i := 1 to m do begin 
-			 * 		APi := EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm); 
-			 * 		APi := APi - Pi; 
-			 * 	end; 
-			 * 	for i := 1 to m do 
-			 * 		Pi := Pi U APi; 
-			 * until APi = 0 for all i;
+			 * 	repeat 
+			 * 		for i := 1 to m 
+			 * 			dQi := dPi; 
+			 * 		for i := 1 to m 
+			 * 			dPi := EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, dQ1,...,dQm); 
+			 * 			dPi := dPi - Pi; 
+			 * 		for i := 1 to m 
+			 * 			Pi := Pi U dPi; 
+			 * 	until dPi = 0 for all i;
 			 * </p>
 			 */
-			cont = true;
-			while (cont) {
-				cont = false;
-				if(preds.size() == 0) break;
-				for (final IPredicate pr : preds) {
-					newTupleAdded = false;
-					// EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, AQ1,...,AQm);
-					p = method.evaluateIncrementally(this.idbMap.get(pr), this.p, aq);
-					if(this.p.getFacts(pr) != null && 
-							! this.p.getFacts(pr).containsAll(p)){
-						
-						removeDeducedTuples(p, this.p.getFacts(pr));
-						aq.put(pr, p);
-						this.p.addFacts(pr, p);
-						newTupleAdded = true;
-					}else{
-						if(aq.get(pr) != null) aq.get(pr).clear(); 
-						newTupleAdded = false;
+			boolean newTuples = true;
+			while (newTuples)
+			{
+				newTuples = false;
+				
+				for (final IPredicate pr : preds)
+				{
+					IMixedDatatypeRelation dPi = method.evaluateIncrementally(idbMap.get(pr), mProgram, dP);
+					
+					// Anything to do?
+					if ( dPi.size() > 0 )
+					{
+						IMixedDatatypeRelation programFacts = mProgram.getFacts(pr);
+						if(programFacts != null )
+						{
+							if ( ! programFacts.containsAll(dPi) )
+							{
+								removeDeducedTuples(dPi, programFacts);
+								dP.put(pr, dPi);
+								newTuples = true;
+							}
+						}
 					}
-					cont = cont || newTupleAdded;
+					if ( ! newTuples )
+						dP.remove( pr );
+//						dP.get( pr ).clear();
+				}
+
+				// Iterate new tuples in dP[i] and add to program
+				Iterator<Map.Entry<IPredicate, IMixedDatatypeRelation>> iterdP = dP.entrySet().iterator();
+				while( iterdP.hasNext() )
+				{
+					Map.Entry<IPredicate, IMixedDatatypeRelation> e = iterdP.next();
+					mProgram.addFacts( e.getKey(), e.getValue() );
 				}
 			}
 		}
