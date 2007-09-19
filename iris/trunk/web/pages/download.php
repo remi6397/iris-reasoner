@@ -6,6 +6,29 @@
 <p>IRIS releases are available at <a href="http://sourceforge.net/project/platformdownload.php?group_id=167309">sourceforge</a>.</p>
 
 <h2>Release History</h2>
+
+<p><b><a href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=540609">v0.4</a></b> 2007-09-19</p> 
+<p>New features</p>
+<ul>
+	<li>1773193 - IRIS is now able to persist facts in a relational database</li>
+	<li>1773182 - Add subtraction builtin for dateTime</li>
+</ul>
+	
+<p>Bug fixes</p>
+<ul>
+	<li>1716628 - MiscOps.statify(...) method is broken</li>
+	<li>1749168 - satisfiability checks broken</li>
+	<li>1778705 - it is possible to specify inconsistent timezones</li>
+	<li>1780055 - Duration should hold the timespan in millis</li>
+	<li>1792385 - DateTime datatype handles months incorrectly</li>
+	<li>1792822 - Exceptionally long evaluation time</li>
+</ul>
+	
+<p>Known problems</p>
+<ul>
+    <li>1798276 - Magic Sets evaluation does not allow conjunctive queries. (This will be fixed for the next release.)</li>
+</ul>
+
 <p><b><a href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=516287">v0.3</a></b> 2007-06-15</p> 
 <ul>
 	<li>enabled multiple programs per vm</li>
