@@ -3,9 +3,31 @@ The IRIS ChangeLog:
 
 Changes since 0.3:
 ==================
-	Improvements:
-	-------------
-	- enabled multible programs per vm
+
+	Improvements
+	------------
+	o Enabled multiple programs per vm
+	o IRIS is now able to persist facts in a relational database
+	
+	New features
+	------------
+	1773182 - Add subtraction builtin for dateTime
+	
+	Bug fixes
+	---------
+	1716628 - MiscOps.statify(...) method is broken
+	1749168 - satisfiability checks broken
+	1778705 - it is possible to specify inconsistent timezones
+	1780055 - Duration should hold the timespan in millis
+	1792385 - DateTime datatype handles months incorrectly
+	1792822 - Exceptionally long evaluation time
+	
+	Known problems
+	--------------
+	o The Magic sets evaluation algorithm will not work with conjunctive queries. This restriction
+	  will be removed for the next release.
+	
+
 Changes since 0.2:
 ==================
 	Additions:
@@ -17,20 +39,21 @@ Changes since 0.2:
 	- added the IndexingOnTheFlyRelation and corresponding implementations
 	- Relational algebra operators modified to handle IMixedDatatypeRelation
 	- Added the IRelationFactory interface (not all calls 
-	to the Relation constructor are exchanged, yet)
+	  to the Relation constructor are exchanged, yet)
 	- modified the IBuiltinInterface
 	- reimplemented the Complementor class (used for the construction 
-	of the DOM)
+	  of the DOM)
 	- modified the parser to distinguish the datatypes (according 
-	to the wsml datatype specification)
+	  to the wsml datatype specification)
 	- added the ITime interface, including the implementation, and so on...
+	
 	Fixes:
-	- added the possibility to make custom builitns (see doc folder for a
-	howto)
-	- added relations to accept tuples with various datatypes at any
-	position
 	------
+	- added the possibility to make custom builitns (see doc folder for a
+	  howto)
+	- added relations to accept tuples with various datatypes at any
+	  position
 	- some bugfixes in the magic sets
 	- some bugfixes in the Join operator and SeminaiveEvaluation classes
 
-$Id: ChangeLog,v 1.7 2007-06-20 08:55:47 poettler_ric Exp $
+$Id: ChangeLog,v 1.8 2007-09-19 15:07:54 bazbishop237 Exp $
