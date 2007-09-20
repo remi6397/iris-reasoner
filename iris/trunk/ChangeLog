@@ -4,13 +4,9 @@ The IRIS ChangeLog:
 Changes since 0.3:
 ==================
 
-	Improvements
-	------------
-	o Enabled multiple programs per vm
-	o IRIS is now able to persist facts in a relational database
-	
 	New features
 	------------
+	1773193 - IRIS is now able to persist facts in a relational database
 	1773182 - Add subtraction builtin for dateTime
 	
 	Bug fixes
@@ -24,8 +20,8 @@ Changes since 0.3:
 	
 	Known problems
 	--------------
-	o The Magic sets evaluation algorithm will not work with conjunctive queries. This restriction
-	  will be removed for the next release.
+	1798276 - Magic Sets evaluation does not allow conjunctive queries. (This will
+	          will be fixed for the next release.)
 	
 
 Changes since 0.2:
@@ -33,7 +29,7 @@ Changes since 0.2:
 	Additions:
 	----------
 	- Support for all data types supported by WSML
-	- A numbr of built-ins implemented
+	- A number of built-ins implemented
 	- The evaluation modified to properly handle built-ins.
 	- added the IMixedDatatypeRelation  and corresponding implementations
 	- added the IndexingOnTheFlyRelation and corresponding implementations
@@ -56,4 +52,4 @@ Changes since 0.2:
 	- some bugfixes in the magic sets
 	- some bugfixes in the Join operator and SeminaiveEvaluation classes
 
-$Id: ChangeLog,v 1.8 2007-09-19 15:07:54 bazbishop237 Exp $
+$Id: ChangeLog,v 1.9 2007-09-20 06:13:21 bazbishop237 Exp $
