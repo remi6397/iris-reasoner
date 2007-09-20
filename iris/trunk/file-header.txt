@@ -4,7 +4,7 @@
 	built-in predicates, default negation (under well-founded semantics), 
 	function symbols and contexts. 
     
-    Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+    Copyright (C) 2007  Digital Enterprise Research Institute (DERI), 
     Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
     A-6020 Innsbruck. Austria.
 
