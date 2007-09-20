@@ -1,0 +1,295 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for dataLOGGER with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
+ * 
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
+package org.deri.iris.builtins;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import org.deri.iris.api.basics.IPredicate;
+
+/**
+ * <p>
+ * Holds the informaitons about various registered builtins.
+ * </p>
+ * <p>
+ * Before a builtin can be recognized by the parser as a builtin it must be
+ * first registered in the BuiltinRegister of the program the parser uses. A
+ * builtin can be registered at startup, or later by hand. In both cases the
+ * builtin got to implement a <code>public static</code> method called
+ * getBuiltinPredicate taking <b>no</b> arguments and returning the predicate
+ * defining the builtin (the name and the arity of the builtin). To register a
+ * builtin at startup there must be a file called &quot;<code>builtins.load</code>&quot;
+ * in the classpath containing the classnames of the builtins to register with
+ * one classname on each line. If you want to register a builtin by hand, you
+ * simply call the {@link #registerBuiltin() registerBuiltin} method passing the
+ * classname of the builtin to register.
+ * </p>
+ * <p>
+ * $Id: BuiltinRegister.java,v 1.5 2007-09-05 16:04:23 poettler_ric Exp $
+ * </p>
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision: 1.5 $
+ */
+public final class BuiltinRegister {
+
+	/** The Logger for this class. */
+	private static final Logger LOGGER = Logger.getLogger(BuiltinRegister.class);
+
+	/** The resource name of the custom builtins. */
+	private static final String CUSTOM_BUILTINS_FILE = "builtins.load";
+
+	/** The resource name of the core builtins. */
+	private static final String CORE_BUILTINS_FILE = "core.builtins.load";
+
+	/** Holding all the information about the builtins.
+	 * <ul>
+	 * <li>key: the name (predicate symbol of the builtin)</li>
+	 * <li>value: the RegisterEntry containing the informaiton about the
+	 * builtin</li>
+	 * </ul>
+	 */
+	private final Map<String, RegisterEntry> reg = new HashMap<String, RegisterEntry>();
+
+	/**
+	 * Constructs a new builtin register. This constructor also reads the
+	 * builtins.load file from the classpath. A builtin with the same
+	 * name as a core builtin wont be registered.
+	 */
+	public BuiltinRegister() {
+		registerFromResource(CUSTOM_BUILTINS_FILE, false);
+		registerFromResource(CORE_BUILTINS_FILE, true);
+	}
+
+	/**
+	 * Tries to register the builtis from a given resource. Already existing
+	 * builtins in the register will be overwritten.
+	 * @param res the resource name from where to load the builtins
+	 * @param mandatory <code>true</code> if it is mandatory, that this file
+	 * can be located, otherwise <code>false</code>
+	 */
+	private void registerFromResource(final String res, final boolean mandatory) {
+		assert res != null: "The resource must not be null";
+
+		final InputStream is = getClass().getClassLoader().getSystemResourceAsStream(res);
+		if (is != null) {
+			final BufferedReader br = new BufferedReader(new InputStreamReader(is));
+			try {
+				String line;
+				while ((line = br.readLine()) != null) {
+					try {
+						privRegisterBuiltin(Class.forName(line));
+					} catch (ClassNotFoundException e) {
+						LOGGER.warn("Couldn't load the class: " + line);
+					}
+				}
+			} catch (IOException e) {
+				LOGGER.warn("Error while reading the " + res + " file", e);
+			} finally {
+				try {
+					br.close();
+				} catch (IOException e) {
+					LOGGER.warn("Couldn't close the " + res + " file", e);
+				}
+			}
+		} else if (mandatory) {
+			LOGGER.error("Couldn't locate the resource " + res);
+		}
+	}
+
+	/**
+	 * Registers a single builtin. This method searches for the
+	 * &quot;<code>getBuiltinPredicate</code>&quot; method and ivokes it.
+	 * Already registered builtins will be overwritten.
+	 * @param c the builtinclass to register
+	 */
+	private void privRegisterBuiltin(final Class c) {
+		assert c != null: "The class must not be null";
+
+		try {
+			final RegisterEntry ent = new RegisterEntry(c, 
+					(IPredicate) c.getMethod("getBuiltinPredicate").invoke(null));
+			reg.put(ent.getName(), ent);
+		} catch (NoSuchMethodException e) {
+			LOGGER.warn("Coundn't find the method: " + c.getName() + 
+					".getBuiltinPredicate()", e);
+		} catch (IllegalAccessException e) {
+			LOGGER.warn("Coundn't find the method: " + c.getName() + 
+					".getBuiltinPredicate()", e);
+		} catch (InvocationTargetException e) {
+			LOGGER.warn("Coundn't find the method: " + c.getName() + 
+					".getBuiltinPredicate()", e);
+		}
+	}
+
+	/**
+	 * Registers a single builtin. This method searches for the
+	 * &quot;<code>getBuiltinPredicate</code>&quot; method and ivokes it.
+	 * @param c the builtinclass to register
+	 * @throws NullPointerException if the class is <code>null</code>
+	 */
+	public void registerBuiltin(final Class c) {
+		privRegisterBuiltin(c);
+	}
+
+	/**
+	 * Returns the arity of a registered builtin.
+	 * @param s the name (predicate symbol) of the builtin
+	 * @return the arity, or -1 if such a builtin hasn't been registered yet
+	 */
+	public int getBuiltinArity(final String s) {
+		final RegisterEntry re = reg.get(s);
+		return (re == null) ? -1 : re.getArity();
+	}
+
+	/**
+	 * Returns the class of a registered builtin.
+	 * @param s the name (predicate symbol) of the builtin
+	 * @return the class, or <code>null</code> if such a builtin hasn't been registered yet
+	 */
+	public Class getBuiltinClass(final String s) {
+		final RegisterEntry re = reg.get(s);
+		return (re == null) ? null : re.getBuiltinClass();
+	}
+
+	/**
+	 * <p>
+	 * Returns a short description of this object. <b>The format of
+	 * the returned string is undocumented and subjet to change.</b>
+	 * </p>
+	 * <p>
+	 * An example return string could be: <code>[ADD[3,
+	 * org.deri.iris.builtins.AddBuiltin],SUBTRACT[3,
+	 * org.deri.builtins.SubtractBuiltin]]</code>
+	 * </p>
+	 * @return the description
+	 */
+	public String toString() {
+		return reg.values().toString();
+	}
+
+	public boolean equals(final Object o) {
+		if (!(o instanceof BuiltinRegister)) {
+			return false;
+		}
+		return reg.equals(((BuiltinRegister) o).reg);
+	}
+
+	public int hashCode() {
+		return reg.hashCode();
+	}
+
+	/**
+	 * Holds various informations about a builtin.
+	 */
+	private static class RegisterEntry {
+
+		/** The class of the builtin. */
+		private Class builtinClass;
+
+		/** The predicate defining the builtin. */
+		private IPredicate pred;
+
+		/**
+		 * Constructs a registry entry.
+		 * @param c the class of the builtin
+		 * @param p the predicate of the builtin
+		 * @throws NullPointerException if the class is <code>null</code>
+		 * @throws NullPointerException if the predicate is <code>null</code>
+		 */
+		public RegisterEntry(final Class c, final IPredicate p) {
+			if (c == null) {
+				throw new NullPointerException("The class must not be null");
+			}
+			if (p == null) {
+				throw new NullPointerException("The predicate must not be null");
+			}
+			builtinClass = c;
+			pred = p;
+		}
+
+		/**
+		 * Returns the class of the builtin.
+		 * @return the class
+		 */
+		public Class getBuiltinClass() {
+			return builtinClass;
+		}
+
+		/**
+		 * Returns the arity of the builtin.
+		 * @return the arity
+		 */
+		public int getArity() {
+			return pred.getArity();
+		}
+
+		/**
+		 * Returns the name (predicate symbol) of the builtin.
+		 * @return the name
+		 */
+		public String getName() {
+			return pred.getPredicateSymbol();
+		}
+
+		/**
+		 * <p>
+		 * Returns a short description of this object. <b>The format of
+		 * the returned string is undocumented and subjet to change.</b>
+		 * </p>
+		 * <p>
+		 * An example return string could be: <code>ADD[3,
+		 * org.deri.iris.builtins.AddBuiltin)</code>
+		 * </p>
+		 * @return the description
+		 */
+		public String toString() {
+			return getName() + "[" + getArity() + ", " + getBuiltinClass() + "]";
+		}
+
+		public boolean equals(final Object o) {
+			if (!(o instanceof RegisterEntry)) {
+				return false;
+			}
+			final RegisterEntry e = (RegisterEntry) o;
+			return builtinClass.equals(e.builtinClass) && pred.equals(e.pred);
+		}
+
+		public int hashCode() {
+			int res = 17;
+			res = res * 37 + pred.hashCode();
+			res = res * 37 + builtinClass.hashCode();
+			return res;
+		}
+	}
+}
