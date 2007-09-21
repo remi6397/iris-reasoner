@@ -231,6 +231,10 @@ public final class MiscHelper {
 			throw new NullPointerException("The collection must not be null");
 		}
 
+		if (c.isEmpty()) {
+			return "";
+		}
+
 		final StringBuilder b = new StringBuilder();
 		for (final Object o : c) {
 			b.append(o).append(d);
