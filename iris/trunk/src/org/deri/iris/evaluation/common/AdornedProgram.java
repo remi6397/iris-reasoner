@@ -53,11 +53,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.24 2007-07-25 08:16:57 poettler_ric Exp $
+ * $Id: AdornedProgram.java,v 1.25 2007-09-21 09:11:55 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class AdornedProgram implements IAdornedProgram {
 
@@ -79,6 +79,12 @@ public class AdornedProgram implements IAdornedProgram {
 	/** Query for this program. */
 	private final IQuery query;
 
+	/** 
+	 * Predicate symbol for the temporary query. This query will be used
+	 * when there is a conjunctive query.
+	 */
+	private static final String TEMP_PREDICATE_NAME = "TEMP_QUERY_PREDICATE";
+
 	/**
 	 * Creates a new adorned program depending on the submitted rules and the
 	 * query.
@@ -95,7 +101,7 @@ public class AdornedProgram implements IAdornedProgram {
 	 * @throws IllegalArgumentException
 	 *             if the list of rules contains null
 	 */
-	public AdornedProgram(final Set<IRule> rules, final IQuery query) {
+	public AdornedProgram(final Collection<IRule> rules, final IQuery query) {
 		// check the parameters
 		if ((rules == null) || (query == null)) {
 			throw new NullPointerException(
@@ -111,16 +117,56 @@ public class AdornedProgram implements IAdornedProgram {
 						+ "only works with rules with one literal in the head.");
 			}
 		}
-		if (query.getQueryLenght() != 1) {
-			throw new IllegalArgumentException("At the moment there are only "
-					+ "queries with one literal supported");
+
+		if (query.getQueryLiterals().size() > 1) { // if we got a conjunctive query
+			// construct the temp query and rule
+			final ILiteral tmpLiteral = BASIC.createLiteral(
+					true, 
+					BASIC.createAtom(
+						BASIC.createPredicate(TEMP_PREDICATE_NAME, 0), 
+						BASIC.createTuple(Collections.EMPTY_LIST)));
+			final IRule tmpRule = BASIC.createRule(
+					BASIC.createHead(tmpLiteral), 
+					BASIC.createBody(query.getQueryLiterals()));
+			final IQuery tmpQuery = BASIC.createQuery(tmpLiteral);
+
+			// adorn it
+			final Set<IRule> modRules = new HashSet<IRule>(rules);
+			modRules.add(tmpRule);
+			createAdornedRules(modRules, tmpQuery);
+
+			// remove the temp rule again and create the query out
+			// of it
+			for (final IRule r : adornedRules) {
+				if ((r.getHeadLiterals().size() == 1) && 
+						(r.getHeadLiterals().get(0).equals(tmpLiteral))) {
+					adornedRules.remove(r);
+					//newQuery = BASIC.createQuery(r.getBodyLiterals());
+					break;
+				}
+			}
+		} else { // handle non-conjunctive query
+			createAdornedRules(rules, query);
 		}
 
 		// TODO: maybe defensive copy should be made.
-		this.rules = rules;
+		this.rules = new HashSet<IRule>(rules);
 		this.query = query;
+	}
 
-		updateDerivedPredicates();
+	/**
+	 * Iterates over all the rules an checks what can be adorned. <b>The
+	 * query must only contain one literal!</b>
+	 * @param rules the rules to adorn
+	 * @param query the the query from where to take the bounds from
+	 */
+	private void createAdornedRules(final Collection<IRule> rules, final IQuery query) {
+		assert rules != null: "The rules must not be null";
+		assert !rules.contains(null): "The rules must not contain null";
+		assert query != null: "The query must not be null";
+		assert query.getQueryLiterals().size() == 1: "The query must only contain one literal";
+
+		deriveredPredicates.addAll(updateDerivedPredicates(rules)); // TODO: i think this should go
 
 		// creating an adored predicate out of the query, and add it to the
 		// predicate sets
@@ -130,7 +176,7 @@ public class AdornedProgram implements IAdornedProgram {
 		final Set<IAdornedPredicate> predicatesToProcess = new HashSet<IAdornedPredicate>();
 		if (Collections.frequency(Arrays.asList(qa.getAdornment()),
 				Adornment.FREE) == qa.getAdornment().length) {
-			predicatesToProcess.addAll(doAllFreeQuery(query));
+			predicatesToProcess.addAll(startAllFreeQuery(rules, query));
 		} else {
 			predicatesToProcess.add(qa);
 			adornedPredicates.add(qa);
@@ -282,11 +328,21 @@ public class AdornedProgram implements IAdornedProgram {
 	/**
 	 * Determines all derived predicates of the program and adds them to the
 	 * derivedPredicates set.
+	 * @param rules rules from where to check which predicates are derived
+	 * @return the derived predicates
 	 */
-	private void updateDerivedPredicates() {
-		for (IRule r : rules) {
-			deriveredPredicates.add(r.getHeadLiteral(0).getPredicate());
+	private static Set<IPredicate> updateDerivedPredicates(final Collection<IRule> rules) {
+		assert rules != null: "The rules must not be null";
+		assert !rules.contains(null): "The rules must not contain null";
+
+		final Set<IPredicate> derived = new HashSet<IPredicate>();
+		for (final IRule r : rules) {
+			//deriveredPredicates.add(r.getHeadLiteral(0).getPredicate());
+			for (final ILiteral l : r.getHeadLiterals()) {
+				derived.add(l.getPredicate());
+			}
 		}
+		return derived;
 	}
 
 	/**
@@ -343,23 +399,17 @@ public class AdornedProgram implements IAdornedProgram {
 	 * This is a helpermethod to handle the case if no arguments are bound in
 	 * the query.
 	 * 
+	 * @param rules the rules to check for the query predicate
 	 * @param q
 	 *            the query where no arguments are bound (the arguments (terms)
 	 *            won't be checked)
 	 * @return a set of all newly generated adorned predicates
-	 * @throws NullPointerException
-	 *             if the query is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the length of the query is not 1
 	 */
-	private Set<IAdornedPredicate> doAllFreeQuery(final IQuery q) {
-		if (q == null) {
-			throw new NullPointerException("The query must not be null");
-		}
-		if (q.getQueryLenght() != 1) {
-			throw new IllegalArgumentException(
-					"The querylenght must be 1, but was " + q.getQueryLenght());
-		}
+	private Set<IAdornedPredicate> startAllFreeQuery(final Collection<IRule> rules, final IQuery q) {
+		assert rules != null: "The rules must not be null";
+		assert !rules.contains(null): "The rules must not contain null";
+		assert q != null: "The query must not be null";
+		assert q.getQueryLenght() == 1: "The query must have length of 1";
 
 		final IPredicate p = q.getQueryLiteral(0).getPredicate();
 		final Set<IAdornedPredicate> todo = new HashSet<IAdornedPredicate>();
@@ -635,8 +685,8 @@ public class AdornedProgram implements IAdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.24 $
-	 * @date $Date: 2007-07-25 08:16:57 $
+	 * @version $Revision: 1.25 $
+	 * @date $Date: 2007-09-21 09:11:55 $
 	 */
 	public static class AdornedRule implements IAdornedRule {
 		/** The inner rule represented by this object */

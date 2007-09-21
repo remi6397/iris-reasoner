@@ -68,11 +68,11 @@ import org.deri.iris.MiscHelper;
  * Tests the adornments.
  * </p>
  * <p>
- * $Id: AdornmentsTest.java,v 1.5 2007-04-16 14:54:07 poettler_ric Exp $
+ * $Id: AdornmentsTest.java,v 1.6 2007-09-21 09:11:56 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class AdornmentsTest extends TestCase {
 
@@ -646,15 +646,48 @@ public class AdornmentsTest extends TestCase {
 	}
 
 	/**
+	 * Tests conjunctive queries.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
+	 */
+	public void testConjunctiveQuery() {
+		final String prog = "p(?X, ?X) :- c(?X).\n" + 
+			"r(?X, ?X, ?X) :- c(?X).\n" + 
+			"s(?X, ?X) :- c(?X).\n" + 
+			"?- p(?X, 'a'), r('b', ?X, ?Y), s('e', ?Y).";
+		final IProgram p = Parser.parse(prog);
+		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
+
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final Adornment[] fb = new Adornment[]{Adornment.FREE, Adornment.BOUND};
+		final Adornment[] bb = new Adornment[]{Adornment.BOUND, Adornment.BOUND};
+		final ILiteral c = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 1), BASIC.createTuple(X)));
+		final ITerm[] XX = new ITerm[]{X, X};
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// p^fb(?X, ?X) :- c(?X)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", fb, XX)), BASIC.createBody(c)));
+		// r^bbf(?X, ?X, ?X) :- c(?X)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, new ITerm[]{X, X, X})), BASIC.createBody(c)));
+		// s^bb(?X, ?X) :- c(?X)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XX)), BASIC.createBody(c)));
+
+		assertTrue("The rules must be '" + MiscHelper.join("\n", ref) + "', but were '" + 
+				MiscHelper.join("\n", ap.getAdornedRules()) + "'", 
+				MiscHelper.compare(ap.getAdornedRules(), ref, RC));
+	}
+
+	/**
 	 * <p>
 	 * Compares two rules according to their predicate symbols.
 	 * </p>
 	 * <p>
-	 * $Id: AdornmentsTest.java,v 1.5 2007-04-16 14:54:07 poettler_ric Exp $
+	 * $Id: AdornmentsTest.java,v 1.6 2007-09-21 09:11:56 poettler_ric Exp $
 	 * </p>
 	 * 
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.5 $
+	 * @version $Revision: 1.6 $
 	 */
 	private static class RuleComparator implements Comparator<IRule> {
 		public int compare(IRule o1, IRule o2) {
