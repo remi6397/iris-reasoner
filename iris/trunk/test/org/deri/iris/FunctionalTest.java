@@ -604,7 +604,7 @@ public class FunctionalTest extends TestCase
 	}
 
 	/**
-	 * Check that tuples with varying types happily co-exist in the same relation.
+	 * Check that tuples with various types happily co-exist in the same relation.
 	 */
 	public void testMixedDataTypes() throws Exception
 	{
@@ -717,12 +717,155 @@ public class FunctionalTest extends TestCase
 	}
 	
 	/**
-	 * Assert that the <, <=, =, !=, >, >= operators function as expected for all
-	 * data types.
+	 * Create (valid) facts using all possible data types.
+	 * @throws Exception 
 	 */
-	public void testBuiltInDataTypes()
+	public void testValidDataTypes() throws Exception
 	{
-		fail( "Not implemented yet." );
+		String allDataTypes =
+			"p( _string( 'a string' ) )." +
+			"p( 'literal string' )." +
+			
+			"p( _decimal( -1.11 ) )." +
+			"p( 2.22 )." +
+			
+			"p( _integer( 333 ) )." +
+			"p( -444 )." +
+			
+			"p( _float( 5.55 ) )." +
+			
+			"p( _double( 6.66 ) )." +
+			
+			"p( _iri( 'http://example.org/PersonOntology#Person' ) )." +
+			"p( _'http://example.org/PersonOntology#Human' )." +
+			
+			"p( dc#title )." +
+			"p( _sqname( foaf#name ) )." +
+
+			"p( _boolean( 'true' ) )." +
+			"p( _boolean( 'false' ) )." +
+
+			"p( _duration( 1970, 1, 1, 23, 15, 30 ) )." +
+			"p( _duration( 1970, 1, 1, 23, 15, 29, 99 ) )." +
+
+			"p( _datetime( 1980, 2, 2, 1, 2, 3 ) )." +
+			"p( _datetime( 1980, 2, 2, 1, 2, 3, 1, 30 ) )." +
+			"p( _datetime( 1980, 2, 2, 1, 2, 3, 99, 1, 30 ) )." +
+			
+			"p( _date( 1981, 3, 3 ) )." +
+			"p( _date( 1982, 4, 4, 13, 30 ) )." +
+			
+			"p( _time( 1, 2, 3 ) )." +
+			"p( _time( 1, 2, 3, 1, 30 ) )." +
+			"p( _time( 1, 2, 3, 99, 1, 30 ) )." +
+			
+			"p( _gyear( 1991 ) )." +
+			"p( _gyearmonth( 1992, 2 ) )." +
+			"p( _gmonth( 3 ) )." +
+			"p( _gmonthday( 2, 28 ) )." +
+			"p( _gday( 31 ) )." +
+			
+			"p( _hexbinary( '0FB7abcd' ) )." +
+			"p( _base64binary( 'QmFycnkgQmlzaG9w' ) )." +
+			"";
+
+		String program =
+			allDataTypes +
+			"?- p( ?X ).";
+		
+       	String expectedResults = allDataTypes;
+
+       	evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Check that badly formatted literals cause failures.
+	 * @throws Exception 
+	 */
+	public void testInvalidDataTypes()
+	{
+		checkFailureWithAllStrategies( "p( _string( 'a', 'b' ) ).", null );
+
+		checkFailureWithAllStrategies( "p( _decimal( -1.A1 ) ).", null );
+		checkFailureWithAllStrategies( "p( 1.2B ).", null );
+		
+		checkFailureWithAllStrategies( "p( _integer( -B ) ).", null );
+		checkFailureWithAllStrategies( "p( -C ).", null );
+
+		checkFailureWithAllStrategies( "p( _float( 3.r3) ).", null );
+		checkFailureWithAllStrategies( "p( _double( -2.3u ) ).", null );
+
+		checkFailureWithAllStrategies( "p( _iri( 'http://example.org/PersonOntology #Person' ) ).", null );
+		checkFailureWithAllStrategies( "p( _'http://example.org/ PersonOntology#Human' ).", null );
+		
+		checkFailureWithAllStrategies( "p( dc #title ).", null );
+		checkFailureWithAllStrategies( "p( _sqname( foaf name ) ).", null );
+		
+		// TODO This should fail
+		checkFailureWithAllStrategies( "p( _boolean( 'blah' ) ).", null );
+
+		// Too few parameters
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 3, 4, 12, 30 ) ).", null );
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 3, 4, 12, 30, 0, 1, 2, 3, 4 ) ).", null );
+
+		// Bad month
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 13, 4, 12, 30, 0 ) ).", null );
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 0, 4, 12, 30, 0 ) ).", null );
+
+		// Bad day
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 32, 12, 30, 0 ) ).", null );
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 0, 12, 30, 0 ) ).", null );
+
+		// Bad hour
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 24, 30, 0 ) ).", null );
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, -1, 30, 0 ) ).", null );
+
+		// Bad minute
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 60, 0 ) ).", null );
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, -1, 0 ) ).", null );
+
+		// Bad second, NB There can be leap seconds!
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 61 ) ).", null );
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, -1 ) ).", null );
+
+		// Bad millisecond
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 1000 ) ).", null );
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, -1 ) ).", null );
+
+		// Bad time zone hour
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 999, 25, 30 ) ).", null );
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, 0, -25, 0 ) ).", null );
+
+		// TODO These should fail
+		// Bad time zone minute
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 999, 1, 60 ) ).", null );
+		checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, 0, -1, -60 ) ).", null );
+
+		// Wrong number of parameters
+		checkFailureWithAllStrategies( "p( _date( 1982, 3 ) ).", null );
+		checkFailureWithAllStrategies( "p( _date( 1982, 3, 4, 12, 30, 1 ) ).", null );
+
+		// Wrong number of parameters
+		checkFailureWithAllStrategies( "p( _time( 12, 30 ) ).", null );
+		checkFailureWithAllStrategies( "p( _time( 12, 30, 0, 99, 13, 0, 1 ) ).", null );
+	
+		checkFailureWithAllStrategies( "p( _yearmonth( 1980 ) ).", null );
+		checkFailureWithAllStrategies( "p( _yearmonth( 1980, 12, 1 ) ).", null );
+		checkFailureWithAllStrategies( "p( _yearmonth( 1980, 13 ) ).", null );
+		checkFailureWithAllStrategies( "p( _yearmonth( 1980, 0 ) ).", null );
+
+		checkFailureWithAllStrategies( "p( _monthday( 12 ) ).", null );
+		checkFailureWithAllStrategies( "p( _monthday( 12, 1, 1 ) ).", null );
+		checkFailureWithAllStrategies( "p( _monthday( 13, 1 ) ).", null );
+		checkFailureWithAllStrategies( "p( _monthday( 0, 1 ) ).", null );
+		checkFailureWithAllStrategies( "p( _monthday( 12, 32 ) ).", null );
+		checkFailureWithAllStrategies( "p( _monthday( 1, 0 ) ).", null );
+		
+		// Invalid hexadecimal
+		checkFailureWithAllStrategies( "p( _hexbinary( '0FB7abcdG' ) ).", null );
+		
+		// Invalid base 64
+		checkFailureWithAllStrategies( "p( _base64binary( 'QmFycnkgQmlzaG9wa' ) ).", null );
 	}
 	
 	/**
@@ -1096,9 +1239,18 @@ public class FunctionalTest extends TestCase
 		StringBuilder buffer = new StringBuilder();
 		
 		String lastName = "first";
-		
+
+		// Starting facts
 		buffer.append( lastName ).append( "('a','b')." ).append( lastName ).append( "(1,2)." );
 		
+		// Some more facts along the chain.
+		buffer.append( "ba" ).append( "(3,4)." );
+		buffer.append( "ma" ).append( "(5,6)." );
+		buffer.append( "za" ).append( "(7,8)." );
+		buffer.append( "zz" ).append( "(9,10)." );
+		
+		buffer.append( lastName ).append( "('a','b')." ).append( lastName ).append( "(1,2)." );
+
 		for ( char i = 'a'; i <= 'z'; ++i )
 		{
 			for ( char j = 'a'; j <= 'z'; ++j )
@@ -1113,7 +1265,45 @@ public class FunctionalTest extends TestCase
 		buffer.append( "?- zz(?x,?y)." );
 		
 		String program = buffer.toString();
-		String expectedResults = "zz('a','b').zz(1,2).";
+		String expectedResults =
+			"zz('a','b')." + 
+			"zz(1,2)." +
+			"zz(3,4)." +
+			"zz(5,6)." +
+			"zz(7,8)." +
+			"zz(9,10).";
+		
+		evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Check for the correct evaluation of a logic program that contains rules that require a great
+	 * deal of modification during rectification.
+	 * @throws Exception 
+	 */
+	public void testRuleRectification() throws Exception
+	{
+		String program =
+			"q( 1 )." +
+			"r( 2 )." +
+			"s( 3 )." +
+			"t( 1 )." +
+			"u( 4 )." +
+			"p( ?X, ?Y, ?Z ) :- q( ?X ), r( ?Y ), s( ?Z )." +
+			"p( ?X, ?Y, ?X ) :- q( ?X ), r( ?Y ), t( ?X )." +
+			"p( ?X, 3, ?Z ) :- q( ?X ), u( ?Z )." +
+			"p( ?X, 5, 5 ) :- q( ?X )." +
+			"p( 5, 5, 5 ) :- q( ?X )." +
+			"p( ?X, ?X, ?X ) :- q( ?X )." +
+			"?- p( ?X, ?Y, ?Z ).";
+		
+		String expectedResults =
+			"p( 1, 2, 3 )." +
+			"p( 1, 2, 1 )." +
+			"p( 1, 3, 4 )." +
+			"p( 1, 5, 5 )." +
+			"p( 5, 5, 5 )." +
+			"p( 1, 1, 1 ).";
 		
 		evaluateWithAllStrategies( program, expectedResults );
 	}
