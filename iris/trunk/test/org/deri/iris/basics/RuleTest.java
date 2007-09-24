@@ -492,8 +492,8 @@ public class RuleTest extends TestCase {
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
 		literal.getTuple().setTerm(0, TERM.createVariable("X"));
 		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(1, TERM.createVariable("U"));
-		literal.getTuple().setTerm(1, TERM.createVariable("V"));
+		literal.getTuple().setTerm(2, TERM.createVariable("U"));
+		literal.getTuple().setTerm(3, TERM.createVariable("V"));
 		literals.add(literal);
 		IHead head = BASIC.createHead(literals);
 
@@ -528,8 +528,8 @@ public class RuleTest extends TestCase {
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
 		literal.getTuple().setTerm(0, TERM.createVariable("X"));
 		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(1, TERM.createVariable("U"));
-		literal.getTuple().setTerm(1, TERM.createVariable("V"));
+		literal.getTuple().setTerm(2, TERM.createVariable("U"));
+		literal.getTuple().setTerm(3, TERM.createVariable("V"));
 		literals.add(literal);
 		IHead head = BASIC.createHead(literals);
 
@@ -564,8 +564,8 @@ public class RuleTest extends TestCase {
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
 		literal.getTuple().setTerm(0, TERM.createVariable("X"));
 		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(1, TERM.createVariable("U"));
-		literal.getTuple().setTerm(1, TERM.createVariable("V"));
+		literal.getTuple().setTerm(2, TERM.createVariable("U"));
+		literal.getTuple().setTerm(3, TERM.createVariable("V"));
 		literals.add(literal);
 		IHead head = BASIC.createHead(literals);
 
@@ -600,8 +600,8 @@ public class RuleTest extends TestCase {
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
 		literal.getTuple().setTerm(0, TERM.createVariable("X"));
 		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(1, TERM.createVariable("U"));
-		literal.getTuple().setTerm(1, TERM.createVariable("V"));
+		literal.getTuple().setTerm(2, TERM.createVariable("U"));
+		literal.getTuple().setTerm(3, TERM.createVariable("V"));
 		literals.add(literal);
 		IHead head = BASIC.createHead(literals);
 
@@ -636,8 +636,8 @@ public class RuleTest extends TestCase {
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
 		literal.getTuple().setTerm(0, TERM.createVariable("X"));
 		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(1, TERM.createVariable("U"));
-		literal.getTuple().setTerm(1, TERM.createVariable("V"));
+		literal.getTuple().setTerm(2, TERM.createVariable("U"));
+		literal.getTuple().setTerm(3, TERM.createVariable("V"));
 		literals.add(literal);
 		IHead head = BASIC.createHead(literals);
 
@@ -672,8 +672,8 @@ public class RuleTest extends TestCase {
 		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
 		literal.getTuple().setTerm(0, TERM.createVariable("X"));
 		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(1, TERM.createVariable("U"));
-		literal.getTuple().setTerm(1, TERM.createVariable("V"));
+		literal.getTuple().setTerm(2, TERM.createVariable("U"));
+		literal.getTuple().setTerm(3, TERM.createVariable("V"));
 		literals.add(literal);
 		IHead head = BASIC.createHead(literals);
 
