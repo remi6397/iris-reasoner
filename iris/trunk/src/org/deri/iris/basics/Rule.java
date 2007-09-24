@@ -25,11 +25,13 @@
  */
 package org.deri.iris.basics;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
@@ -61,7 +63,65 @@ public class Rule implements IRule {
 		this.head = head;
 		this.body = body;
 	}
+	
+	/**
+	 * A second attempt at defining what is and what is not a safe rule.
+	 * 
+	 * 1) Every variable in the head must appear in a positive, non/builtin literal.
+	 * 
+	 * 2) Any variable occurring in a comparative predicates must also occur in
+	 *    some non-comparative positive literal in the body of the same rule.
+	 *    
+	 * However, a positive, builtin, equality literal has special treatment.
+	 * 
+	 * @return
+	 */
+	public boolean isSafe2()
+	{
+		Set<IVariable> headVariables = new HashSet<IVariable>();
 
+		for (IVariable var : head.getHeadVariables())
+		{
+			headVariables.add(var);
+		}
+
+		Set<IVariable> comparisonVariables = new HashSet<IVariable>();
+		Set<IVariable> positiveVariables = new HashSet<IVariable>();
+		
+		// get all literals of the body
+		List<ILiteral> bodyLiterals = body.getBodyLiterals();
+
+		// remove all ordinary(non-builtin) not-negated predicates and mark their variables as limited
+		for( ILiteral lit : body.getBodyLiterals() )
+		{
+			if ( ! lit.isGround() )
+			{
+				boolean builtin = lit.getAtom().isBuiltin();
+				boolean positive = lit.isPositive();
+
+				for( ITerm litTerm : lit.getTuple().getTerms() )
+				{
+					if (!litTerm.isGround())
+					{
+						if ( positive && ! builtin )
+							positiveVariables.add( (IVariable)litTerm );
+						
+						if ( builtin )
+							comparisonVariables.add( (IVariable)litTerm );
+					}
+				}
+			}
+		}
+		
+		if ( ! positiveVariables.containsAll( headVariables ) )
+			return false;
+
+		if ( ! positiveVariables.containsAll( comparisonVariables ) )
+			return false;
+		
+		return true;
+	}
+	
 	/**
 	 * checks the safeness of the datalog rule:
 	 * @see ullman: ,,logic as a datamodel'' chapter 3 page 104
