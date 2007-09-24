@@ -311,7 +311,179 @@ public class RuleTest extends TestCase {
 		IBody body = BASIC.createBody(literals);
 
 		assertTrue(!BASIC.createRule(head, body).isSafe());	
-	}	
+	}
+
+	public void testSafe_Variable_InNegatedSubGoal_NotInRuleHead_NotInPositiveLiteral() throws Exception
+    {
+		// b( ?X ) :- p( ?X ),not q( ?X, ?Y )
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		// Head
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("b", 1));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 1));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literals.add(literal);
+		
+		literal = BASIC.createLiteral(false, BASIC.createPredicate("q", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue( BASIC.createRule(head, body).isSafe() );	
+    }
+	
+	public void testSafe_Variable_InNegatedSubGoal_InRuleHead_InPositiveLiteral() throws Exception
+    {
+		// w(?X,?Y) :- s(?X), r(?Y), not p(?X,?Y)
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		// Head
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("w", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		
+		// Body
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 1));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literals.add(literal);
+		
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 1));
+		literal.getTuple().setTerm(0, TERM.createVariable("Y"));
+		literals.add(literal);
+		
+		literal = BASIC.createLiteral(false, BASIC.createPredicate("p", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue( BASIC.createRule(head, body).isSafe() );	
+    }
+	
+	public void testUnsafe_Variable_InNegatedSubGoal_InRuleHead_NotInPositiveLiteral() throws Exception
+    {
+		// w(?X,?Y) :- s(?X), not p(?X,?Y)
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		// Head
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("w", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		
+		// Body
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 1));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literals.add(literal);
+		
+		literal = BASIC.createLiteral(false, BASIC.createPredicate("p", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		
+		IBody body = BASIC.createBody(literals);
+
+		assertFalse( BASIC.createRule(head, body).isSafe() );	
+    }
+	
+    public void testUnsafe_Variable_InHead_NotInBody()
+    {
+    	// p( ?X, ?Y ) :- q( ?X ).
+
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		// Head
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		
+		// Body
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("q", 1));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literals.add(literal);
+		
+		IBody body = BASIC.createBody(literals);
+
+		assertFalse( BASIC.createRule(head, body).isSafe() );	
+    }
+	
+	public void testUnsafe_VariableInBuiltinButNotInPositiveLiteral()
+	{
+		//less(?X, ?Y) :- id(?X), ?X < ?Y.
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		// Head
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("less", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		
+		// Body
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("id", 1));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literals.add(literal);
+		
+		literal = BASIC.createLiteral(true, BUILTIN.createLess(TERM.createVariable("X"), TERM.createVariable("Y")));
+		literals.add(literal);
+		IBody body = BASIC.createBody(literals);
+
+		assertFalse( BASIC.createRule(head, body).isSafe() );	
+	}
+	
+	public void testSafe_AllVariablesInBuiltinAlsoInPositiveLiteral()
+	{
+		//less(?X, ?Y) :- id(?X), id(?Y), ?X < ?Y.
+		List<ILiteral> literals = new ArrayList<ILiteral>();
+		
+		// Head
+		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("less", 2));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
+		literals.add(literal);
+		IHead head = BASIC.createHead(literals);
+
+		literals.clear();
+		
+		// Body
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("id", 1));
+		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literals.add(literal);
+		
+		literal = BASIC.createLiteral(true, BASIC.createPredicate("id", 1));
+		literal.getTuple().setTerm(0, TERM.createVariable("Y"));
+		literals.add(literal);
+		
+		literal = BASIC.createLiteral(true, BUILTIN.createLess(TERM.createVariable("X"), TERM.createVariable("Y")));
+		literals.add(literal);
+
+		IBody body = BASIC.createBody(literals);
+
+		assertTrue( BASIC.createRule(head, body).isSafe() );	
+	}
+	
 	public void testSafeness_allTogether() {
 		
 		// m(X, Y, U, V) :- p(W, Z), q(X, Z), r(L, K), X = Y, U = V, W = U -> safe 
