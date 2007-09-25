@@ -28,7 +28,7 @@ import junit.framework.TestCase;
 /**
  * Tests for IRIS built-in predicates.
  */
-public class Builtins extends TestCase
+public class BuiltinsTest extends TestCase
 {
 	/**
 	 * Test that the evaluation strategy correctly handles relations with

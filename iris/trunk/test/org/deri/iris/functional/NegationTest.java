@@ -25,7 +25,7 @@ package org.deri.iris.functional;
 
 import junit.framework.TestCase;
 
-public class Negation extends TestCase
+public class NegationTest extends TestCase
 {
 	/**
 	 * Assert that evaluations of logic programs containing globally stratified

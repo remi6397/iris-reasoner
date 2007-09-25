@@ -25,7 +25,7 @@ package org.deri.iris.functional;
 
 import junit.framework.TestCase;
 
-public class Evaluation extends TestCase
+public class EvaluationTest extends TestCase
 {
 	/**
 	 * Test that a simple logic program of predicate logic is correctly
