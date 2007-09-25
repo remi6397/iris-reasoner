@@ -39,7 +39,7 @@ public class Builtins extends TestCase
 	 * any numeric can be tested against any other numeric, otherwise
 	 * the datatypes must exactly match.
 	 */
-	public void testMixedDataTypes_DifferentDataTypesNeverEqual() throws Exception
+	public void testMixedDataTypes_IncompatibleDataTypesNeverEqual() throws Exception
 	{
 		String program =
 			"p( 'a', 'b' )." +
@@ -65,7 +65,7 @@ public class Builtins extends TestCase
 	 * any numeric can be tested against any other numeric, otherwise
 	 * the datatypes must exactly match.
 	 */
-	public void testMixedDataTypes_DifferentDataTypesAlwaysNotEqual() throws Exception
+	public void testMixedDataTypes_IncompatibleDataTypesAlwaysNotEqual() throws Exception
 	{
 		String program =
 			"p( 'a', 'b' )." +
