@@ -25,7 +25,7 @@ package org.deri.iris.functional;
 
 import junit.framework.TestCase;
 
-public class RuleSafety extends TestCase
+public class RuleSafetyTest extends TestCase
 {
 
 	/**

@@ -28,7 +28,7 @@ import junit.framework.TestCase;
 /**
  * Tests for IRIS supported data types.
  */
-public class DataTypes extends TestCase
+public class DataTypesTest extends TestCase
 {
 	/**
 	 * Create (valid) facts using all possible data types.
