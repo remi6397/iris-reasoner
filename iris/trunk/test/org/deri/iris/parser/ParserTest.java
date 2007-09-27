@@ -33,11 +33,9 @@ import static org.deri.iris.factory.Factory.TERM;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -48,8 +46,8 @@ import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.compiler.Parser;
+import org.deri.iris.compiler.ParserException;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -58,11 +56,11 @@ import org.deri.iris.factory.Factory;
  * Tests for the datalog parser.
  * </p>
  * <p>
- * $Id: ParserTest.java,v 1.9 2007-09-13 15:20:37 poettler_ric Exp $
+ * $Id: ParserTest.java,v 1.10 2007-09-27 14:56:25 bazbishop237 Exp $
  * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class ParserTest extends TestCase {
 
@@ -88,9 +86,10 @@ public class ParserTest extends TestCase {
 
 	/**
 	 * run parser test
+	 * @throws ParserException 
 	 *
 	 */
-	protected void runParser(final String expr, final Set<IRule> rul) {
+	protected void runParser(final String expr, final Set<IRule> rul) throws ParserException {
 		Parser.parse(expr, prog);
 		assertCol(rul, prog.getRules());
 	}
@@ -99,7 +98,7 @@ public class ParserTest extends TestCase {
 	 * s(X, Y) :- p(Y, Z), r(Y, Z)
 	 *
 	 */
-	public void testParser() {
+	public void testParser() throws Exception {
 		
 		// input
 		String expr = "s(?X, ?Y) :- p(?X, ?Z), r(?Y, ?Z).";
@@ -134,7 +133,7 @@ public class ParserTest extends TestCase {
 	 * p(?X,?Y) :- r(?Z, ?Y) and ?X='a'
 	 *
 	 */
-	public void testParser_1a() {
+	public void testParser_1a() throws Exception {
 
 		// input
 		String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X='a'.";
@@ -167,7 +166,7 @@ public class ParserTest extends TestCase {
 	 * p(?X,?Y) :- r(?X, ?Y) and ?X!='a'
 	 *
 	 */
-	public void testParser_1b() {
+	public void testParser_1b() throws Exception {
 
 		// input
 		String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X!='a'.";
@@ -200,7 +199,7 @@ public class ParserTest extends TestCase {
 	/**
 	 * Tests whether all terms are created correctly.
 	 */
-	public void testTerms() {
+	public void testTerms() throws Exception {
 		final String expr = "ints(1). intl(_integer(2)). \n" + 
 			"strs('hallos'). strl(_string('hallol')). \n" + 
 			"decs(1.5). decl(_decimal(3.7)). \n" + 
@@ -324,7 +323,7 @@ public class ParserTest extends TestCase {
 		assertTrue("Could not find the hex", prog.getFacts(pred).contains(BASIC.createTuple(CONCRETE.createHexBinary("a1df"))));
 	}
 
-	public void testParseBinaryBuiltins() {
+	public void testParseBinaryBuiltins() throws Exception {
 		final String toParse = "x(?X) :- \n" +
 			"1 < 2, \n" + 
 			"3 <= 4, \n" + 
@@ -348,7 +347,7 @@ public class ParserTest extends TestCase {
 					BASIC.createLiteral(true, BUILTIN.createUnequal(CONCRETE.createInteger(11), CONCRETE.createInteger(12)))));
 	}
 
-	public void testParseTenaryBuiltins() {
+	public void testParseTenaryBuiltins() throws Exception {
 		final String toParse = "x(?X) :- \n" +
 			"1 + 2 = 3, \n" + 
 			"4 - 5 = 6, \n" + 
