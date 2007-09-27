@@ -48,11 +48,11 @@ import org.deri.iris.factory.Factory;
  * Tests the Executor.
  * </p>
  * <p>
- * $Id: ExecutorTest.java,v 1.4 2007-06-14 21:50:43 darko_anicic Exp $
+ * $Id: ExecutorTest.java,v 1.5 2007-09-27 08:56:28 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class ExecutorTest extends TestCase {
 	private IProgram p;
@@ -89,7 +89,7 @@ public class ExecutorTest extends TestCase {
 		p.addQuery(BASIC.createQuery(createLiteral("q", "X")));
 	}
 
-	public void testComputeSubstitution() {
+	public void testComputeSubstitution() throws Exception{
 		Executor e = new Executor(p, new ExpressionEvaluator());
 		e.execute();
 		for (final Map.Entry<IPredicate, IMixedDatatypeRelation> me : e.computeSubstitutions()
