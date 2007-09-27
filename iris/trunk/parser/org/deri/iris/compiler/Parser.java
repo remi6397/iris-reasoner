@@ -42,11 +42,11 @@ import org.deri.iris.parser.parser.ParserException;
  * Parser to parse datalog programs.
  * </p>
  * <p>
- * $Id: Parser.java,v 1.8 2007-06-20 12:07:09 poettler_ric Exp $
+ * $Id: Parser.java,v 1.9 2007-09-27 14:49:44 bazbishop237 Exp $
  * </p>
  * @author Francisco Garcia
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class Parser {
      
@@ -54,13 +54,14 @@ public class Parser {
 	 * Parses a datalog program.
 	 * @param prog the program to parse
 	 * @return a newly created program represented the parsed one.
-	 * @throws IllegalArgumentException if something went wrong while
+	 * @throws org.deri.iris.compiler.ParserException 
+	 * @throws ParserException if something went wrong while
 	 * parsing
-	 * @throws NullPointerException if the program is <code>null</code>
+	 * @throws IllegalArgumentException if the program is <code>null</code>
 	 */
-	public static IProgram parse(final String prog) {
+	public static IProgram parse(final String prog) throws org.deri.iris.compiler.ParserException {
 		if (prog == null) {
-			throw new NullPointerException("The string to parse must not be null");
+			throw new IllegalArgumentException("The string to parse must not be null");
 		}
 		return parse(prog, null);
 	}
@@ -69,13 +70,14 @@ public class Parser {
 	 * Parses a datalog program.
 	 * @param r the reader from where to read the program
 	 * @return a newly created program represented the parsed one.
-	 * @throws IllegalArgumentException if something went wrong while
+	 * @throws org.deri.iris.compiler.ParserException 
+	 * @throws ParserException if something went wrong while
 	 * parsing
-	 * @throws NullPointerException if the reader is <code>null</code>
+	 * @throws IllegalArgumentException if the reader is <code>null</code>
 	 */
-	public static IProgram parse(final Reader r) {
+	public static IProgram parse(final Reader r) throws org.deri.iris.compiler.ParserException {
 		if (r == null) {
-			throw new NullPointerException("The reader must not be null");
+			throw new IllegalArgumentException("The reader must not be null");
 		}
 		return parse(r, null);
 	}
@@ -89,13 +91,14 @@ public class Parser {
 	 * @return the input program, or a newly created one (if the input
 	 * program was <code>null</code>) containing all the objects of the
 	 * parsed one.
-	 * @throws IllegalArgumentException if something went wrong while
+	 * @throws org.deri.iris.compiler.ParserException 
+	 * @throws ParserException if something went wrong while
 	 * parsing
-	 * @throws NullPointerException if the string is <code>null</code>
+	 * @throws IllegalArgumentException if the string is <code>null</code>
 	 */
-	public static IProgram parse(final String prog, final IProgram p) {
+	public static IProgram parse(final String prog, final IProgram p) throws org.deri.iris.compiler.ParserException {
 		if (prog == null) {
-			throw new NullPointerException("The string to parse must not be null");
+			throw new IllegalArgumentException("The string to parse must not be null");
 		}
 		return parse(new StringReader(prog), p);
 	}
@@ -109,25 +112,42 @@ public class Parser {
 	 * @return the input program, or a newly created one (if the input
 	 * program was <code>null</code>) containing all the objects of the
 	 * parsed one.
-	 * @throws IllegalArgumentException if something went wrong while
+	 * @throws org.deri.iris.compiler.ParserException if something went wrong while
 	 * parsing
-	 * @throws NullPointerException if the reader is <code>null</code>
+	 * @throws IllegalArgumentException if the reader is <code>null</code>
 	 */
-	public static IProgram parse(final Reader r, final IProgram p) {
+	public static IProgram parse(final Reader r, final IProgram p) throws org.deri.iris.compiler.ParserException{
 		if (r == null) {
-			throw new NullPointerException("The reader must not be null");
+			throw new IllegalArgumentException("The reader must not be null");
 		}
 		final IProgram prog = (p == null) ? PROGRAM.createProgram() : p;
-		try {
-			(new org.deri.iris.parser.parser.Parser(new Lexer(new PushbackReader(r, 1024))))
-				.parse().apply(new TreeWalker(prog));
-		} catch (ParserException e) {
-			throw new IllegalArgumentException("Could not parse the program", e);
-		} catch (LexerException e) {
-			throw new IllegalArgumentException("Could not parse the program", e);
-		} catch (IOException e) {
-			throw new IllegalArgumentException("Something wrong while reading the program", e);
+		try
+		{
+			org.deri.iris.parser.parser.Parser parser = new org.deri.iris.parser.parser.Parser( new Lexer( new PushbackReader(r, 1024) ) );
+
+			parser.parse().apply( new TreeWalker( prog ) );
 		}
+		catch (ParserException e)
+		{
+			throw new org.deri.iris.compiler.ParserException( "Parser error: " + e.getMessage() );
+		}
+		catch (LexerException e)
+		{
+			throw new org.deri.iris.compiler.ParserException( "Lexer error: " + e.getMessage() );
+		}
+		catch (IOException e)
+		{
+			// This error condition is intentionally hidden, since it is considered very unlikely
+			// to occur. Usually library users will pass a String containing the logic program, in
+			// which case this exception type can not be thrown.
+			throw new org.deri.iris.compiler.ParserException( "I/O error: " + e.getMessage() );
+		}
+		catch( IllegalArgumentException e )
+		{
+			// Some errors (such as wrong number of arguments for a type) manifest themselves as IllegalArgumentExceptions.
+			throw new org.deri.iris.compiler.ParserException( e.getMessage() );
+		}
+		
 		return prog;
 	}
 }
