@@ -23,6 +23,7 @@
  */
 package org.deri.iris.functional;
 
+import org.deri.iris.RuleUnsafeException;
 import junit.framework.TestCase;
 
 public class RuleSafetyTest extends TestCase
@@ -99,9 +100,7 @@ public class RuleSafetyTest extends TestCase
 
     		"?- w(?X,?Y).";
     
-    	// TODO Pass the expected exception class's Class object,
-    	// e.g. EvaluationException.class
-    	Helper.checkFailureWithAllStrategies( program, null );
+    	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
     }
 
 	/**
@@ -116,8 +115,7 @@ public class RuleSafetyTest extends TestCase
     		"pp( ?X, ?Y ) :- p( ?X )." +
     		"?- pp( ?X, ?Y ).";
     	
-    	// TODO Pass the expected exception class's Class object.
-    	Helper.checkFailureWithAllStrategies( program, null );
+    	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
     }
 
 	/**
@@ -163,12 +161,29 @@ public class RuleSafetyTest extends TestCase
     		"enter(?X) :- id(?X), less(?X,10)." +
     		"?- enter(?Y).";
     
-    	// TODO Remove this line when fixed
-    	fail( "This program will cause IRIS to go in to an infinite loop with every evaluation strategy." );
-    
-    	// TODO Pass the expect exception class's Class object.
-    	Helper.checkFailureWithAllStrategies( program, null );
+    	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
     }
-	
 
+	/**
+     * Try to execute a rule with an unsafe use of a builtin operator.
+     * This should fail, because IRIS should detect that the 'less' rule below
+     * is unsafe.
+     * 
+     * (It is unsafe because every variable in the builtin predicate must appear
+     * in a positive, non-comparitive literal in the same rule.)
+	 * @throws Exception 
+     * 
+     * @throws Exception
+     */
+    public void testSafe_Variable_InEquality_InRuleHead_NotInPositiveLiteral() throws Exception
+    {
+    	String program =
+    		"id(1)." +
+    		"p(?X, ?Y) :- id(?X), ?X = ?Y." +
+    		"?- p(?X, ?Y).";
+
+    	String expectedResults = "p( 1, 1 ).";
+    
+    	Helper.evaluateWithAllStrategies( program, expectedResults );
+    }
 }

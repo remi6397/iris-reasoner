@@ -23,6 +23,7 @@
  */
 package org.deri.iris.functional;
 
+import org.deri.iris.ProgramNotStratifiedException;
 import junit.framework.TestCase;
 
 public class NegationTest extends TestCase
@@ -126,7 +127,6 @@ public class NegationTest extends TestCase
 			"q( ?X ) :- r( ?X ),not p(?X)." +
 			"?- q( ?X ).";
 		
-    	// TODO Pass the expected exception class's Class object.
-		Helper.checkFailureWithAllStrategies( program, null );
+		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
 	}
 }
