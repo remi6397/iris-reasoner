@@ -23,6 +23,7 @@
  */
 package org.deri.iris.functional;
 
+import org.deri.iris.compiler.ParserException;
 import junit.framework.TestCase;
 
 /**
@@ -98,7 +99,7 @@ public class DataTypesTest extends TestCase
 	 */
 	public void testInvalidLiteral_String()
 	{
-		Helper.checkFailureWithAllStrategies( "p( _string( 'a', 'b' ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _string( 'a', 'b' ) ).", ParserException.class );
 	}
 	
 	/**
@@ -107,8 +108,8 @@ public class DataTypesTest extends TestCase
 	 */
 	public void testInvalidLiteral_Decimal()
 	{
-		Helper.checkFailureWithAllStrategies( "p( _decimal( -1.A1 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( 1.2B ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _decimal( -1.A1 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( 1.2B ).", ParserException.class );
 	}
 	
 	/**
@@ -117,8 +118,8 @@ public class DataTypesTest extends TestCase
 	 */
 	public void testInvalidLiteral_Integer()
 	{
-		Helper.checkFailureWithAllStrategies( "p( _integer( -B ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( -C ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _integer( -B ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( -C ).", ParserException.class );
 	}
 	
 	/**
@@ -127,7 +128,7 @@ public class DataTypesTest extends TestCase
 	 */
 	public void testInvalidLiteral_Float()
 	{
-		Helper.checkFailureWithAllStrategies( "p( _float( 3.r3) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _float( 3.r3) ).", ParserException.class );
 	}
 	
 	/**
@@ -136,7 +137,7 @@ public class DataTypesTest extends TestCase
 	 */
 	public void testInvalidLiteral_Double()
 	{
-		Helper.checkFailureWithAllStrategies( "p( _double( -2.3u ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _double( -2.3u ) ).", ParserException.class );
 	}
 	
 	/**
@@ -155,8 +156,8 @@ public class DataTypesTest extends TestCase
 	 */
 	public void testInvalidLiteral_SQName()
 	{
-		Helper.checkFailureWithAllStrategies( "p( dc #title ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _sqname( foaf name ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( dc #title ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _sqname( foaf name ) ).", ParserException.class );
 	}
 	
 	/**
@@ -166,7 +167,7 @@ public class DataTypesTest extends TestCase
 	public void testInvalidLiteral_Boolean()
 	{
 		// TODO This should fail - invalid value
-		Helper.checkFailureWithAllStrategies( "p( _boolean( 'blah' ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _boolean( 'blah' ) ).", ParserException.class );
 	}
 	
 	/**
@@ -176,41 +177,41 @@ public class DataTypesTest extends TestCase
 	public void testInvalidLiteral_DateTime()
 	{
 		// Too few parameters
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 3, 4, 12, 30 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 3, 4, 12, 30, 0, 1, 2, 3, 4 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 3, 4, 12, 30 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 3, 4, 12, 30, 0, 1, 2, 3, 4 ) ).", ParserException.class );
 
 		// Bad month
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 13, 4, 12, 30, 0 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 0, 4, 12, 30, 0 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 13, 4, 12, 30, 0 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 0, 4, 12, 30, 0 ) ).", ParserException.class );
 
 		// Bad day
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 32, 12, 30, 0 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 0, 12, 30, 0 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 32, 12, 30, 0 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 0, 12, 30, 0 ) ).", ParserException.class );
 
 		// Bad hour
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 24, 30, 0 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, -1, 30, 0 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 24, 30, 0 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, -1, 30, 0 ) ).", ParserException.class );
 
 		// Bad minute
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 60, 0 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, -1, 0 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 60, 0 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, -1, 0 ) ).", ParserException.class );
 
 		// Bad second, NB There can be leap seconds!
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 61 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, -1 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 61 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, -1 ) ).", ParserException.class );
 
 		// Bad millisecond
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 1000 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, -1 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 1000 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, -1 ) ).", ParserException.class );
 
 		// Bad time zone hour
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 999, 25, 30 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, 0, -25, 0 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 999, 25, 30 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, 0, -25, 0 ) ).", ParserException.class );
 
 		// TODO These should fail, but don't!
 		// Bad time zone minute
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 999, 1, 60 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, 0, -1, -60 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 999, 1, 60 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, 0, -1, -60 ) ).", ParserException.class );
 	}
 	
 	/**
@@ -220,17 +221,17 @@ public class DataTypesTest extends TestCase
 	public void testInvalidLiteral_Date()
 	{
 		// Wrong number of parameters
-		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 3 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 3, 4, 12, 30, 1 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 3 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 3, 4, 12, 30, 1 ) ).", ParserException.class );
 
 		// Bad time zone hour
-		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 12, 31, 25, 30 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 1, 1, -25, 0 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 12, 31, 25, 30 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 1, 1, -25, 0 ) ).", ParserException.class );
 
 		// TODO These should fail, but don't!
 		// Bad time zone minute
-		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 12, 31, 1, 60 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 1, 1, -1, -60 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 12, 31, 1, 60 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 1, 1, -1, -60 ) ).", ParserException.class );
 	}
 	
 	/**
@@ -240,33 +241,33 @@ public class DataTypesTest extends TestCase
 	public void testInvalidLiteral_Time()
 	{
 		// Wrong number of parameters
-		Helper.checkFailureWithAllStrategies( "p( _time( 12, 30 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _time( 12, 30, 0, 99, 13, 0, 1 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _time( 12, 30 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( 12, 30, 0, 99, 13, 0, 1 ) ).", ParserException.class );
 
 		// Bad hour
-		Helper.checkFailureWithAllStrategies( "p( _time( 24, 30, 0 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _time( -1, 30, 0 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _time( 24, 30, 0 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( -1, 30, 0 ) ).", ParserException.class );
 
 		// Bad minute
-		Helper.checkFailureWithAllStrategies( "p( _time( 23, 60, 0 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _time( 23, -1, 0 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, 60, 0 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, -1, 0 ) ).", ParserException.class );
 
 		// Bad second, NB There can be leap seconds!
-		Helper.checkFailureWithAllStrategies( "p( _time( 23, 59, 61 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _time( 23, 0, -1 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, 59, 61 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, 0, -1 ) ).", ParserException.class );
 
 		// Bad millisecond
-		Helper.checkFailureWithAllStrategies( "p( _time( 23, 59, 59, 1000 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _time( 23, 0, 0, -1 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, 59, 59, 1000 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, 0, 0, -1 ) ).", ParserException.class );
 
 		// Bad time zone hour
-		Helper.checkFailureWithAllStrategies( "p( _time( 1982, 12, 31, 23, 59, 59, 999, 25, 30 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _time( 1982, 1, 1, 23, 0, 0, 0, -25, 0 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _time( 1982, 12, 31, 23, 59, 59, 999, 25, 30 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( 1982, 1, 1, 23, 0, 0, 0, -25, 0 ) ).", ParserException.class );
 
 		// TODO These should fail, but don't!
 		// Bad time zone minute
-		Helper.checkFailureWithAllStrategies( "p( _time( 23, 59, 59, 999, 1, 60 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _time( 23, 0, 0, 0, -1, -60 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, 59, 59, 999, 1, 60 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, 0, 0, 0, -1, -60 ) ).", ParserException.class );
 	}
 	
 	/**
@@ -275,10 +276,10 @@ public class DataTypesTest extends TestCase
 	 */
 	public void testInvalidLiteral_YearMonth()
 	{
-		Helper.checkFailureWithAllStrategies( "p( _yearmonth( 1980 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _yearmonth( 1980, 12, 1 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _yearmonth( 1980, 13 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _yearmonth( 1980, 0 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _yearmonth( 1980 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _yearmonth( 1980, 12, 1 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _yearmonth( 1980, 13 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _yearmonth( 1980, 0 ) ).", ParserException.class );
 	}
 	
 	/**
@@ -287,12 +288,12 @@ public class DataTypesTest extends TestCase
 	 */
 	public void testInvalidLiteral_MonthDay()
 	{
-		Helper.checkFailureWithAllStrategies( "p( _monthday( 12 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _monthday( 12, 1, 1 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _monthday( 13, 1 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _monthday( 0, 1 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _monthday( 12, 32 ) ).", null );
-		Helper.checkFailureWithAllStrategies( "p( _monthday( 1, 0 ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _monthday( 12 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _monthday( 12, 1, 1 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _monthday( 13, 1 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _monthday( 0, 1 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _monthday( 12, 32 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _monthday( 1, 0 ) ).", ParserException.class );
 	}
 	
 	/**
@@ -302,7 +303,7 @@ public class DataTypesTest extends TestCase
 	public void testInvalidLiteral_HexBinary()
 	{
 		// Invalid hexa-decimal
-		Helper.checkFailureWithAllStrategies( "p( _hexbinary( '0FB7abcdG' ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _hexbinary( '0FB7abcdG' ) ).", ParserException.class );
 	}
 	
 	/**
@@ -312,7 +313,7 @@ public class DataTypesTest extends TestCase
 	public void testInvalidLiteral_Base64Binary()
 	{
 		// Invalid base 64
-		Helper.checkFailureWithAllStrategies( "p( _base64binary( 'QmFycnkgQmlzaG9wa' ) ).", null );
+		Helper.checkFailureWithAllStrategies( "p( _base64binary( 'QmFycnkgQmlzaG9wa' ) ).", ParserException.class );
 	}
 
 	/**
