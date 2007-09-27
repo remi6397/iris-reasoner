@@ -63,11 +63,11 @@ import org.deri.iris.MiscHelper;
  * Tests the magic sets.
  * </p>
  * <p>
- * $Id: MagicTest.java,v 1.3 2007-07-17 14:14:13 poettler_ric Exp $
+ * $Id: MagicTest.java,v 1.4 2007-09-27 14:53:11 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class MagicTest extends TestCase {
 
@@ -421,7 +421,7 @@ public class MagicTest extends TestCase {
 	/**
 	 * Tests that constatns in bodyliterals are determined as bound.
 	 */
-	public void testBoundConstant() {
+	public void testBoundConstant() throws Exception {
 		final String program = "a(?X, ?Y) :- b(?X, ?Z), c('a', ?Z, ?Y). \n" + 
 			"c(?X, ?Y, ?Z) :- x(?X, ?Y, ?Z). \n" + 
 			"?-a('john', ?Y).";
@@ -467,7 +467,7 @@ public class MagicTest extends TestCase {
 	 * Tests whether useless magic predicates (magic_q^f()) will be created,
 	 * or not.
 	 */
-	public void testStupidRules() {
+	public void testStupidRules() throws Exception {
 		final String program = "q(?X) :- s(?X), not p(?X)." + 
 			"p(?X) :- r(?X)." + 
 			"r(?X) :- t(?X)." + 

@@ -8,6 +8,7 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.compiler.Parser;
+import org.deri.iris.compiler.ParserException;
 import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
 
@@ -20,8 +21,9 @@ public class ExecutionHelper
 	 * Create a program object by parsing the datalog logic program.
 	 * @param program The logic program.
 	 * @return A concrete program object.
+	 * @throws ParserException 
 	 */
-	public static IProgram parseProgram( String program )
+	public static IProgram parseProgram( String program ) throws ParserException
 	{
 		IProgram p = Factory.PROGRAM.createProgram();
 		p.resetProgram();
