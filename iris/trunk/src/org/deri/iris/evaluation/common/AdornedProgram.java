@@ -53,11 +53,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.25 2007-09-21 09:11:55 poettler_ric Exp $
+ * $Id: AdornedProgram.java,v 1.26 2007-09-27 12:25:24 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public class AdornedProgram implements IAdornedProgram {
 
@@ -685,8 +685,8 @@ public class AdornedProgram implements IAdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.25 $
-	 * @date $Date: 2007-09-21 09:11:55 $
+	 * @version $Revision: 1.26 $
+	 * @date $Date: 2007-09-27 12:25:24 $
 	 */
 	public static class AdornedRule implements IAdornedRule {
 		/** The inner rule represented by this object */
@@ -797,10 +797,6 @@ public class AdornedProgram implements IAdornedProgram {
 
 		public boolean isRectified() {
 			return rule.isRectified();
-		}
-
-		public boolean isSafe() {
-			return rule.isSafe();
 		}
 
 		public int getHeadLenght() {
