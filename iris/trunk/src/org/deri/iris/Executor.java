@@ -31,6 +31,7 @@ import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.evaluation.IBottomUpEvaluator;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
@@ -39,15 +40,15 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
 
 /**
  * <p>
- * Executes a programm.
+ * Executes a program using the semi-naive evaluation strategy.
  * </p>
  * <p>
- * $Id: Executor.java,v 1.9 2007-06-14 21:26:15 darko_anicic Exp $
+ * $Id: Executor.java,v 1.10 2007-09-27 12:21:17 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class Executor implements IExecutor {
 
@@ -57,12 +58,12 @@ public class Executor implements IExecutor {
 	/** The bottom-up evaluator. */
 	private IBottomUpEvaluator evaluator;
 
-	/** The evaluation mehtod. */
+	/** The evaluation method. */
 	private IExpressionEvaluator method;
 	
 	/**
 	 * <p>
-	 * Creates a new evaluator with a given programm and evaluator.
+	 * Creates a new evaluator with a given program and evaluator.
 	 * </p>
 	 * 
 	 * @param p
@@ -81,7 +82,7 @@ public class Executor implements IExecutor {
 	
 	public IMixedDatatypeRelation computeSubstitution(final IQuery q) {
 		if (q == null) {
-			throw new NullPointerException("The query must not be null");
+			throw new IllegalArgumentException("The query must not be null");
 		}
 		if (q.getQueryLenght() != 1) {
 			throw new IllegalArgumentException(
@@ -96,31 +97,16 @@ public class Executor implements IExecutor {
 		return this.evaluator.getResultSet().getResults();
 	}
 
-	public boolean execute() {
-		// TODO: remove the next checking once you introuduce the magic sets!
-		if(! MiscOps.stratify(this.prog)){
-			throw new RuntimeException("The input program is not strtifed");
-		}
-		/*
-		 * TODO: Introuduce the magic sets here!
-		 * 
-		// Applying the magic sets
-		   final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(
-				this.prog.getRules(), q));
+	public boolean execute() throws EvaluationException
+	{
+		if( ! MiscOps.stratify( prog ) )
+			throw new ProgramNotStratifiedException( "The input program is not stratified" );
+
+		for (IRule rule : prog.getRules() )
+			MiscOps.checkRuleSafe( rule );
 		
-		// Tests the stratum of the newly constructed program. If not strtified re-set 
-		// the program to the original one.
-		IProgram p = ms.createProgram(prog);
-		if (p.isStratified()) {
-			prog = p;
-		}*/
-		
-		// Run the evalutaion
-		// Seminaive evaluation:
-		this.evaluator = new SeminaiveEvaluation(method, this.prog);
-		
-		// Naive evaluation:
-		//this.evaluator = new NaiveEvaluation(method, this.prog);
+		// Run the evaluation
+		this.evaluator = new SeminaiveEvaluation(method, prog);
 		
 		return this.evaluator.evaluate();
 	}

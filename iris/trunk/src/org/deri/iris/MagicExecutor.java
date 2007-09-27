@@ -65,10 +65,10 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
  * the rules of those predicates into the upcomming query computations.
  * </p>
  * <p>
- * $Id: MagicExecutor.java,v 1.1 2007-07-03 16:36:03 poettler_ric Exp $
+ * $Id: MagicExecutor.java,v 1.2 2007-09-27 12:21:17 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class MagicExecutor implements IExecutor {
 
@@ -113,7 +113,7 @@ public class MagicExecutor implements IExecutor {
 		final Set<IPredicate> depends = EvaluationUtilities.getDepends(program.getRules(), q);
 		depends.removeAll(fullyEvaluated);
 		final Set<IRule> minimalRules = EvaluationUtilities.getRulesForPredicates(program.getRules(), depends);
-		// determining the final porgram and query to evaluate
+		// determining the final program and query to evaluate
 		final IProgram finProgram;
 		final IQuery finQuery;
 		if (tryMagic(q)) { // try the magic sets
@@ -145,9 +145,16 @@ public class MagicExecutor implements IExecutor {
 		return res;
 	}
 
-	public boolean execute() {
+	public boolean execute() throws EvaluationException {
 		// delete the cached data, to enforce the recomputation
 		fullyEvaluated = new HashSet<IPredicate>();
+
+		if( ! MiscOps.stratify( program ) )
+			throw new ProgramNotStratifiedException( "The input program is not stratified" );
+
+		for (IRule rule : program.getRules() )
+			MiscOps.checkRuleSafe( rule );
+		
 		return true;
 	}
 
@@ -182,6 +189,7 @@ public class MagicExecutor implements IExecutor {
 	 * @param q the query to retrieve
 	 * @param e the expression evaluator to use
 	 * @return the computed relation
+	 * @throws EvaluationException 
 	 * @throws NullPointerException if the program is <code>null</code>
 	 * @throws NullPointerException if the query is <code>null</code>
 	 * @throws NullPointerException if the expression evaluator is <code>null</code>

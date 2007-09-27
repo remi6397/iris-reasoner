@@ -31,6 +31,7 @@ import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.evaluation.IBottomUpEvaluator;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
@@ -51,12 +52,12 @@ public class NaiveExecutor implements IExecutor {
 	/** The bottom-up evaluator. */
 	private IBottomUpEvaluator evaluator;
 
-	/** The evaluation mehtod. */
+	/** The evaluation method. */
 	private IExpressionEvaluator method;
 	
 	/**
 	 * <p>
-	 * Creates a new evaluator with a given programm and evaluator.
+	 * Creates a new evaluator with a given program and evaluator.
 	 * </p>
 	 * 
 	 * @param p
@@ -90,13 +91,15 @@ public class NaiveExecutor implements IExecutor {
 		return this.evaluator.getResultSet().getResults();
 	}
 
-	public boolean execute()
+	public boolean execute() throws EvaluationException
 	{
-		if( !MiscOps.stratify( this.prog ) )
-		{
-			throw new RuntimeException( "The input program is not strtifed" );
-		}
-		this.evaluator = new NaiveEvaluation( method, this.prog );
+		if( ! MiscOps.stratify( prog ) )
+			throw new ProgramNotStratifiedException( "The input program is not stratified" );
+
+		for (IRule rule : prog.getRules() )
+			MiscOps.checkRuleSafe( rule );
+		
+		this.evaluator = new NaiveEvaluation( method, prog );
 		
 		return this.evaluator.evaluate();
 	}
