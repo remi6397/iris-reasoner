@@ -59,16 +59,16 @@ import org.deri.iris.parser.ProgramTest;
  * <p>
  * </p>
  * <p>
- * $Id: TestNeg.java,v 1.4 2007-06-14 21:53:55 darko_anicic Exp $
+ * $Id: TestNeg.java,v 1.5 2007-09-27 12:05:58 bazbishop237 Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.4 $
- * @date $Date: 2007-06-14 21:53:55 $
+ * @version $Revision: 1.5 $
+ * @date $Date: 2007-09-27 12:05:58 $
  */
 public class TestNeg {
 
-	public static void main(final String[] arg) {
+	public static void main(final String[] arg) throws Exception{
 		// constructing the rules
 		// q(X) :- s(X), -p(X)
 		Set<IRule> rules = new HashSet<IRule>(3);

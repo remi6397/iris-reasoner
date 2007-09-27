@@ -54,12 +54,12 @@ import org.deri.iris.parser.ProgramTest;
  * @date   06.03.2007 10:00:07
  */
 public class TestDatatypes {
-	public static void main(final String[] arg) {
+	public static void main(final String[] arg) throws Exception{
 		//test1();
 		test2();
 	}
 	
-	private static void test1(){
+	private static void test1() throws Exception{
 		// constructing rules
 		
 		// solarPlanet(X) :- planet(?X), distanceFromSun(?X,?Y)
@@ -206,7 +206,7 @@ public class TestDatatypes {
 		ProgramTest.printResults(result);
 	}
 	
-	private static void test2(){
+	private static void test2()throws Exception{
 		// constructing rules
 		
 		// s(?X[String]) :- p(?X[String],?Y[String]), p(?X[String],?Y[Integer]).

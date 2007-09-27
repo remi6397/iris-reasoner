@@ -62,7 +62,7 @@ import org.deri.iris.parser.ProgramTest;
  */
 public class TestTwoParameterDatatypes {
 	
-	public static void main(final String[] arg) {
+	public static void main(final String[] arg) throws Exception{
 		// constructing the rules
 		// w(?X) :- s(?X), p(?X), ?X != 'd'
 		Set<IRule> rules = new HashSet<IRule>(3);
