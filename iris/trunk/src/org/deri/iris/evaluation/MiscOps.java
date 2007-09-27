@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.deri.iris.RuleUnsafeException;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IHead;
@@ -47,20 +48,21 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.basics.seminaive.ConstLiteral;
+import org.deri.iris.builtins.EqualBuiltin;
 
 /**
  * <p>
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.12 2007-06-22 07:09:43 poettler_ric Exp $
+ * $Id: MiscOps.java,v 1.13 2007-09-27 12:22:46 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class MiscOps {
 
@@ -369,5 +371,84 @@ public class MiscOps {
 			}
 		}
 		return predicates;
+	}
+	
+	/**
+	 * Check the rule for safeness based on the current configuration for rule-safety.
+	 * @param rule The rule to be checked
+	 * @throws RuleUnsafeException If the rule is not safe.
+	 */
+	public static void checkRuleSafe( IRule rule ) throws RuleUnsafeException
+	{
+		// Eventually the parameters values for this validator instance need to be obtained from
+		// some IRIS-wide configuration.
+		RuleValidator rs = new RuleValidator( true, true );
+		
+		// Add all the head variables
+		for (IVariable var : rule.getHeadVariables())
+			rs.addHeadVariable( var.toString() );
+
+		// Then for each literal in the rule
+		for( ILiteral lit : rule.getBodyLiterals() )
+		{
+			// If it has any variables at all
+			if ( ! lit.isGround() )
+			{
+				boolean builtin = lit.getAtom().isBuiltin();
+				boolean positive = lit.isPositive();
+				
+				// Do the special handling for built-in predicates
+				if( builtin )
+				{
+					if( lit.getTuple().getArity() == 2 )
+					{
+						boolean positiveEquality = positive && lit.getAtom() instanceof EqualBuiltin;
+						
+						String operand1 = extractVariableName( lit, 0 );
+						String operand2 = extractVariableName( lit, 1 );
+						
+						rs.addVariablesFromBuiltinBinaryPredicate( positiveEquality, operand1, operand2 );
+					}
+					else if( lit.getTuple().getArity() == 3 )
+					{
+						String operand1 = extractVariableName( lit, 0 );
+						String operand2 = extractVariableName( lit, 1 );
+						String target   = extractVariableName( lit, 2 );
+						
+						rs.addVariablesFromBuiltinTernaryPredicate( positive, operand1, operand2, target );
+					}
+					else
+						assert false : "Only built-in predicates with arity 2 or 3 are expected.";
+				}
+				else
+				{
+					// Ordinary predicate
+					for( ITerm litTerm : lit.getTuple().getTerms() )
+					{
+						if (! litTerm.isGround())
+						{
+							String variableName = litTerm.toString();
+							
+							rs.addVariableFromOrdinaryPredicate( positive, variableName );
+						}
+					}
+				}
+			}
+		}
+		
+		// Throws if not safe!
+		rs.isSafe();
+	}
+	
+	/**
+	 * Get the variable name of a term at position 'index' in a literal.
+	 * @param lit The literal to be processed.
+	 * @param index The position of the variable term in the literal.
+	 * @return The name of variable or null if the term is not a variable.
+	 */
+	private static String extractVariableName( ILiteral lit, int index )
+	{
+		ITerm term = lit.getTuple().getTerms().get( index );
+		return term.isGround() ? null : term.toString();		
 	}
 }
