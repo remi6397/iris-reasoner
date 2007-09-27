@@ -39,22 +39,13 @@ package org.deri.iris.api.basics;
  * Only safe rules are supported. A rule is safe if its every variable
  * occurs in one of its positive, non built-in, atoms of the body.</p>
  * <p>
- * $Id: IRule.java,v 1.6 2007-06-21 08:56:09 poettler_ric Exp $
+ * $Id: IRule.java,v 1.7 2007-09-27 12:25:24 bazbishop237 Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   14.11.2005 17:21:21
  */
 public interface IRule extends IHead, IBody{
-	
-	/**
-	 * <p>
-	 * Checks the safeness of a rule.
-	 * </p>
-	 * 
-	 * @return	True if the rule is safe; false otherwise.
-	 */
-	public boolean isSafe();
 	
 	/**
 	 * <p>

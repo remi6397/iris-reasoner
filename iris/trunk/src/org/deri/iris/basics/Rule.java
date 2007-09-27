@@ -39,6 +39,9 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.builtins.EqualBuiltin;
+import org.deri.iris.evaluation.RuleValidator;
+import org.deri.iris.terms.Variable;
 
 /**
  * <p>
@@ -64,145 +67,6 @@ public class Rule implements IRule {
 		this.body = body;
 	}
 	
-	/**
-	 * A second attempt at defining what is and what is not a safe rule.
-	 * 
-	 * 1) Every variable in the head must appear in a positive, non/builtin literal.
-	 * 
-	 * 2) Any variable occurring in a comparative predicates must also occur in
-	 *    some non-comparative positive literal in the body of the same rule.
-	 *    
-	 * However, a positive, builtin, equality literal has special treatment.
-	 * 
-	 * @return
-	 */
-	public boolean isSafe2()
-	{
-		Set<IVariable> headVariables = new HashSet<IVariable>();
-
-		for (IVariable var : head.getHeadVariables())
-		{
-			headVariables.add(var);
-		}
-
-		Set<IVariable> comparisonVariables = new HashSet<IVariable>();
-		Set<IVariable> positiveVariables = new HashSet<IVariable>();
-		
-		// get all literals of the body
-		List<ILiteral> bodyLiterals = body.getBodyLiterals();
-
-		// remove all ordinary(non-builtin) not-negated predicates and mark their variables as limited
-		for( ILiteral lit : body.getBodyLiterals() )
-		{
-			if ( ! lit.isGround() )
-			{
-				boolean builtin = lit.getAtom().isBuiltin();
-				boolean positive = lit.isPositive();
-
-				for( ITerm litTerm : lit.getTuple().getTerms() )
-				{
-					if (!litTerm.isGround())
-					{
-						if ( positive && ! builtin )
-							positiveVariables.add( (IVariable)litTerm );
-						
-						if ( builtin )
-							comparisonVariables.add( (IVariable)litTerm );
-					}
-				}
-			}
-		}
-		
-		if ( ! positiveVariables.containsAll( headVariables ) )
-			return false;
-
-		if ( ! positiveVariables.containsAll( comparisonVariables ) )
-			return false;
-		
-		return true;
-	}
-	
-	/**
-	 * checks the safeness of the datalog rule:
-	 * @see ullman: ,,logic as a datamodel'' chapter 3 page 104
-	 * 
-	 * @return true if the rule is safe
-	 */
-	
-	public boolean isSafe() {
-
-		// initialize variable set with all header vars marked as not limited
-		Map<IVariable, Boolean> varsLimited = new HashMap<IVariable, Boolean>();
-		for (IVariable var : this.head.getHeadVariables()) {
-			varsLimited.put(var, Boolean.FALSE);
-		}
-
-		// get all literals of the body
-		List<ILiteral> tmpLiterals = new ArrayList<ILiteral>(), literals = this.body.getBodyLiterals();
-
-		// remove all ordinary(non-builtin) not-negated predicates and mark their variables as limited
-		Iterator it = literals.iterator();
-		while (it.hasNext()) {
-			ILiteral lit = (ILiteral) it.next();
-			if (!lit.getAtom().isBuiltin() && lit.isPositive() && !lit.isGround())
-				for(ITerm litTerm : lit.getTuple().getTerms()) {
-					if (!litTerm.isGround()) {
-						varsLimited.put((IVariable)litTerm, Boolean.TRUE);
-					}
-				}
-			else
-				tmpLiterals.add(lit);
-		}
-
-		// handle builtin predicates
-		//System.out.println("lit list: "  + tmpLiterals + "\nso far: " + varsLimited + "\n");
-		boolean somethingChanged = true;
-		while(somethingChanged) {
-			somethingChanged = false;
-			it = tmpLiterals.iterator();
-			while (it.hasNext()) {
-				boolean negNEBuiltin = false;
-			
-				ILiteral lit = (ILiteral) it.next();
-
-				if(lit.getAtom().isBuiltin()) {
-					if(lit.getPredicate().getPredicateSymbol() == "UNEQUAL" && !lit.isPositive())
-						negNEBuiltin = true; // NE builtin case: !( % != %)
-
-					if(lit.getPredicate().getPredicateSymbol() != "EQUAL" && !negNEBuiltin)
-						return false;
-					
-					int i = 0;
-					for(ITerm litTerm : lit.getTuple().getTerms()) {
-						ITerm otherTerm = lit.getTuple().getTerm((i+1) % 2);
-						// already in limitedVar set!?
-						if (!litTerm.isGround() && !varsLimited.containsKey(litTerm))
-							varsLimited.put((IVariable)litTerm, Boolean.FALSE);
-						if (!otherTerm.isGround() && !varsLimited.containsKey(otherTerm))
-							varsLimited.put((IVariable)otherTerm, Boolean.FALSE);
-						
-						if ((litTerm.isGround() || varsLimited.get(litTerm)) && (lit.isPositive() || negNEBuiltin)) {
-							if (!otherTerm.isGround())
-								if (!varsLimited.get(otherTerm)) {
-									varsLimited.put((IVariable)otherTerm, Boolean.TRUE);
-									somethingChanged = true;
-								}
-						}
-						i++;
-					}
-				}
-			}
-		}
-		
-		// final check if all variables are limited
-		for (IVariable var : varsLimited.keySet())
-		{
-			if (!varsLimited.get(var))
-				return false;
-		}
-		return true;
-	}
-
 	public boolean isRectified() {
 		// TODO Auto-generated method stub
 		return false;
