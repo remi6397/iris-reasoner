@@ -107,13 +107,7 @@ public class Rule2Relation {
 		IPredicate p = null;
 		
 		for (IRule rule : rls) {
-			// TODO: isSafe() doesn't work properly with built-ins
-			/*boolean safe = rule.isSafe();
-			if (! safe) {
-				throw new IllegalArgumentException("Unsafe rules are currently not supported. Rule: " + 
-						rule.toString() + ". is unsafe.");
-			}*/
-			/** Rectify rules */
+			/* Rectify rules */
 			r = MiscOps.rectify(rule);
 			p = r.getHeadLiteral(0).getPredicate();
 			
