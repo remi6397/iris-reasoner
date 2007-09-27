@@ -75,7 +75,7 @@ public class MultiplyBuiltinEvaluationTest extends TestCase {
 				.getSimpleName());
 	}
 
-	public void testEvaluate0() {
+	public void testEvaluate0() throws Exception{
 		// constructing the rules
 		Set<IRule> rules = new HashSet<IRule>(1);
 		// p(?S,?K) :- p1(?S,?I), less(?I, 10), multiply(?I,?I,?K), p2(?S).
@@ -189,7 +189,7 @@ public class MultiplyBuiltinEvaluationTest extends TestCase {
 	 * 
 	 * @param p	A program to be evaluated.
 	 */
-	private static void executeTest(final IProgram p, IMixedDatatypeRelation res){
+	private static void executeTest(final IProgram p, IMixedDatatypeRelation res)throws Exception{
 		System.out.println("--- input ---");
 		for (final IRule rule : p.getRules()) {
 			System.out.println(rule);

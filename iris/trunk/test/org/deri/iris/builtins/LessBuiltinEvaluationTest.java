@@ -75,7 +75,7 @@ public class LessBuiltinEvaluationTest extends TestCase {
 				.getSimpleName());
 	}
 
-	public void testEvaluate0() {
+	public void testEvaluate0() throws Exception{
 		// constructing the rules
 		Set<IRule> rules = new HashSet<IRule>(3);
 		// p(X) :- r(X)
@@ -127,7 +127,7 @@ public class LessBuiltinEvaluationTest extends TestCase {
 		executeTest(pr, res);
 	}
 	
-	public void testEvaluate1() {
+	public void testEvaluate1() throws Exception{
 		// constructing the rules
 		Set<IRule> rules = new HashSet<IRule>(3);
 		// p(X) :- r(X)
@@ -177,7 +177,7 @@ public class LessBuiltinEvaluationTest extends TestCase {
 		executeTest(pr, res);
 	}
 	
-	public void testEvaluate2() {
+	public void testEvaluate2() throws Exception{
 		// constructing the rules
 		Set<IRule> rules = new HashSet<IRule>(3);
 		// p(?X,?Y) :- s(?X,?Y), less(?Y,?X).
@@ -216,7 +216,7 @@ public class LessBuiltinEvaluationTest extends TestCase {
 		executeTest(pr, res);
 	}
 	
-	public void testEvaluate3() {
+	public void testEvaluate3() throws Exception{
 		// constructing the rules
 		Set<IRule> rules = new HashSet<IRule>(3);
 		// p(?X,?Y) :- s(?X,?Y), less(?X,?Y).
@@ -320,7 +320,7 @@ public class LessBuiltinEvaluationTest extends TestCase {
 	 * 
 	 * @param p	A program to be evaluated.
 	 */
-	private static void executeTest(final IProgram p, IMixedDatatypeRelation res){
+	private static void executeTest(final IProgram p, IMixedDatatypeRelation res)throws Exception{
 		System.out.println("--- input ---");
 		for (final IRule rule : p.getRules()) {
 			System.out.println(rule);
