@@ -35,7 +35,6 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.basics.BasicFactory;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.storage.MixedDatatypeRelation;
 import org.deri.iris.storage.RelationFactory;
 import org.deri.iris.terms.TermFactory;
 
@@ -48,10 +47,10 @@ import junit.framework.TestSuite;
  * Tests various functionalities of the program.
  * </p>
  * <p>
- * $Id: ProgramTest.java,v 1.2 2007-09-17 09:47:54 bazbishop237 Exp $
+ * $Id: ProgramTest.java,v 1.3 2007-09-27 12:13:51 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ProgramTest extends TestCase {
 
