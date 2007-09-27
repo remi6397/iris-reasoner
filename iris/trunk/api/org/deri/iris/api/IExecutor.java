@@ -27,6 +27,7 @@ package org.deri.iris.api;
 
 import java.util.Map;
 
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
@@ -48,12 +49,12 @@ import org.deri.iris.api.storage.IMixedDatatypeRelation;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IExecutor.java,v 1.7 2007-06-14 21:13:27 darko_anicic Exp $
+ * $Id: IExecutor.java,v 1.8 2007-09-27 12:26:29 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public interface IExecutor {
 
@@ -72,7 +73,7 @@ public interface IExecutor {
 	 * @return True if the evaluation has been successfully terminated,
 	 *         otherwise false.
 	 */
-	public boolean execute();
+	public boolean execute() throws EvaluationException;
 
 	/**
 	 * <p>
