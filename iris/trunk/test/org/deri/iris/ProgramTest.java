@@ -47,10 +47,10 @@ import junit.framework.TestSuite;
  * Tests various functionalities of the program.
  * </p>
  * <p>
- * $Id: ProgramTest.java,v 1.3 2007-09-27 12:13:51 bazbishop237 Exp $
+ * $Id: ProgramTest.java,v 1.4 2007-09-27 14:51:00 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ProgramTest extends TestCase {
 
@@ -62,8 +62,9 @@ public class ProgramTest extends TestCase {
 	 * Tests whether it is possible to construct two programs which are
 	 * independent of each other. Means, that one program should not contain
 	 * the other's objects.
+	 * @throws Exception 
 	 */
-	public void testMultiblePrograms() {
+	public void testMultiblePrograms() throws Exception {
 		final String prog0 = "a(?X) :- b(?X).\n" + 
 			"b('a').";
 		final String prog1 = "x(?X) :- y(?X).\n" + 

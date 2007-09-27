@@ -68,11 +68,11 @@ import org.deri.iris.MiscHelper;
  * Tests the adornments.
  * </p>
  * <p>
- * $Id: AdornmentsTest.java,v 1.6 2007-09-21 09:11:56 poettler_ric Exp $
+ * $Id: AdornmentsTest.java,v 1.7 2007-09-27 14:52:39 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class AdornmentsTest extends TestCase {
 
@@ -615,7 +615,7 @@ public class AdornmentsTest extends TestCase {
 	/**
 	 * Tests that constants in literals in the body will be marked as bound.
 	 */
-	public void testConstantsInBody() {
+	public void testConstantsInBody() throws Exception {
 		final String program = "a(?X, ?Y) :- b(?X, ?Z), c('a', ?Z, ?Y). \n" + 
 			"c(?X, ?Y, ?Z) :- x(?X, ?Y, ?Z). \n" + 
 			"?-a('john', ?Y).";
@@ -649,7 +649,7 @@ public class AdornmentsTest extends TestCase {
 	 * Tests conjunctive queries.
 	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
 	 */
-	public void testConjunctiveQuery() {
+	public void testConjunctiveQuery() throws Exception {
 		final String prog = "p(?X, ?X) :- c(?X).\n" + 
 			"r(?X, ?X, ?X) :- c(?X).\n" + 
 			"s(?X, ?X) :- c(?X).\n" + 
@@ -683,11 +683,11 @@ public class AdornmentsTest extends TestCase {
 	 * Compares two rules according to their predicate symbols.
 	 * </p>
 	 * <p>
-	 * $Id: AdornmentsTest.java,v 1.6 2007-09-21 09:11:56 poettler_ric Exp $
+	 * $Id: AdornmentsTest.java,v 1.7 2007-09-27 14:52:39 bazbishop237 Exp $
 	 * </p>
 	 * 
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.6 $
+	 * @version $Revision: 1.7 $
 	 */
 	private static class RuleComparator implements Comparator<IRule> {
 		public int compare(IRule o1, IRule o2) {

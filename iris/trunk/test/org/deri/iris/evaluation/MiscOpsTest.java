@@ -48,11 +48,11 @@ import org.deri.iris.basics.seminaive.ConstLiteral;
  * Tests the methods in the MiscOps class.
  * </p>
  * <p>
- * $Id: MiscOpsTest.java,v 1.6 2007-09-27 12:06:38 bazbishop237 Exp $
+ * $Id: MiscOpsTest.java,v 1.7 2007-09-27 14:52:03 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class MiscOpsTest extends TestCase {
 
@@ -161,7 +161,7 @@ public class MiscOpsTest extends TestCase {
 		assertEquals("The original rule must remain the same", backup, in);
 	}
 	
-	public void testStratify() {
+	public void testStratify() throws Exception {
 
 		final String stratProg = "p(?X) :- r(?X).\n" + 
 			"p(?X) :- p(?X).\n" + 
