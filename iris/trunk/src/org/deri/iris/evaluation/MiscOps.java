@@ -48,21 +48,25 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.basics.seminaive.ConstLiteral;
+import org.deri.iris.builtins.AddBuiltin;
+import org.deri.iris.builtins.DivideBuiltin;
 import org.deri.iris.builtins.EqualBuiltin;
+import org.deri.iris.builtins.MultiplyBuiltin;
+import org.deri.iris.builtins.SubtractBuiltin;
 
 /**
  * <p>
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.13 2007-09-27 12:22:46 bazbishop237 Exp $
+ * $Id: MiscOps.java,v 1.14 2007-10-03 15:34:36 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class MiscOps {
 
@@ -400,30 +404,37 @@ public class MiscOps {
 				// Do the special handling for built-in predicates
 				if( builtin )
 				{
-					if( lit.getTuple().getArity() == 2 )
+					int arity = lit.getTuple().getArity();
+					
+					if ( positive && arity == 2 && isEquality( lit.getAtom() ) )
 					{
-						boolean positiveEquality = positive && lit.getAtom() instanceof EqualBuiltin;
-						
 						String operand1 = extractVariableName( lit, 0 );
 						String operand2 = extractVariableName( lit, 1 );
 						
-						rs.addVariablesFromBuiltinBinaryPredicate( positiveEquality, operand1, operand2 );
+						rs.addVariablesFromPositiveEqualityPredicate( operand1, operand2 );
 					}
-					else if( lit.getTuple().getArity() == 3 )
+					else if ( positive && arity == 3 && isArithmetic( lit.getAtom() ) )
 					{
 						String operand1 = extractVariableName( lit, 0 );
 						String operand2 = extractVariableName( lit, 1 );
 						String target   = extractVariableName( lit, 2 );
-						
-						rs.addVariablesFromBuiltinTernaryPredicate( positive, operand1, operand2, target );
+					
+						rs.addVariablesFromPositiveArithmeticPredicate( operand1, operand2, target );
 					}
 					else
-						assert false : "Only built-in predicates with arity 2 or 3 are expected.";
+					{
+						for ( int a = 0; a < arity; ++a )
+						{
+							String variable = extractVariableName( lit, a );
+						
+							rs.addVariableFromBuiltinPredicate( variable );
+						}
+					}
 				}
 				else
 				{
 					// Ordinary predicate
-					for( ITerm litTerm : lit.getTuple().getTerms() )
+					for( ITerm<?> litTerm : lit.getTuple().getTerms() )
 					{
 						if (! litTerm.isGround())
 						{
@@ -448,7 +459,30 @@ public class MiscOps {
 	 */
 	private static String extractVariableName( ILiteral lit, int index )
 	{
-		ITerm term = lit.getTuple().getTerms().get( index );
+		ITerm<?> term = lit.getTuple().getTerms().get( index );
 		return term.isGround() ? null : term.toString();		
+	}
+	
+	/**
+	 * Utility to check if an atom is an equality built-in
+	 * @param atom The atom to check
+	 * @return true if it is
+	 */
+	private static boolean isEquality( IAtom atom )
+	{
+		return atom instanceof EqualBuiltin;
+	}
+
+	/**
+	 * Utility to check if an atom is one of the ternary arithmetic built-ins
+	 * @param atom The atom to check
+	 * @return true if it is
+	 */
+	private static boolean isArithmetic( IAtom atom )
+	{
+		return  atom instanceof AddBuiltin ||
+				atom instanceof SubtractBuiltin ||
+				atom instanceof MultiplyBuiltin ||
+				atom instanceof DivideBuiltin;
 	}
 }
