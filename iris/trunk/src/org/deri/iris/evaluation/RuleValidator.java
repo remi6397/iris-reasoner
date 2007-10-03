@@ -90,6 +90,20 @@ public class RuleValidator
 	}
 
 	/**
+	 * Add variable from any built-in predicate other than positive equality and ternary arithmetic
+	 * in predicates, e.g. the IS<type>() predicates.
+	 * e.g.
+	 *   ISSTRING( ?X  )
+	 * 
+	 * @param variable 'X' in this example
+	 */
+	public void addVariableFromBuiltinPredicate( String variable )
+	{
+		if ( variable != null )
+			mBuiltin.add( variable );
+	}
+
+	/**
 	 * Add variables from binary built-in predicates, i.e. the comparison/equality predicates:
 	 * 	 < <= > >= = !=
 	 * e.g.
@@ -97,11 +111,10 @@ public class RuleValidator
 	 * 
 	 * Pass null values for variables that are ground terms.
 	 * 
-	 * @param isPositiveEquality true for a positive equality predicate, false otherwise
 	 * @param operand1 'X' in this example
 	 * @param operand2 'Y' in this example
 	 */
-	public void addVariablesFromBuiltinBinaryPredicate( boolean isPositiveEquality, String operand1, String operand2 )
+	public void addVariablesFromPositiveEqualityPredicate( String operand1, String operand2 )
 	{
 		// These will have to be limited too.
 		if ( operand1 != null )
@@ -110,20 +123,17 @@ public class RuleValidator
 		if ( operand2 != null )
 			mBuiltin.add( operand2 );
 
-		if ( isPositiveEquality )
+		if ( operand1 != null && operand2 != null )
 		{
-			if ( operand1 != null && operand2 != null )
-			{
-				mEqualityPairs.add( new String[]{ operand1, operand2 } );
-			}
-			else if ( operand1 != null && operand2 == null )
-			{
-				mLimitedVariables.add( operand1 );
-			}
-			else if ( operand1 == null && operand2 != null )
-			{
-				mLimitedVariables.add( operand2 );
-			}
+			mEqualityPairs.add( new String[]{ operand1, operand2 } );
+		}
+		else if ( operand1 != null && operand2 == null )
+		{
+			mLimitedVariables.add( operand1 );
+		}
+		else if ( operand1 == null && operand2 != null )
+		{
+			mLimitedVariables.add( operand2 );
 		}
 	}
 
@@ -138,7 +148,7 @@ public class RuleValidator
 	 * @param operand2 'Y' in this example
 	 * @param target 'Z' in this example
 	 */
-	public void addVariablesFromBuiltinTernaryPredicate( boolean positive, String operand1, String operand2, String target )
+	public void addVariablesFromPositiveArithmeticPredicate( String operand1, String operand2, String target )
 	{
 		if ( operand1 != null )
 			mBuiltin.add( operand1 );
@@ -147,12 +157,7 @@ public class RuleValidator
 			mBuiltin.add( operand2 );
 
 		if ( target != null )
-		{
-			if ( positive )
-				mTernaryTarget.add( target );
-			else
-				mBuiltin.add( target );	// not X <op> Y = Z, does not make Z limited even if X and Y are.
-		}
+			mTernaryTarget.add( target );
 	}
 
 	/**
