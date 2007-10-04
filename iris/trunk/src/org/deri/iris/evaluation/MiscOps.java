@@ -59,14 +59,14 @@ import org.deri.iris.builtins.SubtractBuiltin;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.14 2007-10-03 15:34:36 bazbishop237 Exp $
+ * $Id: MiscOps.java,v 1.15 2007-10-04 08:12:00 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class MiscOps {
 
@@ -434,7 +434,7 @@ public class MiscOps {
 				else
 				{
 					// Ordinary predicate
-					for( ITerm<?> litTerm : lit.getTuple().getTerms() )
+					for( ITerm litTerm : lit.getTuple().getTerms() )
 					{
 						if (! litTerm.isGround())
 						{
@@ -459,7 +459,7 @@ public class MiscOps {
 	 */
 	private static String extractVariableName( ILiteral lit, int index )
 	{
-		ITerm<?> term = lit.getTuple().getTerms().get( index );
+		ITerm term = lit.getTuple().getTerms().get( index );
 		return term.isGround() ? null : term.toString();		
 	}
 	
