@@ -56,11 +56,11 @@ import org.deri.iris.factory.Factory;
  * Tests for the datalog parser.
  * </p>
  * <p>
- * $Id: ParserTest.java,v 1.10 2007-09-27 14:56:25 bazbishop237 Exp $
+ * $Id: ParserTest.java,v 1.11 2007-10-04 22:32:07 bazbishop237 Exp $
  * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class ParserTest extends TestCase {
 
@@ -367,6 +367,24 @@ public class ParserTest extends TestCase {
 		assertTrue("Can't find '10 / 11 = 12' in " + body, body.contains(
 					BASIC.createLiteral(true, BUILTIN.createDivideBuiltin(
 							CONCRETE.createInteger(10), CONCRETE.createInteger(11), CONCRETE.createInteger(12)))));
+	}
+	
+	/**
+	 * Test that the parsing of negated built-ins works as expected.
+	 * @throws Exception
+	 */
+	public void testNegatedPredicateAndBuiltinEquivalence() throws Exception
+	{
+		String program1 = "p(?X, ?Y) :- q(?X), not LESS( ?X, ?Y ), not ADD( ?X, ?Y, 3 ).";
+		String program2 = "p(?X, ?Y) :- q(?X), not ?X < ?Y, not ?X +?Y = 3.";
+		
+		IProgram prog1 = Factory.PROGRAM.createProgram();
+		IProgram prog2 = Factory.PROGRAM.createProgram();
+
+		Parser.parse( program1, prog1 );
+		Parser.parse( program2, prog2 );
+		
+		assertEquals( prog1.getRules(), prog2.getRules() );
 	}
 
 	/**
