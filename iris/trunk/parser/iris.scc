@@ -6,7 +6,7 @@ Package org.deri.iris.parser;
 Helpers 
 	all = [0x0 .. 0xffff];
     
-	// the whitespaces
+	// the whitespace
 	tab = 9;
 	cr = 13;
 	lf = 10;
@@ -64,7 +64,7 @@ Tokens
     t_ter_op = add | sub | mul | div; // ternary operators
     t_eq = eq;
                    
-	// tokens defining the diffenrent primitives
+	// tokens defining the different primitives
 	t_int 		= min? num+;
 	t_dec 		= min? num+ (dot num+)?;
 	t_str 		= delim anychar+ delim;
@@ -121,7 +121,8 @@ Productions
     
 	literal = 	{negated} t_not predicate |
 			predicate |
-			{builtin} builtin;
+			{builtin} builtin |
+			{negatedbuiltin} t_not builtin;
     
 	predicate = 	t_id paramlist?;
 
