@@ -80,7 +80,7 @@ public class RuleValidatorTest extends TestCase
 		rv.addVariableFromOrdinaryPredicate( true, "a" );
 		rv.addVariableFromOrdinaryPredicate( true, "b" );
 		
-		rv.addVariablesFromBuiltinTernaryPredicate( true, "a", "b", "c" );
+		rv.addVariablesFromPositiveArithmeticPredicate( "a", "b", "c" );
 
 		assertSafe( rv );
 	}
@@ -96,7 +96,7 @@ public class RuleValidatorTest extends TestCase
 		rv.addVariableFromOrdinaryPredicate( true, "a" );
 		rv.addVariableFromOrdinaryPredicate( true, "b" );
 		
-		rv.addVariablesFromBuiltinTernaryPredicate( true, "a", "b", "c" );
+		rv.addVariablesFromPositiveArithmeticPredicate( "a", "b", "c" );
 
 		assertUnsafe( rv );
 	}
@@ -110,23 +110,9 @@ public class RuleValidatorTest extends TestCase
 
 		rv.addVariableFromOrdinaryPredicate( true, "a" );
 		
-		rv.addVariablesFromBuiltinBinaryPredicate( true, "a", "b" );
+		rv.addVariablesFromPositiveEqualityPredicate( "a", "b" );
 
 		assertSafe( rv );
-	}
-	
-	public void testNotPositiveEquality()
-	{
-		RuleValidator rv = new RuleValidator( true, true );
-		
-		rv.addHeadVariable( "a" );
-		rv.addHeadVariable( "b" );
-
-		rv.addVariableFromOrdinaryPredicate( true, "a" );
-		
-		rv.addVariablesFromBuiltinBinaryPredicate( false, "a", "b" );
-
-		assertUnsafe( rv );
 	}
 	
 	void assertUnsafe( RuleValidator rv )
