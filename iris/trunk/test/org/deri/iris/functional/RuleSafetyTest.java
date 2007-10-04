@@ -64,7 +64,7 @@ public class RuleSafetyTest extends TestCase
     }
 
 	/**
-     * Test a safe logic program with simple negation.
+     * Simple negation.
      * @throws Exception
      */
     public void testSafe_Variable_InNegatedSubGoal_InRuleHead_InPositiveLiteral() throws Exception
@@ -85,41 +85,29 @@ public class RuleSafetyTest extends TestCase
     }
 
 	/**
-     * Ensure that this logic program with unsafe negation is not evaluated.
+     * Rule with unsafe negation.
      * @throws Exception
      */
     public void testUnsafe_Variable_InNegatedSubGoal_InRuleHead_NotInPositiveLiteral() throws Exception
     {
-    	String program = 
-    		"s(1)." +
-    		"p(2,2)." +
-    		"p(3,9)." +
-    		"r(9)." +
-    		
-    		"w(?X,?Y) :- s(?X), not p(2,?Y)." +
+    	String program = "w(?X,?Y) :- s(?X), not p(2,?Y).";
 
-    		"?- w(?X,?Y).";
-    
     	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
     }
 
 	/**
-     * Assert that a logic program containing an unsafe rule is detected.
+     * Unsafe rule with head variable not in the body.
      * @throws Exception 
      */
     public void testUnsafe_Variable_InHead_NotInBody() throws Exception
     {
-    	String program =
-    		"p( 5 )." +
-    		"p( 7 )." +
-    		"pp( ?X, ?Y ) :- p( ?X )." +
-    		"?- pp( ?X, ?Y ).";
+    	String program = "p( ?X, ?Y ) :- q( ?X ).";
     	
     	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
     }
 
 	/**
-     * Assert that logic programs that contain safe rules are correctly evaluated.
+     * Simple rule with every head variable in a positive, ordinary predicate.
      * @throws Exception 
      */
     public void testSafe_Variable_InHead_InPositiveLiteral() throws Exception
@@ -143,36 +131,23 @@ public class RuleSafetyTest extends TestCase
     }
 
 	/**
-     * Try to execute a rule with an unsafe use of a builtin operator.
-     * This should fail, because IRIS should detect that the 'less' rule below
-     * is unsafe.
+     * Try to execute a rule with an unsafe use of a built-in operator.
      * 
-     * (It is unsafe because every variable in the builtin predicate must appear
-     * in a positive, non-comparitive literal in the same rule.)
+     * (It is unsafe because every variable in the built-in predicate must appear
+     * in a positive, ordinary predicate in the same rule.)
      * 
      * @throws Exception
      */
     public void testUnsafe_Variable_InBuiltin_InRuleHead_NotInPositiveLiteral()
     {
-    	String program =
-    		"id(1)." +
-    		"id(11)." +
-    		"less(?X, ?Y) :- id(?X), ?X < ?Y." +
-    		"enter(?X) :- id(?X), less(?X,10)." +
-    		"?- enter(?Y).";
+    	String program = "p(?X, ?Y) :- q(?X), ?X < ?Y.";
     
     	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
     }
 
 	/**
-     * Try to execute a rule with an unsafe use of a builtin operator.
-     * This should fail, because IRIS should detect that the 'less' rule below
-     * is unsafe.
-     * 
-     * (It is unsafe because every variable in the builtin predicate must appear
-     * in a positive, non-comparitive literal in the same rule.)
-	 * @throws Exception 
-     * 
+     * A rule with a built-in equality that makes a variable limited
+     * (and therefore the rule safe).
      * @throws Exception
      */
     public void testSafe_Variable_InEquality_InRuleHead_NotInPositiveLiteral() throws Exception
@@ -184,6 +159,49 @@ public class RuleSafetyTest extends TestCase
 
     	String expectedResults = "p( 1, 1 ).";
     
+    	Helper.evaluateWithAllStrategies( program, expectedResults );
+    }
+
+	/**
+     * Unsafe unary predicate.
+     * @throws Exception
+     */
+    public void testUnsafe_Variable_InUnaryBuiltin_NotInPositiveLiteral() throws Exception
+    {
+    	String program = "w(?X,?Y) :- s(?X), ISSTRING(?Y).";    
+
+    	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    }
+    
+	/**
+     * Unsafe unary predicate.
+     * @throws Exception
+     */
+	public void testUnsafe_Variable_InUnaryBuiltin_NotInPositiveLiteral_NotInHead() throws Exception
+	{
+		String program =
+			"man('homer')." +
+			"isMale(?x) :- man(?x), ISSTRING(?z)." +
+			"?-isMale(?x).";
+	
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+	}
+
+	/**
+     * Unsafe unary predicate.
+     * @throws Exception
+     */
+    public void testSafe_Variable_InUnaryBuiltin_InPositiveLiteral() throws Exception
+    {
+    	String program =
+    		"s(1)." +
+    		"p(2)." +
+    		"p('s')." +
+    		"w(?X,?Y) :- s(?X), p(?Y), ISSTRING(?Y)." +
+    		"?- w(?X, ?Y).";    
+
+    	String expectedResults = "w( 1, 's' ).";
+        
     	Helper.evaluateWithAllStrategies( program, expectedResults );
     }
 }
