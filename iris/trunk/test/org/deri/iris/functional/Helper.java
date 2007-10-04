@@ -61,7 +61,7 @@ public class Helper
 	 * @param expectedExceptionClass The exception class object expected or null for an
 	 * unknown exception type. 
 	 */
-	public  static void checkFailureWithAllStrategies( String program, Class expectedExceptionClass )
+	public  static void checkFailureWithAllStrategies( String program, Class<?> expectedExceptionClass )
 	{
 		try
 		{
@@ -149,11 +149,11 @@ public class Helper
 			
 			if ( expectedPredicate != null )
 			{
-				junit.framework.Assert.assertEquals( evaluationStrategy + ": Each relation must have the same number of tuples",
+				junit.framework.Assert.assertEquals( evaluationStrategy + ": The relation did not have the expected number of tuples",
 								expectedPredicate.size(), actualPredicate.size() );
-				junit.framework.Assert.assertTrue( evaluationStrategy + ": The output relation must contain all expected tuples",
+				junit.framework.Assert.assertTrue( evaluationStrategy + ": The relation did not contain all the expected tuples",
 								expectedPredicate.containsAll( actualPredicate ) );
-				junit.framework.Assert.assertTrue( evaluationStrategy + ": The expected relation must contain all out tuples",
+				junit.framework.Assert.assertTrue( evaluationStrategy + ": The relation contains tuples that were not expected",
 								actualPredicate.containsAll( expectedPredicate ) );
 			}
 		}
