@@ -138,6 +138,22 @@ public class RuleSafetyTest extends TestCase
      * 
      * @throws Exception
      */
+    public void testUnsafe_Variable_InNegatedBuiltin_InRuleHead_NotInPositiveLiteral()
+    {
+		// Same as: p(?X, ?Y) :- q(?X), not LESS( ?X, ?Y ).
+    	String program = "p(?X, ?Y) :- q(?X), not ?X < ?Y.";
+    
+    	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    }
+
+	/**
+     * Try to execute a rule with an unsafe use of a built-in operator.
+     * 
+     * (It is unsafe because every variable in the built-in predicate must appear
+     * in a positive, ordinary predicate in the same rule.)
+     * 
+     * @throws Exception
+     */
     public void testUnsafe_Variable_InBuiltin_InRuleHead_NotInPositiveLiteral()
     {
     	String program = "p(?X, ?Y) :- q(?X), ?X < ?Y.";
@@ -177,6 +193,17 @@ public class RuleSafetyTest extends TestCase
      * Unsafe unary predicate.
      * @throws Exception
      */
+    public void testUnsafe_Variable_InNegatedUnaryBuiltin_NotInPositiveLiteral() throws Exception
+    {
+    	String program = "w(?X,?Y) :- s(?X), not ISSTRING(?Y).";    
+
+    	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    }
+    
+	/**
+     * Unsafe unary predicate.
+     * @throws Exception
+     */
 	public void testUnsafe_Variable_InUnaryBuiltin_NotInPositiveLiteral_NotInHead() throws Exception
 	{
 		String program =
@@ -203,5 +230,24 @@ public class RuleSafetyTest extends TestCase
     	String expectedResults = "w( 1, 's' ).";
         
     	Helper.evaluateWithAllStrategies( program, expectedResults );
+    }
+
+	/**
+     * Simple negation.
+     * @throws Exception
+     */
+    public void testSafe_Variable_InNegatedBuiltin_InRuleHead_InPositiveLiteral() throws Exception
+    {
+    	String program = 
+    		"s(1)." +
+    		"r(9)." +
+    		
+    		"w(?X,?Y) :- s(?X), r(?Y), not 2 < ?Y." +
+    	    "?- w(?X,?Y).";
+        	
+       	String expectedResults = 
+    	    "w(1, 9).";
+    
+       	Helper.evaluateWithAllStrategies( program, expectedResults );
     }
 }
