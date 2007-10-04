@@ -46,6 +46,35 @@ public class EvaluationTest extends TestCase
 	}
 	
 	/**
+	 * Check that IRIS copes with predicates with the same name, but different arities.
+	 * @throws Exception 
+	 */
+	public void testPredicateWithSeveralArities() throws Exception
+	{
+		String facts =
+			"p(8,9,10,11)." +
+			"p(12,13,14,15)." +
+			"p(5,6,7)." +
+			"p(6,6,8)." +
+			"p(3,4)." +
+			"p(1)." +
+			"p(2)." +
+			"p.";
+		
+		String program = facts +
+			"?-p(?x,?y,?z,?a)." +
+			"?-p(?x,?y,?z)." +
+			"?-p(?x,?y)." +
+			"?- p(?x)." +
+			"?- p.";
+		
+		String expectedResults = facts;
+			
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	
+	/**
 	 * Test that a query with more than one predicate is correctly
 	 * evaluated.
 	 * TODO Semi-naive with Magic Sets evaluation is expected to fail, because
