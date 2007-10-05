@@ -40,15 +40,13 @@ public class BuiltinDescriptor extends Component implements IBuiltinDescriptor{
 
 	IBuiltInAtom builtin = null;
 	
-	boolean positive = true;
-	
 	BuiltinDescriptor (boolean isPositive, IBuiltInAtom builtin) {
 		super(ComponentType.BUILTIN, builtin.getTuple().getAllVariables());
 		
 		if (builtin == null) {
 			throw new IllegalArgumentException("BuiltinDescriptor input parameters must not be null");
 		}
-		this.positive = isPositive;
+		setPositive( isPositive );
 		this.builtin = builtin;
 	}
 
@@ -60,7 +58,7 @@ public class BuiltinDescriptor extends Component implements IBuiltinDescriptor{
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(ComponentType.BUILTIN + 
 				"[");
-		if (!this.positive)
+		if (!isPositive())
 			buffer.append("NOT_");
 		buffer.append(this.builtin.toString());
 		buffer.append("]");
