@@ -242,12 +242,8 @@ public class RuleSafetyTest extends TestCase
     		"s(1)." +
     		"r(9)." +
     		
-    		"w(?X,?Y) :- s(?X), r(?Y), not 2 < ?Y." +
-    	    "?- w(?X,?Y).";
+    		"w(?X,?Y) :- s(?X), r(?Y), not 2 < ?Y.";
         	
-       	String expectedResults = 
-    	    "w(1, 9).";
-    
-       	Helper.evaluateWithAllStrategies( program, expectedResults );
+       	Helper.evaluateWithAllStrategies( program, "" );
     }
 }
