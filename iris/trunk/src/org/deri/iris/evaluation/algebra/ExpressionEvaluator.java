@@ -380,12 +380,12 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		IBuiltinEvaluator eval = null;
 		if (c.getChildren().size() == 0) {
 			if (relVars == null || rel == null) {
-				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator(
+				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator( con.isPositive(),
 						con.getBuiltin(), new ArrayList<IVariable>(0), 
 						RELATION.getMixedRelation(0));
 			} else {
-				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator(con
-						.getBuiltin(), relVars, rel);
+				eval = RELATION_OPERATION.createBuiltinEvaluatorOperator( con.isPositive(),
+								con.getBuiltin(), relVars, rel);
 			}
 		} else {
 			throw new IllegalArgumentException(
