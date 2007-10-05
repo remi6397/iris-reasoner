@@ -129,4 +129,102 @@ public class NegationTest extends TestCase
 		
 		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
 	}
+
+	/**
+	 * Simple negation of a builtin binary predicate.
+	 * @throws Exception
+	 */
+    public void testNegatedLess() throws Exception
+    {
+    	String program = 
+    		"r(0)." +
+    		"r(1)." +
+    		"r(2)." +
+    		"r(3)." +
+    		"r(4)." +
+    		
+    		"v(?X) :- r(?X), not  ?X > 2." +
+    		"w(?X) :- r(?X),      ?X > 2." +
+    	    "?- v(?X)." +
+    	    "?- w(?X).";
+        	
+       	String expectedResults = 
+    	    "v(0)." +
+    	    "v(1)." +
+    	    "v(2)." +
+    	    "w(3)." +
+    	    "w(4).";
+    
+       	Helper.evaluateWithAllStrategies( program, expectedResults );
+    }
+
+	/**
+	 * Simple negation of a builtin unary predicate.
+	 * @throws Exception
+	 */
+    public void testNegatedIsString() throws Exception
+    {
+    	String program = 
+    		"r(1)." +
+    		"r(2)." +
+    		"r('a')." +
+    		"r('b')." +
+    		
+    		"v(?X) :- r(?X), not  ISSTRING( ?X )." +
+    		"w(?X) :- r(?X),      ISSTRING( ?X )." +
+    	    "?- v(?X)." +
+    	    "?- w(?X).";
+        	
+       	String expectedResults = 
+    	    "v(1)." +
+    	    "v(2)." +
+    	    "w('a')." +
+    	    "w('b').";
+    
+       	Helper.evaluateWithAllStrategies( program, expectedResults );
+    }
+
+	/**
+	 * Simple negation of a builtin unary predicate.
+	 * @throws Exception
+	 */
+    public void testNegatedAdd() throws Exception
+    {
+    	String program = 
+    		"r(1)." +
+    		"r(2)." +
+    		"r(3)." +
+    		"r(4)." +
+    		
+    		"s(5)." +
+    		"s(6)." +
+    		"s(7)." +
+    		"s(8)." +
+    		
+    		"v(?X,?Y) :- r(?X), s(?Y),     ?X + ?Y = 7." +
+    		"w(?X,?Y) :- r(?X), s(?Y), not ?X + ?Y = 7." +
+    	    "?- v(?X,?Y)." +
+    	    "?- w(?X,?Y).";
+        	
+       	String expectedResults = 
+    	    "v(1,6)." +
+    	    "v(2,5)." +
+    	    
+    	    "w(1,5)." +
+    	    "w(1,7)." +
+    	    "w(1,8)." +
+    	    "w(2,6)." +
+    	    "w(2,7)." +
+    	    "w(2,8)." +
+    	    "w(3,5)." +
+    	    "w(3,6)." +
+    	    "w(3,7)." +
+    	    "w(3,8)." +
+    	    "w(4,5)." +
+    	    "w(4,6)." +
+    	    "w(4,7)." +
+    	    "w(4,8).";
+    
+       	Helper.evaluateWithAllStrategies( program, expectedResults );
+    }
 }
