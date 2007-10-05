@@ -63,6 +63,8 @@ public class GeneralBuiltinEvaluator implements IBuiltinEvaluator {
 	private List<IVariable> relVars = null;
 
 	private List<IVariable> outVras = null;
+	
+	private final boolean positive;
 
 	/**
 	 * <p>
@@ -83,7 +85,7 @@ public class GeneralBuiltinEvaluator implements IBuiltinEvaluator {
 	 *            Serves as the input relation for the evaluation of a built-in
 	 *            subgoal.
 	 */
-	GeneralBuiltinEvaluator(IBuiltInAtom builtin, List<IVariable> relVars,
+	GeneralBuiltinEvaluator(boolean positive, IBuiltInAtom builtin, List<IVariable> relVars,
 			IMixedDatatypeRelation rel) {
 
 		if (builtin == null || relVars == null || rel == null) {
@@ -94,6 +96,7 @@ public class GeneralBuiltinEvaluator implements IBuiltinEvaluator {
 		this.relation0 = rel;
 		this.relVars = relVars;
 		this.outVras = getOVars();
+		this.positive = positive;
 	}
 
 	/**
@@ -118,7 +121,8 @@ public class GeneralBuiltinEvaluator implements IBuiltinEvaluator {
 			while (it0.hasNext()) {
 				t0 = it0.next();
 				t1 = this.builtin.evaluate(getInTuple(t0));
-				if (t1 != null) {
+				if (t1 != null && positive || t1 == null && ! positive)
+				{
 					tRes = BASIC.createTuple(t0.getArity()
 							+ this.outVras.size());
 					tRes.setTerms(0, t0.getTerms());
