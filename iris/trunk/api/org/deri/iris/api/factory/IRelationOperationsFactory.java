@@ -156,6 +156,6 @@ public interface IRelationOperationsFactory {
 
 	public IUnion createUnionOperator(final List<IMixedDatatypeRelation> arg);
 	
-	public IBuiltinEvaluator createBuiltinEvaluatorOperator(IBuiltInAtom builtin, 
+	public IBuiltinEvaluator createBuiltinEvaluatorOperator(boolean positive, IBuiltInAtom builtin, 
 			List<IVariable> relVars, IMixedDatatypeRelation rel);
 }

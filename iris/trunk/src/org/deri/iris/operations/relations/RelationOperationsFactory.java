@@ -139,7 +139,7 @@ public class RelationOperationsFactory implements IRelationOperationsFactory{
 		return new GeneralUnion(arg);
 	}
 	
-	public IBuiltinEvaluator createBuiltinEvaluatorOperator(IBuiltInAtom builtin, List<IVariable> relVars, IMixedDatatypeRelation rel) {
-		return new GeneralBuiltinEvaluator(builtin, relVars, rel);
+	public IBuiltinEvaluator createBuiltinEvaluatorOperator(boolean positive, IBuiltInAtom builtin, List<IVariable> relVars, IMixedDatatypeRelation rel) {
+		return new GeneralBuiltinEvaluator(positive, builtin, relVars, rel);
 	}
 }
