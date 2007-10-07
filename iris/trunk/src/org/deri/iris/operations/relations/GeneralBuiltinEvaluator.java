@@ -64,6 +64,7 @@ public class GeneralBuiltinEvaluator implements IBuiltinEvaluator {
 
 	private List<IVariable> outVras = null;
 	
+	/** Flag to indicate if this predicate is positive or negated. */
 	private final boolean positive;
 
 	/**
