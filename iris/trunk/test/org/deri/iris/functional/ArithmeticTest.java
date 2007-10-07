@@ -322,4 +322,101 @@ public class ArithmeticTest extends TestCase
 
        	Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
+	
+	/**
+	 * Check for round-off errors (see bug 1808292).
+	 * @throws Exception
+	 */
+	public void testFloatingPointRoundOffError() throws Exception
+	{
+		String program =
+			"a(0.5)." +
+			"a(0.6)." +
+			"a(4.2)." +
+	
+			"b(0.1)." +
+	
+			"c(5.0)." +
+			"c(6.0)." +
+			"c(42.0)." +
+	
+			"d(?Z) :- a(?X), b(?Y), c(?Z), ?X / ?Y = ?Z." +
+	
+			"?- d(?x).";
+
+       	String expectedResults = 
+       		"d(5.0)." +
+       		"d(6.0)." +
+       		"d(42.0).";
+
+       	Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Check for round-off errors converting 'int' to 'float' (see bug 1808896). 
+	 * @throws Exception
+	 */
+	public void testFloatingPointIntegerToFloatRoundOffError() throws Exception
+	{
+		String program =
+			"a(2000000000)." +
+			"a(2000000001)." +
+	
+			"c(_float(1.0))." +
+	
+			"e(?X) :- a(?X), c(?Y), ?X * ?Y = ?X." +
+	
+			"?- e(?x).";
+
+       	String expectedResults =
+			"e(2000000000)." +
+			"e(2000000001).";
+
+       	Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	/**
+	 * Predict behaviour of divide by zero (infinity) and zero-divide-by-zero (indeterminate) for
+	 * integer type (see bug 1808309)
+	 * @throws Exception
+	 */
+	public void testIntegerDivideByZero() throws Exception
+	{
+		String program =
+			"a(0)." +
+			"a(1)." +
+			"b(0)." +
+			"d(?Z) :- a(?X), b(?Y), ?X / ?Y = ?Z." +
+			"?-d(?X).";
+
+       	String expectedResults =
+//       		"d(0)." + // Value used for indeterminate?
+//       		"d(2147483647)" +	// Value used for infinity?
+       		"";
+
+       	Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	/**
+	 * Predict behaviour of divide by zero (infinity) and zero-divide-by-zero (indeterminate) for
+	 * type 'double'
+	 * (see bug 1808309)
+	 * @throws Exception
+	 */
+	public void testFloatingPointDivideByZero() throws Exception
+	{
+		String program =
+			"a(0.0)." +
+			"a(1.0)." +
+			"b(0.0)." +
+			"d(?Z) :- a(?X), b(?Y), ?X / ?Y = ?Z." +
+			"?-d(?X).";
+
+       	String expectedResults =
+//       		"d(NaN)." + // Value used for indeterminate?
+//       		"d(INFINITY)" +	// Value used for infinity?
+       		"";
+
+       	Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
 }
