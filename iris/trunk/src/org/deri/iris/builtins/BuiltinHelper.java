@@ -53,11 +53,11 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.13 2007-09-13 15:20:37 poettler_ric Exp $
+ * $Id: BuiltinHelper.java,v 1.14 2007-10-08 11:38:28 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class BuiltinHelper {
 
@@ -120,11 +120,34 @@ public class BuiltinHelper {
 	 *             if one of the numbers is null
 	 * @see Number
 	 */
-	public static int numbersCompare(final INumericTerm n0, final INumericTerm n1) {
+	public static int numbersCompare(final INumericTerm<?> n0, final INumericTerm<?> n1) {
 		if ((n0 == null) || (n1 == null)) {
 			throw new NullPointerException("The numbers must not be null");
 		}
-		return Double.compare(getDouble(n0), getDouble(n1));
+
+		// Special case. Any combination of different numeric types get casted to double, except
+		// a pair of integers...
+		if( n0 instanceof IIntegerTerm && n1 instanceof IIntegerTerm )
+        {
+	        Integer i0 = ( (IIntegerTerm) n0 ).getValue();
+	        Integer i1 = ( (IIntegerTerm) n1 ).getValue();
+	     
+	        return i0.compareTo( i1 );
+        }
+		
+		// ...and a pair of floats.
+		if( n0 instanceof IFloatTerm && n1 instanceof IFloatTerm )
+        {
+	        Float f0 = ( (IFloatTerm) n0 ).getValue();
+	        Float f1 = ( (IFloatTerm) n1 ).getValue();
+	     
+			return FloatingPoint.getFloat().compare( f0, f1 );
+        }
+		
+		double f0 = getDouble(n0);
+		double f1 = getDouble(n1);
+		
+		return FloatingPoint.getDouble().compare( f0, f1 );
 	}
 
 	/**
