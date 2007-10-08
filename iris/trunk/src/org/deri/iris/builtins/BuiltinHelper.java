@@ -53,11 +53,11 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.14 2007-10-08 11:38:28 bazbishop237 Exp $
+ * $Id: BuiltinHelper.java,v 1.15 2007-10-08 12:20:22 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class BuiltinHelper {
 
@@ -204,9 +204,8 @@ public class BuiltinHelper {
 	 * @see Number
 	 */
 	private static double getDouble(final INumericTerm n) {
-		if (n == null) {
-			throw new NullPointerException("The term must not be null");
-		}
+		assert n != null;
+
 		// TODO: maybe instance check for Number
 		return ((Number) n.getValue()).doubleValue();
 	}
@@ -300,12 +299,14 @@ public class BuiltinHelper {
 	 * @throws IllegalArgumentException if the operation couldn't be applied
 	 * to the terms
 	 */
-	public static ITerm add(final ITerm t0, final ITerm t1) {
+	public static ITerm<?> add(final ITerm<?> t0, final ITerm<?> t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
-		if((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm)) { // number + number = number
-			return toAccuratest(getDouble((INumericTerm) t0) + getDouble((INumericTerm) t1), t0, t1);
+		if((t0 instanceof IIntegerTerm) && (t1 instanceof IIntegerTerm)) { // int + int = int
+			return CONCRETE.createInteger( ((IIntegerTerm) t0).getValue() + ((IIntegerTerm) t1).getValue() );
+		} else if((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm)) { // number + number = number
+			return toAppropriateType(getDouble((INumericTerm) t0) + getDouble((INumericTerm) t1), t0, t1);
 		} else if ((t0 instanceof IDateTime) && (t1 instanceof IDuration)) { // datetime + duration = datetime
 			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTime) t0).getValue().clone();
 			cal0.add(((IDuration) t1).getValue());
@@ -351,12 +352,14 @@ public class BuiltinHelper {
 	 * @throws IllegalArgumentException if the operation couldn't be applied
 	 * to the terms
 	 */
-	public static ITerm subtract(final ITerm t0, final ITerm t1) {
+	public static ITerm<?> subtract(final ITerm<?> t0, final ITerm<?> t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
-		if((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm)) { // numer - number = number
-			return toAccuratest(getDouble((INumericTerm) t0) - getDouble((INumericTerm) t1), t0, t1);
+		if((t0 instanceof IIntegerTerm) && (t1 instanceof IIntegerTerm)) { // int - int = int
+			return CONCRETE.createInteger( ((IIntegerTerm) t0).getValue() - ((IIntegerTerm) t1).getValue() );
+		} else if((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm)) { // numer - number = number
+			return toAppropriateType(getDouble((INumericTerm) t0) - getDouble((INumericTerm) t1), t0, t1);
 		} else if ((t0 instanceof IDateTime) && (t1 instanceof IDateTime)) { // datetime - datetime = duration
 			final XMLGregorianCalendar cal0 = ((IDateTime) t0).getValue();
 			final XMLGregorianCalendar cal1 = ((IDateTime) t1).getValue();
@@ -404,7 +407,7 @@ public class BuiltinHelper {
 	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
 	 */
-	public static ITerm multiply(final ITerm t0, final ITerm t1) {
+	public static ITerm<?> multiply(final ITerm<?> t0, final ITerm<?> t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
@@ -412,7 +415,17 @@ public class BuiltinHelper {
 			throw new IllegalArgumentException("The terms must be INumericTermS, but were " + 
 					t0.getClass().getName() + " and " + t1.getClass().getName());
 		}
-		return toAccuratest(getDouble((INumericTerm) t0) * getDouble((INumericTerm) t1), t0, t1);
+		
+		if((t0 instanceof IIntegerTerm) && (t1 instanceof IIntegerTerm))
+		{
+			// int * int = int
+			return CONCRETE.createInteger(
+							((IIntegerTerm) t0).getValue() *
+							((IIntegerTerm) t1).getValue() );
+		}
+		return toAppropriateType(
+						getDouble((INumericTerm) t0) *
+						getDouble((INumericTerm) t1), t0, t1 );
 	}
 
 	/**
@@ -429,7 +442,7 @@ public class BuiltinHelper {
 	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
 	 */
-	public static ITerm divide(final ITerm t0, final ITerm t1) {
+	public static ITerm<?> divide(final ITerm<?> t0, final ITerm<?> t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
@@ -437,43 +450,45 @@ public class BuiltinHelper {
 			throw new IllegalArgumentException("The terms must be INumericTermS, but were " + 
 					t0.getClass().getName() + " and " + t1.getClass().getName());
 		}
-		return toAccuratest(getDouble((INumericTerm) t0) / getDouble((INumericTerm) t1), t0, t1);
+		
+		if((t0 instanceof IIntegerTerm) && (t1 instanceof IIntegerTerm))
+		{
+			// int / int = int
+			return CONCRETE.createInteger( ((IIntegerTerm) t0).getValue() / ((IIntegerTerm) t1).getValue() );
+		}
+
+		return toAppropriateType(getDouble((INumericTerm) t0) / getDouble((INumericTerm) t1), t0, t1);
 	}
 
 	/**
-	 * Constructs a number term with of the most accuratest submitted term type.
+	 * Constructs a number term with of the most appropriate term type.
 	 * @param n the value for the returned term
 	 * @param t0 the first term (only the type of this term will be taken into account)
 	 * @param t1 the first term (only the type of this term will be taken into account)
-	 * @return a term of the most accuratest type of the submitted ones with the 
+	 * @return a term of the most appropriate type of the submitted ones with the 
 	 * 	given value.
-	 * @throws NullPointerException if the number is <code>null</code>
-	 * @throws NullPointerException if one of the terms is <code>null</code>
-	 * @throws IllegalArgumentException if one of the terms is not  a INumericTerm
-	 * @throws IllegalArgumentException if the most accuratest term could not be determined.
 	 */
-	private static ITerm toAccuratest(final Number n, final ITerm t0, final ITerm t1) {
-		if(n == null) {
-			throw new NullPointerException("The number must not be null");
-		}
-		if((t0 == null) || (t1 == null)) {
-			throw new NullPointerException("The terms must not be null");
-		}
-		if(!(t0 instanceof INumericTerm) || !(t1 instanceof INumericTerm)) {
-			throw new IllegalArgumentException("The terms must be INumericTermS, but were " + 
-					t0.getClass().getName() + " and " + t1.getClass().getName());
-		}
-		if((t0 instanceof IDecimalTerm) || (t1 instanceof IDecimalTerm)) {
-			return CONCRETE.createDecimal(n.doubleValue());
-		} else if((t0 instanceof IDoubleTerm) || (t1 instanceof IDoubleTerm)) {
-			return CONCRETE.createDouble(n.doubleValue());
-		} else if((t0 instanceof IFloatTerm) || (t1 instanceof IFloatTerm)) {
-			return CONCRETE.createFloat(n.floatValue());
-		} else if((t0 instanceof IIntegerTerm) || (t1 instanceof IIntegerTerm)) {
+	private static ITerm<?> toAppropriateType(final Number n, final ITerm<?> t0, final ITerm<?> t1)
+	{
+		assert n != null;
+		assert t0 != null;
+		assert t1 != null;
+		assert t0 instanceof INumericTerm;
+		assert t1 instanceof INumericTerm;
+
+		if((t0 instanceof IIntegerTerm) && (t1 instanceof IIntegerTerm))
 			return CONCRETE.createInteger(n.intValue());
-		}
-		throw new IllegalArgumentException("Couldn't determine the most accurate term out of " + 
-				t0.getClass().getName() + " and " + t1.getClass().getName());
+		
+		if((t0 instanceof IDecimalTerm) || (t1 instanceof IDecimalTerm))
+			return CONCRETE.createDecimal(n.doubleValue());
+		
+		if((t0 instanceof IDoubleTerm) || (t1 instanceof IDoubleTerm))
+			return CONCRETE.createDouble(n.doubleValue());
+
+		if((t0 instanceof IFloatTerm) && (t1 instanceof IFloatTerm))
+			return CONCRETE.createFloat(n.floatValue());
+		
+		return CONCRETE.createDouble(n.doubleValue());
 	}
 
 	/**
