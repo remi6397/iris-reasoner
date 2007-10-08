@@ -46,10 +46,10 @@ import org.deri.iris.api.terms.ITerm;
  * Tests the <code>BuiltinHelper</code>.
  * </p>
  * <p>
- * $Id: BuiltinHelperTest.java,v 1.3 2007-09-13 15:20:37 poettler_ric Exp $
+ * $Id: BuiltinHelperTest.java,v 1.4 2007-10-08 12:20:21 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class BuiltinHelperTest extends TestCase {
 
@@ -263,7 +263,7 @@ public class BuiltinHelperTest extends TestCase {
 		final INumericTerm D_25 = CONCRETE.createDouble(2.5d);
 
 		assertEquals(I_5, BuiltinHelper.add(I_2, I_3));
-		assertEquals(F_5, BuiltinHelper.add(I_2, F_3));
+		assertEquals(D_5, BuiltinHelper.add(I_2, F_3));
 		assertEquals(D_5, BuiltinHelper.add(I_2, D_3));
 
 		assertEquals(F_5, BuiltinHelper.add(F_2, F_3));
@@ -271,7 +271,7 @@ public class BuiltinHelperTest extends TestCase {
 
 		assertEquals(D_5, BuiltinHelper.add(D_2, D_3));
 
-		assertEquals(F_55, BuiltinHelper.add(I_3, F_25));
+		assertEquals(D_55, BuiltinHelper.add(I_3, F_25));
 		assertEquals(F_55, BuiltinHelper.add(F_3, F_25));
 		assertEquals(D_55, BuiltinHelper.add(D_3, F_25));
 
@@ -295,7 +295,7 @@ public class BuiltinHelperTest extends TestCase {
 		final INumericTerm D_35 = CONCRETE.createDouble(3.5d);
 
 		assertEquals(I_2, BuiltinHelper.subtract(I_5, I_3));
-		assertEquals(F_2, BuiltinHelper.subtract(I_5, F_3));
+		assertEquals(D_2, BuiltinHelper.subtract(I_5, F_3));
 		assertEquals(D_2, BuiltinHelper.subtract(I_5, D_3));
 
 		assertEquals(F_2, BuiltinHelper.subtract(F_5, F_3));
@@ -303,7 +303,7 @@ public class BuiltinHelperTest extends TestCase {
 
 		assertEquals(D_2, BuiltinHelper.subtract(D_5, D_3));
 
-		assertEquals(F_15, BuiltinHelper.subtract(I_5, F_35));
+		assertEquals(D_15, BuiltinHelper.subtract(I_5, F_35));
 		assertEquals(F_15, BuiltinHelper.subtract(F_5, F_35));
 		assertEquals(D_15, BuiltinHelper.subtract(D_5, F_35));
 
@@ -320,7 +320,7 @@ public class BuiltinHelperTest extends TestCase {
 		final INumericTerm D_11 = CONCRETE.createDouble(11d);
 
 		assertEquals(I_10, BuiltinHelper.multiply(I_2, I_5));
-		assertEquals(F_10, BuiltinHelper.multiply(I_2, F_5));
+		assertEquals(D_10, BuiltinHelper.multiply(I_2, F_5));
 		assertEquals(D_10, BuiltinHelper.multiply(I_2, D_5));
 
 		assertEquals(F_10, BuiltinHelper.multiply(F_2, F_5));
@@ -328,7 +328,7 @@ public class BuiltinHelperTest extends TestCase {
 
 		assertEquals(D_10, BuiltinHelper.multiply(D_2, D_5));
 
-		assertEquals(F_11, BuiltinHelper.multiply(I_2, F_55));
+		assertEquals(D_11, BuiltinHelper.multiply(I_2, F_55));
 		assertEquals(F_11, BuiltinHelper.multiply(F_2, F_55));
 		assertEquals(D_11, BuiltinHelper.multiply(D_2, F_55));
 
@@ -345,7 +345,7 @@ public class BuiltinHelperTest extends TestCase {
 		final INumericTerm D_25 = CONCRETE.createDouble(2.5d);
 
 		assertEquals(I_2, BuiltinHelper.divide(I_10, I_5));
-		assertEquals(F_2, BuiltinHelper.divide(I_10, F_5));
+		assertEquals(D_2, BuiltinHelper.divide(I_10, F_5));
 		assertEquals(D_2, BuiltinHelper.divide(I_10, D_5));
 
 		assertEquals(F_2, BuiltinHelper.divide(F_10, F_5));
@@ -353,7 +353,7 @@ public class BuiltinHelperTest extends TestCase {
 
 		assertEquals(D_2, BuiltinHelper.divide(D_10, D_5));
 
-		assertEquals(F_2, BuiltinHelper.divide(I_5, F_25));
+		assertEquals(D_2, BuiltinHelper.divide(I_5, F_25));
 		assertEquals(F_2, BuiltinHelper.divide(F_5, F_25));
 		assertEquals(D_2, BuiltinHelper.divide(D_5, F_25));
 
