@@ -60,7 +60,7 @@ import org.deri.iris.basics.Literal;
  * @date 25.04.2007
  * 
  */
-public class ConstLiteral implements ILiteral<ILiteral>{
+public class ConstLiteral implements ILiteral{
 	
 	private boolean positive = true;
 	
@@ -117,7 +117,7 @@ public class ConstLiteral implements ILiteral<ILiteral>{
 		return buffer.toString();
 	}
 
-	public int compareTo(ILiteral o) {
+	public int compareTo(IAtom o) {
 		throw new UnsupportedOperationException(
 			"This method is not supported by this literal.");
 	}
