@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.api.evaluation.common.IAdornedRule;
+import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 import org.deri.iris.evaluation.common.Adornment;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 
@@ -46,11 +46,11 @@ public class QSQRule {
 	/**
 	 * adorned rule
 	 */
-	private IAdornedRule adRule;
+	private AdornedRule adRule;
 	
 	private List<SupplementaryRelation> supRels;
 
-	public QSQRule(final IAdornedRule ar, final List<SupplementaryRelation> sr) {
+	public QSQRule(final AdornedRule ar, final List<SupplementaryRelation> sr) {
 		if ((1 + ar.getBodyLiterals().size()) !=
 				sr.size()) {
 			throw new IllegalArgumentException(
@@ -65,7 +65,7 @@ public class QSQRule {
 	/**
 	 * @return Returns the rule.
 	 */
-	public IAdornedRule getAdornedRule() {
+	public AdornedRule getAdornedRule() {
 		return adRule;
 	}
 
