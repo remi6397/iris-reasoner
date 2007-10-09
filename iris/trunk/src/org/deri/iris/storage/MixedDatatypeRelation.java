@@ -40,7 +40,6 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
@@ -68,11 +67,11 @@ import org.deri.iris.api.terms.ITerm;
  * <code>null</code> is not permitted by this relation, nor by its subsets.
  * </p>
  * <p>
- * $Id: MixedDatatypeRelation.java,v 1.3 2007-06-14 15:35:25 poettler_ric Exp $
+ * $Id: MixedDatatypeRelation.java,v 1.4 2007-10-09 20:30:42 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixedDatatypeRelation {
 
@@ -94,7 +93,7 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 	 * IMixedDatatypeRelation interface.</li>
 	 * </ul>
 	 */
-	private final Map<Integer, Class[]> datatypeIndex = new HashMap<Integer, Class[]>();
+	private final Map<Integer, Class<?>[]> datatypeIndex = new HashMap<Integer, Class<?>[]>();
 
 	/** The arity of this relation. */
 	private final int arity;
@@ -151,7 +150,7 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 			rel = new IndexingOnTheFlyRelation(arity);
 			datatypeRelations.put(hash, rel);
 			// constructing and storing the class array
-			final Class[] classes = new Class[arity];
+			final Class<?>[] classes = new Class<?>[arity];
 			int i = 0;
 			for (final ITerm term : t.getTerms()) {
 				classes[i++] = (term == null) ? null : term.getClass();
@@ -273,13 +272,13 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 		if (t == null) {
 			throw new NullPointerException("The tuple must not be null");
 		}
-		final Class[] classes = new Class[arity];
+		final Class<?>[] classes = new Class<?>[arity];
 		for (int i = 0; i < arity; i++) {
 			classes[i] = (t.getTerm(i) == null) ? null : t.getTerm(i).getClass();
 		}
 		final Set<Integer> res = new HashSet<Integer>();
-		for (final Entry<Integer, Class[]> e : datatypeIndex.entrySet()) {
-			final Class[] others = e.getValue();
+		for (final Entry<Integer, Class<?>[]> e : datatypeIndex.entrySet()) {
+			final Class<?>[] others = e.getValue();
 			boolean matches = true;
 			for (int i = 0; (i < arity) && matches; i++) {
 				matches &= (classes[i] == null) || 
@@ -331,9 +330,9 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 	 * Iterator designed to iterate over a set of Relations.
 	 * </p>
 	 * <p>
-	 * $Id: MixedDatatypeRelation.java,v 1.3 2007-06-14 15:35:25 poettler_ric Exp $
+	 * $Id: MixedDatatypeRelation.java,v 1.4 2007-10-09 20:30:42 bazbishop237 Exp $
 	 * </p>
-	 * @version $Revision: 1.3 $
+	 * @version $Revision: 1.4 $
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
 	 */
 	private class CompoundIterator implements Iterator<ITuple> {
@@ -397,9 +396,9 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 	 * and added internally.
 	 * </p>
 	 * <p>
-	 * $Id: MixedDatatypeRelation.java,v 1.3 2007-06-14 15:35:25 poettler_ric Exp $
+	 * $Id: MixedDatatypeRelation.java,v 1.4 2007-10-09 20:30:42 bazbishop237 Exp $
 	 * </p>
-	 * @version $Revision: 1.3 $
+	 * @version $Revision: 1.4 $
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
 	 */
 	private class CompoundRelation extends AbstractSet<ITuple> implements IMixedDatatypeRelation {
@@ -433,7 +432,7 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 		 * The class/datatype patter of this relation. Is
 		 * <code>null</code> if there is no constraint.
 		 */
-		private final Class[] classPattern;
+		private final Class<?>[] classPattern;
 
 		/**
 		 * Constructs a set which is sorted on the given idexes.
@@ -505,11 +504,11 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 		 * @throws NullPointerException if the tuple is
 		 * <code>null</code>
 		 */
-		private Class[] classPattern(final ITuple t) {
+		private Class<?>[] classPattern(final ITuple t) {
 			if (t == null) {
 				throw new NullPointerException("The tuple must not be null");
 			}
-			final List<Class> res = new ArrayList<Class>();
+			final List<Class<?>> res = new ArrayList<Class<?>>();
 			for (final ITerm term : t.getTerms()) {
 				res.add((term == null) ? null : term.getClass());
 			}
@@ -532,7 +531,7 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 			if (classPattern == null) {
 				return true;
 			}
-			final Class[] others = classPattern(t);
+			final Class<?>[] others = classPattern(t);
 			if (classPattern.length != others.length) {
 				return false;
 			}
