@@ -27,7 +27,8 @@
 	</target>
 
 	<target name="compile" description="compiles all the class files" depends="init,prepareclasses">
-		<javac srcdir="${dir.api}:${dir.src}" classpathref="defaultcp" destdir="${dir.classes}" deprecation="on">
+		<javac srcdir="${dir.api}:${dir.src}" classpathref="defaultcp"
+			destdir="${dir.classes}" deprecation="on">
 			<compilerarg value="-Xlint:unchecked" compiler="modern" />
 			<compilerarg value="-Xlint:unchecked" compiler="classic" />
 			<exclude name="**/qsq/**" />
@@ -115,7 +116,8 @@
 	</target>
 
 	<target name="testsingle" description="some people want to run only ONE test" depends="init,jar,compiletest,preparetest">
-		<junit showoutput="true" printsummary="true">
+		<junit showoutput="true" printsummary="true" fork="yes">
+			<jvmarg value="-ea"/>
 			<classpath>
 				<path refid="defaultcp" />
 				<fileset dir="${dir.jar}">
@@ -130,7 +132,8 @@
 	</target>
 
 	<target name="test" description="runs junit tests" depends="init,jar,compiletest,preparetest">
-		<junit showoutput="true" printsummary="true">
+		<junit showoutput="true" printsummary="true" fork="yes">
+			<jvmarg value="-ea"/>
 			<classpath>
 				<path refid="defaultcp" />
 				<fileset dir="${dir.jar}">
