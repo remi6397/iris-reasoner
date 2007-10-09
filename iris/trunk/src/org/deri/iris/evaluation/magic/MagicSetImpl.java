@@ -41,9 +41,9 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.evaluation.common.IAdornedPredicate;
-import org.deri.iris.api.evaluation.common.IAdornedProgram;
-import org.deri.iris.api.evaluation.common.IAdornedRule;
+import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
+import org.deri.iris.evaluation.common.AdornedProgram;
+import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 import org.deri.iris.api.evaluation.magic.ISip;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.IConstructedTerm;
@@ -77,13 +77,13 @@ public final class MagicSetImpl {
 	static final String MAGIC_LABEL_PREFIX = "label_";
 
 	/** Cache for all adorned sips. */
-	private final Map<IAdornedRule, ISip> adornedSipCache = new HashMap<IAdornedRule, ISip>();
+	private final Map<AdornedRule, ISip> adornedSipCache = new HashMap<AdornedRule, ISip>();
 
 	/** Holds all magic rules. */
 	private final Set<IRule> magicRules = new HashSet<IRule>();
 
 	/** Holds all rewritten rules. */
-	private final Set<IAdornedRule> rewrittenRules = new HashSet<IAdornedRule>();
+	private final Set<AdornedRule> rewrittenRules = new HashSet<AdornedRule>();
 
 	/** The remaining not adorned rules. */
 	private final Set<IRule> remainingRules = new HashSet<IRule>();
@@ -104,14 +104,14 @@ public final class MagicSetImpl {
 	 * @throws IllegalArgumentException
 	 *             if one of the rule got a head with length unequal 1
 	 */
-	public MagicSetImpl(final IAdornedProgram program) {
+	public MagicSetImpl(final AdornedProgram program) {
 		if (program == null) {
 			throw new NullPointerException("The program must not be null");
 		}
 
 		// TODO: maybe a defensive copy should be made
 
-		for (final IAdornedRule r : program.getAdornedRules()) {
+		for (final AdornedRule r : program.getAdornedRules()) {
 			if (r.getHeadLenght() != 1) {
 				throw new IllegalArgumentException("At the moment only heads "
 						+ "with length of 1 are allowed");
@@ -127,11 +127,59 @@ public final class MagicSetImpl {
 			rewrittenRules.add(getRewrittenRule(r));
 		}
 
-		query = adjustQuery(program.getQuery());
 		seed = createSeed(program.getQuery());
+		query = program.getQuery();
 		// adding the remaining rules
 		remainingRules.addAll(filterRemainingRules(program.getNormalRules(),
 				program.getAdornedRules()));
+		// adding the rules for the conjunctive query
+		magicRules.addAll(createConjunctiveRules(program.getQuery()));
+	}
+
+	/**
+	 * Computes the magic rules needed to evaluate conjunctive queries.
+	 * @param q the query
+	 * @return the computed rules
+	 */
+	private static Set<IRule> createConjunctiveRules(final IQuery q) {
+		assert q != null: "The query must not be null";
+
+		final Set<IRule> res = new HashSet<IRule>();
+		final List<ILiteral> query = q.getQueryLiterals();
+		for (int i = 1, max = query.size(); i < max; i++) {
+			res.add(BASIC.createRule(
+						BASIC.createHead(
+							BASIC.createLiteral(
+								query.get(i).isPositive(), 
+								createMagicAtom(query.get(i)))), 
+						BASIC.createBody(slice(query, 0, i))));
+		}
+		return res;
+	}
+
+	/**
+	 * Returns a sublist of a list. Using a slice like perl would be too
+	 * simple...
+	 * @param orig the original list
+	 * @param from from where to copy the elements (inclusive)
+	 * @param to to which element to copy (exclusive)
+	 * @return the sublist
+	 */
+	private static <Type> List<Type> slice(final List<Type> orig, final int from, final int to) {
+		assert orig != null: "The list must not be null";
+
+		// adjust the input variables for the origianl list size
+		final int nfrom = (from < 0) ? 0 : from;
+		final int nto = ((to < 0) || (to > orig.size())) ? orig.size() : to;
+
+		assert (nto > nfrom): "nfrom (" + nfrom + ") must be smaller than nto(" + nto + ")";
+
+		// copy the range
+		final List<Type> res = new java.util.ArrayList<Type>(nto - nfrom);
+		for (int i = nfrom; i < nto; i++) {
+			res.add(orig.get(i));
+		}
+		return res;
 	}
 
 	/**
@@ -149,7 +197,7 @@ public final class MagicSetImpl {
 	 * @throws IllegalArgumentException
 	 *             if the length of the head is unequal to 1
 	 */
-	private IAdornedRule getRewrittenRule(final IAdornedRule r) {
+	private AdornedRule getRewrittenRule(final AdornedRule r) {
 		if (r == null) {
 			throw new NullPointerException("The rule must not be null");
 		}
@@ -206,49 +254,12 @@ public final class MagicSetImpl {
 	 * @param q
 	 *            for which to create the seed
 	 * @return the seed or <code>null</code> if the query didn't contain any constants
-	 * @throws NullPointerException
-	 *             if the query is null
-	 * @throws IllegalArgumentException
-	 *             if the length of the query is unequal 1.
 	 */
 	private static IAtom createSeed(final IQuery q) {
-		if (q == null) {
-			throw new NullPointerException();
-		}
-		if (q.getQueryLenght() != 1) {
-			throw new IllegalArgumentException(
-					"At the moment only queries with length 1 are allowed");
-		}
+		assert q != null: "The query must not be null";
 
-		final ILiteral ql = q.getQueryLiteral(0);
-		final IAdornedPredicate ap = new AdornedPredicate(ql);
-		final IAtom aa = BASIC.createAtom(ap, ql.getTuple());
-
-		return (!Arrays.asList(ap.getAdornment()).contains(Adornment.BOUND)) ? 
-			null : createMagicAtom(aa);
-	}
-
-	/**
-	 * Adjusts the query, so that the query could be run properly.
-	 * @param q the query to adjust
-	 * @return the adjusted query
-	 * @throws NullPointerException if the quers is <code>null</code>
-	 * @throws IllegalArgumentException if the query is conjunctive
-	 */
-	private static IQuery adjustQuery(final IQuery q) {
-		if (q == null) {
-			throw new NullPointerException("The query must not be null");
-		}
-		if (q.getQueryLenght() != 1) {
-			throw new IllegalArgumentException(
-					"At the moment conjunctive queries are not allowed");
-		}
-		final ILiteral ql = q.getQueryLiteral(0);
-		final IAdornedPredicate ap = new AdornedPredicate(ql);
-		if (!Arrays.asList(ap.getAdornment()).contains(Adornment.BOUND)) {
-			return q;
-		}
-		return BASIC.createQuery(BASIC.createLiteral(ql.isPositive(), ap, ql.getTuple()));
+		return (q.getQueryLiterals().isEmpty()) ? 
+			null : createMagicAtom(q.getQueryLiterals().get(0).getAtom());
 	}
 
 	/**
@@ -268,7 +279,7 @@ public final class MagicSetImpl {
 	 * @throws IllegalArgumentException
 	 *             if the length of the head is unequal to 1
 	 */
-	private Set<IRule> generateRules(final ILiteral l, final IAdornedRule r) {
+	private Set<IRule> generateRules(final ILiteral l, final AdornedRule r) {
 		if ((l == null) || (r == null)) {
 			throw new NullPointerException(
 					"The rule and the literal must not be null");
@@ -331,7 +342,7 @@ public final class MagicSetImpl {
 	 * @throws IllegalArgumentException
 	 *             if the length of the head of the rule is unequal 1
 	 */
-	private IRule createMagicRule(final ILiteral l, final IAdornedRule rule) {
+	private IRule createMagicRule(final ILiteral l, final AdornedRule rule) {
 		if ((l == null) || (rule == null)) {
 			throw new NullPointerException(
 					"The rule and the literal must not be null");
@@ -361,7 +372,7 @@ public final class MagicSetImpl {
 		// skip the exchange of the literals, because there isn't anything to exchage, and 
 		// remove the first literal of the body (which is the headliteral)
 		final ILiteral headLiteral = rule.getHeadLiteral(0);
-		if ((headLiteral.getPredicate() instanceof IAdornedPredicate)) {
+		if ((headLiteral.getPredicate() instanceof AdornedPredicate)) {
 			for (int i = 0, max = bodyLiterals.size(); i < max; i++) {
 				if (bodyLiterals.get(i).equals(headLiteral)) {
 					bodyLiterals.set(i, createMagicLiteral(bodyLiterals .get(i)));
@@ -399,7 +410,7 @@ public final class MagicSetImpl {
 	 *             if the headlength of the rule is unequal to 1
 	 */
 	private IRule createLabeledRule(
-			final LabeledEdge<ILiteral, Set<IVariable>> e, final IAdornedRule r,
+			final LabeledEdge<ILiteral, Set<IVariable>> e, final AdornedRule r,
 			final int index) {
 		if ((e == null) || (r == null)) {
 			throw new NullPointerException(
@@ -458,23 +469,19 @@ public final class MagicSetImpl {
 	}
 
 	/**
-	 * Creates a magic atom out of an adorned one. To gain a magic atom the
-	 * predicate of the atom must be adorned, otherwise the passed in atom
-	 * will be returned back. The terms of the constructed atom will only
-	 * consist of the bound terms.
-	 * @param a the atom for which to create the magic one
-	 * @return the magic atom, or the passed in atom, if it's predicate
-	 * wasn't adorned.
-	 * @throws NullPointerException if the atom is <code>null</code>
+	 * Creates a magic atom. The magic atom will be prefixed with
+	 * &quot;magic_&quot; and only contain the bound terms according to it's
+	 * adornments. If the predicate of the input atom is not adorned, it
+	 * will be adorned according to it's ground terms.
+	 * @param a the atom for which to create the magic atom
+	 * @return the magic atom
 	 */
 	private static IAtom createMagicAtom(final IAtom a) {
-		if (a == null) {
-			throw new NullPointerException("The atom must not be null");
-		}
-		if (!(a.getPredicate() instanceof IAdornedPredicate)) {
-			return a;
-		}
-		final AdornedPredicate p = (AdornedPredicate) a.getPredicate();
+		assert a != null: "The atom must not be null";
+
+		final AdornedPredicate p = (a.getPredicate() instanceof AdornedPredicate) ? 
+			(AdornedPredicate) a.getPredicate() :
+			new AdornedPredicate(a);
 		final ITuple boundTuple = BASIC.createTuple(getBounds(p, a));
 		final AdornedPredicate magicPredicate = new AdornedPredicate(
 				MAGIC_PREDICATE_PREFIX + p.getPredicateSymbol(), Collections
@@ -506,7 +513,7 @@ public final class MagicSetImpl {
 			throw new NullPointerException("The literal must not be null");
 		}
 		// if the literal isn't adorned then there isn't anything to do.
-		if (!(l.getPredicate() instanceof IAdornedPredicate)) {
+		if (!(l.getPredicate() instanceof AdornedPredicate)) {
 			return l;
 		}
 		return BASIC.createLiteral(l.isPositive(), createMagicAtom(l.getAtom()));
@@ -627,7 +634,7 @@ public final class MagicSetImpl {
 	 *            for which to retrieve the sip
 	 * @return the sip
 	 */
-	private ISip getAdornedSip(final IAdornedRule r) {
+	private ISip getAdornedSip(final AdornedRule r) {
 		ISip sip = null;
 		if ((sip = adornedSipCache.get(r)) == null) {
 			sip = SipHelper.getAdornedSip(r);
@@ -650,7 +657,7 @@ public final class MagicSetImpl {
 	 * 
 	 * @return the unmodifiable set of rules
 	 */
-	public Set<IAdornedRule> getRewrittenRules() {
+	public Set<AdornedRule> getRewrittenRules() {
 		return Collections.unmodifiableSet(rewrittenRules);
 	}
 
@@ -707,6 +714,10 @@ public final class MagicSetImpl {
 		for (IRule r : rewrittenRules) {
 			buffer.append(r).append(NEWLINE);
 		}
+		buffer.append(NEWLINE);
+		for (IRule r : remainingRules) {
+			buffer.append(r).append(NEWLINE);
+		}
 		return buffer.toString();
 	}
 
@@ -749,11 +760,11 @@ public final class MagicSetImpl {
 	 *             if one of the collections is {@code null}
 	 */
 	private static Set<IRule> filterRemainingRules(final Collection<IRule> nr,
-			final Collection<IAdornedRule> ar) {
+			final Collection<AdornedRule> ar) {
 		final Set<IRule> rem = new HashSet<IRule>();
 		for (final IRule n : nr) {
 			boolean add = true;
-			for (final IAdornedRule a : ar) {
+			for (final AdornedRule a : ar) {
 				if (isSameRule(n, a)) {
 					add = false;
 					break;
@@ -855,7 +866,7 @@ public final class MagicSetImpl {
 	 */
 	private static boolean isSamePredicate(final IPredicate p0, final IPredicate p1) {
 		if ((p0 == null) || (p1 == null)) {
-			System.out.println("The predicates must not be null");
+			throw new NullPointerException("The predicates must not be null");
 		}
 		return p0.getPredicateSymbol().equals(p1.getPredicateSymbol()) && (p0.getArity() == p1.getArity());
 	}
