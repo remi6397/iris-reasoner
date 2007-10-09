@@ -51,11 +51,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.27 2007-10-09 07:45:31 poettler_ric Exp $
+ * $Id: AdornedProgram.java,v 1.28 2007-10-09 20:32:19 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 public class AdornedProgram {
 
@@ -82,7 +82,7 @@ public class AdornedProgram {
 			true, 
 			BASIC.createAtom(
 				BASIC.createPredicate("TEMP_QUERY_LITERAL", 0), 
-				BASIC.createTuple(Collections.EMPTY_LIST)));
+				BASIC.createTuple(new ArrayList<ITerm>())));
 
 	/** Adorned predicate for the temporary query literal. */
 	private static final AdornedPredicate AD_TEMP_QUERY_PREDICATE = 
@@ -648,7 +648,7 @@ public class AdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.27 $
+	 * @version $Revision: 1.28 $
 	 */
 	public static class AdornedRule implements IRule {
 		/** The inner rule represented by this object */
