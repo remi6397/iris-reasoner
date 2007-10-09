@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -114,8 +113,6 @@ public class Rule2Relation {
 			// TODO: If you don't need - remove it!
 			//m = new HashMap<ILiteral, List<IVariable>>();
 			//oVars = new HashSet<IVariable>();
-			IAtom a = null;
-			ISelectionDescriptor s = null;
 			
 			IComponent body = translateBody(r.getBodyLiterals());
 			results.put(p, body);
@@ -498,47 +495,47 @@ public class Rule2Relation {
 		return inds;
 	}
 
-	private int[] getSelectionIndexes(final List<ITerm> selVars,
-			final List<IVariable> allVars, boolean equal) {
-		
-		List<IVariable> vars = new ArrayList<IVariable>(allVars.size());
-		vars.addAll(allVars);
-		int[] inds = new int[allVars.size()];
-		// TODO: Use scwitch (below) to integrate built-ins in IRIS
-		int j = 0, k;
-		if(equal) k = 1;
-		else k = -1;
-		for(ITerm v : selVars){
-			j = vars.indexOf((IVariable)v);
-			while(j != -1){
-				inds[j] = k;
-				vars.set(j, null);
-				j = vars.indexOf(v);
-			}
-		}
-		/*switch (condition){
-			case EQUALS:
-				
-				break;
-			case NOT_EQUAL:
-				
-				break;
-			case LESS_THAN:
-				
-				break;
-			case GREATER_THAN:
-				
-				break;
-			case LESS_OR_EQUAL:
-				
-				break;
-			case GREATER_OR_EQUAL:
-				
-				break;
-		}*/
-		return inds;
-	}
-	
+//	private int[] getSelectionIndexes(final List<ITerm> selVars,
+//			final List<IVariable> allVars, boolean equal) {
+//		
+//		List<IVariable> vars = new ArrayList<IVariable>(allVars.size());
+//		vars.addAll(allVars);
+//		int[] inds = new int[allVars.size()];
+//		// TODO: Use scwitch (below) to integrate built-ins in IRIS
+//		int j = 0, k;
+//		if(equal) k = 1;
+//		else k = -1;
+//		for(ITerm v : selVars){
+//			j = vars.indexOf((IVariable)v);
+//			while(j != -1){
+//				inds[j] = k;
+//				vars.set(j, null);
+//				j = vars.indexOf(v);
+//			}
+//		}
+//		/*switch (condition){
+//			case EQUALS:
+//				
+//				break;
+//			case NOT_EQUAL:
+//				
+//				break;
+//			case LESS_THAN:
+//				
+//				break;
+//			case GREATER_THAN:
+//				
+//				break;
+//			case LESS_OR_EQUAL:
+//				
+//				break;
+//			case GREATER_OR_EQUAL:
+//				
+//				break;
+//		}*/
+//		return inds;
+//	}
+//	
 	private List<IVariable> filterProjectionVariables(final int[] pInds,
 			final List<IVariable> vars) {
 		List<IVariable> v = new ArrayList<IVariable>(pInds.length);
