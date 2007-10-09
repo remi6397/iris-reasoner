@@ -34,13 +34,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.evaluation.common.IAdornedPredicate;
-import org.deri.iris.api.evaluation.common.IAdornedProgram;
-import org.deri.iris.api.evaluation.common.IAdornedRule;
 import org.deri.iris.api.evaluation.magic.ISip;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
@@ -53,13 +51,13 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.26 2007-09-27 12:25:24 bazbishop237 Exp $
+ * $Id: AdornedProgram.java,v 1.27 2007-10-09 07:45:31 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.27 $
  */
-public class AdornedProgram implements IAdornedProgram {
+public class AdornedProgram {
 
 	// TODO: make a smaller empty-constant-term
 	private static final ITerm EMPTY_CONSTANT_TERM = TERM.createString("");
@@ -68,10 +66,10 @@ public class AdornedProgram implements IAdornedProgram {
 	private final Set<IPredicate> deriveredPredicates = new HashSet<IPredicate>();
 
 	/** Set of all adorned predicates. */
-	private final Set<IAdornedPredicate> adornedPredicates = new HashSet<IAdornedPredicate>();
+	private final Set<AdornedPredicate> adornedPredicates = new HashSet<AdornedPredicate>();
 
 	/** Set of all adorned rules. */
-	private final Set<IAdornedRule> adornedRules = new HashSet<IAdornedRule>();
+	private final Set<AdornedRule> adornedRules = new HashSet<AdornedRule>();
 
 	/** Set of all normal rules. */
 	private final Set<IRule> rules;
@@ -79,11 +77,16 @@ public class AdornedProgram implements IAdornedProgram {
 	/** Query for this program. */
 	private final IQuery query;
 
-	/** 
-	 * Predicate symbol for the temporary query. This query will be used
-	 * when there is a conjunctive query.
-	 */
-	private static final String TEMP_PREDICATE_NAME = "TEMP_QUERY_PREDICATE";
+	/** Temporary query literal for conjunctive queries. */
+	private static final ILiteral TEMP_QUERY_LITERAL = BASIC.createLiteral(
+			true, 
+			BASIC.createAtom(
+				BASIC.createPredicate("TEMP_QUERY_LITERAL", 0), 
+				BASIC.createTuple(Collections.EMPTY_LIST)));
+
+	/** Adorned predicate for the temporary query literal. */
+	private static final AdornedPredicate AD_TEMP_QUERY_PREDICATE = 
+		new AdornedPredicate(TEMP_QUERY_LITERAL);
 
 	/**
 	 * Creates a new adorned program depending on the submitted rules and the
@@ -118,17 +121,14 @@ public class AdornedProgram implements IAdornedProgram {
 			}
 		}
 
+		IQuery newQuery = null; // if we can adorn the query save it here
+
 		if (query.getQueryLiterals().size() > 1) { // if we got a conjunctive query
 			// construct the temp query and rule
-			final ILiteral tmpLiteral = BASIC.createLiteral(
-					true, 
-					BASIC.createAtom(
-						BASIC.createPredicate(TEMP_PREDICATE_NAME, 0), 
-						BASIC.createTuple(Collections.EMPTY_LIST)));
 			final IRule tmpRule = BASIC.createRule(
-					BASIC.createHead(tmpLiteral), 
+					BASIC.createHead(TEMP_QUERY_LITERAL), 
 					BASIC.createBody(query.getQueryLiterals()));
-			final IQuery tmpQuery = BASIC.createQuery(tmpLiteral);
+			final IQuery tmpQuery = BASIC.createQuery(TEMP_QUERY_LITERAL);
 
 			// adorn it
 			final Set<IRule> modRules = new HashSet<IRule>(rules);
@@ -139,19 +139,29 @@ public class AdornedProgram implements IAdornedProgram {
 			// of it
 			for (final IRule r : adornedRules) {
 				if ((r.getHeadLiterals().size() == 1) && 
-						(r.getHeadLiterals().get(0).equals(tmpLiteral))) {
+						(r.getHeadLiterals().get(0).getPredicate().equals(AD_TEMP_QUERY_PREDICATE))) {
 					adornedRules.remove(r);
-					//newQuery = BASIC.createQuery(r.getBodyLiterals());
+					newQuery = BASIC.createQuery(r.getBodyLiterals());
 					break;
 				}
 			}
 		} else { // handle non-conjunctive query
 			createAdornedRules(rules, query);
+
+			final ILiteral ql = query.getQueryLiterals().get(0);
+			final AdornedPredicate ap = new AdornedPredicate(ql);
+			if (Collections.frequency(Arrays.asList(ap.getAdornment()), Adornment.FREE) == 
+					ap.getAdornment().length) {
+				newQuery = BASIC.createQuery(BASIC.createLiteral(
+							ql.isPositive(), 
+							BASIC.createAtom(ap, BASIC.createTuple(ql.getTuple().getTerms()))));
+			}
+
 		}
 
 		// TODO: maybe defensive copy should be made.
 		this.rules = new HashSet<IRule>(rules);
-		this.query = query;
+		this.query = (newQuery != null) ? newQuery : query;
 	}
 
 	/**
@@ -173,18 +183,13 @@ public class AdornedProgram implements IAdornedProgram {
 		final AdornedPredicate qa = new AdornedPredicate(query
 				.getQueryLiteral(0));
 
-		final Set<IAdornedPredicate> predicatesToProcess = new HashSet<IAdornedPredicate>();
-		if (Collections.frequency(Arrays.asList(qa.getAdornment()),
-				Adornment.FREE) == qa.getAdornment().length) {
-			predicatesToProcess.addAll(startAllFreeQuery(rules, query));
-		} else {
-			predicatesToProcess.add(qa);
-			adornedPredicates.add(qa);
-		}
+		final Set<AdornedPredicate> predicatesToProcess = new HashSet<AdornedPredicate>();
+		predicatesToProcess.add(qa);
+		adornedPredicates.add(qa);
 
 		// iterating through all predicates in the todolist
 		while (!predicatesToProcess.isEmpty()) {
-			final IAdornedPredicate ap = predicatesToProcess.iterator().next();
+			final AdornedPredicate ap = predicatesToProcess.iterator().next();
 			predicatesToProcess.remove(ap);
 
 			for (final IRule r : rules) {
@@ -198,7 +203,6 @@ public class AdornedProgram implements IAdornedProgram {
 					final ISip sip = new SIPImpl(r, createQueryForAP(ap, lh));
 					final AdornedRule ra = new AdornedRule(r, sip);
 					ra.replaceHeadLiteral(lh, ap);
-					adornedRules.add(ra);
 
 					// iterating through all bodyliterals of the
 					for (final ILiteral l : r.getBodyLiterals()) {
@@ -208,6 +212,7 @@ public class AdornedProgram implements IAdornedProgram {
 							predicatesToProcess.add(newAP);
 						}
 					}
+					adornedRules.add(ra);
 				}
 			}
 		}
@@ -229,7 +234,7 @@ public class AdornedProgram implements IAdornedProgram {
 	public String toString() {
 		final String NEWLINE = System.getProperty("line.separator");
 		StringBuilder buffer = new StringBuilder();
-		for (IAdornedRule r : adornedRules) {
+		for (AdornedRule r : adornedRules) {
 			buffer.append(r).append(NEWLINE);
 		}
 		buffer.append(NEWLINE);
@@ -263,7 +268,7 @@ public class AdornedProgram implements IAdornedProgram {
 		return query.equals(ap.query) && rules.equals(ap.rules);
 	}
 
-	public Set<IAdornedRule> getAdornedRules() {
+	public Set<AdornedRule> getAdornedRules() {
 		return Collections.unmodifiableSet(adornedRules);
 	}
 
@@ -271,7 +276,7 @@ public class AdornedProgram implements IAdornedProgram {
 		return Collections.unmodifiableSet(rules);
 	}
 
-	public Set<IAdornedPredicate> getAdornedPredicates() {
+	public Set<AdornedPredicate> getAdornedPredicates() {
 		return Collections.unmodifiableSet(adornedPredicates);
 	}
 
@@ -304,7 +309,7 @@ public class AdornedProgram implements IAdornedProgram {
 	 *             if the rule, or the literal are {@code null}
 	 */
 	private AdornedPredicate processLiteral(final ILiteral l,
-			final IAdornedRule r) {
+			final AdornedRule r) {
 		if ((l == null) || (r == null)) {
 			throw new NullPointerException(
 					"The literal and rule must not be null");
@@ -312,15 +317,7 @@ public class AdornedProgram implements IAdornedProgram {
 		AdornedPredicate ap = null;
 		if (deriveredPredicates.contains(l.getPredicate())) {
 			ap = new AdornedPredicate(l, r.getSIP().getBoundVariables(l));
-
-			// if all adornmets are "free" then do nothing, and return null
-			if ((Collections.frequency(Arrays.asList(ap.getAdornment()),
-					Adornment.FREE) == ap.getAdornment().length)) {
-				ap = null;
-			} else { // replace the literal in the body, and return the new
-				// adorned predicate
-				r.replaceBodyLiteral(l, ap);
-			}
+			r.replaceBodyLiteral(l, ap);
 		}
 		return ap;
 	}
@@ -365,7 +362,7 @@ public class AdornedProgram implements IAdornedProgram {
 	 *             if the adornment of the predicate contains something else
 	 *             than BOUND or FREE.
 	 */
-	private static IQuery createQueryForAP(final IAdornedPredicate ap,
+	private static IQuery createQueryForAP(final AdornedPredicate ap,
 			final ILiteral hl) {
 		if ((hl == null) || (ap == null)) {
 			throw new NullPointerException(
@@ -396,58 +393,11 @@ public class AdornedProgram implements IAdornedProgram {
 	}
 
 	/**
-	 * This is a helpermethod to handle the case if no arguments are bound in
-	 * the query.
-	 * 
-	 * @param rules the rules to check for the query predicate
-	 * @param q
-	 *            the query where no arguments are bound (the arguments (terms)
-	 *            won't be checked)
-	 * @return a set of all newly generated adorned predicates
-	 */
-	private Set<IAdornedPredicate> startAllFreeQuery(final Collection<IRule> rules, final IQuery q) {
-		assert rules != null: "The rules must not be null";
-		assert !rules.contains(null): "The rules must not contain null";
-		assert q != null: "The query must not be null";
-		assert q.getQueryLenght() == 1: "The query must have length of 1";
-
-		final IPredicate p = q.getQueryLiteral(0).getPredicate();
-		final Set<IAdornedPredicate> todo = new HashSet<IAdornedPredicate>();
-
-		for (final IRule r : rules) {
-			// if the headliteral and the adorned predicate have the
-			// same signature
-			if (p.equals(r.getHeadLiteral(0).getPredicate())) {
-				// creating a sip for the actual rule and the ap
-				final ISip sip = new SIPImpl(r, q);
-				final AdornedRule ra = new AdornedRule(r, sip);
-				boolean gotNewAdornedRule = false;
-
-				// iterating through all bodyliterals of the
-				for (final ILiteral l : r.getBodyLiterals()) {
-					final AdornedPredicate newAP = processLiteral(l, ra);
-
-					// adding the adorned predicate to the sets
-					if ((newAP != null) && (adornedPredicates.add(newAP))) {
-						todo.add(newAP);
-						gotNewAdornedRule = true;
-					}
-				}
-				if (gotNewAdornedRule) {
-					adornedRules.add(ra);
-				}
-			}
-		}
-
-		return todo;
-	}
-
-	/**
 	 * Represents an adorned predicate.
 	 * 
 	 * @author richi
 	 */
-	public static class AdornedPredicate implements IAdornedPredicate {
+	public static class AdornedPredicate implements IPredicate {
 		/** The predicate which should be adorned */
 		private final IPredicate p;
 
@@ -556,11 +506,24 @@ public class AdornedProgram implements IAdornedProgram {
 		 *             if the literal of the predicate of the literal is null
 		 */
 		public AdornedPredicate(final ILiteral l) {
-			if (l == null) {
-				throw new NullPointerException("The literal must not be null");
+			this(l.getAtom());
+		}
+
+		/**
+		 * Constructs an adorned predicate out of a atom. All ground terms
+		 * will be marked as bound.
+		 * 
+		 * @param a
+		 *            atom for which to construct the adorned predicate
+		 * @throws NullPointerException
+		 *             if the literal of the predicate of the literal is null
+		 */
+		public AdornedPredicate(final IAtom a) {
+			if (a == null) {
+				throw new NullPointerException("The atom must not be null");
 			}
 
-			this.p = l.getPredicate();
+			this.p = a.getPredicate();
 
 			// checking the submitted values
 			if (p == null) {
@@ -571,7 +534,7 @@ public class AdornedProgram implements IAdornedProgram {
 			int iCounter = 0;
 			// computing the adornment
 			adornment = new Adornment[p.getArity()];
-			for (ITerm t : (List<ITerm>) l.getTuple().getTerms()) {
+			for (ITerm t : (List<ITerm>) a.getTuple().getTerms()) {
 				if (t.isGround()) {
 					adornment[iCounter] = Adornment.BOUND;
 				} else {
@@ -685,10 +648,9 @@ public class AdornedProgram implements IAdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.26 $
-	 * @date $Date: 2007-09-27 12:25:24 $
+	 * @version $Revision: 1.27 $
 	 */
-	public static class AdornedRule implements IAdornedRule {
+	public static class AdornedRule implements IRule {
 		/** The inner rule represented by this object */
 		private IRule rule;
 

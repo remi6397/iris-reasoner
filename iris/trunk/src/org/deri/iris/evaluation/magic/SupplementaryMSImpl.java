@@ -38,7 +38,7 @@ import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.evaluation.common.IAdornedRule;
+import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
@@ -49,12 +49,12 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
  * from Beeri's paper &quot;The Power Of Magic&quot;.
  * </p>
  * <p>
- * $Id: SupplementaryMSImpl.java,v 1.3 2007-07-04 14:11:31 poettler_ric Exp $
+ * $Id: SupplementaryMSImpl.java,v 1.4 2007-10-09 07:45:32 poettler_ric Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.3 $
- * @date $Date: 2007-07-04 14:11:31 $
+ * @version $Revision: 1.4 $
+ * @date $Date: 2007-10-09 07:45:32 $
  */
 public class SupplementaryMSImpl {
 
@@ -65,7 +65,7 @@ public class SupplementaryMSImpl {
 	private List<List<IRule>> supMagicRules = new ArrayList<List<IRule>>();
 
 	/** Contains all eht substituted rewriteten rules. */
-	private List<IAdornedRule> rewrittenRules = new ArrayList<IAdornedRule>();
+	private List<AdornedRule> rewrittenRules = new ArrayList<AdornedRule>();
 
 	/** Contains all the substituted magic rules. */
 	private List<IRule> magicRules = new ArrayList<IRule>();
@@ -89,7 +89,7 @@ public class SupplementaryMSImpl {
 		magicRules.addAll(ms.getMagicRules());
 
 		int ruleCounter = 1;
-		for (final IAdornedRule r : ms.getRewrittenRules()) {
+		for (final AdornedRule r : ms.getRewrittenRules()) {
 			final List<IRule> supRules = new ArrayList<IRule>(
 					r.getBodyLenght() - 2);
 			supMagicRules.add(supRules);
@@ -292,7 +292,7 @@ public class SupplementaryMSImpl {
 	 * @throws NullPointerException
 	 *             if the rule or the sortedbody is <code>null</code>
 	 */
-	private IAdornedRule modifyRewrittenRule(final IAdornedRule r,
+	private AdornedRule modifyRewrittenRule(final AdornedRule r,
 			final List<ILiteral> sortedBody, final int ruleIndex) {
 		if ((r == null) || (sortedBody == null)) {
 			throw new NullPointerException(
@@ -352,7 +352,7 @@ public class SupplementaryMSImpl {
 	 * @throws IllegalArgumentException
 	 *             if the ruleIndex is smalller than 1
 	 */
-	private IRule createSupMRule(final IAdornedRule r,
+	private IRule createSupMRule(final AdornedRule r,
 			final List<ILiteral> sortedBody, final int literalIndex,
 			final int ruleIndex) {
 		if ((r == null) || (sortedBody == null)) {
@@ -431,7 +431,7 @@ public class SupplementaryMSImpl {
 	 *             if the index is smaller than 2
 	 */
 	private static Set<IVariable> getNotDiscardedVars(final int index,
-			final IAdornedRule r, final List<ILiteral> sortedBody) {
+			final AdornedRule r, final List<ILiteral> sortedBody) {
 		if (index < 2) {
 			throw new IllegalArgumentException(
 					"The literalIndex must be at least 2, but was " + index);
@@ -502,7 +502,7 @@ public class SupplementaryMSImpl {
 	 * 
 	 * @return the rewritten rules
 	 */
-	public List<IAdornedRule> getRewrittenRules() {
+	public List<AdornedRule> getRewrittenRules() {
 		return Collections.unmodifiableList(rewrittenRules);
 	}
 
@@ -543,7 +543,7 @@ public class SupplementaryMSImpl {
 			}
 		}
 		buffer.append(NEwLINE);
-		for (final IAdornedRule r : rewrittenRules) {
+		for (final AdornedRule r : rewrittenRules) {
 			buffer.append(r).append(NEwLINE);
 		}
 		buffer.append(NEwLINE);

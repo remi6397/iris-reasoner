@@ -51,12 +51,10 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.evaluation.common.IAdornedPredicate;
-import org.deri.iris.api.evaluation.common.IAdornedProgram;
-import org.deri.iris.api.evaluation.common.IAdornedRule;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.compiler.Parser;
+import org.deri.iris.evaluation.common.AdornedProgram;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 import org.deri.iris.evaluation.magic.SIPImpl;
@@ -68,17 +66,17 @@ import org.deri.iris.MiscHelper;
  * Tests the adornments.
  * </p>
  * <p>
- * $Id: AdornmentsTest.java,v 1.7 2007-09-27 14:52:39 bazbishop237 Exp $
+ * $Id: AdornmentsTest.java,v 1.8 2007-10-09 07:45:33 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class AdornmentsTest extends TestCase {
 
-	private IAdornedProgram p0;
+	private AdornedProgram p0;
 
-	private IAdornedProgram p1;
+	private AdornedProgram p1;
 
 	public static final Comparator<IRule> RC = new RuleComparator();
 
@@ -143,7 +141,7 @@ public class AdornmentsTest extends TestCase {
 	 */
 	public void testAdornedPredicatesP0() {
 		// constructing the reference adorned predicate set
-		final Set<IAdornedPredicate> preds = new HashSet<IAdornedPredicate>(1);
+		final Set<AdornedPredicate> preds = new HashSet<AdornedPredicate>(1);
 		preds.add(new AdornedPredicate("sg", new Adornment[] { Adornment.BOUND,
 				Adornment.FREE }));
 
@@ -157,7 +155,7 @@ public class AdornmentsTest extends TestCase {
 	 */
 	public void testAdornedPredicatesP1() {
 		// constructing the reference adorned predicate set
-		final Set<IAdornedPredicate> preds = new HashSet<IAdornedPredicate>(1);
+		final Set<AdornedPredicate> preds = new HashSet<AdornedPredicate>(1);
 		preds.add(new AdornedPredicate("rsg", new Adornment[] {
 				Adornment.BOUND, Adornment.FREE }));
 		preds.add(new AdornedPredicate("rsg", new Adornment[] { Adornment.FREE,
@@ -181,11 +179,11 @@ public class AdornmentsTest extends TestCase {
 	 */
 	public void testAdornedRulesP0() {
 		// constructing the adorned predicate
-		final IAdornedPredicate pred = new AdornedPredicate("sg",
+		final AdornedPredicate pred = new AdornedPredicate("sg",
 				new Adornment[] { Adornment.BOUND, Adornment.FREE });
 
 		// constructing the adorned rules
-		Set<IAdornedRule> rules = new HashSet<IAdornedRule>();
+		Set<AdornedRule> rules = new HashSet<AdornedRule>();
 		// sg^bf(X, Y) :- flat(X, Y)
 		IHead head = BASIC.createHead(BASIC.createLiteral(true, pred, BASIC
 				.createTuple(new ArrayList<ITerm>(createVarList("X", "Y")))));
@@ -217,8 +215,8 @@ public class AdornmentsTest extends TestCase {
 				.add(new AdornedRule(r, new SIPImpl(unadornRule(r), p0
 						.getQuery())));
 
-		final List<IAdornedRule> l0 = new ArrayList<IAdornedRule>(rules);
-		final List<IAdornedRule> l1 = new ArrayList<IAdornedRule>(p0
+		final List<AdornedRule> l0 = new ArrayList<AdornedRule>(rules);
+		final List<AdornedRule> l1 = new ArrayList<AdornedRule>(p0
 				.getAdornedRules());
 
 		assertEquals("The amount of rules must be equal", l0.size(), l1.size());
@@ -227,10 +225,10 @@ public class AdornmentsTest extends TestCase {
 		Collections.sort(l1, RC);
 
 		// TODO: maybe look whether the sip contains all edges
-		for (Iterator<IAdornedRule> i0 = l0.iterator(), i1 = l1.iterator(); i0
+		for (Iterator<AdornedRule> i0 = l0.iterator(), i1 = l1.iterator(); i0
 				.hasNext();) {
-			final IAdornedRule r0 = i0.next();
-			final IAdornedRule r1 = i1.next();
+			final AdornedRule r0 = i0.next();
+			final AdornedRule r1 = i1.next();
 			assertEquals(
 					"The rules\n" + r0 + "\nand\n" + r1 + "\ndon't match.", 0,
 					RC.compare(r0, r1));
@@ -250,13 +248,13 @@ public class AdornmentsTest extends TestCase {
 	 */
 	public void testAdornedRulesP1() {
 		// constructing the adorned predicate
-		final IAdornedPredicate pred_bf = new AdornedPredicate("rsg",
+		final AdornedPredicate pred_bf = new AdornedPredicate("rsg",
 				new Adornment[] { Adornment.BOUND, Adornment.FREE });
-		final IAdornedPredicate pred_fb = new AdornedPredicate("rsg",
+		final AdornedPredicate pred_fb = new AdornedPredicate("rsg",
 				new Adornment[] { Adornment.FREE, Adornment.BOUND });
 
 		// constructing the adorned rules
-		Set<IAdornedRule> rules = new HashSet<IAdornedRule>();
+		Set<AdornedRule> rules = new HashSet<AdornedRule>();
 		// rsg^bf(X, Y) :- flat(X, Y)
 		IHead head = BASIC.createHead(BASIC.createLiteral(true, pred_bf, BASIC
 				.createTuple(new ArrayList<ITerm>(createVarList("X", "Y")))));
@@ -310,8 +308,8 @@ public class AdornmentsTest extends TestCase {
 				.add(new AdornedRule(r, new SIPImpl(unadornRule(r), p1
 						.getQuery())));
 
-		final List<IAdornedRule> l0 = new ArrayList<IAdornedRule>(rules);
-		final List<IAdornedRule> l1 = new ArrayList<IAdornedRule>(p1
+		final List<AdornedRule> l0 = new ArrayList<AdornedRule>(rules);
+		final List<AdornedRule> l1 = new ArrayList<AdornedRule>(p1
 				.getAdornedRules());
 
 		assertEquals("The amount of rules must be equal", l0.size(), l1.size());
@@ -320,10 +318,10 @@ public class AdornmentsTest extends TestCase {
 		Collections.sort(l1, RC);
 
 		// TODO: maybe look whether the sip contains all edges
-		for (Iterator<IAdornedRule> i0 = l0.iterator(), i1 = l1.iterator(); i0
+		for (Iterator<AdornedRule> i0 = l0.iterator(), i1 = l1.iterator(); i0
 				.hasNext();) {
-			final IAdornedRule r0 = i0.next();
-			final IAdornedRule r1 = i1.next();
+			final AdornedRule r0 = i0.next();
+			final AdornedRule r1 = i1.next();
 			assertEquals(
 					"The rules\n" + r0 + "\nand\n" + r1 + "\ndon't match.", 0,
 					RC.compare(r0, r1));
@@ -347,9 +345,9 @@ public class AdornmentsTest extends TestCase {
 		List<ILiteral> lits = new ArrayList<ILiteral>(r.getHeadLiterals());
 		int i = 0;
 		for (final ILiteral l : lits) {
-			if (l.getPredicate() instanceof IAdornedPredicate) {
+			if (l.getPredicate() instanceof AdornedPredicate) {
 				lits.set(i, BASIC.createLiteral(l.isPositive(),
-						((IAdornedPredicate) l.getPredicate())
+						((AdornedPredicate) l.getPredicate())
 								.getUnadornedPredicate(), l.getTuple()));
 				changed = true;
 			}
@@ -359,9 +357,9 @@ public class AdornmentsTest extends TestCase {
 		lits = new ArrayList<ILiteral>(r.getBodyLiterals());
 		i = 0;
 		for (final ILiteral l : lits) {
-			if (l.getPredicate() instanceof IAdornedPredicate) {
+			if (l.getPredicate() instanceof AdornedPredicate) {
 				lits.set(i, BASIC.createLiteral(l.isPositive(),
-						((IAdornedPredicate) l.getPredicate())
+						((AdornedPredicate) l.getPredicate())
 								.getUnadornedPredicate(), l.getTuple()));
 				changed = true;
 			}
@@ -383,16 +381,27 @@ public class AdornmentsTest extends TestCase {
 	 * isn't compared</b>
 	 * </p>
 	 */
-	public void testFreeQuery() {
-		// w(Y) :- k(X, Y), l(X)
-		final IRule r = BASIC.createRule(BASIC.createHead(createLiteral("w",
-				"Y")), BASIC.createBody(createLiteral("k", "X", "Y"),
-				createLiteral("l", "X")));
-		// :- w(X)
-		final IQuery q = BASIC.createQuery(createLiteral("w", "X"));
-		final AdornedProgram a = new AdornedProgram(Collections.singleton(r), q);
-		assertTrue("There must not any adorned rules be created", a
-				.getAdornedRules().isEmpty());
+	public void testFreeQuery() throws Exception {
+		final String prog = "w(?Y) :- k(?X, ?Y), l(?X).\n" + 
+			"?- w(?X).";
+		final IProgram p = Parser.parse(prog);
+		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
+
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final Adornment[] f = new Adornment[]{Adornment.FREE};
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// w^f(Y) :- k(X, Y), l(X)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("w", f, new ITerm[]{Y})), 
+					BASIC.createBody(createLiteral("k", "X", "Y"), createLiteral("l", "X"))));
+
+		assertTrue("The rule collection must be equal", MiscHelper.compare(ap.getAdornedRules(), ref, RC));
+
+		// ?- w^f(X)
+		final IQuery refQuery = BASIC.createQuery(createAdornedLiteral("w", f, new ITerm[]{X}));
+
+		assertEquals("The query is not correct", refQuery, ap.getQuery());
 	}
 
 	/**
@@ -407,63 +416,38 @@ public class AdornmentsTest extends TestCase {
 	 * isn't compared</b>
 	 * </p>
 	 */
-	public void testFreeQuery1() {
-		// constructing the adorned predicate
-		final IAdornedPredicate pred = new AdornedPredicate("w",
-				new Adornment[] { Adornment.BOUND, Adornment.FREE });
+	public void testFreeQuery1() throws Exception {
+		final String prog = "w(?X, ?Y) :- k(?X, ?B), l(?B, ?C), w(?C, ?Y).\n" + 
+			"?- w(?X, ?Y).";
+		final IProgram p = Parser.parse(prog);
+		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
-		// w(X, Y) :- k(X, B), l(B, C), w(C, Y)
-		final IRule r = BASIC.createRule(BASIC.createHead(createLiteral("w",
-				"X", "Y")), BASIC.createBody(createLiteral("k", "X", "B"),
-				createLiteral("l", "B", "C"), createLiteral("w", "C", "Y")));
-		// w(X, Y)
-		final IQuery q = BASIC.createQuery(createLiteral("w", "X", "Y"));
+		final ITerm C = TERM.createVariable("C");
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm[] CY = new ITerm[]{C, Y};
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final Adornment[] ff = new Adornment[]{Adornment.FREE, Adornment.FREE};
+		final Adornment[] bf = new Adornment[]{Adornment.BOUND, Adornment.FREE};
 
-		// constructing the adorned rules
-		Set<IAdornedRule> rules = new HashSet<IAdornedRule>();
-
+		final Set<IRule> ref = new HashSet<IRule>();
+		// w^ff(X, Y) :- k(X, B), l(B, C), w^bf(C, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("w" ,ff, XY)), 
+					BASIC.createBody(createLiteral("k", "X", "B"), 
+						createLiteral("l", "B", "C"), 
+						createAdornedLiteral("w", bf, CY))));
 		// w^bf(X, Y) :- k(X, B), l(B, C), w^bf(C, Y)
-		IHead head = BASIC.createHead(BASIC.createLiteral(true, pred, BASIC
-				.createTuple(new ArrayList<ITerm>(createVarList("X", "Y")))));
-		IBody body = BASIC.createBody(createLiteral("k", "X", "B"),
-				createLiteral("l", "B", "C"), BASIC.createLiteral(true, pred,
-						BASIC.createTuple(new ArrayList<ITerm>(createVarList(
-								"C", "Y")))));
-		IRule rule = BASIC.createRule(head, body);
-		// we can call new AdornedRule, because there is no computation, and
-		// we assume that the sip is created correct.
-		rules.add(new AdornedRule(rule, new SIPImpl(unadornRule(rule), q)));
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("w" ,bf, XY)), 
+					BASIC.createBody(createLiteral("k", "X", "B"), 
+						createLiteral("l", "B", "C"), 
+						createAdornedLiteral("w", bf, CY))));
 
-		// w(X, Y) :- k(X, B), l(B, C), w^bf(C, Y)
-		head = BASIC.createHead(createLiteral("w", "X", "Y"));
-		body = BASIC.createBody(createLiteral("k", "X", "B"), createLiteral(
-				"l", "B", "C"), BASIC.createLiteral(true, pred, BASIC
-				.createTuple(new ArrayList<ITerm>(createVarList("C", "Y")))));
-		rule = BASIC.createRule(head, body);
-		// we can call new AdornedRule, because there is no computation, and
-		// we assume that the sip is created correct.
-		rules.add(new AdornedRule(rule, new SIPImpl(unadornRule(rule), q)));
+		assertTrue("The rule collection must be equal", MiscHelper.compare(ap.getAdornedRules(), ref, RC));
 
-		final AdornedProgram a = new AdornedProgram(Collections.singleton(r), q);
+		// ?- w^ff(X, Y)
+		final IQuery refQuery = BASIC.createQuery(createAdornedLiteral("w", ff, XY));
 
-		final List<IAdornedRule> l0 = new ArrayList<IAdornedRule>(rules);
-		final List<IAdornedRule> l1 = new ArrayList<IAdornedRule>(a
-				.getAdornedRules());
-
-		assertEquals("The amount of rules must be equal", l0.size(), l1.size());
-
-		Collections.sort(l0, RC);
-		Collections.sort(l1, RC);
-
-		// TODO: maybe look whether the sip contains all edges
-		for (Iterator<IAdornedRule> i0 = l0.iterator(), i1 = l1.iterator(); i0
-				.hasNext();) {
-			final IAdornedRule r0 = i0.next();
-			final IAdornedRule r1 = i1.next();
-			assertEquals(
-					"The rules\n" + r0 + "\nand\n" + r1 + "\ndon't match.", 0,
-					RC.compare(r0, r1));
-		}
+		assertEquals("The query is not correct", refQuery, ap.getQuery());
 	}
 
 	/**
@@ -478,16 +462,35 @@ public class AdornmentsTest extends TestCase {
 	 * isn't compared</b>
 	 * </p>
 	 */
-	public void testFreeQuery2() {
-		// w(X, Y) :- k(X, B), l(B, C), w(D, Y)
-		final IRule r = BASIC.createRule(BASIC.createHead(createLiteral("w",
-				"X", "Y")), BASIC.createBody(createLiteral("k", "X", "B"),
-				createLiteral("l", "B", "C"), createLiteral("w", "D", "Y")));
-		// w(X, Y)
-		final IQuery q = BASIC.createQuery(createLiteral("w", "X", "Y"));
-		final AdornedProgram a = new AdornedProgram(Collections.singleton(r), q);
-		assertTrue("There must not any adorned rules be created", a
-				.getAdornedRules().isEmpty());
+	public void testFreeQuery2() throws Exception {
+		final String prog = "w(?X, ?Y) :- k(?X, ?B), l(?B, ?C), w(?D, ?Y).\n" + 
+			"?- w(?X, ?Y).";
+		final IProgram p = Parser.parse(prog);
+		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
+
+		//final ITerm C = TERM.createVariable("C");
+		final ITerm D = TERM.createVariable("D");
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm[] DY = new ITerm[]{D, Y};
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final Adornment[] ff = new Adornment[]{Adornment.FREE, Adornment.FREE};
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// w^ff(X, Y) :- k(X, B), l(B, C), w^ff(D, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("w" ,ff, XY)), 
+					BASIC.createBody(createLiteral("k", "X", "B"), 
+						createLiteral("l", "B", "C"), 
+						createAdornedLiteral("w", ff, DY))));
+
+		assertTrue("The rule collection must be equal", MiscHelper.compare(ap.getAdornedRules(), ref, RC));
+
+		// ?- w^ff(X, Y)
+		final IQuery refQuery = BASIC.createQuery(createAdornedLiteral("w", ff, XY));
+
+		assertEquals("The query is not correct", refQuery, ap.getQuery());
+
+		printDebug("free", prog, ap);
 	}
 
 	public void testConstructedAdornment() {
@@ -512,14 +515,14 @@ public class AdornmentsTest extends TestCase {
 
 		// constructing the adorned rules
 		// constructing the adorned predicates
-		final IAdornedPredicate bbf = new AdornedPredicate("w",
+		final AdornedPredicate bbf = new AdornedPredicate("w",
 				new Adornment[] { Adornment.BOUND, Adornment.BOUND,
 						Adornment.FREE });
-		final IAdornedPredicate bfb = new AdornedPredicate("w",
+		final AdornedPredicate bfb = new AdornedPredicate("w",
 				new Adornment[] { Adornment.BOUND, Adornment.FREE,
 						Adornment.BOUND });
 
-		final Set<IAdornedRule> rules = new HashSet<IAdornedRule>();
+		final Set<AdornedRule> rules = new HashSet<AdornedRule>();
 
 		// w^bbf(X, Y, Z) :- k(A, B, Y), w^bfb(const[X, A, B], C, Y)
 		IHead head = BASIC.createHead(BASIC.createLiteral(true, bbf,
@@ -552,8 +555,8 @@ public class AdornmentsTest extends TestCase {
 		rules.add(new AdornedRule(rule, new SIPImpl(unadornRule(rule), q)));
 		
 		// asserting the result
-		final List<IAdornedRule> l0 = new ArrayList<IAdornedRule>(rules);
-		final List<IAdornedRule> l1 = new ArrayList<IAdornedRule>(a
+		final List<AdornedRule> l0 = new ArrayList<AdornedRule>(rules);
+		final List<AdornedRule> l1 = new ArrayList<AdornedRule>(a
 				.getAdornedRules());
 
 		assertEquals("The amount of rules must be equal", l0.size(), l1.size());
@@ -562,10 +565,10 @@ public class AdornmentsTest extends TestCase {
 		Collections.sort(l1, RC);
 
 		// TODO: maybe look whether the sip contains all edges
-		for (Iterator<IAdornedRule> i0 = l0.iterator(), i1 = l1.iterator(); i0
+		for (Iterator<AdornedRule> i0 = l0.iterator(), i1 = l1.iterator(); i0
 				.hasNext();) {
-			final IAdornedRule r0 = i0.next();
-			final IAdornedRule r1 = i1.next();
+			final AdornedRule r0 = i0.next();
+			final AdornedRule r1 = i1.next();
 			assertEquals(
 					"The rules\n" + r0 + "\nand\n" + r1 + "\ndon't match.", 0,
 					RC.compare(r0, r1));
@@ -649,33 +652,278 @@ public class AdornmentsTest extends TestCase {
 	 * Tests conjunctive queries.
 	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
 	 */
-	public void testConjunctiveQuery() throws Exception {
-		final String prog = "p(?X, ?X) :- c(?X).\n" + 
-			"r(?X, ?X, ?X) :- c(?X).\n" + 
-			"s(?X, ?X) :- c(?X).\n" + 
+	public void testConjunctiveQuery0() throws Exception {
+		final String prog = "p(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
+			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, 'a'), r('b', ?X, ?Y), s('e', ?Y).";
 		final IProgram p = Parser.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
-		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm[] XYZ = new ITerm[]{X, Y, Z};
 		final Adornment[] fb = new Adornment[]{Adornment.FREE, Adornment.BOUND};
 		final Adornment[] bb = new Adornment[]{Adornment.BOUND, Adornment.BOUND};
-		final ILiteral c = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 1), BASIC.createTuple(X)));
-		final ITerm[] XX = new ITerm[]{X, X};
+		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
+		final ILiteral c3= BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
 
 		final Set<IRule> ref = new HashSet<IRule>();
-		// p^fb(?X, ?X) :- c(?X)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", fb, XX)), BASIC.createBody(c)));
-		// r^bbf(?X, ?X, ?X) :- c(?X)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, new ITerm[]{X, X, X})), BASIC.createBody(c)));
-		// s^bb(?X, ?X) :- c(?X)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XX)), BASIC.createBody(c)));
+		// p^fb(?X, ?Y) :- c(?X, ?Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", fb, XY)), BASIC.createBody(c2)));
+		// r^bbf(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, XYZ)), BASIC.createBody(c3)));
+		// s^bb(?X, ?Y) :- c(?X, ?Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)), BASIC.createBody(c2)));
 
-		assertTrue("The rules must be '" + MiscHelper.join("\n", ref) + "', but were '" + 
-				MiscHelper.join("\n", ap.getAdornedRules()) + "'", 
-				MiscHelper.compare(ap.getAdornedRules(), ref, RC));
+		assertTrue("The rule collection must be equal", MiscHelper.compare(ap.getAdornedRules(), ref, RC));
+
+		// ?- p^fb(X, 'a'), r^bbf('b', X, Y), s^bb('e', Y)
+		final IQuery refQuery = BASIC.createQuery(createAdornedLiteral("p", fb, new ITerm[]{X, TERM.createString("a")}), 
+				createAdornedLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X, Y}), 
+				createAdornedLiteral("s", bb, new ITerm[]{TERM.createString("e"), Y}));
+
+		assertEquals("The query is not correct", refQuery, ap.getQuery());
+	}
+
+	/**
+	 * Tests conjunctive queries.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
+	 */
+	public void testConjunctiveQuery1() throws Exception {
+		final String prog = "p(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
+			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
+		final IProgram p = Parser.parse(prog);
+		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
+
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm[] XYZ = new ITerm[]{X, Y, Z};
+		final Adornment[] ff = new Adornment[]{Adornment.FREE, Adornment.FREE};
+		final Adornment[] bb = new Adornment[]{Adornment.BOUND, Adornment.BOUND};
+		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
+		final ILiteral c3= BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// p^ff(X, Y) :- c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", ff, XY)), BASIC.createBody(c2)));
+		// s^bb(X, Y) :- c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)), BASIC.createBody(c2)));
+		// r^bbf(X, Y, Z) :- c(X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, XYZ)), BASIC.createBody(c3)));
+
+		assertTrue("The rule collection must be equal", MiscHelper.compare(ap.getAdornedRules(), ref, RC));
+
+		// ?- p^ff(X, Y), r^bbf(b, X, Z), s^bb(e, Z)
+		final IQuery refQuery = BASIC.createQuery(createAdornedLiteral("p", ff, XY), 
+				createAdornedLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X, Z}), 
+				createAdornedLiteral("s", bb, new ITerm[]{TERM.createString("e"), Z}));
+
+		assertEquals("The query is not correct", refQuery, ap.getQuery());
+	}
+
+	/**
+	 * Tests conjunctive queries.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
+	 */
+	public void testConjunctiveQuery2() throws Exception {
+		final String prog = "p(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
+			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"?- p('b', 'a'), r('b', ?X, ?Y), s('e', ?Y).";
+		final IProgram p = Parser.parse(prog);
+		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
+
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm[] XYZ = new ITerm[]{X, Y, Z};
+		final Adornment[] bb = new Adornment[]{Adornment.BOUND, Adornment.BOUND};
+		final Adornment[] bff = new Adornment[]{Adornment.BOUND, Adornment.FREE, Adornment.FREE};
+		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
+		final ILiteral c3= BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// p^bb(X, Y) :- c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", bb, XY)), BASIC.createBody(c2)));
+		// r^bff(X, Y, Z) :- c(X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bff, XYZ)), BASIC.createBody(c3)));
+		// s^bb(X, Y) :- c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)), BASIC.createBody(c2)));
+
+		assertTrue("The rule collection must be equal", MiscHelper.compare(ap.getAdornedRules(), ref, RC));
+
+		// ?- p^bb(b, a), r^bff(b, X, Y), s^bb(e, Y)
+		final IQuery refQuery = BASIC.createQuery(createAdornedLiteral("p", bb, 
+					new ITerm[]{TERM.createString("b"), TERM.createString("a")}), 
+				createAdornedLiteral("r", bff, new ITerm[]{TERM.createString("b"), X, Y}), 
+				createAdornedLiteral("s", bb, new ITerm[]{TERM.createString("e"), Y}));
+
+		assertEquals("The query is not correct", refQuery, ap.getQuery());
+	}
+
+	/**
+	 * Tests conjunctive queries.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
+	 */
+	public void testConjunctiveQuery3() throws Exception {
+		final String prog = "p(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"r(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"s(?W, ?Y, ?X, ?X) :- c(?W, ?X, ?Y, ?Z).\n" + 
+			"?- p(?W, ?X), r(?Y, ?Z), s(?W, ?X, ?Y, ?Z).";
+		final IProgram p = Parser.parse(prog);
+		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
+
+		final ITerm W = TERM.createVariable("W");
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] WX = new ITerm[]{W, X};
+		final ITerm[] YZ = new ITerm[]{Y, Z};
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm[] WXYZ = new ITerm[]{W, X, Y, Z};
+		final Adornment[] ff = new Adornment[]{Adornment.FREE, Adornment.FREE};
+		final Adornment[] bbbb = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.BOUND, Adornment.BOUND};
+		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
+		final ILiteral c4= BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 4), BASIC.createTuple(WXYZ)));
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// s^bbbb(W, Y, X, X) :- c(W, X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bbbb, WXYZ)), BASIC.createBody(c4)));
+		// p^ff(X, Y) :- c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", ff, XY)), BASIC.createBody(c2)));
+		// r^ff(X, Y) :- c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", ff, XY)), BASIC.createBody(c2)));
+
+		assertTrue("The rule collection must be equal", MiscHelper.compare(ap.getAdornedRules(), ref, RC));
+
+		// ?- p^ff(W, X), r^ff(Y, Z), s^bbbb(W, X, Y, Z)
+		final IQuery refQuery = BASIC.createQuery(createAdornedLiteral("p", ff, WX), 
+				createAdornedLiteral("r", ff, YZ), 
+				createAdornedLiteral("s", bbbb, WXYZ));
+
+		assertEquals("The query is not correct", refQuery, ap.getQuery());
+	}
+
+	/**
+	 * Tests conjunctive queries.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
+	 */
+	public void testComplicatedConjunctiveQuery0() throws Exception {
+		final String prog = "p(?X, ?Y) :- c(?X, ?Y), r(?Z, ?Y, ?X).\n" + 
+			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
+			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
+		final IProgram p = Parser.parse(prog);
+		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
+
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm[] XYZ = new ITerm[]{X, Y, Z};
+		final ITerm[] ZYX = new ITerm[]{Z, Y, X};
+		final Adornment[] ff = new Adornment[]{Adornment.FREE, Adornment.FREE};
+		final Adornment[] bb = new Adornment[]{Adornment.BOUND, Adornment.BOUND};
+		final Adornment[] fbb = new Adornment[]{Adornment.FREE, Adornment.BOUND, Adornment.BOUND};
+		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
+		final ILiteral c3= BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// p^ff(X, Y) :- c(X, Y), r^fbb(Z, Y, X)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", ff, XY)), 
+					BASIC.createBody(c2, createAdornedLiteral("r", fbb, ZYX))));
+		// s^bb(X, Y) :- c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)), 
+					BASIC.createBody(c2)));
+		// r^fbb(X, Y, Z) :- c(X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", fbb, XYZ)), 
+					BASIC.createBody(c3)));
+		// r^bbf(X, Y, Z) :- c(X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, XYZ)), 
+					BASIC.createBody(c3)));
+
+		assertTrue("The rule collection must be equal", MiscHelper.compare(ap.getAdornedRules(), ref, RC));
+
+		// ?- p^ff(X, Y), r^bbf(b, X, Z), s^bb(e, Z)
+		final IQuery refQuery = BASIC.createQuery(createAdornedLiteral("p", ff, XY), 
+				createAdornedLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X, Z}), 
+				createAdornedLiteral("s", bb, new ITerm[]{TERM.createString("e"), Z}));
+
+		assertEquals("The query is not correct", refQuery, ap.getQuery());
+	}
+
+	/**
+	 * Tests conjunctive queries.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
+	 */
+	public void testComplicatedConjunctiveQuery1() throws Exception {
+		final String prog = "p(?X, ?Y) :- c(?X, ?Y), s(?Z, ?T).\n" + 
+			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
+			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
+		final IProgram p = Parser.parse(prog);
+		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
+
+		final ITerm T = TERM.createVariable("T");
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm[] XYZ = new ITerm[]{X, Y, Z};
+		final Adornment[] ff = new Adornment[]{Adornment.FREE, Adornment.FREE};
+		final Adornment[] bb = new Adornment[]{Adornment.BOUND, Adornment.BOUND};
+		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
+		final ILiteral c3= BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// s^ff(X, Y) :- c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", ff, XY)), 
+					BASIC.createBody(c2)));
+		// p^ff(X, Y) :- c(X, Y), s^ff(Z, T)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", ff, XY)), 
+					BASIC.createBody(c2, createAdornedLiteral("s", ff, new ITerm[]{Z, T}))));
+		// s^bb(X, Y) :- c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)), 
+					BASIC.createBody(c2)));
+		// r^bbf(X, Y, Z) :- c(X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, XYZ)), 
+					BASIC.createBody(c3)));
+
+		assertTrue("The rule collection must be equal", MiscHelper.compare(ap.getAdornedRules(), ref, RC));
+
+		// ?- p^ff(X, Y), r^bbf(b, X, Z), s^bb(e, Z)
+		final IQuery refQuery = BASIC.createQuery(createAdornedLiteral("p", ff, XY), 
+				createAdornedLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X, Z}), 
+				createAdornedLiteral("s", bb, new ITerm[]{TERM.createString("e"), Z}));
+
+		assertEquals("The query is not correct", refQuery, ap.getQuery());
+	}
+	/**
+	 * Prints a program and the resulting adorned program in a formated
+	 * way.
+	 * @param name the name to identify the test
+	 * @param prog the input program
+	 * @param res the resulting program
+	 */
+	private static void printDebug(final String name, final String prog, final AdornedProgram ap) {
+		System.out.println("---");
+		System.out.println(name);
+		System.out.println("\tinput: ");
+		System.out.println(prog);
+		System.out.println("\tadorned: ");
+		System.out.println(ap);
 	}
 
 	/**
@@ -683,11 +931,11 @@ public class AdornmentsTest extends TestCase {
 	 * Compares two rules according to their predicate symbols.
 	 * </p>
 	 * <p>
-	 * $Id: AdornmentsTest.java,v 1.7 2007-09-27 14:52:39 bazbishop237 Exp $
+	 * $Id: AdornmentsTest.java,v 1.8 2007-10-09 07:45:33 poettler_ric Exp $
 	 * </p>
 	 * 
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.7 $
+	 * @version $Revision: 1.8 $
 	 */
 	private static class RuleComparator implements Comparator<IRule> {
 		public int compare(IRule o1, IRule o2) {
@@ -734,16 +982,16 @@ public class AdornmentsTest extends TestCase {
 				return res;
 			}
 			// comparing the adornments
-			if ((p1 instanceof IAdornedPredicate)
-					&& !(p2 instanceof IAdornedPredicate)) {
+			if ((p1 instanceof AdornedPredicate)
+					&& !(p2 instanceof AdornedPredicate)) {
 				return 1;
-			} else if (!(p1 instanceof IAdornedPredicate)
-					&& (p2 instanceof IAdornedPredicate)) {
+			} else if (!(p1 instanceof AdornedPredicate)
+					&& (p2 instanceof AdornedPredicate)) {
 				return -1;
-			} else if ((p1 instanceof IAdornedPredicate)
-					&& (p2 instanceof IAdornedPredicate)) {
-				final Adornment[] a1 = ((IAdornedPredicate) p1).getAdornment();
-				final Adornment[] a2 = ((IAdornedPredicate) p2).getAdornment();
+			} else if ((p1 instanceof AdornedPredicate)
+					&& (p2 instanceof AdornedPredicate)) {
+				final Adornment[] a1 = ((AdornedPredicate) p1).getAdornment();
+				final Adornment[] a2 = ((AdornedPredicate) p2).getAdornment();
 				for (int i = 0; i < a1.length; i++) {
 					if ((a1[i] != a2[i]) && (a1[i] == Adornment.BOUND)) {
 						return -1;
