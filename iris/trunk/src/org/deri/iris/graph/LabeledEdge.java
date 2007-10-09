@@ -38,11 +38,11 @@ package org.deri.iris.graph;
  * to keep this class in the api!</b>
  * </p>
  * <p>
- * $Id: LabeledEdge.java,v 1.1 2007-04-18 13:33:49 poettler_ric Exp $
+ * $Id: LabeledEdge.java,v 1.2 2007-10-09 20:23:12 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class LabeledEdge<V, L> {
 
@@ -118,7 +118,7 @@ public class LabeledEdge<V, L> {
 		if (!(o instanceof LabeledEdge)) {
 			return false;
 		}
-		LabeledEdge le = (LabeledEdge) o;
+		LabeledEdge<?,?> le = (LabeledEdge<?,?>) o;
 
 		return le.getSource().equals(getSource())
 				&& le.getTarget().equals(getTarget())
