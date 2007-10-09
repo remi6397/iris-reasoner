@@ -29,25 +29,23 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.factory.IProgramFactory;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.api.storage.IRelation;
 
 /**
  * <p>
  * A simple IProgramFactory implementation.
  * </p>
  * <p>
- * $Id: ProgramFactory.java,v 1.11 2007-06-20 12:20:00 poettler_ric Exp $
+ * $Id: ProgramFactory.java,v 1.12 2007-10-09 20:45:48 bazbishop237 Exp $
  * </p>
  * @author Francisco Garcia
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class ProgramFactory implements IProgramFactory {
 	private static final IProgramFactory FACTORY = new ProgramFactory();
