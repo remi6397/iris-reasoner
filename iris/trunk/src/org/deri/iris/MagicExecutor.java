@@ -65,10 +65,10 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
  * the rules of those predicates into the upcomming query computations.
  * </p>
  * <p>
- * $Id: MagicExecutor.java,v 1.3 2007-10-09 07:55:12 poettler_ric Exp $
+ * $Id: MagicExecutor.java,v 1.4 2007-10-09 20:46:31 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class MagicExecutor implements IExecutor {
 
@@ -219,7 +219,6 @@ public class MagicExecutor implements IExecutor {
 		if (q == null) {
 			throw new IllegalArgumentException("The query must not be null");
 		}
-		boolean tryMagic = false;
 		for (final ITerm t : q.getQueryLiteral(0).getTuple().getTerms()) {
 			if (t.isGround()) {
 				return true;
