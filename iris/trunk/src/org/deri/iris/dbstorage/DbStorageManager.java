@@ -42,7 +42,7 @@ public class DbStorageManager {
 
 	private Connection con = null;
 
-	public DbStorageManager(Map conf)
+	public DbStorageManager(Map<?,?> conf)
 			throws DbStorageManagerException {
 		try {
 			con = createConnection(conf);
@@ -414,7 +414,7 @@ public class DbStorageManager {
 		}
 	}
 
-	private Connection createConnection(Map conf)
+	private Connection createConnection(Map<?,?> conf)
 			throws ClassNotFoundException, FileNotFoundException, IOException,
 			SQLException {
 		String dburl = null;

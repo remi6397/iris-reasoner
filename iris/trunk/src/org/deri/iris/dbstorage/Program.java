@@ -56,12 +56,12 @@ import java.sql.SQLException;
  * This implementaion is thread-save.
  * </p>
  * <p>
- * $Id: Program.java,v 1.4 2007-09-10 10:31:56 fefacca Exp $
+ * $Id: Program.java,v 1.5 2007-10-09 20:33:43 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class Program implements IProgram {
 
@@ -101,7 +101,7 @@ public class Program implements IProgram {
 	 * Creates an empty extensional database (knowledge base) ready to be filled
 	 * up with facts, rules and queries.
 	 */
-	Program(Map conf) {
+	Program(Map<?,?> conf) {
 		try {
 			dbm = new DbStorageManager(conf);
 		} catch (DbStorageManagerException e) {
@@ -121,7 +121,7 @@ public class Program implements IProgram {
 	 * @param q
 	 *            a set of queries to be added into the EDB.
 	 */
-	Program(Map conf, final Map<IPredicate, IMixedDatatypeRelation> f,
+	Program(Map<?,?> conf, final Map<IPredicate, IMixedDatatypeRelation> f,
 			final Set<IRule> r, final Set<IQuery> q) {
 		try {
 			dbm = new DbStorageManager(conf);
