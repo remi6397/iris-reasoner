@@ -63,11 +63,11 @@ import org.deri.iris.MiscHelper;
  * Tests the magic sets.
  * </p>
  * <p>
- * $Id: MagicTest.java,v 1.4 2007-09-27 14:53:11 bazbishop237 Exp $
+ * $Id: MagicTest.java,v 1.5 2007-10-09 07:48:46 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class MagicTest extends TestCase {
 
@@ -468,44 +468,400 @@ public class MagicTest extends TestCase {
 	 * or not.
 	 */
 	public void testStupidRules() throws Exception {
-		final String program = "q(?X) :- s(?X), not p(?X)." + 
-			"p(?X) :- r(?X)." + 
-			"r(?X) :- t(?X)." + 
+		final String program = "q(?X) :- s(?X), not p(?X).\n" + 
+			"p(?X) :- r(?X).\n" + 
+			"r(?X) :- t(?X).\n" + 
 			"?- q(?X).";
 		final IProgram p = Factory.PROGRAM.createProgram();
 		Parser.parse(program, p);
 
+		final AdornedProgram ap = new AdornedProgram(
+				p.getRules(), p.getQueries().iterator().next());
 		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(
 					p.getRules(), p.getQueries().iterator().next()));
 
 		final ITerm[] X = new ITerm[]{TERM.createVariable("X")};
-		final Adornment[] sb = new Adornment[]{Adornment.BOUND};
+		final Adornment[] b = new Adornment[]{Adornment.BOUND};
+		final Adornment[] f = new Adornment[]{Adornment.FREE};
 		final ILiteral s = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("s", 1), BASIC.createTuple(X)));
 		final ILiteral t = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("t", 1), BASIC.createTuple(X)));
 		final ILiteral q = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("q", 1), BASIC.createTuple(X)));
-		final ILiteral neg_ad_p = createAdornedLiteral("p", sb, X);
+		final ILiteral neg_ad_p = createAdornedLiteral("p", b, X);
 		neg_ad_p.setPositive(false);
-		final ILiteral ad_p = createAdornedLiteral("p", sb, X);
-		final ILiteral ad_r = createAdornedLiteral("r", sb, X);
-		final ILiteral magic_p = createMagicLiteral("p", sb, X);
-		final ILiteral magic_r = createMagicLiteral("r", sb, X);
+		final ILiteral ad_q = createAdornedLiteral("q", f, X);
+		final ILiteral ad_p = createAdornedLiteral("p", b, X);
+		final ILiteral ad_r = createAdornedLiteral("r", b, X);
+		final ILiteral magic_p = createMagicLiteral("p", b, X);
+		final ILiteral magic_r = createMagicLiteral("r", b, X);
 
 		final Set<IRule> ref = new HashSet<IRule>();
-		//magic_r^b(X) :- magic_p^b(X)
+		// magic_r^b(X) :- magic_p^b(X)
 		ref.add(BASIC.createRule(BASIC.createHead(magic_r), BASIC.createBody(magic_p)));
-		//magic_p^b(X) :- s(X)
-		ref.add(BASIC.createRule(BASIC.createHead(magic_p), BASIC.createBody(s)));
-		//r^b(X) :- magic_r^b(X), t(X)
+		// magic_p^b(X) :- magic_q^f(), s(X)
+		ref.add(BASIC.createRule(BASIC.createHead(magic_p), 
+					BASIC.createBody(createMagicLiteral("q", f, new ITerm[]{}), s)));
+		// q^f(X) :- magic_q^f(), s(X), -p^b(X)
+		ref.add(BASIC.createRule(BASIC.createHead(ad_q), 
+					BASIC.createBody(createMagicLiteral("q", f, new ITerm[]{}), s, neg_ad_p)));
+		// r^b(X) :- magic_r^b(X), t(X)
 		ref.add(BASIC.createRule(BASIC.createHead(ad_r), BASIC.createBody(magic_r, t)));
-		//q(X) :- s(X), -p^b(X)
-		ref.add(BASIC.createRule(BASIC.createHead(q), BASIC.createBody(s, neg_ad_p)));
-		//p^b(X) :- magic_p^b(X), r^b(X)
+		// p^b(X) :- magic_p^b(X), r^b(X)
 		ref.add(BASIC.createRule(BASIC.createHead(ad_p), BASIC.createBody(magic_p, ad_r)));
 		
 		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
 		rules.addAll(ms.getMagicRules());
 
-		assertTrue("The two rule collections must be equals", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
+		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
+	}
+
+	/**
+	 * Tests conjunctive queries.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
+	 */
+	public void testConjunctiveQuery0() throws Exception {
+		final String prog = "p(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
+			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"?- p(?X, 'a'), r('b', ?X, ?Y), s('e', ?Y).";
+		final IProgram p = Parser.parse(prog);
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), p.getQueries().iterator().next()));
+
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm[] XYZ = new ITerm[]{X, Y, Z};
+		final Adornment[] fb = new Adornment[]{Adornment.FREE, Adornment.BOUND};
+		final Adornment[] bb = new Adornment[]{Adornment.BOUND, Adornment.BOUND};
+		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
+		final ILiteral c3 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// magic_r^bbf(b, X) :- p^fb(X, a)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", bbf, 
+							new ITerm[]{TERM.createString("b"), X})), 
+					BASIC.createBody(createAdornedLiteral("p", fb, 
+							new ITerm[]{X, TERM.createString("a")}))));
+		// magic_s^bb(e, Y) :- p^fb(X, a), r^bbf(b, X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", bb, 
+							new ITerm[]{TERM.createString("e"), Y})),
+					BASIC.createBody(createAdornedLiteral("p", fb, 
+							new ITerm[]{X, TERM.createString("a")}), 
+						createAdornedLiteral("r", bbf, 
+							new ITerm[]{TERM.createString("b"), X, Y}))));
+		// p^fb(X, Y) :- magic_p^fb(Y), c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", fb, XY)), 
+					BASIC.createBody(createMagicLiteral("p", fb, new ITerm[]{Y}), c2)));
+		// r^bbf(X, Y, Z) :- magic_r^bbf(X, Y), c(X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, XYZ)), 
+					BASIC.createBody(createMagicLiteral("r", bbf, XY), c3)));
+		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)), 
+					BASIC.createBody(createMagicLiteral("s", bb, XY), c2)));
+
+		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
+		rules.addAll(ms.getMagicRules());
+
+		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
+		assertEquals("The seed is not correct", 
+				createMagicLiteral("p", fb, new ITerm[]{TERM.createString("a")}).getAtom(), 
+				ms.getSeed());
+	}
+
+	/**
+	 * Tests conjunctive queries.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
+	 */
+	public void testConjunctiveQuery1() throws Exception {
+		final String prog = "p(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
+			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
+		final IProgram p = Parser.parse(prog);
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), p.getQueries().iterator().next()));
+
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm[] XYZ = new ITerm[]{X, Y, Z};
+		final Adornment[] ff = new Adornment[]{Adornment.FREE, Adornment.FREE};
+		final Adornment[] bb = new Adornment[]{Adornment.BOUND, Adornment.BOUND};
+		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
+		final ILiteral c3 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// magic_r^bbf(b, X) :- p^ff(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", bbf, 
+							new ITerm[]{TERM.createString("b"), X})), 
+					BASIC.createBody(createAdornedLiteral("p", ff, XY))));
+		// magic_s^bb(e, Z) :- p^ff(X, Y), r^bbf(b, X, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", bb, 
+							new ITerm[]{TERM.createString("e"), Z})), 
+					BASIC.createBody(createAdornedLiteral("p", ff, XY), 
+						createAdornedLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X, Z}))));
+		// r^bbf(X, Y, Z) :- magic_r^bbf(X, Y), c(X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, XYZ)), 
+					BASIC.createBody(createMagicLiteral("r", bbf, XY), c3)));
+		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)), 
+					BASIC.createBody(createMagicLiteral("s", bb, XY), c2)));
+		// p^ff(X, Y) :- magic_p^ff(), c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", ff, XY)), 
+					BASIC.createBody(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
+
+		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
+		rules.addAll(ms.getMagicRules());
+
+		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
+		assertEquals("The seed is not correct", 
+				createMagicLiteral("p", ff, new ITerm[]{}).getAtom(), 
+				ms.getSeed());
+	}
+
+	/**
+	 * Tests conjunctive queries.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
+	 */
+	public void testConjunctiveQuery2() throws Exception {
+		final String prog = "p(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
+			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"?- p('b', 'a'), r('b', ?X, ?Y), s('e', ?Y).";
+		final IProgram p = Parser.parse(prog);
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), p.getQueries().iterator().next()));
+
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm[] XYZ = new ITerm[]{X, Y, Z};
+		final Adornment[] bb = new Adornment[]{Adornment.BOUND, Adornment.BOUND};
+		final Adornment[] bff = new Adornment[]{Adornment.BOUND, Adornment.FREE, Adornment.FREE};
+		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
+		final ILiteral c3 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// magic_r^bff(b) :- p^bb(b, a)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", bff, 
+							new ITerm[]{TERM.createString("b")})), 
+					BASIC.createBody(createAdornedLiteral("p", bb, 
+							new ITerm[]{TERM.createString("b"), TERM.createString("a")}))));
+		// magic_s^bb(e, Y) :- p^bb(b, a), r^bff(b, X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", bb, 
+							new ITerm[]{TERM.createString("e"), Y})), 
+					BASIC.createBody(createAdornedLiteral("p", bb, 
+							new ITerm[]{TERM.createString("b"), TERM.createString("a")}), 
+						createAdornedLiteral("r", bff, 
+							new ITerm[]{TERM.createString("b"), X, Y}))));
+		// p^bb(X, Y) :- magic_p^bb(X, Y), c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", bb, XY)), 
+					BASIC.createBody(createMagicLiteral("p", bb, XY), c2)));
+		// r^bff(X, Y, Z) :- magic_r^bff(X), c(X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bff, XYZ)), 
+					BASIC.createBody(createMagicLiteral("r", bff, new ITerm[]{X}), c3)));
+		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)), 
+					BASIC.createBody(createMagicLiteral("s", bb, XY), c2)));
+
+		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
+		rules.addAll(ms.getMagicRules());
+
+		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
+		assertEquals("The seed is not correct", 
+				createMagicLiteral("p", bb, new ITerm[]{TERM.createString("b"), TERM.createString("a")}).getAtom(), 
+				ms.getSeed());
+	}
+
+	/**
+	 * Tests conjunctive queries.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
+	 */
+	public void testConjunctiveQuery3() throws Exception {
+		final String prog = "p(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"r(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"s(?W, ?X, ?Y, ?Z) :- c(?W, ?X, ?Y, ?Z).\n" + 
+			"?- p(?W, ?X), r(?Y, ?Z), s(?W, ?X, ?Y, ?Z).";
+		final IProgram p = Parser.parse(prog);
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), p.getQueries().iterator().next()));
+
+		final ITerm W = TERM.createVariable("W");
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] WX = new ITerm[]{W, X};
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm[] YZ = new ITerm[]{Y, Z};
+		final ITerm[] WXYZ = new ITerm[]{W, X, Y, Z};
+		final Adornment[] ff = new Adornment[]{Adornment.FREE, Adornment.FREE};
+		final Adornment[] bbbb = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.BOUND, Adornment.BOUND};
+		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
+		final ILiteral c4 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 4), BASIC.createTuple(WXYZ)));
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// magic_s^bbbb(W, X, Y, Z) :- p^ff(W, X), r^ff(Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", bbbb, WXYZ)), 
+					BASIC.createBody(createAdornedLiteral("p", ff, WX), 
+						createAdornedLiteral("r", ff, YZ))));
+		// magic_r^ff() :- p^ff(W, X)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", ff, new ITerm[]{})), 
+					BASIC.createBody(createAdornedLiteral("p", ff, WX))));
+		// s^bbbb(W, X, Y, Z) :- magic_s^bbbb(W, X, Y, Z), c(W, X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bbbb, WXYZ)), 
+					BASIC.createBody(createMagicLiteral("s", bbbb, WXYZ), c4)));
+		// r^ff(X, Y) :- magic_r^ff(), c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", ff, XY)), 
+					BASIC.createBody(createMagicLiteral("r", ff, new ITerm[]{}), c2)));
+		// p^ff(X, Y) :- magic_p^ff(), c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", ff, XY)), 
+					BASIC.createBody(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
+
+		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
+		rules.addAll(ms.getMagicRules());
+
+		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
+		assertEquals("The seed is not correct", 
+				createMagicLiteral("p", ff, new ITerm[]{}).getAtom(), 
+				ms.getSeed());
+	}
+
+	/**
+	 * Tests conjunctive queries.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
+	 */
+	public void testComplicatedConjunctiveQuery0() throws Exception {
+		final String prog = "p(?X, ?Y) :- c(?X, ?Y), r(?Z, ?Y, ?X).\n" + 
+			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
+			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
+		final IProgram p = Parser.parse(prog);
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), p.getQueries().iterator().next()));
+
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm[] YX = new ITerm[]{Y, X};
+		final ITerm[] YZ = new ITerm[]{Y, Z};
+		final ITerm[] XYZ = new ITerm[]{X, Y, Z};
+		final ITerm[] ZYX = new ITerm[]{Z, Y, X};
+		final Adornment[] ff = new Adornment[]{Adornment.FREE, Adornment.FREE};
+		final Adornment[] bb = new Adornment[]{Adornment.BOUND, Adornment.BOUND};
+		final Adornment[] fbb = new Adornment[]{Adornment.FREE, Adornment.BOUND, Adornment.BOUND};
+		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
+		final ILiteral c3 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// magic_r^bbf(b, X) :- p^ff(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X})),
+					BASIC.createBody(createAdornedLiteral("p", ff, XY))));
+		// magic_r^fbb(Y, X) :- magic_p^ff(), c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", fbb, YX)), 
+					BASIC.createBody(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
+		// magic_s^bb(e, Z) :- p^ff(X, Y), r^bbf(b, X, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", bb, new ITerm[]{TERM.createString("e"), Z})), 
+					BASIC.createBody(createAdornedLiteral("p", ff, XY), 
+						createAdornedLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X, Z}))));
+		// r^fbb(X, Y, Z) :- magic_r^fbb(Y, Z), c(X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", fbb, XYZ)), 
+					BASIC.createBody(createMagicLiteral("r", fbb, YZ), c3)));
+		// r^bbf(X, Y, Z) :- magic_r^bbf(X, Y), c(X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, XYZ)), 
+					BASIC.createBody(createMagicLiteral("r", bbf, XY), c3)));
+		// p^ff(X, Y) :- magic_p^ff(), c(X, Y), r^fbb(Z, Y, X)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", ff, XY)), 
+					BASIC.createBody(createMagicLiteral("p", ff, new ITerm[]{}), 
+						c2, 
+						createAdornedLiteral("r", fbb, ZYX))));
+		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)), 
+					BASIC.createBody(createMagicLiteral("s", bb, XY), c2)));
+
+		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
+		rules.addAll(ms.getMagicRules());
+
+		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
+		assertEquals("The seed is not correct", 
+				createMagicLiteral("p", ff, new ITerm[]{}).getAtom(), 
+				ms.getSeed());
+	}
+
+	/**
+	 * Tests conjunctive queries.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1798276&group_id=167309&atid=842434">bug #1798276: Magic Sets evaluation does not allow conjunctive queries</a>
+	 */
+	public void testComplicatedConjunctiveQuery1() throws Exception {
+		final String prog = "p(?X, ?Y) :- c(?X, ?Y), s(?Z, ?T).\n" + 
+			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
+			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
+			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
+		final IProgram p = Parser.parse(prog);
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), p.getQueries().iterator().next()));
+
+		final ITerm T = TERM.createVariable("T");
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm[] XYZ = new ITerm[]{X, Y, Z};
+		final Adornment[] ff = new Adornment[]{Adornment.FREE, Adornment.FREE};
+		final Adornment[] bb = new Adornment[]{Adornment.BOUND, Adornment.BOUND};
+		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
+		final ILiteral c3 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
+
+		final Set<IRule> ref = new HashSet<IRule>();
+		// magic_r^bbf(b, X) :- p^ff(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X})),
+					BASIC.createBody(createAdornedLiteral("p", ff, XY))));
+		// magic_s^bb(e, Z) :- p^ff(X, Y), r^bbf(b, X, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", bb, new ITerm[]{TERM.createString("e"), Z})),
+					BASIC.createBody(createAdornedLiteral("p", ff, XY), 
+						createAdornedLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X, Z}))));
+		// magic_s^ff() :- magic_p^ff(), c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", ff, new ITerm[]{})),
+					BASIC.createBody(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
+		// r^bbf(X, Y, Z) :- magic_r^bbf(X, Y), c(X, Y, Z)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, XYZ)),
+					BASIC.createBody(createMagicLiteral("r", bbf, XY), c3)));
+		// p^ff(X, Y) :- magic_p^ff(), c(X, Y), s^ff(Z, T)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", ff, XY)),
+					BASIC.createBody(createMagicLiteral("p", ff, new ITerm[]{}), 
+						c2, 
+						createAdornedLiteral("s", ff, new ITerm[]{Z, T}))));
+		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)),
+					BASIC.createBody(createMagicLiteral("s", bb, XY), c2)));
+		// s^ff(X, Y) :- magic_s^ff(), c(X, Y)
+		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", ff, XY)),
+					BASIC.createBody(createMagicLiteral("s", ff, new ITerm[]{}), c2)));
+
+		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
+		rules.addAll(ms.getMagicRules());
+
+		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
+		assertEquals("The seed is not correct", 
+				createMagicLiteral("p", ff, new ITerm[]{}).getAtom(), 
+				ms.getSeed());
+	}
+
+	/**
+	 * Prints a program and the resulting magic program in a formated
+	 * way.
+	 * @param name the name to identify the test
+	 * @param prog the input program
+	 * @param res the resulting program
+	 */
+	private static void printDebug(final String name, final String prog, final MagicSetImpl res) {
+		System.out.println("---");
+		System.out.println(name);
+		System.out.println("\tinput: ");
+		System.out.println(prog);
+		System.out.println("\tresult: ");
+		System.out.println(res);
 	}
 
 	public static Test suite() {
