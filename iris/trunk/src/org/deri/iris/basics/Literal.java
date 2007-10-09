@@ -41,7 +41,7 @@ import org.deri.iris.api.basics.ITuple;
  * @author Darko Anicic, DERI Innsbruck
  * @version $Revision$
  */
-public class Literal implements ILiteral<ILiteral>{
+public class Literal implements ILiteral{
 
 	private boolean positive = true;
 
@@ -80,7 +80,8 @@ public class Literal implements ILiteral<ILiteral>{
 		return atom.isGround();
 	}
 
-	public int compareTo(final ILiteral o) {
+	public int compareTo(final IAtom oo) {
+		ILiteral o = (ILiteral) oo;
 		if ((positive != o.isPositive()) && positive) {
 			return 1;
 		} else if ((positive != o.isPositive()) && !positive) {

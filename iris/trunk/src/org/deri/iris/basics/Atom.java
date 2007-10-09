@@ -39,7 +39,7 @@ import org.deri.iris.api.basics.ITuple;
  * 
  * @version $Revision$
  */
-public class Atom implements IAtom<IAtom> {
+public class Atom implements IAtom {
 
 	private final IPredicate predicate;
 	
