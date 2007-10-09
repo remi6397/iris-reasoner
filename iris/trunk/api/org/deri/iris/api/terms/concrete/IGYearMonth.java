@@ -40,7 +40,12 @@ import org.deri.iris.api.terms.ITerm;
  * @author richi
  *
  */
-public interface IGYearMonth extends ITerm<IGYearMonth, Integer[]> {
+public interface IGYearMonth extends ITerm
+{
+	/**
+	 * Return the wrapped type.
+	 */
+	public Integer[] getValue();
 	
 	/**
 	 * Returns the year (a gregorian calendar year).

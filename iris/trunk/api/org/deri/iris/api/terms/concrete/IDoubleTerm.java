@@ -39,5 +39,10 @@ import org.deri.iris.api.terms.INumericTerm;
  * @author Darko Anicic, DERI Innsbruck
  * @date 06.01.2006 17:19:12
  */
-public interface IDoubleTerm extends INumericTerm<IDoubleTerm, Double> {
+public interface IDoubleTerm extends INumericTerm
+{
+	/**
+	 * Return the wrapped type.
+	 */
+	public Double getValue();
 }

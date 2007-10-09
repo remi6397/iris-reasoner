@@ -45,15 +45,21 @@ import org.deri.iris.api.terms.ITerm;
  * 
  * <pre>
  *       Created on 06.04.2006
- *       Committed by $Author: poettler_ric $
+ *       Committed by $Author: bazbishop237 $
  *       $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/IDateTime.java,v $,
  * </pre>
  * 
  * @author Richard Pöttler
  * 
- * @version $Revision: 1.6 $ $Date: 2007-09-13 15:20:36 $
+ * @version $Revision: 1.7 $ $Date: 2007-10-09 20:21:21 $
  */
-public interface IDateTime extends ITerm<IDateTime, XMLGregorianCalendar> {
+public interface IDateTime extends ITerm
+{
+	/**
+	 * Return the wrapped type.
+	 */
+	public XMLGregorianCalendar getValue();
+
 	/**
 	 * Returns the year.
 	 * 

@@ -34,7 +34,12 @@ package org.deri.iris.api.terms;
  * @author Darko Anicic, DERI Innsbruck
  * @date   20.12.2005 16:32:16
  */
-public interface INumericTerm<Type extends INumericTerm, Type0 extends Number> extends ITerm<Type, Type0>{
+public interface INumericTerm extends ITerm
+{
+	/**
+	 * Return the wrapped type.
+	 */
+	public Number getValue();
 	
 	/**
 	 * <p>

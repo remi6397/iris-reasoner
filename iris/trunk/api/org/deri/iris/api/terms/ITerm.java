@@ -41,13 +41,13 @@ package org.deri.iris.api.terms;
  * a positive number.
  * </p>
  * <p>
- * $Id: ITerm.java,v 1.13 2007-07-10 12:26:53 poettler_ric Exp $
+ * $Id: ITerm.java,v 1.14 2007-10-09 20:19:39 bazbishop237 Exp $
  * </p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  */
 
-public interface ITerm<Type extends ITerm, Type0> extends Comparable<Type> {
+public interface ITerm extends Comparable<ITerm>{
 
 	/**
 	 * Checks whether the term is ground (a term with no variables).
@@ -62,14 +62,14 @@ public interface ITerm<Type extends ITerm, Type0> extends Comparable<Type> {
 	 * 
 	 * @return	The term value.
 	 */
-	public Type0 getValue();
+	public Object getValue();
 
 	/**
 	 * Sets a vale of the term.
 	 * 
 	 * @param t The new value of the term.
 	 */
-	public void setValue(Type0 t);
+//	public void setValue(WrappedType t);
 
 	/**
 	 * Creates and returns a copy of this object.

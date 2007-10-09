@@ -38,14 +38,14 @@ package org.deri.iris.api.basics;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IAtom.java,v 1.5 2007-04-10 11:10:14 poettler_ric Exp $
+ * $Id: IAtom.java,v 1.6 2007-10-09 20:17:49 bazbishop237 Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
-public interface IAtom<Type extends IAtom> extends Comparable<Type> {
+public interface IAtom extends Comparable<IAtom> {
 
 	/**
 	 * <p>

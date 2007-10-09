@@ -44,8 +44,13 @@ import org.deri.iris.api.terms.ITerm;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public interface IDateTerm extends ITerm<IDateTerm, XMLGregorianCalendar> {
+public interface IDateTerm extends ITerm {
 	
+	/**
+	 * Return the wrapped type.
+	 */
+	public XMLGregorianCalendar getValue();
+
 	/**
 	 * Returns the month of the year.
 	 * 

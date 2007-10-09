@@ -36,12 +36,17 @@ import org.deri.iris.api.terms.ITerm;
  * 
  * @author Richard Pöttler
  */
-public interface IIri extends ITerm<IIri, String> {
+public interface IIri extends ITerm
+{
+	/**
+	 * Return the wrapped type.
+	 */
+	public String getValue();
 	
 	/**
 	 * Returns the URI.
 	 * 
 	 * @return	The URI.
 	 */
-	public abstract URI getURI();
+	public URI getURI();
 }

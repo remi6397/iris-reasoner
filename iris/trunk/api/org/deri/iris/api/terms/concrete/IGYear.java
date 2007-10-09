@@ -40,8 +40,13 @@ import org.deri.iris.api.terms.ITerm;
  * @author Darko Anicic, DERI Innsbruck
  * @date 22.01.2007 16:20:59
  */
-public interface IGYear extends ITerm<IGYear, Integer> {
-	
+public interface IGYear extends ITerm
+{
+	/**
+	 * Return the wrapped type.
+	 */
+	public Integer getValue();
+
 	/**
 	 * Returns the year (a gregorian calendar year).
 	 * 
