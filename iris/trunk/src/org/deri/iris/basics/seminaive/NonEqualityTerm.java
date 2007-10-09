@@ -52,11 +52,7 @@ public class NonEqualityTerm implements ITerm{
 		return this.term.getValue();
 	}
 
-	public void setValue(Object t) {
-		this.term.setValue(t);
-	}
-
-	public int compareTo(Object o) {
+	public int compareTo(ITerm o) {
 		return this.term.compareTo(o);
 	}
 	
