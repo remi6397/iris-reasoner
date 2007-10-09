@@ -26,6 +26,7 @@
 package org.deri.iris.terms.concrete;
 
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -64,11 +65,13 @@ public class DecimalTerm implements IDecimalTerm, Cloneable {
 		return true;
 	}
 
-	public int compareTo(IDecimalTerm o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return Double.compare(d, o.getValue());
+		
+		DecimalTerm dt = (DecimalTerm) o;
+		return Double.compare(d, dt.getValue());
 	}
 
 	public Object clone() {

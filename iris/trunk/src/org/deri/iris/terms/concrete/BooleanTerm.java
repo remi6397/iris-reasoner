@@ -27,6 +27,7 @@
 package org.deri.iris.terms.concrete;
 
 import org.deri.iris.api.terms.concrete.IBooleanTerm;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -133,11 +134,13 @@ public class BooleanTerm implements IBooleanTerm, Cloneable {
 		return true;
 	}
 
-	public int compareTo(IBooleanTerm o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return Boolean.valueOf(value).compareTo(o.getValue());
+		
+		BooleanTerm b = (BooleanTerm) o;
+		return Boolean.valueOf(value).compareTo(b.getValue());
 	}
 
 	public void setValue(Boolean t) {

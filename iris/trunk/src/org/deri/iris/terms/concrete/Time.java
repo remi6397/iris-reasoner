@@ -33,6 +33,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.ITime;
 
 /**
@@ -40,10 +41,10 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Simple implementation of ITime.
  * </p>
  * <p>
- * $Id: Time.java,v 1.5 2007-09-13 15:20:37 poettler_ric Exp $
+ * $Id: Time.java,v 1.6 2007-10-09 20:29:37 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class Time implements ITime, Cloneable {
 
@@ -133,11 +134,13 @@ public class Time implements ITime, Cloneable {
 		return null;
 	}
 
-	public int compareTo(ITime o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return time.compare(o.getValue());
+		
+		Time t = (Time) o;
+		return time.compare(t.getValue());
 	}
 
 	public boolean equals(final Object obj) {

@@ -31,6 +31,7 @@ import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IGMonth;
 
 /**
@@ -103,11 +104,13 @@ public class GMonth implements IGMonth, Cloneable {
 		return null;
 	}
 
-	public int compareTo(IGMonth o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return getMonth() - o.getMonth();
+		
+		GMonth gm = (GMonth) o;
+		return getMonth() - gm.getValue();
 	}
 
 	public boolean equals(final Object obj) {

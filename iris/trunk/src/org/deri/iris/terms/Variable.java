@@ -26,6 +26,7 @@
 package org.deri.iris.terms;
 
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -37,7 +38,7 @@ import org.deri.iris.api.terms.IVariable;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class Variable implements IVariable<IVariable>, Cloneable {
+public class Variable implements IVariable, Cloneable {
 
 	private String name = "";
 
@@ -57,11 +58,13 @@ public class Variable implements IVariable<IVariable>, Cloneable {
 		return false;
 	}
 
-	public int compareTo(IVariable o) {
-		if (o == null) {
+	public int compareTo(ITerm o) {
+		if (o == null)
 			return 1;
-		}
-		return name.compareTo((String) o.getValue());
+			
+		Variable v = (Variable) o;
+		
+		return name.compareTo( v.getValue() );
 	}
 
 	public int hashCode() {

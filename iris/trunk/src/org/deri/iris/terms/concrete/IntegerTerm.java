@@ -27,6 +27,7 @@
 package org.deri.iris.terms.concrete;
 
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -66,11 +67,12 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 		return true;
 	}
 
-	public int compareTo(IIntegerTerm o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return Integer.valueOf(i).compareTo(o.getValue());
+		IntegerTerm it = (IntegerTerm) o;
+		return Integer.valueOf(i).compareTo(it.getValue());
 	}
 
 	public int hashCode() {

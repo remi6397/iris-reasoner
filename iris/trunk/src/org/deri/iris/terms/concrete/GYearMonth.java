@@ -32,6 +32,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.concrete.IGYearMonth;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -104,15 +105,17 @@ public class GYearMonth implements IGYearMonth, Cloneable {
 		return null;
 	}
 
-	public int compareTo(IGYearMonth o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		int iResult = getYear() - o.getYear();
+		
+		IGYearMonth gmy = (IGYearMonth) o;
+		int iResult = getYear() - gmy.getYear();
 		if (iResult != 0) {
 			return iResult;
 		}
-		return getMonth() - o.getMonth();
+		return getMonth() - gmy.getMonth();
 	}
 
 	public boolean equals(final Object obj) {

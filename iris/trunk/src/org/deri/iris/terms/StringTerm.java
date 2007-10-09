@@ -26,6 +26,7 @@
 package org.deri.iris.terms;
 
 import org.deri.iris.api.terms.IStringTerm;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -57,11 +58,14 @@ public class StringTerm implements IStringTerm, Cloneable {
 		return true;
 	}
 
-	public int compareTo(IStringTerm o) {
+	public int compareTo(ITerm o) {
+		// TODO Remove these lines?
 		if (o == null) {
 			return 1;
 		}
-		return value.compareTo((String) o.getValue());
+		
+		IStringTerm st = (IStringTerm) o;
+		return value.compareTo( st.getValue() );
 	}
 
 	public int hashCode() {

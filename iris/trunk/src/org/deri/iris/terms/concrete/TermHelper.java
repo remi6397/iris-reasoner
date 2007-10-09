@@ -25,19 +25,17 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.api.terms.INumericTerm;
-
 /**
  * <p>
  * Some helper methods for some operations on terms.
  * </p>
  * <p>
- * $Id: TermHelper.java,v 1.2 2007-03-14 10:15:52 poettler_ric Exp $
+ * $Id: TermHelper.java,v 1.3 2007-10-09 20:29:38 bazbishop237 Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.2 $
- * @date $Date: 2007-03-14 10:15:52 $
+ * @version $Revision: 1.3 $
+ * @date $Date: 2007-10-09 20:29:38 $
  */
 class TermHelper {
 	private TermHelper() {

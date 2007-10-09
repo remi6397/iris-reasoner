@@ -26,13 +26,12 @@
 
 package org.deri.iris.terms.concrete;
 
-import java.util.TimeZone;
-
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.concrete.IDateTerm;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -128,11 +127,13 @@ public class DateTerm implements IDateTerm, Cloneable {
 		return true;
 	}
 
-	public int compareTo(IDateTerm o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return date.compare(o.getValue());
+		
+		DateTerm dt = (DateTerm) o;
+		return date.compare(dt.getValue());
 	}
 
 	public int getMonth() {

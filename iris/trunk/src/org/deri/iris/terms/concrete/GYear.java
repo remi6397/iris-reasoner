@@ -32,6 +32,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.concrete.IGYear;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -107,11 +108,13 @@ public class GYear implements IGYear, Cloneable {
 		return null;
 	}
 
-	public int compareTo(IGYear o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return getYear() - o.getYear();
+		
+		GYear gy = (GYear) o;
+		return getYear() - gy.getValue();
 	}
 
 	public boolean equals(final Object obj) {

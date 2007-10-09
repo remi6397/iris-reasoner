@@ -26,6 +26,7 @@
 package org.deri.iris.terms.concrete;
 
 import org.deri.iris.api.terms.concrete.IFloatTerm;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -79,11 +80,13 @@ public class FloatTerm implements IFloatTerm, Cloneable {
 		return true;
 	}
 
-	public int compareTo(IFloatTerm o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return Float.compare(f, o.getValue());
+		
+		FloatTerm ft = (FloatTerm) o;
+		return Float.compare(f, ft.getValue());
 	}
 
 	public Object clone() {

@@ -93,11 +93,11 @@ public class ConstructedTerm implements IConstructedTerm, Cloneable {
 	}
 
 	public boolean isGround() {
-		for(ITerm term : this.terms){
+		for(Object term : this.terms){
 			if(term instanceof ConstructedTerm){
 				if(!isGround((IConstructedTerm)term)) return false;
 			}else{
-				if (!term.isGround()) return false;
+				if (!( (ITerm) term).isGround()) return false;
 			}
 				
 		}
@@ -119,7 +119,7 @@ public class ConstructedTerm implements IConstructedTerm, Cloneable {
 	public int hashCode() {
 		int result = 17;
 		result = result * 37 + symbol.hashCode();
-		for (ITerm t : terms) {
+		for (Object t : terms) {
 			result = result * 37 + t.hashCode();
 		}
 		return result;
@@ -153,10 +153,13 @@ public class ConstructedTerm implements IConstructedTerm, Cloneable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public int compareTo(final IConstructedTerm o) {
-		if (o == null) {
+	public int compareTo(final ITerm oo) {
+		if (oo == null) {
 			return 1;
 		}
+		
+		final IConstructedTerm o = (IConstructedTerm) oo;
+		
 		int result = symbol.compareTo(o.getFunctionSymbol());
 		if (result != 0) {
 			return result;
@@ -166,9 +169,8 @@ public class ConstructedTerm implements IConstructedTerm, Cloneable {
 		
 		for (int iCounter = 0; iCounter < min; iCounter++) {
 			result = terms.get(iCounter).compareTo(o.getParameter(iCounter));
-			if (result != 0) {
+			if (result != 0)
 				return result;
-			}
 		}
 		return terms.size() - ((List<ITerm>)o.getValue()).size();
 	}
@@ -201,13 +203,9 @@ public class ConstructedTerm implements IConstructedTerm, Cloneable {
 		return this.terms;
 	}
 
-	public void setValue(List<ITerm> t) {
-		this.terms = t;
-	}
-
 	public Set<IVariable> getVariables() {
 		Set<IVariable> variables = new HashSet<IVariable>();
-		for(ITerm term : this.terms){
+		for(Object term : this.terms){
 			if(term instanceof IVariable)
 				variables.add((IVariable)term);
 			if(term instanceof IConstructedTerm)

@@ -28,6 +28,7 @@ package org.deri.iris.terms.concrete;
 
 import java.util.regex.Pattern;
 
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IHexBinary;
 
 /**
@@ -59,11 +60,13 @@ public class HexBinary implements IHexBinary, Cloneable {
 		return null;
 	}
 
-	public int compareTo(IHexBinary o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return getValue().compareTo(o.getValue());
+		
+		HexBinary hb = (HexBinary) o;
+		return getValue().compareTo(hb.getValue());
 	}
 
 	public boolean equals(final Object obj) {
