@@ -39,11 +39,11 @@ import org.deri.iris.factory.Factory;
  * Serves as skeleton implementation for builtins. If you use this class as
  * superclass, you only have only to implement the evaluate method.
  * <p>
- * $Id: AbstractBuiltin.java,v 1.8 2007-05-10 15:58:01 poettler_ric Exp $
+ * $Id: AbstractBuiltin.java,v 1.9 2007-10-09 20:38:17 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public abstract class AbstractBuiltin implements IBuiltInAtom {
 
@@ -94,7 +94,7 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 		return a.isGround();
 	}
 
-	public int compareTo(Object o) {
+	public int compareTo(IAtom o) {
 		return a.compareTo(o);
 	}
 

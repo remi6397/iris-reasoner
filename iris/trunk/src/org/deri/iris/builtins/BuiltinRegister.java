@@ -30,7 +30,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,10 +55,10 @@ import org.deri.iris.api.basics.IPredicate;
  * classname of the builtin to register.
  * </p>
  * <p>
- * $Id: BuiltinRegister.java,v 1.5 2007-09-05 16:04:23 poettler_ric Exp $
+ * $Id: BuiltinRegister.java,v 1.6 2007-10-09 20:38:17 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public final class BuiltinRegister {
 
@@ -101,7 +100,8 @@ public final class BuiltinRegister {
 	private void registerFromResource(final String res, final boolean mandatory) {
 		assert res != null: "The resource must not be null";
 
-		final InputStream is = getClass().getClassLoader().getSystemResourceAsStream(res);
+//		final InputStream is = getClass().getClassLoader().getSystemResourceAsStream(res);
+		final InputStream is = ClassLoader.getSystemResourceAsStream(res);
 		if (is != null) {
 			final BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			try {
@@ -133,7 +133,7 @@ public final class BuiltinRegister {
 	 * Already registered builtins will be overwritten.
 	 * @param c the builtinclass to register
 	 */
-	private void privRegisterBuiltin(final Class c) {
+	private void privRegisterBuiltin(final Class<?> c) {
 		assert c != null: "The class must not be null";
 
 		try {
@@ -158,7 +158,7 @@ public final class BuiltinRegister {
 	 * @param c the builtinclass to register
 	 * @throws NullPointerException if the class is <code>null</code>
 	 */
-	public void registerBuiltin(final Class c) {
+	public void registerBuiltin(final Class<?> c) {
 		privRegisterBuiltin(c);
 	}
 
@@ -177,7 +177,7 @@ public final class BuiltinRegister {
 	 * @param s the name (predicate symbol) of the builtin
 	 * @return the class, or <code>null</code> if such a builtin hasn't been registered yet
 	 */
-	public Class getBuiltinClass(final String s) {
+	public Class<?> getBuiltinClass(final String s) {
 		final RegisterEntry re = reg.get(s);
 		return (re == null) ? null : re.getBuiltinClass();
 	}
@@ -215,7 +215,7 @@ public final class BuiltinRegister {
 	private static class RegisterEntry {
 
 		/** The class of the builtin. */
-		private Class builtinClass;
+		private Class<?> builtinClass;
 
 		/** The predicate defining the builtin. */
 		private IPredicate pred;
@@ -227,7 +227,7 @@ public final class BuiltinRegister {
 		 * @throws NullPointerException if the class is <code>null</code>
 		 * @throws NullPointerException if the predicate is <code>null</code>
 		 */
-		public RegisterEntry(final Class c, final IPredicate p) {
+		public RegisterEntry(final Class<?> c, final IPredicate p) {
 			if (c == null) {
 				throw new NullPointerException("The class must not be null");
 			}
@@ -242,7 +242,7 @@ public final class BuiltinRegister {
 		 * Returns the class of the builtin.
 		 * @return the class
 		 */
-		public Class getBuiltinClass() {
+		public Class<?> getBuiltinClass() {
 			return builtinClass;
 		}
 

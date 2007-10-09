@@ -25,9 +25,6 @@
  */
 package org.deri.iris.basics;
 
-import static org.deri.iris.factory.Factory.GRAPH;
-import static org.deri.iris.factory.Factory.PROGRAM;
-
 import java.util.Arrays;
 import java.util.List;
 

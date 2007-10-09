@@ -25,15 +25,12 @@
  */
 package org.deri.iris.builtins;
 
-import static org.deri.iris.factory.Factory.BASIC;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
@@ -47,13 +44,13 @@ import org.deri.iris.factory.Factory;
  * IntegerTerm data type.
  * </p>
  * <p>
- * $Id: LessBuiltin.java,v 1.12 2007-09-05 09:37:15 poettler_ric Exp $
+ * $Id: LessBuiltin.java,v 1.13 2007-10-09 20:38:17 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class LessBuiltin extends AbstractBuiltin {
 

@@ -25,23 +25,13 @@
  */
 package org.deri.iris.basics;
 
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
 
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.builtins.EqualBuiltin;
-import org.deri.iris.evaluation.RuleValidator;
-import org.deri.iris.terms.Variable;
 
 /**
  * <p>
