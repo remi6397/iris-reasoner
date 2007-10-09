@@ -26,12 +26,10 @@
 package org.deri.iris;
 
 import static org.deri.iris.factory.Factory.RELATION;
-import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -46,7 +44,6 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.terms.ConstructedTerm;
