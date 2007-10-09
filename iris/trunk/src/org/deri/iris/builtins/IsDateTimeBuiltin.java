@@ -34,7 +34,6 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.api.terms.concrete.IBooleanTerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
 
 /**
@@ -42,10 +41,10 @@ import org.deri.iris.api.terms.concrete.IDateTime;
  * Checks whether a term is a boolean.
  * </p>
  * <p>
- * $Id: IsDateTimeBuiltin.java,v 1.1 2007-08-22 15:50:07 nathaliest Exp $
+ * $Id: IsDateTimeBuiltin.java,v 1.2 2007-10-09 20:38:17 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @since 0.4
  */
 public class IsDateTimeBuiltin extends AbstractBuiltin {

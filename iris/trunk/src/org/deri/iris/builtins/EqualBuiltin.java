@@ -33,7 +33,6 @@ import java.util.List;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
@@ -42,13 +41,13 @@ import org.deri.iris.api.terms.IVariable;
  * Builtin to compare two terms for equality.
  * </p>
  * <p>
- * $Id: EqualBuiltin.java,v 1.13 2007-09-05 09:37:15 poettler_ric Exp $
+ * $Id: EqualBuiltin.java,v 1.14 2007-10-09 20:38:17 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class EqualBuiltin extends AbstractBuiltin {
 
