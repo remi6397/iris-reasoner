@@ -48,13 +48,18 @@ import org.deri.iris.api.terms.ITerm;
  * </p>
  * <pre>
  *      Created on 04.04.2006
- *      Committed by $Author: poettler_ric $
+ *      Committed by $Author: bazbishop237 $
  *      $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/IBase64Binary.java,v $,
  * </pre>
  * 
  * @author Richard Pöttler AuthorLastName
  * 
- * @version $Revision: 1.5 $ $Date: 2007-07-26 09:49:17 $
+ * @version $Revision: 1.6 $ $Date: 2007-10-09 20:21:21 $
  */
-public interface IBase64Binary extends ITerm<IBase64Binary, String> {
+public interface IBase64Binary extends ITerm
+{
+	/**
+	 * Return the wrapped type.
+	 */
+	public String getValue();
 }

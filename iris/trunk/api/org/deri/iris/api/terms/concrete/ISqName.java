@@ -34,19 +34,24 @@ import org.deri.iris.api.terms.ITerm;
  * 
  * @author Richard Pöttler
  */
-public interface ISqName extends ITerm<ISqName, String> {
+public interface ISqName extends ITerm
+{
+	/**
+	 * Return the wrapped type.
+	 */
+	public String getValue();
 	
 	/**
 	 * Returns the namespace.
 	 * 
 	 * @return	The namespace.
 	 */
-	public abstract IIri getNamespace();
+	public IIri getNamespace();
 
 	/**
 	 * Returns the name.
 	 * 
 	 * @return	The name.
 	 */
-	public abstract String getName();
+	public String getName();
 }

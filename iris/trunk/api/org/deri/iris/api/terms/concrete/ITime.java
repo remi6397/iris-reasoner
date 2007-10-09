@@ -43,13 +43,19 @@ import org.deri.iris.api.terms.ITerm;
  * <code>ATTENTION: set the correct timezone</code>
  * </p>
  * <p>
- * $Id: ITime.java,v 1.2 2007-09-13 15:20:36 poettler_ric Exp $
+ * $Id: ITime.java,v 1.3 2007-10-09 20:21:22 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
-public interface ITime extends ITerm<ITime, XMLGregorianCalendar> {
+public interface ITime extends ITerm
+{
+	/**
+	 * Return the wrapped type.
+	 */
+	public XMLGregorianCalendar getValue();
+
 	/**
 	 * Returns the hour of the day.
 	 * 

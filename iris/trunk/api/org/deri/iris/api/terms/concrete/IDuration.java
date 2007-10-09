@@ -39,12 +39,17 @@ import org.deri.iris.api.terms.ITerm;
  * specification for primitive XML Schema datatypes.
  * </p>
  * <p>
- * $Id: IDuration.java,v 1.6 2007-09-13 15:20:36 poettler_ric Exp $
+ * $Id: IDuration.java,v 1.7 2007-10-09 20:21:22 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
-public interface IDuration extends ITerm<IDuration, Duration> {
+public interface IDuration extends ITerm{
+	/**
+	 * Return the wrapped type.
+	 */
+	public Duration getValue();
+
 	/**
 	 * Returns the years.
 	 * 

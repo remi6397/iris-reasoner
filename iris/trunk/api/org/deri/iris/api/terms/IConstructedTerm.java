@@ -37,9 +37,10 @@ import java.util.Set;
  * @author Darko Anicic, DERI Innsbruck
  * @date   14.11.2005 11:34:59
  */
-public interface IConstructedTerm
-						extends ITerm<IConstructedTerm, List<ITerm>>{
+public interface IConstructedTerm extends ITerm{
 
+	public List<ITerm> getValue();
+	
 	/**
 	 * Set the name of the constructed term (function symbol).
 	 * 
@@ -74,7 +75,7 @@ public interface IConstructedTerm
 	/**
 	 * Returns a list of all terms from this constructed term (function symbol).
 	 * 
-	 * @return	ist of all terms from this constructed term.
+	 * @return	List of all terms from this constructed term.
 	 */
 	public List<ITerm> getParameters();
 	
