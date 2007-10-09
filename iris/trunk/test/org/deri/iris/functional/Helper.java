@@ -129,16 +129,20 @@ public class Helper
 			
 			IMixedDatatypeRelation actualPredicate = actual.get( pr );
 			
-			// TODO
+			// TODO - see bug 1794659
 			// Strange behaviour - the arity of the predicate that indexes the relation
 			// that is the result of a query is very hard to predict, i.e. it might
 			// not have the same arity as the relations! Try expected or zero...
-			
 			if ( actualPredicate == null )
 			{
-				IPredicate tempPred = makePredicate( pr.getPredicateSymbol(), 0 );
+				for( int arity = 0; arity < 10; ++arity )
+				{
+					IPredicate tempPred = makePredicate( pr.getPredicateSymbol(), arity );
 			
-				actualPredicate = actual.get( tempPred );
+					actualPredicate = actual.get( tempPred );
+					if ( actualPredicate != null )
+						break;
+				}
 			}
 			
 			if ( expectedPredicate != null && actualPredicate == null )
