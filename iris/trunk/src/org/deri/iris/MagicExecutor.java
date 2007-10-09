@@ -65,10 +65,10 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
  * the rules of those predicates into the upcomming query computations.
  * </p>
  * <p>
- * $Id: MagicExecutor.java,v 1.2 2007-09-27 12:21:17 bazbishop237 Exp $
+ * $Id: MagicExecutor.java,v 1.3 2007-10-09 07:55:12 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class MagicExecutor implements IExecutor {
 
@@ -101,11 +101,6 @@ public class MagicExecutor implements IExecutor {
 	}
 
 	public IMixedDatatypeRelation computeSubstitution(final IQuery q) {
-		// TODO: support conjunctive queries
-		if (q.getQueryLiterals().size() != 1) {
-			throw new IllegalArgumentException("At the moment only queries with one " + 
-					"literal are supported. found: " + q.getQueryLiterals().size());
-		}
 		if (!MiscOps.stratify(program)) {
 			throw new RuntimeException("The input program is not strtifed");
 		}
@@ -206,10 +201,6 @@ public class MagicExecutor implements IExecutor {
 		if (e == null) {
 			throw new NullPointerException("The expression evaluator must not be null");
 		}
-		if (q.getQueryLiterals().size() != 1) {
-			throw new IllegalArgumentException("At the moment only queries with one " + 
-					"literal are supported. found: " + q.getQueryLiterals().size());
-		}
 		final IBottomUpEvaluator eval = new SeminaiveEvaluation(e, p);
 		eval.evaluate();
 		eval.runQuery(q);
@@ -227,10 +218,6 @@ public class MagicExecutor implements IExecutor {
 	private static boolean tryMagic(final IQuery q) {
 		if (q == null) {
 			throw new IllegalArgumentException("The query must not be null");
-		}
-		if (q.getQueryLiterals().size() != 1) {
-			throw new IllegalArgumentException("At the moment only queries with one " + 
-					"literal are supported. found: " + q.getQueryLiterals().size());
 		}
 		boolean tryMagic = false;
 		for (final ITerm t : q.getQueryLiteral(0).getTuple().getTerms()) {
