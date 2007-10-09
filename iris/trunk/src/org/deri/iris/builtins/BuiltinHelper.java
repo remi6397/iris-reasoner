@@ -53,11 +53,11 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.15 2007-10-08 12:20:22 bazbishop237 Exp $
+ * $Id: BuiltinHelper.java,v 1.16 2007-10-09 06:15:01 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class BuiltinHelper {
 
@@ -120,7 +120,7 @@ public class BuiltinHelper {
 	 *             if one of the numbers is null
 	 * @see Number
 	 */
-	public static int numbersCompare(final INumericTerm<?> n0, final INumericTerm<?> n1) {
+	public static int numbersCompare(final INumericTerm n0, final INumericTerm n1) {
 		if ((n0 == null) || (n1 == null)) {
 			throw new NullPointerException("The numbers must not be null");
 		}
@@ -299,7 +299,7 @@ public class BuiltinHelper {
 	 * @throws IllegalArgumentException if the operation couldn't be applied
 	 * to the terms
 	 */
-	public static ITerm<?> add(final ITerm<?> t0, final ITerm<?> t1) {
+	public static ITerm add(final ITerm t0, final ITerm t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
@@ -352,7 +352,7 @@ public class BuiltinHelper {
 	 * @throws IllegalArgumentException if the operation couldn't be applied
 	 * to the terms
 	 */
-	public static ITerm<?> subtract(final ITerm<?> t0, final ITerm<?> t1) {
+	public static ITerm subtract(final ITerm t0, final ITerm t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
@@ -407,7 +407,7 @@ public class BuiltinHelper {
 	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
 	 */
-	public static ITerm<?> multiply(final ITerm<?> t0, final ITerm<?> t1) {
+	public static ITerm multiply(final ITerm t0, final ITerm t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
@@ -442,7 +442,7 @@ public class BuiltinHelper {
 	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
 	 */
-	public static ITerm<?> divide(final ITerm<?> t0, final ITerm<?> t1) {
+	public static ITerm divide(final ITerm t0, final ITerm t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
@@ -468,7 +468,7 @@ public class BuiltinHelper {
 	 * @return a term of the most appropriate type of the submitted ones with the 
 	 * 	given value.
 	 */
-	private static ITerm<?> toAppropriateType(final Number n, final ITerm<?> t0, final ITerm<?> t1)
+	private static ITerm toAppropriateType(final Number n, final ITerm t0, final ITerm t1)
 	{
 		assert n != null;
 		assert t0 != null;
