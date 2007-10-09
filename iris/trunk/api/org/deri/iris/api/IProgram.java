@@ -32,9 +32,7 @@ import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.BuiltinRegister;
 
 /**
@@ -58,12 +56,12 @@ import org.deri.iris.builtins.BuiltinRegister;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IProgram.java,v 1.12 2007-06-20 13:39:21 poettler_ric Exp $
+ * $Id: IProgram.java,v 1.13 2007-10-09 20:14:43 bazbishop237 Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public interface IProgram {
 
