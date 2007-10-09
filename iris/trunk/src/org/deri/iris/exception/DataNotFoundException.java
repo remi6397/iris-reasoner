@@ -46,4 +46,7 @@ public class DataNotFoundException extends java.lang.RuntimeException{
 	public DataNotFoundException(java.lang.Throwable cause){
 		super(cause);
 	};
+
+	/** The serial ID */
+    private static final long serialVersionUID = 1L;
 }

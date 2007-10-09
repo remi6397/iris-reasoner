@@ -45,4 +45,7 @@ public class DataModelException extends java.lang.RuntimeException{
 	public DataModelException(java.lang.Throwable cause){
 		super(cause);
 	};
+	
+	/** The serial ID */
+    private static final long serialVersionUID = 1L;
 }
