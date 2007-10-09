@@ -37,7 +37,6 @@ import java.util.SortedSet;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.api.storage.IRelation;
 import org.deri.iris.api.terms.ITerm;
 
 /**
@@ -58,10 +57,10 @@ import org.deri.iris.api.terms.ITerm;
  * How the projection parameters are specified are documented in the {@link
  * SimpleProjection SimpleProjection}.
  * <p>
- * $Id: DoingAllAtOnceOperation.java,v 1.1 2007-06-20 09:48:04 poettler_ric Exp $
+ * $Id: DoingAllAtOnceOperation.java,v 1.2 2007-10-09 20:31:22 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @see SortMergeJoin
  * @see SimpleSelection
  * @see SimpleProjection
