@@ -89,9 +89,6 @@ public class BuiltinsTest extends TestCase
 	 * 
 	 * Need to check the behaviour when using <, <=, >, >= when comparing arguments
 	 * with different data types.
-	 * 
-	 * I would expect <, <=, >, >= to only work with arguments which are both numeric and the
-	 * comparison is performed with the types promoted to the highest precision 'containing' type.
 	 */
 	public void testMixedDataTypes_ComparingDifferingDatatypes() throws Exception
 	{
