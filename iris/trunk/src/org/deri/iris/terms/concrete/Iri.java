@@ -29,6 +29,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IIri;
 
 /**
@@ -85,11 +86,12 @@ public class Iri implements IIri, Cloneable {
 		return null;
 	}
 
-	public int compareTo(IIri o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return uri.compareTo(o.getURI());
+		IIri iri = (IIri) o;
+		return uri.compareTo(iri.getURI());
 	}
 
 	public boolean equals(final Object obj) {

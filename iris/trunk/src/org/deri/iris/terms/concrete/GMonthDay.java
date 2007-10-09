@@ -32,6 +32,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.concrete.IGMonthDay;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -106,15 +107,17 @@ public class GMonthDay implements IGMonthDay, Cloneable {
 		return null;
 	}
 
-	public int compareTo(IGMonthDay o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		int iResult = getMonth() - o.getMonth();
+		
+		GMonthDay gmd = (GMonthDay) o;
+		int iResult = getMonth() - gmd.getMonth();
 		if (iResult != 0) {
 			return iResult;
 		}
-		return getDay() - o.getDay();
+		return getDay() - gmd.getDay();
 	}
 
 	public boolean equals(final Object obj) {

@@ -26,6 +26,7 @@
 package org.deri.iris.terms.concrete;
 
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -64,11 +65,13 @@ public class DoubleTerm implements IDoubleTerm, Cloneable {
 		return true;
 	}
 
-	public int compareTo(IDoubleTerm o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return Double.compare(d, o.getValue());
+		
+		DoubleTerm dt = (DoubleTerm) o;
+		return Double.compare(d, dt.getValue());
 	}
 	
 	public Object clone() {

@@ -32,6 +32,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.concrete.IGDay;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -103,11 +104,13 @@ public class GDay implements IGDay, Cloneable {
 		return null;
 	}
 
-	public int compareTo(IGDay o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return getDay() - o.getDay();
+		
+		GDay gd = (GDay) o;
+		return getDay() - gd.getValue();
 	}
 
 	public boolean equals(final Object obj) {

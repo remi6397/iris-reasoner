@@ -29,6 +29,7 @@ package org.deri.iris.terms.concrete;
 import java.util.regex.Pattern;
 
 import org.deri.iris.api.terms.concrete.IBase64Binary;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -65,11 +66,12 @@ public class Base64Binary implements IBase64Binary, Cloneable {
 		return null;
 	}
 
-	public int compareTo(IBase64Binary o) {
-		if(o == null) {
+	public int compareTo(ITerm o) {
+		if(o == null)
 			return 1;
-		}
-		return content.compareTo(o.getValue());
+		
+		Base64Binary b64 = (Base64Binary) o;
+		return content.compareTo(b64.getValue());
 	}
 	
 	public boolean equals(final Object obj) {

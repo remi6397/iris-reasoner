@@ -26,6 +26,7 @@
 
 package org.deri.iris.terms.concrete;
 
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IIri;
 import org.deri.iris.api.terms.concrete.ISqName;
 
@@ -201,16 +202,17 @@ public class SqName implements ISqName, Cloneable {
 		return getNamespace().getValue() + "#" + getName();
 	}
 
-	public int compareTo(ISqName o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
 
-		int iResult = getNamespace().compareTo(o.getNamespace());
+		ISqName sqName = (ISqName) o;
+		int iResult = getNamespace().compareTo(sqName.getNamespace());
 		if (iResult != 0) {
 			return iResult;
 		}
-		return getName().compareTo(o.getName());
+		return getName().compareTo(sqName.getName());
 	}
 
 	public boolean isGround() {

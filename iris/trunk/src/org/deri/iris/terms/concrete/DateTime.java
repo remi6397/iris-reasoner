@@ -34,6 +34,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
 
 /**
@@ -152,11 +153,13 @@ public class DateTime implements IDateTime, Cloneable {
 		return null;
 	}
 
-	public int compareTo(IDateTime o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return datetime.compare(o.getValue());
+		
+		DateTime dt = (DateTime) o;
+		return datetime.compare(dt.getValue());
 	}
 
 	public boolean equals(final Object obj) {

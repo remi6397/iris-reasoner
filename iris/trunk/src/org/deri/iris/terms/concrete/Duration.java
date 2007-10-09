@@ -36,6 +36,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
 import org.deri.iris.api.terms.concrete.IDuration;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -239,11 +240,12 @@ public class Duration implements IDuration, Cloneable {
 		throw new CloneNotSupportedException("The underlying duration object is not cloneable");
 	}
 
-	public int compareTo(IDuration o) {
+	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		return duration.compare(((IDuration) o).getValue());
+		Duration dt = (Duration) o;
+		return duration.compare(dt.getValue());
 	}
 
 	public boolean isGround() {
