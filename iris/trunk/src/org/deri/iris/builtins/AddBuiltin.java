@@ -42,11 +42,11 @@ import org.deri.iris.api.terms.IVariable;
  * variable be left for computation, otherwise an exception will be thrown.
  * </p>
  * <p>
- * $Id: AddBuiltin.java,v 1.13 2007-09-05 09:37:15 poettler_ric Exp $
+ * $Id: AddBuiltin.java,v 1.14 2007-10-10 14:47:06 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class AddBuiltin extends AbstractBuiltin {
 
@@ -81,25 +81,49 @@ public class AddBuiltin extends AbstractBuiltin {
 		// putting the term from this builtin and the submitted tuple together
 		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
 				BuiltinHelper.getIndexes(c.getTerms(), outstanding), bCons);
-		// determing the remaining vars of the terms
+		// determining the remaining vars of the terms
 		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
 		// run the evaluation
 		if (vars.length == 0) { // checking whether the result is correct
-			return BuiltinHelper.equal(complete[2], BuiltinHelper.add(complete[0], complete[1])) ? 
+			ITerm result = BuiltinHelper.add(complete[0], complete[1]);
+			
+			if( result == null )
+				return null;
+			
+			return BuiltinHelper.equal(complete[2], result ) ? 
 				BuiltinHelper.EMPTY_TUPLE : null;
-		} else if(vars.length > 1) {
-			throw new IllegalArgumentException("Can not evaluate an ADD with >1 variables");
 		}
-		switch(vars[0]) { // calculating the missing possition
-			case 0:
-				return BASIC.createTuple(BuiltinHelper.subtract(complete[2], complete[1]));
-			case 1:
-				return BASIC.createTuple(BuiltinHelper.subtract(complete[2], complete[0]));
-			case 2:
-				return BASIC.createTuple(BuiltinHelper.add(complete[0], complete[1]));
-			default:
-				throw new IllegalArgumentException("The variable must be at possition " + 
-						"0 to 2, but was on " + vars[0]);
+		else if( vars.length == 1 )
+		{
+			ITerm result;
+			
+			// calculate the missing position
+			switch( vars[0] )
+			{
+				case 0:
+					result = BuiltinHelper.subtract(complete[2], complete[1]);
+					break;
+					
+				case 1:
+					result = BuiltinHelper.subtract(complete[2], complete[0]);
+					break;
+					
+				case 2:
+					result = BuiltinHelper.add(complete[0], complete[1]);
+					break;
+					
+				default:
+					throw new IllegalArgumentException("The variable must be at position " + 
+							"0 to 2, but was on " + vars[0]);
+			}
+
+			if( result == null )
+				return null;
+			return BASIC.createTuple( result );
+		}
+		else
+		{
+			throw new IllegalArgumentException("Can not evaluate an ADD with >1 variables");
 		}
 	}
 
