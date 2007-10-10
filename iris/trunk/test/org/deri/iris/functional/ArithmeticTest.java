@@ -383,16 +383,14 @@ public class ArithmeticTest extends TestCase
 	public void testIntegerDivideByZero() throws Exception
 	{
 		String program =
+			"a(-1)." +
 			"a(0)." +
 			"a(1)." +
 			"b(0)." +
 			"d(?Z) :- a(?X), b(?Y), ?X / ?Y = ?Z." +
 			"?-d(?X).";
 
-       	String expectedResults =
-//       		"d(0)." + // Value used for indeterminate?
-//       		"d(2147483647)" +	// Value used for infinity?
-       		"";
+       	String expectedResults = "";	// No special values for indeterminate or +/- infinity
 
        	Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
@@ -406,16 +404,14 @@ public class ArithmeticTest extends TestCase
 	public void testFloatingPointDivideByZero() throws Exception
 	{
 		String program =
+			"a(-1.0)." +
 			"a(0.0)." +
 			"a(1.0)." +
 			"b(0.0)." +
 			"d(?Z) :- a(?X), b(?Y), ?X / ?Y = ?Z." +
 			"?-d(?X).";
 
-       	String expectedResults =
-//       		"d(NaN)." + // Value used for indeterminate?
-//       		"d(INFINITY)" +	// Value used for infinity?
-       		"";
+       	String expectedResults = "";	// NaN and +/- infinity should not be produced.
 
        	Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
