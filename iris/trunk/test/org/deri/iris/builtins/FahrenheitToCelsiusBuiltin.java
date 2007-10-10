@@ -27,7 +27,6 @@ package org.deri.iris.builtins;
 
 import static org.deri.iris.builtins.BuiltinHelper.add;
 import static org.deri.iris.builtins.BuiltinHelper.divide;
-import static org.deri.iris.builtins.BuiltinHelper.equal;
 import static org.deri.iris.builtins.BuiltinHelper.multiply;
 import static org.deri.iris.builtins.BuiltinHelper.subtract;
 import static org.deri.iris.factory.Factory.BASIC;
@@ -47,9 +46,9 @@ import org.deri.iris.api.terms.IVariable;
  * value, the second is the celsius value.
  * </p>
  * <p>
- * $Id: FahrenheitToCelsiusBuiltin.java,v 1.6 2007-07-13 09:17:07 poettler_ric Exp $
+ * $Id: FahrenheitToCelsiusBuiltin.java,v 1.7 2007-10-10 14:58:27 bazbishop237 Exp $
  * </p>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  */
 public class FahrenheitToCelsiusBuiltin extends AbstractBuiltin {
@@ -85,7 +84,7 @@ public class FahrenheitToCelsiusBuiltin extends AbstractBuiltin {
 		final int[] missing = BuiltinHelper.determineUnground(Arrays.asList(complete));
 		// run the evaluation
 		if (missing.length == 0) { // check the validity of the constants
-			return equal(complete[1], divide(multiply(subtract(complete[0], t32), t5), t9)) ?
+			return BuiltinHelper.equal(complete[1], divide(multiply(subtract(complete[0], t32), t5), t9)) ?
 				BuiltinHelper.EMPTY_TUPLE : null;
 		} else if (missing.length > 1) { // we are only able to calculate one missing position
 			throw new IllegalArgumentException("Only one variable is allowed, but was: " + 

@@ -38,11 +38,11 @@ import junit.framework.TestSuite;
  * Tests for the less builtin.
  * </p>
  * <p>
- * $Id: LessBuiltinTest.java,v 1.3 2007-05-10 07:01:16 poettler_ric Exp $
+ * $Id: LessBuiltinTest.java,v 1.4 2007-10-10 14:58:27 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class LessBuiltinTest extends TestCase {
 
@@ -68,12 +68,6 @@ public class LessBuiltinTest extends TestCase {
 		assertNull("a shouldn't be less to a", xy.evaluate(
 					BASIC.createTuple(TERM.createString("a"), TERM.createString("a"))));
 		
-		boolean exceptionThrown = false;
-		try {
-			xy.evaluate(BASIC.createTuple(CONCRETE.createInteger(5), TERM.createString("a")));
-		} catch (IllegalArgumentException e) {
-			exceptionThrown = true;
-		}
-		assertTrue("5 < a should not be evaluable", exceptionThrown);
+		assertEquals( null, xy.evaluate(BASIC.createTuple(CONCRETE.createInteger(5), TERM.createString("a"))));
 	}
 }
