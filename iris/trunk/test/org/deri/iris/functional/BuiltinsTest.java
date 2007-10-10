@@ -125,20 +125,66 @@ public class BuiltinsTest extends TestCase
 	public void testBuiltIn_Equality() throws Exception
 	{
 		String program = 
- 			"s('d')." +
-		    "s('b')." +
+ 			"s(1)." +
+		    "s(2)." +
+		    "s(3)." +
+		    
 		    "s('a')." +
+		    "s('b')." +
+		    "s('c')." +
 		    
-		    "r('d')." +
-		    
-		    "p('b')." +
-		    
-		    "p(?X) :- r(?X)." +
-		    "w(?X) :- s(?X), p(?X), ?X='d'." +
-		    "?- w(?X).";
+		    "s(1.2)." +
+		    "s(2.0)." +
+		    "s(_float(2.0))." +
 
-		String expectedResults = "w('d').";
+		    "s(_date(1997,2,20))." +
+		    
+		    "p(?X) :- s(?X), ?X = 2." +
+		    "p(?X) :- s(?X), ?X = 'b'." +
+		    "?- p(?X).";
 
+		String expectedResults =
+		    "p(2)." +
+		    "p(2.0)." +
+		    "p(_float(2.0))." +
+		    "p('b').";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Negated equality as negation as failure.
+	 * correctly evaluated.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_NegatedEquality() throws Exception
+	{
+		String program = 
+ 			"s(1)." +
+		    "s(2)." +
+		    "s(3)." +
+		    
+		    "s('a')." +
+		    "s('b')." +
+		    "s('c')." +
+		    
+		    "s(1.2)." +
+		    "s(2.0)." +
+		    "s(_float(2.0))." +
+
+		    "s(_date(1997,2,20))." +
+		    
+		    "p(?X) :- s(?X), not ?X = 2, not ?X = 'b'." +
+		    "?- p(?X).";
+
+		String expectedResults =
+			"p(1)." +
+		    "p(3)." +
+		    "p('a')." +
+		    "p('c')." +
+		    "p(1.2)." +
+		    "p(_date(1997,2,20)).";
+		
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
 	
@@ -150,19 +196,66 @@ public class BuiltinsTest extends TestCase
 	public void testBuiltIn_Inequality() throws Exception
 	{
 		String program = 
-   			"s('d')." +
-		    "s('b')." +
+ 			"s(1)." +
+		    "s(2)." +
+		    "s(3)." +
+		    
 		    "s('a')." +
+		    "s('b')." +
+		    "s('c')." +
 		    
-		    "p('b')." +
-		    "p('d')." +
+		    "s(1.2)." +
+		    "s(2.0)." +
+		    "s(_float(2.0))." +
+
+		    "s(_date(1997,2,20))." +
 		    
-		    // Inequality built-in:
-		    "w(?X) :- s(?X), p(?X), ?X != 'd'." +
-		    "?- w(?X).";
+		    "p(?X) :- s(?X), ?X != 2, ?X != 'b'." +
+		    "?- p(?X).";
 
-		String expectedResults = "w('b').";
+		String expectedResults =
+ 			"p(1)." +
+		    "p(3)." +
+		    
+		    "p('a')." +
+		    "p('c')." +
+		    
+		    "p(1.2)." +
 
+		    "p(_date(1997,2,20)).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Negated equality as negation as failure.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_NegatedInequality() throws Exception
+	{
+		String program = 
+ 			"s(1)." +
+		    "s(2)." +
+		    "s(3)." +
+		    
+		    "s('a')." +
+		    "s('b')." +
+		    "s('c')." +
+		    
+		    "s(1.2)." +
+		    "s(2.0)." +
+		    "s(_float(2.0))." +
+
+		    "s(_date(1997,2,20))." +
+		    
+		    "p(?X) :- s(?X), not ?X != 2." +
+		    "?- p(?X).";
+
+		String expectedResults = 
+		    "p(2)." +
+		    "p(2.0)." +
+		    "p(_float(2.0)).";		
+		
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
 	
@@ -296,6 +389,78 @@ public class BuiltinsTest extends TestCase
 	}
 	
 	/**
+	 * Mixed data type add - compute target.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_Add_MixedDataTypesComputeTarget() throws Exception
+	{
+		String program = 
+			"s(1)." +
+			"s('a')." +
+			
+			"p(2)." +
+			"p(3)." +
+			"p('a')." +
+			
+		    "w(?Z) :- s(?X), p(?Y), ?X + ?Y = ?Z." +
+		    "?- w(?Z).";
+
+		String expectedResults =
+		    "w(3)." +
+		    "w(4).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Mixed data type add - compute target.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_Add_MixedDataTypesValidateTarget() throws Exception
+	{
+		String program = 
+			"s(1)." +
+			"s('a')." +
+			
+			"p(2)." +
+			"p(3)." +
+			"p('a')." +
+			
+			"q(4)." +
+			"q('c')." +
+			
+		    "w(?Z) :- s(?X), p(?Y), q(?Z), ?X + ?Y = ?Z." +
+		    "?- w(?Z).";
+
+		String expectedResults =
+		    "w(4).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Mixed data type add - compute target.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_NegatedAdd_MixedDataTypes() throws Exception
+	{
+		String program =
+			"p( 2, 3, 5 )." +
+			"p( 3, 3, 6 )." +
+			"p( 2, 'a', 0 )." +
+			"p( 'b', 3, 1 )." +
+			
+		    "w(?Z) :- p( ?X, ?Y, ?Z ), not ?X + ?Y = ?Z." +
+		    "?- w(?Z).";
+
+		String expectedResults =
+			"w(0)." +
+			"w(1).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
 	 * Check that a program containing the built-in predicate is
 	 * correctly evaluated.
 	 * @throws Exception
@@ -314,6 +479,80 @@ public class BuiltinsTest extends TestCase
 		String expectedResults =
 		    "w(1, -1)." +
 		    "w(1, -2).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Mixed data type add - compute target.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_Subtract_MixedDataTypesComputeTarget() throws Exception
+	{
+		String program = 
+			"s(1)." +
+			"s('a')." +
+			
+			"p(2)." +
+			"p(3)." +
+			"p('a')." +
+			
+		    "w(?Z) :- s(?X), p(?Y), ?X - ?Y = ?Z." +
+		    "?- w(?Z).";
+
+		String expectedResults =
+		    "w(-1)." +
+		    "w(-2).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Mixed data type add - compute target.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_Subtract_MixedDataTypesValidateTarget() throws Exception
+	{
+		String program = 
+			"s(1)." +
+			"s('a')." +
+			
+			"p(2)." +
+			"p(3)." +
+			"p('a')." +
+			
+			"q(-2)." +
+			"q('c')." +
+			
+		    "w(?Z) :- s(?X), p(?Y), q(?Z), ?X - ?Y = ?Z." +
+		    "?- w(?Z).";
+
+		String expectedResults =
+		    "w(-2).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Mixed data type add - compute target.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_NegatedSubtract_MixedDataTypes() throws Exception
+	{
+		String program =
+			"p( 2, 3, -1 )." +
+			"p( 3.3, 3.0, 0.3 )." +
+			"p( 2, 'a', 0 )." +
+			"p( 'b', 3, 1 )." +
+			
+		    "w(?Z) :- p( ?X, ?Y, ?Z ), not ?X - ?Y = ?Z." +
+		    "?- w(?Z).";
+
+		String expectedResults =
+			"w(0)." +
+			"w(1).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
 
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
@@ -342,6 +581,78 @@ public class BuiltinsTest extends TestCase
 	}
 	
 	/**
+	 * Mixed data type add - compute target.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_Multiply_MixedDataTypesComputeTarget() throws Exception
+	{
+		String program = 
+			"s(4)." +
+			"s('a')." +
+			
+			"p(2)." +
+			"p(3)." +
+			"p('a')." +
+			
+		    "w(?Z) :- s(?X), p(?Y), ?X * ?Y = ?Z." +
+		    "?- w(?Z).";
+
+		String expectedResults =
+		    "w(8)." +
+		    "w(12).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Mixed data type add - compute target.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_Multiply_MixedDataTypesValidateTarget() throws Exception
+	{
+		String program = 
+			"s(3)." +
+			"s('a')." +
+			
+			"p(2)." +
+			"p(3)." +
+			"p('a')." +
+			
+			"q(6)." +
+			"q('c')." +
+			
+		    "w(?Z) :- s(?X), p(?Y), q(?Z), ?X * ?Y = ?Z." +
+		    "?- w(?Z).";
+
+		String expectedResults =
+		    "w(6).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Mixed data type add - compute target.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_NegatedMultiply_MixedDataTypes() throws Exception
+	{
+		String program =
+			"p( 2, 3, 6 )." +
+			"p( 3.1, 3, 9.3 )." +
+			"p( 2, 'a', 0 )." +
+			"p( 'b', 3, 1 )." +
+			
+		    "w(?Z) :- p( ?X, ?Y, ?Z ), not ?X * ?Y = ?Z." +
+		    "?- w(?Z).";
+
+		String expectedResults =
+			"w(0)." +
+			"w(1).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
 	 * Check that a program containing the built-in predicate is
 	 * correctly evaluated.
 	 * @throws Exception
@@ -360,6 +671,274 @@ public class BuiltinsTest extends TestCase
 		String expectedResults =
 		    "w(12, 6)." +
 		    "w(12, 4).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	/**
+	 * Mixed data type add - compute target.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_Divide_MixedDataTypesComputeTarget() throws Exception
+	{
+		String program = 
+			"s(12)." +
+			"s('a')." +
+			
+			"p(2)." +
+			"p(3)." +
+			"p('a')." +
+			
+		    "w(?Z) :- s(?X), p(?Y), ?X / ?Y = ?Z." +
+		    "?- w(?Z).";
+
+		String expectedResults =
+		    "w(6)." +
+		    "w(4).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Mixed data type add - compute target.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_Divide_MixedDataTypesValidateTarget() throws Exception
+	{
+		String program = 
+			"s(12)." +
+			"s('a')." +
+			
+			"p(2)." +
+			"p(3)." +
+			"p('a')." +
+			
+			"q(6)." +
+			"q('c')." +
+			
+		    "w(?Z) :- s(?X), p(?Y), q(?Z), ?X / ?Y = ?Z." +
+		    "?- w(?Z).";
+
+		String expectedResults =
+		    "w(6).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Mixed data type add - compute target.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_NegatedDivide_MixedDataTypes() throws Exception
+	{
+		String program =
+			"p( 12, 3, 4 )." +
+			"p( 12, 4, 3 )." +
+			"p( 12, 'a', 1 )." +
+			"p( 'b', 3, 0 )." +
+			
+		    "w(?Z) :- p( ?X, ?Y, ?Z ), not ?X / ?Y = ?Z." +
+		    "?- w(?Z).";
+
+		String expectedResults =
+			"w(0)." +
+			"w(1).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Test for correct mixed data type behaviour.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_Less_MixedDataTypes() throws Exception
+	{
+		String program = 
+			"s(1,2)." +
+			"s(2,2)." +
+			"s(3,2)." +
+			"s(3,4)." +
+			"s(3,'a')." +
+			"s('b',4)." +
+			
+		    "t(?X, ?Y) :- s(?X, ?Y), ?X < ?Y." +
+		    "?- t(?X, ?Y).";
+
+		String expectedResults =
+			"t(1,2)." +
+			"t(3,4).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	/**
+	 * Test for correct NAF behaviour.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_Less_NegationAsFailure() throws Exception
+	{
+		String program = 
+			"s(1,2)." +
+			"s(2,2)." +
+			"s(3,2)." +
+			"s(3,4)." +
+			"s(3,'a')." +
+			"s('b',4)." +
+			
+		    "t(?X, ?Y) :- s(?X, ?Y), not ?X < ?Y." +
+		    "?- t(?X, ?Y).";
+
+		String expectedResults =
+			"t(2,2)." +
+			"t(3,2)." +
+			"t(3,'a')." +
+			"t('b',4).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	/**
+	 * Test for correct mixed data type behaviour.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_Greater_MixedDataTypes() throws Exception
+	{
+		String program = 
+			"s(1,2)." +
+			"s(2,2)." +
+			"s(3,2)." +
+			"s(3,4)." +
+			"s(3,'a')." +
+			"s('b',4)." +
+			
+		    "t(?X, ?Y) :- s(?X, ?Y), ?X > ?Y." +
+		    "?- t(?X, ?Y).";
+
+		String expectedResults =
+			"t(3,2).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	/**
+	 * Test for correct NAF behaviour.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_Greater_NegationAsFailure() throws Exception
+	{
+		String program = 
+			"s(1,2)." +
+			"s(2,2)." +
+			"s(3,2)." +
+			"s(3,4)." +
+			"s(3,'a')." +
+			"s('b',4)." +
+			
+		    "t(?X, ?Y) :- s(?X, ?Y), not ?X > ?Y." +
+		    "?- t(?X, ?Y).";
+
+		String expectedResults =
+			"t(1,2)." +
+			"t(2,2)." +
+			"t(3,4)." +
+			"t(3,'a')." +
+			"t('b',4).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	/**
+	 * Test for correct mixed data type behaviour.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_LessEquals_MixedDataTypes() throws Exception
+	{
+		String program = 
+			"s(1,2)." +
+			"s(2,2)." +
+			"s(3,2)." +
+			"s(3,4)." +
+			"s(3,'a')." +
+			"s('b',4)." +
+			
+		    "t(?X, ?Y) :- s(?X, ?Y), ?X <= ?Y." +
+		    "?- t(?X, ?Y).";
+
+		String expectedResults =
+			"t(1,2)." +
+			"t(2,2)." +
+			"t(3,4).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	/**
+	 * Test for correct NAF behaviour.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_LessEquals_NegationAsFailure() throws Exception
+	{
+		String program = 
+			"s(1,2)." +
+			"s(2,2)." +
+			"s(3,2)." +
+			"s(3,4)." +
+			"s(3,'a')." +
+			"s('b',4)." +
+			
+		    "t(?X, ?Y) :- s(?X, ?Y), not ?X <= ?Y." +
+		    "?- t(?X, ?Y).";
+
+		String expectedResults =
+			"t(3,2)." +
+			"t(3,'a')." +
+			"t('b',4).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	/**
+	 * Test for correct mixed data type behaviour.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_GreaterEquals_MixedDataTypes() throws Exception
+	{
+		String program = 
+			"s(1,2)." +
+			"s(2,2)." +
+			"s(3,2)." +
+			"s(3,4)." +
+			"s(3,'a')." +
+			"s('b',4)." +
+			
+		    "t(?X, ?Y) :- s(?X, ?Y), ?X >= ?Y." +
+		    "?- t(?X, ?Y).";
+
+		String expectedResults =
+			"t(2,2)." +
+			"t(3,2).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	/**
+	 * Test for correct NAF behaviour.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_GreaterEquals_NegationAsFailure() throws Exception
+	{
+		String program = 
+			"s(1,2)." +
+			"s(2,2)." +
+			"s(3,2)." +
+			"s(3,4)." +
+			"s(3,'a')." +
+			"s('b',4)." +
+			
+		    "t(?X, ?Y) :- s(?X, ?Y), not ?X >= ?Y." +
+		    "?- t(?X, ?Y).";
+
+		String expectedResults =
+			"t(1,2)." +
+			"t(3,4)." +
+			"t(3,'a')." +
+			"t('b',4).";
 
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
