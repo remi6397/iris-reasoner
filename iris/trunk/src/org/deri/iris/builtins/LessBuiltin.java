@@ -44,13 +44,13 @@ import org.deri.iris.factory.Factory;
  * IntegerTerm data type.
  * </p>
  * <p>
- * $Id: LessBuiltin.java,v 1.13 2007-10-09 20:38:17 bazbishop237 Exp $
+ * $Id: LessBuiltin.java,v 1.14 2007-10-10 14:47:06 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class LessBuiltin extends AbstractBuiltin {
 
@@ -93,11 +93,12 @@ public class LessBuiltin extends AbstractBuiltin {
 		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
 
 		// run the evaluation
-		if (vars.length == 0) {
-			return BuiltinHelper.compare(complete[0], complete[1]) < 0 ? 
+		if (vars.length == 0)
+		{
+			return BuiltinHelper.less(complete[0], complete[1]) ? 
 				BuiltinHelper.EMPTY_TUPLE : null;
 		}
-		throw new IllegalArgumentException("Can not evaluate a LESS with any variables");
+		throw new IllegalArgumentException("Can not evaluate a LESS with variables");
 	}
 
 	public boolean isEvaluable(final Collection<IVariable> v) {
