@@ -36,6 +36,7 @@ import java.util.TimeZone;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
@@ -53,11 +54,11 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.16 2007-10-09 06:15:01 bazbishop237 Exp $
+ * $Id: BuiltinHelper.java,v 1.17 2007-10-10 14:45:57 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class BuiltinHelper {
 
@@ -173,22 +174,63 @@ public class BuiltinHelper {
 		throw new IllegalArgumentException("Couldn't compare " + t0.getClass().getName() + 
 				" and " + t1.getClass().getName());
 	}
+	
+	/**
+	 * Evaluate a < operation. 
+	 * @param t0 A term
+	 * @param t1 A term
+	 * @return true if the two terms can be compared and t0 is less than t1
+	 */
+	static boolean less( final ITerm t0, final ITerm t1 )
+	{
+		assert t0 != null;
+		assert t1 != null;
+
+		if( (t0 instanceof INumericTerm) && (t1 instanceof INumericTerm) )
+			return numbersCompare((INumericTerm) t0, (INumericTerm) t1) < 0;
+			
+		if( t0.getClass() == t1.getClass() )
+			return t0.compareTo( t1 ) < 0;
+		
+		return false;
+	}
+
+	/**
+	 * Evaluate a <= operation. 
+	 * @param t0 A term
+	 * @param t1 A term
+	 * @return true if the two terms can be compared and t0 is less than or equal to t1
+	 */
+	static boolean lessEquals( final ITerm t0, final ITerm t1 )
+	{
+		assert t0 != null;
+		assert t1 != null;
+
+		if( (t0 instanceof INumericTerm) && (t1 instanceof INumericTerm) )
+			return numbersCompare((INumericTerm) t0, (INumericTerm) t1) <= 0;
+			
+		if( t0.getClass() == t1.getClass() )
+			return t0.compareTo( t1 ) <= 0;
+		
+		return false;
+	}
 
 	/**
 	 * Checks whether the values of two terms are the same.
 	 * @param t0 the first term
 	 * @param t1 the second term
-	 * @return <code>true</code> if the values are equal, otherwise
+	 * @return <code>true</code> if the terms are comparable and if their values are equal, otherwise
 	 * <code>false</code>
 	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 */
-	public static boolean equal(final ITerm t0, final ITerm t1) {
-		if ((t0 == null) || (t1 == null)) {
-			throw new NullPointerException("The terms must not be null");
-		}
-		if ((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm)) {
+	static boolean equal(final ITerm t0, final ITerm t1)
+	{
+		assert t0 != null;
+		assert t1 != null;
+
+		if ((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm))
 			return numbersEqual((INumericTerm) t0, (INumericTerm) t1);
-		}
+		
 		return t0.equals(t1);
 	}
 
@@ -336,8 +378,7 @@ public class BuiltinHelper {
 			final Duration d1 = ((IDuration) t1).getValue();
 			return createDuration(d0.add(d1));
 		}
-		throw new IllegalArgumentException("The add operatoin on " + t0.getClass().getName() + 
-				" and " + t1.getClass().getName() + " is not possible");
+		return null;
 	}
 
 	/**
@@ -389,8 +430,8 @@ public class BuiltinHelper {
 			final Duration d1 = ((IDuration) t1).getValue();
 			return createDuration(d0.add(d1.negate()));
 		}
-		throw new IllegalArgumentException("The subtract operatoin on " + t0.getClass().getName() + 
-				" and " + t1.getClass().getName() + "is not possible");
+		
+		return null;
 	}
 
 	/**
@@ -411,10 +452,6 @@ public class BuiltinHelper {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
-		if(!(t0 instanceof INumericTerm) || !(t1 instanceof INumericTerm)) {
-			throw new IllegalArgumentException("The terms must be INumericTermS, but were " + 
-					t0.getClass().getName() + " and " + t1.getClass().getName());
-		}
 		
 		if((t0 instanceof IIntegerTerm) && (t1 instanceof IIntegerTerm))
 		{
@@ -423,9 +460,11 @@ public class BuiltinHelper {
 							((IIntegerTerm) t0).getValue() *
 							((IIntegerTerm) t1).getValue() );
 		}
-		return toAppropriateType(
-						getDouble((INumericTerm) t0) *
-						getDouble((INumericTerm) t1), t0, t1 );
+
+		if( t0 instanceof INumericTerm && t1 instanceof INumericTerm) // number - number = number
+			return toAppropriateType(getDouble((INumericTerm) t0) * getDouble((INumericTerm) t1), t0, t1);
+
+		return null;
 	}
 
 	/**
@@ -440,24 +479,49 @@ public class BuiltinHelper {
 	 * @param t1 the divisor
 	 * @return the quotient
 	 * @throws NullPointerException if one of the terms is <code>null</code>
-	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
 	 */
 	public static ITerm divide(final ITerm t0, final ITerm t1) {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
-		if(!(t0 instanceof INumericTerm) || !(t1 instanceof INumericTerm)) {
-			throw new IllegalArgumentException("The terms must be INumericTermS, but were " + 
-					t0.getClass().getName() + " and " + t1.getClass().getName());
-		}
 		
 		if((t0 instanceof IIntegerTerm) && (t1 instanceof IIntegerTerm))
 		{
+			int denominator = ((IIntegerTerm) t1).getValue();
+			
+			if( denominator == 0 )
+			{
+				handleDivideByZero();
+				return null;
+			}
+			
 			// int / int = int
-			return CONCRETE.createInteger( ((IIntegerTerm) t0).getValue() / ((IIntegerTerm) t1).getValue() );
+			return CONCRETE.createInteger( ((IIntegerTerm) t0).getValue() / denominator );
 		}
 
-		return toAppropriateType(getDouble((INumericTerm) t0) / getDouble((INumericTerm) t1), t0, t1);
+		if( t0 instanceof INumericTerm && t1 instanceof INumericTerm )
+		{
+			double denominator = getDouble((INumericTerm) t1);
+			
+			if( denominator == 0.0 )
+			{
+				handleDivideByZero();
+				return null;
+			}
+			
+			return toAppropriateType(getDouble((INumericTerm) t0) / denominator, t0, t1);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Method to call whenever a divide by zero occurs.
+	 */
+	private static void handleDivideByZero()
+	{
+		if( false )
+			;//throw new EvaluationException( "Divide by zero error" );
 	}
 
 	/**
