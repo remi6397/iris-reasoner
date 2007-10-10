@@ -46,10 +46,10 @@ import org.deri.iris.api.terms.ITerm;
  * Tests the <code>BuiltinHelper</code>.
  * </p>
  * <p>
- * $Id: BuiltinHelperTest.java,v 1.4 2007-10-08 12:20:21 bazbishop237 Exp $
+ * $Id: BuiltinHelperTest.java,v 1.5 2007-10-10 14:58:27 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class BuiltinHelperTest extends TestCase {
 
@@ -249,6 +249,9 @@ public class BuiltinHelperTest extends TestCase {
 
 		assertFalse(BuiltinHelper.equal(S_a, S_b));
 		assertFalse(BuiltinHelper.equal(S_a, I_2));
+
+		assertFalse(BuiltinHelper.equal(S_a, I_2));
+		assertFalse(BuiltinHelper.equal(I_2, S_a));
 	}
 
 	/**
