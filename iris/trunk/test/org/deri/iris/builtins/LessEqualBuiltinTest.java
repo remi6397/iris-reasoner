@@ -29,7 +29,6 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
-import org.deri.iris.api.basics.ITuple;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -39,11 +38,11 @@ import junit.framework.TestSuite;
  * Tests for the less equal builtin.
  * </p>
  * <p>
- * $Id: LessEqualBuiltinTest.java,v 1.3 2007-10-10 14:58:27 bazbishop237 Exp $
+ * $Id: LessEqualBuiltinTest.java,v 1.4 2007-10-12 12:51:54 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class LessEqualBuiltinTest extends TestCase {
 
