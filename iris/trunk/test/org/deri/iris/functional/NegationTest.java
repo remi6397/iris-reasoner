@@ -170,8 +170,8 @@ public class NegationTest extends TestCase
     		"r('a')." +
     		"r('b')." +
     		
-    		"v(?X) :- r(?X), not  ISSTRING( ?X )." +
-    		"w(?X) :- r(?X),      ISSTRING( ?X )." +
+    		"v(?X) :- r(?X), not  IS_STRING( ?X )." +
+    		"w(?X) :- r(?X),      IS_STRING( ?X )." +
     	    "?- v(?X)." +
     	    "?- w(?X).";
         	
