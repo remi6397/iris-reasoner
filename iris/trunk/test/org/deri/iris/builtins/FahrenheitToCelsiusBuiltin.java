@@ -46,12 +46,12 @@ import org.deri.iris.api.terms.IVariable;
  * value, the second is the celsius value.
  * </p>
  * <p>
- * $Id: FahrenheitToCelsiusBuiltin.java,v 1.7 2007-10-10 14:58:27 bazbishop237 Exp $
+ * $Id: FahrenheitToCelsiusBuiltin.java,v 1.8 2007-10-12 12:52:13 bazbishop237 Exp $
  * </p>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  */
-public class FahrenheitToCelsiusBuiltin extends AbstractBuiltin {
+public class FahrenheitToCelsiusBuiltin extends ArithmeticBuiltin {
 
 	/** Predicate holding the information about this builtin. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate("ftoc", 2);
@@ -74,41 +74,14 @@ public class FahrenheitToCelsiusBuiltin extends AbstractBuiltin {
 		super(PREDICATE, t);
 	}
 
-	public ITuple evaluate(final ITuple c) {
-		if (c == null) {
-			throw new NullPointerException("The collection of terms must not be null");
-		}
-		// merge the terms
-		final ITerm[] complete = BuiltinHelper.merge(getTuple(), c);
-		// determine the messing term positions
-		final int[] missing = BuiltinHelper.determineUnground(Arrays.asList(complete));
-		// run the evaluation
-		if (missing.length == 0) { // check the validity of the constants
-			return BuiltinHelper.equal(complete[1], divide(multiply(subtract(complete[0], t32), t5), t9)) ?
-				BuiltinHelper.EMPTY_TUPLE : null;
-		} else if (missing.length > 1) { // we are only able to calculate one missing position
-			throw new IllegalArgumentException("Only one variable is allowed, but was: " + 
-					missing.length + " " + Arrays.toString(complete));
-		}
-		switch (missing[0]) {
-			case 0: // fahrenheit are requested
-				return BASIC.createTuple(add(divide(multiply(complete[1], t9), t5), t32));
-			case 1: // celsius are requested
-				return BASIC.createTuple(divide(multiply(subtract(complete[0], t32), t5), t9));
-			default:
-				throw new IllegalArgumentException("This builtin only has 2 positions, but " + 
-						missing[0] + " was requested");
-		}
-	}
-
-	public boolean isEvaluable(final Collection<IVariable> v) {
-		if (v == null) {
-			throw new NullPointerException("The variable Collection must not be null");
-		}
-		final Collection<IVariable> vars = getTuple().getAllVariables();
-		vars.removeAll(v);
-		return vars.size() <= 1;
-	}
+	@Override
+    protected ITerm computeMissingTerm( int missingTermIndex, ITerm[] terms )
+    {
+		if( missingTermIndex == 0 ) // fahrenheit are requested
+			return add(divide(multiply(terms[ 1 ], t9), t5), t32);
+		else // celsius are requested
+			return divide(multiply(subtract(terms[ 0 ], t32), t5), t9);
+    }
 
 	public static IPredicate getBuiltinPredicate() {
 		return PREDICATE;
