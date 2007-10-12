@@ -20,6 +20,7 @@ Helpers
 	min = '-';
 	dot = '.';
 	comma = ',';
+	predtrailing = alpha | num | '_';
 
 	comment = '//' [all - [cr + lf]]* eol;
 
@@ -34,6 +35,7 @@ Helpers
     sub = '-';
     mul = '*';
     div = '/';
+    mod = '%';
     lt = '<';
     le = lt eq;
     gt = '>';
@@ -55,13 +57,13 @@ Tokens
     t_rpar = ')';
     t_variable = '?' alphanum+;
     t_query = '?-';
-    t_id = alpha+;
+    t_id = alpha predtrailing*;
     t_delim = delim;
     t_unders = '_';
     
     // builtin symbols
     t_bin_op = ne | lt | le | gt | ge; // binary operators
-    t_ter_op = add | sub | mul | div; // ternary operators
+    t_ter_op = add | sub | mul | div | mod; // ternary operators
     t_eq = eq;
                    
 	// tokens defining the different primitives
