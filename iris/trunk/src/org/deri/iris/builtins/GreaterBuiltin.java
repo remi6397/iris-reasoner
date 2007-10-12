@@ -25,32 +25,22 @@
  */
 package org.deri.iris.builtins;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 
 /**
  * <p>
- * Builtin to compare two terms and determine which one is bigger.
+ * Built-in to compare two terms and determine which one is bigger.
  * </p>
  * <p>
- * $Id: GreaterBuiltin.java,v 1.14 2007-10-10 14:47:06 bazbishop237 Exp $
+ * $Id: GreaterBuiltin.java,v 1.15 2007-10-12 12:40:58 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
-public class GreaterBuiltin extends AbstractBuiltin {
-
-	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate(
-			"GREATER", 2);
+public class GreaterBuiltin extends BooleanBuiltin {
 
 	/**
 	 * Constructs a builtin. Two terms must be passed to the constructor,
@@ -62,48 +52,21 @@ public class GreaterBuiltin extends AbstractBuiltin {
 	 * not 2
 	 * @throws NullPointerException if t is <code>null</code>
 	 */
-	public GreaterBuiltin(final ITerm... t) {
+	public GreaterBuiltin(final ITerm... t)
+	{
 		super(PREDICATE, t);
 	}
 
-	/**
-	 * This is an empty method stub to keep the src directory compileable.
-	 * @return at the moment it always returns <code>null</code>
-	 */
-	public ITuple evaluate(final ITuple t) {
-		if(t == null) {
-			throw new NullPointerException("The collection must not be null");
-		}
-		// calculating the needed term indexes from the submitted tuple
-		int[] outstanding = BuiltinHelper.determineUnground(getTuple().getTerms());
-		// retrieving the constants of this builin
-		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple().getTerms(), 
-				BuiltinHelper.complement(outstanding, getTuple().getArity()));
-
-		// putting the term from this builtin and the submitted tuple together
-		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
-				BuiltinHelper.getIndexes(t.getTerms(), outstanding), bCons);
-		// determing the remaining vars of the terms
-		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
-
-		// run the evaluation
-		if (vars.length == 0) {
-			return BuiltinHelper.less(complete[1], complete[0]) ? 
-							BuiltinHelper.EMPTY_TUPLE : null;
-		}
-		throw new IllegalArgumentException("Can not evaluate a GREATER with any variables");
+	protected boolean computeResult( ITerm[] terms )
+	{
+		return BuiltinHelper.less( terms[ 1 ], terms[ 0 ] );
 	}
 
-	public boolean isEvaluable(final Collection<IVariable> v) {
-		if (v == null) {
-			throw new NullPointerException("The variables must not be null");
-		}
-		final List<IVariable> var = getTuple().getAllVariables();
-		var.removeAll(v);
-		return var.isEmpty();
-	}
-
-	public static IPredicate getBuiltinPredicate() {
+	public static IPredicate getBuiltinPredicate()
+	{
 		return PREDICATE;
 	}
+
+	/** The predicate defining this built-in. */
+	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate( "GREATER", 2 );
 }

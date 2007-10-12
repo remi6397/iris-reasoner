@@ -26,65 +26,43 @@
 
 package org.deri.iris.builtins;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.api.terms.concrete.IDateTime;
 
 /**
  * <p>
- * Checks whether a term is a boolean.
+ * Checks whether a term is a datetime.
  * </p>
  * <p>
- * $Id: IsDateTimeBuiltin.java,v 1.2 2007-10-09 20:38:17 bazbishop237 Exp $
+ * $Id: IsDateTimeBuiltin.java,v 1.3 2007-10-12 12:40:58 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @since 0.4
  */
-public class IsDateTimeBuiltin extends AbstractBuiltin {
-
-	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = 
-		org.deri.iris.factory.Factory.BASIC.createPredicate("ISDATETIME", 1);
+public class IsDateTimeBuiltin extends BooleanBuiltin {
 
 	public IsDateTimeBuiltin(final ITerm... t) {
 		super(PREDICATE, t);
 	}
 
-	public ITuple evaluate(final ITuple t) {
-		if (t == null) {
-			throw new NullPointerException("The tuple must not be null");
-		}
-		// merging the constants of the builtin and the submitted term
-		final ITerm[] complete = BuiltinHelper.merge(getTuple(), t);
-		// if we don't have any vars -> run eval
-		if (BuiltinHelper.determineUnground(Arrays.asList(complete)).length == 0) {
-			return (complete[0] instanceof IDateTime) ? BuiltinHelper.EMPTY_TUPLE : null;
-		}
-		throw new IllegalArgumentException("Can not evaluate a " + PREDICATE + 
-				" with any variables");
+	protected boolean computeResult( ITerm[] terms )
+	{
+		assert terms.length == 1;
+		return terms[ 0 ] instanceof IDateTime;
 	}
 
 	/**
-	 * Returns the predicate for this builtin.
+	 * Returns the predicate for this built-in.
 	 * @return the predicate
 	 */
 	public static IPredicate getBuiltinPredicate() {
 		return PREDICATE;
 	}
 
-	public boolean isEvaluable(final Collection<IVariable> v) {
-		if (v == null) {
-			throw new NullPointerException("The variables must not be null");
-		}
-		final List<IVariable> var = getTuple().getAllVariables();
-		var.removeAll(v);
-		return var.isEmpty();
-	}
+	/** The predicate defining this built-in. */
+	private static final IPredicate PREDICATE = 
+		org.deri.iris.factory.Factory.BASIC.createPredicate("IS_DATETIME", 1);
+
 }

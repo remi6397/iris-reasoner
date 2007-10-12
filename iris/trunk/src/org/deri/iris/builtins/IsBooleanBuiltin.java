@@ -26,65 +26,40 @@
 
 package org.deri.iris.builtins;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.api.terms.concrete.IBooleanTerm;
 
 /**
- * <p>
- * Checks whether a term is a boolean.
- * </p>
- * <p>
- * $Id: IsBooleanBuiltin.java,v 1.1 2007-07-13 09:12:43 poettler_ric Exp $
- * </p>
- * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.1 $
- * @since 0.4
+ * Checks a term for being boolean type.
  */
-public class IsBooleanBuiltin extends AbstractBuiltin {
-
-	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = 
-		org.deri.iris.factory.Factory.BASIC.createPredicate("ISBOOLEAN", 1);
-
-	public IsBooleanBuiltin(final ITerm... t) {
-		super(PREDICATE, t);
+public class IsBooleanBuiltin extends BooleanBuiltin
+{
+	/**
+	 * Constructor.
+	 * @param t The list of terms. Must always be of length 1 in this case.
+	 */
+	public IsBooleanBuiltin( final ITerm... t )
+	{
+		super( PREDICATE, t );
 	}
 
-	public ITuple evaluate(final ITuple t) {
-		if (t == null) {
-			throw new NullPointerException("The tuple must not be null");
-		}
-		// merging the constants of the builtin and the submitted term
-		final ITerm[] complete = BuiltinHelper.merge(getTuple(), t);
-		// if we don't have any vars -> run eval
-		if (BuiltinHelper.determineUnground(Arrays.asList(complete)).length == 0) {
-			return (complete[0] instanceof IBooleanTerm) ? BuiltinHelper.EMPTY_TUPLE : null;
-		}
-		throw new IllegalArgumentException("Can not evaluate a " + PREDICATE + 
-				" with any variables");
+	protected boolean computeResult( ITerm[] terms )
+	{
+		assert terms.length == 1;
+		return terms[ 0 ] instanceof IBooleanTerm;
 	}
 
 	/**
-	 * Returns the predicate for this builtin.
+	 * Returns the predicate for this built-in.
 	 * @return the predicate
 	 */
-	public static IPredicate getBuiltinPredicate() {
+	public static IPredicate getBuiltinPredicate()
+	{
 		return PREDICATE;
 	}
 
-	public boolean isEvaluable(final Collection<IVariable> v) {
-		if (v == null) {
-			throw new NullPointerException("The variables must not be null");
-		}
-		final List<IVariable> var = getTuple().getAllVariables();
-		var.removeAll(v);
-		return var.isEmpty();
-	}
+	/** The predicate defining this built-in. */
+	private static final IPredicate PREDICATE = 
+		org.deri.iris.factory.Factory.BASIC.createPredicate("IS_BOOLEAN", 1);
 }

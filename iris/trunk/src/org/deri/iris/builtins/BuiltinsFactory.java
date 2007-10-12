@@ -34,11 +34,11 @@ import org.deri.iris.api.terms.ITerm;
  * Factory to create all sorts of builtins.
  * </p>
  * <p>
- * $Id: BuiltinsFactory.java,v 1.3 2007-03-13 16:57:15 poettler_ric Exp $
+ * $Id: BuiltinsFactory.java,v 1.4 2007-10-12 12:40:58 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class BuiltinsFactory implements IBuiltInsFactory {
 
@@ -71,6 +71,10 @@ public class BuiltinsFactory implements IBuiltInsFactory {
 
 	public IBuiltInAtom createDivideBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
 		return new DivideBuiltin(t0, t1, t2);
+	}
+
+	public IBuiltInAtom createModulusBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
+		return new ModulusBuiltin(t0, t1, t2);
 	}
 
 	public IBuiltInAtom createEqual(ITerm t0, ITerm t1) {
