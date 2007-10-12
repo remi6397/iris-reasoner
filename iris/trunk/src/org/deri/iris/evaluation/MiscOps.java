@@ -48,25 +48,22 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.basics.seminaive.ConstLiteral;
-import org.deri.iris.builtins.AddBuiltin;
-import org.deri.iris.builtins.DivideBuiltin;
+import org.deri.iris.builtins.ArithmeticBuiltin;
 import org.deri.iris.builtins.EqualBuiltin;
-import org.deri.iris.builtins.MultiplyBuiltin;
-import org.deri.iris.builtins.SubtractBuiltin;
 
 /**
  * <p>
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.15 2007-10-04 08:12:00 bazbishop237 Exp $
+ * $Id: MiscOps.java,v 1.16 2007-10-12 12:41:54 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class MiscOps {
 
@@ -389,8 +386,8 @@ public class MiscOps {
 		RuleValidator rs = new RuleValidator( true, true );
 		
 		// Add all the head variables
-		for (IVariable var : rule.getHeadVariables())
-			rs.addHeadVariable( var.toString() );
+		for( ILiteral headLiteral : rule.getHeadLiterals() )
+			rs.addHeadVariables( extractVariableNames( headLiteral ) );
 
 		// Then for each literal in the rule
 		for( ILiteral lit : rule.getBodyLiterals() )
@@ -401,48 +398,24 @@ public class MiscOps {
 				boolean builtin = lit.getAtom().isBuiltin();
 				boolean positive = lit.isPositive();
 				
+				List<String> variables = extractVariableNames( lit );
+				
 				// Do the special handling for built-in predicates
 				if( builtin )
 				{
-					int arity = lit.getTuple().getArity();
-					
-					if ( positive && arity == 2 && isEquality( lit.getAtom() ) )
+					if( positive && isArithmetic( lit.getAtom() ) )
 					{
-						String operand1 = extractVariableName( lit, 0 );
-						String operand2 = extractVariableName( lit, 1 );
-						
-						rs.addVariablesFromPositiveEqualityPredicate( operand1, operand2 );
-					}
-					else if ( positive && arity == 3 && isArithmetic( lit.getAtom() ) )
-					{
-						String operand1 = extractVariableName( lit, 0 );
-						String operand2 = extractVariableName( lit, 1 );
-						String target   = extractVariableName( lit, 2 );
-					
-						rs.addVariablesFromPositiveArithmeticPredicate( operand1, operand2, target );
+						rs.addVariablesFromPositiveArithmeticPredicate( isEquality( lit.getAtom() ), variables );
 					}
 					else
 					{
-						for ( int a = 0; a < arity; ++a )
-						{
-							String variable = extractVariableName( lit, a );
-						
-							rs.addVariableFromBuiltinPredicate( variable );
-						}
+						rs.addVariablesFromBuiltinPredicate( variables );
 					}
 				}
 				else
 				{
 					// Ordinary predicate
-					for( ITerm litTerm : lit.getTuple().getTerms() )
-					{
-						if (! litTerm.isGround())
-						{
-							String variableName = litTerm.toString();
-							
-							rs.addVariableFromOrdinaryPredicate( positive, variableName );
-						}
-					}
+					rs.addVariablesFromOrdinaryPredicate( positive, variables );
 				}
 			}
 		}
@@ -452,15 +425,21 @@ public class MiscOps {
 	}
 	
 	/**
-	 * Get the variable name of a term at position 'index' in a literal.
-	 * @param lit The literal to be processed.
-	 * @param index The position of the variable term in the literal.
-	 * @return The name of variable or null if the term is not a variable.
+	 * Get the variable names of variable terms in a literal.
+	 * @param literal The literal to be processed.
+	 * @return The names of variables.
 	 */
-	private static String extractVariableName( ILiteral lit, int index )
+	private static List<String> extractVariableNames( ILiteral literal )
 	{
-		ITerm term = lit.getTuple().getTerms().get( index );
-		return term.isGround() ? null : term.toString();		
+		List<String> variables = new ArrayList<String>();
+		
+		for( ITerm term : literal.getTuple().getTerms() )
+		{
+			if( ! term.isGround() )
+				variables.add( term.toString() );
+		}
+		
+		return variables;
 	}
 	
 	/**
@@ -480,9 +459,6 @@ public class MiscOps {
 	 */
 	private static boolean isArithmetic( IAtom atom )
 	{
-		return  atom instanceof AddBuiltin ||
-				atom instanceof SubtractBuiltin ||
-				atom instanceof MultiplyBuiltin ||
-				atom instanceof DivideBuiltin;
+		return  atom instanceof ArithmeticBuiltin;
 	}
 }

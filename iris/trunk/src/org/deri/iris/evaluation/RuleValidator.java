@@ -45,8 +45,9 @@ import org.deri.iris.RuleUnsafeException;
  * still make for a safe rule, as such a rule can be re-written to move the negated sub-goal
  * to a separate rule, see the example in Ullman, page 129-130
  * 
- * Furthermore, variables that only appear as a target of a ternary predicate can be considered
- * limited if the operands of the predicate are themselves limited.
+ * Furthermore, variables that appear in arithmetic predicates can also be considered limited if
+ * all the remaining variables are limited, e.g.
+ *      X + Y = Z, X = 3, Z = 4, implies that Y is also limited
  *
  * These two relaxations of the definition of a safe rule are configurable (on/off).
  */
@@ -55,109 +56,63 @@ public class RuleValidator
 	/**
 	 * Constructor. Each instance of this rule can process exactly one rule, after which it must be
 	 * discarded.
-	 * @param variablesInNegatedSubGoalsNeedNotBeLimited false, if the strict Ullman definition
+	 * @param allowNotLimitedVariablesInNegatedSubGoals false, if the strict Ullman definition
 	 * should be enforced for variables in negated sub-goals.
 	 * @param limitedTernaryOperandsImplyLimitedResult false, if the strict Ullman definition
-	 * should be enforced for variables in that are targets in ternary built-in predicates.
+	 * should be enforced for variables in that are in arithmetic predicates.
 	 */
-	public RuleValidator( 	boolean variablesInNegatedSubGoalsNeedNotBeLimited,
-							boolean limitedTernaryOperandsImplyLimitedResult )
+	public RuleValidator( 	boolean allowNotLimitedVariablesInNegatedSubGoals,
+							boolean allowArithmeticPredicatesToImplyLimited )
 	{
-		mVariablesInNegatedSubGoalsNeedNotBeLimited = variablesInNegatedSubGoalsNeedNotBeLimited;
-		mLimitedTernaryOperandsImplyLimitedResult = limitedTernaryOperandsImplyLimitedResult;
+		mAllowNotLimitedVariablesInNegatedSubGoals = allowNotLimitedVariablesInNegatedSubGoals;
+		mAllowArithmeticPredicatesToImplyLimited = allowArithmeticPredicatesToImplyLimited;
 	}
 	
 	/**
-	 * Add a variable that appears in the rule head.
-	 * @param variable The variable name.
+	 * Add variables that appears in the rule head.
+	 * @param variables The variable names.
 	 */
-	public void addHeadVariable( String variable )
+	public void addHeadVariables( List<String> variables )
 	{
-		mHeadVariables.add( variable );
+		mHeadVariables.addAll( variables );
 	}
 	
 	/**
-	 * Add a variable that appears in an ordinary predicate.
+	 * Add variables that appear in an ordinary predicate.
 	 * @param positive true if the predicate is positive, i.e. not negated.
-	 * @param variable The variable name.
+	 * @param variables The variable names.
 	 */
-	public void addVariableFromOrdinaryPredicate( boolean positive, String variable )
+	public void addVariablesFromOrdinaryPredicate( boolean positive, List<String> variables )
 	{
 		if ( positive )
-			mLimitedVariables.add( variable );
+			mLimitedVariables.addAll( variables );
 		else
-			mNegativeOrdinary.add( variable );
+			mNegativeOrdinary.addAll( variables );
 	}
 
 	/**
-	 * Add variable from any built-in predicate other than positive equality and ternary arithmetic
-	 * in predicates, e.g. the IS<type>() predicates.
-	 * e.g.
-	 *   ISSTRING( ?X  )
+	 * Add variables from any built-in predicate other than positive arithmetic and equality
+	 * predicates.
 	 * 
-	 * @param variable 'X' in this example
+	 * @param variables The variable names.
 	 */
-	public void addVariableFromBuiltinPredicate( String variable )
+	public void addVariablesFromBuiltinPredicate( List<String> variables )
 	{
-		if ( variable != null )
-			mBuiltin.add( variable );
+		mBuiltin.addAll( variables );
 	}
 
 	/**
-	 * Add variables from binary built-in predicates, i.e. the comparison/equality predicates:
-	 * 	 < <= > >= = !=
-	 * e.g.
-	 *   ?X < ?Y
+	 * Add variables from arithmetic or equality predicates
 	 * 
-	 * Pass null values for variables that are ground terms.
-	 * 
-	 * @param operand1 'X' in this example
-	 * @param operand2 'Y' in this example
+	 * @param isEquality true if the predicate is equality.
+	 * @param variables The variable names.
 	 */
-	public void addVariablesFromPositiveEqualityPredicate( String operand1, String operand2 )
+	public void addVariablesFromPositiveArithmeticPredicate( boolean isEquality, List<String> variables )
 	{
-		// These will have to be limited too.
-		if ( operand1 != null )
-			mBuiltin.add( operand1 );
-		
-		if ( operand2 != null )
-			mBuiltin.add( operand2 );
+		mBuiltin.addAll( variables );
 
-		if ( operand1 != null && operand2 != null )
-		{
-			mEqualityPairs.add( new String[]{ operand1, operand2 } );
-		}
-		else if ( operand1 != null && operand2 == null )
-		{
-			mLimitedVariables.add( operand1 );
-		}
-		else if ( operand1 == null && operand2 != null )
-		{
-			mLimitedVariables.add( operand2 );
-		}
-	}
-
-	/**
-	 * Add variables from ternary built-in predicates, i.e. the arithmetic predicates.
-	 * e.g.
-	 *   ?X + ?Y = ?Z
-	 * 
-	 * Pass null values for variables that are ground terms.
-	 * 
-	 * @param operand1 'X' in this example
-	 * @param operand2 'Y' in this example
-	 * @param target 'Z' in this example
-	 */
-	public void addVariablesFromPositiveArithmeticPredicate( String operand1, String operand2, String target )
-	{
-		if ( operand1 != null )
-			mBuiltin.add( operand1 );
-		
-		if ( operand2 != null )
-			mBuiltin.add( operand2 );
-
-		if ( target != null )
-			mTernaryTarget.add( target );
+		if( isEquality || mAllowArithmeticPredicatesToImplyLimited )
+			mArithmeticGroups.add( variables );
 	}
 
 	/**
@@ -172,33 +127,23 @@ public class RuleValidator
 		{
 			mHeadVariables.removeAll( mLimitedVariables );
 			
-			throw new RuleUnsafeException( "Head variables " + toString( mHeadVariables ) + " are not limited." );
+			throw new RuleUnsafeException( "Head variable(s) " + toString( mHeadVariables ) + " are not limited." );
 		}
 		
 		if ( ! mLimitedVariables.containsAll( mBuiltin ) )
 		{
 			mBuiltin.removeAll( mLimitedVariables );
 			
-			throw new RuleUnsafeException( "Variables " + toString( mBuiltin ) + " from built-in predicates are not limited." );
+			throw new RuleUnsafeException( "Variable(s) " + toString( mBuiltin ) + " from built-in predicates are not limited." );
 		}
 		
-		if ( ! mVariablesInNegatedSubGoalsNeedNotBeLimited )
+		if ( ! mAllowNotLimitedVariablesInNegatedSubGoals )
 		{
 			if ( ! mLimitedVariables.containsAll( mNegativeOrdinary ) )
 			{
 				mNegativeOrdinary.removeAll( mLimitedVariables );
 				
-				throw new RuleUnsafeException( "Variables " + toString( mNegativeOrdinary ) + " from negated sub-goals are not limited." );
-			}
-		}
-		
-		if ( ! mLimitedTernaryOperandsImplyLimitedResult )
-		{
-			if ( ! mLimitedVariables.containsAll( mTernaryTarget ) )
-			{
-				mTernaryTarget.removeAll( mLimitedVariables );
-				
-				throw new RuleUnsafeException( "Variables " + toString( mTernaryTarget ) + " from built-in ternary predicates are not limited." );
+				throw new RuleUnsafeException( "Variable(s) " + toString( mNegativeOrdinary ) + " from negated sub-goals are not limited." );
 			}
 		}
 	}
@@ -208,38 +153,32 @@ public class RuleValidator
 	 */
 	private void processBuiltins()
 	{
-		// Process the positive equality predicates
+		// Process the positive arithmetic predicates
 		boolean changed = true;
 		while( changed )
 		{
 			changed = false;
-			for ( String[] equalityPair : mEqualityPairs )
+			for ( List<String> group : mArithmeticGroups )
 			{
-				if( mLimitedVariables.contains( equalityPair[ 0 ] ) && ! mLimitedVariables.contains( equalityPair[ 1 ] ) ||
-					! mLimitedVariables.contains( equalityPair[ 0 ] ) && mLimitedVariables.contains( equalityPair[ 1 ] ) )
+				if( group.removeAll( mLimitedVariables ) )
 				{
-					mLimitedVariables.add( equalityPair[ 0 ] );
-					mLimitedVariables.add( equalityPair[ 1 ] );
-					
+					changed = true;
+				}
+				
+				if( group.size() == 1 )
+				{
+					mLimitedVariables.add( group.get( 0 ) );
+					group.clear();
 					changed = true;
 				}
 			}
 		}
-
-		// Process the ternary predicates (e.g. ?X + ?Y = ?Z)
-		if ( mLimitedTernaryOperandsImplyLimitedResult )
-		{
-			// Cheat a bit with the ternary predicates!
-			// We know that if the operands are not limited this will be caught first.
-			// Which means that all ternary targets are automatically limited.
-			mLimitedVariables.addAll( mTernaryTarget );
-		}
 	}
 	
 	/**
-	 * Utility method to convert a collection of IVariable terms to a human-readable string.
-	 * @param variables The variables to find the names for.
-	 * @return The string-ised names.
+	 * Utility method to convert a collection of variable names to a human-readable string.
+	 * @param variables The variable names.
+	 * @return The names in a string.
 	 */
 	private String toString( Collection<String> variables )
 	{
@@ -262,10 +201,10 @@ public class RuleValidator
 	}
 
 	/** Flag to indicate if variables in negated sub goals must be limited or not. */
-	private final boolean mVariablesInNegatedSubGoalsNeedNotBeLimited;
+	private final boolean mAllowNotLimitedVariablesInNegatedSubGoals;
 	
 	/** Flag to indicate if limited variables as operands of a ternary operator imply that the target is also limited. */
-	private final boolean mLimitedTernaryOperandsImplyLimitedResult;
+	private final boolean mAllowArithmeticPredicatesToImplyLimited;
 	
 	/** All head variables. */
 	private final Set<String> mHeadVariables = new HashSet<String>();
@@ -276,11 +215,8 @@ public class RuleValidator
 	/** All variables from built-in predicates, EXCEPT the targets of positive, ternary predicates. */
 	private final Set<String> mBuiltin = new HashSet<String>();
 	
-	/** All variables that are the targets of positive, built-in ternary predicates. */
-	private final Set<String> mTernaryTarget = new HashSet<String>();
-
 	/** All variables that appear in 'variable = variable' positive, equality predicates. */
-	private final List<String[]> mEqualityPairs = new ArrayList<String[]>();
+	private final List<List<String>> mArithmeticGroups = new ArrayList<List<String>>();
 
 	/** All limited variables. */
 	private final Set<String> mLimitedVariables = new HashSet<String>();
