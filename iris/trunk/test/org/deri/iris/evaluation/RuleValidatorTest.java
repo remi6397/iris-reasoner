@@ -25,6 +25,8 @@
  */
 package org.deri.iris.evaluation;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.deri.iris.RuleUnsafeException;
 import junit.framework.TestCase;
 
@@ -35,17 +37,27 @@ public class RuleValidatorTest extends TestCase
     {
     }
 	
+	private List<String> makeList( String ... tokens )
+	{
+		List<String> result = new ArrayList<String>();
+		
+		for( String token : tokens )
+			result.add( token );
+		
+		return result;
+	}
+	
 	public void testPositiveRule()
 	{
 		RuleValidator rv = new RuleValidator( true, true );
 		
-		rv.addHeadVariable( "a" );
+		rv.addHeadVariables( makeList( "a" ) );
 		assertUnsafe( rv );
 
-		rv.addVariableFromOrdinaryPredicate( true, "a" );
+		rv.addVariablesFromOrdinaryPredicate( true, makeList( "a" ) );
 		assertSafe( rv );
 
-		rv.addVariableFromOrdinaryPredicate( true, "b" );
+		rv.addVariablesFromOrdinaryPredicate( true, makeList( "b" ) );
 		assertSafe( rv );
 	}
 	
@@ -53,9 +65,9 @@ public class RuleValidatorTest extends TestCase
 	{
 		RuleValidator rv = new RuleValidator( true, true );
 		
-		rv.addHeadVariable( "a" );
-		rv.addVariableFromOrdinaryPredicate( true, "a" );
-		rv.addVariableFromOrdinaryPredicate( false, "b" );
+		rv.addHeadVariables( makeList( "a" ) );
+		rv.addVariablesFromOrdinaryPredicate( true, makeList( "a" ) );
+		rv.addVariablesFromOrdinaryPredicate( false, makeList( "b" ) );
 		assertSafe( rv );
 	}
 	
@@ -63,9 +75,9 @@ public class RuleValidatorTest extends TestCase
 	{
 		RuleValidator rv = new RuleValidator( false, true );
 		
-		rv.addHeadVariable( "a" );
-		rv.addVariableFromOrdinaryPredicate( true, "a" );
-		rv.addVariableFromOrdinaryPredicate( false, "b" );
+		rv.addHeadVariables( makeList( "a" ) );
+		rv.addVariablesFromOrdinaryPredicate( true, makeList( "a" ) );
+		rv.addVariablesFromOrdinaryPredicate( false, makeList( "b" ) );
 		assertUnsafe( rv );
 	}
 	
@@ -73,14 +85,11 @@ public class RuleValidatorTest extends TestCase
 	{
 		RuleValidator rv = new RuleValidator( true, true );
 		
-		rv.addHeadVariable( "a" );
-		rv.addHeadVariable( "b" );
-		rv.addHeadVariable( "c" );
+		rv.addHeadVariables( makeList( "a", "b", "c" ) );
 
-		rv.addVariableFromOrdinaryPredicate( true, "a" );
-		rv.addVariableFromOrdinaryPredicate( true, "b" );
+		rv.addVariablesFromOrdinaryPredicate( true, makeList( "a", "b" ) );
 		
-		rv.addVariablesFromPositiveArithmeticPredicate( "a", "b", "c" );
+		rv.addVariablesFromPositiveArithmeticPredicate( false, makeList( "a", "b", "c" ) );
 
 		assertSafe( rv );
 	}
@@ -89,14 +98,11 @@ public class RuleValidatorTest extends TestCase
 	{
 		RuleValidator rv = new RuleValidator( true, false );
 		
-		rv.addHeadVariable( "a" );
-		rv.addHeadVariable( "b" );
-		rv.addHeadVariable( "c" );
+		rv.addHeadVariables( makeList( "a", "b", "c" ) );
 
-		rv.addVariableFromOrdinaryPredicate( true, "a" );
-		rv.addVariableFromOrdinaryPredicate( true, "b" );
+		rv.addVariablesFromOrdinaryPredicate( true, makeList( "a", "b" ) );
 		
-		rv.addVariablesFromPositiveArithmeticPredicate( "a", "b", "c" );
+		rv.addVariablesFromPositiveArithmeticPredicate( false, makeList( "a", "b", "c" ) );
 
 		assertUnsafe( rv );
 	}
@@ -105,12 +111,30 @@ public class RuleValidatorTest extends TestCase
 	{
 		RuleValidator rv = new RuleValidator( true, true );
 		
-		rv.addHeadVariable( "a" );
-		rv.addHeadVariable( "b" );
+		rv.addHeadVariables( makeList( "a", "b" ) );
 
-		rv.addVariableFromOrdinaryPredicate( true, "a" );
+		rv.addVariablesFromOrdinaryPredicate( true, makeList( "a" ) );
 		
-		rv.addVariablesFromPositiveEqualityPredicate( "a", "b" );
+		rv.addVariablesFromPositiveArithmeticPredicate( true, makeList( "a", "b" ) );
+
+		assertSafe( rv );
+	}
+	
+	public void testEqualityAndArithmeticTogether()
+	{
+		RuleValidator rv = new RuleValidator( true, true );
+		
+		rv.addHeadVariables( makeList( "z" ) );
+
+		rv.addVariablesFromPositiveArithmeticPredicate( false, makeList( "x", "y", "z" ) );
+		rv.addVariablesFromPositiveArithmeticPredicate( false, makeList( "p", "x", "q" ) );
+		rv.addVariablesFromPositiveArithmeticPredicate( false, makeList( "p", "s", "t" ) );
+
+		rv.addVariablesFromPositiveArithmeticPredicate( true, makeList( "q", "r" ) );
+		rv.addVariablesFromPositiveArithmeticPredicate( true, makeList( "y", "s" ) );
+		rv.addVariablesFromPositiveArithmeticPredicate( true, makeList( "t" ) );
+		rv.addVariablesFromPositiveArithmeticPredicate( true, makeList( "r" ) );
+		rv.addVariablesFromPositiveArithmeticPredicate( true, makeList( "p" ) );
 
 		assertSafe( rv );
 	}
