@@ -12,7 +12,7 @@ org.deri.iris.builtins.LessEqualBuiltin
 org.deri.iris.builtins.GreaterBuiltin
 org.deri.iris.builtins.GreaterEqualBuiltin
 
-org.deri.iris.builtins.IsBase64Binary
+org.deri.iris.builtins.IsBase64BinaryBuiltin
 org.deri.iris.builtins.IsBooleanBuiltin
 org.deri.iris.builtins.IsDateBuiltin
 org.deri.iris.builtins.IsDateTimeBuiltin
