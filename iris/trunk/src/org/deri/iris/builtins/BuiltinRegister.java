@@ -54,10 +54,10 @@ import org.deri.iris.api.basics.IPredicate;
  * classname of the builtin to register.
  * </p>
  * <p>
- * $Id: BuiltinRegister.java,v 1.7 2007-10-12 12:40:58 bazbishop237 Exp $
+ * $Id: BuiltinRegister.java,v 1.8 2007-10-12 15:04:57 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public final class BuiltinRegister {
 
@@ -107,7 +107,11 @@ public final class BuiltinRegister {
 				String line;
 				while ((line = br.readLine()) != null) {
 					try {
-						privRegisterBuiltin(Class.forName(line));
+						line = line.trim();
+						if( line.length() > 0 )
+						{
+							privRegisterBuiltin(Class.forName(line));
+						}
 					} catch (ClassNotFoundException e) {
 						LOGGER.warn("Couldn't load the class: " + line);
 					}
