@@ -34,13 +34,13 @@ import org.deri.iris.api.terms.ITerm;
  * by this engine.
  * </p>
  * <p>
- * $Id: IBuiltInsFactory.java,v 1.6 2007-03-13 17:14:48 poettler_ric Exp $
+ * $Id: IBuiltInsFactory.java,v 1.7 2007-10-12 13:00:42 bazbishop237 Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @date 17.03.2006 11:55:35
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public interface IBuiltInsFactory {
 
@@ -88,6 +88,16 @@ public interface IBuiltInsFactory {
 	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 */
 	public abstract IBuiltInAtom createDivideBuiltin(final ITerm t0, final ITerm t1, final ITerm t2);
+
+	/**
+	 * Creates a modulus builtin.
+	 * @param t0 the numerator
+	 * @param t1 the denominator
+	 * @param t2 the result
+	 * @return the constructed builtin
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 */
+	public abstract IBuiltInAtom createModulusBuiltin(final ITerm t0, final ITerm t1, final ITerm t2);
 
 	/**
 	 * Creates an equal builtin.
