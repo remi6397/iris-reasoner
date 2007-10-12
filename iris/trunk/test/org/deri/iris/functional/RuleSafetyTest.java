@@ -318,4 +318,100 @@ public class RuleSafetyTest extends TestCase
 	
 		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
 	}
+
+	/**
+     * Arithmetic predicate.
+     * @throws Exception
+     */
+    public void testSafe_SameVariableFirstAndSecondInArithmetic() throws Exception
+    {
+    	String program = 
+    		"w(?X) :- s(?X), ?X + ?X = ?Z.";
+        	
+       	Helper.evaluateWithAllStrategies( program, "" );
+    }
+
+	/**
+     * Arithmetic predicate.
+     * @throws Exception
+     */
+    public void testSafe_SameVariableFirstAndThirdInArithmetic() throws Exception
+    {
+    	String program = 
+    		"w(?X) :- s(?X), ?X + ?Y = ?X.";
+        	
+       	Helper.evaluateWithAllStrategies( program, "" );
+    }
+
+	/**
+     * Arithmetic predicate.
+     * @throws Exception
+     */
+    public void testSafe_SameVariableSecondAndThirdInArithmetic() throws Exception
+    {
+    	String program = 
+    		"w(?X) :- s(?X), ?Y + ?X = ?X.";
+        	
+       	Helper.evaluateWithAllStrategies( program, "" );
+    }
+
+	/**
+     * Arithmetic predicate.
+     * @throws Exception
+     */
+    public void testUnsafe_SameUnknownVariableFirstAndSecondInArithmetic() throws Exception
+    {
+    	String program = 
+    		"w(?X) :- s(?Z), ?X + ?X = ?Z.";
+        	
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    }
+
+	/**
+     * Arithmetic predicate.
+     * @throws Exception
+     */
+    public void testUnsafe_SameUnknownVariableFirstAndThirdInArithmetic() throws Exception
+    {
+    	String program = 
+    		"w(?X) :- s(?Y), ?X + ?Y = ?X.";
+        	
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    }
+
+	/**
+     * Arithmetic predicate.
+     * @throws Exception
+     */
+    public void testUnsafe_SameUnknownVariableSecondAndThirdInArithmetic() throws Exception
+    {
+    	String program = 
+    		"w(?X) :- s(?Y), ?Y + ?X = ?X.";
+        	
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    }
+
+	/**
+     * Arithmetic predicate.
+     * @throws Exception
+     */
+    public void testSafe_SameVariableFirstSecondAndThirdInArithmetic() throws Exception
+    {
+    	String program = 
+    		"w(?X) :- s(?X), ?X + ?X = ?X.";
+        	
+       	Helper.evaluateWithAllStrategies( program, "" );
+    }
+
+	/**
+     * Arithmetic predicate.
+     * @throws Exception
+     */
+    public void testUnsafe_SameUnknownVariableFirstSecondAndThirdInArithmetic() throws Exception
+    {
+    	String program = 
+    		"w(?X) :- ?X + ?X = ?X.";
+        	
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    }
 }
