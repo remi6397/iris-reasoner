@@ -25,92 +25,34 @@
  */
 package org.deri.iris.builtins;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 
 /**
- * <p>
- * Built-in to compare two terms and determine which one is bigger.
- * </p>
- * <p>
- * REMARK: Please note that the current implementation works only with
- * IntegerTerm data type.
- * </p>
- * <p>
- * $Id: LessBuiltin.java,v 1.14 2007-10-10 14:47:06 bazbishop237 Exp $
- * </p>
- * 
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @author Darko Anicic, DERI Innsbruck
- * 
- * @version $Revision: 1.14 $
+ * Built-in to compare two terms.
  */
-public class LessBuiltin extends AbstractBuiltin {
-
-	/** The predicate defining this builtin. */
-	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate(
-			"LESS", 2);
-
+public class LessBuiltin extends BooleanBuiltin
+{
 	/**
-	 * Constructs a builtin. Two terms must be passed to the constructor,
-	 * otherwise an exception will be thrown.
-	 * 
-	 * @param t the terms
-	 * @throws NullPointerException if one of the terms is null
-	 * @throws IllegalArgumentException if the number of terms submitted is
-	 * not 2
-	 * @throws NullPointerException if t is <code>null</code>
+	 * Constructor.
+	 * @param terms the terms, must be of length 2
 	 */
-	public LessBuiltin(final ITerm... t) {
-		super(PREDICATE, t);
+	public LessBuiltin( final ITerm... terms )
+	{
+		super( PREDICATE, terms );
 	}
 
-	/**
-	 * This is an empty method stub to keep the src directory compileable.
-	 * @return at the moment it always returns <code>null</code>
-	 */
-	public ITuple evaluate(final ITuple t) {
-		if(t == null) {
-			throw new NullPointerException("The collection must not be null");
-		}
-		// calculating the needed term indexes from the submitted tuple
-		int[] outstanding = BuiltinHelper.determineUnground(getTuple().getTerms());
-		// retrieving the constants of this builin
-		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple().getTerms(), 
-				BuiltinHelper.complement(outstanding, getTuple().getArity()));
-
-		// putting the term from this builtin and the submitted tuple together
-		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
-				BuiltinHelper.getIndexes(t.getTerms(), outstanding), bCons);
-		// determing the remaining vars of the terms
-		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
-
-		// run the evaluation
-		if (vars.length == 0)
-		{
-			return BuiltinHelper.less(complete[0], complete[1]) ? 
-				BuiltinHelper.EMPTY_TUPLE : null;
-		}
-		throw new IllegalArgumentException("Can not evaluate a LESS with variables");
+	protected boolean computeResult( ITerm[] terms )
+	{
+		return BuiltinHelper.less( terms[ 0 ], terms[ 1 ] );
 	}
 
-	public boolean isEvaluable(final Collection<IVariable> v) {
-		if (v == null) {
-			throw new NullPointerException("The variables must not be null");
-		}
-		final List<IVariable> var = getTuple().getAllVariables();
-		var.removeAll(v);
-		return var.isEmpty();
-	}
-
-	public static IPredicate getBuiltinPredicate() {
+	public static IPredicate getBuiltinPredicate()
+	{
 		return PREDICATE;
 	}
+
+	/** The predicate defining this built-in. */
+	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate( "LESS", 2 );
 }

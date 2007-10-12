@@ -36,7 +36,6 @@ import java.util.TimeZone;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
@@ -54,11 +53,11 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.17 2007-10-10 14:45:57 bazbishop237 Exp $
+ * $Id: BuiltinHelper.java,v 1.18 2007-10-12 12:40:58 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class BuiltinHelper {
 
@@ -522,6 +521,87 @@ public class BuiltinHelper {
 	{
 		if( false )
 			;//throw new EvaluationException( "Divide by zero error" );
+	}
+	
+	static ITerm increment( ITerm argument )
+	{
+		assert argument != null;
+
+		if( argument instanceof IIntegerTerm )
+			return CONCRETE.createInteger( ( (IIntegerTerm) argument).getValue() + 1 );
+
+		if( argument instanceof INumericTerm )
+			return toAppropriateType( getDouble((INumericTerm) argument) + 1, argument, argument );
+
+		return null;
+	}
+
+	/**
+	 * <p>
+	 * Produces the modulus of two terms. The resulting term will be of the most accurate
+	 * type of the submitted ones.
+	 * </p>
+	 * <p>
+	 * At the moment only INumericTerms are supported.
+	 * </p>
+	 * @param t0 the first argument
+	 * @param t1 the second argument
+	 * @return the product = t0 % t1
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
+	 */
+	public static ITerm modulus(final ITerm t0, final ITerm t1) {
+		if((t0 == null) || (t1 == null)) {
+			throw new NullPointerException("The terms must not be null");
+		}
+		
+		if((t0 instanceof IIntegerTerm) && (t1 instanceof IIntegerTerm))
+		{
+			int numerator = ((IIntegerTerm) t0).getValue();
+			if( numerator < 0  )
+			{
+				handleInvalidModulusNumerator();
+				return null;
+			}
+			
+			int denominator = ((IIntegerTerm) t1).getValue();
+			if( denominator < 1 )
+			{
+				handleInvalidModulusDenominator();
+				return null;
+			}
+			
+			return CONCRETE.createInteger( ((IIntegerTerm) t0).getValue() % denominator );
+		}
+
+		if( t0 instanceof INumericTerm && t1 instanceof INumericTerm )
+		{
+			double numerator = getDouble((INumericTerm) t0);
+			if( numerator < 0  )
+			{
+				handleInvalidModulusNumerator();
+				return null;
+			}
+			
+			double denominator = getDouble((INumericTerm) t1);
+			if( denominator <= 0.0 )
+			{
+				handleDivideByZero();
+				return null;
+			}
+			
+			return toAppropriateType( numerator % denominator, t0, t1);
+		}
+
+		return null;
+	}
+
+	private static void handleInvalidModulusNumerator()
+	{
+	}
+	
+	private static void handleInvalidModulusDenominator()
+	{
 	}
 
 	/**

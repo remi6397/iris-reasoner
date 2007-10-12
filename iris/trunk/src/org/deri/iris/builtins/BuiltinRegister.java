@@ -1,5 +1,4 @@
 /*
- * Integrated Rule Inference System (IRIS):
  * An extensible rule inference system for dataLOGGER with extensions by 
  * built-in predicates, default negation (under well-founded semantics), 
  * function symbols and contexts. 
@@ -55,10 +54,10 @@ import org.deri.iris.api.basics.IPredicate;
  * classname of the builtin to register.
  * </p>
  * <p>
- * $Id: BuiltinRegister.java,v 1.6 2007-10-09 20:38:17 bazbishop237 Exp $
+ * $Id: BuiltinRegister.java,v 1.7 2007-10-12 12:40:58 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public final class BuiltinRegister {
 

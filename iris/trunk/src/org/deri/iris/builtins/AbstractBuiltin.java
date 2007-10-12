@@ -25,13 +25,17 @@
  */
 package org.deri.iris.builtins;
 
+import static org.deri.iris.factory.Factory.BASIC;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -39,11 +43,11 @@ import org.deri.iris.factory.Factory;
  * Serves as skeleton implementation for builtins. If you use this class as
  * superclass, you only have only to implement the evaluate method.
  * <p>
- * $Id: AbstractBuiltin.java,v 1.9 2007-10-09 20:38:17 bazbishop237 Exp $
+ * $Id: AbstractBuiltin.java,v 1.10 2007-10-12 12:40:14 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public abstract class AbstractBuiltin implements IBuiltInAtom {
 
@@ -110,7 +114,7 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 	/**
 	 * <p>
 	 * Returns a short description of the inner atom. <b>The format of the
-	 * returned String is undocumented and shubject to change.</b>
+	 * returned String is undocumented and subject to change.</b>
 	 * </p>
 	 * <p>
 	 * An example String could be: <code>EQUALS(A, B)</code>
@@ -140,4 +144,78 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 	public boolean isBuiltin() {
 		return true;
 	}
+	
+	public ITuple evaluate(final ITuple t)
+	{
+		if(t == null)
+			throw new NullPointerException("The collection must not be null");
+
+		// calculating the needed term indexes from the submitted tuple
+		int[] outstanding = BuiltinHelper.determineUnground(getTuple().getTerms());
+		
+		// retrieving the constants of this builin
+		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple().getTerms(), 
+				BuiltinHelper.complement(outstanding, getTuple().getArity()));
+
+		// putting the term from this builtin and the submitted tuple together
+		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
+				BuiltinHelper.getIndexes(t.getTerms(), outstanding), bCons);
+		
+		// determining the remaining vars of the terms
+		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
+		
+		if( vars.length > maxUnknownVariables() )
+			throw new IllegalArgumentException( "Can not evaluate a " + getPredicate().toString() +
+							" with more than " + maxUnknownVariables() + " variables (had " + vars.length + ")." );
+			
+		ITerm result = evaluateTerms( complete, vars );
+
+		if( result == null )
+			return null;
+		
+		if( result == EMPTY_TERM )
+			return BuiltinHelper.EMPTY_TUPLE;
+		
+		return BASIC.createTuple( result );
+	}
+	
+	/**
+	 * Evaluate the predicate once the terms and variable indexes have been found.
+	 * 
+	 * @param terms The array of all terms for this evaluation.
+	 * @param variableIndexes The indexes of the positions of variables in the 'terms' array.
+	 * @return The result of the evaluation.
+	 */
+	protected ITerm evaluateTerms( ITerm[] terms, int[] variableIndexes )
+	{
+		return null;
+	}
+	
+	/**
+	 * Find out if the predicate can be evaluated. It can be if the total number of unknown
+	 * variables is less than or equal to the result of maxUnknownVariables().
+	 * @return true is evaluatable.
+	 */
+	public boolean isEvaluable( final Collection<IVariable> variables )
+	{
+		if( variables == null )
+			throw new IllegalArgumentException( "The variables must not be null");
+		
+		final List<IVariable> unknownVariables = getTuple().getAllVariables();
+		unknownVariables.removeAll( variables );
+		
+		return unknownVariables.size() <= maxUnknownVariables();
+	}
+
+	/**
+	 * The maximum number of unknown variables that allows the predicate to be evaluated.
+	 * @return The maximum number of unknown variables.
+	 */
+	public int maxUnknownVariables()
+	{
+		return 0;
+	}
+
+	/** Something to save creating an an empty tuple every time we just need 'any' tuple. */
+	protected static final ITerm EMPTY_TERM = Factory.TERM.createString( "" );
 }

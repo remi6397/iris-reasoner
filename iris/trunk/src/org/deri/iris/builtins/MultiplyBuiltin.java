@@ -27,28 +27,18 @@ package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.BASIC;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.IVariable;
 
 /**
  * <p>
  * Represents a multiply operation. In at the evaluation time there must be only one
  * variable be left for computation, otherwise an exception will be thrown.
  * </p>
- * <p>
- * $Id: MultiplyBuiltin.java,v 1.14 2007-10-10 14:47:05 bazbishop237 Exp $
- * </p>
- * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
-public class MultiplyBuiltin extends AbstractBuiltin {
+public class MultiplyBuiltin extends ArithmeticBuiltin {
 
 	/** The predicate defining this builtin. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
@@ -58,85 +48,34 @@ public class MultiplyBuiltin extends AbstractBuiltin {
 	 * Constructs a builtin. Three terms must be passed to the constructor,
 	 * otherwise an exception will be thrown.
 	 * 
-	 * @param t the terms
+	 * @param terms the terms
 	 * @throws NullPointerException if one of the terms is {@code null}
 	 * @throws IllegalArgumentException if the number of terms submitted is
 	 * not 3
 	 * @throws NullPointerException if t is <code>null</code>
 	 */
-	public MultiplyBuiltin(final ITerm... t) {
-		super(PREDICATE, t);
+	public MultiplyBuiltin(final ITerm... terms)
+	{
+		super(PREDICATE, terms);
 	}
 
-	public ITuple evaluate(final ITuple c) {
-		if(c == null) {
-			throw new NullPointerException("The collection must not be null");
-		}
-		// calculating the needed term indexes from the submitted tuple
-		int[] outstanding = BuiltinHelper.determineUnground(getTuple().getTerms());
-		// retrieving the constants of this builin
-		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple().getTerms(), 
-				BuiltinHelper.complement(outstanding, getTuple().getArity()));
-
-		// putting the term from this builtin and the submitted tuple together
-		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
-				BuiltinHelper.getIndexes(c.getTerms(), outstanding), bCons);
-		// determing the remaining vars of the terms
-		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
-		// run the evaluation
-		if (vars.length == 0)
-		{ // checking whether the result is correct
-			ITerm result = BuiltinHelper.multiply(complete[0], complete[1]);
-			
-			if( result == null )
-				return null;
-			
-			return BuiltinHelper.equal(complete[2], result ) ? 
-				BuiltinHelper.EMPTY_TUPLE : null;
-		}
-		else if( vars.length == 1 )
+	protected ITerm computeMissingTerm( int missingTermIndex, ITerm[] terms )
+	{
+		switch( missingTermIndex )
 		{
-			ITerm result;
-		
-			switch(vars[0]) {
-				case 0:
-					result = BuiltinHelper.divide(complete[2], complete[1] );
-					break;
-					
-				case 1:
-					result = BuiltinHelper.divide(complete[2], complete[0] );
-					break;
-					
-				case 2:
-					result = BuiltinHelper.multiply(complete[0], complete[1]);
-					break;
-					
-				default:
-					throw new IllegalArgumentException("The variable must be at possition " + 
-							"0 to 2, but was on " + vars[0]);
-			}
-			if( result == null )
-				return null;
-
-			return BASIC.createTuple( result );
+		case 0:
+			return BuiltinHelper.divide( terms[ 2 ], terms[ 1 ] );
+			
+		case 1:
+			return BuiltinHelper.divide( terms[ 2 ], terms[ 0 ] );
+			
+		default:
+			return BuiltinHelper.multiply( terms[ 0 ], terms[ 1 ] );
 		}
-		else
-		{
-			throw new IllegalArgumentException("Can not evaluate an MULTIPLY with >2 variables");
-		}
-
 	}
 
-	public boolean isEvaluable(final Collection<IVariable> v) {
-		if (v == null) {
-			throw new NullPointerException("The variables must not be null");
-		}
-		final List<IVariable> var = getTuple().getAllVariables();
-		var.removeAll(v);
-		return var.size() <= 1;
-	}
-
-	public static IPredicate getBuiltinPredicate() {
+	public static IPredicate getBuiltinPredicate()
+	{
 		return PREDICATE;
 	}
 }
