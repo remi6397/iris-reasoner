@@ -184,7 +184,7 @@ public class RuleSafetyTest extends TestCase
      */
     public void testUnsafe_Variable_InUnaryBuiltin_NotInPositiveLiteral() throws Exception
     {
-    	String program = "w(?X,?Y) :- s(?X), ISSTRING(?Y).";    
+    	String program = "w(?X,?Y) :- s(?X), IS_STRING(?Y).";    
 
     	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
     }
@@ -195,7 +195,7 @@ public class RuleSafetyTest extends TestCase
      */
     public void testUnsafe_Variable_InNegatedUnaryBuiltin_NotInPositiveLiteral() throws Exception
     {
-    	String program = "w(?X,?Y) :- s(?X), not ISSTRING(?Y).";    
+    	String program = "w(?X,?Y) :- s(?X), not IS_STRING(?Y).";    
 
     	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
     }
@@ -208,7 +208,7 @@ public class RuleSafetyTest extends TestCase
 	{
 		String program =
 			"man('homer')." +
-			"isMale(?x) :- man(?x), ISSTRING(?z)." +
+			"isMale(?x) :- man(?x), IS_STRING(?z)." +
 			"?-isMale(?x).";
 	
 		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
@@ -224,7 +224,7 @@ public class RuleSafetyTest extends TestCase
     		"s(1)." +
     		"p(2)." +
     		"p('s')." +
-    		"w(?X,?Y) :- s(?X), p(?Y), ISSTRING(?Y)." +
+    		"w(?X,?Y) :- s(?X), p(?Y), IS_STRING(?Y)." +
     		"?- w(?X, ?Y).";    
 
     	String expectedResults = "w( 1, 's' ).";
@@ -246,4 +246,76 @@ public class RuleSafetyTest extends TestCase
         	
        	Helper.evaluateWithAllStrategies( program, "" );
     }
+
+	/**
+     * Arithmetic predicate.
+     * @throws Exception
+     */
+    public void testSafe_UnknownVariableFirstInArithmetic() throws Exception
+    {
+    	String program = 
+    		"w(?X,?Y) :- s(?X), r(?Y), ?X + ?Y = ?Z.";
+        	
+       	Helper.evaluateWithAllStrategies( program, "" );
+    }
+
+	/**
+     * Arithmetic predicate.
+     * @throws Exception
+     */
+    public void testSafe_UnknownVariableSecondInArithmetic() throws Exception
+    {
+    	String program = 
+    		"w(?X,?Y) :- s(?X), r(?Z), ?X + ?Y = ?Z.";
+        	
+       	Helper.evaluateWithAllStrategies( program, "" );
+    }
+
+	/**
+     * Arithmetic predicate.
+     * @throws Exception
+     */
+    public void testSafe_UnknownVariableThirsInArithmetic() throws Exception
+    {
+    	String program = 
+    		"w(?X,?Y) :- s(?Y), r(?Z), ?X + ?Y = ?Z.";
+        	
+       	Helper.evaluateWithAllStrategies( program, "" );
+    }
+
+	/**
+     * Unsafe negated arithmetic predicate.
+     * @throws Exception
+     */
+	public void testUnsafe_UnknownVariableFirstInNegatedArithmetic() throws Exception
+	{
+		String program =
+    		"w(?X,?Y) :- s(?X), r(?Y), not ?X + ?Y = ?Z.";
+	
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+	}
+
+	/**
+     * Unsafe negated arithmetic predicate.
+     * @throws Exception
+     */
+	public void testUnsafe_UnknownVariableSecondInNegatedArithmetic() throws Exception
+	{
+		String program =
+    		"w(?X,?Y) :- s(?X), r(?Z), not ?X + ?Y = ?Z.";
+	
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+	}
+
+	/**
+     * Unsafe negated arithmetic predicate.
+     * @throws Exception
+     */
+	public void testUnsafe_UnknownVariableThirdInNegatedArithmetic() throws Exception
+	{
+		String program =
+    		"w(?X,?Y) :- s(?Y), r(?Z), not ?X + ?Y = ?Z.";
+	
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+	}
 }
