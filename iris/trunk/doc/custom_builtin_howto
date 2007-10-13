@@ -1,54 +1,65 @@
+			      Custom Built-in HOWTO
+			      =====================
 
-			      Custom Builtin HOWTO
-			      ====================
 
-Overview:
-=========
-To create and use a custom builtin there are only a view steps neccessary:
-* Extend the AbstractBuiltin
-* Register the builtin in the BuiltinRegister of the program
-* use the builtin ;)
+Overview
+========
+To create and use a custom built-in predicate there are only a few steps to follow:
 
-Extend the AbstractBuiltin:
-===========================
+* Extend one of the built-in base classes (AbstractBuiltin, ArithmeticBuiltin, BooleanBuiltin)
+* Register the built-in with the BuiltinRegister class
+
+
+Extend one of the base classes
+==============================
 Take a look at the FahrenheitToCelsiusBuiltin.java in this directory.
 You also might want to read the javadoc of the BuiltinRegister. There are only 3
-things you hava to implement:
+things you must to implement:
+
 * a constructor taking an ITerm array as input which might then be the constants
-  and variables set in this builtin.
-* implement the evaluate(Collection<ITuple>) method for your needs (the
-  BuiltinHelper got some methods, you might want to use.
-* provide a staitc getBuiltinPredicate() method which returns the predicate
-  describing your builtin (the arity and the predicate name)
+  and variables set in this built-in.
+* implement either:
+  * AbstractBuiltin.evaluateTerms( ITerm[] terms, int[] variableIndexes ), OR
+  * BooleanBuiltin.computeResult( ITerm[] terms ), OR
+  * ArithmeticBuiltin.computeMissingTerm( int missingTermIndex, ITerm[] terms )
+* provide a static getBuiltinPredicate() method which returns the predicate object
+  describing your built-in (with attributes 'name' and 'arity')
 
-Register the builtin:
+Note: The BuiltinHelper class has some useful utility methods you might want to use.
+
+
+Register the built-in
 =====================
-There are two ways to register a builtin:
-* automatically through the builtins.load file
-* by hand, calling the registerBuiltin(Class) method of the BuiltinRegister
+There are two ways to register a built-in:
+* automatically by adding the class name to the 'builtins.load' load file
+* explicitly by calling the BuiltinRegister.registerBuiltin( Class ) 
 
-Automatically:
---------------
-You only have to write the classname of your builtin in the builtins.load file
+
+Automatically
+-------------
+You only have to write the classname of your built-in in the builtins.load file
 and make this file accessible through the classpath (note: only one
-builtins.load file will be recognized). In the builtins.load you list all
-builtins, you want to load at the creatinon of the BuiltinRegister. On each line
-of the file there must only one classname be listed.
+builtins.load file will be recognised). In the builtins.load file you must list all
+the built-in classes that you want loaded automatically. Place one fully qualified class name
+on each line of the file.
 
-By hand:
---------
-Call the registerBuiltin(Class) method with your builtin class as parameter.
-E.g.: <IProgram object>.getBuiltinRegister().registerBuiltin(FahrenheitToCelsiusBuiltin.class)
 
-Use the Builtin:
+Explicitly
+----------
+Call BuiltinRegister.registerBuiltin( Class ) with your built-in class's class object as the parameter,
+e.g. <IProgram object>.getBuiltinRegister().registerBuiltin(FahrenheitToCelsiusBuiltin.class);
+
+
+Use the Built-in
 ================
-The builtin should now be recognized as such, when you parse a datalog program
-using the sablecc parser (if you use the program where you registered the
-builtin as parameter, too ;) )
+The built-in should now be recognised when you evaluate a logic program. Note that the built-in must
+be explicitly registered for every program object.
 
-Notes:
-======
-If you find any bugs, pleas don't hesitate to report them, using the bugtracher
-(http://sourceforge.net/tracker/?group_id=167309&atid=842434).
 
-$Id: custom_builtin_howto,v 1.1 2007-04-06 08:51:16 poettler_ric Exp $
+Notes
+=====
+If you find any bugs, pleas don't hesitate to report them, using the bug-tracker:
+
+http://sourceforge.net/tracker/?group_id=167309&atid=842434
+
+$Id: custom_builtin_howto,v 1.2 2007-10-13 23:01:40 bazbishop237 Exp $
