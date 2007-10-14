@@ -44,7 +44,7 @@ import org.deri.iris.api.terms.IVariable;
  * NOTE: Currently, rules with only one literal in the head are supported.
  * </p>
  * <p>
- * $Id: IHead.java,v 1.6 2006-12-07 16:37:08 darko Exp $
+ * $Id: IHead.java,v 1.7 2007-10-14 14:48:59 bazbishop237 Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -60,7 +60,7 @@ public interface IHead {
 	 * 
 	 * @return The length of the head.
 	 */
-	public int getHeadLenght();
+	public int getLength();
 
 	/**
 	 * <p>
@@ -71,7 +71,7 @@ public interface IHead {
 	 *            Index of element to return.
 	 * @return The literal at the specified position in this list.
 	 */
-	public ILiteral getHeadLiteral(int arg);
+	public ILiteral getLiteral(int arg);
 
 	/**
 	 * <p>
@@ -80,7 +80,7 @@ public interface IHead {
 	 * 
 	 * @return A list of all literals.
 	 */
-	public List<ILiteral> getHeadLiterals();
+	public List<ILiteral> getLiterals();
 
 	/**
 	 * <p>
@@ -89,5 +89,5 @@ public interface IHead {
 	 * 
 	 * @return A list of all variables.
 	 */
-	public List<IVariable> getHeadVariables();
+	public List<IVariable> getVariables();
 }

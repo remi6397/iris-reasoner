@@ -45,19 +45,19 @@ public class Query implements IQuery {
 	}
 
 	public int getQueryLenght() {
-		return body.getBodyLenght();
+		return body.getLength();
 	}
 
 	public ILiteral getQueryLiteral(int arg) {
-		return body.getBodyLiteral(arg);
+		return body.getLiteral(arg);
 	}
 
 	public List<ILiteral> getQueryLiterals() {
-		return body.getBodyLiterals();
+		return body.getLiterals();
 	}
 
 	public List<IVariable> getQueryVariables() {
-		return body.getBodyVariables();
+		return body.getVariables();
 	}
 	
 	public int hashCode() {

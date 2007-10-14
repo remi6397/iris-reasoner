@@ -68,19 +68,19 @@ public class Body implements IBody {
 		this.literals = new ArrayList<ILiteral>(literals);
 	}
 
-	public int getBodyLenght() {
+	public int getLength() {
 		return literals.size();
 	}
 
-	public ILiteral getBodyLiteral(int arg) {
+	public ILiteral getLiteral(int arg) {
 		return literals.get(arg);
 	}
 
-	public List<ILiteral> getBodyLiterals() {
+	public List<ILiteral> getLiterals() {
 		return Collections.unmodifiableList(literals);
 	}
 
-	public List<IVariable> getBodyVariables() {
+	public List<IVariable> getVariables() {
 		if (variables == null) {
 			variables = new ArrayList<IVariable>();
 			for (ILiteral l : literals) {

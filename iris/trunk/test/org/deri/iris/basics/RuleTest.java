@@ -100,9 +100,9 @@ public class RuleTest extends TestCase {
 		ObjectTests.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
 				new Rule(null, BODY));
 		ObjectTests.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
-				new Rule(HEAD, new Body(HEAD.getHeadLiterals())));
+				new Rule(HEAD, new Body(HEAD.getLiterals())));
 		ObjectTests.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
-				new Rule(new Head(BODY.getBodyLiterals()), BODY));
+				new Rule(new Head(BODY.getLiterals()), BODY));
 	}
 
 	public void testHashCode() {

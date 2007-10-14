@@ -63,11 +63,11 @@ import org.deri.iris.MiscHelper;
  * Tests the magic sets.
  * </p>
  * <p>
- * $Id: MagicTest.java,v 1.5 2007-10-09 07:48:46 poettler_ric Exp $
+ * $Id: MagicTest.java,v 1.6 2007-10-14 14:49:04 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class MagicTest extends TestCase {
 
@@ -336,7 +336,7 @@ public class MagicTest extends TestCase {
 					Adornment.BOUND, Adornment.FREE }, new ITerm[] {
 					TERM.createVariable("X"), TERM.createVariable("Y") });
 			final List<ILiteral> body = new ArrayList<ILiteral>(r
-					.getBodyLiterals());
+					.getBody().getLiterals());
 			int i = 0;
 			// adorning the sg's with bf
 			for (final ILiteral l : body) {
@@ -383,7 +383,7 @@ public class MagicTest extends TestCase {
 					new ITerm[] { TERM.createVariable("X"),
 							TERM.createVariable("Y"), TERM.createVariable("Z") });
 			final List<ILiteral> body = new ArrayList<ILiteral>(r
-					.getBodyLiterals());
+					.getBody().getLiterals());
 			int i = 0;
 			// adorning the sg's with bf
 			for (final ILiteral l : body) {

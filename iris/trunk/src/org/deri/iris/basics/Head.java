@@ -68,19 +68,19 @@ public class Head implements IHead {
 		this.literals = new ArrayList<ILiteral>(literals);
 	}
 
-	public int getHeadLenght() {
+	public int getLength() {
 		return literals.size();
 	}
 
-	public ILiteral getHeadLiteral(int arg) {
+	public ILiteral getLiteral(int arg) {
 		return literals.get(arg);
 	}
 
-	public List<ILiteral> getHeadLiterals() {
+	public List<ILiteral> getLiterals() {
 		return Collections.unmodifiableList(literals);
 	}
 
-	public List<IVariable> getHeadVariables() {
+	public List<IVariable> getVariables() {
 		if (variables == null) {
 			variables = new ArrayList<IVariable>();
 			for (ILiteral l : literals) {

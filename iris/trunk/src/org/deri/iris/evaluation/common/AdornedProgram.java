@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.deri.iris.api.basics.IAtom;
+import org.deri.iris.api.basics.IBody;
+import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -51,11 +53,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.28 2007-10-09 20:32:19 bazbishop237 Exp $
+ * $Id: AdornedProgram.java,v 1.29 2007-10-14 14:49:01 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 public class AdornedProgram {
 
@@ -115,7 +117,7 @@ public class AdornedProgram {
 					"The list of rules must not contain null");
 		}
 		for (IRule r : rules) {
-			if (r.getHeadLiterals().size() != 1) {
+			if (r.getHead().getLiterals().size() != 1) {
 				throw new IllegalArgumentException("At the moment this class "
 						+ "only works with rules with one literal in the head.");
 			}
@@ -138,10 +140,10 @@ public class AdornedProgram {
 			// remove the temp rule again and create the query out
 			// of it
 			for (final IRule r : adornedRules) {
-				if ((r.getHeadLiterals().size() == 1) && 
-						(r.getHeadLiterals().get(0).getPredicate().equals(AD_TEMP_QUERY_PREDICATE))) {
+				if ((r.getHead().getLiterals().size() == 1) && 
+						(r.getHead().getLiterals().get(0).getPredicate().equals(AD_TEMP_QUERY_PREDICATE))) {
 					adornedRules.remove(r);
-					newQuery = BASIC.createQuery(r.getBodyLiterals());
+					newQuery = BASIC.createQuery(r.getBody().getLiterals());
 					break;
 				}
 			}
@@ -193,7 +195,7 @@ public class AdornedProgram {
 			predicatesToProcess.remove(ap);
 
 			for (final IRule r : rules) {
-				final ILiteral lh = r.getHeadLiteral(0);
+				final ILiteral lh = r.getHead().getLiteral(0);
 				final IPredicate ph = lh.getPredicate();
 
 				// if the headliteral and the adorned predicate have the
@@ -205,7 +207,7 @@ public class AdornedProgram {
 					ra.replaceHeadLiteral(lh, ap);
 
 					// iterating through all bodyliterals of the
-					for (final ILiteral l : r.getBodyLiterals()) {
+					for (final ILiteral l : r.getBody().getLiterals()) {
 						final AdornedPredicate newAP = processLiteral(l, ra);
 						// adding the adorned predicate to the sets
 						if ((newAP != null) && (adornedPredicates.add(newAP))) {
@@ -335,7 +337,7 @@ public class AdornedProgram {
 		final Set<IPredicate> derived = new HashSet<IPredicate>();
 		for (final IRule r : rules) {
 			//deriveredPredicates.add(r.getHeadLiteral(0).getPredicate());
-			for (final ILiteral l : r.getHeadLiterals()) {
+			for (final ILiteral l : r.getHead().getLiterals()) {
 				derived.add(l.getPredicate());
 			}
 		}
@@ -648,7 +650,7 @@ public class AdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.28 $
+	 * @version $Revision: 1.29 $
 	 */
 	public static class AdornedRule implements IRule {
 		/** The inner rule represented by this object */
@@ -674,10 +676,20 @@ public class AdornedProgram {
 						"The rule and the sip must not be null");
 			}
 			rule = BASIC.createRule(BASIC.createHead(new ArrayList<ILiteral>(r
-					.getHeadLiterals())), BASIC
-					.createBody(new ArrayList<ILiteral>(r.getBodyLiterals())));
+					.getHead().getLiterals())), BASIC
+					.createBody(new ArrayList<ILiteral>(r.getBody().getLiterals())));
 			sip = s.defensifeCopy();
 		}
+		
+		public IBody getBody()
+        {
+	        return rule.getBody();
+        }
+
+		public IHead getHead()
+        {
+	        return rule.getHead();
+        }
 
 		public ISip getSIP() {
 			return sip;
@@ -695,7 +707,7 @@ public class AdornedProgram {
 			}
 
 			final List<ILiteral> head = new ArrayList<ILiteral>(rule
-					.getHeadLiterals());
+					.getHead().getLiterals());
 
 			final int index = head.indexOf(l);
 			if (index == -1) {
@@ -706,7 +718,7 @@ public class AdornedProgram {
 			head.set(index, BASIC
 					.createLiteral(l.isPositive(), p, l.getTuple()));
 			rule = BASIC.createRule(BASIC.createHead(head), BASIC
-					.createBody(rule.getBodyLiterals()));
+					.createBody(rule.getBody().getLiterals()));
 		}
 
 		public void replaceBodyLiteral(final ILiteral l, final IPredicate p) {
@@ -721,7 +733,7 @@ public class AdornedProgram {
 			}
 
 			final List<ILiteral> body = new ArrayList<ILiteral>(rule
-					.getBodyLiterals());
+					.getBody().getLiterals());
 
 			final int index = body.indexOf(l);
 			if (index == -1) {
@@ -731,7 +743,7 @@ public class AdornedProgram {
 
 			body.set(index, BASIC
 					.createLiteral(l.isPositive(), p, l.getTuple()));
-			rule = BASIC.createRule(BASIC.createHead(rule.getHeadLiterals()),
+			rule = BASIC.createRule(BASIC.createHead(rule.getHead().getLiterals()),
 					BASIC.createBody(body));
 		}
 
@@ -761,36 +773,36 @@ public class AdornedProgram {
 			return rule.isRectified();
 		}
 
-		public int getHeadLenght() {
-			return rule.getHeadLenght();
-		}
-
-		public ILiteral getHeadLiteral(int arg) {
-			return rule.getHeadLiteral(arg);
-		}
-
-		public List<ILiteral> getHeadLiterals() {
-			return Collections.unmodifiableList(rule.getHeadLiterals());
-		}
-
-		public List<IVariable> getHeadVariables() {
-			return Collections.unmodifiableList(rule.getHeadVariables());
-		}
-
-		public int getBodyLenght() {
-			return rule.getBodyLenght();
-		}
-
-		public ILiteral getBodyLiteral(int arg) {
-			return rule.getBodyLiteral(arg);
-		}
-
-		public List<ILiteral> getBodyLiterals() {
-			return Collections.unmodifiableList(rule.getBodyLiterals());
-		}
-
-		public List<IVariable> getBodyVariables() {
-			return Collections.unmodifiableList(rule.getBodyVariables());
-		}
+//		public int getHeadLenght() {
+//			return rule.getHead().getHeadLenght();
+//		}
+//
+//		public ILiteral getHeadLiteral(int arg) {
+//			return rule.getHead().getHeadLiteral(arg);
+//		}
+//
+//		public List<ILiteral> getHeadLiterals() {
+//			return Collections.unmodifiableList(rule.getHead().getHeadLiterals());
+//		}
+//
+//		public List<IVariable> getHeadVariables() {
+//			return Collections.unmodifiableList(rule.getHead().getHeadVariables());
+//		}
+//
+//		public int getBodyLenght() {
+//			return rule.getBody().getBodyLenght();
+//		}
+//
+//		public ILiteral getBodyLiteral(int arg) {
+//			return rule.getBody().getBodyLiteral(arg);
+//		}
+//
+//		public List<ILiteral> getBodyLiterals() {
+//			return Collections.unmodifiableList(rule.getBody().getBodyLiterals());
+//		}
+//
+//		public List<IVariable> getBodyVariables() {
+//			return Collections.unmodifiableList(rule.getBody().getBodyVariables());
+//		}
 	}
 }

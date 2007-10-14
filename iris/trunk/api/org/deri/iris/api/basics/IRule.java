@@ -39,14 +39,26 @@ package org.deri.iris.api.basics;
  * Only safe rules are supported. A rule is safe if its every variable
  * occurs in one of its positive, non built-in, atoms of the body.</p>
  * <p>
- * $Id: IRule.java,v 1.7 2007-09-27 12:25:24 bazbishop237 Exp $
+ * $Id: IRule.java,v 1.8 2007-10-14 14:48:59 bazbishop237 Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date   14.11.2005 17:21:21
  */
-public interface IRule extends IHead, IBody{
+public interface IRule
+{
+	/**
+	 * Get the rule head-
+	 * @return The rule head.
+	 */
+	public IHead getHead();
 	
+	/**
+	 * Get the rule body.
+	 * @return The rule body.
+	 */
+	public IBody getBody();
+
 	/**
 	 * <p>
 	 * A rule is rectified if its head has the same form as 

@@ -49,12 +49,12 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
  * from Beeri's paper &quot;The Power Of Magic&quot;.
  * </p>
  * <p>
- * $Id: SupplementaryMSImpl.java,v 1.4 2007-10-09 07:45:32 poettler_ric Exp $
+ * $Id: SupplementaryMSImpl.java,v 1.5 2007-10-14 14:49:00 bazbishop237 Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.4 $
- * @date $Date: 2007-10-09 07:45:32 $
+ * @version $Revision: 1.5 $
+ * @date $Date: 2007-10-14 14:49:00 $
  */
 public class SupplementaryMSImpl {
 
@@ -91,11 +91,11 @@ public class SupplementaryMSImpl {
 		int ruleCounter = 1;
 		for (final AdornedRule r : ms.getRewrittenRules()) {
 			final List<IRule> supRules = new ArrayList<IRule>(
-					r.getBodyLenght() - 2);
+					r.getBody().getLength() - 2);
 			supMagicRules.add(supRules);
 
 			final List<ILiteral> sortedBody = new ArrayList<ILiteral>(r
-					.getBodyLiterals());
+					.getBody().getLiterals());
 			Collections.sort(sortedBody, r.getSIP().getLiteralComparator());
 
 			// generating the sup magic rules
@@ -111,7 +111,7 @@ public class SupplementaryMSImpl {
 				supRules.add(supmRule);
 				// modifying the magic rules
 				if (litCounter > 2) {
-					for (final ILiteral l : supmRule.getBodyLiterals()) {
+					for (final ILiteral l : supmRule.getBody().getLiterals()) {
 						if (l.getPredicate() instanceof AdornedPredicate) {
 							findAndSubstituteMagicRule(l, litCounter,
 									ruleCounter);
@@ -204,7 +204,7 @@ public class SupplementaryMSImpl {
 		if (r == null) {
 			return null;
 		}
-		for (final ILiteral bodyL : r.getBodyLiterals()) {
+		for (final ILiteral bodyL : r.getBody().getLiterals()) {
 			if (bodyL.getPredicate().getPredicateSymbol().startsWith(
 					MagicSetImpl.MAGIC_LABEL_PREFIX)) {
 				return null;
@@ -227,9 +227,9 @@ public class SupplementaryMSImpl {
 					"The rule index must be bigger than 0");
 		}
 
-		return BASIC.createRule(BASIC.createHead(r.getHeadLiterals()), BASIC
+		return BASIC.createRule(BASIC.createHead(r.getHead().getLiterals()), BASIC
 				.createBody(supMagicRules.get(ruleIndex - 1).get(
-						literalIndex - 3).getHeadLiterals()));
+						literalIndex - 3).getHead().getLiterals()));
 
 	}
 
@@ -265,7 +265,7 @@ public class SupplementaryMSImpl {
 
 		final List<ITerm> bounds = MagicSetImpl.getBounds(l);
 		for (final IRule magicRule : magicRules) {
-			final ILiteral headLiteral = magicRule.getHeadLiteral(0);
+			final ILiteral headLiteral = magicRule.getHead().getLiteral(0);
 			final List<ITerm> terms = headLiteral.getTuple().getTerms();
 			if ((headLiteral.getPredicate().getPredicateSymbol()
 					.startsWith(MagicSetImpl.MAGIC_PREDICATE_PREFIX
@@ -316,13 +316,13 @@ public class SupplementaryMSImpl {
 				supMagicRules.get(ruleIndex - 1).size() - 1);
 
 		final List<ILiteral> body = new ArrayList<ILiteral>();
-		body.add(lastRule.getHeadLiteral(0));
-		for (int i = sortedBody.indexOf(lastRule.getBodyLiteral(1)) + 1, m = sortedBody
+		body.add(lastRule.getHead().getLiteral(0));
+		for (int i = sortedBody.indexOf(lastRule.getBody().getLiteral(1)) + 1, m = sortedBody
 				.size(); i < m; i++) {
 			body.add(sortedBody.get(i));
 		}
 		return SipHelper.getAdornedRule(BASIC.createRule(BASIC.createHead(r
-				.getHeadLiterals()), BASIC.createBody(body)));
+				.getHead().getLiterals()), BASIC.createBody(body)));
 	}
 
 	/**
@@ -382,7 +382,7 @@ public class SupplementaryMSImpl {
 		} else { // adding the head of the previous supm rule as first
 			// literal
 			body[0] = supMagicRules.get(ruleIndex - 1).get(literalIndex - 3)
-					.getHeadLiteral(0);
+					.getHead().getLiteral(0);
 			body[1] = sortedBody.get(literalIndex - 1);
 		}
 
@@ -446,7 +446,7 @@ public class SupplementaryMSImpl {
 		}
 
 		final Set<IVariable> gotToStay = new HashSet<IVariable>();
-		gotToStay.addAll(r.getHeadVariables());
+		gotToStay.addAll(r.getHead().getVariables());
 		for (int counter = index, max = sortedBody.size(); counter < max; counter++) {
 			gotToStay.addAll(getAllVariables(sortedBody.get(counter).getTuple()
 					.getTerms()));

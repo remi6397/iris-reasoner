@@ -56,12 +56,12 @@ import java.sql.SQLException;
  * This implementaion is thread-save.
  * </p>
  * <p>
- * $Id: Program.java,v 1.5 2007-10-09 20:33:43 bazbishop237 Exp $
+ * $Id: Program.java,v 1.6 2007-10-14 14:49:04 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class Program implements IProgram {
 
@@ -487,10 +487,10 @@ public class Program implements IProgram {
 		WRITE.lock();
 		try {
 			if (rules.add(r)) {
-				for (final ILiteral l : r.getHeadLiterals()) {
+				for (final ILiteral l : r.getHead().getLiterals()) {
 					increasePredicateCount(l.getPredicate());
 				}
-				for (final ILiteral l : r.getBodyLiterals()) {
+				for (final ILiteral l : r.getBody().getLiterals()) {
 					increasePredicateCount(l.getPredicate());
 				}
 				return true;
@@ -508,10 +508,10 @@ public class Program implements IProgram {
 		WRITE.lock();
 		try {
 			if (rules.remove(r)) {
-				for (final ILiteral l : r.getHeadLiterals()) {
+				for (final ILiteral l : r.getHead().getLiterals()) {
 					decreasePredicateCount(l.getPredicate());
 				}
-				for (final ILiteral l : r.getBodyLiterals()) {
+				for (final ILiteral l : r.getBody().getLiterals()) {
 					decreasePredicateCount(l.getPredicate());
 				}
 				return true;
@@ -544,7 +544,7 @@ public class Program implements IProgram {
 		READ.lock();
 		try {
 			for (IRule r : rules) {
-				for (ILiteral l : r.getBodyLiterals()) {
+				for (ILiteral l : r.getBody().getLiterals()) {
 					if (!l.isPositive()) {
 						return true;
 					}
@@ -560,14 +560,14 @@ public class Program implements IProgram {
 		READ.lock();
 		try {
 			for (IRule r : rules) {
-				for (ILiteral l : r.getBodyLiterals()) {
+				for (ILiteral l : r.getBody().getLiterals()) {
 					for (Object t : l.getTuple().getTerms()) {
 						if (t instanceof ConstructedTerm) {
 							return true;
 						}
 					}
 				}
-				for (ILiteral l : r.getHeadLiterals()) {
+				for (ILiteral l : r.getHead().getLiterals()) {
 					for (Object t : l.getTuple().getTerms()) {
 						if (t instanceof ConstructedTerm) {
 							return true;

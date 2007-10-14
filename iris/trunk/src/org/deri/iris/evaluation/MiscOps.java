@@ -56,14 +56,14 @@ import org.deri.iris.builtins.EqualBuiltin;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.16 2007-10-12 12:41:54 bazbishop237 Exp $
+ * $Id: MiscOps.java,v 1.17 2007-10-14 14:49:05 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class MiscOps {
 
@@ -119,14 +119,14 @@ public class MiscOps {
 		if (r == null) {
 			throw new NullPointerException("The rule must not be null.");
 		}
-		if (r.getHeadLenght() != 1) {
+		if (r.getHead().getLength() != 1) {
 			throw new IllegalArgumentException(
 					"There must be only one literal in the head.");
 		}
-		final ILiteral hl = r.getHeadLiteral(0);
+		final ILiteral hl = r.getHead().getLiteral(0);
 		final int arity = hl.getPredicate().getArity();
 		final List<ITerm> headTerms = new ArrayList<ITerm>(arity);
-		final List<ILiteral> eqSubGoals = new ArrayList<ILiteral>(r.getBodyLenght());
+		final List<ILiteral> eqSubGoals = new ArrayList<ILiteral>(r.getBody().getLength());
 		final Map<IVariable, List<ILiteral>> headVarsMap = new HashMap<IVariable, List<ILiteral>>();
 		
 		// iterating through the terms of the head
@@ -159,8 +159,8 @@ public class MiscOps {
 		}
 		// Substitute all body variables with new variables and unify introduced subgolas 
 		// when possible.
-		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(r.getBodyLenght());
-		for (final ILiteral l: r.getBodyLiterals()) {
+		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(r.getBody().getLength());
+		for (final ILiteral l: r.getBody().getLiterals()) {
 			final List<ITerm> litTerms = new ArrayList<ITerm>(l.getPredicate().getArity());
 			for (final ITerm t : l.getTuple().getTerms()) {
 				if(! t.isGround()){
@@ -280,10 +280,10 @@ public class MiscOps {
 		while ((total >= max) && change) {
 			change = false;
 			for (final IRule r : rules) {
-				for (final ILiteral hl : r.getHeadLiterals()) {
+				for (final ILiteral hl : r.getHead().getLiterals()) {
 					final IPredicate hp = hl.getPredicate();
 
-					for (final ILiteral bl : r.getBodyLiterals()) {
+					for (final ILiteral bl : r.getBody().getLiterals()) {
 						final IPredicate bp = bl.getPredicate();
 
 						if (!bl.isPositive()) {
@@ -386,11 +386,11 @@ public class MiscOps {
 		RuleValidator rs = new RuleValidator( true, true );
 		
 		// Add all the head variables
-		for( ILiteral headLiteral : rule.getHeadLiterals() )
+		for( ILiteral headLiteral : rule.getHead().getLiterals() )
 			rs.addHeadVariables( extractVariableNames( headLiteral ) );
 
 		// Then for each literal in the rule
-		for( ILiteral lit : rule.getBodyLiterals() )
+		for( ILiteral lit : rule.getBody().getLiterals() )
 		{
 			// If it has any variables at all
 			if ( ! lit.isGround() )
