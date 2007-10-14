@@ -112,12 +112,12 @@ public final class MagicSetImpl {
 		// TODO: maybe a defensive copy should be made
 
 		for (final AdornedRule r : program.getAdornedRules()) {
-			if (r.getHeadLenght() != 1) {
+			if (r.getHead().getLength() != 1) {
 				throw new IllegalArgumentException("At the moment only heads "
 						+ "with length of 1 are allowed");
 			}
 
-			for (ILiteral l : r.getBodyLiterals()) {
+			for (ILiteral l : r.getBody().getLiterals()) {
 				if (l.getPredicate() instanceof AdornedPredicate) {
 					// creating a magic rule for the literal
 					magicRules.addAll(generateRules(l, r));
@@ -201,16 +201,16 @@ public final class MagicSetImpl {
 		if (r == null) {
 			throw new NullPointerException("The rule must not be null");
 		}
-		if (r.getHeadLenght() != 1) {
+		if (r.getHead().getLength() != 1) {
 			throw new IllegalArgumentException("At the moment only heads "
 					+ "with length of 1 are allowed");
 		}
 
-		final ILiteral headL = r.getHeadLiteral(0);
+		final ILiteral headL = r.getHead().getLiteral(0);
 
 		// computing the rewritten body
 		final List<ILiteral> rewrittenBody = new ArrayList<ILiteral>(r
-				.getBodyLiterals());
+				.getBody().getLiterals());
 		Collections
 				.sort(rewrittenBody, getAdornedSip(r).getLiteralComparator());
 
@@ -234,7 +234,7 @@ public final class MagicSetImpl {
 		adornedSip.updateSip(headL, magicL, boundVars);
 
 		// creating the normal rule
-		IRule tmpRule = BASIC.createRule(BASIC.createHead(r.getHeadLiterals()),
+		IRule tmpRule = BASIC.createRule(BASIC.createHead(r.getHead().getLiterals()),
 				BASIC.createBody(rewrittenBody));
 
 		// creating the adorned rule
@@ -288,7 +288,7 @@ public final class MagicSetImpl {
 			throw new IllegalArgumentException(
 					"The predicate of the literal must be adorned");
 		}
-		if (r.getHeadLenght() != 1) {
+		if (r.getHead().getLength() != 1) {
 			throw new IllegalArgumentException(
 					"At the moment only heads with length 1 are allowed");
 		}
@@ -312,7 +312,7 @@ public final class MagicSetImpl {
 			final Set<ILiteral> bodyLiterals = new HashSet<ILiteral>(rules
 					.size());
 			for (final IRule rule : rules) {
-				bodyLiterals.add(rule.getHeadLiteral(0));
+				bodyLiterals.add(rule.getHead().getLiteral(0));
 			}
 			final ILiteral hl = createMagicLiteral(l);
 			hl.setPositive(true);
@@ -351,7 +351,7 @@ public final class MagicSetImpl {
 			throw new IllegalArgumentException(
 					"The predicate of the literal must be adorned");
 		}
-		if (rule.getHeadLenght() != 1) {
+		if (rule.getHead().getLength() != 1) {
 			throw new IllegalArgumentException(
 					"At the moment only heads with length 1 are allowed");
 		}
@@ -371,7 +371,7 @@ public final class MagicSetImpl {
 		// if the head literal wasn't adorned (only happens if the query hasn't any constants
 		// skip the exchange of the literals, because there isn't anything to exchage, and 
 		// remove the first literal of the body (which is the headliteral)
-		final ILiteral headLiteral = rule.getHeadLiteral(0);
+		final ILiteral headLiteral = rule.getHead().getLiteral(0);
 		if ((headLiteral.getPredicate() instanceof AdornedPredicate)) {
 			for (int i = 0, max = bodyLiterals.size(); i < max; i++) {
 				if (bodyLiterals.get(i).equals(headLiteral)) {
@@ -435,12 +435,12 @@ public final class MagicSetImpl {
 			throw new IllegalArgumentException("The index must not be negative");
 		}
 
-		if (r.getHeadLenght() != 1) {
+		if (r.getHead().getLength() != 1) {
 			throw new IllegalArgumentException(
 					"At the moment only heads with length 1 are allowed");
 		}
 
-		final ILiteral headLiteral = r.getHeadLiteral(0);
+		final ILiteral headLiteral = r.getHead().getLiteral(0);
 
 		// create head of the rule
 		final ILiteral hl = createLabeledLiteral(targetLiteral, index);
@@ -794,8 +794,8 @@ public final class MagicSetImpl {
 		}
 
 		// comparing the head literals
-		final Iterator<ILiteral> h0 = r0.getHeadLiterals().iterator();
-		final Iterator<ILiteral> h1 = r1.getHeadLiterals().iterator();
+		final Iterator<ILiteral> h0 = r0.getHead().getLiterals().iterator();
+		final Iterator<ILiteral> h1 = r1.getHead().getLiterals().iterator();
 		while (h0.hasNext() && h1.hasNext()) {
 			if (!isSameLiteral(h0.next(), h1.next())) {
 				return false;
@@ -806,8 +806,8 @@ public final class MagicSetImpl {
 		}
 
 		// comparing the body literals
-		final Iterator<ILiteral> b0 = r0.getBodyLiterals().iterator();
-		final Iterator<ILiteral> b1 = r1.getBodyLiterals().iterator();
+		final Iterator<ILiteral> b0 = r0.getBody().getLiterals().iterator();
+		final Iterator<ILiteral> b1 = r1.getBody().getLiterals().iterator();
 		while (b0.hasNext() && b1.hasNext()) {
 			ILiteral l0 = b0.next();
 			while (l0.getPredicate().getPredicateSymbol().startsWith(

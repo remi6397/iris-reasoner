@@ -111,11 +111,11 @@ public class PredicateGraph implements IPredicateGraph {
 			throw new NullPointerException("The rule must not be null");
 		}
 
-		for (final ILiteral h : rule.getHeadLiterals()) {
+		for (final ILiteral h : rule.getHead().getLiterals()) {
 			final IPredicate hp = h.getPredicate();
 			g.addVertex(hp);
 
-			for (final ILiteral l : rule.getBodyLiterals()) {
+			for (final ILiteral l : rule.getBody().getLiterals()) {
 				final IPredicate p = l.getPredicate();
 				final LabeledEdge<IPredicate, Boolean> e = 
 					new LabeledEdge<IPredicate, Boolean>(p, hp, l.isPositive());
@@ -254,12 +254,12 @@ public class PredicateGraph implements IPredicateGraph {
 			if ((o1 == null) || (o2 == null)) {
 				throw new NullPointerException("None of the rule must be null");
 			}
-			if ((o1.getHeadLenght() != 1) || (o2.getHeadLenght() != 1)) {
+			if ((o1.getHead().getLength() != 1) || (o2.getHead().getLength() != 1)) {
 				throw new IllegalArgumentException(
 						"Only rules with a headlength of 1 are allowed.");
 			}
-			return pc.compare(o1.getHeadLiteral(0).getPredicate(), o2
-					.getHeadLiteral(0).getPredicate());
+			return pc.compare(o1.getHead().getLiteral(0).getPredicate(), o2
+					.getHead().getLiteral(0).getPredicate());
 		}
 	}
 

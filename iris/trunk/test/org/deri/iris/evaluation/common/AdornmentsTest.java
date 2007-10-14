@@ -66,11 +66,11 @@ import org.deri.iris.MiscHelper;
  * Tests the adornments.
  * </p>
  * <p>
- * $Id: AdornmentsTest.java,v 1.8 2007-10-09 07:45:33 poettler_ric Exp $
+ * $Id: AdornmentsTest.java,v 1.9 2007-10-14 14:49:04 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class AdornmentsTest extends TestCase {
 
@@ -342,7 +342,7 @@ public class AdornmentsTest extends TestCase {
 			throw new NullPointerException("The rule must not be null");
 		}
 		boolean changed = false;
-		List<ILiteral> lits = new ArrayList<ILiteral>(r.getHeadLiterals());
+		List<ILiteral> lits = new ArrayList<ILiteral>(r.getHead().getLiterals());
 		int i = 0;
 		for (final ILiteral l : lits) {
 			if (l.getPredicate() instanceof AdornedPredicate) {
@@ -354,7 +354,7 @@ public class AdornmentsTest extends TestCase {
 			i++;
 		}
 		final IHead h = BASIC.createHead(lits);
-		lits = new ArrayList<ILiteral>(r.getBodyLiterals());
+		lits = new ArrayList<ILiteral>(r.getBody().getLiterals());
 		i = 0;
 		for (final ILiteral l : lits) {
 			if (l.getPredicate() instanceof AdornedPredicate) {
@@ -931,11 +931,11 @@ public class AdornmentsTest extends TestCase {
 	 * Compares two rules according to their predicate symbols.
 	 * </p>
 	 * <p>
-	 * $Id: AdornmentsTest.java,v 1.8 2007-10-09 07:45:33 poettler_ric Exp $
+	 * $Id: AdornmentsTest.java,v 1.9 2007-10-14 14:49:04 bazbishop237 Exp $
 	 * </p>
 	 * 
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.8 $
+	 * @version $Revision: 1.9 $
 	 */
 	private static class RuleComparator implements Comparator<IRule> {
 		public int compare(IRule o1, IRule o2) {
@@ -944,20 +944,20 @@ public class AdornmentsTest extends TestCase {
 			}
 
 			int res = 0;
-			if ((res = o1.getHeadLenght() - o2.getHeadLenght()) != 0) {
+			if ((res = o1.getHead().getLength() - o2.getHead().getLength()) != 0) {
 				return res;
 			}
-			for (final Iterator<ILiteral> i1 = o1.getHeadLiterals().iterator(), i2 = o2
-					.getHeadLiterals().iterator(); i1.hasNext();) {
+			for (final Iterator<ILiteral> i1 = o1.getHead().getLiterals().iterator(), i2 = o2
+					.getHead().getLiterals().iterator(); i1.hasNext();) {
 				if ((res = compareLiteral(i1.next(), i2.next())) != 0) {
 					return res;
 				}
 			}
-			if ((res = o1.getBodyLenght() - o2.getBodyLenght()) != 0) {
+			if ((res = o1.getBody().getLength() - o2.getBody().getLength()) != 0) {
 				return res;
 			}
-			for (final Iterator<ILiteral> i1 = o1.getBodyLiterals().iterator(), i2 = o2
-					.getBodyLiterals().iterator(); i1.hasNext();) {
+			for (final Iterator<ILiteral> i1 = o1.getBody().getLiterals().iterator(), i2 = o2
+					.getBody().getLiterals().iterator(); i1.hasNext();) {
 				if ((res = compareLiteral(i1.next(), i2.next())) != 0) {
 					return res;
 				}

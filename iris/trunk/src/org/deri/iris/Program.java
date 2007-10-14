@@ -431,10 +431,10 @@ public class Program implements IProgram{
 		WRITE.lock();
 		try {
 			if(rules.add(r)) {
-				for (final ILiteral l : r.getHeadLiterals()) {
+				for (final ILiteral l : r.getHead().getLiterals()) {
 					increasePredicateCount(l.getPredicate());
 				}
-				for (final ILiteral l : r.getBodyLiterals()) {
+				for (final ILiteral l : r.getBody().getLiterals()) {
 					increasePredicateCount(l.getPredicate());
 				}
 				return true;
@@ -452,10 +452,10 @@ public class Program implements IProgram{
 		WRITE.lock();
 		try {
 			if(rules.remove(r)) {
-				for (final ILiteral l : r.getHeadLiterals()) {
+				for (final ILiteral l : r.getHead().getLiterals()) {
 					decreasePredicateCount(l.getPredicate());
 				}
-				for (final ILiteral l : r.getBodyLiterals()) {
+				for (final ILiteral l : r.getBody().getLiterals()) {
 					decreasePredicateCount(l.getPredicate());
 				}
 				return true;
@@ -488,7 +488,7 @@ public class Program implements IProgram{
 		READ.lock();
 		try {
 			for (IRule r : rules) {
-				for (ILiteral l : r.getBodyLiterals()) {
+				for (ILiteral l : r.getBody().getLiterals()) {
 					if (!l.isPositive()) {
 						return true;
 					}
@@ -504,14 +504,14 @@ public class Program implements IProgram{
 		READ.lock();
 		try {
 			for (IRule r : rules) {
-				for (ILiteral l : r.getBodyLiterals()) {
+				for (ILiteral l : r.getBody().getLiterals()) {
 					for (Object t : l.getTuple().getTerms()) {
 						if (t instanceof ConstructedTerm) {
 							return true;
 						}
 					}
 				}
-				for (ILiteral l : r.getHeadLiterals()) {
+				for (ILiteral l : r.getHead().getLiterals()) {
 					for (Object t : l.getTuple().getTerms()) {
 						if (t instanceof ConstructedTerm) {
 							return true;

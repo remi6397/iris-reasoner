@@ -57,41 +57,51 @@ public class Rule implements IRule {
 		this.body = body;
 	}
 	
+	public IHead getHead()
+	{
+		return head;
+	}
+	
+	public IBody getBody()
+	{
+		return body;
+	}
+
 	public boolean isRectified() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	public int getHeadLenght() {
-		return head.getHeadLenght();
-	}
-
-	public ILiteral getHeadLiteral(int arg) {
-		return head.getHeadLiteral(arg);
-	}
-
-	public List<ILiteral> getHeadLiterals() {
-		return head.getHeadLiterals();
-	}
-
-	public List<IVariable> getHeadVariables() {
-		return head.getHeadVariables();
-	}
-
+//	public int getHeadLenght() {
+//		return head.getHeadLenght();
+//	}
+//
+//	public ILiteral getHeadLiteral(int arg) {
+//		return head.getHeadLiteral(arg);
+//	}
+//
+//	public List<ILiteral> getHeadLiterals() {
+//		return head.getHeadLiterals();
+//	}
+//
+//	public List<IVariable> getHeadVariables() {
+//		return head.getHeadVariables();
+//	}
+//
 	public int getBodyLenght() {
-		return body.getBodyLenght();
+		return body.getLength();
 	}
 
 	public ILiteral getBodyLiteral(int arg) {
-		return body.getBodyLiteral(arg);
+		return body.getLiteral(arg);
 	}
 
 	public List<ILiteral> getBodyLiterals() {
-		return body.getBodyLiterals();
+		return body.getLiterals();
 	}
 
 	public List<IVariable> getBodyVariables() {
-		return body.getBodyVariables();
+		return body.getVariables();
 	}
 	
 	public int hashCode() {

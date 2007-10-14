@@ -48,12 +48,12 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
  * Helpermethods to do various tasks related to sips and adornments.
  * </p>
  * <p>
- * $Id: SipHelper.java,v 1.7 2007-10-09 07:45:32 poettler_ric Exp $
+ * $Id: SipHelper.java,v 1.8 2007-10-14 14:49:00 bazbishop237 Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.7 $
- * @date $Date: 2007-10-09 07:45:32 $
+ * @version $Revision: 1.8 $
+ * @date $Date: 2007-10-14 14:49:00 $
  */
 public class SipHelper {
 
@@ -75,7 +75,7 @@ public class SipHelper {
 		if (r == null) {
 			throw new NullPointerException("The rule must not be null");
 		}
-		if (r.getHeadLenght() != 1) {
+		if (r.getHead().getLength() != 1) {
 			throw new IllegalArgumentException(
 					"At the moment only heads with length 1 are allowed");
 		}
@@ -83,7 +83,7 @@ public class SipHelper {
 		final ISip copy = r.getSIP().defensifeCopy(r, r.getSIP().getQuery());
 		// exchanging all occurences of unadorned literals in the sip through
 		// the adorned ones in the head
-		for (final ILiteral l : r.getHeadLiterals()) {
+		for (final ILiteral l : r.getHead().getLiterals()) {
 			if (l.getPredicate() instanceof AdornedPredicate) {
 				final AdornedPredicate p = (AdornedPredicate) l.getPredicate();
 				final ILiteral unadornedLiteral = BASIC.createLiteral(l
@@ -95,7 +95,7 @@ public class SipHelper {
 		}
 		// exchanging all occurences of unadorned literals in the sip through
 		// the adorned ones in the body
-		for (final ILiteral l : r.getBodyLiterals()) {
+		for (final ILiteral l : r.getBody().getLiterals()) {
 			if (l.getPredicate() instanceof AdornedPredicate) {
 				final AdornedPredicate p = (AdornedPredicate) l.getPredicate();
 				final ILiteral unadornedLiteral = BASIC.createLiteral(l
@@ -198,12 +198,12 @@ public class SipHelper {
 		if (r == null) {
 			throw new NullPointerException("The rule must not´ be null");
 		}
-		if (r.getHeadLenght() != 1) {
+		if (r.getHead().getLength() != 1) {
 			throw new IllegalArgumentException(
 					"The head must have a length of 1");
 		}
 
-		final ILiteral headLiteral = r.getHeadLiteral(0);
+		final ILiteral headLiteral = r.getHead().getLiteral(0);
 
 		if (!(headLiteral.getPredicate() instanceof AdornedPredicate)) {
 			throw new IllegalArgumentException(

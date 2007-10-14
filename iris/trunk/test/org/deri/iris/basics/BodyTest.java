@@ -90,17 +90,17 @@ public class BodyTest extends TestCase {
 	public static void testBasic() {
 		final Body REFERENCE = new Body(LITERALS);
 		assertEquals("getBodyLenght doesn't work properly", LITERALS.size(),
-				REFERENCE.getBodyLenght());
+				REFERENCE.getLength());
 		assertTrue("getBodyLiterals doesn't work properly", REFERENCE
-				.getBodyLiterals().equals(LITERALS));
+				.getLiterals().equals(LITERALS));
 		for (int iCounter = 0; iCounter < LITERALS.size(); iCounter++) {
 			assertEquals("getBodyLiteral doesn't work properly", LITERALS
-					.get(iCounter), REFERENCE.getBodyLiteral(iCounter));
+					.get(iCounter), REFERENCE.getLiteral(iCounter));
 		}
 		assertEquals("The size of getBodyVariables doesn't work properly",
-				VARIABLES.size(), REFERENCE.getBodyVariables().size());
+				VARIABLES.size(), REFERENCE.getVariables().size());
 		assertTrue("getBodyVariables doesn't work properly", REFERENCE
-				.getBodyVariables().containsAll(VARIABLES));
+				.getVariables().containsAll(VARIABLES));
 	}
 
 	public static void testEquals() {

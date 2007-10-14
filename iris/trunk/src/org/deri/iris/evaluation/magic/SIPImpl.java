@@ -61,11 +61,11 @@ import org.jgrapht.graph.SimpleDirectedGraph;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.21 2007-07-25 08:38:52 poettler_ric Exp $
+ * $Id: SIPImpl.java,v 1.22 2007-10-14 14:49:00 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public final class SIPImpl implements ISip {
 	/**
@@ -105,7 +105,7 @@ public final class SIPImpl implements ISip {
 		if ((r == null) || (q == null)) {
 			throw new NullPointerException();
 		}
-		if (r.getHeadLenght() != 1) {
+		if (r.getHead().getLength() != 1) {
 			throw new IllegalArgumentException(
 					"At the moment only rule heads with length 1 are allowed");
 		}
@@ -117,7 +117,7 @@ public final class SIPImpl implements ISip {
 		rule = r;
 		query = q;
 
-		final ILiteral headLiteral = rule.getHeadLiteral(0);
+		final ILiteral headLiteral = rule.getHead().getLiteral(0);
 		final ILiteral queryLiteral = query.getQueryLiteral(0);
 		final IPredicate headPredicate = headLiteral.getPredicate();
 		final IPredicate queryPredicate = queryLiteral.getPredicate();
@@ -275,7 +275,7 @@ public final class SIPImpl implements ISip {
 			return connected;
 		}
 
-		for (ILiteral lit : rule.getBodyLiterals()) {
+		for (ILiteral lit : rule.getBody().getLiterals()) {
 			final Set<IVariable> variables = new HashSet<IVariable>(lit
 					.getTuple().getVariables());
 			variables.retainAll(bounds);
@@ -314,7 +314,7 @@ public final class SIPImpl implements ISip {
 
 		// determine all possible successors of this literal
 		final Set<ILiteral> possibleSuccessors = new HashSet<ILiteral>(rule
-				.getBodyLiterals());
+				.getBody().getLiterals());
 
 		possibleSuccessors.remove(l);
 
@@ -356,18 +356,18 @@ public final class SIPImpl implements ISip {
 		}
 		final Set<IVariable> vars = new HashSet<IVariable>(initiallyKnown);
 		vars.addAll(l.getTuple().getVariables());
-		if (l.equals(rule.getHeadLiteral(0))) {
-			return Collections.singletonMap(rule.getBodyLiteral(0), vars);
+		if (l.equals(rule.getHead().getLiteral(0))) {
+			return Collections.singletonMap(rule.getBody().getLiteral(0), vars);
 		}
 
 		// get the next literal -> ignore builtins
 		// FIXME: if two equal literals are in the body -> infinite loop
-		int newPos = rule.getBodyLiterals().indexOf(l) + 1;
-		final int rLength = rule.getBodyLenght();
+		int newPos = rule.getBody().getLiterals().indexOf(l) + 1;
+		final int rLength = rule.getBody().getLength();
 		if (newPos >= rLength) {
 			return Collections.EMPTY_MAP;
 		}
-		return Collections.singletonMap(rule.getBodyLiteral(newPos), vars);
+		return Collections.singletonMap(rule.getBody().getLiteral(newPos), vars);
 	}
 
 	/**
@@ -608,7 +608,7 @@ public final class SIPImpl implements ISip {
 					"The known set must not be, or contain null");
 		}
 
-		final List<ILiteral> body = new ArrayList<ILiteral>(r.getBodyLiterals());
+		final List<ILiteral> body = new ArrayList<ILiteral>(r.getBody().getLiterals());
 		final Set<IVariable> bound = new HashSet<IVariable>(known);
 		for (int i = 0, max = body.size(); i < max; i++) {
 			final ILiteral l = body.get(i);
@@ -626,7 +626,7 @@ public final class SIPImpl implements ISip {
 			}
 		}
 		return Factory.BASIC.createRule(Factory.BASIC.createHead(r
-				.getHeadLiterals()), Factory.BASIC.createBody(body));
+				.getHead().getLiterals()), Factory.BASIC.createBody(body));
 	}
 
 	/**
@@ -690,7 +690,7 @@ public final class SIPImpl implements ISip {
 		private final IPredicate headPredicate;
 
 		public HeuristicPassingOrder() {
-			final ILiteral headLiteral = rule.getHeadLiteral(0);
+			final ILiteral headLiteral = rule.getHead().getLiteral(0);
 			final ILiteral queryLiteral = query.getQueryLiteral(0);
 
 			headPredicate = headLiteral.getPredicate();
@@ -773,8 +773,8 @@ public final class SIPImpl implements ISip {
 			if ((o1 == null) || (o2 == null)) {
 				throw new NullPointerException("The literals must not be null");
 			}
-			final int pos1 = rule.getBodyLiterals().indexOf(o1);
-			final int pos2 = rule.getBodyLiterals().indexOf(o2);
+			final int pos1 = rule.getBody().getLiterals().indexOf(o1);
+			final int pos2 = rule.getBody().getLiterals().indexOf(o2);
 			if ((pos1 == -1 && pos2 == -1)) {
 				return 0;
 			} else if (pos1 == -1) {
@@ -792,10 +792,10 @@ public final class SIPImpl implements ISip {
 	 * The label of the edge will be <code>new HashSet<IVariable>()</code>.
 	 * </p>
 	 * <p>
-	 * $Id: SIPImpl.java,v 1.21 2007-07-25 08:38:52 poettler_ric Exp $
+	 * $Id: SIPImpl.java,v 1.22 2007-10-14 14:49:00 bazbishop237 Exp $
 	 * </p>
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.21 $
+	 * @version $Revision: 1.22 $
 	 * @since 0.3
 	 */
 	private static class SipEdgeFactory implements EdgeFactory<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> {

@@ -90,17 +90,17 @@ public class HeadTest extends TestCase {
 	public static void testBasic() {
 		final Head REFERENCE = new Head(LITERALS);
 		assertEquals("getHeadLength doesn't work properly", LITERALS.size(),
-				REFERENCE.getHeadLenght());
+				REFERENCE.getLength());
 		assertTrue("getHeadLiterals doesn't work properly", REFERENCE
-				.getHeadLiterals().equals(LITERALS));
+				.getLiterals().equals(LITERALS));
 		for (int iCounter = 0; iCounter < LITERALS.size(); iCounter++) {
 			assertEquals("getHeadLiteral doesn't work properly", LITERALS
-					.get(iCounter), REFERENCE.getHeadLiteral(iCounter));
+					.get(iCounter), REFERENCE.getLiteral(iCounter));
 		}
 		assertEquals("The size of getHeadVariables doesn't work properly",
-				VARIABLES.size(), REFERENCE.getHeadVariables().size());
+				VARIABLES.size(), REFERENCE.getVariables().size());
 		assertTrue("getHeadVariables doesn't work properly", REFERENCE
-				.getHeadVariables().containsAll(VARIABLES));
+				.getVariables().containsAll(VARIABLES));
 	}
 
 	public static void testEquals() {

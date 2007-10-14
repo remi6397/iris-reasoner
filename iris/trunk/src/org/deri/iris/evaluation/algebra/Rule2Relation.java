@@ -108,13 +108,13 @@ public class Rule2Relation {
 		for (IRule rule : rls) {
 			/* Rectify rules */
 			r = MiscOps.rectify(rule);
-			p = r.getHeadLiteral(0).getPredicate();
+			p = r.getHead().getLiteral(0).getPredicate();
 			
 			// TODO: If you don't need - remove it!
 			//m = new HashMap<ILiteral, List<IVariable>>();
 			//oVars = new HashSet<IVariable>();
 			
-			IComponent body = translateBody(r.getBodyLiterals());
+			IComponent body = translateBody(r.getBody().getLiterals());
 			results.put(p, body);
 			/**
 			 * <p>
@@ -172,11 +172,11 @@ public class Rule2Relation {
 				pr.addVariables(filterProjectionVariables(pInds, c.getVariables()));
 				results.put(p, pr);
 			}*/
-			int[] pInds = getProjectionIndexes(r.getHeadVariables(), c.getVariables());
+			int[] pInds = getProjectionIndexes(r.getHead().getVariables(), c.getVariables());
 			// TODO: don't use pInds! remove them from the constructor
 			pr = ALGEBRA.createProjectionDescriptor(pInds);
 			pr.addChild(c);
-			pr.addVariables(r.getHeadVariables());
+			pr.addVariables(r.getHead().getVariables());
 			results.put(p, pr);
 			
 			/**

@@ -56,11 +56,11 @@ import org.deri.iris.factory.Factory;
  * Tests for the datalog parser.
  * </p>
  * <p>
- * $Id: ParserTest.java,v 1.11 2007-10-04 22:32:07 bazbishop237 Exp $
+ * $Id: ParserTest.java,v 1.12 2007-10-14 14:49:00 bazbishop237 Exp $
  * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class ParserTest extends TestCase {
 
@@ -332,7 +332,7 @@ public class ParserTest extends TestCase {
 			"9 = 10, \n" + 
 			"11 != 12.";
 		Parser.parse(toParse, prog);
-		final Collection<ILiteral> body = prog.getRules().iterator().next().getBodyLiterals();
+		final Collection<ILiteral> body = prog.getRules().iterator().next().getBody().getLiterals();
 		assertTrue("Can't find '1 < 2' in " + body, body.contains(
 					BASIC.createLiteral(true, BUILTIN.createLess(CONCRETE.createInteger(1), CONCRETE.createInteger(2)))));
 		assertTrue("Can't find '3 <= 4' in " + body, body.contains(
@@ -354,7 +354,7 @@ public class ParserTest extends TestCase {
 			"7 * 8 = 9, \n" + 
 			"10 / 11 = 12.";
 		Parser.parse(toParse, prog);
-		final Collection<ILiteral> body = prog.getRules().iterator().next().getBodyLiterals();
+		final Collection<ILiteral> body = prog.getRules().iterator().next().getBody().getLiterals();
 		assertTrue("Can't find '1 + 2 = 3' in " + body, body.contains(
 					BASIC.createLiteral(true, BUILTIN.createAddBuiltin(
 							CONCRETE.createInteger(1), CONCRETE.createInteger(2), CONCRETE.createInteger(3)))));

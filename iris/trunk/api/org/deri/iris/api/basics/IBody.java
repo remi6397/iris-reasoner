@@ -41,7 +41,7 @@ import org.deri.iris.api.terms.IVariable;
  * the body of a rule consist of literals p1, p2,...,pn.
  * </p>
  * <p>
- * $Id: IBody.java,v 1.7 2006-12-07 16:35:25 darko Exp $
+ * $Id: IBody.java,v 1.8 2007-10-14 14:48:59 bazbishop237 Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -57,7 +57,7 @@ public interface IBody {
 	 * 
 	 * @return The length of the body.
 	 */
-	public int getBodyLenght();
+	public int getLength();
 
 	/**
 	 * <p>
@@ -68,7 +68,7 @@ public interface IBody {
 	 *            Index of element to return.
 	 * @return The literal at the specified position in this list.
 	 */
-	public ILiteral getBodyLiteral(int arg);
+	public ILiteral getLiteral(int arg);
 
 	/**
 	 * <p>
@@ -77,7 +77,7 @@ public interface IBody {
 	 * 
 	 * @return A list of all literals.
 	 */
-	public List<ILiteral> getBodyLiterals();
+	public List<ILiteral> getLiterals();
 
 	/**
 	 * <p>
@@ -86,5 +86,5 @@ public interface IBody {
 	 * 
 	 * @return A list of all variables.
 	 */
-	public List<IVariable> getBodyVariables();
+	public List<IVariable> getVariables();
 }
