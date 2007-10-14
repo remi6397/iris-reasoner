@@ -145,7 +145,7 @@ public final class MagicSetImpl {
 		assert q != null: "The query must not be null";
 
 		final Set<IRule> res = new HashSet<IRule>();
-		final List<ILiteral> query = q.getQueryLiterals();
+		final List<ILiteral> query = q.getLiterals();
 		for (int i = 1, max = query.size(); i < max; i++) {
 			res.add(BASIC.createRule(
 						BASIC.createHead(
@@ -258,8 +258,8 @@ public final class MagicSetImpl {
 	private static IAtom createSeed(final IQuery q) {
 		assert q != null: "The query must not be null";
 
-		return (q.getQueryLiterals().isEmpty()) ? 
-			null : createMagicAtom(q.getQueryLiterals().get(0).getAtom());
+		return (q.getLiterals().isEmpty()) ? 
+			null : createMagicAtom(q.getLiterals().get(0).getAtom());
 	}
 
 	/**

@@ -558,7 +558,7 @@ public class Program implements IProgram{
 		WRITE.lock();
 		try {
 			if (queries.add(q)) {
-				for (final ILiteral l : q.getQueryLiterals()) {
+				for (final ILiteral l : q.getLiterals()) {
 					increasePredicateCount(l.getPredicate());
 				}
 				return true;
@@ -580,7 +580,7 @@ public class Program implements IProgram{
 		WRITE.lock();
 		try {
 			if (queries.remove(q)) {
-				for (final ILiteral l : q.getQueryLiterals()) {
+				for (final ILiteral l : q.getLiterals()) {
 					decreasePredicateCount(l.getPredicate());
 				}
 				return true;

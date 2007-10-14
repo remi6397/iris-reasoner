@@ -53,11 +53,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.29 2007-10-14 14:49:01 bazbishop237 Exp $
+ * $Id: AdornedProgram.java,v 1.30 2007-10-14 15:11:58 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class AdornedProgram {
 
@@ -125,11 +125,11 @@ public class AdornedProgram {
 
 		IQuery newQuery = null; // if we can adorn the query save it here
 
-		if (query.getQueryLiterals().size() > 1) { // if we got a conjunctive query
+		if (query.getLiterals().size() > 1) { // if we got a conjunctive query
 			// construct the temp query and rule
 			final IRule tmpRule = BASIC.createRule(
 					BASIC.createHead(TEMP_QUERY_LITERAL), 
-					BASIC.createBody(query.getQueryLiterals()));
+					BASIC.createBody(query.getLiterals()));
 			final IQuery tmpQuery = BASIC.createQuery(TEMP_QUERY_LITERAL);
 
 			// adorn it
@@ -150,7 +150,7 @@ public class AdornedProgram {
 		} else { // handle non-conjunctive query
 			createAdornedRules(rules, query);
 
-			final ILiteral ql = query.getQueryLiterals().get(0);
+			final ILiteral ql = query.getLiterals().get(0);
 			final AdornedPredicate ap = new AdornedPredicate(ql);
 			if (Collections.frequency(Arrays.asList(ap.getAdornment()), Adornment.FREE) == 
 					ap.getAdornment().length) {
@@ -176,14 +176,14 @@ public class AdornedProgram {
 		assert rules != null: "The rules must not be null";
 		assert !rules.contains(null): "The rules must not contain null";
 		assert query != null: "The query must not be null";
-		assert query.getQueryLiterals().size() == 1: "The query must only contain one literal";
+		assert query.getLiterals().size() == 1: "The query must only contain one literal";
 
 		deriveredPredicates.addAll(updateDerivedPredicates(rules)); // TODO: i think this should go
 
 		// creating an adored predicate out of the query, and add it to the
 		// predicate sets
 		final AdornedPredicate qa = new AdornedPredicate(query
-				.getQueryLiteral(0));
+				.getLiteral(0));
 
 		final Set<AdornedPredicate> predicatesToProcess = new HashSet<AdornedPredicate>();
 		predicatesToProcess.add(qa);
@@ -650,7 +650,7 @@ public class AdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.29 $
+	 * @version $Revision: 1.30 $
 	 */
 	public static class AdornedRule implements IRule {
 		/** The inner rule represented by this object */

@@ -38,13 +38,11 @@ import org.deri.iris.api.terms.IVariable;
 
 public interface IQuery {
     
-	public int getQueryLenght();
+	public int getLength();
 	
-	public ILiteral getQueryLiteral(int arg);
+	public ILiteral getLiteral(int arg);
 	
-	public List<ILiteral> getQueryLiterals();
+	public List<ILiteral> getLiterals();
 	
-	public List<IVariable> getQueryVariables();
-	
-	public boolean equals(Object obj);
+	public List<IVariable> getVariables();
 }
