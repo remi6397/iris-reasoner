@@ -83,7 +83,7 @@ public abstract class GeneralSeminaiveEvaluation implements IBottomUpEvaluator {
 		
 		/** EVAL (pi, R1,..., Rk, Q1,..., Qm); */
 		this.results.getResults().put(
-				q.getQueryLiteral(0).getPredicate(), 
+				q.getLiteral(0).getPredicate(), 
 				this.method.evaluate(this.rr.translateQuery(q), mProgram));
 		
 		return true;

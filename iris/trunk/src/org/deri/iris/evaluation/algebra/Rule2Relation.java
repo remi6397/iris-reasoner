@@ -226,14 +226,14 @@ public class Rule2Relation {
 		
 		for(IQuery q : queries){
 			results.put(
-					q.getQueryLiteral(0).getPredicate(), 
-					translateBody(q.getQueryLiterals()));
+					q.getLiteral(0).getPredicate(), 
+					translateBody(q.getLiterals()));
 		}
 		return results;
 	}
 	
 	public IComponent translateQuery(final IQuery query) {
-		return	translateBody(query.getQueryLiterals());
+		return	translateBody(query.getLiterals());
 	}
 	
 	/**

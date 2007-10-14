@@ -44,19 +44,19 @@ public class Query implements IQuery {
 		this.body = body;
 	}
 
-	public int getQueryLenght() {
+	public int getLength() {
 		return body.getLength();
 	}
 
-	public ILiteral getQueryLiteral(int arg) {
+	public ILiteral getLiteral(int arg) {
 		return body.getLiteral(arg);
 	}
 
-	public List<ILiteral> getQueryLiterals() {
+	public List<ILiteral> getLiterals() {
 		return body.getLiterals();
 	}
 
-	public List<IVariable> getQueryVariables() {
+	public List<IVariable> getVariables() {
 		return body.getVariables();
 	}
 	

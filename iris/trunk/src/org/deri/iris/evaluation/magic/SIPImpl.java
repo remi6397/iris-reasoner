@@ -61,11 +61,11 @@ import org.jgrapht.graph.SimpleDirectedGraph;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.22 2007-10-14 14:49:00 bazbishop237 Exp $
+ * $Id: SIPImpl.java,v 1.23 2007-10-14 15:11:59 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public final class SIPImpl implements ISip {
 	/**
@@ -109,7 +109,7 @@ public final class SIPImpl implements ISip {
 			throw new IllegalArgumentException(
 					"At the moment only rule heads with length 1 are allowed");
 		}
-		if (q.getQueryLenght() != 1) {
+		if (q.getLength() != 1) {
 			throw new IllegalArgumentException(
 					"At the moment only queries with length 1 are allowed");
 		}
@@ -118,7 +118,7 @@ public final class SIPImpl implements ISip {
 		query = q;
 
 		final ILiteral headLiteral = rule.getHead().getLiteral(0);
-		final ILiteral queryLiteral = query.getQueryLiteral(0);
+		final ILiteral queryLiteral = query.getLiteral(0);
 		final IPredicate headPredicate = headLiteral.getPredicate();
 		final IPredicate queryPredicate = queryLiteral.getPredicate();
 
@@ -691,7 +691,7 @@ public final class SIPImpl implements ISip {
 
 		public HeuristicPassingOrder() {
 			final ILiteral headLiteral = rule.getHead().getLiteral(0);
-			final ILiteral queryLiteral = query.getQueryLiteral(0);
+			final ILiteral queryLiteral = query.getLiteral(0);
 
 			headPredicate = headLiteral.getPredicate();
 
@@ -792,10 +792,10 @@ public final class SIPImpl implements ISip {
 	 * The label of the edge will be <code>new HashSet<IVariable>()</code>.
 	 * </p>
 	 * <p>
-	 * $Id: SIPImpl.java,v 1.22 2007-10-14 14:49:00 bazbishop237 Exp $
+	 * $Id: SIPImpl.java,v 1.23 2007-10-14 15:11:59 bazbishop237 Exp $
 	 * </p>
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.22 $
+	 * @version $Revision: 1.23 $
 	 * @since 0.3
 	 */
 	private static class SipEdgeFactory implements EdgeFactory<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> {

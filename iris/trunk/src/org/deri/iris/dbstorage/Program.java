@@ -56,12 +56,12 @@ import java.sql.SQLException;
  * This implementaion is thread-save.
  * </p>
  * <p>
- * $Id: Program.java,v 1.6 2007-10-14 14:49:04 bazbishop237 Exp $
+ * $Id: Program.java,v 1.7 2007-10-14 15:11:58 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class Program implements IProgram {
 
@@ -615,7 +615,7 @@ public class Program implements IProgram {
 		WRITE.lock();
 		try {
 			if (queries.add(q)) {
-				for (final ILiteral l : q.getQueryLiterals()) {
+				for (final ILiteral l : q.getLiterals()) {
 					increasePredicateCount(l.getPredicate());
 				}
 				return true;
@@ -637,7 +637,7 @@ public class Program implements IProgram {
 		WRITE.lock();
 		try {
 			if (queries.remove(q)) {
-				for (final ILiteral l : q.getQueryLiterals()) {
+				for (final ILiteral l : q.getLiterals()) {
 					decreasePredicateCount(l.getPredicate());
 				}
 				return true;

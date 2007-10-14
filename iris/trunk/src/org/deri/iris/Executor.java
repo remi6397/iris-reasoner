@@ -43,12 +43,12 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
  * Executes a program using the semi-naive evaluation strategy.
  * </p>
  * <p>
- * $Id: Executor.java,v 1.10 2007-09-27 12:21:17 bazbishop237 Exp $
+ * $Id: Executor.java,v 1.11 2007-10-14 15:11:58 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class Executor implements IExecutor {
 
@@ -84,12 +84,12 @@ public class Executor implements IExecutor {
 		if (q == null) {
 			throw new IllegalArgumentException("The query must not be null");
 		}
-		if (q.getQueryLenght() != 1) {
+		if (q.getLength() != 1) {
 			throw new IllegalArgumentException(
 					"The length of the query literals must be 1");
 		}
 		this.evaluator.runQuery(q);
-		return this.evaluator.getResultSet().getResults().get(q.getQueryLiteral(0).getPredicate());
+		return this.evaluator.getResultSet().getResults().get(q.getLiteral(0).getPredicate());
 	}
 	
 	public Map<IPredicate, IMixedDatatypeRelation> computeSubstitutions() {

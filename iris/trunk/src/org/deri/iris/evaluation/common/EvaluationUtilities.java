@@ -42,12 +42,12 @@ import org.deri.iris.api.graph.IPredicateGraph;
  * evaluation methods.
  * </p>
  * <p>
- * $Id: EvaluationUtilities.java,v 1.3 2007-10-14 14:49:03 bazbishop237 Exp $
+ * $Id: EvaluationUtilities.java,v 1.4 2007-10-14 15:11:58 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author uwekel
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class EvaluationUtilities {
 
@@ -117,7 +117,7 @@ public class EvaluationUtilities {
 		// predicates instead of using a graph (might be faster)
 		final IPredicateGraph pg = org.deri.iris.factory.Factory.GRAPH.createPredicateGraph(r);
 		final Set<IPredicate> depends = new HashSet<IPredicate>();
-		for (final ILiteral l : q.getQueryLiterals()) {
+		for (final ILiteral l : q.getLiterals()) {
 			depends.add(l.getPredicate());
 			depends.addAll(pg.getDepends(l.getPredicate()));
 		}
