@@ -57,10 +57,6 @@ public class Base64BinaryTest extends TestCase {
 				new Base64Binary(BASIC), new Base64Binary(BASICMORE));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new Base64Binary(BASIC));
-	}
-
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new Base64Binary(BASIC),
 				new Base64Binary(BASIC), new Base64Binary(BASICMORE),

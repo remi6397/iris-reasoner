@@ -74,10 +74,6 @@ public class IriTest extends TestCase {
 				new Iri(URISTRMORE));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new Iri(URISTR));
-	}
-
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new Iri(URISTR), new Iri(URISTR),
 				new Iri(URISTRMORE), new Iri(URISTRMORE1));

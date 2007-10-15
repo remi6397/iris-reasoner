@@ -59,19 +59,14 @@ public class DoubleTest extends TestCase {
 	public void testBasic() {
 		DoubleTerm basic = new DoubleTerm(BASIC);
 		DoubleTerm changed = new DoubleTerm(MORE);
-		changed.setValue(BASIC);
+
 		assertEquals("object not initialized correctly", BASIC, basic
 				.getValue());
-		assertEquals("setValue(..) doesn't work correctly", basic, changed);
 	}
 
 	public void testEquals() {
 		ObjectTests.runTestEquals(new DoubleTerm(BASIC), new DoubleTerm(BASIC),
 				new DoubleTerm(MORE));
-	}
-
-	public void testClone() {
-		ObjectTests.runTestClone(new DoubleTerm(BASIC));
 	}
 
 	public void testCompare() {

@@ -47,10 +47,6 @@ public class GYearTest extends TestCase {
 				new GYear(YEAR + 1));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new GYear(YEAR));
-	}
-
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new GYear(YEAR), new GYear(YEAR),
 				new GYear(YEAR + 1), new GYear(YEAR + 2));

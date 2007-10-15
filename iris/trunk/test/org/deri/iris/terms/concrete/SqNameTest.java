@@ -63,10 +63,6 @@ public class SqNameTest extends TestCase {
 				SPACE, NAME), new SqName(SPACE, NAMEMORE));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new SqName(SPACE, NAME));
-	}
-
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new SqName(SPACE, NAME),
 				new SqName(SPACE, NAME), new SqName(SPACE, NAMEMORE),

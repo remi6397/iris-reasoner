@@ -42,7 +42,7 @@ import org.deri.iris.api.terms.concrete.IIri;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class Iri implements IIri, Cloneable {
+public class Iri implements IIri {
 
 	/** the uri represented by this object */
 	private URI uri;
@@ -73,19 +73,6 @@ public class Iri implements IIri, Cloneable {
 		_setValue(uri);
 	}
 
-	public Object clone() {
-		try {
-			Iri i = (Iri) super.clone();
-			i.uri = new URI(uri.toString());
-			return i;
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
-		return null;
-	}
-
 	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
@@ -114,42 +101,16 @@ public class Iri implements IIri, Cloneable {
 		return uri.hashCode();
 	}
 
-	/**
-	 * Sets the uri.
-	 * 
-	 * @param arg
-	 *            the string of the uri
-	 * @throws NullPointerException
-	 *             if the string is null
-	 * @throws IllegalArgumentException
-	 *             if the string couldn't be parsed to an URI
-	 */
-	public void setValue(final String arg) {
-		_setValue(arg);
-	}
-
 	private void _setValue(final String arg) {
 		if (arg == null) {
 			throw new NullPointerException("arg must not be null");
 		}
 		try {
-			setValue(new URI(arg));
+			_setValue(new URI(arg));
 		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException("Wasn't able to parse: "
 					+ arg.trim());
 		}
-	}
-
-	/**
-	 * Sets the uri.
-	 * 
-	 * @param uri
-	 *            the new uri
-	 * @throws NullPointerException
-	 *             if the uri is null
-	 */
-	public void setValue(final URI uri) {
-		_setValue(uri);
 	}
 
 	private void _setValue(final URI uri) {

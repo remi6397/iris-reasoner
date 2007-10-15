@@ -38,19 +38,12 @@ import org.deri.iris.api.terms.ITerm;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class DecimalTerm implements IDecimalTerm, Cloneable {
+public class DecimalTerm implements IDecimalTerm {
 
 	private double d = 0d;
 
 	DecimalTerm(final double d) {
 		this.d = d;
-	}
-
-	public void setValue(Double arg) {
-		if (arg == null) {
-			throw new IllegalArgumentException("The value must not be null");
-		}
-		d = arg;
 	}
 
 	public Double getValue() {
@@ -72,15 +65,6 @@ public class DecimalTerm implements IDecimalTerm, Cloneable {
 		
 		DecimalTerm dt = (DecimalTerm) o;
 		return Double.compare(d, dt.getValue());
-	}
-
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
 	}
 
 	public boolean equals(final Object o) {

@@ -47,10 +47,6 @@ public class GMonthTest extends TestCase {
 				new GMonth(MONTH + 1));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new GMonth(MONTH));
-	}
-
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new GMonth(MONTH),
 				new GMonth(MONTH), new GMonth(MONTH + 1),

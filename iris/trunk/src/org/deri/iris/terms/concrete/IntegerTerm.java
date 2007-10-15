@@ -40,19 +40,12 @@ import org.deri.iris.api.terms.ITerm;
  * @author Holger Lausen
  * @version $Revision$
  */
-public class IntegerTerm implements IIntegerTerm, Cloneable {
+public class IntegerTerm implements IIntegerTerm {
 	/** integer to represent this datatype */
 	private int i;
 
 	IntegerTerm(int z) {
 		this.i = z;
-	}
-
-	public void setValue(final Integer arg) {
-		if (arg == null) {
-			throw new IllegalArgumentException("The value must not be null");
-		}
-		i = arg;
 	}
 
 	public Integer getValue() {
@@ -79,15 +72,6 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 		return i;
 	}
 
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
-	}
-
 	public boolean equals(final Object o) {
 		if (!(o instanceof IntegerTerm)) {
 			return false;
@@ -103,9 +87,5 @@ public class IntegerTerm implements IIntegerTerm, Cloneable {
 	 */
 	public String toString() {
 		return Integer.toString(i);
-	}
-
-	public IntegerTerm getMinValue() {
-		return new IntegerTerm(Integer.MIN_VALUE);
 	}
 }

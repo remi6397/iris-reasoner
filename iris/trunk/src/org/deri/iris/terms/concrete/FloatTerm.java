@@ -38,7 +38,7 @@ import org.deri.iris.api.terms.ITerm;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class FloatTerm implements IFloatTerm, Cloneable {
+public class FloatTerm implements IFloatTerm {
 
 	/** The float represented by this object */
 	private float f;
@@ -56,18 +56,6 @@ public class FloatTerm implements IFloatTerm, Cloneable {
 		this.f = f;
 	}
 	
-	/**
-	 * Sets the value to the given float.
-	 * @param arg the value for this object
-	 * @throws NullPointerException if the float is null
-	 */
-	public void setValue(final Float arg) {
-		if (arg == null) {
-			throw new NullPointerException();
-		}
-		f = arg;
-	}
-
 	public Float getValue() {
 		return f;
 	}
@@ -89,15 +77,6 @@ public class FloatTerm implements IFloatTerm, Cloneable {
 		return Float.compare(f, ft.getValue());
 	}
 
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
-	}
-	
 	public int hashCode() {
 		return Float.valueOf(f).hashCode();
 	}

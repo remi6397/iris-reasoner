@@ -25,7 +25,6 @@
  */
 package org.deri.iris.terms;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -47,7 +46,7 @@ import org.deri.iris.api.terms.IVariable;
  * @author Darko Anicic, DERI Innsbruck
  * @version $Revision$
  */
-public class ConstructedTerm implements IConstructedTerm, Cloneable {
+public class ConstructedTerm implements IConstructedTerm {
 
 	/**
 	 * A constructed term consist of a list of terms, where these terms 
@@ -67,13 +66,6 @@ public class ConstructedTerm implements IConstructedTerm, Cloneable {
 		}
 		this.symbol = symbol;
 		this.terms.addAll(terms);
-	}
-
-	public void setFunctionSymbol(String arg) {
-		if (arg == null) {
-			throw new IllegalArgumentException("The symbol must not be null");
-		}
-		symbol = arg;
 	}
 
 	public String getFunctionSymbol() {
@@ -125,20 +117,6 @@ public class ConstructedTerm implements IConstructedTerm, Cloneable {
 		return result;
 	}
 
-	public Object clone() {
-		try {
-			ConstructedTerm ct = (ConstructedTerm) super.clone();
-			ct.terms = new ArrayList<ITerm>(terms.size());
-			for (ITerm t : terms) {
-				ct.terms.add((ITerm) runClone(t));
-			}
-			return ct;
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
-	}
-
 	public String toString() {
 		return symbol + terms.toString();
 	}
@@ -152,7 +130,6 @@ public class ConstructedTerm implements IConstructedTerm, Cloneable {
 				&& (terms.containsAll(t.terms));
 	}
 
-	@SuppressWarnings("unchecked")
 	public int compareTo(final ITerm oo) {
 		if (oo == null) {
 			return 1;
@@ -173,30 +150,6 @@ public class ConstructedTerm implements IConstructedTerm, Cloneable {
 				return result;
 		}
 		return terms.size() - ((List<ITerm>)o.getValue()).size();
-	}
-
-	/**
-	 * Helpermethod to clone an object, because the Object.clone() method is
-	 * protected. This Method clones a object using reflection.
-	 * 
-	 * @param o
-	 *            the object to clone
-	 * @return the clone
-	 */
-	private static Object runClone(final Object o) {
-		// TODO: think about caching the methods
-		try {
-			return o.getClass().getMethod("clone", (Class[]) null).invoke(o,
-					(Object[]) null);
-		} catch (SecurityException e) {
-			throw new IllegalArgumentException(e);
-		} catch (IllegalAccessException e) {
-			throw new IllegalArgumentException(e);
-		} catch (InvocationTargetException e) {
-			throw new IllegalArgumentException(e);
-		} catch (NoSuchMethodException e) {
-			throw new IllegalArgumentException(e);
-		}
 	}
 
 	public List<ITerm> getValue() {

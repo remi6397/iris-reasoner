@@ -56,10 +56,6 @@ public class NonEqualityTerm implements ITerm{
 		return this.term.compareTo(o);
 	}
 	
-	public Object clone() throws CloneNotSupportedException{
-		return this.term.clone();
-	}
-	
 	public String toString() {
 		return "!" + this.term.toString();
 	}

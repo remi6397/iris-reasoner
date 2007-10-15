@@ -48,7 +48,7 @@ import org.deri.iris.api.terms.ITerm;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class GYear implements IGYear, Cloneable {
+public class GYear implements IGYear {
 
 	/** Factory used to create the xml durations. */
 	private static final DatatypeFactory FACTORY;
@@ -97,17 +97,6 @@ public class GYear implements IGYear, Cloneable {
 				tzHour * 60 + tzMinute);
 	}
 
-	public Object clone() {
-		try {
-			GYear gy = (GYear) super.clone();
-			gy.date = (XMLGregorianCalendar) date.clone();
-			return gy;
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
-	}
-
 	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
@@ -143,12 +132,5 @@ public class GYear implements IGYear, Cloneable {
 
 	public Integer getValue() {
 		return date.getYear();
-	}
-
-	public void setValue(Integer t) {
-		if (t == null) {
-			throw new IllegalArgumentException("The value must not be null");
-		}
-		date.setYear(t);
 	}
 }

@@ -27,7 +27,6 @@ package org.deri.iris.terms.concrete;
 
 import org.deri.iris.ObjectTests;
 import org.deri.iris.TermTests;
-import org.deri.iris.factory.Factory;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -59,20 +58,14 @@ public class DecimalTest extends TestCase {
 
 	public void testBasic() {
 		DecimalTerm basic = new DecimalTerm(BASIC);
-		DecimalTerm changed = new DecimalTerm(MORE);
-		changed.setValue(BASIC);
+
 		assertEquals("object not initialized correctly", BASIC, basic
 				.getValue());
-		assertEquals("setValue(..) doesn't work correctly", basic, changed);
 	}
 
 	public void testEquals() {
 		ObjectTests.runTestEquals(new DecimalTerm(BASIC),
 				new DecimalTerm(BASIC), new DecimalTerm(MORE));
-	}
-
-	public void testClone() {
-		ObjectTests.runTestClone(new DecimalTerm(BASIC));
 	}
 
 	public void testCompare() {

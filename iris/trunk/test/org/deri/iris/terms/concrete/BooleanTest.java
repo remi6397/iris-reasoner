@@ -47,10 +47,6 @@ public class BooleanTest extends TestCase {
 				new BooleanTerm(false));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new BooleanTerm(true));
-	}
-
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new BooleanTerm(false), new BooleanTerm(
 				false), new BooleanTerm(true));

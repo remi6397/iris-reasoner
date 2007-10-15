@@ -44,7 +44,7 @@ import org.deri.iris.api.terms.concrete.IGMonth;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class GMonth implements IGMonth, Cloneable {
+public class GMonth implements IGMonth {
 
 	/** Factory used to create the xml durations. */
 	private static final DatatypeFactory FACTORY;
@@ -93,17 +93,6 @@ public class GMonth implements IGMonth, Cloneable {
 				tzHour * 60 + tzMinute);
 	}
 
-	public Object clone() {
-		try {
-			GMonth gm = (GMonth) super.clone();
-			gm.date = (XMLGregorianCalendar) date.clone();
-			return gm;
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
-	}
-
 	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
@@ -139,12 +128,5 @@ public class GMonth implements IGMonth, Cloneable {
 
 	public Integer getValue() {
 		return date.getMonth();
-	}
-
-	public void setValue(Integer t) {
-		if (t == null) {
-			throw new IllegalArgumentException("The value must not be null");
-		}
-		date.setMonth(t);
 	}
 }

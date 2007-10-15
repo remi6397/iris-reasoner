@@ -46,10 +46,6 @@ public class GDayTest extends TestCase {
 				new GDay(DAY + 1));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new GDay(DAY));
-	}
-
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new GDay(DAY), new GDay(DAY), new GDay(
 				DAY + 1), new GDay(DAY + 2));

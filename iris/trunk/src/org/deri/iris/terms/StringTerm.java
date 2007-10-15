@@ -38,16 +38,12 @@ import org.deri.iris.api.terms.ITerm;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class StringTerm implements IStringTerm, Cloneable {
+public class StringTerm implements IStringTerm {
 
 	private String value = "";
 
 	StringTerm(final String value) {
 		this.value = value;
-	}
-
-	public void setValue(String arg) {
-		this.value = arg;
 	}
 
 	public String getValue() {
@@ -78,15 +74,6 @@ public class StringTerm implements IStringTerm, Cloneable {
 		}
 		StringTerm st = (StringTerm) o;
 		return value.equals(st.value);
-	}
-
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
 	}
 
 	/**

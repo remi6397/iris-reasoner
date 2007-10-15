@@ -44,7 +44,7 @@ import org.deri.iris.api.terms.ITerm;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class GDay implements IGDay, Cloneable {
+public class GDay implements IGDay {
 
 	/** Factory used to create the xml durations. */
 	private static final DatatypeFactory FACTORY;
@@ -93,17 +93,6 @@ public class GDay implements IGDay, Cloneable {
 				tzHour * 60 + tzMinute);
 	}
 
-	public Object clone() {
-		try {
-			GDay gi = (GDay) super.clone();
-			gi.date = (XMLGregorianCalendar) date.clone();
-			return gi;
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
-	}
-
 	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
@@ -139,12 +128,5 @@ public class GDay implements IGDay, Cloneable {
 
 	public Integer getValue() {
 		return date.getDay();
-	}
-
-	public void setValue(Integer t) {
-		if (t == null) {
-			throw new IllegalArgumentException("The value must not be null");
-		}
-		date.setDay(t);
 	}
 }

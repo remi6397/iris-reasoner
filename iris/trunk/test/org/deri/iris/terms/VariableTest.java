@@ -48,22 +48,18 @@ public class VariableTest extends TestCase {
 				.getSimpleName());
 	}
 
-	public void testBasic() {
-		Variable basic = new Variable(BASIC);
-		Variable changed = new Variable(MORE);
-		changed.setName(BASIC);
-		assertEquals("object not initialized correctly", BASIC, basic
-				.getName());
-		assertEquals("setValue(..) doesn't work correctly", basic, changed);
-	}
+//	public void testBasic() {
+//		Variable basic = new Variable(BASIC);
+//		Variable changed = new Variable(MORE);
+//		changed.setName(BASIC);
+//		assertEquals("object not initialized correctly", BASIC, basic
+//				.getName());
+//		assertEquals("setValue(..) doesn't work correctly", basic, changed);
+//	}
 
 	public void testEquals() {
 		ObjectTests.runTestEquals(new Variable(BASIC), new Variable(BASIC),
 				new Variable(MORE1));
-	}
-
-	public void testClone() {
-		ObjectTests.runTestClone(new Variable(BASIC));
 	}
 
 	public void testHashCode() {

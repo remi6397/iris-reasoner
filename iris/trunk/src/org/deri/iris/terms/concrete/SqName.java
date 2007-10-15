@@ -40,7 +40,7 @@ import org.deri.iris.api.terms.concrete.ISqName;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class SqName implements ISqName, Cloneable {
+public class SqName implements ISqName {
 
 	/** Namespace for this sqname */
 	private IIri namespace;
@@ -157,32 +157,6 @@ public class SqName implements ISqName, Cloneable {
 		int result = namespace.hashCode();
 		result = result * 37 + name.hashCode();
 		return result;
-	}
-
-	public Object clone() {
-		try {
-			SqName sq = (SqName) super.clone();
-			sq.namespace = (Iri) ((Iri) namespace).clone();
-			return sq;
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
-	}
-
-	/**
-	 * Sets the value for this sqname. The format of the string must be
-	 * <code>&lt;namespace&gt;#&lt;name&gt;</code>.
-	 * 
-	 * @param arg
-	 *            the string to parse
-	 * @throws NullPointerException
-	 *             if arg is null
-	 * @throws IllegalArgumentException
-	 *             if the string got an invalid format
-	 */
-	public void setValue(final String arg) {
-		_setValue(arg);
 	}
 
 	private void _setValue(final String arg) {

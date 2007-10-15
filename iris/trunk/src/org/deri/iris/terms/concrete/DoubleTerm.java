@@ -38,7 +38,7 @@ import org.deri.iris.api.terms.ITerm;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class DoubleTerm implements IDoubleTerm, Cloneable {
+public class DoubleTerm implements IDoubleTerm {
 
 	private double d = 0d;
 	
@@ -46,13 +46,6 @@ public class DoubleTerm implements IDoubleTerm, Cloneable {
 		this.d = d;
 	}
 	
-	public void setValue(final Double arg) {
-		if (arg == null) {
-			throw new IllegalArgumentException("The value must not be null");
-		}
-		d = arg;
-	}
-
 	public Double getValue() {
 		return d;
 	}
@@ -72,15 +65,6 @@ public class DoubleTerm implements IDoubleTerm, Cloneable {
 		
 		DoubleTerm dt = (DoubleTerm) o;
 		return Double.compare(d, dt.getValue());
-	}
-	
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
 	}
 	
 	public boolean equals(final Object o) {

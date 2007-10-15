@@ -57,10 +57,6 @@ public class HexBinaryTest extends TestCase {
 				BASIC), new HexBinary(BASICMORE));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new HexBinary(BASIC));
-	}
-
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new HexBinary(BASIC),
 				new HexBinary(BASIC), new HexBinary(BASICMORE),

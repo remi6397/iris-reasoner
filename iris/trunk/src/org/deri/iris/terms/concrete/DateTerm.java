@@ -43,7 +43,7 @@ import org.deri.iris.api.terms.ITerm;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class DateTerm implements IDateTerm, Cloneable {
+public class DateTerm implements IDateTerm {
 
 	/** Factory used to create the xml durations. */
 	private static final DatatypeFactory FACTORY;
@@ -96,17 +96,6 @@ public class DateTerm implements IDateTerm, Cloneable {
 		this(year, month, day, 0, 0);
 	}
 
-	public Object clone() {
-		try {
-			DateTerm dt = (DateTerm) super.clone();
-			dt.date = (XMLGregorianCalendar) date.clone();
-			return dt;
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return false;
-	}
-
 	public boolean equals(final Object obj) {
 		if (!(obj instanceof DateTerm)) {
 			return false;
@@ -150,12 +139,5 @@ public class DateTerm implements IDateTerm, Cloneable {
 
 	public XMLGregorianCalendar getValue() {
 		return (XMLGregorianCalendar) date.clone();
-	}
-
-	public void setValue(final XMLGregorianCalendar t) {
-		if (t == null) {
-			throw new NullPointerException("The value must not be null");
-		}
-		date = t;
 	}
 }

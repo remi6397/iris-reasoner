@@ -41,12 +41,12 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Simple implementation of ITime.
  * </p>
  * <p>
- * $Id: Time.java,v 1.6 2007-10-09 20:29:37 bazbishop237 Exp $
+ * $Id: Time.java,v 1.7 2007-10-15 15:46:15 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
-public class Time implements ITime, Cloneable {
+public class Time implements ITime {
 
 	/** Factory used to create the xml durations. */
 	private static final DatatypeFactory FACTORY;
@@ -123,17 +123,6 @@ public class Time implements ITime, Cloneable {
 				tzHour * 60 + tzMinute);
 	}
 
-	public Object clone() {
-		try {
-			Time dt = (Time) super.clone();
-			dt.time = (XMLGregorianCalendar) time.clone();
-			return dt;
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
-	}
-
 	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
@@ -197,13 +186,5 @@ public class Time implements ITime, Cloneable {
 
 	public XMLGregorianCalendar getValue() {
 		return (XMLGregorianCalendar) time.clone();
-	}
-
-	public void setValue(final XMLGregorianCalendar t) {
-		// TODO shouldn't a copy be made?
-		if (t == null) {
-			throw new IllegalArgumentException("The value must not be null");
-		}
-		time = t;
 	}
 }
