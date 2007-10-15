@@ -41,7 +41,7 @@ package org.deri.iris.api.terms;
  * a positive number.
  * </p>
  * <p>
- * $Id: ITerm.java,v 1.14 2007-10-09 20:19:39 bazbishop237 Exp $
+ * $Id: ITerm.java,v 1.15 2007-10-15 15:20:38 bazbishop237 Exp $
  * </p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
@@ -63,19 +63,4 @@ public interface ITerm extends Comparable<ITerm>{
 	 * @return	The term value.
 	 */
 	public Object getValue();
-
-	/**
-	 * Sets a vale of the term.
-	 * 
-	 * @param t The new value of the term.
-	 */
-//	public void setValue(WrappedType t);
-
-	/**
-	 * Creates and returns a copy of this object.
-	 * 
-	 * @return	A clone of this instance.
-	 * @throws CloneNotSupportedException
-	 */
-	public Object clone() throws CloneNotSupportedException;
 }

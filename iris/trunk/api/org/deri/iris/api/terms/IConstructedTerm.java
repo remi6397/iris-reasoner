@@ -42,13 +42,6 @@ public interface IConstructedTerm extends ITerm{
 	public List<ITerm> getValue();
 	
 	/**
-	 * Set the name of the constructed term (function symbol).
-	 * 
-	 * @param arg	The name of the constructed term.
-	 */
-	public void setFunctionSymbol(String arg);
-	
-	/**
 	 * Get the name of the constructed term (function symbol).
 	 * 
 	 * @return	The name of the constructed term.
