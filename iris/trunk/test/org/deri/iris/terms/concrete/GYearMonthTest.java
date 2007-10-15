@@ -49,10 +49,6 @@ public class GYearMonthTest extends TestCase {
 				new GYearMonth(YEAR, MONTH + 1));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new GYearMonth(YEAR, MONTH));
-	}
-
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new GYearMonth(YEAR, MONTH),
 				new GYearMonth(YEAR, MONTH), new GYearMonth(YEAR,

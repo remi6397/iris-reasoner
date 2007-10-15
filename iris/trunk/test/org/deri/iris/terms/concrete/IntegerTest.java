@@ -59,20 +59,13 @@ public class IntegerTest extends TestCase {
 
 	public void testBasic() {
 		IntegerTerm basic = new IntegerTerm(BASIC);
-		IntegerTerm changed = new IntegerTerm(MORE);
-		changed.setValue(BASIC);
 		assertEquals("object not initialized correctly",
 				Integer.valueOf(BASIC), basic.getValue());
-		assertEquals("setValue(..) doesn't work correctly", basic, changed);
 	}
 
 	public void testEquals() {
 		ObjectTests.runTestEquals(new IntegerTerm(BASIC),
 				new IntegerTerm(BASIC), new IntegerTerm(MORE));
-	}
-
-	public void testClone() {
-		ObjectTests.runTestClone(new IntegerTerm(BASIC));
 	}
 
 	public void testCompare() {

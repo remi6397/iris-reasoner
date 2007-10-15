@@ -41,7 +41,7 @@ import org.deri.iris.api.terms.ITerm;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class Base64Binary implements IBase64Binary, Cloneable {
+public class Base64Binary implements IBase64Binary {
 
 	public static final Pattern PATTERN = Pattern.compile("([a-zA-Z0-9/+]{4})*"
 			+ "(([a-zA-Z0-9/+]{2}[AEIMQUYcgkosw048]=)|"
@@ -55,15 +55,6 @@ public class Base64Binary implements IBase64Binary, Cloneable {
 	Base64Binary(final String content) {
 		this();
 		_setValue(content);
-	}
-
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
 	}
 
 	public int compareTo(ITerm o) {
@@ -88,10 +79,6 @@ public class Base64Binary implements IBase64Binary, Cloneable {
 
 	public int hashCode() {
 		return content.hashCode();
-	}
-
-	public void setValue(final String content) {
-		_setValue(content);
 	}
 
 	private void _setValue(final String content) {

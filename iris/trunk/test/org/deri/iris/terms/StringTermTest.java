@@ -67,10 +67,6 @@ public class StringTermTest extends TestCase {
 				new StringTerm(MORE1));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new StringTerm(BASIC));
-	}
-
 	public void testHashCode() {
 		ObjectTests
 				.runTestHashCode(new StringTerm(BASIC), new StringTerm(BASIC));

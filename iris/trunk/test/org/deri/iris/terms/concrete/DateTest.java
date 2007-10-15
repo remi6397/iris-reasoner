@@ -63,10 +63,6 @@ public class DateTest extends TestCase {
 				new DateTerm(YEAR, MONTH, DAY + 2));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new DateTerm(YEAR, MONTH, DAY));
-	}
-
 	public void testHashCode() {
 		ObjectTests.runTestHashCode(new DateTerm(YEAR, MONTH, DAY), 
 				new DateTerm(YEAR, MONTH, DAY));

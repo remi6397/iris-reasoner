@@ -48,7 +48,7 @@ import org.deri.iris.api.terms.ITerm;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class Duration implements IDuration, Cloneable {
+public class Duration implements IDuration {
 
 	/** Calendar used to calculate the milliseconds. */
 	private static final Calendar ZERO;
@@ -236,10 +236,6 @@ public class Duration implements IDuration, Cloneable {
 		return duration.toString();
 	}
 
-	public Object clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException("The underlying duration object is not cloneable");
-	}
-
 	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
@@ -254,12 +250,5 @@ public class Duration implements IDuration, Cloneable {
 
 	public javax.xml.datatype.Duration getValue() {
 		return duration;
-	}
-
-	public void setValue(final javax.xml.datatype.Duration duration) {
-		if (duration == null) {
-			throw new NullPointerException("The duration must not be null");
-		}
-		this.duration = duration;
 	}
 }

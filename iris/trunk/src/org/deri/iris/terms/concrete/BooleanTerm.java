@@ -40,7 +40,7 @@ import org.deri.iris.api.terms.ITerm;
  * @author Darko Anicic, DERI Innsbruck
  * @version $Revision$
  */
-public class BooleanTerm implements IBooleanTerm, Cloneable {
+public class BooleanTerm implements IBooleanTerm {
 
 	/** The boolean value represented by this object */
 	private boolean value;
@@ -80,15 +80,6 @@ public class BooleanTerm implements IBooleanTerm, Cloneable {
 		this.value = Boolean.valueOf(value);
 	}
 
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
-	}
-
 	public boolean equals(final Object obj) {
 		if (!(obj instanceof BooleanTerm)) {
 			return false;
@@ -103,10 +94,6 @@ public class BooleanTerm implements IBooleanTerm, Cloneable {
 
 	public int hashCode() {
 		return Boolean.valueOf(value).hashCode();
-	}
-
-	public void setValue(boolean arg) {
-		this.value = arg;
 	}
 
 	public String toString() {
@@ -141,12 +128,5 @@ public class BooleanTerm implements IBooleanTerm, Cloneable {
 		
 		BooleanTerm b = (BooleanTerm) o;
 		return Boolean.valueOf(value).compareTo(b.getValue());
-	}
-
-	public void setValue(Boolean t) {
-		if (t == null) {
-			throw new IllegalArgumentException("The value must not be null");
-		}
-		value = t;
 	}
 }

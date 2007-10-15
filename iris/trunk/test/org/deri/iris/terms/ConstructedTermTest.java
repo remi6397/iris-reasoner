@@ -52,6 +52,7 @@ public class ConstructedTermTest extends TestCase {
 	private static final String SYMBOL = "and";
 
 	private static ConstructedTerm BASIC;
+	private static ConstructedTerm BASIC2;
 
 	private static ConstructedTerm MORE;
 
@@ -68,6 +69,12 @@ public class ConstructedTermTest extends TestCase {
 		terms.add(1, new StringTerm("b"));
 
 		BASIC = new ConstructedTerm(SYMBOL, terms);
+
+		terms = new ArrayList<ITerm>();
+		terms.add(0, new StringTerm("a"));
+		terms.add(1, new StringTerm("b"));
+
+		BASIC2 = new ConstructedTerm(SYMBOL, terms);
 
 		terms = new ArrayList<ITerm>();
 		terms.add(0, new StringTerm("a"));
@@ -97,19 +104,14 @@ public class ConstructedTermTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTests.runTestEquals(BASIC, BASIC.clone(), MORE1);
-	}
-
-	public void testClone() {
-		ObjectTests.runTestClone(BASIC);
+		ObjectTests.runTestEquals(BASIC, BASIC2, MORE1);
 	}
 
 	public void testHashCode() {
-		ObjectTests.runTestHashCode(BASIC, BASIC.clone());
+		ObjectTests.runTestHashCode(BASIC, BASIC2);
 	}
 
 	public void testCompareTo() {
-		ObjectTests.runTestCompareTo(BASIC, (ConstructedTerm) BASIC.clone(),
-				MORE, MORE1);
+		assertEquals( BASIC.compareTo( BASIC2 ), 0 );
 	}
 }

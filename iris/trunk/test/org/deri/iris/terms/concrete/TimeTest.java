@@ -69,10 +69,6 @@ public class TimeTest extends TestCase {
 				new Time(HOUR, MINUTE, SECOND + 2, TZ_HOUR, TZ_MINUTE));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new Time(HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE));
-	}
-
 	public void testHashCode() {
 		ObjectTests.runTestHashCode(new Time(HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE), 
 				new Time(HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE));

@@ -47,7 +47,7 @@ import org.deri.iris.api.terms.concrete.IDateTime;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class DateTime implements IDateTime, Cloneable {
+public class DateTime implements IDateTime {
 
 	/** Factory used to create the xml durations. */
 	private static final DatatypeFactory FACTORY;
@@ -142,17 +142,6 @@ public class DateTime implements IDateTime, Cloneable {
 				tzHour * 60 + tzMinute);
 	}
 
-	public Object clone() {
-		try {
-			DateTime dt = (DateTime) super.clone();
-			dt.datetime = (XMLGregorianCalendar) datetime.clone();
-			return dt;
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
-	}
-
 	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
@@ -224,13 +213,5 @@ public class DateTime implements IDateTime, Cloneable {
 
 	public XMLGregorianCalendar getValue() {
 		return (XMLGregorianCalendar) datetime.clone();
-	}
-
-	public void setValue(XMLGregorianCalendar t) {
-		// TODO shouldn't a copy be made?
-		if (t == null) {
-			throw new IllegalArgumentException("The value must not be null");
-		}
-		datetime = t;
 	}
 }

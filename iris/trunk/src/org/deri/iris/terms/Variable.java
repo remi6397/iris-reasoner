@@ -38,20 +38,12 @@ import org.deri.iris.api.terms.ITerm;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class Variable implements IVariable, Cloneable {
+public class Variable implements IVariable {
 
 	private String name = "";
 
 	Variable(final String name) {
 		this.name = name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public boolean isGround() {
@@ -69,15 +61,6 @@ public class Variable implements IVariable, Cloneable {
 
 	public int hashCode() {
 		return name.hashCode();
-	}
-
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
 	}
 
 	public boolean equals(final Object o) {
@@ -100,10 +83,6 @@ public class Variable implements IVariable, Cloneable {
 	}
 
 	public String getValue() {
-		return this.name;
-	}
-
-	public void setValue(String t) {
-		this.name = t;
+		return name;
 	}
 }

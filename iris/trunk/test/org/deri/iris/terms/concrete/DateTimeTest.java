@@ -77,10 +77,6 @@ public class DateTimeTest extends TestCase {
 				new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND + 2, TZ_HOUR, TZ_MINUTE));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE));
-	}
-
 	public void testHashCode() {
 		ObjectTests.runTestHashCode(new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE), 
 				new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE));

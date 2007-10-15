@@ -49,10 +49,6 @@ public class GMonthDayTest extends TestCase {
 				MONTH, DAY), new GMonthDay(MONTH, DAY + 1));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new GMonthDay(MONTH, DAY));
-	}
-
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new GMonthDay(MONTH, DAY), new GMonthDay(
 				MONTH, DAY), new GMonthDay(MONTH, DAY + 1), new GMonthDay(

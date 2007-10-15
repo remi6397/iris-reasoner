@@ -41,7 +41,7 @@ import org.deri.iris.api.terms.concrete.IHexBinary;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class HexBinary implements IHexBinary, Cloneable {
+public class HexBinary implements IHexBinary {
 
 	public static final Pattern PATTERN = Pattern.compile("([\\dA-F]{2})+");
 
@@ -49,15 +49,6 @@ public class HexBinary implements IHexBinary, Cloneable {
 
 	HexBinary(final String content) {
 		_setValue(content);
-	}
-
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
 	}
 
 	public int compareTo(ITerm o) {
@@ -83,10 +74,6 @@ public class HexBinary implements IHexBinary, Cloneable {
 	
 	public int hashCode() {
 		return content.hashCode();
-	}
-
-	public void setValue(final String arg) {
-		_setValue(arg);
 	}
 
 	private void _setValue(final String arg) {
