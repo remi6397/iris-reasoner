@@ -57,8 +57,11 @@ public class DataTypesTest extends TestCase
 			"p( dc#title )." +
 			"p( _sqname( foaf#name ) )." +
 
-			"p( _boolean( 'true' ) )." +
-			"p( _boolean( 'false' ) )." +
+			"p( _boolean( 'trUE' ) )." +	// Mixed case is ok
+			"p( _boolean( 'falSE' ) )." +
+
+			"p( _boolean( '1' ) )." +	// Valid values are also '1' and '0'
+			"p( _boolean( '0' ) )." +
 
 			"p( _duration( 1970, 1, 1, 23, 15, 30 ) )." +
 			"p( _duration( 1970, 1, 1, 23, 15, 29, 99 ) )." +
@@ -166,8 +169,11 @@ public class DataTypesTest extends TestCase
 	 */
 	public void testInvalidLiteral_Boolean()
 	{
-		// TODO This should fail - invalid value
-		Helper.checkFailureWithAllStrategies( "p( _boolean( 'blah' ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _boolean( 'tr_ue' ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _boolean( 'fals' ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _boolean( '2' ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _boolean( '-1' ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _boolean( 'one' ) ).", ParserException.class );
 	}
 	
 	/**
@@ -205,13 +211,18 @@ public class DataTypesTest extends TestCase
 		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, -1 ) ).", ParserException.class );
 
 		// Bad time zone hour
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 999, 25, 30 ) ).", ParserException.class );
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, 0, -25, 0 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 999, 15, 0 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, 0, -15, 0 ) ).", ParserException.class );
 
-		// TODO These should fail, but don't!
 		// Bad time zone minute
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 999, 1, 60 ) ).", ParserException.class );
-		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, 0, -1, -60 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 999, 0, 60 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, 0, 0, -60 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 999, 14, 1 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, 0, -14, -1 ) ).", ParserException.class );
+
+		// Sign mismatch between time zone hours and minutes
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 12, 31, 23, 59, 59, 999, 1, -1 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _datetime( 1982, 1, 1, 23, 0, 0, 0, -1, 1 ) ).", ParserException.class );
 	}
 	
 	/**
@@ -225,13 +236,18 @@ public class DataTypesTest extends TestCase
 		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 3, 4, 12, 30, 1 ) ).", ParserException.class );
 
 		// Bad time zone hour
-		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 12, 31, 25, 30 ) ).", ParserException.class );
-		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 1, 1, -25, 0 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 12, 31, 15, 30 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 1, 1, -15, 0 ) ).", ParserException.class );
 
-		// TODO These should fail, but don't!
 		// Bad time zone minute
-		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 12, 31, 1, 60 ) ).", ParserException.class );
-		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 1, 1, -1, -60 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 12, 31, 0, 60 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 1, 1, 0, -60 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 12, 31, 14, 1 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 1, 1, 14, -1 ) ).", ParserException.class );
+
+		// Sign mismatch between time zone hours and minutes
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 12, 31, 1, -1 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _date( 1982, 1, 1, -1, 1 ) ).", ParserException.class );
 	}
 	
 	/**
@@ -261,13 +277,18 @@ public class DataTypesTest extends TestCase
 		Helper.checkFailureWithAllStrategies( "p( _time( 23, 0, 0, -1 ) ).", ParserException.class );
 
 		// Bad time zone hour
-		Helper.checkFailureWithAllStrategies( "p( _time( 1982, 12, 31, 23, 59, 59, 999, 25, 30 ) ).", ParserException.class );
-		Helper.checkFailureWithAllStrategies( "p( _time( 1982, 1, 1, 23, 0, 0, 0, -25, 0 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( 1982, 12, 31, 23, 59, 59, 999, 15, 30 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( 1982, 1, 1, 23, 0, 0, 0, -15, 0 ) ).", ParserException.class );
 
-		// TODO These should fail, but don't!
 		// Bad time zone minute
-		Helper.checkFailureWithAllStrategies( "p( _time( 23, 59, 59, 999, 1, 60 ) ).", ParserException.class );
-		Helper.checkFailureWithAllStrategies( "p( _time( 23, 0, 0, 0, -1, -60 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, 59, 59, 999, 0, 60 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, 0, 0, 0, 0, -60 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, 59, 59, 999, 14, 1 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, 0, 0, 0, -14, -1 ) ).", ParserException.class );
+
+		// Sign mismatch between time zone hours and minutes
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, 59, 59, 999, 1, -1 ) ).", ParserException.class );
+		Helper.checkFailureWithAllStrategies( "p( _time( 23, 0, 0, 0, -1, 1 ) ).", ParserException.class );
 	}
 	
 	/**
