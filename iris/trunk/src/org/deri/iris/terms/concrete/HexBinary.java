@@ -90,7 +90,7 @@ public class HexBinary implements IHexBinary {
 	}
 
 	public String toString() {
-		return getClass().getName() + "[content=" + getValue() + "]";
+		return getClass().getSimpleName() + "(" + getValue() + ")";
 	}
 
 	public boolean isGround() {
