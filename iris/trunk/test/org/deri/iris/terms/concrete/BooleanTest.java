@@ -36,7 +36,7 @@ public class BooleanTest extends TestCase {
 
 	public void testBasic() {
 		BooleanTerm trueTerm = new BooleanTerm(true);
-		BooleanTerm trueTermParsed = BooleanTerm.parse("TRUE");
+		BooleanTerm trueTermParsed = new BooleanTerm("TRUE");
 
 		assertEquals("Instanciation didn't work", Boolean.TRUE, trueTerm.getValue());
 		assertEquals("The parsing didn't work", trueTerm, trueTermParsed);
