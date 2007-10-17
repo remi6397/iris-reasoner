@@ -44,13 +44,18 @@ public class BooleanTerm implements IBooleanTerm {
 
 	/** The boolean value represented by this object */
 	private boolean value;
+	
+	/** One of the legal values. */
+	private static final String TRUE = "true"; 
 
-	/**
-	 * Constructs a boolean with the value <code>false</code>.
-	 */
-	BooleanTerm() {
-		this(false);
-	}
+	/** One of the legal values. */
+	private static final String FALSE = "false"; 
+
+	/** One of the legal values. */
+	private static final String ONE = "1"; 
+
+	/** One of the legal values. */
+	private static final String ZERO = "0"; 
 
 	/**
 	 * Constructs a boolean with the given value.
@@ -63,21 +68,24 @@ public class BooleanTerm implements IBooleanTerm {
 	}
 
 	/**
-	 * Constructs a boolean with the given value. If the string isn't a valid
-	 * boolean representation the default will be false (according to
-	 * Boolean.valueOf(String)).
+	 * Constructs a boolean with the given value according to http://www.w3.org/TR/xmlschema-2/#boolean  
 	 * 
-	 * @param value
-	 *            string representation of the boolean
-	 * @throws NullPointerException
-	 *             if the string is null
-	 * @see Boolean.valueOf(String)
+	 * @param value String representation of the boolean, one of {true, false, 1, 0}
+	 * @throws IllegalArgumentException If the string is null
+	 * @throws IllegalArgumentException If the string does not contain one of the legal values
+	 * {true, false, 1, 0}
 	 */
-	BooleanTerm(final String value) {
-		if (value == null) {
-			throw new NullPointerException();
-		}
-		this.value = Boolean.valueOf(value);
+	BooleanTerm(final String strValue) {
+		if (strValue == null)
+			throw new IllegalArgumentException( "Constructor parameter 'value' must not be null" );
+
+		if( strValue.equalsIgnoreCase( TRUE ) || strValue.equalsIgnoreCase( ONE ) )
+			value = true;
+		else if( strValue.equalsIgnoreCase( FALSE ) || strValue.equalsIgnoreCase( ZERO ) )
+			value = false;
+		else
+			throw new IllegalArgumentException( "Constructor parameter 'value' must be one of {" +
+							TRUE + ", " + FALSE + ", " + ONE + ", " + ZERO + "}" );
 	}
 
 	public boolean equals(final Object obj) {
@@ -98,23 +106,6 @@ public class BooleanTerm implements IBooleanTerm {
 
 	public String toString() {
 		return Boolean.toString(value);
-	}
-
-	/**
-	 * Returns a new BooleanTerm object corresponding to the submitted String.
-	 * This method uses the Boolean.valueOf Method to determine whether true of
-	 * false was submitted.
-	 * 
-	 * @param str
-	 *            of the value (will be matched caseinsensitive)
-	 * @return the corresponding object
-	 * @see Boolean#valueOf(java.lang.String)
-	 */
-	public static BooleanTerm parse(final String str) {
-		if (str == null) {
-			throw new NullPointerException("Can not convert null to a boolean");
-		}
-		return new BooleanTerm(str);
 	}
 
 	public boolean isGround() {

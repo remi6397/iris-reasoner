@@ -75,6 +75,10 @@ public class ConcreteFactory implements IConcreteFactory {
 		return new BooleanTerm(b);
 	}
 
+	public IBooleanTerm createBoolean(final String value) {
+		return new BooleanTerm(value);
+	}
+	
 	public IDateTerm createDate(final int year, final int month, final int day) {
 		return new DateTerm(year, month, day);
 	}
