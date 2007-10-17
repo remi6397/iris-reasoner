@@ -75,11 +75,8 @@ public class DateTerm implements IDateTerm {
 	 */
 	DateTerm(final int year, final int month, final int day, 
 			final int tzHour, final int tzMinute) {
-		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0))) {
-			throw new IllegalArgumentException("Both, the timezone hours and " + 
-					"minutes must be negative, or positive, but were " + 
-					tzHour + " and " + tzMinute);
-		}
+
+		DateTime.checkTimeZone( tzHour, tzMinute );
 
 		date = FACTORY.newXMLGregorianCalendarDate(year, month, day, tzHour * 60 + tzMinute);
 	}
