@@ -41,10 +41,10 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Simple implementation of ITime.
  * </p>
  * <p>
- * $Id: Time.java,v 1.7 2007-10-15 15:46:15 bazbishop237 Exp $
+ * $Id: Time.java,v 1.8 2007-10-17 07:40:44 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class Time implements ITime {
 
@@ -110,11 +110,8 @@ public class Time implements ITime {
 	 */
 	Time(final int hour, final int minute, final int second, final int millisecond, 
 			final int tzHour, final int tzMinute) {
-		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0))) {
-			throw new IllegalArgumentException("Both, the timezone hours and " + 
-					"minutes must be negative, or positive, but were " + 
-					tzHour + " and " + tzMinute);
-		}
+
+		DateTime.checkTimeZone( tzHour, tzMinute );
 
 		time = FACTORY.newXMLGregorianCalendarTime(hour, 
 				minute, 

@@ -60,6 +60,45 @@ public class DateTime implements IDateTime {
 
 	/** Milliseconds per hour. */
 	private static final int MILLIS_PER_HOUR = MILLIS_PER_MINUTE * 60;
+	
+	public static final int MAX_TIMEZONE_HOURS = 14;
+	public static final int MAX_TIMEZONE_MINUTES = 59;
+	
+	/**
+	 * Implements the restrictions as detailed in: http://www.w3.org/TR/xmlschema-2/#dateTime
+	 * ( |h| < 14 AND |m| <= 59 ) OR ( |h| = 14, m = 0 )
+	 *   AND
+	 * sign( h ) = sign( m )
+	 * @param tzHour The time zone hours
+	 * @param tzMinute The time zone minutes
+	 */
+	public static void checkTimeZone( int tzHour, int tzMinute )
+	{
+		// Sign of hours and minutes must be the same
+		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0)))
+			throw new IllegalArgumentException("The timezone hours and " + 
+					"minutes must be both positive or both negative, but were " + 
+					tzHour + " and " + tzMinute);
+		
+		// Magnitude of hours must not be greater than MAX_TIMEZONE_HOURS
+		if( Math.abs( tzHour ) > MAX_TIMEZONE_HOURS )
+			throw new IllegalArgumentException("The timezone hours magnitude can not be greater than " +
+							MAX_TIMEZONE_HOURS + ", but was " + tzHour );
+
+		// Magnitude of minutes must not be greater than MAX_TIMEZONE_MINUTES
+		if( Math.abs( tzMinute ) > MAX_TIMEZONE_MINUTES )
+			throw new IllegalArgumentException("The timezone minutes magnitude can not be greater than " +
+							MAX_TIMEZONE_MINUTES + ", but was " + tzMinute );
+
+		// Minutes must be zero if hours are +/- 14
+		if( Math.abs( tzHour ) == MAX_TIMEZONE_HOURS )
+		{
+			if( tzMinute != 0 )
+				throw new IllegalArgumentException("The timezone minutes must be zero when the timezone hours magnitude is " +
+								MAX_TIMEZONE_HOURS + ", but was " + tzMinute );
+		}
+		
+	}
 
 	static {
 		// creating the factory
@@ -125,11 +164,8 @@ public class DateTime implements IDateTime {
 	DateTime(final int year, final int month, final int day, 
 			final int hour, final int minute, final int second, final int millisecond, 
 			final int tzHour, final int tzMinute) {
-		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0))) {
-			throw new IllegalArgumentException("Both, the timezone hours and " + 
-					"minutes must be negative, or positive, but were " + 
-					tzHour + " and " + tzMinute);
-		}
+
+		checkTimeZone( tzHour, tzMinute );
 
 		datetime = FACTORY.newXMLGregorianCalendar(
 				BigInteger.valueOf((long) year), 
