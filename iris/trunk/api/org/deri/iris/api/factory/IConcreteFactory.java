@@ -59,7 +59,20 @@ import org.deri.iris.api.terms.concrete.ITime;
 public interface IConcreteFactory {
 	public IBase64Binary createBase64Binary(final String s);
 
+	/**
+	 * Create a boolean term from a boolean value.
+	 * @param b The value of the term
+	 * @return The boolean term.
+	 */
 	public IBooleanTerm createBoolean(final boolean b);
+
+	/**
+	 * Create a boolean term with a string value.
+	 * @param value The string value, which must be either 'true' or '1' for true, or
+	 * 'false' or '0' for false. 
+	 * @return The boolean term.
+	 */
+	public IBooleanTerm createBoolean(final String value);
 
 	/**
 	 * Creates a datetime object with a given timezone.
