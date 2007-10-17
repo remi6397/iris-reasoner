@@ -91,7 +91,7 @@ public class Base64Binary implements IBase64Binary {
 	}
 
 	public String toString() {
-		return getClass().getName() + "[content=" + getValue() + "]";
+		return getClass().getSimpleName() + "(" + getValue() + ")";
 	}
 
 	public boolean isGround() {

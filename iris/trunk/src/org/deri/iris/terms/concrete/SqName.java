@@ -123,7 +123,7 @@ public class SqName implements ISqName {
 	 */
 	private void setName(final String str) {
 		if (str == null) {
-			throw new NullPointerException("The srt must not be null");
+			throw new NullPointerException("The str must not be null");
 		}
 		if (str.trim().length() <= 0) {
 			throw new IllegalArgumentException(
@@ -141,8 +141,8 @@ public class SqName implements ISqName {
 	}
 
 	public String toString() {
-		return getClass().getName() + "[namespace=" + getNamespace().getValue()
-				+ ",name=" + getName() + "]";
+		return getClass().getSimpleName() + "(" + namespace.getValue() + "#" +
+							name + ")";
 	}
 
 	public boolean equals(final Object obj) {
