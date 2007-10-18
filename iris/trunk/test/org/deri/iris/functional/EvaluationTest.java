@@ -606,4 +606,36 @@ public class EvaluationTest extends TestCase
 		
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
+	
+	/**
+	 * This was supposed to be a test involving relations with thousands of tuples, but as
+	 * it turns out, IRIS runs out of heap when there are 100 rows in each predicate.
+	 * About 50 rows takes about 20 seconds to evaluate with naive.
+	 * 
+	 * @throws Exception
+	 */
+	public void testJoinWithLargeDataSets() throws Exception
+	{
+		StringBuilder p = new StringBuilder();
+		StringBuilder r = new StringBuilder();
+		
+		final int MAX = 50;
+		
+		for( int i = 0; i < MAX; ++i )
+		{
+			p.append( "p(" + i + ")." );
+			p.append( "q(" + i + ")." );
+			p.append( "r(" + i + ")." );
+			
+			r.append( "t(" + i + "," + i + "," + i + ")." );
+		}
+		
+		p.append( "t(?X,?Y,?Z) :- p(?X), q(?Y), r(?Z), ?X = ?Y, ?Y = ?Z." );
+		p.append( "?- t( ?X, ?Y, ?Z )." );
+		
+		String program = p.toString();
+		String expectedResults = r.toString();
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
 }
