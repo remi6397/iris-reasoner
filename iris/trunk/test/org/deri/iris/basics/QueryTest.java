@@ -37,12 +37,19 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTests;
+import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.ILiteral;
 
 /**
- * @author richi
- * 
- * Revision 1.1  26.07.2006 11:52:46  Darko Anicic, DERI Innsbruck
+ * <p>
+ * Tests for the query.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ *
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision$
  */
 public class QueryTest extends TestCase {
 
@@ -53,38 +60,20 @@ public class QueryTest extends TestCase {
 	static {
 		List<ILiteral> tempLiterals = new ArrayList<ILiteral>();
 
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
-				"sin", 1));
-		literal.getTuple().setTerm(0, CONCRETE.createInteger(1));
+		ILiteral literal = BASIC.createLiteral(true, 
+				BASIC.createAtom(
+					BASIC.createPredicate("sin", 1), 
+					BASIC.createTuple(CONCRETE.createInteger(1))));
 		tempLiterals.add(literal);
 
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		tempLiterals.add(literal);
-
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
-		literal.getTuple().setTerm(0, TERM.createVariable("J"));
-		literal.getTuple().setTerm(1, TERM.createVariable("K"));
-		literal.getTuple().setTerm(2, TERM.createVariable("L"));
-		tempLiterals.add(literal);
+		tempLiterals.add(MiscHelper.createLiteral("cos", "X"));
+		tempLiterals.add(MiscHelper.createLiteral("date", "J", "K", "L"));
 
 		BODY = new Body(tempLiterals);
 
-		tempLiterals = new ArrayList<ILiteral>();
+		tempLiterals = new ArrayList<ILiteral>(BODY.getLiterals());
 
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("sin", 1));
-		literal.getTuple().setTerm(0, CONCRETE.createInteger(1));
-		tempLiterals.add(literal);
-
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		tempLiterals.add(literal);
-
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
-		literal.getTuple().setTerm(0, TERM.createVariable("J"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Q"));
-		literal.getTuple().setTerm(2, TERM.createVariable("L"));
-		tempLiterals.add(literal);
+		tempLiterals.set(2, MiscHelper.createLiteral("date", "J", "K", "M"));
 
 		BODYMORE = new Body(tempLiterals);
 	}

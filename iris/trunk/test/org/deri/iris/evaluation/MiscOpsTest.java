@@ -34,6 +34,7 @@ import java.util.List;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.deri.iris.MiscHelper;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
@@ -48,11 +49,11 @@ import org.deri.iris.basics.seminaive.ConstLiteral;
  * Tests the methods in the MiscOps class.
  * </p>
  * <p>
- * $Id: MiscOpsTest.java,v 1.7 2007-09-27 14:52:03 bazbishop237 Exp $
+ * $Id: MiscOpsTest.java,v 1.8 2007-10-18 13:31:11 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class MiscOpsTest extends TestCase {
 
@@ -184,22 +185,15 @@ public class MiscOpsTest extends TestCase {
 		// s(x, y) :- p(x, z), s(y, z)
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("s", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
 
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("p", "X", "Z"));
+		literals.add(MiscHelper.createLiteral("r", "Y", "Z"));
+
 		IBody body = BASIC.createBody(literals);
 		
 		assertTrue( isSafe( head, body ) );
@@ -210,14 +204,12 @@ public class MiscOpsTest extends TestCase {
 		// biggerthan(X, Y) :- X > Y -> not safe
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("biggerthan", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("biggerthan", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
-		literal = BASIC.createLiteral(true, BUILTIN.createGreater(TERM.createVariable("X"), TERM.createVariable("Y")));
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createGreater(TERM.createVariable("X"), TERM.createVariable("Y")));
 		literals.add(literal);
 		IBody body = BASIC.createBody(literals);
 		
@@ -244,17 +236,15 @@ public class MiscOpsTest extends TestCase {
 	}
 	public void testSafenessBuiltin_Equal2() {
 		
-		// euqala(X, Y) :- X = Y, U = W, V = W, V = Y, X = a -> safe 
+		// equals(X, Y) :- X = Y, U = W, V = W, V = Y, X = a -> safe 
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("equals", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
 		literals.add(literal);
 		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("W")));
 		literals.add(literal);
@@ -270,17 +260,15 @@ public class MiscOpsTest extends TestCase {
 	}
 	public void testSafenessBuiltin_Equal2b() {
 		
-		// euqala(X, Y) :- X = Y, U = W, b = W, X = Y, X = a -> safe 
+		// equals(X, Y) :- X = Y, U = W, b = W, X = Y, X = a -> safe 
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("equals", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
 		literals.add(literal);
 		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("W")));
 		literals.add(literal);
@@ -296,17 +284,15 @@ public class MiscOpsTest extends TestCase {
 	}
 	public void testSafenessBuiltin_Equal3() {
 		
-		// euqala(X, Y) :- X = Y, U = W, V = W, X = a -> not safe 
+		// equals(X, Y) :- X = Y, U = W, V = W, X = a -> not safe 
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("equals", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
 		literals.add(literal);
 		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("W")));
 		literals.add(literal);
@@ -320,17 +306,15 @@ public class MiscOpsTest extends TestCase {
 	}
 	public void testSafenessBuiltin_Equal3b() {
 		
-		// euqala(X, Y) :- X = Y, U = W, V = W, b = Y, X = a -> not safe 
+		// equals(X, Y) :- X = Y, U = W, V = W, b = Y, X = a -> not safe 
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("equals", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
 		literals.add(literal);
 		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("W")));
 		literals.add(literal);
@@ -346,18 +330,15 @@ public class MiscOpsTest extends TestCase {
 	}
 	public void testSafenessBuiltin_containsGreater() {
 		
-		// euqala(X, Y) :- X = Y, X = a -> safe 
-		// s(X, Y) :- Y = X, V = Y, V > Y, X = a
+		// s(X, Y) :- Y = X, V = Y, V > Y, X = a -> save
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("s", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
 		literals.add(literal);
 		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("V"), TERM.createVariable("Y")));
 		literals.add(literal);
@@ -376,21 +357,14 @@ public class MiscOpsTest extends TestCase {
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
 		// Head
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("b", 1));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("b", "X"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
 		
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 1));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literals.add(literal);
-		
-		literal = BASIC.createLiteral(false, BASIC.createPredicate("q", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("p", "X"));
+		literals.add(MiscHelper.createLiteral(false, "q", "X", "Y"));
 
 		IBody body = BASIC.createBody(literals);
 
@@ -403,28 +377,17 @@ public class MiscOpsTest extends TestCase {
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
 		// Head
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("w", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("w", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
 		
 		// Body
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 1));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literals.add(literal);
-		
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 1));
-		literal.getTuple().setTerm(0, TERM.createVariable("Y"));
-		literals.add(literal);
-		
-		literal = BASIC.createLiteral(false, BASIC.createPredicate("p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
-		
+		literals.add(MiscHelper.createLiteral("s", "X"));
+		literals.add(MiscHelper.createLiteral("r", "Y"));
+		literals.add(MiscHelper.createLiteral(false, "p", "X", "Y"));
+
 		IBody body = BASIC.createBody(literals);
 
 		assertTrue( isSafe( head, body ) );
@@ -436,24 +399,16 @@ public class MiscOpsTest extends TestCase {
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
 		// Head
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("w", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("w", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
 		
 		// Body
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("s", 1));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literals.add(literal);
-		
-		literal = BASIC.createLiteral(false, BASIC.createPredicate("p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
-		
+		literals.add(MiscHelper.createLiteral("s", "X"));
+		literals.add(MiscHelper.createLiteral(false, "p", "X", "Y"));
+
 		IBody body = BASIC.createBody(literals);
 
 		assertFalse( isSafe( head, body ) );
@@ -466,19 +421,15 @@ public class MiscOpsTest extends TestCase {
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
 		// Head
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("w", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
 		
 		// Body
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("q", 1));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literals.add(literal);
-		
+		literals.add(MiscHelper.createLiteral("q", "X"));
+
 		IBody body = BASIC.createBody(literals);
 
 		assertFalse( isSafe( head, body ) );
@@ -490,20 +441,16 @@ public class MiscOpsTest extends TestCase {
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
 		// Head
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("less", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("less", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
 		
 		// Body
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("id", 1));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literals.add(literal);
-		
-		literal = BASIC.createLiteral(true, BUILTIN.createLess(TERM.createVariable("X"), TERM.createVariable("Y")));
+		literals.add(MiscHelper.createLiteral("id", "X"));
+
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createLess(TERM.createVariable("X"), TERM.createVariable("Y")));
 		literals.add(literal);
 		IBody body = BASIC.createBody(literals);
 
@@ -516,24 +463,17 @@ public class MiscOpsTest extends TestCase {
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
 		// Head
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("less", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("less", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
 		
 		// Body
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("id", 1));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literals.add(literal);
-		
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("id", 1));
-		literal.getTuple().setTerm(0, TERM.createVariable("Y"));
-		literals.add(literal);
-		
-		literal = BASIC.createLiteral(true, BUILTIN.createLess(TERM.createVariable("X"), TERM.createVariable("Y")));
+		literals.add(MiscHelper.createLiteral("id", "X"));
+		literals.add(MiscHelper.createLiteral("id", "Y"));
+
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createLess(TERM.createVariable("X"), TERM.createVariable("Y")));
 		literals.add(literal);
 
 		IBody body = BASIC.createBody(literals);
@@ -546,28 +486,17 @@ public class MiscOpsTest extends TestCase {
 		// m(X, Y, U, V) :- p(W, Z), q(X, Z), r(L, K), X = Y, U = V, W = U -> safe 
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(2, TERM.createVariable("U"));
-		literal.getTuple().setTerm(3, TERM.createVariable("V"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("m", "X", "Y", "U", "V"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("W"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("q", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("L"));
-		literal.getTuple().setTerm(1, TERM.createVariable("K"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+
+		literals.add(MiscHelper.createLiteral("p", "W", "Z"));
+		literals.add(MiscHelper.createLiteral("q", "X", "Z"));
+		literals.add(MiscHelper.createLiteral("r", "L", "K"));
+
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
 		literals.add(literal);
 		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("V")));
 		literals.add(literal);
@@ -583,28 +512,17 @@ public class MiscOpsTest extends TestCase {
 		// m(X, Y, U, V) :- p(W, Z), q(X, Z), !r(L, K), X = Y, U = V, W = U -> safe 
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(2, TERM.createVariable("U"));
-		literal.getTuple().setTerm(3, TERM.createVariable("V"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("m", "X", "Y", "U", "V"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("W"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("q", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(false, BASIC.createPredicate("r", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("L"));
-		literal.getTuple().setTerm(1, TERM.createVariable("K"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+
+		literals.add(MiscHelper.createLiteral("p", "W", "Z"));
+		literals.add(MiscHelper.createLiteral("q", "X", "Z"));
+		literals.add(MiscHelper.createLiteral(false, "r", "L", "K"));
+
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
 		literals.add(literal);
 		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("V")));
 		literals.add(literal);
@@ -619,28 +537,17 @@ public class MiscOpsTest extends TestCase {
 		// m(X, Y, U, V) :- p(W, Z), q(X, Z), r(L, K), X = Y, !U = V, W = U -> not safe 
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(2, TERM.createVariable("U"));
-		literal.getTuple().setTerm(3, TERM.createVariable("V"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("m", "X", "Y", "U", "V"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("W"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("q", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("L"));
-		literal.getTuple().setTerm(1, TERM.createVariable("K"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+
+		literals.add(MiscHelper.createLiteral("p", "W", "Z"));
+		literals.add(MiscHelper.createLiteral("q", "X", "Z"));
+		literals.add(MiscHelper.createLiteral("r", "L", "K"));
+
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
 		literals.add(literal);
 		literal = BASIC.createLiteral(false, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("V")));
 		literals.add(literal);
@@ -655,28 +562,17 @@ public class MiscOpsTest extends TestCase {
 		// m(X, Y, U, V) :- p(W, Z), q(X, Z), !r(L, K), X = Y, !U = V, W = U -> not safe 
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(2, TERM.createVariable("U"));
-		literal.getTuple().setTerm(3, TERM.createVariable("V"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("m", "X", "Y", "U", "V"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("W"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("q", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(false, BASIC.createPredicate("r", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("L"));
-		literal.getTuple().setTerm(1, TERM.createVariable("K"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+
+		literals.add(MiscHelper.createLiteral("p", "W", "Z"));
+		literals.add(MiscHelper.createLiteral("q", "X", "Z"));
+		literals.add(MiscHelper.createLiteral("r", "L", "K"));
+
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
 		literals.add(literal);
 		literal = BASIC.createLiteral(false, BUILTIN.createEqual(TERM.createVariable("U"), TERM.createVariable("V")));
 		literals.add(literal);
@@ -691,28 +587,17 @@ public class MiscOpsTest extends TestCase {
 		// m(X, Y, U, V) :- p(W, Z), q(X, Z), !r(L, K), X = Y, !U != V, W = U -> V not safe 
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(2, TERM.createVariable("U"));
-		literal.getTuple().setTerm(3, TERM.createVariable("V"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("m", "X", "Y", "U", "V"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("W"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("q", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(false, BASIC.createPredicate("r", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("L"));
-		literal.getTuple().setTerm(1, TERM.createVariable("K"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+
+		literals.add(MiscHelper.createLiteral("p", "W", "Z"));
+		literals.add(MiscHelper.createLiteral("q", "X", "Z"));
+		literals.add(MiscHelper.createLiteral(false, "r", "L", "K"));
+
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
 		literals.add(literal);
 		literal = BASIC.createLiteral(false, BUILTIN.createUnequal(TERM.createVariable("U"), TERM.createVariable("V")));
 		literals.add(literal);
@@ -727,28 +612,17 @@ public class MiscOpsTest extends TestCase {
 		// m(X, Y, U, V) :- p(W, Z), q(X, Z), !r(L, K), X = Y, !U > V, W = U -> safe 
 		List<ILiteral> literals = new ArrayList<ILiteral>();
 		
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate("m", 4));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(2, TERM.createVariable("U"));
-		literal.getTuple().setTerm(3, TERM.createVariable("V"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("m", "X", "Y", "U", "V"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("W"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("q", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(false, BASIC.createPredicate("r", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("L"));
-		literal.getTuple().setTerm(1, TERM.createVariable("K"));
-		literals.add(literal);
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
+
+		literals.add(MiscHelper.createLiteral("p", "W", "Z"));
+		literals.add(MiscHelper.createLiteral("q", "X", "Z"));
+		literals.add(MiscHelper.createLiteral(false, "r", "L", "K"));
+
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y"), TERM.createVariable("X")));
 		literals.add(literal);
 		literal = BASIC.createLiteral(false, BUILTIN.createGreater(TERM.createVariable("U"), TERM.createVariable("V")));
 		literals.add(literal);

@@ -329,21 +329,21 @@ public class GeneralSelection implements ISelection {
 	}
 	
 	private ITuple[] getPosAndNegPattern() {
-		ITuple posTup = BASIC.createTuple(this.pattern);
-		ITuple negTup = BASIC.createTuple(this.pattern);
+		final ITerm[] pos = new ITerm[pattern.size()];
+		final ITerm[] neg = new ITerm[pattern.size()];
 		int index = 0;
 		
-		for(ITerm t : this.pattern.getTerms()){
-			if(t instanceof NonEqualityTerm){
-				posTup.setTerm(index, null);
-				negTup.setTerm(index, ((NonEqualityTerm)t).getTerm());
-			}else{
-				negTup.setTerm(index, null);
-				posTup.setTerm(index, t);
+		for (final ITerm t : pattern) {
+			if (t instanceof NonEqualityTerm) {
+				pos[index] = null;
+				neg[index] = ((NonEqualityTerm)t).getTerm();
+			} else {
+				neg[index] = null;
+				pos[index] = t;
 			}
 			index++;
 		}
-		return new ITuple[]{posTup, negTup};
+		return new ITuple[]{BASIC.createTuple(pos), BASIC.createTuple(neg)};
 	}
 	
 	private boolean containsOnlyNull(ITuple tup){

@@ -26,152 +26,100 @@
 package org.deri.iris.basics;
 
 import static org.deri.iris.factory.Factory.BASIC;
-import static org.deri.iris.factory.Factory.TERM;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTests;
+import org.deri.iris.MiscHelper;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.basics.IAtom;
+import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.basics.IPredicate;
 
 /**
- * @author richi
- * 
- * Revision 1.1  26.07.2006 09:27:55  Darko Anicic, DERI Innsbruck
- * 
+ * <p>
+ * Tests for the literal.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ *
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision$
  */
 public class LiteralTest extends TestCase {
 
 	private static final boolean NEGATIVE = false;
 
+	private static final boolean POSITIVE = true;
+
 	private static final int ARITY = 3;
 
 	private static final String SYMBOL = "date";
 
-	private static final List<ITerm> TERMS;
+	private static final ITuple TUPLE = MiscHelper.createTuple("a", "b", "c");
+	
+	private static final ITuple TUPLEMORE = MiscHelper.createTuple("a", "b", "d");
+	
+	private static final IPredicate PREDICATE = new Predicate(SYMBOL, ARITY);
 
-	private static final List<ITerm> TERMSMORE;
-
-	private static final Predicate PREDICATE = new Predicate(SYMBOL, ARITY);
-
-	private static final Predicate PREDICATEMORE = new Predicate(SYMBOL + 1,
+	private static final IPredicate PREDICATEMORE = new Predicate(SYMBOL + 1,
 			ARITY);
 
-	static {
-		List<ITerm> temp = new ArrayList<ITerm>(ARITY);
-		temp.add(TERM.createString("a"));
-		temp.add(TERM.createString("b"));
-		temp.add(TERM.createString("c"));
-		TERMS = Collections.unmodifiableList(temp);
-
-		temp = new ArrayList<ITerm>(ARITY);
-		temp.add(TERM.createString("a"));
-		temp.add(TERM.createString("b"));
-		temp.add(TERM.createString("d"));
-		TERMSMORE = Collections.unmodifiableList(temp);
-	}
+	private static final IAtom ATOM = BASIC.createAtom(PREDICATE, BASIC.createTuple(TUPLE));
 
 	public static Test suite() {
 		return new TestSuite(LiteralTest.class, LiteralTest.class
 				.getSimpleName());
 	}
 
-	public void testBasic() {
-		Literal REFERENCE = new Literal(NEGATIVE, BASIC.createAtom(PREDICATE,
-				BASIC.createTuple(TERMS)));
-		Literal MUTABLE = new Literal(NEGATIVE, BASIC.createAtom(PREDICATE));
-		boolean rightExceptionThrown = false;
-		List<ITerm> tooManyTerms = new ArrayList<ITerm>(ARITY + 1);
-		tooManyTerms.add(TERM.createString("a"));
-		tooManyTerms.add(TERM.createString("b"));
-		tooManyTerms.add(TERM.createString("c"));
-		tooManyTerms.add(TERM.createString("d"));
+	public void testIsPositive() {
+		final ILiteral pos = new Literal(POSITIVE, ATOM);
+		assertTrue("The literal should be positive", pos.isPositive());
+		final ILiteral neg = new Literal(NEGATIVE, ATOM);
+		assertFalse("The literal should be negative", neg.isPositive());
+	}
 
-		MUTABLE.getTuple().setTerm(0, TERM.createString("a"));
-		MUTABLE.getTuple().setTerm(1, TERM.createString("b"));
-		MUTABLE.getTuple().setTerm(2, TERM.createString("c"));
+	public void testSetPositive() {
+		final ILiteral lit = new Literal(POSITIVE, ATOM);
+		assertTrue("The literal should be positive", lit.isPositive());
+		lit.setPositive(false);
+		assertFalse("The literal should be negative", lit.isPositive());
+		lit.setPositive(true);
+		assertTrue("The literal should be positive again", lit.isPositive());
+	}
 
-		try {
-			MUTABLE.getTuple().setTerm(3, TERM.createString("d"));
-		} catch (IndexOutOfBoundsException e) {
-			rightExceptionThrown = true;
-		} finally {
-			if (!rightExceptionThrown) {
-				throw new AssertionFailedError(
-						"You shouldn't be able to add more "
-								+ "terms to the atom than the predicate allows.");
-			}
-		}
-
-		try {
-			MUTABLE.getTuple().setTerms(tooManyTerms);
-		} catch (IndexOutOfBoundsException e) {
-			rightExceptionThrown = true;
-		} finally {
-			if (!rightExceptionThrown) {
-				throw new AssertionFailedError(
-						"You shouldn't be able to add more "
-								+ "terms to the atom than the predicate allows.");
-			}
-		}
-
-		MUTABLE.getTuple().setTerms(TERMS);
-		MUTABLE.setPositive(NEGATIVE);
-
-		assertEquals("isPositive doesn't work properly", NEGATIVE, REFERENCE
-				.isPositive());
-		assertEquals("isPositive doesn't work properly", NEGATIVE, MUTABLE
-				.isPositive());
-		assertEquals("getPredicate doesn't work properly", PREDICATE, REFERENCE
-				.getPredicate());
-		assertEquals("getPredicate doesn't work properly", PREDICATE, MUTABLE
-				.getPredicate());
-		for (int iCounter = 0; iCounter < TERMS.size(); iCounter++) {
-			assertEquals("getTerm doesn't work properly", TERMS.get(iCounter),
-					REFERENCE.getTuple().getTerm(iCounter));
-		}
-		for (int iCounter = 0; iCounter < TERMS.size(); iCounter++) {
-			assertEquals("getTerm doesn't work properly", TERMS.get(iCounter),
-					MUTABLE.getTuple().getTerm(iCounter));
-		}
-		assertEquals("The two objects should be equal", REFERENCE, MUTABLE);
-
+	public void testGetAtom() {
+		final ILiteral lit = new Literal(POSITIVE, ATOM);
+		assertEquals("The getAtom method doesn't work properly", ATOM, lit.getAtom());
 	}
 
 	public void testEquals() {
-		ObjectTests.runTestEquals(new Literal(NEGATIVE, BASIC.createAtom(
-				PREDICATE, BASIC.createTuple(TERMS))), new Literal(NEGATIVE, BASIC.createAtom(
-				PREDICATE, BASIC.createTuple(TERMS))), new Literal(BASIC.createAtom(PREDICATE,
-				BASIC.createTuple(TERMSMORE))));
-		ObjectTests.runTestEquals(new Literal(NEGATIVE, BASIC.createAtom(
-				PREDICATE, BASIC.createTuple(TERMS))), new Literal(NEGATIVE, BASIC.createAtom(
-				PREDICATE, BASIC.createTuple(TERMS))), new Literal(!NEGATIVE, BASIC.createAtom(
-				PREDICATE, BASIC.createTuple(TERMS))));
+		ObjectTests.runTestEquals(new Literal(NEGATIVE, BASIC.createAtom(PREDICATE, TUPLE)), 
+				new Literal(NEGATIVE, BASIC.createAtom(PREDICATE, TUPLE)), 
+				new Literal(BASIC.createAtom(PREDICATE, TUPLEMORE)));
+		ObjectTests.runTestEquals(new Literal(NEGATIVE, BASIC.createAtom(PREDICATE, TUPLE)), 
+				new Literal(NEGATIVE, BASIC.createAtom(PREDICATE, TUPLE)), 
+				new Literal(!NEGATIVE, BASIC.createAtom(PREDICATE, TUPLE)));
 	}
 
 	public void testHashCode() {
-		ObjectTests.runTestHashCode(new Literal(NEGATIVE, BASIC.createAtom(
-				PREDICATE, BASIC.createTuple(TERMS))), new Literal(NEGATIVE, BASIC.createAtom(
-				PREDICATE, BASIC.createTuple(TERMS))));
+		ObjectTests.runTestHashCode(new Literal(NEGATIVE, BASIC.createAtom(PREDICATE, TUPLE)), 
+				new Literal(NEGATIVE, BASIC.createAtom(PREDICATE, TUPLE)));
 	}
 
 	public void testCompareTo() {
-		ObjectTests.runTestCompareTo(new Literal(BASIC.createAtom(PREDICATE,
-				BASIC.createTuple(TERMS))), new Literal(BASIC.createAtom(PREDICATE, 
-				BASIC.createTuple(TERMS))),
-				new Literal(BASIC.createAtom(PREDICATE, BASIC.createTuple(TERMSMORE))),
-				new Literal(BASIC.createAtom(PREDICATEMORE, BASIC.createTuple(TERMS))));
-		ObjectTests.runTestCompareTo(new Literal(NEGATIVE, BASIC.createAtom(
-				PREDICATE, BASIC.createTuple(TERMS))), new Literal(NEGATIVE, BASIC.createAtom(
-				PREDICATE, BASIC.createTuple(TERMS))), new Literal(NEGATIVE, BASIC.createAtom(
-				PREDICATE, BASIC.createTuple(TERMSMORE))), new Literal(BASIC.createAtom(PREDICATE,
-						BASIC.createTuple(TERMS))));
+		ObjectTests.runTestCompareTo(new Literal(BASIC.createAtom(PREDICATE, TUPLE)), 
+				new Literal(BASIC.createAtom(PREDICATE, TUPLE)), 
+				new Literal(BASIC.createAtom(PREDICATE, TUPLEMORE)), 
+				new Literal(BASIC.createAtom(PREDICATEMORE, TUPLE)));
+		ObjectTests.runTestCompareTo(new Literal(NEGATIVE, BASIC.createAtom(PREDICATE, TUPLE)), 
+				new Literal(NEGATIVE, BASIC.createAtom(PREDICATE, TUPLE)), 
+				new Literal(NEGATIVE, BASIC.createAtom(PREDICATE, TUPLEMORE)), 
+				new Literal(BASIC.createAtom(PREDICATE, TUPLE)));
 	}
 
 }

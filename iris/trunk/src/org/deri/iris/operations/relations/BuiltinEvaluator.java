@@ -97,31 +97,18 @@ public class BuiltinEvaluator {//implements IBuiltinEvaluator{
 	public IRelation evaluate(){
 		IRelation resultRel = RELATION.getRelation(this.relation0.getArity() + this.outVras.size());
 		ITuple t0, t1 = null;
-		ITuple tRes = null;
 		if(this.relation0.size() > 0){
 			Iterator<ITuple> it0 = this.relation0.iterator();
 			while(it0.hasNext()){
 				t0 = it0.next();
 				t1 = this.builtin.evaluate(getInTuple(t0));
-				if(t1 != null){
-					tRes = BASIC.createTuple(t0.getArity() + this.outVras.size());
-					tRes.setTerms(0, t0.getTerms());
-					if(this.outVras.size()>0) 
-						tRes.setTerms(t0.getArity(), t1.getTerms());
-					resultRel.add(tRes);	
+				if (t1 != null) {
+					resultRel.add(t0.append(outVras));
 				}
 			}
 		}else{
 			// e.g., add(3, 4, ?X)
-			
-			// TODO: Sometimes this.relation0 is empty but builtin is not
-			// evaluable with the bindings from the rule
-			/*if(this.builtin.isEvaluable(vars)){
-				tRes = this.builtin.evaluate(this.builtin.getTuple());
-				resultRel.add(tRes);
-			}*/
-			tRes = this.builtin.evaluate(this.builtin.getTuple());
-			resultRel.add(tRes);	
+			resultRel.add(builtin.evaluate(builtin.getTuple()));	
 		}
 		return resultRel;
 	}

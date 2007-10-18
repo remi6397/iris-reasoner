@@ -116,20 +116,13 @@ public class GeneralBuiltinEvaluator implements IBuiltinEvaluator {
 				.getMixedRelation(this.relation0.getArity()
 						+ this.outVras.size());
 		ITuple t0, t1 = null;
-		ITuple tRes = null;
 		if (this.relation0.size() > 0) {
 			Iterator<ITuple> it0 = this.relation0.iterator();
 			while (it0.hasNext()) {
 				t0 = it0.next();
 				t1 = this.builtin.evaluate(getInTuple(t0));
-				if (t1 != null && positive || t1 == null && ! positive)
-				{
-					tRes = BASIC.createTuple(t0.getArity()
-							+ this.outVras.size());
-					tRes.setTerms(0, t0.getTerms());
-					if (this.outVras.size() > 0)
-						tRes.setTerms(t0.getArity(), t1.getTerms());
-					resultRel.add(tRes);
+				if (((t1 != null) && positive) || ((t1 == null) && !positive)) {
+					resultRel.add(t0.append(t1));
 				}
 			}
 		} else {
@@ -138,15 +131,13 @@ public class GeneralBuiltinEvaluator implements IBuiltinEvaluator {
 			// evaluable with the bindings from the rule
 			// Correct this once the isEvaluable method is correctly implemented
 			
-			//if(this.builtin.isEvaluable(this.builtin.getTuple().getAllVariables())){
 			if(this.builtin.getTuple().getAllVariables().size() == 1 &&
 					(this.builtin instanceof AddBuiltin ||
 					 this.builtin instanceof DivideBuiltin ||
 					 this.builtin instanceof MultiplyBuiltin ||
 					 this.builtin instanceof SubtractBuiltin
 					)){
-				tRes = this.builtin.evaluate(this.builtin.getTuple());
-				resultRel.add(tRes); 
+				resultRel.add(builtin.evaluate(builtin.getTuple())); 
 			}
 		}
 		return resultRel;

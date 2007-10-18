@@ -30,13 +30,18 @@ import static org.deri.iris.factory.Factory.BASIC;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.ITerm;
 
 /**
- * A simple Atom implementation
- * <br/><br/>$Id$
- * @author richi
+ * <p>
+ * A simple Atom implementation.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ *
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
- * 
  * @version $Revision$
  */
 public class Atom implements IAtom {
@@ -50,7 +55,7 @@ public class Atom implements IAtom {
 			throw new IllegalArgumentException("The predicate must not be null");
 		}
 		this.predicate = predicate;
-		this.tuple = BASIC.createTuple(predicate.getArity());
+		this.tuple = BASIC.createTuple(new ITerm[predicate.getArity()]);
 	}
 	
 	@SuppressWarnings("unchecked") 

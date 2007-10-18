@@ -673,10 +673,12 @@ public class QSQEvaluator implements IEvaluator {
 		ITuple tuple = null;
 
 		if (res != null) {
-			tuple = BASIC.createTuple(t1.getArity());
-			for (int i = 0; i < t1.getTerms().size(); i++) {
-				tuple.setTerm(i, substitute(t1.getTerm(i), res.getTails()));
+			final ITerm[] res = new ITerm[t1.size()];
+			int i = 0;
+			for (final ITerm t : t1) {
+				res[i++] = substitute(t, res.getTails());
 			}
+			tuple = BASIC.createTuple(res);
 		}
 		return tuple;
 	}

@@ -25,10 +25,10 @@
  */
 package org.deri.iris.basics;
 
+import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,10 +39,11 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.ObjectTests;
+import org.deri.iris.MiscHelper;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.factory.Factory;
 
 /**
  * @author Darko Anicic, DERI Innsbruck
@@ -53,136 +54,69 @@ public class TupleTest extends TestCase {
 
 	private static final int ARITY = 3;
 	
-	private static List<ITerm> TERMS;
+	private static final ITuple REFERENCE = MiscHelper.createTuple("a", "b", "c");
 	
-	private static List<ITerm> MORETERMS;
+	private static final ITuple TUPLE = MiscHelper.createTuple("a", "b", "c");
 	
-	private static List<ITerm> tooManyTerms;
+	private static final ITuple MORE = MiscHelper.createTuple("a", "b", "d");
 	
-	private Tuple REFERENCE;
-	
-	private Tuple MUTABLE;
-	
-	private Tuple MORE;
-	
-	private Tuple EVENMORE;
-	
-	
+	private static final ITuple EVENMORE = MiscHelper.createTuple("a", "b", "d", "e");
+
 	public static Test suite() {
 		return new TestSuite(TupleTest.class, TupleTest.class
 				.getSimpleName());
 	}
 
-	public void setUp() {
-		List<ITerm> temp = new ArrayList<ITerm>(ARITY);
-		temp.add(0, TERM.createString("a"));
-		temp.add(1, TERM.createString("b"));
-		temp.add(2, TERM.createString("c"));
-		TERMS = Collections.unmodifiableList(temp);
-		
-		REFERENCE = new Tuple(temp);
-		
-		temp = new ArrayList<ITerm>(ARITY);
-		temp.add(0, TERM.createString("b"));
-		temp.add(1, TERM.createString("b"));
-		temp.add(2, TERM.createString("c"));
-		
-		MORETERMS = Collections.unmodifiableList(temp);
-		
-		MUTABLE = new Tuple(ARITY);
-		MORE = new Tuple(MORETERMS);
-		
-		tooManyTerms = new ArrayList<ITerm>(ARITY + 1);
-		tooManyTerms.add(TERM.createString("c"));
-		tooManyTerms.add(TERM.createString("b"));
-		tooManyTerms.add(TERM.createString("c"));
-		tooManyTerms.add(TERM.createString("d"));
-
-		EVENMORE = new Tuple(tooManyTerms);
+	public void testSize() {
+		assertEquals("The size method doesn't work properly", ARITY, TUPLE.size());
 	}
 
-	public void testBasic() {
-		boolean rightExceptionThrown = false;
-		
-		MUTABLE.setTerm(0, TERM.createString("a"));
-		MUTABLE.setTerm(1, TERM.createString("b"));
-		MUTABLE.setTerm(2, TERM.createString("c"));
-
-		try {
-			MUTABLE.setTerm(3, TERM.createString("d"));
-		} catch (IndexOutOfBoundsException e) {
-			rightExceptionThrown = true;
-		} finally {
-			if (!rightExceptionThrown) {
-				throw new AssertionFailedError(
-						"You shouldn't be able to add more "
-								+ "terms to the atom than the arity allows.");
-			}
-		}
-		try {
-			MUTABLE.setTerms(tooManyTerms);
-		} catch (IndexOutOfBoundsException e) {
-			rightExceptionThrown = true;
-		} finally {
-			if (!rightExceptionThrown) {
-				throw new AssertionFailedError(
-						"You shouldn't be able to add more "
-								+ "terms to the atom than the arity allows.");
-			}
-		}
-		MUTABLE.setTerms(TERMS);
-
-		for (int iCounter = 0; iCounter < TERMS.size(); iCounter++) {
-			assertEquals("getTerm doesn't work properly", TERMS.get(iCounter),
-					REFERENCE.getTerm(iCounter));
-		}
-		for (int iCounter = 0; iCounter < TERMS.size(); iCounter++) {
-			assertEquals("getTerm doesn't work properly", TERMS.get(iCounter),
-					MUTABLE.getTerm(iCounter));
-		}
-		assertEquals("The two objects should be equal", REFERENCE.getTerms(), MUTABLE.getTerms());
-		assertTrue("The REFERENCE tuple is a ground tuple", REFERENCE.isGround());
-		assertEquals("(a, b, c)", REFERENCE.toString());
+	public void testGet() {
+		assertEquals("The get method doesn't work properly", TERM.createString("a"), TUPLE.get(0));
+		assertEquals("The get method doesn't work properly", TERM.createString("b"), TUPLE.get(1));
+		assertEquals("The get method doesn't work properly", TERM.createString("c"), TUPLE.get(2));
 	}
 
-	
+	public void testGetArity() {
+		assertEquals("The getArity method doesn't work properly", ARITY, TUPLE.getArity());
+	}
+
+	public void testGetTerm() {
+		assertEquals("The getTerm method doesn't work properly", TERM.createString("a"), TUPLE.getTerm(0));
+		assertEquals("The getTerm method doesn't work properly", TERM.createString("b"), TUPLE.getTerm(1));
+		assertEquals("The getTerm method doesn't work properly", TERM.createString("c"), TUPLE.getTerm(2));
+	}
+
+	public void testGetTerms() {
+		assertEquals("The getTerms method doesn't work properly", TUPLE.getTerms(), TUPLE);
+	}
+
 	public void testEquals() {
-		// Correct it!
-		// something has changed MUTABLE in meantime!
-		MUTABLE.setTerms(TERMS);
-		ObjectTests.runTestEquals(REFERENCE, MUTABLE, MORE);
+		ObjectTests.runTestEquals(REFERENCE, TUPLE, MORE);
 	}
 	
 	public void testCompareTo() {
-		// Correct it!
-		// something has changed MUTABLE in meantime!
-		MUTABLE.setTerms(TERMS);
-		ObjectTests.runTestCompareTo(REFERENCE, MUTABLE, MORE,
-				EVENMORE);
+		ObjectTests.runTestCompareTo(REFERENCE, TUPLE, MORE, EVENMORE);
 	}
 	
 	public void testHashCode() {
-		// Correct it!
-		// something has changed MUTABLE in meantime!
-		MUTABLE.setTerms(TERMS);
-		ObjectTests.runTestHashCode(REFERENCE, MUTABLE);
+		ObjectTests.runTestHashCode(REFERENCE, TUPLE);
 	}
 	
 	public void testVariables() {
 		Set<IVariable> variables = new HashSet<IVariable>();
-		IVariable x = Factory.TERM.createVariable("X");
-		IVariable y = Factory.TERM.createVariable("Y");
+		IVariable x = TERM.createVariable("X");
+		IVariable y = TERM.createVariable("Y");
 		
 		variables.add(x);
 		variables.add(y);
 		
-		IConstructedTerm c1 = Factory.TERM.createConstruct("c1", y);
-		IConstructedTerm c2 = Factory.TERM.createConstruct("c2", c1, x);
+		IConstructedTerm c1 = TERM.createConstruct("c1", y);
+		IConstructedTerm c2 = TERM.createConstruct("c2", c1, x);
 		List<ITerm> terms = new ArrayList<ITerm>();
-		terms.addAll(TERMS);
+		terms.addAll(REFERENCE);
 		terms.add(c2);
 		
-		assertEquals(variables, 
-				Factory.BASIC.createTuple(terms).getVariables());
+		assertEquals(variables, BASIC.createTuple(terms).getVariables());
 	}
 }

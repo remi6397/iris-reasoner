@@ -53,11 +53,11 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.18 2007-10-12 12:40:58 bazbishop237 Exp $
+ * $Id: BuiltinHelper.java,v 1.19 2007-10-18 13:31:06 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class BuiltinHelper {
 
@@ -66,7 +66,7 @@ public class BuiltinHelper {
 	 * tuples. 
 	 */
 	public static final ITuple EMPTY_TUPLE = 
-		org.deri.iris.factory.Factory.BASIC.createTuple(0);
+		org.deri.iris.factory.Factory.BASIC.createTuple(new ITerm[]{});
 
 	/** 
 	 * Calendar with all fields set to 0. Used to get the milliseconds out
