@@ -39,20 +39,21 @@ import org.deri.iris.api.terms.IVariable;
  * relation.
  * </p>
  * <p>
- * $Id: ITuple.java,v 1.12 2007-07-10 09:47:23 poettler_ric Exp $
+ * $Id: ITuple.java,v 1.13 2007-10-18 13:31:05 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 
-public interface ITuple extends Comparable<ITuple> {
+public interface ITuple extends List<ITerm>, Comparable<ITuple> {
 
 	/**
 	 * Returns the arity of the predicate.
 	 * 
 	 * @return The arity of the predicate.
+	 * @deprecated use {@link #size() size()} instead
 	 */
 	public int getArity();
 
@@ -62,6 +63,7 @@ public interface ITuple extends Comparable<ITuple> {
 	 * @param index
 	 *            Index of tuple to return.
 	 * @return The term at the specified position in this tuple.
+	 * @deprecated use {@link #get(int) get(int)} instead
 	 */
 	public ITerm getTerm(int index);
 
@@ -70,45 +72,9 @@ public interface ITuple extends Comparable<ITuple> {
 	 * tuple.
 	 * 
 	 * @return Returns all terms of this tuple.
+	 * @deprecated use <code>this</code> object instead
 	 */
 	public List<ITerm> getTerms();
-
-	/**
-	 * Replaces the term at the specified position in this tuple with the
-	 * specified term.
-	 * 
-	 * @param index
-	 *            Index of element to replace.
-	 * @param term
-	 *            Term to be stored at the specified position.
-	 * @return The term which was previously placed at the specified position.
-	 */
-	public ITerm setTerm(int index, ITerm term);
-
-	/**
-	 * Inserts all of the elements in the specified collection into this list
-	 * (starting from 0th position). The new elements will appear in this list
-	 * in the order that they are returned by the specified collection's
-	 * iterator. This method is thread-save.
-	 * 
-	 * @param terms
-	 *            Elements to be inserted into this list.
-	 * @throws IndexOutOfBoundsException if the addition of the terms would
-	 * exceed the arity of this tuple.
-	 */
-	public void setTerms(Collection<ITerm> terms);
-
-	/**
-	 * Inserts all of the elements in the specified collection into this list at
-	 * the specified position. Replaces the element
-	 * currently at that position (if any) and any subsequent elements to the
-	 * right. It does not increases their indices.
-	 * @param index Index at which to insert first element
-	 * @param terms Elements to be inserted into this list.
-	 * @throws IndexOutOfBoundsException if the addition of the terms would
-	 * exceed the arity of this tuple.
-	 */
-	public void setTerms(int index, Collection<ITerm> terms);
 
 	/**
 	 * Checks whether this tuple contains only ground terms.
@@ -131,4 +97,13 @@ public interface ITuple extends Comparable<ITuple> {
 	 * @return All variables from this tupple.
 	 */
 	public List<IVariable> getAllVariables();
+
+	/**
+	 * Creates a new tupel with the tuples of <code>this</code> one and
+	 * appends the tuples of the submitted list at the end.
+	 * @param t the tuples to add
+	 * @return the newly created tuple
+	 * @throws IllegalArgumentException if the list is <code>null</code>
+	 */
+	public ITuple append(final Collection<? extends ITerm> t);
 }

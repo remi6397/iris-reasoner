@@ -43,6 +43,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
@@ -60,8 +61,8 @@ import org.deri.iris.operations.relations.JoinCondition;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic, DERI Innsbruck
- * @date $Date: 2007-07-25 08:16:57 $
- * @version $Id: Rule2RelationTest.java,v 1.9 2007-07-25 08:16:57 poettler_ric Exp $
+ * @date $Date: 2007-10-18 13:31:11 $
+ * @version $Id: Rule2RelationTest.java,v 1.10 2007-10-18 13:31:11 poettler_ric Exp $
  */
 public class Rule2RelationTest extends TestCase {
 
@@ -94,29 +95,18 @@ public class Rule2RelationTest extends TestCase {
 	}
 	
 	/**
-	 * s(X, Y) :- p(Y, Z), r(Y, Z)
+	 * s(X, Y) :- p(X, Z), r(Y, Z)
 	 *
 	 */
 	public void testRule2Relation() {
 		// input
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
-				"s", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("s", "X", "Y"));
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
 		
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("p", "X", "Z"));
+		literals.add(MiscHelper.createLiteral("r", "Y", "Z"));
 
 		IBody body = BASIC.createBody(literals);
 		
@@ -164,21 +154,14 @@ public class Rule2RelationTest extends TestCase {
 	 */
 	public void testRule2Relation_1a() {
 		// input
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
-				"p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("p", "X", "Y"));
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
 		
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("Z"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("r", "Z", "Y"));
 
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
 		literals.add(literal);
 
 		IBody body = BASIC.createBody(literals);

@@ -40,6 +40,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.deri.iris.MiscHelper;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.IHead;
@@ -56,11 +57,11 @@ import org.deri.iris.factory.Factory;
  * Tests for the datalog parser.
  * </p>
  * <p>
- * $Id: ParserTest.java,v 1.12 2007-10-14 14:49:00 bazbishop237 Exp $
+ * $Id: ParserTest.java,v 1.13 2007-10-18 13:31:13 poettler_ric Exp $
  * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class ParserTest extends TestCase {
 
@@ -104,24 +105,14 @@ public class ParserTest extends TestCase {
 		String expr = "s(?X, ?Y) :- p(?X, ?Z), r(?Y, ?Z).";
 		
 		// result
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
-				"s", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("s", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
 		
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
-
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("Y"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Z"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("p", "X", "Z"));
+		literals.add(MiscHelper.createLiteral("r", "Y", "Z"));
 
 		IBody body = BASIC.createBody(literals);
 		
@@ -139,21 +130,15 @@ public class ParserTest extends TestCase {
 		String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X='a'.";
 		
 		// result
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
-				"p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("p", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
 		
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("Z"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("r", "Z", "Y"));
 
-		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
 		literals.add(literal);
 
 		IBody body = BASIC.createBody(literals);
@@ -172,21 +157,15 @@ public class ParserTest extends TestCase {
 		String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X!='a'.";
 
 		// result
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
-				"p", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("p", "X", "Y"));
+
 		IHead head = BASIC.createHead(literals);
 
 		literals.clear();
 		
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("r", 2));
-		literal.getTuple().setTerm(0, TERM.createVariable("Z"));
-		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
-		literals.add(literal);
+		literals.add(MiscHelper.createLiteral("r", "Z", "Y"));
 
-		literal = BASIC.createLiteral(true, BUILTIN.createUnequal(TERM.createVariable("X"), TERM.createString("a")));
+		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createUnequal(TERM.createVariable("X"), TERM.createString("a")));
 		literals.add(literal);
 
 		IBody body = BASIC.createBody(literals);

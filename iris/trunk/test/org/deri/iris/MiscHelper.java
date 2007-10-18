@@ -108,6 +108,29 @@ public final class MiscHelper {
 	 */
 	public static ILiteral createLiteral(final String pred,
 			final String... vars) {
+		return createLiteral(true, pred, vars);
+	}
+
+	/**
+	 * Creates a positive literal out of a predicate name and a set of variable
+	 * names.
+	 * 
+	 * @param pos whether the literal should be positive, or not
+	 * @param pred
+	 *            the predicate name
+	 * @param vars
+	 *            the variable names
+	 * @return the constructed literal
+	 * @throws NullPointerException
+	 *             if the predicate name or the set of variable names is
+	 *             {@code null}
+	 * @throws NullPointerException
+	 *             if the set of variable names contains {@code null}
+	 * @throws IllegalArgumentException
+	 *             if the name of the predicate is 0 characters long
+	 */
+	public static ILiteral createLiteral(final boolean pos, final String pred,
+			final String... vars) {
 		if ((pred == null) || (vars == null)) {
 			throw new NullPointerException(
 					"The predicate and the vars must not be null");
@@ -120,7 +143,7 @@ public final class MiscHelper {
 			throw new NullPointerException("The vars must not contain null");
 		}
 
-		return BASIC.createLiteral(true, BASIC.createPredicate(pred,
+		return BASIC.createLiteral(pos, BASIC.createPredicate(pred,
 				vars.length), BASIC.createTuple(new ArrayList<ITerm>(
 				createVarList(vars))));
 	}

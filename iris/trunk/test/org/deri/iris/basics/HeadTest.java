@@ -42,10 +42,15 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.terms.ITerm;
 
 /**
- * @author richi
- * 
- * Revision 1.1  26.07.2006 09:26:56  Darko Anicic, DERI Innsbruck
- * 
+ * <p>
+ * Tests for the head.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
+ *
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision$
  */
 public class HeadTest extends TestCase {
 
@@ -60,22 +65,27 @@ public class HeadTest extends TestCase {
 		List<ILiteral> tempLiteralsUnequ = new ArrayList<ILiteral>();
 		List<ITerm> tempVariables = new ArrayList<ITerm>();
 
-		ILiteral literal = BASIC.createLiteral(true, BASIC.createPredicate(
-				"sin", 1));
-		literal.getTuple().setTerm(0, CONCRETE.createInteger(1));
+		ILiteral literal = BASIC.createLiteral(true, 
+				BASIC.createAtom(
+					BASIC.createPredicate("sin", 1),
+					BASIC.createTuple(CONCRETE.createInteger(1))));
 		tempLiterals.add(literal);
 		tempLiteralsUnequ.add(literal);
 
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("cos", 1));
-		literal.getTuple().setTerm(0, TERM.createVariable("X"));
+		literal = BASIC.createLiteral(true, 
+				BASIC.createAtom(
+					BASIC.createPredicate("cos", 1),
+					BASIC.createTuple(TERM.createVariable("X"))));
 		tempLiterals.add(literal);
 		tempLiteralsUnequ.add(literal);
 		tempVariables.add(literal.getTuple().getTerm(0));
 
-		literal = BASIC.createLiteral(true, BASIC.createPredicate("date", 3));
-		literal.getTuple().setTerm(0, CONCRETE.createInteger(2005));
-		literal.getTuple().setTerm(1, CONCRETE.createInteger(12));
-		literal.getTuple().setTerm(2, CONCRETE.createInteger(24));
+		literal = BASIC.createLiteral(true, 
+				BASIC.createAtom(
+					BASIC.createPredicate("date", 3),
+					BASIC.createTuple(CONCRETE.createInteger(2005), 
+						CONCRETE.createInteger(12), 
+						CONCRETE.createInteger(24))));
 		tempLiterals.add(literal);
 
 		LITERALS = Collections.unmodifiableList(tempLiterals);

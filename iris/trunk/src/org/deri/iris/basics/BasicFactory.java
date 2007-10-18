@@ -128,10 +128,6 @@ public class BasicFactory implements IBasicFactory {
 		return new Rule(head, body); 
 	}
 	
-	public ITuple createTuple(int arity) {
-		return new Tuple(arity);
-	}
-	
 	public ITuple createTuple(ITerm... terms) {
 		return createTuple(Arrays.asList(terms));
 	}
