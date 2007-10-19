@@ -84,7 +84,7 @@ public class Body implements IBody {
 		if (variables == null) {
 			variables = new ArrayList<IVariable>();
 			for (ILiteral l : literals) {
-				for (Object o : l.getTuple().getTerms()) {
+				for (Object o : l.getTuple()) {
 					if (o instanceof IVariable) {
 						variables.add((IVariable) o);
 					}

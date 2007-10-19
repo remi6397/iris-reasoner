@@ -617,7 +617,7 @@ public final class MagicSetImpl {
 		}
 
 		final List<ITerm> bounds = new ArrayList<ITerm>(p.getAdornment().length);
-		final Iterator<ITerm> terms = a.getTuple().getTerms().iterator();
+		final Iterator<ITerm> terms = a.getTuple().iterator();
 		for (Adornment ad : p.getAdornment()) {
 			final ITerm t = terms.next();
 			if (ad == Adornment.BOUND) {
@@ -851,7 +851,7 @@ public final class MagicSetImpl {
 			return false;
 		}
 		// compare the terms
-		return l0.getTuple().getTerms().equals(l1.getTuple().getTerms());
+		return l0.getTuple().equals(l1.getTuple());
 	}
 
 	/**

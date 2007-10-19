@@ -61,10 +61,10 @@ import org.deri.iris.api.terms.ITerm;
  * according to the <code>JoinCondition</code>.
  * </p>
  * <p>
- * $Id: SortMergeJoin.java,v 1.7 2007-06-20 09:45:53 poettler_ric Exp $
+ * $Id: SortMergeJoin.java,v 1.8 2007-10-19 07:37:18 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class SortMergeJoin implements IMixedDatatypeRelationOperation, IJoin {
 
@@ -204,7 +204,7 @@ public class SortMergeJoin implements IMixedDatatypeRelationOperation, IJoin {
 		Arrays.fill(terms, null);
 		for (int i = 0; i < idx.length; i++) {
 			if (idx[i] >= 0) {
-				terms[idx[i]] = outer.getTerm(i);
+				terms[idx[i]] = outer.get(i);
 			}
 		}
 		return BASIC.createTuple(terms);
@@ -228,7 +228,7 @@ public class SortMergeJoin implements IMixedDatatypeRelationOperation, IJoin {
 			if (tup == null) {
 				throw new NullPointerException("None of the tuples must be null");
 			}
-			terms.addAll(tup.getTerms());
+			terms.addAll(tup);
 		}
 		return BASIC.createTuple(terms);
 	}
@@ -251,32 +251,32 @@ public class SortMergeJoin implements IMixedDatatypeRelationOperation, IJoin {
 		switch (c) {
 			case EQUALS:
 				for (int i = 0; (i < idx.length) && matches; i++) {
-					matches = (idx[i] > -1) ? t0.getTerm(i).equals(t1.getTerm(idx[i])) : true;
+					matches = (idx[i] > -1) ? t0.get(i).equals(t1.get(idx[i])) : true;
 				}
 				break;
 			case LESS_THAN:
 				for (int i = 0; (i < idx.length) && matches; i++) {
-					matches = (idx[i] > -1) ? t0.getTerm(i).compareTo(t1.getTerm(idx[i])) > 0 : true;
+					matches = (idx[i] > -1) ? t0.get(i).compareTo(t1.get(idx[i])) > 0 : true;
 				}
 				break;
 			case GREATER_THAN:
 				for (int i = 0; (i < idx.length) && matches; i++) {
-					matches = (idx[i] > -1) ? t0.getTerm(i).compareTo(t1.getTerm(idx[i])) < 0 : true;
+					matches = (idx[i] > -1) ? t0.get(i).compareTo(t1.get(idx[i])) < 0 : true;
 				}
 				break;
 			case LESS_OR_EQUAL:
 				for (int i = 0; (i < idx.length) && matches; i++) {
-					matches = (idx[i] > -1) ? t0.getTerm(i).compareTo(t1.getTerm(idx[i])) >= 0 : true;
+					matches = (idx[i] > -1) ? t0.get(i).compareTo(t1.get(idx[i])) >= 0 : true;
 				}
 				break;
 			case GREATER_OR_EQUAL:
 				for (int i = 0; (i < idx.length) && matches; i++) {
-					matches = (idx[i] > -1) ? t0.getTerm(i).compareTo(t1.getTerm(idx[i])) <= 0 : true;
+					matches = (idx[i] > -1) ? t0.get(i).compareTo(t1.get(idx[i])) <= 0 : true;
 				}
 				break;
 			case NOT_EQUAL:
 				for (int i = 0; (i < idx.length) && matches; i++) {
-					matches = (idx[i] > -1) ? !t0.getTerm(i).equals(t1.getTerm(idx[i])) : true;
+					matches = (idx[i] > -1) ? !t0.get(i).equals(t1.get(idx[i])) : true;
 				}
 				break;
 			default:

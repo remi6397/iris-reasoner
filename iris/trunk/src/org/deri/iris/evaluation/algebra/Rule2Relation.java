@@ -135,18 +135,18 @@ public class Rule2Relation {
 							s = ALGEBRA.createSelectionDescriptor(
 									// TODO: Add tuple pattern, e.g.: for a built-In case: EQUAL(?X, 'a')
 									null,
-									getSelectionIndexes(a.getTuple().getTerms(), body.getVariables(), true));
+									getSelectionIndexes(a.getTuple(), body.getVariables(), true));
 						}
 						if (a instanceof UnEqualBuiltin) {
 							// TODO: Remove/don't use: NonEqualityTerm
 							List<ITerm> terms = new ArrayList<ITerm>(a.getTuple()
 									.getArity());
-							for (ITerm t : a.getTuple().getTerms()) {
+							for (ITerm t : a.getTuple()) {
 								terms.add(new NonEqualityTerm(t));
 							}
 							s = ALGEBRA.createSelectionDescriptor(
 									// TODO: Add tuple pattern, e.g.: for a built-In case: NON-EQUAL(?X, 'a')
-									getSelectionIndexes(a.getTuple().getTerms(), body.getVariables(), false));
+									getSelectionIndexes(a.getTuple(), body.getVariables(), false));
 						}
 						IComponent tmp = results.get(p); 
 						if(tmp != null) s.addChild(tmp);
@@ -325,7 +325,7 @@ public class Rule2Relation {
 		int[] projectInds = org.deri.iris.operations.relations.
 				MiscOps.getInitProjectionIndexes(l.getPredicate().getArity());
 		List<ITerm> ts = new ArrayList<ITerm>(l.getPredicate().getArity());
-		List<ITerm> terms = l.getAtom().getTuple().getTerms();
+		List<ITerm> terms = l.getAtom().getTuple();
 		List<IVariable> vars = new ArrayList<IVariable>(l.getPredicate()
 				.getArity());
 		Map<IVariable, Integer> selIndexes = new HashMap<IVariable, Integer>();
@@ -375,8 +375,8 @@ public class Rule2Relation {
 	
 	private IComponent translateConstLiteral(final ConstLiteral constL) {
 		IConstantDescriptor con = ALGEBRA.createConstantDescriptor(
-				(ITerm)constL.getAtom().getTuple().getTerm(0), 
-				(IVariable)constL.getAtom().getTuple().getTerm(1));
+				(ITerm)constL.getAtom().getTuple().get(0), 
+				(IVariable)constL.getAtom().getTuple().get(1));
 		return con;
 	}
 
@@ -406,7 +406,7 @@ public class Rule2Relation {
 						break;
 					}
 				}
-				List<ITerm> terms = l.getTuple().getTerms();
+				List<ITerm> terms = l.getTuple();
 				List<IVariable> vars = new ArrayList<IVariable>(terms.size());
 				List<IVariable> distinctVars = new ArrayList<IVariable>();
 				int[] projectInds = new int[l.getPredicate().getArity()];

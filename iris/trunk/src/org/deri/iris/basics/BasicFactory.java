@@ -136,13 +136,6 @@ public class BasicFactory implements IBasicFactory {
 		return new Tuple(terms);
 	}
 
-	public ITuple createTuple(final ITuple t) {
-		if (t == null) {
-			throw new NullPointerException("The tuple must not be null");
-		}
-		return createTuple(t.getTerms());
-	}
-
 	public IAtom createAtom(final IAtom a) {
 		if (a == null) {
 			throw new NullPointerException("The atom must not be null");

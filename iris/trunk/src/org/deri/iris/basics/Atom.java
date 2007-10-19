@@ -63,7 +63,7 @@ public class Atom implements IAtom {
 		if (predicate == null || tuple == null) {
 			throw new IllegalArgumentException("The parameters must not be null");
 		}
-		if (predicate.getArity() != tuple.getArity()) {
+		if (predicate.getArity() != tuple.size()) {
 			throw new IllegalArgumentException("Cannot create an atom when" +
 					" a tuple's arity does not match the predicate's arity.");
 		}

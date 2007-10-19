@@ -47,10 +47,10 @@ import junit.framework.TestSuite;
  * Tests various functionalities of the program.
  * </p>
  * <p>
- * $Id: ProgramTest.java,v 1.4 2007-09-27 14:51:00 bazbishop237 Exp $
+ * $Id: ProgramTest.java,v 1.5 2007-10-19 07:37:18 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class ProgramTest extends TestCase {
 
@@ -117,7 +117,7 @@ public class ProgramTest extends TestCase {
 				assertEquals( r.getArity(), arity );
 				assertEquals( r.size(), 1 );
 				
-				IStringTerm strTerm = (IStringTerm) r.first().getTerm( 0 );
+				IStringTerm strTerm = (IStringTerm) r.first().get( 0 );
 				
 				assertEquals( Integer.parseInt( strTerm.getValue() ), termValue );
 

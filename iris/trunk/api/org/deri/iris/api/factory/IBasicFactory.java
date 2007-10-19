@@ -44,11 +44,11 @@ import org.deri.iris.api.terms.ITerm;
  * such as predicates, atoms, rules, queries etc.
  * </p>
  * <p>
- * $Id: IBasicFactory.java,v 1.15 2007-10-18 13:31:06 poettler_ric Exp $
+ * $Id: IBasicFactory.java,v 1.16 2007-10-19 07:37:16 poettler_ric Exp $
  * </p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public interface IBasicFactory {
 
@@ -102,14 +102,4 @@ public interface IBasicFactory {
 	
 	public ITuple createTuple(ITerm... terms);
 	public ITuple createTuple(List<ITerm> terms);
-
-	/**
-	 * Creates a copy of a tuple. The terms themsemves will remain the same
-	 * instances.
-	 * @param t the tuple to copy
-	 * @return the copy
-	 * @throws NullPointerException if the tuple is <code>null</code>
-	 * @since 0.3
-	 */
-	public ITuple createTuple(final ITuple t);
 }

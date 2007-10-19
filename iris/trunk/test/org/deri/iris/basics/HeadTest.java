@@ -78,7 +78,7 @@ public class HeadTest extends TestCase {
 					BASIC.createTuple(TERM.createVariable("X"))));
 		tempLiterals.add(literal);
 		tempLiteralsUnequ.add(literal);
-		tempVariables.add(literal.getTuple().getTerm(0));
+		tempVariables.add(literal.getTuple().get(0));
 
 		literal = BASIC.createLiteral(true, 
 				BASIC.createAtom(

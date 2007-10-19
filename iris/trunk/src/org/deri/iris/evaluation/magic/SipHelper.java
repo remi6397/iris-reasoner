@@ -48,12 +48,12 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
  * Helpermethods to do various tasks related to sips and adornments.
  * </p>
  * <p>
- * $Id: SipHelper.java,v 1.8 2007-10-14 14:49:00 bazbishop237 Exp $
+ * $Id: SipHelper.java,v 1.9 2007-10-19 07:37:18 poettler_ric Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.8 $
- * @date $Date: 2007-10-14 14:49:00 $
+ * @version $Revision: 1.9 $
+ * @date $Date: 2007-10-19 07:37:18 $
  */
 public class SipHelper {
 
@@ -135,11 +135,11 @@ public class SipHelper {
 		final ITuple t = l.getTuple();
 		final List<ITerm> queryTerms = new ArrayList<ITerm>(realLength);
 
-		if (t.getArity() == realLength) { // if the arity matches the lenght
+		if (t.size() == realLength) { // if the arity matches the lenght
 			// of the adornemt
 			int counter = 0;
 			for (final Adornment a : p.getAdornment()) {
-				final ITerm actualTerm = t.getTerm(counter);
+				final ITerm actualTerm = t.get(counter);
 				switch (a) {
 				case BOUND:
 					if (t.isGround()) {
@@ -149,7 +149,7 @@ public class SipHelper {
 					}
 					break;
 				case FREE:
-					queryTerms.add(t.getTerm(counter));
+					queryTerms.add(t.get(counter));
 					break;
 				default:
 					throw new IllegalArgumentException(
@@ -166,7 +166,7 @@ public class SipHelper {
 					queryTerms.add(MINIMAL_CONST_TERM);
 					break;
 				case FREE:
-					queryTerms.add(t.getTerm(counter));
+					queryTerms.add(t.get(counter));
 					break;
 				default:
 					throw new IllegalArgumentException(

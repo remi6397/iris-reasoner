@@ -75,7 +75,7 @@ public class SortAgainRelation implements IRelation {
 
 		@SuppressWarnings("unchecked")
 		public int compare(ITuple t1, ITuple t2) {
-			return t1.getTerm(indexField).compareTo(t2.getTerm(indexField));
+			return t1.get(indexField).compareTo(t2.get(indexField));
 		}
 
 		public int getIndexField() {
@@ -123,10 +123,10 @@ public class SortAgainRelation implements IRelation {
 	}
 
 	public boolean add(ITuple o) {
-		if (o.getArity() != arity) {
+		if (o.size() != arity) {
 			throw new IllegalArgumentException(
 					"The tuple must have an arity of " + arity + " but was "
-							+ o.getArity());
+							+ o.size());
 		}
 		WRITE.lock();
 		try {

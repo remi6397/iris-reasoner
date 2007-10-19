@@ -53,11 +53,11 @@ import org.deri.iris.api.terms.ITerm;
  * <code>null</code> is not permitted by this relation, nor by its subsets.
  * </p>
  * <p>
- * $Id: IndexingOnTheFlyRelation.java,v 1.5 2007-06-14 15:27:05 poettler_ric Exp $
+ * $Id: IndexingOnTheFlyRelation.java,v 1.6 2007-10-19 07:37:18 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRelation {
 
@@ -111,9 +111,9 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 		if (t == null) {
 			throw new NullPointerException("The tuple to add must not be null");
 		}
-		if (t.getArity() != arity) {
+		if (t.size() != arity) {
 			throw new IllegalArgumentException(
-					"The arity of the tuple must be " + arity + " but was " + t.getArity());
+					"The arity of the tuple must be " + arity + " but was " + t.size());
 		}
 
 		boolean changed = false;
@@ -204,11 +204,11 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 	 * Compares two tuples according to a given set of indexes.
 	 * </p>
 	 * <p>
-	 * $Id: IndexingOnTheFlyRelation.java,v 1.5 2007-06-14 15:27:05 poettler_ric Exp $
+	 * $Id: IndexingOnTheFlyRelation.java,v 1.6 2007-10-19 07:37:18 poettler_ric Exp $
 	 * </p>
 	 * 
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
-	 * @version $Revision: 1.5 $
+	 * @version $Revision: 1.6 $
 	 */
 	private static class TupleComparator implements Comparator<ITuple> {
 
@@ -301,8 +301,8 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 
 			int res = 0;
 			for (final int i : indexOrder) {
-				final ITerm t1 = o1.getTerm(i);
-				final ITerm t2 = o2.getTerm(i);
+				final ITerm t1 = o1.get(i);
+				final ITerm t2 = o2.get(i);
 				if ((t1 == null) && (t2 != null)) {
 					return -1;
 				} else if ((t1 != null) && (t2 == null)) {
@@ -323,10 +323,10 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 	 * <code>SortedSet</code>.
 	 * </p>
 	 * <p>
-	 * $Id: IndexingOnTheFlyRelation.java,v 1.5 2007-06-14 15:27:05 poettler_ric Exp $
+	 * $Id: IndexingOnTheFlyRelation.java,v 1.6 2007-10-19 07:37:18 poettler_ric Exp $
 	 * </p>
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
-	 * @version $Revision: 1.5 $
+	 * @version $Revision: 1.6 $
 	 */
 	private class ModifiableIterator<Type> implements Iterator<Type> {
 
@@ -381,11 +381,11 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 	 * is save to modify it's subrelations.
 	 * </p>
 	 * <p>
-	 * $Id: IndexingOnTheFlyRelation.java,v 1.5 2007-06-14 15:27:05 poettler_ric Exp $
+	 * $Id: IndexingOnTheFlyRelation.java,v 1.6 2007-10-19 07:37:18 poettler_ric Exp $
 	 * </p>
 	 *
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
-	 * @version $Revision: 1.5 $
+	 * @version $Revision: 1.6 $
 	 */
 	private class SubRelation extends AbstractSet<ITuple> implements IRelation {
 

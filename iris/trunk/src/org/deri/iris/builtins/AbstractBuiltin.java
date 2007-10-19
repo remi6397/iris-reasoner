@@ -43,11 +43,11 @@ import org.deri.iris.factory.Factory;
  * Serves as skeleton implementation for builtins. If you use this class as
  * superclass, you only have only to implement the evaluate method.
  * <p>
- * $Id: AbstractBuiltin.java,v 1.10 2007-10-12 12:40:14 bazbishop237 Exp $
+ * $Id: AbstractBuiltin.java,v 1.11 2007-10-19 07:37:16 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public abstract class AbstractBuiltin implements IBuiltInAtom {
 
@@ -151,15 +151,15 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 			throw new NullPointerException("The collection must not be null");
 
 		// calculating the needed term indexes from the submitted tuple
-		int[] outstanding = BuiltinHelper.determineUnground(getTuple().getTerms());
+		int[] outstanding = BuiltinHelper.determineUnground(getTuple());
 		
 		// retrieving the constants of this builin
-		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple().getTerms(), 
-				BuiltinHelper.complement(outstanding, getTuple().getArity()));
+		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple(), 
+				BuiltinHelper.complement(outstanding, getTuple().size()));
 
 		// putting the term from this builtin and the submitted tuple together
 		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
-				BuiltinHelper.getIndexes(t.getTerms(), outstanding), bCons);
+				BuiltinHelper.getIndexes(t, outstanding), bCons);
 		
 		// determining the remaining vars of the terms
 		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));

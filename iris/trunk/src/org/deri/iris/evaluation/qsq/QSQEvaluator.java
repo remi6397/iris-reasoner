@@ -309,7 +309,7 @@ public class QSQEvaluator implements IEvaluator {
 					// lit contains an idb predicate R' => apply:
 					// 3(b)...{(B.ii)}
 					// apply: 3(b)(i)
-					litVars = lit.getAtom().getTuple().getTerms();
+					litVars = lit.getAtom().getTuple();
 					vars = this.getBoundVars(ap, litVars);
 					this.projectionOperator = 
 						new Projection(
@@ -396,7 +396,7 @@ public class QSQEvaluator implements IEvaluator {
 		int[] indexes = new int[maxSize];
 		IVariable v0 = null;
 		IVariable v1 = null;
-		List<ITerm> vars1 = l.getAtom().getTuple().getTerms();
+		List<ITerm> vars1 = l.getAtom().getTuple();
 
 		for (int i = 0; i < maxSize; i++) {
 			indexes[i] = -1;
@@ -435,7 +435,7 @@ public class QSQEvaluator implements IEvaluator {
 				+ l.getAtom().getPredicate().getArity()];
 		IVariable v0 = null;
 		IVariable v1 = null;
-		List<ITerm> terms = l.getAtom().getTuple().getTerms();
+		List<ITerm> terms = l.getAtom().getTuple();
 		ITerm t = null;
 		boolean found = false;
 		int pos = -1;
@@ -526,7 +526,7 @@ public class QSQEvaluator implements IEvaluator {
 	 * @return adorn predicate for the query q
 	 */
 	private AdornedPredicate getAdornPredicate(IQuery q) {
-		List<ITerm> terms = q.getQueryLiteral(0).getTuple().getTerms();
+		List<ITerm> terms = q.getQueryLiteral(0).getTuple();
 		Adornment[] ads = new Adornment[terms.size()];
 		int i = 0;
 
@@ -549,7 +549,7 @@ public class QSQEvaluator implements IEvaluator {
 	 */
 	private ITuple getInitTuple(ITuple t) {
 		List<ITerm> terms = new ArrayList<ITerm>();
-		List<ITerm> tList = t.getTerms();
+		List<ITerm> tList = t;
 
 		for (ITerm term : tList) {
 			if (term instanceof IStringTerm)

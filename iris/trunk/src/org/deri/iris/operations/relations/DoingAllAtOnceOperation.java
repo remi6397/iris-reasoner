@@ -57,10 +57,10 @@ import org.deri.iris.api.terms.ITerm;
  * How the projection parameters are specified are documented in the {@link
  * SimpleProjection SimpleProjection}.
  * <p>
- * $Id: DoingAllAtOnceOperation.java,v 1.2 2007-10-09 20:31:22 bazbishop237 Exp $
+ * $Id: DoingAllAtOnceOperation.java,v 1.3 2007-10-19 07:37:18 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @see SortMergeJoin
  * @see SimpleSelection
  * @see SimpleProjection
@@ -342,10 +342,10 @@ public class DoingAllAtOnceOperation implements IJoin {
 		}
 		int tmp = idx;
 		for (final ITuple tup : t) {
-			if (tmp < tup.getArity()) {
-				return tup.getTerm(tmp);
+			if (tmp < tup.size()) {
+				return tup.get(tmp);
 			} else {
-				tmp -= tup.getArity();
+				tmp -= tup.size();
 			}
 		}
 		throw new NoSuchElementException("There was no term at position " + idx);
@@ -413,7 +413,7 @@ public class DoingAllAtOnceOperation implements IJoin {
 		Arrays.fill(terms, null);
 		for (int i = 0; i < jidx.length; i++) {
 			if (jidx[i] >= 0) {
-				terms[jidx[i]] = outer.getTerm(i);
+				terms[jidx[i]] = outer.get(i);
 			}
 		}
 		return BASIC.createTuple(terms);
@@ -443,7 +443,7 @@ public class DoingAllAtOnceOperation implements IJoin {
 			if (tup == null) {
 				throw new NullPointerException("None of the tuples must be null");
 			}
-			terms.addAll(tup.getTerms());
+			terms.addAll(tup);
 		}
 		return BASIC.createTuple(terms);
 	}
@@ -466,32 +466,32 @@ public class DoingAllAtOnceOperation implements IJoin {
 		switch (jc) {
 			case EQUALS:
 				for (int i = 0; (i < jidx.length) && matches; i++) {
-					matches = (jidx[i] > -1) ? t0.getTerm(i).equals(t1.getTerm(jidx[i])) : true;
+					matches = (jidx[i] > -1) ? t0.get(i).equals(t1.get(jidx[i])) : true;
 				}
 				break;
 			case LESS_THAN:
 				for (int i = 0; (i < jidx.length) && matches; i++) {
-					matches = (jidx[i] > -1) ? t0.getTerm(i).compareTo(t1.getTerm(jidx[i])) > 0 : true;
+					matches = (jidx[i] > -1) ? t0.get(i).compareTo(t1.get(jidx[i])) > 0 : true;
 				}
 				break;
 			case GREATER_THAN:
 				for (int i = 0; (i < jidx.length) && matches; i++) {
-					matches = (jidx[i] > -1) ? t0.getTerm(i).compareTo(t1.getTerm(jidx[i])) < 0 : true;
+					matches = (jidx[i] > -1) ? t0.get(i).compareTo(t1.get(jidx[i])) < 0 : true;
 				}
 				break;
 			case LESS_OR_EQUAL:
 				for (int i = 0; (i < jidx.length) && matches; i++) {
-					matches = (jidx[i] > -1) ? t0.getTerm(i).compareTo(t1.getTerm(jidx[i])) >= 0 : true;
+					matches = (jidx[i] > -1) ? t0.get(i).compareTo(t1.get(jidx[i])) >= 0 : true;
 				}
 				break;
 			case GREATER_OR_EQUAL:
 				for (int i = 0; (i < jidx.length) && matches; i++) {
-					matches = (jidx[i] > -1) ? t0.getTerm(i).compareTo(t1.getTerm(jidx[i])) <= 0 : true;
+					matches = (jidx[i] > -1) ? t0.get(i).compareTo(t1.get(jidx[i])) <= 0 : true;
 				}
 				break;
 			case NOT_EQUAL:
 				for (int i = 0; (i < jidx.length) && matches; i++) {
-					matches = (jidx[i] > -1) ? !t0.getTerm(i).equals(t1.getTerm(jidx[i])) : true;
+					matches = (jidx[i] > -1) ? !t0.get(i).equals(t1.get(jidx[i])) : true;
 				}
 				break;
 			default:

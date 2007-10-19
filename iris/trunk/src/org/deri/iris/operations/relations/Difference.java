@@ -33,8 +33,8 @@ import org.deri.iris.api.storage.IRelation;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic
- * @date $Date: 2007-06-14 21:46:13 $
- * @version $Id: Difference.java,v 1.9 2007-06-14 21:46:13 darko_anicic Exp $
+ * @date $Date: 2007-10-19 07:37:18 $
+ * @version $Id: Difference.java,v 1.10 2007-10-19 07:37:18 poettler_ric Exp $
  * 
  */
 public class Difference {//implements IDifference{
@@ -58,9 +58,9 @@ public class Difference {//implements IDifference{
 		}
 
 		if (!arg0.isEmpty() && !arg1.isEmpty()) {
-			if (((ITuple)arg0.first()).getArity() != ((ITuple)arg1.first()).getArity()) {
+			if (((ITuple)arg0.first()).size() != ((ITuple)arg1.first()).size()) {
 				throw new IllegalArgumentException(
-						"Arity of input parameter do not match: " + ((ITuple)arg0.first()).getArity() + " != " + ((ITuple)arg1.first()).getArity());
+						"Arity of input parameter do not match: " + ((ITuple)arg0.first()).size() + " != " + ((ITuple)arg1.first()).size());
 			}
 		}
 		

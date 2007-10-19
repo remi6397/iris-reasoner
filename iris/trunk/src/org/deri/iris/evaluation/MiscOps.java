@@ -56,14 +56,14 @@ import org.deri.iris.builtins.EqualBuiltin;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.17 2007-10-14 14:49:05 bazbishop237 Exp $
+ * $Id: MiscOps.java,v 1.18 2007-10-19 07:37:17 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class MiscOps {
 
@@ -130,7 +130,7 @@ public class MiscOps {
 		final Map<IVariable, List<ILiteral>> headVarsMap = new HashMap<IVariable, List<ILiteral>>();
 		
 		// iterating through the terms of the head
-		final Iterator<ITerm> terms = hl.getTuple().getTerms().iterator();
+		final Iterator<ITerm> terms = hl.getTuple().iterator();
 		for (int i = 0; i < arity; i++) {
 			final ITerm t = terms.next();
 			// Introduce a new variable for each of the arguments of the head predicate.
@@ -162,11 +162,11 @@ public class MiscOps {
 		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(r.getBody().getLength());
 		for (final ILiteral l: r.getBody().getLiterals()) {
 			final List<ITerm> litTerms = new ArrayList<ITerm>(l.getPredicate().getArity());
-			for (final ITerm t : l.getTuple().getTerms()) {
+			for (final ITerm t : l.getTuple()) {
 				if(! t.isGround()){
 					final List<ILiteral> eqLiterals = headVarsMap.get(t);
 					if (eqLiterals != null) { // if this var was substituted in the head
-						litTerms.add(eqLiterals.get(0).getTuple().getTerm(1));
+						litTerms.add(eqLiterals.get(0).getTuple().get(1));
 					} else {
 						litTerms.add(t);
 					}
@@ -191,7 +191,7 @@ public class MiscOps {
 				// variable in the head -> reap out the origial var
 				ITerm last = null;
 				for (final ILiteral l : equals) {
-					final ITerm actual = l.getTuple().getTerm(1);
+					final ITerm actual = l.getTuple().get(1);
 					if (last != null) {
 						bodyLiterals.add(BASIC.createLiteral(true, BUILTIN.createEqual(last, actual)));
 					}
@@ -227,7 +227,7 @@ public class MiscOps {
 			throw new NullPointerException("The atom must not be null");
 		}
 		final ITerm[] terms = (t == null) ? 
-			a.getTuple().getTerms().toArray(new ITerm[a.getTuple().getArity()]) : 
+			a.getTuple().toArray(new ITerm[a.getTuple().size()]) : 
 			t.toArray(new ITerm[t.size()]);
 		try {
 			return a.getClass().getConstructor(ITerm[].class).newInstance(new Object[]{terms});
@@ -433,7 +433,7 @@ public class MiscOps {
 	{
 		List<String> variables = new ArrayList<String>();
 		
-		for( ITerm term : literal.getTuple().getTerms() )
+		for( ITerm term : literal.getTuple() )
 		{
 			if( ! term.isGround() )
 				variables.add( term.toString() );

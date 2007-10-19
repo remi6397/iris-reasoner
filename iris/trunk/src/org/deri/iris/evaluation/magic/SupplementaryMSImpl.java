@@ -49,12 +49,12 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
  * from Beeri's paper &quot;The Power Of Magic&quot;.
  * </p>
  * <p>
- * $Id: SupplementaryMSImpl.java,v 1.5 2007-10-14 14:49:00 bazbishop237 Exp $
+ * $Id: SupplementaryMSImpl.java,v 1.6 2007-10-19 07:37:18 poettler_ric Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.5 $
- * @date $Date: 2007-10-14 14:49:00 $
+ * @version $Revision: 1.6 $
+ * @date $Date: 2007-10-19 07:37:18 $
  */
 public class SupplementaryMSImpl {
 
@@ -266,7 +266,7 @@ public class SupplementaryMSImpl {
 		final List<ITerm> bounds = MagicSetImpl.getBounds(l);
 		for (final IRule magicRule : magicRules) {
 			final ILiteral headLiteral = magicRule.getHead().getLiteral(0);
-			final List<ITerm> terms = headLiteral.getTuple().getTerms();
+			final List<ITerm> terms = headLiteral.getTuple();
 			if ((headLiteral.getPredicate().getPredicateSymbol()
 					.startsWith(MagicSetImpl.MAGIC_PREDICATE_PREFIX
 							+ l.getPredicate().getPredicateSymbol()))
@@ -389,8 +389,8 @@ public class SupplementaryMSImpl {
 		// compute head of the rule
 		// gathering all possible variables
 		final Set<ITerm> headVars = new HashSet<ITerm>();
-		headVars.addAll(getAllVariables(body[0].getTuple().getTerms()));
-		headVars.addAll(getAllVariables(body[1].getTuple().getTerms()));
+		headVars.addAll(getAllVariables(body[0].getTuple()));
+		headVars.addAll(getAllVariables(body[1].getTuple()));
 		// cleaning up the variables
 		headVars.retainAll(getNotDiscardedVars(literalIndex, r, sortedBody));
 		// computing the predicate
@@ -449,7 +449,7 @@ public class SupplementaryMSImpl {
 		gotToStay.addAll(r.getHead().getVariables());
 		for (int counter = index, max = sortedBody.size(); counter < max; counter++) {
 			gotToStay.addAll(getAllVariables(sortedBody.get(counter).getTuple()
-					.getTerms()));
+					));
 		}
 		return gotToStay;
 	}

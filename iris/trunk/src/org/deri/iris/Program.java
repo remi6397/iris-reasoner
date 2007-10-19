@@ -505,14 +505,14 @@ public class Program implements IProgram{
 		try {
 			for (IRule r : rules) {
 				for (ILiteral l : r.getBody().getLiterals()) {
-					for (Object t : l.getTuple().getTerms()) {
+					for (Object t : l.getTuple()) {
 						if (t instanceof ConstructedTerm) {
 							return true;
 						}
 					}
 				}
 				for (ILiteral l : r.getHead().getLiterals()) {
-					for (Object t : l.getTuple().getTerms()) {
+					for (Object t : l.getTuple()) {
 						if (t instanceof ConstructedTerm) {
 							return true;
 						}

@@ -109,10 +109,10 @@ public class ConstLiteral implements ILiteral{
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("{");
-		buffer.append(this.getAtom().getTuple().getTerm(0).toString());
+		buffer.append(this.getAtom().getTuple().get(0).toString());
 		buffer.append("}");
 		buffer.append("(");
-		buffer.append(this.getAtom().getTuple().getTerm(1).toString());
+		buffer.append(this.getAtom().getTuple().get(1).toString());
 		buffer.append(")");
 		return buffer.toString();
 	}

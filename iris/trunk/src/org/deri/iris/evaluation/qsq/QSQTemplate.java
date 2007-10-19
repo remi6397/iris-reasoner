@@ -200,7 +200,7 @@ public class QSQTemplate {
 			
 			for(int j=0; j<i+1; j++){
 				literal = body.get(j);
-				terms = literal.getTuple().getTerms();
+				terms = literal.getTuple();
 				for(ITerm term : terms){
 					if(term instanceof IVariable && !variables_before.contains(term))
 						variables_before.add((IVariable)term);
@@ -208,7 +208,7 @@ public class QSQTemplate {
 			}
 			for(int j=i+1; j<body.size(); j++){
 				literal = body.get(j);
-				terms = literal.getTuple().getTerms();
+				terms = literal.getTuple();
 				for(ITerm term : terms){
 					if(term instanceof IVariable && variables_before.contains(term))
 						variables.add((IVariable)term);

@@ -112,17 +112,13 @@ public class GeneralBuiltinEvaluator implements IBuiltinEvaluator {
 	 * @see org.deri.iris.api.operations.relation.IBuiltinEvaluator#evaluate()
 	 */
 	public IMixedDatatypeRelation evaluate() {
-		IMixedDatatypeRelation resultRel = RELATION
-				.getMixedRelation(this.relation0.getArity()
-						+ this.outVras.size());
-		ITuple t0, t1 = null;
-		if (this.relation0.size() > 0) {
-			Iterator<ITuple> it0 = this.relation0.iterator();
-			while (it0.hasNext()) {
-				t0 = it0.next();
-				t1 = this.builtin.evaluate(getInTuple(t0));
+		final IMixedDatatypeRelation resultRel = RELATION.getMixedRelation(
+				relation0.getArity() + outVras.size());
+		if (!relation0.isEmpty()) {
+			for (final ITuple t0 : relation0) {
+				final ITuple t1 = builtin.evaluate(getInTuple(t0));
 				if (((t1 != null) && positive) || ((t1 == null) && !positive)) {
-					resultRel.add(t0.append(t1));
+					resultRel.add((outVras.isEmpty()) ? t0 : t0.append(t1));
 				}
 			}
 		} else {
@@ -158,13 +154,13 @@ public class GeneralBuiltinEvaluator implements IBuiltinEvaluator {
 	private ITuple getInTuple(ITuple tup) {
 		List<ITerm> termList = new ArrayList<ITerm>();
 		int i = 0;
-		for (ITerm t : this.builtin.getTuple().getTerms()) {
+		for (ITerm t : this.builtin.getTuple()) {
 			if (t.isGround()) {
 				termList.add(t);
 			} else {
 				i = this.relVars.indexOf((IVariable) t);
 				if (i != -1) {
-					termList.add(tup.getTerm(i));
+					termList.add(tup.get(i));
 				} else {
 					termList.add(t);
 				}

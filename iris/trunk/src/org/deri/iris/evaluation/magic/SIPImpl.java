@@ -61,11 +61,11 @@ import org.jgrapht.graph.SimpleDirectedGraph;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.23 2007-10-14 15:11:59 bazbishop237 Exp $
+ * $Id: SIPImpl.java,v 1.24 2007-10-19 07:37:18 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  */
 public final class SIPImpl implements ISip {
 	/**
@@ -139,8 +139,8 @@ public final class SIPImpl implements ISip {
 		// determining the known variables of the head
 		final Set<IVariable> assumedKnown = new HashSet<IVariable>();
 		for (final Iterator<ITerm> headTerms = headLiteral.getTuple()
-				.getTerms().iterator(), queryTerms = queryLiteral.getTuple()
-				.getTerms().iterator(); (headTerms.hasNext() && queryTerms
+				.iterator(), queryTerms = queryLiteral.getTuple()
+				.iterator(); (headTerms.hasNext() && queryTerms
 				.hasNext());) {
 			final ITerm headT = headTerms.next();
 			final ITerm queryT = queryTerms.next();
@@ -696,8 +696,8 @@ public final class SIPImpl implements ISip {
 			headPredicate = headLiteral.getPredicate();
 
 			for (final Iterator<ITerm> headTerms = headLiteral.getTuple()
-					.getTerms().iterator(), queryTerms = queryLiteral
-					.getTuple().getTerms().iterator(); (headTerms.hasNext() && queryTerms
+					.iterator(), queryTerms = queryLiteral
+					.getTuple().iterator(); (headTerms.hasNext() && queryTerms
 					.hasNext());) {
 				final ITerm headT = headTerms.next();
 				final ITerm queryT = queryTerms.next();
@@ -792,10 +792,10 @@ public final class SIPImpl implements ISip {
 	 * The label of the edge will be <code>new HashSet<IVariable>()</code>.
 	 * </p>
 	 * <p>
-	 * $Id: SIPImpl.java,v 1.23 2007-10-14 15:11:59 bazbishop237 Exp $
+	 * $Id: SIPImpl.java,v 1.24 2007-10-19 07:37:18 poettler_ric Exp $
 	 * </p>
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.23 $
+	 * @version $Revision: 1.24 $
 	 * @since 0.3
 	 */
 	private static class SipEdgeFactory implements EdgeFactory<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> {
