@@ -49,10 +49,7 @@ import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.evaluation.common.AdornedProgram;
 import org.deri.iris.evaluation.common.Adornment;
-import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
-import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.graph.LabeledEdge;
 
@@ -93,6 +90,9 @@ public final class MagicSetImpl {
 
 	/** The query for which the adorned program was constructed. */
 	private final IQuery query;
+	
+	/** An empty list that getBounds() can return. */
+	private static final List<ITerm> EMPTY_TERM_LIST = new ArrayList<ITerm>();
 
 	/**
 	 * Construcs a MagicSet using the submitted programm.
@@ -581,7 +581,7 @@ public final class MagicSetImpl {
 			throw new NullPointerException("The literal must not be null");
 		}
 		if (!(l.getPredicate() instanceof AdornedPredicate)) {
-			return Collections.EMPTY_LIST;
+			return EMPTY_TERM_LIST;
 		}
 		return getBounds((AdornedPredicate) l.getPredicate(), l);
 	}

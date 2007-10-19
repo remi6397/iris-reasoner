@@ -61,11 +61,11 @@ import org.jgrapht.graph.SimpleDirectedGraph;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.24 2007-10-19 07:37:18 poettler_ric Exp $
+ * $Id: SIPImpl.java,v 1.25 2007-10-19 13:38:44 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public final class SIPImpl implements ISip {
 	/**
@@ -82,6 +82,9 @@ public final class SIPImpl implements ISip {
 
 	/** The query for wich the sip was created. */
 	private IQuery query = null;
+	
+	/** An empty map tha getNextByRule() can return. */
+	private static final Map<ILiteral, Set<IVariable>> EMPTY_LITERAL_VARIABLES_MAP = new HashMap<ILiteral, Set<IVariable>>();
 
 	private SIPImpl() {
 	}
@@ -365,7 +368,7 @@ public final class SIPImpl implements ISip {
 		int newPos = rule.getBody().getLiterals().indexOf(l) + 1;
 		final int rLength = rule.getBody().getLength();
 		if (newPos >= rLength) {
-			return Collections.EMPTY_MAP;
+			return EMPTY_LITERAL_VARIABLES_MAP;
 		}
 		return Collections.singletonMap(rule.getBody().getLiteral(newPos), vars);
 	}
@@ -792,10 +795,10 @@ public final class SIPImpl implements ISip {
 	 * The label of the edge will be <code>new HashSet<IVariable>()</code>.
 	 * </p>
 	 * <p>
-	 * $Id: SIPImpl.java,v 1.24 2007-10-19 07:37:18 poettler_ric Exp $
+	 * $Id: SIPImpl.java,v 1.25 2007-10-19 13:38:44 bazbishop237 Exp $
 	 * </p>
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.24 $
+	 * @version $Revision: 1.25 $
 	 * @since 0.3
 	 */
 	private static class SipEdgeFactory implements EdgeFactory<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> {
