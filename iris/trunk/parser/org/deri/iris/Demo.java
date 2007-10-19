@@ -1,6 +1,7 @@
 package org.deri.iris;
 
 import java.util.Map;
+import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
@@ -73,20 +74,25 @@ public class Demo
 				
 				long t = -System.currentTimeMillis();
 				
+				IProgram p;
+				
 				switch( evaluationStrategy )
 				{
 				case 1:
 					System.out.println( "Naive evaluation" );
-					results = ExecutionHelper.evaluateNaive( program );
+					p = ExecutionHelper.parseProgram( program );
+					results = ExecutionHelper.evaluateNaive( p );
 					break;
 				case 2:
 				default:
 					System.out.println( "Semi-naive evaluation" );
-					results = ExecutionHelper.evaluateSeminaive( program );
+					p = ExecutionHelper.parseProgram( program );
+					results = ExecutionHelper.evaluateSeminaive( p );
 					break;
 				case 3:
 					System.out.println( "Semi-naive evaluation with magic sets" );
-					results = ExecutionHelper.evaluateSeminaiveWithMagicSets( program );
+					p = ExecutionHelper.parseProgram( program );
+					results = ExecutionHelper.evaluateSeminaiveWithMagicSets( p );
 					break;
 				}
 

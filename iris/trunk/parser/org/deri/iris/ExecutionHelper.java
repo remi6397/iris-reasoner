@@ -38,13 +38,11 @@ public class ExecutionHelper
 	 * @return Results of queries
 	 * @throws Exception If evaluation fails
 	 */
-	public static Map<IPredicate, IMixedDatatypeRelation> evaluateNaive( String program ) throws Exception
+	public static Map<IPredicate, IMixedDatatypeRelation> evaluateNaive( IProgram program ) throws Exception
 	{
-		IProgram p = parseProgram( program );
-		
 		IExpressionEvaluator method = new ExpressionEvaluator();
 
-		IExecutor exec = new NaiveExecutor( p, method );
+		IExecutor exec = new NaiveExecutor( program, method );
 
 		exec.execute();
 		
@@ -57,13 +55,11 @@ public class ExecutionHelper
 	 * @return Results of queries
 	 * @throws Exception If evaluation fails
 	 */
-	public static Map<IPredicate, IMixedDatatypeRelation> evaluateSeminaive( String program ) throws Exception
+	public static Map<IPredicate, IMixedDatatypeRelation> evaluateSeminaive( IProgram program ) throws Exception
 	{
-		IProgram p = parseProgram( program );
-		
 		IExpressionEvaluator method = new ExpressionEvaluator();
 
-		IExecutor exec = new Executor( p, method );
+		IExecutor exec = new Executor( program, method );
 
 		exec.execute();
 		
@@ -76,13 +72,11 @@ public class ExecutionHelper
 	 * @return Results of queries
 	 * @throws Exception If evaluation fails
 	 */
-	public static Map<IPredicate, IMixedDatatypeRelation> evaluateSeminaiveWithMagicSets( String program ) throws Exception
+	public static Map<IPredicate, IMixedDatatypeRelation> evaluateSeminaiveWithMagicSets( IProgram program ) throws Exception
 	{
-		IProgram p = parseProgram( program );
-		
 		IExpressionEvaluator method = new ExpressionEvaluator();
 
-		IExecutor exec = new MagicExecutor( p, method );
+		IExecutor exec = new MagicExecutor( program, method );
 
 		exec.execute();
 		
