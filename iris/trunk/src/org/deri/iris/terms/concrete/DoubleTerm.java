@@ -64,7 +64,7 @@ public class DoubleTerm implements IDoubleTerm {
 		}
 		
 		DoubleTerm dt = (DoubleTerm) o;
-		return Double.compare(d, dt.getValue());
+		return d.compareTo(dt.getValue());
 	}
 	
 	public boolean equals(final Object o) {
@@ -72,11 +72,11 @@ public class DoubleTerm implements IDoubleTerm {
 			return false;
 		}
 		DoubleTerm dt = (DoubleTerm) o;
-		return Double.doubleToLongBits(d) == Double.doubleToLongBits(dt.d);
+		return d.equals( dt.d );
 	}
 	
 	public int hashCode() {
-		return Double.valueOf(d).hashCode();
+		return d.hashCode();
 	}
 	
 	/**
@@ -85,10 +85,6 @@ public class DoubleTerm implements IDoubleTerm {
 	 * @return the String representation of the holded double
 	 */
 	public String toString() {
-		return Double.toString(d);
-	}
-
-	public IDoubleTerm getMinValue() {
-		return new DoubleTerm(Double.MIN_VALUE);
+		return d.toString();
 	}
 }

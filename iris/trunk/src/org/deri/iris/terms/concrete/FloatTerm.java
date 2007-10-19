@@ -71,11 +71,11 @@ public class FloatTerm implements IFloatTerm {
 		}
 		
 		FloatTerm ft = (FloatTerm) o;
-		return Float.compare(f, ft.getValue());
+		return f.compareTo(ft.getValue());
 	}
 
 	public int hashCode() {
-		return Float.valueOf(f).hashCode();
+		return f.hashCode();
 	}
 	
 	public boolean equals(Object o) {
@@ -83,10 +83,10 @@ public class FloatTerm implements IFloatTerm {
 			return false;
 		}
 		FloatTerm ft = (FloatTerm) o;
-		return Float.floatToIntBits(f) == Float.floatToIntBits(ft.f);
+		return f.equals(ft.f);
 	}
 	
 	public String toString() {
-		return Float.toString(f);
+		return f.toString();
 	}
 }

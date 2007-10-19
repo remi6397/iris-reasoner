@@ -64,7 +64,7 @@ public class DecimalTerm implements IDecimalTerm {
 		}
 		
 		DecimalTerm dt = (DecimalTerm) o;
-		return Double.compare(d, dt.getValue());
+		return d.compareTo(dt.getValue());
 	}
 
 	public boolean equals(final Object o) {
@@ -72,11 +72,11 @@ public class DecimalTerm implements IDecimalTerm {
 			return false;
 		}
 		DecimalTerm dt = (DecimalTerm) o;
-		return Double.doubleToLongBits(d) == Double.doubleToLongBits(dt.d);
+		return d.equals( dt.d );
 	}
 
 	public int hashCode() {
-		return Double.valueOf(d).hashCode();
+		return d.hashCode();
 	}
 
 	/**
@@ -85,6 +85,6 @@ public class DecimalTerm implements IDecimalTerm {
 	 * @return the String representation of the holded double
 	 */
 	public String toString() {
-		return Double.toString(d);
+		return d.toString();
 	}
 }
