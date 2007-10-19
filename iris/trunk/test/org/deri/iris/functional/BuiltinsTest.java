@@ -108,15 +108,109 @@ public class BuiltinsTest extends TestCase
        	Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
 	
+	private static final String mNumerics =
+		"p( _decimal( 1.0 ) )." +
+		"p( _double( 2.0 ) )." +
+		"p( _float( 3.0 ) )." +
+		"p( _integer( 4 ) ).";
+		
+	private static final String mAllDataTypes =
+		mNumerics +
+		
+		"p( _string( 'text' ) )." +
+		"p( _iri( 'http://example.org/PersonOntology#Person' ) )." +
+		"p( _sqname( foaf#name ) )." +
+		"p( _boolean( 'true' ) )." +
+
+		"p( _duration( 1970, 2, 2, 2, 2, 2 ) )." +
+		"p( _datetime( 1980, 3, 3, 3, 3, 3 ) )." +
+		"p( _date( 1990, 4, 4 ) )." +
+		"p( _time( 5, 5, 5 ) )." +
+		
+		"p( _gyear( 1991 ) )." +
+		"p( _gyearmonth( 1992, 2 ) )." +
+		"p( _gmonth( 3 ) )." +
+		"p( _gmonthday( 4, 4 ) )." +
+		"p( _gday( 5 ) )." +
+		
+		"p( _hexbinary( '0FB7abcd' ) )." +
+		"p( _base64binary( 'QmFycnkgQmlzaG9w' ) )." +
+		"";
+
 	/**
 	 * Assert that every built in predicate functions correctly with every
 	 * possible data type.
 	 */
-	public void testBuiltinForAllDataTypes()
+	public void testLess_AllDataTypes() throws Exception
 	{
-		fail( "Not implemented yet." );
-	}
+		String program = mAllDataTypes +
+			"?- p(?X), ?X < 100.";
+		
+       	String expectedResults = mNumerics;
+
+       	Helper.evaluateWithAllStrategies( program, expectedResults );
+
+		program = mAllDataTypes +
+			"?- p(?X), ?X < 0.";
 	
+		Helper.evaluateWithAllStrategies( program, "" );
+
+		program = mAllDataTypes +
+			"?- p(?X), ?X < _duration( 1970, 2, 2, 2, 2, 3 ).";
+
+		Helper.evaluateWithAllStrategies( program, "p( _duration( 1970, 2, 2, 2, 2, 2 ) )." );
+
+		program = mAllDataTypes +
+			"?- p(?X), ?X < p( _datetime( 1980, 3, 3, 3, 3, 4 ) ).";
+
+		Helper.evaluateWithAllStrategies( program, "p( _datetime( 1980, 3, 3, 3, 3, 3 ) )." );
+
+		program = mAllDataTypes +
+			"?- p(?X), ?X < p( _date( 1990, 4, 5 ) ).";
+
+		Helper.evaluateWithAllStrategies( program, "p( _date( 1990, 4, 4 ) )." );
+
+		program = mAllDataTypes +
+			"?- p(?X), ?X < p( _time( 5, 5, 6 ) ).";
+
+		Helper.evaluateWithAllStrategies( program, "p( _time( 5, 5, 5 ) )." );
+
+		program = mAllDataTypes +
+			"?- p(?X), ?X < p( _gyear( 1992 ) ).";
+
+		Helper.evaluateWithAllStrategies( program, "p( _gyear( 1991 ) )." );
+
+		program = mAllDataTypes +
+			"?- p(?X), ?X < p( _gyearmonth( 1992, 3 ) ).";
+		
+		Helper.evaluateWithAllStrategies( program, "p( _gyearmonth( 1992, 2 ) )." );
+		
+		program = mAllDataTypes +
+			"?- p(?X), ?X < p( _gmonth( 4 ) ).";
+		
+		Helper.evaluateWithAllStrategies( program, "p( _gmonth( 3 ) )." );
+		
+		program = mAllDataTypes +
+			"?- p(?X), ?X < p( _gmonthday( 4, 5 ) ).";
+		
+		Helper.evaluateWithAllStrategies( program, "p( _gmonthday( 4, 4 ) )." );
+		
+		program = mAllDataTypes +
+			"?- p(?X), ?X < p( _gday( 6 ) ).";
+		
+		Helper.evaluateWithAllStrategies( program, "p( _gday( 5 ) )." );
+		
+		program = mAllDataTypes +
+			"?- p(?X), ?X < p( _hexbinary( '0FB7abce' ) ).";
+		
+		Helper.evaluateWithAllStrategies( program, "p( _hexbinary( '0FB7abcd' ) )." );
+		
+		program = mAllDataTypes +
+			"?- p(?X), ?X < p( _base64binary( 'QmFycnkgQmlzaG9y' ) ).";
+		
+		Helper.evaluateWithAllStrategies( program, "p( _base64binary( 'QmFycnkgQmlzaG9w' ) )." );
+	}
+
 	/**
 	 * Check that a program containing the built-in equality predicate is
 	 * correctly evaluated.
