@@ -42,7 +42,7 @@ import org.deri.iris.api.terms.ITerm;
  */
 public class IntegerTerm implements IIntegerTerm {
 	/** integer to represent this datatype */
-	private int i;
+	private final Integer i;
 
 	IntegerTerm(int z) {
 		this.i = z;

@@ -43,7 +43,7 @@ import org.deri.iris.api.terms.ITerm;
 public class BooleanTerm implements IBooleanTerm {
 
 	/** The boolean value represented by this object */
-	private boolean value;
+	private final Boolean value;
 	
 	/** One of the legal values. */
 	private static final String TRUE = "true"; 

@@ -57,7 +57,7 @@ public class Duration implements IDuration {
 	private static final DatatypeFactory FACTORY;
 
 	/** The inner duration object. */
-	private javax.xml.datatype.Duration duration;
+	private final javax.xml.datatype.Duration duration;
 
 	/** Milliseconds per second. */
 	private static final BigDecimal MILLIS_PER_SECOND = new BigDecimal(1000);

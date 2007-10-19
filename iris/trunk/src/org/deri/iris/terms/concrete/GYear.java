@@ -54,7 +54,7 @@ public class GYear implements IGYear {
 	private static final DatatypeFactory FACTORY;
 
 	/** The inner calendar object. */
-	private XMLGregorianCalendar date;
+	private final XMLGregorianCalendar date;
 
 	static {
 		// creating the factory

@@ -40,7 +40,7 @@ import org.deri.iris.api.terms.ITerm;
  */
 public class DoubleTerm implements IDoubleTerm {
 
-	private double d = 0d;
+	private final Double d;
 	
 	DoubleTerm(final double d) {
 		this.d = d;
