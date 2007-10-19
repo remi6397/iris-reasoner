@@ -47,6 +47,7 @@ if( !file_exists( $filelocation ) ) {
 
     <div class="sideBox LHS">
       <div>overview</div>
+        <a href="/user_guide">user guide</a>
         <a href="/download">download</a>
         <a href="/foundations">foundations</a>
         <a href="/license">license</a>
