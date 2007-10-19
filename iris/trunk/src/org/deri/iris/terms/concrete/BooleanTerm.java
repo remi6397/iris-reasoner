@@ -93,7 +93,7 @@ public class BooleanTerm implements IBooleanTerm {
 			return false;
 		}
 		BooleanTerm bt = (BooleanTerm) obj;
-		return value == bt.value;
+		return value.equals( bt.value );
 	}
 
 	public Boolean getValue() {
@@ -101,11 +101,11 @@ public class BooleanTerm implements IBooleanTerm {
 	}
 
 	public int hashCode() {
-		return Boolean.valueOf(value).hashCode();
+		return value.hashCode();
 	}
 
 	public String toString() {
-		return Boolean.toString(value);
+		return value.toString();
 	}
 
 	public boolean isGround() {
@@ -118,6 +118,6 @@ public class BooleanTerm implements IBooleanTerm {
 		}
 		
 		BooleanTerm b = (BooleanTerm) o;
-		return Boolean.valueOf(value).compareTo(b.getValue());
+		return value.compareTo(b.getValue());
 	}
 }

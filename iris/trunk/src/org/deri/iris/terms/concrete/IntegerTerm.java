@@ -65,7 +65,7 @@ public class IntegerTerm implements IIntegerTerm {
 			return 1;
 		}
 		IntegerTerm it = (IntegerTerm) o;
-		return Integer.valueOf(i).compareTo(it.getValue());
+		return i.compareTo(it.getValue());
 	}
 
 	public int hashCode() {
@@ -77,7 +77,7 @@ public class IntegerTerm implements IIntegerTerm {
 			return false;
 		}
 		IntegerTerm it = (IntegerTerm) o;
-		return i == it.i;
+		return i.equals( it.i );
 	}
 
 	/**
@@ -86,6 +86,6 @@ public class IntegerTerm implements IIntegerTerm {
 	 * @return the String representation of the holded int
 	 */
 	public String toString() {
-		return Integer.toString(i);
+		return i.toString();
 	}
 }
