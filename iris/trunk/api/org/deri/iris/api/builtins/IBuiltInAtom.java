@@ -36,12 +36,12 @@ import org.deri.iris.api.terms.IVariable;
  * Defines a Builtin.
  * </p>
  * <p>
- * $Id: IBuiltInAtom.java,v 1.10 2007-07-13 09:20:34 poettler_ric Exp $
+ * $Id: IBuiltInAtom.java,v 1.11 2007-10-19 13:27:39 bazbishop237 Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public abstract interface IBuiltInAtom extends IAtom {
 
@@ -88,7 +88,7 @@ public abstract interface IBuiltInAtom extends IAtom {
 	 * @param v the collection of known variables
 	 * @return <code>true</code> if the builtin would be evaluable,
 	 * otherwise </code>false</code>
-	 * @deprecated This should in the end be needless, because sometime
+	 * This should in the end be needless, because sometime
 	 * there will be a heuristic so order literals of a rule to get an
 	 * optimal result (and then this method be eleminated, too).
 	 */
