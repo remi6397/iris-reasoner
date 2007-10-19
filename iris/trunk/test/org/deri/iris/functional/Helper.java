@@ -40,6 +40,27 @@ import org.deri.iris.factory.Factory;
 public class Helper
 {
 	public static final boolean PRINT_RESULTS = false;
+	public static final boolean PRINT_TIMINGS = true;
+	
+	static class Timer
+	{
+		Timer()
+		{
+			mTime = System.currentTimeMillis();
+		}
+		
+		void show( String event )
+		{
+			long span = System.currentTimeMillis() - mTime;
+			
+			if( PRINT_TIMINGS )
+				System.out.println( event + ": " + span + "ms" );
+			
+			mTime = System.currentTimeMillis();
+		}
+		
+		long mTime;
+	}
 	
 	/**
 	 * Evaluate a logic program using every combination of evaluation strategy
@@ -49,9 +70,35 @@ public class Helper
 	 */
 	public static void evaluateWithAllStrategies( String program, String expectedResults ) throws Exception
 	{
-		checkResults( ExecutionHelper.evaluateNaive( program ), expectedResults, "Naive" );
-		checkResults( ExecutionHelper.evaluateSeminaive( program ), expectedResults, "Semi-naive" );
-		checkResults( ExecutionHelper.evaluateSeminaiveWithMagicSets( program ), expectedResults, "Magic sets" );
+		Timer timer = new Timer();
+
+		IProgram p = ExecutionHelper.parseProgram( program );
+		timer.show( "Parsing" );
+		
+		Map<IPredicate, IMixedDatatypeRelation> results = ExecutionHelper.evaluateNaive( p );
+		timer.show( "Naive evaluation" );
+
+		checkResults( results, expectedResults, "Naive" );
+		
+		// =========================================================================================
+		timer = new Timer();
+
+		p = ExecutionHelper.parseProgram( program );
+		
+		results = ExecutionHelper.evaluateSeminaive( p );
+		timer.show( "Semi-naive evaluation" );
+
+		checkResults( results, expectedResults, "Semi-naive" );
+
+		// =========================================================================================
+		timer = new Timer();
+
+		p = ExecutionHelper.parseProgram( program );
+		
+		results = ExecutionHelper.evaluateSeminaive( p );
+		timer.show( "Magic sets" );
+
+		checkResults( results, expectedResults, "Magic sets" );
 	}
 	
 	/**
@@ -65,7 +112,8 @@ public class Helper
 	{
 		try
 		{
-			ExecutionHelper.evaluateNaive( program );
+			IProgram p = ExecutionHelper.parseProgram( program );
+			ExecutionHelper.evaluateNaive( p );
 			junit.framework.Assert.fail( "Naive evaluation did not throw the correct exception." );
 		}
 		catch( Exception e )
@@ -78,7 +126,8 @@ public class Helper
 
 		try
 		{
-			ExecutionHelper.evaluateSeminaive( program );
+			IProgram p = ExecutionHelper.parseProgram( program );
+			ExecutionHelper.evaluateSeminaive( p );
 			junit.framework.Assert.fail( "Semi-naive evaluation did not throw the correct exception." );
 		}
 		catch( Exception e )
@@ -91,7 +140,8 @@ public class Helper
 
 		try
 		{
-			ExecutionHelper.evaluateSeminaiveWithMagicSets( program );
+			IProgram p = ExecutionHelper.parseProgram( program );
+			ExecutionHelper.evaluateSeminaiveWithMagicSets( p );
 			junit.framework.Assert.fail( "Magic sets evaluation did not throw the correct exception." );
 		}
 		catch( Exception e )
@@ -132,7 +182,7 @@ public class Helper
 			// TODO - see bug 1794659
 			// Strange behaviour - the arity of the predicate that indexes the relation
 			// that is the result of a query is very hard to predict, i.e. it might
-			// not have the same arity as the relations! Try expected or zero...
+			// not have the same arity as the relations! Try expected or zero or others...
 			if ( actualPredicate == null )
 			{
 				for( int arity = 0; arity < 10; ++arity )
