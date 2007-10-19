@@ -41,10 +41,10 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Simple implementation of ITime.
  * </p>
  * <p>
- * $Id: Time.java,v 1.8 2007-10-17 07:40:44 bazbishop237 Exp $
+ * $Id: Time.java,v 1.9 2007-10-19 10:41:56 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class Time implements ITime {
 
@@ -52,7 +52,7 @@ public class Time implements ITime {
 	private static final DatatypeFactory FACTORY;
 
 	/** The inner calendar object. */
-	private XMLGregorianCalendar time;
+	private final XMLGregorianCalendar time;
 
 	/** Milliseconds per minute. */
 	private static final int MILLIS_PER_MINUTE = 1000 * 60;

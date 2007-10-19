@@ -49,7 +49,7 @@ public class DateTerm implements IDateTerm {
 	private static final DatatypeFactory FACTORY;
 
 	/** The inner calendar object. */
-	private XMLGregorianCalendar date;
+	private final XMLGregorianCalendar date;
 
 	static {
 		// creating the factory

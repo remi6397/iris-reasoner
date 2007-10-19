@@ -40,7 +40,7 @@ import org.deri.iris.api.terms.ITerm;
  */
 public class DecimalTerm implements IDecimalTerm {
 
-	private double d = 0d;
+	private final Double d;
 
 	DecimalTerm(final double d) {
 		this.d = d;

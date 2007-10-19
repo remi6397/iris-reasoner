@@ -41,7 +41,7 @@ import org.deri.iris.api.terms.ITerm;
 public class FloatTerm implements IFloatTerm {
 
 	/** The float represented by this object */
-	private float f;
+	private final Float f;
 	
 	
 	/**
@@ -49,10 +49,7 @@ public class FloatTerm implements IFloatTerm {
 	 * @param f the float value for this object
 	 * @throws NullPointerException if the float is null
 	 */
-	FloatTerm(final Float f) {
-		if (f == null) {
-			throw new NullPointerException();
-		}
+	FloatTerm(final float f) {
 		this.f = f;
 	}
 	

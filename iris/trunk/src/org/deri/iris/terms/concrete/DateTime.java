@@ -53,7 +53,7 @@ public class DateTime implements IDateTime {
 	private static final DatatypeFactory FACTORY;
 
 	/** The inner calendar object. */
-	private XMLGregorianCalendar datetime;
+	private final XMLGregorianCalendar datetime;
 
 	/** Milliseconds per minute. */
 	private static final int MILLIS_PER_MINUTE = 1000 * 60;
