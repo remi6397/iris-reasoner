@@ -447,27 +447,27 @@ public class DbStorageManager {
 	
 	public boolean addTuple(ITuple t, IPredicate p) throws DbStorageManagerException {
 		String tableName = this.getTableName(p);
-		if (t.getArity() == 0)
+		if (t.size() == 0)
 			return true;
-		if (t.getTerms().isEmpty())
+		if (t.isEmpty())
 			return true;
 		if(hasFact(t, p)) return true;
 		PreparedStatement stmt = null;
 		StringBuilder sqlStatement =  new StringBuilder("INSERT INTO " + tableName + " VALUES (");
-		for (int i = 0; i < t.getArity(); i++) {
+		for (int i = 0; i < t.size(); i++) {
 			sqlStatement.append("?, ?");
-			if (i < t.getArity() - 1)
+			if (i < t.size() - 1)
 				sqlStatement.append(", ");
 		}
 		sqlStatement.append(")");
 		try {
 			stmt = con.prepareStatement(sqlStatement.toString());
 
-			for (int i = 0; i < t.getArity(); i++) {
+			for (int i = 0; i < t.size(); i++) {
 				int valueColumn=2 * i + 1;
 				int typeColumn=2 * i + 2;
-				stmt.setString(valueColumn,serializeTermToString(t.getTerm(i)));
-				stmt.setString(typeColumn,t.getTerm(i).getClass().getCanonicalName());
+				stmt.setString(valueColumn,serializeTermToString(t.get(i)));
+				stmt.setString(typeColumn,t.get(i).getClass().getCanonicalName());
 			}
 		} catch (SQLException e) {
 			throw new DbStorageManagerException(e);
@@ -490,26 +490,26 @@ public class DbStorageManager {
 	public boolean removeFact(IAtom a) throws DbStorageManagerException {
 
 		String tableName = this.getTableName(a.getPredicate());
-		if (a.getTuple().getArity() == 0)
+		if (a.getTuple().size() == 0)
 			return true;
-		if (a.getTuple().getTerms().isEmpty())
+		if (a.getTuple().isEmpty())
 			return true;
 		PreparedStatement stmt = null;
 		StringBuilder sqlStatement = new StringBuilder("DELETE FROM " + tableName + " WHERE ");
-		for (int i = 0; i < a.getTuple().getArity(); i++) {
+		for (int i = 0; i < a.getTuple().size(); i++) {
 			int termPosition=i+1;
 			sqlStatement.append("term"+termPosition+"= ? AND termType"+termPosition+"= ?");
-			if (i < a.getTuple().getArity() - 1)
+			if (i < a.getTuple().size() - 1)
 				sqlStatement.append("AND ");
 		}
 		try {
 			stmt = con.prepareStatement(sqlStatement.toString());
 
-			for (int i = 0; i < a.getTuple().getArity(); i++) {
+			for (int i = 0; i < a.getTuple().size(); i++) {
 				int valueColumn=2 * i + 1;
 				int typeColumn=2 * i + 2;
-				stmt.setString(valueColumn,serializeTermToString(a.getTuple().getTerm(i)));
-				stmt.setString(typeColumn, a.getTuple().getTerm(i).getValue().getClass().getCanonicalName()); //TODO improve this
+				stmt.setString(valueColumn,serializeTermToString(a.getTuple().get(i)));
+				stmt.setString(typeColumn, a.getTuple().get(i).getValue().getClass().getCanonicalName()); //TODO improve this
 			}
 		} catch (SQLException e) {
 			throw new DbStorageManagerException(e);
@@ -542,24 +542,24 @@ public class DbStorageManager {
 		String tableName = this.getTableName(p);
 		if (p.getArity() == 0)
 			return true;
-		if (t.getTerms().isEmpty())
+		if (t.isEmpty())
 			return true;
 		PreparedStatement stmt = null;
 		StringBuilder sqlStatement = new StringBuilder("SELECT * FROM " + tableName + " WHERE ");
-		for (int i = 0; i < t.getArity(); i++) {
+		for (int i = 0; i < t.size(); i++) {
 			int termPosition=i+1;
 			sqlStatement.append("term"+termPosition+"= ? AND termType"+termPosition+"= ?");
-			if (i < t.getArity() - 1)
+			if (i < t.size() - 1)
 				sqlStatement.append(" AND ");
 		}
 		try {
 			stmt = con.prepareStatement(sqlStatement.toString());
 
-			for (int i = 0; i < t.getArity(); i++) {
+			for (int i = 0; i < t.size(); i++) {
 				int valueColumn=2 * i + 1;
 				int typeColumn=2 * i + 2;
-				stmt.setString(valueColumn,serializeTermToString(t.getTerm(i)));
-				stmt.setString(typeColumn, t.getTerm(i).getValue().getClass().getCanonicalName());
+				stmt.setString(valueColumn,serializeTermToString(t.get(i)));
+				stmt.setString(typeColumn, t.get(i).getValue().getClass().getCanonicalName());
 			}
 		} catch (SQLException e) {
 			throw new DbStorageManagerException(e);

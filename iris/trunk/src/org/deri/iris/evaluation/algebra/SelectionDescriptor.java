@@ -80,17 +80,17 @@ public class SelectionDescriptor extends Component implements ISelectionDescript
 		buffer.append(ComponentType.SELECTION);
 		
 		buffer.append(" ((");
-		for (int i = 0; i < this.pattern.getArity(); i++) {
-			if(this.pattern.getTerms().get(i) != null)
-				buffer.append(this.pattern.getTerms().get(i).toString());
+		for (int i = 0; i < this.pattern.size(); i++) {
+			if(this.pattern.get(i) != null)
+				buffer.append(this.pattern.get(i).toString());
 			else
 				buffer.append("null");
 			buffer.append(", ");
 		}
 		buffer.delete(buffer.length() - 2, buffer.length());
 		buffer.append(")<");
-		if(this.pattern.getTerm(0) instanceof NonEqualityTerm &&
-				this.pattern.getTerm(1) instanceof NonEqualityTerm){
+		if(this.pattern.get(0) instanceof NonEqualityTerm &&
+				this.pattern.get(1) instanceof NonEqualityTerm){
 			buffer.append("NON-EQUALS");	
 		}else{
 			buffer.append("EQUALS");

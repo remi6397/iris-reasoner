@@ -53,10 +53,10 @@ import java.util.List;
  * columns will be left out.
  * </p>
  * <p>
- * $Id: SimpleProjection.java,v 1.2 2007-06-14 16:18:21 poettler_ric Exp $
+ * $Id: SimpleProjection.java,v 1.3 2007-10-19 07:37:18 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class SimpleProjection implements IMixedDatatypeRelationOperation {
 
@@ -147,7 +147,7 @@ public class SimpleProjection implements IMixedDatatypeRelationOperation {
 		for (final ITuple t : r) {
 			final List<ITerm> tmp = new LinkedList<ITerm>();
 			for (int i : optimized) {
-				tmp.add(t.getTerm(i));
+				tmp.add(t.get(i));
 			}
 			res.add(BASIC.createTuple(tmp));
 		}

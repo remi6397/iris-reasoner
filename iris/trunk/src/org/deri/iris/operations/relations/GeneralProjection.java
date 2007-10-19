@@ -128,11 +128,11 @@ public class GeneralProjection implements IProjection {
 	}
 
 	private ITuple projectTuple(ITuple tuple) {
-		ITerm[] terms = new ITerm[tuple.getArity()];
+		ITerm[] terms = new ITerm[tuple.size()];
 		List<ITerm> termList = new ArrayList<ITerm>(this.getRelationArity());
 		for (int i = 0; i < this.indexes.length; i++) {
 			if (this.indexes[i] != -1)
-				terms[indexes[i]] = tuple.getTerm(i);
+				terms[indexes[i]] = tuple.get(i);
 		}
 		for (int j = 0; j < this.indexes.length; j++) {
 			if (terms[j] != null)

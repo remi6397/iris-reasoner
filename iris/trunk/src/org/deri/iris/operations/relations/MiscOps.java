@@ -99,9 +99,9 @@ public class MiscOps {
 	 * @return		The projection indexes.
 	 */
 	public static int[] getProjectionIndexes(ITuple tup) {
-		int[] i = new int[tup.getArity()];
+		int[] i = new int[tup.size()];
 		int j = 0, k = 0;
-		for (ITerm t : tup.getTerms()){
+		for (ITerm t : tup){
 			if(! t.isGround()){
 				i[k++] = j++;
 			}else{

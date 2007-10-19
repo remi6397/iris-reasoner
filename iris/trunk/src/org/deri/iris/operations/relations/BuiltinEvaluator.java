@@ -103,7 +103,7 @@ public class BuiltinEvaluator {//implements IBuiltinEvaluator{
 				t0 = it0.next();
 				t1 = this.builtin.evaluate(getInTuple(t0));
 				if (t1 != null) {
-					resultRel.add(t0.append(outVras));
+					resultRel.add((outVras.isEmpty()) ? t0 : t0.append(t1));
 				}
 			}
 		}else{
@@ -127,13 +127,13 @@ public class BuiltinEvaluator {//implements IBuiltinEvaluator{
 	private ITuple getInTuple(ITuple tup){
 		List<ITerm> termList = new ArrayList<ITerm>();
 		int i = 0;
-		for(ITerm t : this.builtin.getTuple().getTerms()){
+		for(ITerm t : this.builtin.getTuple()){
 			if(t.isGround()){
 				termList.add(t);
 			}else{
 				i = this.relVars.indexOf((IVariable)t);
 				if(i != -1){
-					termList.add(tup.getTerm(i));
+					termList.add(tup.get(i));
 				}else{
 					termList.add(t);
 				}

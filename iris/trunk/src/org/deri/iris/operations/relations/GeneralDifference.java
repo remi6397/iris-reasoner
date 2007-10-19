@@ -62,12 +62,12 @@ public class GeneralDifference implements IDifference {
 					"Input parameters must not be null");
 		}
 		if (!arg0.isEmpty() && !arg1.isEmpty()) {
-			if (((ITuple) arg0.first()).getArity() != ((ITuple) arg1.first())
-					.getArity()) {
+			if (((ITuple) arg0.first()).size() != ((ITuple) arg1.first())
+					.size()) {
 				throw new IllegalArgumentException(
 						"Arity of input parameter do not match: "
-								+ ((ITuple) arg0.first()).getArity() + " != "
-								+ ((ITuple) arg1.first()).getArity());
+								+ ((ITuple) arg0.first()).size() + " != "
+								+ ((ITuple) arg1.first()).size());
 			}
 		}
 		this.rel0 = arg0;

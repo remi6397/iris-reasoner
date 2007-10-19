@@ -77,20 +77,6 @@ public class TupleTest extends TestCase {
 		assertEquals("The get method doesn't work properly", TERM.createString("c"), TUPLE.get(2));
 	}
 
-	public void testGetArity() {
-		assertEquals("The getArity method doesn't work properly", ARITY, TUPLE.getArity());
-	}
-
-	public void testGetTerm() {
-		assertEquals("The getTerm method doesn't work properly", TERM.createString("a"), TUPLE.getTerm(0));
-		assertEquals("The getTerm method doesn't work properly", TERM.createString("b"), TUPLE.getTerm(1));
-		assertEquals("The getTerm method doesn't work properly", TERM.createString("c"), TUPLE.getTerm(2));
-	}
-
-	public void testGetTerms() {
-		assertEquals("The getTerms method doesn't work properly", TUPLE.getTerms(), TUPLE);
-	}
-
 	public void testEquals() {
 		ObjectTests.runTestEquals(REFERENCE, TUPLE, MORE);
 	}

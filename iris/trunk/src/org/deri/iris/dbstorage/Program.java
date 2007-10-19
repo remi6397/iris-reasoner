@@ -56,12 +56,12 @@ import java.sql.SQLException;
  * This implementaion is thread-save.
  * </p>
  * <p>
- * $Id: Program.java,v 1.7 2007-10-14 15:11:58 bazbishop237 Exp $
+ * $Id: Program.java,v 1.8 2007-10-19 07:37:17 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class Program implements IProgram {
 
@@ -561,14 +561,14 @@ public class Program implements IProgram {
 		try {
 			for (IRule r : rules) {
 				for (ILiteral l : r.getBody().getLiterals()) {
-					for (Object t : l.getTuple().getTerms()) {
+					for (Object t : l.getTuple()) {
 						if (t instanceof ConstructedTerm) {
 							return true;
 						}
 					}
 				}
 				for (ILiteral l : r.getHead().getLiterals()) {
-					for (Object t : l.getTuple().getTerms()) {
+					for (Object t : l.getTuple()) {
 						if (t instanceof ConstructedTerm) {
 							return true;
 						}

@@ -45,11 +45,11 @@ import org.deri.iris.api.terms.IVariable;
  * A simple tuple implementation. This implementation is thread-safe.
  * </p>
  * <p>
- * $Id: Tuple.java,v 1.18 2007-10-18 13:31:06 poettler_ric Exp $
+ * $Id: Tuple.java,v 1.19 2007-10-19 07:37:16 poettler_ric Exp $
  * </p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class Tuple extends AbstractList<ITerm> implements ITuple {
 
@@ -101,18 +101,6 @@ public class Tuple extends AbstractList<ITerm> implements ITuple {
 		return new Tuple(res);
 	}
 
-	public int getArity() {
-		return size();
-	}
-
-	public ITerm getTerm(final int arg) {
-		return get(arg);
-	}
-
-	public List<ITerm> getTerms() {
-		return this;
-	}
-
 	public boolean isGround() {
 		for (final ITerm t : terms){
 			if(!t.isGround()) {
@@ -141,12 +129,12 @@ public class Tuple extends AbstractList<ITerm> implements ITuple {
 		}
 		
 		int res = 0;
-		for (int i = 0; i < Math.min(terms.length, t.getTerms().size()); i++) {
-			if ((res = terms[i].compareTo(t.getTerm(i))) != 0) {
+		for (int i = 0; i < Math.min(terms.length, t.size()); i++) {
+			if ((res = terms[i].compareTo(t.get(i))) != 0) {
 				return res;
 			}
 		}
-		return terms.length - t.getTerms().size();
+		return terms.length - t.size();
 	}
 
 	public boolean equals(final Object o) {

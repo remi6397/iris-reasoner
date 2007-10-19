@@ -53,11 +53,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.30 2007-10-14 15:11:58 bazbishop237 Exp $
+ * $Id: AdornedProgram.java,v 1.31 2007-10-19 07:37:17 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class AdornedProgram {
 
@@ -156,7 +156,7 @@ public class AdornedProgram {
 					ap.getAdornment().length) {
 				newQuery = BASIC.createQuery(BASIC.createLiteral(
 							ql.isPositive(), 
-							BASIC.createAtom(ap, BASIC.createTuple(ql.getTuple().getTerms()))));
+							BASIC.createAtom(ap, BASIC.createTuple(ql.getTuple()))));
 			}
 
 		}
@@ -382,7 +382,7 @@ public class AdornedProgram {
 				terms[iCounter] = EMPTY_CONSTANT_TERM;
 				break;
 			case FREE:
-				terms[iCounter] = hl.getTuple().getTerm(iCounter);
+				terms[iCounter] = hl.getTuple().get(iCounter);
 				break;
 			default:
 				throw new IllegalArgumentException(
@@ -488,7 +488,7 @@ public class AdornedProgram {
 			adornment = new Adornment[p.getArity()];
 
 			// computing the adornment
-			for (final ITerm t : l.getTuple().getTerms()) {
+			for (final ITerm t : l.getTuple()) {
 				if (isBound(t, bounds)) {
 					adornment[iCoutner] = Adornment.BOUND;
 				} else {
@@ -536,7 +536,7 @@ public class AdornedProgram {
 			int iCounter = 0;
 			// computing the adornment
 			adornment = new Adornment[p.getArity()];
-			for (ITerm t : (List<ITerm>) a.getTuple().getTerms()) {
+			for (ITerm t : (List<ITerm>) a.getTuple()) {
 				if (t.isGround()) {
 					adornment[iCounter] = Adornment.BOUND;
 				} else {
@@ -650,7 +650,7 @@ public class AdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.30 $
+	 * @version $Revision: 1.31 $
 	 */
 	public static class AdornedRule implements IRule {
 		/** The inner rule represented by this object */

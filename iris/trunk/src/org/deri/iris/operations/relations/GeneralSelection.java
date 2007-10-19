@@ -157,7 +157,7 @@ public class GeneralSelection implements ISelection {
 	 */
 	private IMixedDatatypeRelation select_0() {
 		IMixedDatatypeRelation result = RELATION.getMixedRelation(this.pattern
-				.getArity());
+				.size());
 		ITuple tup = null;
 		Iterator<Integer> posIterator = null;
 		Iterator<Integer> negIterator = null;
@@ -189,7 +189,7 @@ public class GeneralSelection implements ISelection {
 				posIterator = selMap.keySet().iterator();
 				while (posIterator.hasNext()) {
 					Integer i = posIterator.next();
-					if (!tup.getTerm(i).equals(selMap.get(i))) {
+					if (!tup.get(i).equals(selMap.get(i))) {
 						toAdd = false;
 						break;
 					}
@@ -198,7 +198,7 @@ public class GeneralSelection implements ISelection {
 					negIterator = selNegMap.keySet().iterator();
 					while (negIterator.hasNext()) {
 						Integer i = negIterator.next();
-						if (tup.getTerm(i).equals(selNegMap.get(i))) {
+						if (tup.get(i).equals(selNegMap.get(i))) {
 							toAdd = false;
 							break;
 						}
@@ -236,15 +236,15 @@ public class GeneralSelection implements ISelection {
 				int key = it.next();
 				posIterator = selIndexes.get(key).iterator();
 				if (posIterator.hasNext())
-					t = tup.getTerm(posIterator.next());
+					t = tup.get(posIterator.next());
 				while (posIterator.hasNext()) {
 					if(key > 0){
-						if (!t.equals(tup.getTerm(posIterator.next()))) {
+						if (!t.equals(tup.get(posIterator.next()))) {
 							toAdd = false;
 							break;
 						}
 					} else {
-						if (t.equals(tup.getTerm(posIterator.next()))) {
+						if (t.equals(tup.get(posIterator.next()))) {
 							toAdd = false;
 							break;
 						}
@@ -297,7 +297,7 @@ public class GeneralSelection implements ISelection {
 	private Map<Integer, ITerm> getSelectionMap(ITuple pattern) {
 		Map<Integer, ITerm> selMap = new TreeMap<Integer, ITerm>();
 		Integer i = 0;
-		for (ITerm t : pattern.getTerms()) {
+		for (ITerm t : pattern) {
 			if (t != null)
 				selMap.put(i, t);
 			i++;
@@ -316,11 +316,11 @@ public class GeneralSelection implements ISelection {
 	 *         operation based on pattern case.
 	 */
 	private Integer[] sortPatternIndexes(ITuple pattern) {
-		final Integer[] res = new Integer[pattern.getArity()];
+		final Integer[] res = new Integer[pattern.size()];
 		Arrays.fill(res, 0);
 		int j = 1;
-		for (int i = 0; i < pattern.getTerms().size(); i++) {
-			if (pattern.getTerm(i) != null) {
+		for (int i = 0; i < pattern.size(); i++) {
+			if (pattern.get(i) != null) {
 				res[i] = j;
 				j++;
 			}
@@ -352,7 +352,7 @@ public class GeneralSelection implements ISelection {
 					"Provide non null value for tuple used as " +
 					"a selection pattern in GeneralSelection");
 		}
-		for(ITerm t : tup.getTerms()){
+		for(ITerm t : tup){
 			if(t != null){
 				return false;
 			}

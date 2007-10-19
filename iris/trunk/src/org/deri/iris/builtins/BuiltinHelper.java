@@ -53,11 +53,11 @@ import org.deri.iris.api.terms.concrete.ITime;
  * Some helper methods common to some Builtins.
  * </p>
  * <p>
- * $Id: BuiltinHelper.java,v 1.19 2007-10-18 13:31:06 poettler_ric Exp $
+ * $Id: BuiltinHelper.java,v 1.20 2007-10-19 07:37:17 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class BuiltinHelper {
 
@@ -801,16 +801,16 @@ public class BuiltinHelper {
 		if ((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The none of the tuples must not be null");
 		}
-		if (t0.getArity() != t1.getArity()) {
+		if (t0.size() != t1.size()) {
 			throw new IllegalArgumentException("The arity of the tuples must match " + 
-					t0.getArity() + " <-> " + t1.getArity());
+					t0.size() + " <-> " + t1.size());
 		}
 		// calculating the needed term indexes from the submitted tuple
-		int[] outstanding = determineUnground(t0.getTerms());
+		int[] outstanding = determineUnground(t0);
 		// retrieving the constants of this builin
-		final ITerm[] bCons = getIndexes(t0.getTerms(), 
-				complement(outstanding, t0.getArity()));
+		final ITerm[] bCons = getIndexes(t0, 
+				complement(outstanding, t0.size()));
 		// putting the term from this builtin and the submitted tuple together
-		return concat(outstanding, getIndexes(t1.getTerms(), outstanding), bCons);
+		return concat(outstanding, getIndexes(t1, outstanding), bCons);
 	}
 }

@@ -39,42 +39,15 @@ import org.deri.iris.api.terms.IVariable;
  * relation.
  * </p>
  * <p>
- * $Id: ITuple.java,v 1.13 2007-10-18 13:31:05 poettler_ric Exp $
+ * $Id: ITuple.java,v 1.14 2007-10-19 07:37:15 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 
 public interface ITuple extends List<ITerm>, Comparable<ITuple> {
-
-	/**
-	 * Returns the arity of the predicate.
-	 * 
-	 * @return The arity of the predicate.
-	 * @deprecated use {@link #size() size()} instead
-	 */
-	public int getArity();
-
-	/**
-	 * Returns the term at the specified position in this tuple.
-	 * 
-	 * @param index
-	 *            Index of tuple to return.
-	 * @return The term at the specified position in this tuple.
-	 * @deprecated use {@link #get(int) get(int)} instead
-	 */
-	public ITerm getTerm(int index);
-
-	/**
-	 * Returns all terms of this tuple preserving the order of terms in the
-	 * tuple.
-	 * 
-	 * @return Returns all terms of this tuple.
-	 * @deprecated use <code>this</code> object instead
-	 */
-	public List<ITerm> getTerms();
 
 	/**
 	 * Checks whether this tuple contains only ground terms.
