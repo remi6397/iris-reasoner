@@ -40,7 +40,7 @@ import org.deri.iris.factory.Factory;
 public class Helper
 {
 	public static final boolean PRINT_RESULTS = false;
-	public static final boolean PRINT_TIMINGS = true;
+	public static final boolean PRINT_TIMINGS = false;
 	
 	static class Timer
 	{
