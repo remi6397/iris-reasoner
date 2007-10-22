@@ -116,17 +116,131 @@ public class NegationTest extends TestCase
 	}
 
 	/**
-	 * Assert that evaluations of logic programs containing non-stratified negation
-	 * are detected correctly.
+	 * Test stratification algorithm.
 	 */
-	public void testNotStratified()
+	public void testIsStratified1() throws Exception
 	{
 		String program =
-			"q( 5 )." +
-			"p( ?X ) :- r( ?X ),not q(?X)." +
-			"q( ?X ) :- r( ?X ),not p(?X)." +
-			"?- q( ?X ).";
+			"p( ?X ) :- r( ?X ), not q(?X).";
 		
+       	Helper.evaluateWithAllStrategies( program, "" );
+	}
+
+	/**
+	 * Test stratification algorithm.
+	 */
+	public void testIsStratified2() throws Exception
+	{
+		String program =
+			"p1( ?X ) :- r( ?X ), not q(?X)." +
+			"p2( ?X ) :- r( ?X ), not q(?X).";
+		
+       	Helper.evaluateWithAllStrategies( program, "" );
+	}
+
+	/**
+	 * Test stratification algorithm.
+	 */
+	public void testIsStratified3() throws Exception
+	{
+		String program =
+			"p1( ?X ) :- r( ?X ), not q(?X)." +
+			"p2( ?X ) :- p1( ?X ), not q(?X).";
+		
+       	Helper.evaluateWithAllStrategies( program, "" );
+	}
+
+	/**
+	 * Test stratification algorithm.
+	 */
+	public void testIsStratified4() throws Exception
+	{
+		String program =
+			"p1( ?X ) :- r( ?X ), not q(?X)." +
+			"p2( ?X ) :- r( ?X ), not p1(?X).";
+		
+       	Helper.evaluateWithAllStrategies( program, "" );
+	}
+
+	/**
+	 * Test stratification algorithm.
+	 */
+	public void testIsStratified5() throws Exception
+	{
+		String program =
+			"p1( ?X ) :- r( ?X ),not q(?X)." +
+			"p2( ?X ) :- r( ?X ),not q(?X)." +
+		
+			"p3( ?X ) :- s(?X), not p1( ?X )." +
+			"p4( ?X ) :- s(?X), not p2( ?X )." +
+			
+			"p5( ?X ) :- p3(?X)." +
+			"p6( ?X ) :- p4(?X)." +
+			"p7( ?X ) :- p6(?X).";
+		
+       	Helper.evaluateWithAllStrategies( program, "" );
+	}
+
+	/**
+	 * Test stratification algorithm.
+	 */
+	public void testNotStratified1()
+	{
+		String program =
+			"p( ?X ) :- r( ?X ),not q(?X)." +
+			"r( ?X ) :- s( ?X ),not p(?X).";
+		
+		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+	}
+
+	/**
+	 * Test stratification algorithm.
+	 */
+	public void testNotStratified2()
+	{
+		String program =
+			"p( ?X ) :- r( ?X ), not q(?X)." +
+			"q( ?X ) :- r( ?X ), p(?X).";
+		
+		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+	}
+
+	/**
+	 * Test stratification algorithm.
+	 */
+	public void testNotStratified3()
+	{
+		String program =
+			"p1( ?X ) :- r( ?X ),not q(?X)." +
+			"p2( ?X ) :- r( ?X ),not q(?X)." +
+		
+			"p3( ?X ) :- s(?X), not p1( ?X )." +
+			"p4( ?X ) :- s(?X), not p2( ?X )." +
+			
+			"p5( ?X ) :- p3(?X)." +
+			"p6( ?X ) :- p4(?X)." +
+			
+			"p7( ?X ) :- t(?X), not p6(?X)." +
+			"p6( ?X ) :- t(?X), p7(?X).";
+			
+		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+	}
+
+	/**
+	 * Test stratification algorithm.
+	 */
+	public void testNotStratifiedLongCyclicDependancy()
+	{
+		String program =
+			"p1( ?X ) :- r( ?X ),not p8(?X)." +
+			"p2( ?X ) :- r( ?X ),not p1(?X)." +
+			"p3( ?X ) :- r( ?X ),not p2(?X)." +
+			"p4( ?X ) :- r( ?X ),not p3(?X)." +
+			"p5( ?X ) :- r( ?X ),not p4(?X)." +
+			"p6( ?X ) :- r( ?X ),not p5(?X)." +
+			"p7( ?X ) :- r( ?X ),not p6(?X)." +
+			"p8( ?X ) :- r( ?X ),not p7(?X).";
+			
 		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
 	}
 
