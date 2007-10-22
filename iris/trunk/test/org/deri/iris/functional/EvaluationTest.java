@@ -638,4 +638,18 @@ public class EvaluationTest extends TestCase
 
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
+
+	public void testqueryForUnknownPredicate() throws Exception
+	{
+    	String program = 
+		    "p(1)." +
+		    "p(2)." +
+		    
+		    "q(?X) :- p(?X)." +
+		    "?- r(?x).";
+		
+		String expectedResults = "";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
 }
