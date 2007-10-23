@@ -160,7 +160,7 @@ public class PredicateGraph implements IPredicateGraph {
 				}
 			}
 		}
-		assert (edges.size() != cycle.size()) : "the number of edges and vertexes must be equal";
+		assert (edges.size() == cycle.size()) : "the number of edges and vertexes must be equal";
 		return edges;
 	}
 
