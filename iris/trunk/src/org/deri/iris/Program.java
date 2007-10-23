@@ -25,28 +25,17 @@
  */
 package org.deri.iris;
 
-import static org.deri.iris.factory.Factory.RELATION;
-
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IAtom;
-import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.builtins.BuiltinRegister;
-import org.deri.iris.evaluation.MiscOps;
-import org.deri.iris.terms.ConstructedTerm;
 
 /**
  * <p>
@@ -65,37 +54,18 @@ import org.deri.iris.terms.ConstructedTerm;
 public class Program implements IProgram{
 
 	/** The facts of this program. */
-	private final Map<Integer, IMixedDatatypeRelation> facts = new HashMap<Integer, IMixedDatatypeRelation>();
+	private Facts mFacts = new Facts();
+
+	/** The rule base. */
+	private RuleBase mRuleBase = new RuleBase();
 	
 	/** The queries of this program. */
-	private final Set<IQuery> queries = new HashSet<IQuery>();
+	private Queries mQueries = new Queries();
 	
-	/** The rules of this program. */
-	private final Set<IRule> rules = new HashSet<IRule>();
 
 	/** The register to hold the information about registered builtins. */
 	private final BuiltinRegister builtinReg = new BuiltinRegister();
 	 
-	/** The Lock to make this set threadsafe */
-	private final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
-
-	/** The read lock */
-	private final Lock READ = LOCK.readLock();
-
-	/** The write lock */
-	private final Lock WRITE = LOCK.writeLock();
-
-	/** Map to count the occurences of a predicate in rules and queries. */
-	private final Map<IPredicate, Integer> predicateCount = new HashMap<IPredicate, Integer>();
-
-	/** Map for the strata of the different predicates. */
-	private final Map<IPredicate, Integer> strata = new HashMap<IPredicate, Integer>();
-	
-	/**
-	 * Whether the program (only the rules) has changed since the latest
-	 * stratum computation. 
-	 */
-	private boolean dirtyStratum = true;
 
 	/**
 	 * Creates an empty extensional database (knowledge base) 
@@ -110,200 +80,47 @@ public class Program implements IProgram{
 	 * be modified later (e.g. to add/remove facts, rules and 
 	 * queries).
 	 * 
-	 * @param f
+	 * @param facts
 	 * 			a set of ground atoms (facts) to be added into the EDB.
-	 * @param r
+	 * @param rules
 	 * 			a set of rules to be added into the EDB.
-	 * @param q
+	 * @param queries
 	 * 			a set of queries to be added into the EDB.
 	 */
-	Program(final Map<IPredicate, IMixedDatatypeRelation> f, final Set<IRule> r, final Set<IQuery> q) {
-		if (f != null) {
-			for (final Map.Entry<IPredicate, IMixedDatatypeRelation> e : f.entrySet()) {
-				if (e.getValue().getArity() != e.getKey().getArity()) {
+	Program(final Map<IPredicate, IMixedDatatypeRelation> facts, final Set<IRule> rules, final Set<IQuery> queries) {
+		if (facts != null) {
+			for (final Map.Entry<IPredicate, IMixedDatatypeRelation> predicateRelation : facts.entrySet()) {
+				if (predicateRelation.getValue().getArity() != predicateRelation.getKey().getArity()) {
 					throw new IllegalArgumentException("The arity of the predicate (" + 
-							e.getKey().getArity() + ") must match the arity of the relation (" + 
-							e.getValue().getArity() + ")");
+							predicateRelation.getKey().getArity() + ") must match the arity of the relation (" + 
+							predicateRelation.getValue().getArity() + ")");
 				} else {
-					registerPredicate(e.getKey());
-					facts.put(plainPredicateHash(e.getKey()), e.getValue());
+					mFacts.setAll(predicateRelation.getKey(), predicateRelation.getValue());
 				}
 			}
 		}
-		if (r != null) {
-			for (final IRule rule : r) {
-				_addRule(rule);
+		if (rules != null) {
+			for (final IRule rule : rules) {
+				addRule(rule);
 			}
 		}
-		if (q != null) {
-			for (final IQuery query : q) {
-				_addQuery(query);
+		if (queries != null) {
+			for (final IQuery query : queries) {
+				mQueries.addQuery( query );
 			}
 		}
 	}
 
-	/**
-	 * Generates a hash of a predicate only based on it's symbol and arity.
-	 * This method was written to enable access to the same relations for
-	 * ordinary predicates and adorned ones.
-	 * @param p the predicate for which to create the hash
-	 * @return the hash
-	 * @throws NullPointerException if the predicate was <code>null</code>
-	 */
-	private static int plainPredicateHash(final IPredicate p) {
-		if (p == null) {
-			throw new NullPointerException("The predicate must not be null");
-		}
-		int res = 17;
-		res = res * 37 + p.getPredicateSymbol().hashCode();
-		res = res * 37 + p.getArity();
-		return res;
-	}
-
-	/**
-	 * Registeres a predicate in the program. <b>This method must be called
-	 * every time a new predicate (in a rule, fact or query) is added to the
-	 * program</b>. The maps for the facts, predicateCount and strata will
-	 * also be created, if they don't already exist.
-	 * @param p the predicate to register
-	 * @throws NullPointerException if the predicate is <code>null</code>
-	 */
-	private void registerPredicate(final IPredicate p) {
-		if (p == null) {
-			throw new NullPointerException("The predicate must not be null");
-		}
-		WRITE.lock();
-		try {
-			if (!predicateCount.keySet().contains(p)) {
-				if (!facts.containsKey(plainPredicateHash(p))) {
-					facts.put(plainPredicateHash(p), 
-							RELATION.getMixedRelation(p.getArity()));
-				}
-				strata.put(p, Integer.valueOf(-1));
-				predicateCount.put(p, Integer.valueOf(0));
-			}
-		} finally {
-			WRITE.unlock();
-		}
-	}
-
-	/**
-	 * Increases the occurence count for the given predicate. <b>This method
-	 * must be called for every predicate occurence in a rule or query,
-	 * which will be added to the program</b>.
-	 * @param p the predicate for which to increase the count
-	 * @throws NullPointerException if the predicate is <code>null</code>
-	 */
-	private void increasePredicateCount(final IPredicate p) {
-		if (p == null) {
-			throw new NullPointerException("The predicate must not be null");
-		}
-		WRITE.lock();
-		try {
-			registerPredicate(p);
-			predicateCount.put(p, Integer.valueOf(predicateCount.get(p) + 1));
-			dirtyStratum = true;
-		} finally {
-			WRITE.unlock();
-		}
-	}
-
-	/**
-	 * Decreases the occurence count for the given predicate. <b>This method
-	 * must be called for every predicate occurence in a rule or query,
-	 * which will be removed from the program</b>.
-	 * @param p the predicate for which to decrease the count
-	 * @throws NullPointerException if the predicate is <code>null</code>
-	 */
-	private void decreasePredicateCount(final IPredicate p) {
-		if (p == null) {
-			throw new NullPointerException("The predicate must not be null");
-		}
-		if (!predicateCount.keySet().contains(p)) {
-			throw new NoSuchElementException("The predicate " + p + 
-					" has not been registered, yet");
-		}
-		WRITE.lock();
-		try {
-			predicateCount.put(p, Integer.valueOf(predicateCount.get(p) - 1));
-			dirtyStratum = true;
-		} finally {
-			WRITE.unlock();
-		}
-	}
-
-	/**
-	 * Cleans up the predicate maps. <b>This method should be called before
-	 * all predicates or the number of predicates is retrieved, to get a
-	 * correct result</b>. With this method all predicate mappings will be
-	 * removed, where the predicate count is less, or equal to 0 and no
-	 * facts are given for this predicate.
-	 */
-	private void cleanupPredicates() {
-		final Set<IPredicate> toRemove = new HashSet<IPredicate>();
-		WRITE.lock();
-		try {
-			for (final IPredicate p : predicateCount.keySet()) {
-				if ((predicateCount.get(p) <= 0) && 
-						facts.get(plainPredicateHash(p)).isEmpty()) {
-					toRemove.add(p);
-				}
-			}
-			for (final IPredicate p : toRemove) {
-				facts.remove(plainPredicateHash(p));
-				predicateCount.remove(p);
-				strata.remove(p);
-			}
-		} finally {
-			WRITE.unlock();
-		}
-	}
-
-	public int getStratum(final IPredicate p) {
-		if (p == null) {
-			throw new NullPointerException("The predicate must not be null");
-		}
-		if (!predicateCount.keySet().contains(p)) {
-			throw new NoSuchElementException("The predicate " + p + 
-					" has not been registered, yet");
-		}
-		WRITE.lock();
-		try {
-			if (dirtyStratum) { // recompute the stratum if a rule updated
-				dirtyStratum = false;
-				cleanupPredicates();
-				isStratified();
-			}
-			READ.lock();
-		} finally {
-			WRITE.unlock();
-		}
-		try {
-			return strata.get(p).intValue();
-		} finally {
-			READ.unlock();
-		}
-	}
-
-	public void setStratum(final IPredicate p, final int s) {
-		if (p == null) {
-			throw new NullPointerException("The predicate must not be null");
-		}
-		if (!predicateCount.keySet().contains(p)) {
-			throw new NoSuchElementException("The predicate " + p + 
-					" has not been registered, yet");
-		}
-		if (s < 0) {
-			throw new IllegalArgumentException("The statum must not be negative, but was: " + s);
-		}
-		WRITE.lock();
-		try {
-			strata.put(p, Integer.valueOf(s));
-		} finally {
-			WRITE.unlock();
-		}
+	public Set<IPredicate> getPredicatesOfStratum( final Set<IPredicate> preds, final int s)
+	{
+		return mRuleBase.getPredicatesOfStratum( preds, s );
 	}
 	
+	public int getMaxStratum(final Set<IPredicate> h)
+	{
+		return mRuleBase.getMaxStratum( h );
+	}
+
 	/** ***************************** */
 	/* methods for the EDB */
 	/* (handling facts)    */
@@ -314,91 +131,38 @@ public class Program implements IProgram{
 			throw new IllegalArgumentException("The input parameter: " + 
 					a.toString() + " needs to be a ground atom (it is not a fact).");
 		}
-		IPredicate p = a.getPredicate();
-		registerPredicate(p);
-		return this.facts.get(plainPredicateHash(p)).add(a.getTuple());
+		
+		return mFacts.addFact( a );
 	}
 
 	public boolean addFacts(Set<IAtom> facts) {
-		if (facts == null) {
-			throw new NullPointerException("The facts must not be null");
-		}
-		boolean added = false;
-		for (IAtom f : facts) {
-			added |= addFact(f);
-		}
-		return added;
+		return mFacts.addFacts( facts );
 	}
 	
 	public boolean addFacts(IPredicate p, IMixedDatatypeRelation r) {
-		if (p == null) {
-			throw new NullPointerException("The predicate must not be null");
-		}
-		if (r == null) {
-			throw new NullPointerException("The relation must not be null");
-		}
-		if (r.getArity() != p.getArity()) {
-			throw new IllegalArgumentException("Predicate " + p + " is assigned with " +
-					"a relation that has a non-matching arity.");
-		}
-		registerPredicate(p);
-		boolean modified = false;
-		final IMixedDatatypeRelation rel = facts.get(plainPredicateHash(p));
-		for (final ITuple t : r) {
-			if (!t.isGround()) {
-				throw new IllegalArgumentException("The fact to add " + 
-						t + " must be ground.");
-			}
-			modified |= rel.add(t);
-		}
-		return modified;
+		return mFacts.addFacts( p, r );
 	}
 
 	public boolean removeFact(IAtom a) {
-		if (a == null) {
-			return false;
-		}
-		return facts.get(plainPredicateHash(a.getPredicate())).remove(a.getTuple());
+		return mFacts.removeFact( a );
 	}
 
 	public boolean removeFacts(Set<IAtom> f) {
-		if (f == null) {
-			throw new NullPointerException("The set of facts must not be null");
-		}
-		boolean bChanged = false;
-		for (IAtom a : f) {
-			bChanged |= removeFact(a);
-		}
-		return bChanged;
+		return mFacts.removeFacts( f );
 	}
 	
 	public boolean hasFact(IAtom a) {
-		if (a == null) {
-			throw new NullPointerException("The fact must not be null");
-		}
-		return this.facts.get(plainPredicateHash(a.getPredicate())).contains(a.getTuple());
-	}
-
-	public boolean hasFacts(IPredicate p) {
-		if (p == null) {
-			throw new NullPointerException("The predicate must not be null");
-		}
-		cleanupPredicates();
-		return predicateCount.keySet().contains(p);
+		return mFacts.hasFact( a );
 	}
 	
-	public Set<IPredicate> getPredicates() {
-		cleanupPredicates();
-		return Collections.unmodifiableSet(predicateCount.keySet());
+	public boolean hasFacts(IPredicate p) {
+		return mFacts.getFacts( p ).size() > 0;
 	}
 
 	public IMixedDatatypeRelation getFacts(final IPredicate p){
-		if (p == null) {
-			throw new NullPointerException("The predicate must not be null");
-		}
-		return facts.get(plainPredicateHash(p));
+		return mFacts.getFacts( p );
 	}
-
+	
 	public Map<IPredicate, IMixedDatatypeRelation> getFacts(){
 		final Map<IPredicate, IMixedDatatypeRelation> ret = 
 			new HashMap<IPredicate, IMixedDatatypeRelation>();
@@ -412,183 +176,53 @@ public class Program implements IProgram{
 	/*		rules                   */
 	/********************************/
 	
-	public boolean addRule(final IRule r) {
-		return _addRule(r);
+	public Set<IPredicate> getPredicates() {
+		return mRuleBase.getPredicates();
 	}
 
-	/**
-	 * Adds a rule to the program. The predicate count will be increased,
-	 * too.
-	 * @param r the rule to add
-	 * @return <code>false</code> if the rule was already in the program,
-	 * otherwise <code>true</code>
-	 * @throws NullPointerException if the rule was <code>null</code>
-	 */
-	private boolean _addRule(final IRule r) {
-		if (r == null) {
-			throw new NullPointerException("The rule must not be null");
-		}
-		WRITE.lock();
-		try {
-			if(rules.add(r)) {
-				for (final ILiteral l : r.getHead().getLiterals()) {
-					increasePredicateCount(l.getPredicate());
-				}
-				for (final ILiteral l : r.getBody().getLiterals()) {
-					increasePredicateCount(l.getPredicate());
-				}
-				return true;
-			}
-			return false;
-		} finally {
-			WRITE.unlock();
-		}
+	public boolean addRule(final IRule r) {
+		return mRuleBase.addRule(r);
 	}
-	
+
 	public boolean removeRule(IRule r){
-		if (r == null) {
-			throw new NullPointerException("The rule must not be null");
-		}
-		WRITE.lock();
-		try {
-			if(rules.remove(r)) {
-				for (final ILiteral l : r.getHead().getLiterals()) {
-					decreasePredicateCount(l.getPredicate());
-				}
-				for (final ILiteral l : r.getBody().getLiterals()) {
-					decreasePredicateCount(l.getPredicate());
-				}
-				return true;
-			}
-			return false;
-		} finally {
-			WRITE.unlock();
-		}
+		return mRuleBase.removeRule( r );
 	}
 	
 	public Set<IRule> getRules() {
-		READ.lock();
-		try {
-			return Collections.unmodifiableSet(rules);
-		} finally {
-			READ.unlock();
-		}
+		return mRuleBase.getRules();
 	}
 	
-	public boolean isStratified() {
-		WRITE.lock();
-		try {
-			return MiscOps.stratify(this);
-		} finally {
-			WRITE.unlock();
-		}
+	public boolean isStratified()
+	{
+		return mRuleBase.stratify();
 	}
-	
+
 	public boolean hasNegation() {
-		READ.lock();
-		try {
-			for (IRule r : rules) {
-				for (ILiteral l : r.getBody().getLiterals()) {
-					if (!l.isPositive()) {
-						return true;
-					}
-				}
-			}
-			return false;
-		} finally {
-			READ.unlock();
-		}
+		return mRuleBase.hasNegation();
 	}
 	
 	public boolean hasConstructedTerms() {
-		READ.lock();
-		try {
-			for (IRule r : rules) {
-				for (ILiteral l : r.getBody().getLiterals()) {
-					for (Object t : l.getTuple()) {
-						if (t instanceof ConstructedTerm) {
-							return true;
-						}
-					}
-				}
-				for (ILiteral l : r.getHead().getLiterals()) {
-					for (Object t : l.getTuple()) {
-						if (t instanceof ConstructedTerm) {
-							return true;
-						}
-					}
-				}
-			}
-			return false;
-		} finally {
-			READ.unlock();
-		}
+		return mRuleBase.hasConstructedTerms();
 	}
 	
 	public int ruleCount() {
-		READ.lock();
-		try {
-			return rules.size();
-		} finally {
-			READ.unlock();
-		}
+		return mRuleBase.ruleCount();
 	}
-	
 	
 	/********************************/
 	/*		queries                 */
 	/********************************/
 	
 	public boolean addQuery(final IQuery q) {
-		return _addQuery(q);
+		return  mQueries.addQuery( q );
 	}
 
-	/**
-	 * Adds a query to the program. The predicate count will be increased,
-	 * too.
-	 * @param q the query to add
-	 * @return <code>false</code> if the query was already in the program,
-	 * otherwise <code>true</code>
-	 * @throws NullPointerException if the query was <code>null</code>
-	 */
-	private boolean _addQuery(final IQuery q) {
-		if (q == null) {
-			throw new NullPointerException("The query must not be null");
-		}
-		WRITE.lock();
-		try {
-			if (queries.add(q)) {
-				for (final ILiteral l : q.getLiterals()) {
-					increasePredicateCount(l.getPredicate());
-				}
-				return true;
-			}
-			return false;
-		} finally {
-			WRITE.unlock();
-		}
-	}
-	
 	public Set<IQuery> getQueries() {
-		return Collections.unmodifiableSet(queries);
+		return mQueries.getQueries();
 	}
 	
 	public boolean removeQuery(IQuery q) {
-		if (q == null) {
-			throw new NullPointerException("The query must not be null");
-		}
-		WRITE.lock();
-		try {
-			if (queries.remove(q)) {
-				for (final ILiteral l : q.getLiterals()) {
-					decreasePredicateCount(l.getPredicate());
-				}
-				return true;
-			}
-			return false;
-		} finally {
-			WRITE.unlock();
-		}
+		return mQueries.removeQuery( q );
 	}
 	
 	/********************************/
@@ -596,12 +230,10 @@ public class Program implements IProgram{
 	/********************************/
 	
 	public void resetProgram(){
-		this.facts.clear();
-		this.rules.clear();
-		this.queries.clear();
-		predicateCount.clear();
-		strata.clear();
-		dirtyStratum = true;
+		mFacts.clear();
+		mQueries.clear();
+
+		mRuleBase.clear();
 	}
 
 	public BuiltinRegister getBuiltinRegister() {
