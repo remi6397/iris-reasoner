@@ -56,12 +56,12 @@ import org.deri.iris.builtins.BuiltinRegister;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IProgram.java,v 1.13 2007-10-09 20:14:43 bazbishop237 Exp $
+ * $Id: IProgram.java,v 1.14 2007-10-23 08:37:15 bazbishop237 Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public interface IProgram {
 
@@ -313,23 +313,17 @@ public interface IProgram {
 	public BuiltinRegister getBuiltinRegister();
 
 	/**
-	 * Returns the stratum of the predicate in this program.
-	 * @param p the predicate
-	 * @return the stratum
-	 * @throws NullPointerException if the predicate is <code>null</code>
-	 * @throws NoSuchElementException if the predicate is unknown to the
-	 * program
+	 * Get all the predicates (rule heads) that belong to the given stratum.
+	 * @param predicates
+	 * @param stratum The stratum (lowest level is RuleBase.BOTTOM_STRATUM).
+	 * @return The set of all (head) predicates that bellong to this stratum.
 	 */
-	public int getStratum(final IPredicate p);
+	public Set<IPredicate> getPredicatesOfStratum( final Set<IPredicate> predicates, int stratum );
 
 	/**
-	 * Sets the stratum for a predicate.
-	 * @param p the predicate
-	 * @param s the stratum to set
-	 * @throws NullPointerException if the predicate is <code>null</code>
-	 * @throws NoSuchElementException if the predicate is unknown to the
-	 * program
-	 * @throws IllegalArgumentException if the stratum is negative
+	 * The the highest stratum level of all the given (rule head) predicates.
+	 * @param predicates The (rule head) predicates of interest.
+	 * @return The highest stratum level of each predicate.
 	 */
-	public void setStratum(final IPredicate p, final int s);
+	public int getMaxStratum(final Set<IPredicate> predicates );
 }
