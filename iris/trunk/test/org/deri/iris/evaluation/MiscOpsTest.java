@@ -49,11 +49,11 @@ import org.deri.iris.basics.seminaive.ConstLiteral;
  * Tests the methods in the MiscOps class.
  * </p>
  * <p>
- * $Id: MiscOpsTest.java,v 1.8 2007-10-18 13:31:11 poettler_ric Exp $
+ * $Id: MiscOpsTest.java,v 1.9 2007-10-23 08:46:11 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class MiscOpsTest extends TestCase {
 
@@ -168,12 +168,12 @@ public class MiscOpsTest extends TestCase {
 			"p(?X) :- p(?X).\n" + 
 			"q(?X) :- s(?X), !p(?X).";
 		final IProgram e0 = org.deri.iris.compiler.Parser.parse(stratProg);
-		assertEquals(true, MiscOps.stratify(e0));
+		assertEquals(true, e0.isStratified());
 		
 		final String unstratProg = "p(?X) :- r(?X), !q(?X).\n" + 
 			"q(?X) :- r(?X), !p(?X).";
 		final IProgram e1 = org.deri.iris.compiler.Parser.parse(unstratProg);
-		assertEquals(false, MiscOps.stratify(e1));
+		assertEquals(false, e1.isStratified());
 	}
 	
 	/*
