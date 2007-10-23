@@ -65,10 +65,10 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
  * the rules of those predicates into the upcomming query computations.
  * </p>
  * <p>
- * $Id: MagicExecutor.java,v 1.6 2007-10-19 07:37:16 poettler_ric Exp $
+ * $Id: MagicExecutor.java,v 1.7 2007-10-23 08:44:59 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class MagicExecutor implements IExecutor {
 
@@ -101,7 +101,7 @@ public class MagicExecutor implements IExecutor {
 	}
 
 	public IMixedDatatypeRelation computeSubstitution(final IQuery q) {
-		if (!MiscOps.stratify(program)) {
+		if (!program.isStratified()) {
 			throw new RuntimeException("The input program is not strtifed");
 		}
 		// shrink the rules for the query
@@ -144,7 +144,7 @@ public class MagicExecutor implements IExecutor {
 		// delete the cached data, to enforce the recomputation
 		fullyEvaluated = new HashSet<IPredicate>();
 
-		if( ! MiscOps.stratify( program ) )
+		if( ! program.isStratified() )
 			throw new ProgramNotStratifiedException( "The input program is not stratified" );
 
 		for (IRule rule : program.getRules() )

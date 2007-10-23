@@ -93,7 +93,7 @@ public class NaiveExecutor implements IExecutor {
 
 	public boolean execute() throws EvaluationException
 	{
-		if( ! MiscOps.stratify( prog ) )
+		if( ! prog.isStratified() )
 			throw new ProgramNotStratifiedException( "The input program is not stratified" );
 
 		for (IRule rule : prog.getRules() )
