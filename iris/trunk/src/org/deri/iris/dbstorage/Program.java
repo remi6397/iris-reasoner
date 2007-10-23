@@ -56,14 +56,30 @@ import java.sql.SQLException;
  * This implementaion is thread-save.
  * </p>
  * <p>
- * $Id: Program.java,v 1.8 2007-10-19 07:37:17 poettler_ric Exp $
+ * $Id: Program.java,v 1.9 2007-10-23 08:41:14 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class Program implements IProgram {
+
+	public boolean stratify()
+    {
+	    // TODO Auto-generated method stub
+	    return false;
+    }
+	
+	public Set<IPredicate> getPredicatesOfStratum( final Set<IPredicate> preds, final int s)
+	{
+		return null;
+	}
+	public int getMaxStratum(final Set<IPredicate> h)
+	{
+		return -1;
+	}
+
 
 	private DbStorageManager dbm = null;
 	
@@ -534,7 +550,7 @@ public class Program implements IProgram {
 	public boolean isStratified() {
 		WRITE.lock();
 		try {
-			return MiscOps.stratify(this);
+			return stratify();
 		} finally {
 			WRITE.unlock();
 		}
