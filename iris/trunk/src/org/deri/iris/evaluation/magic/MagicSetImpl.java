@@ -314,8 +314,7 @@ public final class MagicSetImpl {
 			for (final IRule rule : rules) {
 				bodyLiterals.add(rule.getHead().getLiteral(0));
 			}
-			final ILiteral hl = createMagicLiteral(l);
-			hl.setPositive(true);
+			final ILiteral hl = createMagicLiteral(true, l);
 			rules.add(BASIC.createRule(BASIC.createHead(hl),
 					BASIC.createBody(new ArrayList<ILiteral>(bodyLiterals))));
 			return rules;
@@ -357,8 +356,7 @@ public final class MagicSetImpl {
 		}
 
 		// create head of the rule
-		final ILiteral hl = createMagicLiteral(l);
-		hl.setPositive(true);
+		final ILiteral hl = createMagicLiteral(true, l);
 		final IHead head = BASIC.createHead(hl);
 
 		// create the body of the rule
@@ -443,8 +441,7 @@ public final class MagicSetImpl {
 		final ILiteral headLiteral = r.getHead().getLiteral(0);
 
 		// create head of the rule
-		final ILiteral hl = createLabeledLiteral(targetLiteral, index);
-		hl.setPositive(true);
+		final ILiteral hl = createLabeledLiteral(true, targetLiteral, index);
 		final IHead head = BASIC.createHead(hl);
 
 		// create body of the rule
@@ -509,6 +506,30 @@ public final class MagicSetImpl {
 	 *             if the literal is <code>null</code>
 	 */
 	private static ILiteral createMagicLiteral(final ILiteral l) {
+		return (createMagicLiteral(l.isPositive(), l));
+	}
+
+	/**
+	 * <p>
+	 * Creates a magic literal out of an adorned one. The predicate of the
+	 * literal must be adorned. The terms of the literal will only consist of
+	 * the bound terms.
+	 * </p>
+	 * <p>
+	 * Note that not adorned literals are taken as if they would have only
+	 * bounds.
+	 * </p>
+	 * 
+	 * @param positive whether the resulting literal should be positive, or
+	 * not
+	 * @param l
+	 *            for which to create the adorned one
+	 * @return the magic literal or the same literal again, if the 
+	 * 	predicate of the literal wasn't adorned
+	 * @throws NullPointerException
+	 *             if the literal is <code>null</code>
+	 */
+	private static ILiteral createMagicLiteral(final boolean positive, final ILiteral l) {
 		if (l == null) {
 			throw new NullPointerException("The literal must not be null");
 		}
@@ -516,7 +537,7 @@ public final class MagicSetImpl {
 		if (!(l.getPredicate() instanceof AdornedPredicate)) {
 			return l;
 		}
-		return BASIC.createLiteral(l.isPositive(), createMagicAtom(l.getAtom()));
+		return BASIC.createLiteral(positive, createMagicAtom(l.getAtom()));
 	}
 
 	/**
@@ -538,6 +559,30 @@ public final class MagicSetImpl {
 	 */
 	private static ILiteral createLabeledLiteral(final ILiteral l,
 			final int index) {
+		return createLabeledLiteral(l.isPositive(), l, index);
+	}
+
+	/**
+	 * Creates a labeled literal out of an adorned one. The predicate of the
+	 * literal must be adorned. The terms of the literal will only consist of
+	 * the bound terms.
+	 * 
+	 * @param positive <code>true</code> the resulting literal should be 
+	 * positive, otherwise <code>false</code>
+	 * @param l
+	 *            for which to create the labeled literal
+	 * @param index
+	 *            to append to the literal
+	 * @return the labeled literal
+	 * @throws NullPointerException
+	 *             if the literal is null
+	 * @throws IllegalArgumentException
+	 *             if the predicate of the literal isn't adorned
+	 * @throws IllegalArgumentException
+	 *             if the index is smaller than 0
+	 */
+	private static ILiteral createLabeledLiteral(final boolean positive, 
+			final ILiteral l, final int index) {
 		if (l == null) {
 			throw new NullPointerException("The literal must not be null");
 		}

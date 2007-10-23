@@ -115,7 +115,8 @@ public final class MiscHelper {
 	 * Creates a positive literal out of a predicate name and a set of variable
 	 * names.
 	 * 
-	 * @param pos whether the literal should be positive, or not
+	 * @param pos <code>true</code> if the literal should be positive,
+	 * otherwise <code>false</code>
 	 * @param pred
 	 *            the predicate name
 	 * @param vars

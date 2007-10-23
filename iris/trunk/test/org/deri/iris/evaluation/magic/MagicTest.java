@@ -63,11 +63,11 @@ import org.deri.iris.MiscHelper;
  * Tests the magic sets.
  * </p>
  * <p>
- * $Id: MagicTest.java,v 1.6 2007-10-14 14:49:04 bazbishop237 Exp $
+ * $Id: MagicTest.java,v 1.7 2007-10-23 07:48:39 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class MagicTest extends TestCase {
 
@@ -192,6 +192,32 @@ public class MagicTest extends TestCase {
 	 */
 	private static ILiteral createAdornedLiteral(final String symbol,
 			final Adornment[] ad, final ITerm[] t) {
+		return createAdornedLiteral(true, symbol, ad, t);
+	}
+
+	/**
+	 * Creates an adorned literal.
+	 * 
+	 * @param positive <code>true</code> whether the resulting literal
+	 * should be positive, or not.
+	 * @param symbol
+	 *            the predicate symbot to use for the literal
+	 * @param ad
+	 *            the adornments
+	 * @param t
+	 *            the terms for the literal
+	 * @return the constructed magic literal
+	 * @throws NullPointerException
+	 *             if the symbol is {@code null}
+	 * @throws IllegalArgumentException
+	 *             if the symbol is 0 sighns long
+	 * @throws NullPointerException
+	 *             if the adornments is or contains {@code null}
+	 * @throws NullPointerException
+	 *             if the terms is or contains {@code null}
+	 */
+	private static ILiteral createAdornedLiteral(final boolean positive, final String symbol,
+			final Adornment[] ad, final ITerm[] t) {
 		if (symbol == null) {
 			throw new NullPointerException("The symbol must not be null");
 		}
@@ -207,7 +233,7 @@ public class MagicTest extends TestCase {
 			throw new NullPointerException(
 					"The terms must not be, or contain null");
 		}
-		return BASIC.createLiteral(true, new AdornedProgram.AdornedPredicate(
+		return BASIC.createLiteral(positive, new AdornedProgram.AdornedPredicate(
 				symbol, t.length, ad), BASIC.createTuple(t));
 	}
 
@@ -486,8 +512,7 @@ public class MagicTest extends TestCase {
 		final ILiteral s = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("s", 1), BASIC.createTuple(X)));
 		final ILiteral t = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("t", 1), BASIC.createTuple(X)));
 		final ILiteral q = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("q", 1), BASIC.createTuple(X)));
-		final ILiteral neg_ad_p = createAdornedLiteral("p", b, X);
-		neg_ad_p.setPositive(false);
+		final ILiteral neg_ad_p = createAdornedLiteral(false, "p", b, X);
 		final ILiteral ad_q = createAdornedLiteral("q", f, X);
 		final ILiteral ad_p = createAdornedLiteral("p", b, X);
 		final ILiteral ad_r = createAdornedLiteral("r", b, X);
