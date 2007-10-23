@@ -83,15 +83,6 @@ public class LiteralTest extends TestCase {
 		assertFalse("The literal should be negative", neg.isPositive());
 	}
 
-	public void testSetPositive() {
-		final ILiteral lit = new Literal(POSITIVE, ATOM);
-		assertTrue("The literal should be positive", lit.isPositive());
-		lit.setPositive(false);
-		assertFalse("The literal should be negative", lit.isPositive());
-		lit.setPositive(true);
-		assertTrue("The literal should be positive again", lit.isPositive());
-	}
-
 	public void testGetAtom() {
 		final ILiteral lit = new Literal(POSITIVE, ATOM);
 		assertEquals("The getAtom method doesn't work properly", ATOM, lit.getAtom());

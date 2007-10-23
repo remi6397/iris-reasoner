@@ -43,25 +43,21 @@ import org.deri.iris.api.basics.ITuple;
  */
 public class Literal implements ILiteral{
 
-	private boolean positive = true;
+	private final boolean positive;
 
-	private IAtom atom = null;
+	private final IAtom atom;
 
 	Literal(final IAtom atom) {
-		this.atom = atom;
+		this(true, atom);
 	}
 	
 	Literal(final boolean positive, final IAtom atom) {
 		this.atom = atom;
-		setPositive(positive);
+		this.positive = positive;
 	}
 	
 	public boolean isPositive() {
 		return positive;
-	}
-
-	public void setPositive(boolean arg) {
-		positive = arg;
 	}
 
 	public IPredicate getPredicate() {

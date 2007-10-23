@@ -52,11 +52,11 @@ import org.deri.iris.graph.LabeledEdge;
  * Runns various test on the sip.
  * </p>
  * <p>
- * $Id: SipImplTest.java,v 1.5 2007-07-25 08:38:52 poettler_ric Exp $
+ * $Id: SipImplTest.java,v 1.6 2007-10-23 07:48:40 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class SipImplTest extends TestCase {
 
@@ -171,8 +171,7 @@ public class SipImplTest extends TestCase {
 	public void testLiteralOrder0() {
 		// a(X, Y) :- not b(X, Y1), c(Y1, X1), d(X1, Y)
 		// a(john, Y)
-		final ILiteral not_b = createLiteral("b", "X", "Y1");
-		not_b.setPositive(false);
+		final ILiteral not_b = createLiteral(false, "b", "X", "Y1");
 		final IRule r = BASIC.createRule(
 				BASIC.createHead(createLiteral("a", "X", "Y")), 
 				BASIC.createBody(not_b, createLiteral("c", "Y1", "X1"), createLiteral("d", "X1", "Y")));

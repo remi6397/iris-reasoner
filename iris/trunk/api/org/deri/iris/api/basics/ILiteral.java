@@ -38,7 +38,7 @@ package org.deri.iris.api.basics;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: ILiteral.java,v 1.4 2007-10-09 20:17:49 bazbishop237 Exp $
+ * $Id: ILiteral.java,v 1.5 2007-10-23 07:48:38 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
@@ -56,18 +56,6 @@ public interface ILiteral extends IAtom
 	 *         otherwise.
 	 */
 	public boolean isPositive();
-
-	/**
-	 * <p>
-	 * Sets the literal to be either a positive atomic formula or a negated
-	 * atomic formula.
-	 * </p>
-	 * 
-	 * @param arg
-	 *            If true, the literal is a positive atomic formula; if false,
-	 *            the literal is a negated atomic formula.
-	 */
-	public void setPositive(boolean arg);
 
 	/**
 	 * <p>
