@@ -27,6 +27,7 @@ package org.deri.iris.evaluation.seminaive;
 
 import java.util.Set;
 
+import org.deri.iris.RuleBase;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
@@ -82,10 +83,10 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 		Set<IPredicate> preds = null;
 		
 		// Evaluate rules
-		for (int i = 0, maxStrat = MiscOps.getMaxStratum(mProgram, this.idbMap.keySet()); 
+		for (int i = RuleBase.BOTTOM_STRATUM, maxStrat = mProgram.getMaxStratum(this.idbMap.keySet()); 
 				i <= maxStrat; i++) {
 
-			preds = MiscOps.getPredicatesOfStratum(mProgram, this.idbMap.keySet(), i);
+			preds = mProgram.getPredicatesOfStratum(this.idbMap.keySet(), i);
 			cont = true;
 			while (cont) {
 				if(preds.size() == 0) break;
