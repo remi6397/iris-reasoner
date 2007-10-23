@@ -35,7 +35,7 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.evaluation.MiscOps;
+import org.deri.iris.RuleBase;
 
 /**
  * Algorithm 3.4: Semi-Naive Evaluation of Datalog Equations
@@ -66,14 +66,14 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 	public boolean evaluate()
 	{
 		// Evaluate all the rules one stratum at a time
-		for (int i = 1, maxStrat = MiscOps.getMaxStratum(mProgram, this.idbMap.keySet()); 
+		for (int i = RuleBase.BOTTOM_STRATUM, maxStrat = mProgram.getMaxStratum(this.idbMap.keySet()); 
 				i <= maxStrat; i++)
 		{
 			// A map of IDB predicates and their incremental relations
 			Map<IPredicate, IMixedDatatypeRelation> dP = new HashMap<IPredicate, IMixedDatatypeRelation>();
 			
 			// All head predicates of each rule
-			Set<IPredicate> preds = MiscOps.getPredicatesOfStratum(mProgram, this.idbMap.keySet(), i);
+			Set<IPredicate> preds = mProgram.getPredicatesOfStratum(this.idbMap.keySet(), i);
 			
 			/**
 			 * <p>Algorithm:</p>
