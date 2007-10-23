@@ -40,15 +40,23 @@ import org.deri.iris.api.basics.IPredicate;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public class Predicate implements IPredicate, Cloneable {
+public class Predicate implements IPredicate {
 
 	private final String symbol;
+	
+	/** A (unique) string containing the predicate name and arity. */
+	private final String symbolPlusArity;
 
 	private final int arity;
 	
 	Predicate(final String symbol, final int arity) {
 		this.symbol = symbol;
 		this.arity = arity;
+		
+		StringBuilder b = new StringBuilder();
+		
+		b.append( symbol ).append( '$' ).append( arity );
+		symbolPlusArity = b.toString();
 	}
 
 	public String getPredicateSymbol() {
@@ -60,19 +68,7 @@ public class Predicate implements IPredicate, Cloneable {
 	}
 
 	public int hashCode() {
-		int result = 17;
-		result = result * 37 + arity;
-		result = result * 37 + symbol.hashCode();
-		return result;
-	}
-
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			assert false : "Object is always cloneable";
-		}
-		return null;
+		return symbolPlusArity.hashCode();
 	}
 
 	public boolean equals(final Object o) {
@@ -83,18 +79,12 @@ public class Predicate implements IPredicate, Cloneable {
 			return false;
 		}
 		Predicate p = (Predicate) o;
-		return symbol.equals(p.symbol) && (arity == p.arity);
+		return symbolPlusArity.equals(p.symbolPlusArity);
 	}
 
 	public int compareTo(IPredicate o) {
-		int res = 0;
-		if ((res = symbol.compareTo(o.getPredicateSymbol())) != 0) {
-			return res;
-		}
-		if ((res = arity - o.getArity()) != 0) {
-			return res;
-		}
-		return 0;
+		Predicate predicate = (Predicate) o;
+		return symbolPlusArity.compareTo( predicate.symbolPlusArity );
 	}
 
 	public String toString() {
