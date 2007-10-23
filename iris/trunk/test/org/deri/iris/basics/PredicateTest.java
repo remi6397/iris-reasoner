@@ -70,10 +70,6 @@ public class PredicateTest extends TestCase {
 				SYMBOL, ARITY));
 	}
 
-	public void testClone() {
-		ObjectTests.runTestClone(new Predicate(SYMBOL, ARITY));
-	}
-
 	public void testCompareTo() {
 		ObjectTests.runTestCompareTo(new Predicate(SYMBOL, ARITY),
 				new Predicate(SYMBOL, ARITY), new Predicate(SYMBOL, ARITYMORE),
