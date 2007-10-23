@@ -56,14 +56,14 @@ import org.deri.iris.builtins.EqualBuiltin;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.18 2007-10-19 07:37:17 poettler_ric Exp $
+ * $Id: MiscOps.java,v 1.19 2007-10-23 08:51:42 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class MiscOps {
 
@@ -253,126 +253,6 @@ public class MiscOps {
 	 *	   the stratification! Then correct getPredicatesOfStratum()
 	 *	   from org.deri.iris.evaluation.seminaive.Complementor 
 	*/
-	
-	/**
-	 * <p>
-	 * Calculates and sets the stratum for every predicate of a program.
-	 * </p>
-	 * 
-	 * @param e
-	 *            the program for which to set the stratum
-	 * @return {@code true} if the program is stratified, otherwise
-	 *         {@code false}
-	 */
-	public static boolean stratify(final IProgram e) {
-		if (e == null) {
-			throw new NullPointerException("The program must not be null");
-		}
-		int max = 1;
-		int total = e.getPredicates().size();
-		Collection<IRule> rules = e.getRules();
-		boolean change = true;
-
-		// set all strata to 1
-		for (final IPredicate p : e.getPredicates()) {
-			e.setStratum(p, 1);
-		}
-		while ((total >= max) && change) {
-			change = false;
-			for (final IRule r : rules) {
-				for (final ILiteral hl : r.getHead().getLiterals()) {
-					final IPredicate hp = hl.getPredicate();
-
-					for (final ILiteral bl : r.getBody().getLiterals()) {
-						final IPredicate bp = bl.getPredicate();
-
-						if (!bl.isPositive()) {
-							int current = e.getStratum(bp);
-							if (current >= e.getStratum(hp)) {
-								e.setStratum(hp, current + 1);
-								max = Math.max(max, current + 1);
-								change = true;
-							}
-						} else {
-							int greater = Math.max(e.getStratum(hp), 
-									e.getStratum(bp));
-							if (e.getStratum(hp) < greater) {
-								e.setStratum(hp, greater);
-								change = true;
-							}
-							max = Math.max(max, greater);
-						}
-					}
-				}
-			}
-		}
-		if (total >= max) {
-			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * Returns the highest stratum of a set of predicates.
-	 * 
-	 * @param h	The set of idb predicates.
-	 * @param p the program from where to retrieve the stratum
-	 * @return 	The highest stratum.
-	 * @throws 	NullPointerException
-	 *             	if the set of predicates is {@code null}.
-	 * @throws NullPointerException if the program is <code>null</code>
-	 */
-	public static int getMaxStratum(final IProgram p, final Set<IPredicate> h) {
-		if (p == null) {
-			throw new NullPointerException("The program must not be null");
-		}
-		if (h == null) {
-			throw new NullPointerException("The predicates must not be null");
-		}
-		int strat = 0;
-		for (final IPredicate pred : h) {
-			strat = Math.max(strat, p.getStratum(pred));
-		}
-		return strat;
-	}
-	
-	/**
-	 * Determines (out of a set of literals) all literals whose predicats have a given stratum.
-	 * 
-	 * @param p the program from where to retieve the stratum
-	 * @param preds
-	 *            the set of predicates.
-	 * @param s
-	 *            the stratum to look for
-	 * @return the set of predicates at the given stratum
-	 * @throws NullPointerException if the program is <code>null</code>
-	 * @throws NullPointerException
-	 *             if the set of predicates is {@code null}
-	 * @throws NullPointerException
-	 *             if the set of predicates contains {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the stratum is smaller than 0
-	 */
-	public static Set<IPredicate> getPredicatesOfStratum(
-			final IProgram p, final Set<IPredicate> preds, final int s) {
-		if (p == null) {
-			throw new NullPointerException("The program must not be null");
-		}
-		if (preds == null) {
-			throw new NullPointerException("The predicates must not be null");
-		}
-		if (s < 0) {
-			throw new IllegalArgumentException(s + " is not a valid stratum");
-		}
-
-		final Set<IPredicate> predicates = new HashSet<IPredicate>();
-		for (final IPredicate pred : preds) {
-			if (p.getStratum(pred) == s) {
-				predicates.add(pred);
-			}
-		}
-		return predicates;
-	}
 	
 	/**
 	 * Check the rule for safeness based on the current configuration for rule-safety.
