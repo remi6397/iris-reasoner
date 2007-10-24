@@ -56,14 +56,14 @@ import org.deri.iris.builtins.EqualBuiltin;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.19 2007-10-23 08:51:42 bazbishop237 Exp $
+ * $Id: MiscOps.java,v 1.20 2007-10-24 15:07:59 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class MiscOps {
 
@@ -253,92 +253,4 @@ public class MiscOps {
 	 *	   the stratification! Then correct getPredicatesOfStratum()
 	 *	   from org.deri.iris.evaluation.seminaive.Complementor 
 	*/
-	
-	/**
-	 * Check the rule for safeness based on the current configuration for rule-safety.
-	 * @param rule The rule to be checked
-	 * @throws RuleUnsafeException If the rule is not safe.
-	 */
-	public static void checkRuleSafe( IRule rule ) throws RuleUnsafeException
-	{
-		// Eventually the parameters values for this validator instance need to be obtained from
-		// some IRIS-wide configuration.
-		RuleValidator rs = new RuleValidator( true, true );
-		
-		// Add all the head variables
-		for( ILiteral headLiteral : rule.getHead().getLiterals() )
-			rs.addHeadVariables( extractVariableNames( headLiteral ) );
-
-		// Then for each literal in the rule
-		for( ILiteral lit : rule.getBody().getLiterals() )
-		{
-			// If it has any variables at all
-			if ( ! lit.isGround() )
-			{
-				boolean builtin = lit.getAtom().isBuiltin();
-				boolean positive = lit.isPositive();
-				
-				List<String> variables = extractVariableNames( lit );
-				
-				// Do the special handling for built-in predicates
-				if( builtin )
-				{
-					if( positive && isArithmetic( lit.getAtom() ) )
-					{
-						rs.addVariablesFromPositiveArithmeticPredicate( isEquality( lit.getAtom() ), variables );
-					}
-					else
-					{
-						rs.addVariablesFromBuiltinPredicate( variables );
-					}
-				}
-				else
-				{
-					// Ordinary predicate
-					rs.addVariablesFromOrdinaryPredicate( positive, variables );
-				}
-			}
-		}
-		
-		// Throws if not safe!
-		rs.isSafe();
-	}
-	
-	/**
-	 * Get the variable names of variable terms in a literal.
-	 * @param literal The literal to be processed.
-	 * @return The names of variables.
-	 */
-	private static List<String> extractVariableNames( ILiteral literal )
-	{
-		List<String> variables = new ArrayList<String>();
-		
-		for( ITerm term : literal.getTuple() )
-		{
-			if( ! term.isGround() )
-				variables.add( term.toString() );
-		}
-		
-		return variables;
-	}
-	
-	/**
-	 * Utility to check if an atom is an equality built-in
-	 * @param atom The atom to check
-	 * @return true if it is
-	 */
-	private static boolean isEquality( IAtom atom )
-	{
-		return atom instanceof EqualBuiltin;
-	}
-
-	/**
-	 * Utility to check if an atom is one of the ternary arithmetic built-ins
-	 * @param atom The atom to check
-	 * @return true if it is
-	 */
-	private static boolean isArithmetic( IAtom atom )
-	{
-		return  atom instanceof ArithmeticBuiltin;
-	}
 }
