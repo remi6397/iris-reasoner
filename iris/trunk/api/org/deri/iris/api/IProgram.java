@@ -56,12 +56,12 @@ import org.deri.iris.builtins.BuiltinRegister;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IProgram.java,v 1.14 2007-10-23 08:37:15 bazbishop237 Exp $
+ * $Id: IProgram.java,v 1.15 2007-10-24 15:02:00 bazbishop237 Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public interface IProgram {
 
@@ -217,22 +217,27 @@ public interface IProgram {
 
 	/**
 	 * <p>
+	 * Returns the number of rules in the knowledgebase.
+	 * </p>
+	 * 
+	 * @return The number of rules.
+	 */
+	public int ruleCount();
+
+	/**
+	 * <p>
 	 * Returns all rules from the knowledgebase.
 	 * </p>
 	 * 
 	 * @return Returns set of all rules from the knowledgebase.
 	 */
 	public Set<IRule> getRules();
-
+	
 	/**
-	 * <p>
-	 * Checks whether the knowledgebase contains only stratified rules.
-	 * </p>
-	 * 
-	 * @return True if all rules from the knowledgebase are stratified,
-	 *         otherwise false.
+	 * Indicates if all the rules are safe.
+	 * @return true If all the rules are safe.
 	 */
-	public boolean isStratified();
+	boolean rulesAreSafe();
 
 	/**
 	 * <p>
@@ -253,15 +258,6 @@ public interface IProgram {
 	 *         false.
 	 */
 	public boolean hasConstructedTerms();
-
-	/**
-	 * <p>
-	 * Returns the number of rules in the knowledgebase.
-	 * </p>
-	 * 
-	 * @return The number of rules.
-	 */
-	public int ruleCount();
 
 	/**
 	 * Set of methods for handling the queries:
@@ -311,6 +307,16 @@ public interface IProgram {
 	 * @return the register
 	 */
 	public BuiltinRegister getBuiltinRegister();
+
+	/**
+	 * <p>
+	 * Checks whether the knowledgebase contains only stratified rules.
+	 * </p>
+	 * 
+	 * @return True if all rules from the knowledgebase are stratified,
+	 *         otherwise false.
+	 */
+	public boolean isStratified();
 
 	/**
 	 * Get all the predicates (rule heads) that belong to the given stratum.
