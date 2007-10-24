@@ -46,7 +46,6 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.evaluation.common.AdornedProgram;
 import org.deri.iris.evaluation.common.EvaluationUtilities;
 import org.deri.iris.evaluation.magic.MagicSetImpl;
-import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
 
 /**
@@ -65,10 +64,10 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
  * the rules of those predicates into the upcomming query computations.
  * </p>
  * <p>
- * $Id: MagicExecutor.java,v 1.7 2007-10-23 08:44:59 bazbishop237 Exp $
+ * $Id: MagicExecutor.java,v 1.8 2007-10-24 15:04:50 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class MagicExecutor implements IExecutor {
 
@@ -147,8 +146,8 @@ public class MagicExecutor implements IExecutor {
 		if( ! program.isStratified() )
 			throw new ProgramNotStratifiedException( "The input program is not stratified" );
 
-		for (IRule rule : program.getRules() )
-			MiscOps.checkRuleSafe( rule );
+		if( ! program.rulesAreSafe() )
+			throw new RuleUnsafeException( "The input program contains an unsafe rule" );
 		
 		return true;
 	}

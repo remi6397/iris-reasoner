@@ -31,11 +31,9 @@ import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.evaluation.IBottomUpEvaluator;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.evaluation.seminaive.NaiveEvaluation;
 
 /**
@@ -96,8 +94,8 @@ public class NaiveExecutor implements IExecutor {
 		if( ! prog.isStratified() )
 			throw new ProgramNotStratifiedException( "The input program is not stratified" );
 
-		for (IRule rule : prog.getRules() )
-			MiscOps.checkRuleSafe( rule );
+		if( ! prog.rulesAreSafe() )
+			throw new RuleUnsafeException( "The input program contains an unsafe rule" );
 		
 		this.evaluator = new NaiveEvaluation( method, prog );
 		

@@ -31,11 +31,9 @@ import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.evaluation.IBottomUpEvaluator;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
 
 /**
@@ -43,12 +41,12 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
  * Executes a program using the semi-naive evaluation strategy.
  * </p>
  * <p>
- * $Id: Executor.java,v 1.12 2007-10-23 08:44:59 bazbishop237 Exp $
+ * $Id: Executor.java,v 1.13 2007-10-24 15:04:50 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class Executor implements IExecutor {
 
@@ -102,8 +100,8 @@ public class Executor implements IExecutor {
 		if( ! prog.isStratified() )
 			throw new ProgramNotStratifiedException( "The input program is not stratified" );
 
-		for (IRule rule : prog.getRules() )
-			MiscOps.checkRuleSafe( rule );
+		if( ! prog.rulesAreSafe() )
+			throw new RuleUnsafeException( "The input program contains an unsafe rule" );
 		
 		// Run the evaluation
 		this.evaluator = new SeminaiveEvaluation(method, prog);
