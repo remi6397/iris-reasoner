@@ -71,7 +71,7 @@ public class Program implements IProgram{
 	 * Creates an empty extensional database (knowledge base) 
 	 * ready to be filled up with facts, rules and queries.
 	 */
-	Program() {
+	public Program() {
 	}
 	
 	/**
@@ -209,6 +209,11 @@ public class Program implements IProgram{
 		return mRuleBase.ruleCount();
 	}
 	
+	public boolean rulesAreSafe()
+	{
+		return mRuleBase.checkAllRulesSafe();
+	}
+
 	/********************************/
 	/*		queries                 */
 	/********************************/
