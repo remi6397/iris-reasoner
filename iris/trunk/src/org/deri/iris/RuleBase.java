@@ -25,14 +25,21 @@
  */
 package org.deri.iris;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.builtins.ArithmeticBuiltin;
+import org.deri.iris.builtins.EqualBuiltin;
+import org.deri.iris.evaluation.RuleValidator;
 import org.deri.iris.terms.ConstructedTerm;
 
 /**
@@ -280,6 +287,116 @@ public class RuleBase
 		
 		return strat;
 	}
+	
+	/**
+	 * Indicates if all the rules in the rule base are safe.
+	 * @return true If all the rules are safe.
+	 */
+	public boolean checkAllRulesSafe()
+	{
+		try
+		{
+			for( IRule rule : mRules )
+			{
+				checkRuleIsSafe( rule );
+			}
+		}
+		catch( RuleUnsafeException e )
+		{
+			return false;
+		}
+		
+		return true;
+	}
+
+	/**
+	 * Check the rule for safeness based on the current configuration for rule-safety.
+	 * @param rule The rule to be checked
+	 * @throws RuleUnsafeException If the rule is not safe.
+	 */
+	private void checkRuleIsSafe( IRule rule ) throws RuleUnsafeException
+	{
+		// Eventually the parameter values for this validator instance need to be obtained from
+		// some IRIS-wide configuration.
+		RuleValidator rs = new RuleValidator(	mAllowNotLimitedVariablesInNegatedSubGoals, 
+												mAllowArithmeticPredicatesToImplyLimited );
+		
+		// Add all the head variables
+		for( ILiteral headLiteral : rule.getHead().getLiterals() )
+			rs.addHeadVariables( extractVariableNames( headLiteral ) );
+
+		// Then for each literal in the rule
+		for( ILiteral lit : rule.getBody().getLiterals() )
+		{
+			// If it has any variables at all
+			if ( ! lit.isGround() )
+			{
+				boolean builtin = lit.getAtom().isBuiltin();
+				boolean positive = lit.isPositive();
+				
+				List<String> variables = extractVariableNames( lit );
+				
+				// Do the special handling for built-in predicates
+				if( builtin )
+				{
+					if( positive && isArithmetic( lit.getAtom() ) )
+					{
+						rs.addVariablesFromPositiveArithmeticPredicate( isEquality( lit.getAtom() ), variables );
+					}
+					else
+					{
+						rs.addVariablesFromBuiltinPredicate( variables );
+					}
+				}
+				else
+				{
+					// Ordinary predicate
+					rs.addVariablesFromOrdinaryPredicate( positive, variables );
+				}
+			}
+		}
+		
+		// Throws if not safe!
+		rs.isSafe();
+	}
+	
+	/**
+	 * Get the variable names of variable terms in a literal.
+	 * @param literal The literal to be processed.
+	 * @return The names of variables.
+	 */
+	private static List<String> extractVariableNames( ILiteral literal )
+	{
+		List<String> variables = new ArrayList<String>();
+		
+		for( ITerm term : literal.getTuple() )
+		{
+			if( ! term.isGround() )
+				variables.add( term.toString() );
+		}
+		
+		return variables;
+	}
+	
+	/**
+	 * Utility to check if an atom is an equality built-in
+	 * @param atom The atom to check
+	 * @return true if it is
+	 */
+	private static boolean isEquality( IAtom atom )
+	{
+		return atom instanceof EqualBuiltin;
+	}
+
+	/**
+	 * Utility to check if an atom is one of the ternary arithmetic built-ins
+	 * @param atom The atom to check
+	 * @return true if it is
+	 */
+	private static boolean isArithmetic( IAtom atom )
+	{
+		return  atom instanceof ArithmeticBuiltin;
+	}
 
 	/**
 	 * Get the stratum for a particular (rule head) predicate.
@@ -327,4 +444,10 @@ public class RuleBase
 	
 	/** Result of last stratification attempt. */
 	private boolean mIsStratified = false;
-	}
+
+	/** Flag to indicate if variables in negated sub goals must be limited or not. */
+	private final boolean mAllowNotLimitedVariablesInNegatedSubGoals = true;
+	
+	/** Flag to indicate if limited variables as operands of a ternary operator imply that the target is also limited. */
+	private final boolean mAllowArithmeticPredicatesToImplyLimited = true;
+}
