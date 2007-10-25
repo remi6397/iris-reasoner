@@ -29,10 +29,7 @@ import java.util.Comparator;
 import java.util.Set;
 
 import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.evaluation.magic.SipHelper;
 import org.deri.iris.graph.LabeledEdge;
 
 /**
@@ -41,36 +38,13 @@ import org.deri.iris.graph.LabeledEdge;
  * literal was passed/bound by which literal.
  * </p>
  * <p>
- * $Id: ISip.java,v 1.3 2007-04-18 13:33:49 poettler_ric Exp $
+ * $Id: ISip.java,v 1.4 2007-10-25 07:18:49 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface ISip {
-
-	/**
-	 * <p>
-	 * Updates the sip. If it doesn't contains an edge from the source whitch
-	 * passes the given variables to the target the specific edge will be added.
-	 * If it contains such an edge, the variables in passedTo will be added to
-	 * the passed variables.
-	 * </p>
-	 * <p>
-	 * <b>ATTENTION: There's no error checking whether the sip is still valid.</b>
-	 * </p>
-	 * 
-	 * @param source
-	 *            the source literal
-	 * @param target
-	 *            the literal the variables are passed to
-	 * @param passedTo
-	 *            the variables whitch are passed
-	 * @throws NullPointerException
-	 *             if the source, target or set of variables is null
-	 */
-	public abstract void updateSip(final ILiteral source,
-			final ILiteral target, final Set<IVariable> passedTo);
 
 	/**
 	 * Determines all variables, wich are passed to this literal.
@@ -134,104 +108,6 @@ public interface ISip {
 			final ILiteral source, final ILiteral target);
 
 	/**
-	 * Returns the rule associated with this sip.
-	 * 
-	 * @return the rule
-	 */
-	public abstract IRule getRule();
-
-	/**
-	 * Returns the query associated with this sip.
-	 * 
-	 * @return the query
-	 */
-	public abstract IQuery getQuery();
-
-	/**
-	 * <p>
-	 * Creates a copy of this sip.
-	 * </p>
-	 * <p>
-	 * Nothing will be cloned except the graph.
-	 * </p>
-	 * 
-	 * @return the copy
-	 * @throws NullPointerException
-	 *             if the rule of the query are null
-	 */
-	public abstract ISip defensifeCopy();
-
-	/**
-	 * <p>
-	 * Creates a copy of this sip. There will be no check whether the rule
-	 * matches to teh sip, or not, so inconsistency checks and repair work must
-	 * be done by the user of this method.
-	 * </p>
-	 * <p>
-	 * Nothing will be cloned except the graph.
-	 * </p>
-	 * 
-	 * @param r
-	 *            the new rule for the copy
-	 * @param q
-	 *            the query for the copy
-	 * @return the copy
-	 * @throws NullPointerException
-	 *             if the rule of the query are null
-	 */
-	public abstract ISip defensifeCopy(final IRule r, final IQuery q);
-
-	/**
-	 * <p>
-	 * Exchanges a literal in the sip. All the edges entering and leaving the
-	 * original vertex will now enter of leave the new one.
-	 * </p>
-	 * <p>
-	 * <b>ATTENTION: There's no error checking whether the sip is still valid.</b>
-	 * </p>
-	 * 
-	 * @param from
-	 *            the old literal
-	 * @param to
-	 *            the new literal
-	 * @throws NullPointerException
-	 *             if one of the literals is null
-	 */
-	public abstract void exchangeLiteral(final ILiteral from, final ILiteral to);
-
-	/**
-	 * <p>
-	 * Removes a edge from the sip graph.
-	 * </p>
-	 * <p>
-	 * <b>ATTENTION: There's no error checking whether the sip is still valid.</b>
-	 * </p>
-	 * 
-	 * @param e
-	 *            the edge to remove
-	 * @throws NullPointerException
-	 *             if the edge is null
-	 */
-	public abstract void removeEdge(final LabeledEdge<ILiteral, Set<IVariable>> e);
-
-	/**
-	 * <p>
-	 * Removes the edge with the given source and target from the sip graph.
-	 * </p>
-	 * <p>
-	 * <b>ATTENTION: There's no error checking whether the sip is still valid.</b>
-	 * </p>
-	 * 
-	 * @param source
-	 *            the source literal
-	 * @param target
-	 *            the target literal
-	 * @throws NullPointerException
-	 *             if one of the literals is null
-	 */
-	public abstract void removeEdge(final ILiteral source, final ILiteral target);
-
-	/**
 	 * Determines whether the sip constains a specific literal.
 	 * 
 	 * @param l
@@ -268,5 +144,4 @@ public interface ISip {
 	 * @see SipHelper#getAdornedSip(org.deri.iris.evaluation.common.AdornedProgram.IAdornedRule)
 	 */
 	public abstract Comparator<ILiteral> getLiteralComparator();
-
 }
