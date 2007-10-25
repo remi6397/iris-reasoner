@@ -66,11 +66,11 @@ import org.deri.iris.MiscHelper;
  * Tests the adornments.
  * </p>
  * <p>
- * $Id: AdornmentsTest.java,v 1.9 2007-10-14 14:49:04 bazbishop237 Exp $
+ * $Id: AdornmentsTest.java,v 1.10 2007-10-25 07:18:49 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class AdornmentsTest extends TestCase {
 
@@ -489,8 +489,6 @@ public class AdornmentsTest extends TestCase {
 		final IQuery refQuery = BASIC.createQuery(createAdornedLiteral("w", ff, XY));
 
 		assertEquals("The query is not correct", refQuery, ap.getQuery());
-
-		printDebug("free", prog, ap);
 	}
 
 	public void testConstructedAdornment() {
@@ -528,7 +526,7 @@ public class AdornmentsTest extends TestCase {
 		IHead head = BASIC.createHead(BASIC.createLiteral(true, bbf,
 				BASIC.createTuple(new ArrayList<ITerm>(createVarList("X", "Y",
 						"Z")))));
-		IBody body = BASIC.createBody(createLiteral("k", "X", "B", "Y"), BASIC
+		IBody body = BASIC.createBody(createLiteral("k", "A", "B", "Y"), BASIC
 				.createLiteral(true, bfb, BASIC.createTuple(TERM
 						.createConstruct("const", TERM.createVariable("X"),
 								TERM.createVariable("A"), TERM
@@ -543,7 +541,7 @@ public class AdornmentsTest extends TestCase {
 		head = BASIC.createHead(BASIC.createLiteral(true, bfb,
 				BASIC.createTuple(new ArrayList<ITerm>(createVarList("X", "Y",
 				"Z")))));
-		body = BASIC.createBody(createLiteral("k", "X", "B", "Y"), BASIC
+		body = BASIC.createBody(createLiteral("k", "A", "B", "Y"), BASIC
 				.createLiteral(true, bfb, BASIC.createTuple(TERM
 						.createConstruct("const", TERM.createVariable("X"),
 								TERM.createVariable("A"), TERM
@@ -553,26 +551,9 @@ public class AdornmentsTest extends TestCase {
 		// we can call new AdornedRule, because there is no computation, and
 		// we assume that the sip is created correct.
 		rules.add(new AdornedRule(rule, new SIPImpl(unadornRule(rule), q)));
-		
+
 		// asserting the result
-		final List<AdornedRule> l0 = new ArrayList<AdornedRule>(rules);
-		final List<AdornedRule> l1 = new ArrayList<AdornedRule>(a
-				.getAdornedRules());
-
-		assertEquals("The amount of rules must be equal", l0.size(), l1.size());
-
-		Collections.sort(l0, RC);
-		Collections.sort(l1, RC);
-
-		// TODO: maybe look whether the sip contains all edges
-		for (Iterator<AdornedRule> i0 = l0.iterator(), i1 = l1.iterator(); i0
-				.hasNext();) {
-			final AdornedRule r0 = i0.next();
-			final AdornedRule r1 = i1.next();
-			assertEquals(
-					"The rules\n" + r0 + "\nand\n" + r1 + "\ndon't match.", 0,
-					RC.compare(r0, r1));
-		}
+		assertTrue("The rule collection must be equal", MiscHelper.compare(a.getAdornedRules(), rules, RC));
 	}
 
 	/**
@@ -931,11 +912,11 @@ public class AdornmentsTest extends TestCase {
 	 * Compares two rules according to their predicate symbols.
 	 * </p>
 	 * <p>
-	 * $Id: AdornmentsTest.java,v 1.9 2007-10-14 14:49:04 bazbishop237 Exp $
+	 * $Id: AdornmentsTest.java,v 1.10 2007-10-25 07:18:49 poettler_ric Exp $
 	 * </p>
 	 * 
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.9 $
+	 * @version $Revision: 1.10 $
 	 */
 	private static class RuleComparator implements Comparator<IRule> {
 		public int compare(IRule o1, IRule o2) {

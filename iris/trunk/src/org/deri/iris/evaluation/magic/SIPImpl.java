@@ -39,8 +39,11 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.evaluation.magic.ISip;
+import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.evaluation.common.Adornment;
+import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.graph.LabeledEdge;
 
@@ -61,11 +64,11 @@ import org.jgrapht.graph.SimpleDirectedGraph;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.25 2007-10-19 13:38:44 bazbishop237 Exp $
+ * $Id: SIPImpl.java,v 1.26 2007-10-25 07:18:49 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public final class SIPImpl implements ISip {
 	/**
@@ -77,17 +80,8 @@ public final class SIPImpl implements ISip {
 	private DirectedGraph<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> sipGraph = 
 		new SimpleDirectedGraph<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>>(new SipEdgeFactory());
 
-	/** The rule which is represented by this sip. */
-	private IRule rule = null;
-
-	/** The query for wich the sip was created. */
-	private IQuery query = null;
-	
 	/** An empty map tha getNextByRule() can return. */
 	private static final Map<ILiteral, Set<IVariable>> EMPTY_LITERAL_VARIABLES_MAP = new HashMap<ILiteral, Set<IVariable>>();
-
-	private SIPImpl() {
-	}
 
 	/**
 	 * Creates a SIP for the given rule with bindings for the given query.<b>
@@ -116,12 +110,9 @@ public final class SIPImpl implements ISip {
 			throw new IllegalArgumentException(
 					"At the moment only queries with length 1 are allowed");
 		}
-		// TODO: maybe make defensive copies
-		rule = r;
-		query = q;
 
-		final ILiteral headLiteral = rule.getHead().getLiteral(0);
-		final ILiteral queryLiteral = query.getLiteral(0);
+		final ILiteral headLiteral = r.getHead().getLiteral(0);
+		final ILiteral queryLiteral = q.getLiteral(0);
 		final IPredicate headPredicate = headLiteral.getPredicate();
 		final IPredicate queryPredicate = queryLiteral.getPredicate();
 
@@ -148,30 +139,82 @@ public final class SIPImpl implements ISip {
 			final ITerm headT = headTerms.next();
 			final ITerm queryT = queryTerms.next();
 			if (queryT.isGround() && !headT.isGround()) {
-				// FIXME: this might not always be a variable, use
-				// getVariables()
-				assumedKnown.add((IVariable) headT);
+				assumedKnown.addAll(getVariables(headT));
 			}
 		}
 		
-		// ensure that a save rule will result in a save sip
-		rule = orderLiterals(rule, assumedKnown);
+		// ensure that a save rule will result in a save sip and
+		// construct the sip
+		constructSip(orderLiterals(r, assumedKnown), assumedKnown);
+	}
 
-		// constructing the sip
+	/**
+	 * Constructs a sip out of a rule.
+	 * @param r the rule for which to create the sip
+	 * @throws IllegalArgumentException if the rule is <code>null</code>
+	 */
+	public SIPImpl(final IRule r) {
+		if (r == null) {
+			throw new IllegalArgumentException("The rule must not be null");
+		}
+
+		final Set<IVariable> known = new HashSet<IVariable>();
+		for (final ILiteral l : r.getHead().getLiterals()) {
+			if (l.getAtom().getPredicate() instanceof AdornedPredicate) {
+				final Adornment[] ad = ((AdornedPredicate) l.getAtom().getPredicate()).getAdornment();
+				int i = 0;
+				for (final ITerm t : l.getAtom().getTuple()) {
+					if (ad[i++] == Adornment.BOUND) {
+						known.addAll(getVariables(t));
+					}
+				}
+			}
+		}
+
+		constructSip(r, known);
+	}
+
+	/**
+	 * Returns the variables of a term. If the term is <code>null</code> or
+	 * ground a empty set will be returned, if it is a constructed term all
+	 * of its variables are returned, otherwise (in this case it must be a 
+	 * variable) the term itself in a set will be returned.
+	 * @param t the term for which to return teh varaibles
+	 * @return the set of variables in the term
+	 */
+	private static Set<IVariable> getVariables(final ITerm t) {
+		if ((t == null) || t.isGround()) {
+			return Collections.EMPTY_SET;
+		} else if (t instanceof IConstructedTerm) {
+			return ((IConstructedTerm) t).getVariables();
+		}
+		return Collections.singleton((IVariable) t);
+	}
+
+	/**
+	 * Constructs the sip for a given rule and a known set of variables.
+	 * @param r the rule
+	 * @param assumedKnown the known variables
+	 */
+	private void constructSip(final IRule r, final Set<IVariable> assumedKnown) {
+		assert r != null: "The rule must not be null";
+		assert assumedKnown != null: "The known collection must not be null";
+		assert r.getHead().getLength() == 1: "At the moment we only can " + 
+			"construct a sip for a rule with length of 1";
+
 		final List<ILiteral> literalsTodo = new ArrayList<ILiteral>();
-		final Comparator<ILiteral> passingOrder = new DefaultPassingOrder();
-		literalsTodo.addAll(jumpFromHead(headLiteral, assumedKnown));
+		final Comparator<ILiteral> passingOrder = new DefaultPassingOrder(r);
+		literalsTodo.addAll(jumpFromHead(r, assumedKnown));
 
 		while (!literalsTodo.isEmpty()) {
 			Collections.sort(literalsTodo, passingOrder);
 			final ILiteral l = literalsTodo.remove(0);
 
-			final Map<ILiteral, Set<IVariable>> toAdd = getNextByRule(l,
-					assumedKnown);
-			for (final ILiteral connected : toAdd.keySet()) {
-				assumedKnown.addAll(toAdd.get(connected));
-				updateSip(l, connected, toAdd.get(connected));
-				literalsTodo.add(connected);
+			for (final Map.Entry<ILiteral, Set<IVariable>> e : 
+					getNextByRule(r, l, assumedKnown).entrySet()) {
+				assumedKnown.addAll(e.getValue());
+				addEdge(l, e.getKey(), e.getValue());
+				literalsTodo.add(e.getKey());
 			}
 		}
 		// FIXME: add unconnected literals
@@ -185,12 +228,12 @@ public final class SIPImpl implements ISip {
 	 * @throws NullPointerException
 	 *             if the source, target or passedTo is {@code null}
 	 */
-	public void updateSip(final ILiteral source, final ILiteral target,
+	private void addEdge(final ILiteral source, final ILiteral target,
 			final Set<IVariable> passedTo) {
-		if ((source == null) || (target == null) || (passedTo == null)) {
-			throw new NullPointerException(
-					"The source, target and passed variables must not be null");
-		}
+		assert source != null: "The source must not be null";
+		assert target != null: "The target must not be null";
+		assert passedTo != null: "The passed variables must not be null";
+
 		if (sipGraph.containsEdge(source, target)) { // updating the edge
 			sipGraph.getEdge(source, target).getLabel().addAll(passedTo);
 		}
@@ -207,25 +250,23 @@ public final class SIPImpl implements ISip {
 	 * sip and returns a set of literals where new connections where established
 	 * to.
 	 * 
-	 * @param l
-	 *            the head literal
-	 * @param bound
-	 *            the set of variables, bound by the query
+	 * @param r from which rule to jump
+	 * @param bound the set of variables, bound by the query
 	 * @return the set of the next literals to process
 	 * @throws NullPointerException
 	 *             if the literal or the set is null
 	 */
-	private Set<ILiteral> jumpFromHead(final ILiteral l,
-			final Set<IVariable> bound) {
-		if ((l == null) || (bound == null)) {
-			throw new NullPointerException(
-					"The literal and the bounds must not be null");
-		}
-		final Map<ILiteral, Set<IVariable>> next = getNextByRule(l, bound);
+	private Set<ILiteral> jumpFromHead(final IRule r, final Set<IVariable> bound) {
+		assert r != null: "The rule must not be null";
+		assert r.getHead().getLength() == 1: "At the moment sips can only handle rules with a headlength of 1";
+		assert bound != null: "The bound set must not be null";
+
+		final ILiteral l = r.getHead().getLiteral(0);
+		final Map<ILiteral, Set<IVariable>> next = getNextByRule(r, l, bound);
 		for (final ILiteral lit : next.keySet()) {
 			final Set<IVariable> vars = new HashSet<IVariable>(next.get(lit));
 			vars.retainAll(bound);
-			updateSip(l, lit, vars);
+			addEdge(l, lit, vars);
 		}
 		return next.keySet();
 	}
@@ -252,23 +293,19 @@ public final class SIPImpl implements ISip {
 	 * variables of the connected literal limited to those of the &quot;known
 	 * set&quot;.
 	 * 
-	 * @param l
-	 *            for which to search for connected literals
-	 * @param known
-	 *            the set of known varibles of this literal
+	 * @param r rule containing the literal
+	 * @param l for which to search for connected literals
+	 * @param known the set of known varibles of this literal
 	 * @return the map of the connected literals and the variables which are
 	 *         passed to it
-	 * @throws NullPointerException
-	 *             if the literal or the set is null
 	 */
-	private Map<ILiteral, Set<IVariable>> getNextByBounds(final ILiteral l,
-			final Set<IVariable> known) {
+	private static Map<ILiteral, Set<IVariable>> getNextByBounds(final IRule r, 
+			final ILiteral l, final Set<IVariable> known) {
 		// FIXME: update the sip if literal is already in the sip
 		// FIXME: builtins are handeled as ordinary literals
-		if ((l == null) || (known == null)) {
-			throw new NullPointerException(
-					"The literal or the set of bounds must not be null");
-		}
+		assert r != null: "The rule must not be null";
+		assert l != null: "The literal must not be null";
+		assert known != null: "The known variable set must not be null";
 
 		final Map<ILiteral, Set<IVariable>> connected = new HashMap<ILiteral, Set<IVariable>>();
 
@@ -278,7 +315,7 @@ public final class SIPImpl implements ISip {
 			return connected;
 		}
 
-		for (ILiteral lit : rule.getBody().getLiterals()) {
+		for (final ILiteral lit : r.getBody().getLiterals()) {
 			final Set<IVariable> variables = new HashSet<IVariable>(lit
 					.getTuple().getVariables());
 			variables.retainAll(bounds);
@@ -297,27 +334,23 @@ public final class SIPImpl implements ISip {
 	 * variables are the variables of the connected literal limited to those of
 	 * the &quot;known set&quot;.
 	 * 
-	 * @param l
-	 *            for which to search for connected literals
-	 * @param initiallyKnown
-	 *            the set of known varibles of this literal
+	 * @param r rule containing the literal
+	 * @param l for which to search for connected literals
+	 * @param initiallyKnown the set of known varibles of this literal
 	 * @return the map of the connected literals and the variables which are
 	 *         passed to it
-	 * @throws NullPointerException
-	 *             if the literal or the set is null
 	 */
-	private Map<ILiteral, Set<IVariable>> getNextByFree(final ILiteral l,
-			final Set<IVariable> initiallyKnown) {
+	private Map<ILiteral, Set<IVariable>> getNextByFree(final IRule r, 
+			final ILiteral l, final Set<IVariable> initiallyKnown) {
 		// FIXME: builtins are handeled as ordinary literals
-		if ((l == null) || (initiallyKnown == null)) {
-			throw new NullPointerException("The literal must not be null");
-		}
+		assert r != null: "The rule must not be null";
+		assert l != null: "The literal must not be null";
+		assert initiallyKnown != null: "The known variable set must not be null";
 
 		final Map<ILiteral, Set<IVariable>> connected = new HashMap<ILiteral, Set<IVariable>>();
 
 		// determine all possible successors of this literal
-		final Set<ILiteral> possibleSuccessors = new HashSet<ILiteral>(rule
-				.getBody().getLiterals());
+		final Set<ILiteral> possibleSuccessors = new HashSet<ILiteral>(r.getBody().getLiterals());
 
 		possibleSuccessors.remove(l);
 
@@ -343,34 +376,36 @@ public final class SIPImpl implements ISip {
 	 * in the rule body it will always return the element one after the first
 	 * occurence of the given literal.</b>
 	 * 
-	 * @param l
-	 *            for which to search for connected literals
-	 * @param initiallyKnown
-	 *            the set of known varibles of this literal
+	 * @param r the rule through which to search
+	 * @param l for which to search for connected literals
+	 * @param initiallyKnown the set of known varibles of this literal
 	 * @return the map of the connected literals and the variables which are
 	 *         passed to it
 	 * @throws NullPointerException
 	 *             if the literal or the set is {@code null}
 	 */
-	private Map<ILiteral, Set<IVariable>> getNextByRule(final ILiteral l,
-			final Set<IVariable> initiallyKnown) {
-		if (l == null) {
-			throw new NullPointerException("The literal must not be null");
-		}
+	private static Map<ILiteral, Set<IVariable>> getNextByRule(final IRule r, 
+			final ILiteral l, final Set<IVariable> initiallyKnown) {
+		assert r != null: "The rule must not be null";
+		assert l != null: "The literal must not be null";
+		assert initiallyKnown != null: "The known variables must not be null";
+
 		final Set<IVariable> vars = new HashSet<IVariable>(initiallyKnown);
 		vars.addAll(l.getTuple().getVariables());
-		if (l.equals(rule.getHead().getLiteral(0))) {
-			return Collections.singletonMap(rule.getBody().getLiteral(0), vars);
+
+		// if the literal is the head literal -> return the first
+		// literal of the body
+		if (l.equals(r.getHead().getLiteral(0))) {
+			return Collections.singletonMap(r.getBody().getLiteral(0), vars);
 		}
 
 		// get the next literal -> ignore builtins
 		// FIXME: if two equal literals are in the body -> infinite loop
-		int newPos = rule.getBody().getLiterals().indexOf(l) + 1;
-		final int rLength = rule.getBody().getLength();
-		if (newPos >= rLength) {
+		int newPos = r.getBody().getLiterals().indexOf(l) + 1;
+		if (newPos >= r.getBody().getLength()) {
 			return EMPTY_LITERAL_VARIABLES_MAP;
 		}
-		return Collections.singletonMap(rule.getBody().getLiteral(newPos), vars);
+		return Collections.singletonMap(r.getBody().getLiteral(newPos), vars);
 	}
 
 	/**
@@ -456,14 +491,6 @@ public final class SIPImpl implements ISip {
 		return vars;
 	}
 
-	public IRule getRule() {
-		return rule;
-	}
-
-	public IQuery getQuery() {
-		return query;
-	}
-
 	/**
 	 * Returns a simple string representation of this graph. <b>The subject of
 	 * the returned string is to change.</b> The returned string may be a list
@@ -478,52 +505,6 @@ public final class SIPImpl implements ISip {
 			buffer.append(o).append(NEWLINE);
 		}
 		return buffer.toString();
-	}
-
-	public ISip defensifeCopy() {
-		return defensifeCopy(rule, query);
-	}
-
-	public SIPImpl defensifeCopy(final IRule r, final IQuery q) {
-		if ((r == null) || (q == null)) {
-			throw new NullPointerException(
-					"The rule and the query must not be null");
-		}
-		// TODO: maybe check the predicates of the query and the rulehead
-		SIPImpl copy = new SIPImpl();
-		copy.rule = r;
-		copy.query = q;
-		copy.sipGraph = (DirectedGraph)((SimpleDirectedGraph) sipGraph).clone();
-		return copy;
-	}
-
-	public void exchangeLiteral(final ILiteral from, final ILiteral to) {
-		if ((from == null) || (to == null)) {
-			throw new NullPointerException("The literals must not be null");
-		}
-		for (final LabeledEdge<ILiteral, Set<IVariable>> e : getEdgesEnteringLiteral(from)) {
-			updateSip(e.getSource(), to, e.getLabel());
-		}
-		for (final LabeledEdge<ILiteral, Set<IVariable>> e : getEdgesLeavingLiteral(from)) {
-			updateSip(to, e.getTarget(), e.getLabel());
-		}
-		// needs no check for neighbours, because we deleted all edges
-		sipGraph.removeVertex(from);
-	}
-
-	public void removeEdge(final LabeledEdge<ILiteral, Set<IVariable>> e) {
-		if (e == null) {
-			throw new NullPointerException("The edge must not be null");
-		}
-		sipGraph.removeEdge(e);
-	}
-
-	public void removeEdge(final ILiteral source, final ILiteral target) {
-		if ((source == null) || (target == null)) {
-			throw new NullPointerException(
-					"The source and the target must not be null");
-		}
-		removeEdge(sipGraph.getEdge(source, target));
 	}
 
 	public boolean containsVertex(final ILiteral l) {
@@ -574,14 +555,11 @@ public final class SIPImpl implements ISip {
 			return false;
 		}
 		final SIPImpl s = (SIPImpl) o;
-		return query.equals(s.query) && rule.equals(s.rule)
-				&& sipGraph.edgeSet().equals(s.sipGraph.edgeSet());
+		return sipGraph.edgeSet().equals(s.sipGraph.edgeSet());
 	}
 
 	public int hashCode() {
 		int res = 17;
-		res = res * 37 + rule.hashCode();
-		res = res * 37 + query.hashCode();
 		res = res * 37 + sipGraph.edgeSet().hashCode();
 		return res;
 	}
@@ -681,103 +659,37 @@ public final class SIPImpl implements ISip {
 	}
 
 	/**
-	 * Compares literals according to some heuristics.
-	 * 
-	 * @author richi
-	 * @deprecated because the heuristics aren't well defined at the moment.
-	 */
-	private class HeuristicPassingOrder implements Comparator<ILiteral> {
-
-		private final Set<IVariable> freeByQuery = new HashSet<IVariable>();
-
-		private final IPredicate headPredicate;
-
-		public HeuristicPassingOrder() {
-			final ILiteral headLiteral = rule.getHead().getLiteral(0);
-			final ILiteral queryLiteral = query.getLiteral(0);
-
-			headPredicate = headLiteral.getPredicate();
-
-			for (final Iterator<ITerm> headTerms = headLiteral.getTuple()
-					.iterator(), queryTerms = queryLiteral
-					.getTuple().iterator(); (headTerms.hasNext() && queryTerms
-					.hasNext());) {
-				final ITerm headT = headTerms.next();
-				final ITerm queryT = queryTerms.next();
-				if (!queryT.isGround() && !headT.isGround()) {
-					freeByQuery.add((IVariable) headT);
-				}
-			}
-		}
-
-		public int compare(final ILiteral o1, final ILiteral o2) {
-			if ((o1 == null) || (o2 == null)) {
-				throw new NullPointerException("The literals must not be null");
-			}
-			int result = 0;
-			if ((result = compareContainsFreeQuery(o1, o2)) != 0) {
-				return result;
-			}
-			if ((result = compareIsEdb(o1, o2)) != 0) {
-				return result;
-			}
-			return result;
-		}
-
-		private int compareContainsFreeQuery(final ILiteral o1,
-				final ILiteral o2) {
-			if ((o1 == null) || (o2 == null)) {
-				throw new NullPointerException("The literals must not be null");
-			}
-
-			final Set<IVariable> v1 = o1.getTuple().getVariables();
-			final Set<IVariable> v2 = o2.getTuple().getVariables();
-			v1.retainAll(freeByQuery);
-			v2.retainAll(freeByQuery);
-
-			if (!v1.isEmpty() && !v2.isEmpty()) {
-				return v1.size() - v2.size();
-			} else if (v1.isEmpty() && !v2.isEmpty()) {
-				return -1;
-			} else if (!v1.isEmpty() && v2.isEmpty()) {
-				return 1;
-			}
-			return 0;
-		}
-
-		private int compareIsEdb(final ILiteral o1, final ILiteral o2) {
-			if ((o1 == null) || (o2 == null)) {
-				throw new NullPointerException("The literals must not be null");
-			}
-
-			final IPredicate p1 = o1.getPredicate();
-			final IPredicate p2 = o2.getPredicate();
-			if (hasSameSignature(p1, headPredicate)
-					&& !hasSameSignature(p2, headPredicate)) {
-				return 1;
-			} else if (!hasSameSignature(p1, headPredicate)
-					&& hasSameSignature(p2, headPredicate)) {
-				return -1;
-			}
-			return 0;
-		}
-	}
-
-	/**
 	 * Compares literals according to their position in the body of the rule.
 	 * Literals appearing earlier in the body are smaller than those later in
 	 * the body. If a literal doesn't appear in the body, then it is bigger than
 	 * one whitch is in the body. If both aren't in the body, they are equal.
 	 * 
-	 * @author richi
+	 * @author Richard Pöttler (richard dot poettler at deri dot at)
 	 */
 	private class DefaultPassingOrder implements Comparator<ILiteral> {
+
+		/** Rulebody on which to compare. */
+		final List<ILiteral> body;
+
+		/**
+		 * Constructs the default passing order.
+		 * @param r the rule on which's body to compare
+		 * @throws IllegalArgumentException if the rule is
+		 * <code>null</code>
+		 */
+		public DefaultPassingOrder(final IRule r) {
+			if (r == null) {
+				throw new IllegalArgumentException("The rule must not be null");
+			}
+			body = r.getBody().getLiterals();
+		}
+
 		public int compare(ILiteral o1, ILiteral o2) {
 			if ((o1 == null) || (o2 == null)) {
 				throw new NullPointerException("The literals must not be null");
 			}
-			final int pos1 = rule.getBody().getLiterals().indexOf(o1);
-			final int pos2 = rule.getBody().getLiterals().indexOf(o2);
+			final int pos1 = body.indexOf(o1);
+			final int pos2 = body.indexOf(o2);
 			if ((pos1 == -1 && pos2 == -1)) {
 				return 0;
 			} else if (pos1 == -1) {
@@ -795,10 +707,10 @@ public final class SIPImpl implements ISip {
 	 * The label of the edge will be <code>new HashSet<IVariable>()</code>.
 	 * </p>
 	 * <p>
-	 * $Id: SIPImpl.java,v 1.25 2007-10-19 13:38:44 bazbishop237 Exp $
+	 * $Id: SIPImpl.java,v 1.26 2007-10-25 07:18:49 poettler_ric Exp $
 	 * </p>
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.25 $
+	 * @version $Revision: 1.26 $
 	 * @since 0.3
 	 */
 	private static class SipEdgeFactory implements EdgeFactory<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> {

@@ -50,6 +50,7 @@ import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.common.Adornment;
+import org.deri.iris.evaluation.magic.SIPImpl;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.graph.LabeledEdge;
 
@@ -209,10 +210,10 @@ public final class MagicSetImpl {
 		final ILiteral headL = r.getHead().getLiteral(0);
 
 		// computing the rewritten body
-		final List<ILiteral> rewrittenBody = new ArrayList<ILiteral>(r
-				.getBody().getLiterals());
-		Collections
-				.sort(rewrittenBody, getAdornedSip(r).getLiteralComparator());
+		final List<ILiteral> rewrittenBody = new ArrayList<ILiteral>(
+				r.getBody().getLiterals());
+		Collections.sort(rewrittenBody, 
+				getAdornedSip(r).getLiteralComparator());
 
 		final ILiteral magicL = createMagicLiteral(headL);
 		if (magicL == headL) { // the head literal is not adorned 
@@ -221,24 +222,12 @@ public final class MagicSetImpl {
 		}
 		rewrittenBody.add(0, magicL);
 
-		// modifying the sip
-		final ISip adornedSip = getAdornedSip(r).defensifeCopy();
-		final Set<IVariable> boundVars = new HashSet<IVariable>();
-		boundVars.addAll(getVariables(getBounds(headL)));
-
-		for (final LabeledEdge<ILiteral, Set<IVariable>> e : adornedSip
-				.getEdgesLeavingLiteral(headL)) {
-			adornedSip.removeEdge(e);
-			adornedSip.updateSip(magicL, (ILiteral) e.getTarget(), e.getLabel());
-		}
-		adornedSip.updateSip(headL, magicL, boundVars);
-
 		// creating the normal rule
-		IRule tmpRule = BASIC.createRule(BASIC.createHead(r.getHead().getLiterals()),
+		final IRule tmpRule = BASIC.createRule(BASIC.createHead(r.getHead().getLiterals()),
 				BASIC.createBody(rewrittenBody));
 
 		// creating the adorned rule
-		return new AdornedRule(tmpRule, adornedSip);
+		return new AdornedRule(tmpRule, new SIPImpl(tmpRule));
 	}
 
 	/**
@@ -682,7 +671,7 @@ public final class MagicSetImpl {
 	private ISip getAdornedSip(final AdornedRule r) {
 		ISip sip = null;
 		if ((sip = adornedSipCache.get(r)) == null) {
-			sip = SipHelper.getAdornedSip(r);
+			sip = new SIPImpl(r);
 			adornedSipCache.put(r, sip);
 		}
 		return sip;

@@ -37,11 +37,14 @@ import java.util.Set;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.evaluation.common.Adornment;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
+import org.deri.iris.evaluation.common.AdornedProgram.AdornedRule;
 
 /**
  * <p>
@@ -49,14 +52,16 @@ import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
  * from Beeri's paper &quot;The Power Of Magic&quot;.
  * </p>
  * <p>
- * $Id: SupplementaryMSImpl.java,v 1.6 2007-10-19 07:37:18 poettler_ric Exp $
+ * $Id: SupplementaryMSImpl.java,v 1.7 2007-10-25 07:18:49 poettler_ric Exp $
  * </p>
  * 
- * @author richi
- * @version $Revision: 1.6 $
- * @date $Date: 2007-10-19 07:37:18 $
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision: 1.7 $
  */
 public class SupplementaryMSImpl {
+
+	/** A small dummy constant */
+	private static final ITerm MINIMAL_CONST_TERM = org.deri.iris.factory.Factory.TERM.createString("");
 
 	/** Prefix for the supplementary Magic Predicates. */
 	private static final String SUPMAGIC_PREFIX = "supmagic";
@@ -321,7 +326,7 @@ public class SupplementaryMSImpl {
 				.size(); i < m; i++) {
 			body.add(sortedBody.get(i));
 		}
-		return SipHelper.getAdornedRule(BASIC.createRule(BASIC.createHead(r
+		return getAdornedRule(BASIC.createRule(BASIC.createHead(r
 				.getHead().getLiterals()), BASIC.createBody(body)));
 	}
 
@@ -552,4 +557,111 @@ public class SupplementaryMSImpl {
 		}
 		return buffer.toString();
 	}
+
+	/**
+	 * <p>Creates a adorned rule out of an undadorned one.</p>
+	 * <p>NOTE: Maybe this got to become a constructor of the adorned rule.</p>
+	 * 
+	 * @param r
+	 *            for which to create the adorned rule
+	 * @return the adorned rule
+	 * @throws NullPointerException
+	 *             if the rule is null
+	 * @throws IllegalArgumentException
+	 *             if the length of the head is unequal to 1
+	 */
+	private static AdornedRule getAdornedRule(final IRule r) {
+		if (r instanceof AdornedRule) {
+			return (AdornedRule) r;
+		}
+		if (r == null) {
+			throw new NullPointerException("The rule must not´ be null");
+		}
+		if (r.getHead().getLength() != 1) {
+			throw new IllegalArgumentException(
+					"The head must have a length of 1");
+		}
+
+		final ILiteral headLiteral = r.getHead().getLiteral(0);
+
+		if (!(headLiteral.getPredicate() instanceof AdornedPredicate)) {
+			throw new IllegalArgumentException(
+					"The predicate of the head must be adorned");
+		}
+
+		return new AdornedRule(r, new SIPImpl(r,
+				getQueryForLiteral(headLiteral)));
+	}
+
+	/**
+	 * Creates a query for an adorned literal.
+	 * 
+	 * @param l
+	 *            for which to create the query
+	 * @return the created query
+	 * @throws NullPointerException
+	 *             if the literal is null
+	 * @throws IllegalArgumentException
+	 *             if the predicate of the literal isn't adorned
+	 * @throws IllegalArgumentException
+	 *             if the adornment contains something else than BOUND's and
+	 *             FREE's
+	 */
+	public static IQuery getQueryForLiteral(final ILiteral l) {
+		if (l == null) {
+			throw new NullPointerException("The literal must not be null");
+		}
+		if (!(l.getPredicate() instanceof AdornedPredicate)) {
+			throw new IllegalArgumentException(
+					"The predicate of the literal must be adorned");
+		}
+		final AdornedPredicate p = (AdornedPredicate) l.getPredicate();
+		final int realLength = p.getAdornment().length;
+		final ITuple t = l.getTuple();
+		final List<ITerm> queryTerms = new ArrayList<ITerm>(realLength);
+
+		if (t.size() == realLength) { // if the arity matches the lenght
+			// of the adornemt
+			int counter = 0;
+			for (final Adornment a : p.getAdornment()) {
+				final ITerm actualTerm = t.get(counter);
+				switch (a) {
+				case BOUND:
+					if (t.isGround()) {
+						queryTerms.add(actualTerm);
+					} else {
+						queryTerms.add(MINIMAL_CONST_TERM);
+					}
+					break;
+				case FREE:
+					queryTerms.add(t.get(counter));
+					break;
+				default:
+					throw new IllegalArgumentException(
+							"Can only handle BOUND and FREE as adornments");
+				}
+				counter++;
+			}
+		} else { // if the arities doesn't match -> might be an adorned
+			// predicate
+			int counter = 0;
+			for (final Adornment a : p.getAdornment()) {
+				switch (a) {
+				case BOUND:
+					queryTerms.add(MINIMAL_CONST_TERM);
+					break;
+				case FREE:
+					queryTerms.add(t.get(counter));
+					break;
+				default:
+					throw new IllegalArgumentException(
+							"Can only handle BOUND and FREE as adornments");
+				}
+				counter++;
+			}
+		}
+		return BASIC.createQuery(BASIC.createLiteral(l.isPositive(), p, BASIC
+				.createTuple(queryTerms)));
+	}
+
 }

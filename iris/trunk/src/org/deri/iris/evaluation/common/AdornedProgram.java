@@ -53,11 +53,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.31 2007-10-19 07:37:17 poettler_ric Exp $
+ * $Id: AdornedProgram.java,v 1.32 2007-10-25 07:18:49 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.31 $
+ * @version $Revision: 1.32 $
  */
 public class AdornedProgram {
 
@@ -203,15 +203,18 @@ public class AdornedProgram {
 				if (ap.hasSameSignature(ph)) {
 					// creating a sip for the actual rule and the ap
 					final ISip sip = new SIPImpl(r, createQueryForAP(ap, lh));
-					final AdornedRule ra = new AdornedRule(r, sip);
-					ra.replaceHeadLiteral(lh, ap);
+					AdornedRule ra = (new AdornedRule(r, sip)).replaceHeadLiteral(lh, ap);
 
 					// iterating through all bodyliterals of the
 					for (final ILiteral l : r.getBody().getLiterals()) {
-						final AdornedPredicate newAP = processLiteral(l, ra);
-						// adding the adorned predicate to the sets
-						if ((newAP != null) && (adornedPredicates.add(newAP))) {
-							predicatesToProcess.add(newAP);
+						final AdornedPredicate newAP = checkDerivedLiteral(l, ra);
+						if (newAP != null) {
+							// replacing the literal in the rule
+							ra = ra.replaceBodyLiteral(l, newAP);
+							// adding the adorned predicate to the sets
+							if (adornedPredicates.add(newAP)) {
+								predicatesToProcess.add(newAP);
+							}
 						}
 					}
 					adornedRules.add(ra);
@@ -288,38 +291,26 @@ public class AdornedProgram {
 
 	/**
 	 * <p>
-	 * Processes a literal of a given adorned rule.
+	 * Checks whether the predicate of a literal is a derived one. If the
+	 * literal is derived it will return the adorned predicate. The adorned
+	 * predicate will be adorned according to it's bound and frees of the
+	 * sip of the submitted rule. If the predicate is not adorned
+	 * <code>null</code> will be returned.
 	 * </p>
-	 * <p>
-	 * This method will frist
-	 * determine, whether the predicate of this literal is derived, and if it is
-	 * the predicate will be adorned with the variables passed in from the sip
-	 * of the adorned rule. The predicate of the literal of the adorned rule
-	 * passed in will be replaced by the adorned one. If the predicate was
-	 * derived, the adorned predicate will be returned, otherwise null.
-	 * </p>
-	 * 
-	 * @param l
-	 *            the literal to process
-	 * @param r
-	 *            the adorned rule containing the literal
+	 * @param l the literal to process
+	 * @param r the adorned rule containing the literal
 	 * @return the adorned predicate for this literal corresponding to the
 	 *         passed variables of the adorned rule, or {@code null}, if the
-	 *         predicate of the literal wasn't derived, or if the adornment only
-	 *         consists of free's.
-	 * @throws NullPointerException
-	 *             if the rule, or the literal are {@code null}
+	 *         predicate of the literal wasn't derived.
 	 */
-	private AdornedPredicate processLiteral(final ILiteral l,
+	private AdornedPredicate checkDerivedLiteral(final ILiteral l,
 			final AdornedRule r) {
-		if ((l == null) || (r == null)) {
-			throw new NullPointerException(
-					"The literal and rule must not be null");
-		}
+		assert l != null: "The literal must not be null";
+		assert r != null: "The rule must not be null";
+
 		AdornedPredicate ap = null;
 		if (deriveredPredicates.contains(l.getPredicate())) {
 			ap = new AdornedPredicate(l, r.getSIP().getBoundVariables(l));
-			r.replaceBodyLiteral(l, ap);
 		}
 		return ap;
 	}
@@ -336,7 +327,6 @@ public class AdornedProgram {
 
 		final Set<IPredicate> derived = new HashSet<IPredicate>();
 		for (final IRule r : rules) {
-			//deriveredPredicates.add(r.getHeadLiteral(0).getPredicate());
 			for (final ILiteral l : r.getHead().getLiterals()) {
 				derived.add(l.getPredicate());
 			}
@@ -650,11 +640,11 @@ public class AdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.31 $
+	 * @version $Revision: 1.32 $
 	 */
 	public static class AdornedRule implements IRule {
 		/** The inner rule represented by this object */
-		private IRule rule;
+		private final IRule rule;
 
 		/** The sip for this rule */
 		private final ISip sip;
@@ -675,27 +665,23 @@ public class AdornedProgram {
 				throw new NullPointerException(
 						"The rule and the sip must not be null");
 			}
-			rule = BASIC.createRule(BASIC.createHead(new ArrayList<ILiteral>(r
-					.getHead().getLiterals())), BASIC
-					.createBody(new ArrayList<ILiteral>(r.getBody().getLiterals())));
-			sip = s.defensifeCopy();
+			rule = r;
+			sip = s;
 		}
 		
-		public IBody getBody()
-        {
-	        return rule.getBody();
-        }
+		public IBody getBody() {
+			return rule.getBody();
+		}
 
-		public IHead getHead()
-        {
-	        return rule.getHead();
-        }
+		public IHead getHead() {
+			return rule.getHead();
+		}
 
 		public ISip getSIP() {
 			return sip;
 		}
 
-		public void replaceHeadLiteral(final ILiteral l, final IPredicate p) {
+		public AdornedRule replaceHeadLiteral(final ILiteral l, final IPredicate p) {
 			if ((l == null) || (p == null)) {
 				throw new NullPointerException(
 						"The literal and the predcate must not be null");
@@ -715,13 +701,14 @@ public class AdornedProgram {
 						+ ") couldn't be found in head (" + head + ")");
 			}
 
-			head.set(index, BASIC
-					.createLiteral(l.isPositive(), p, l.getTuple()));
-			rule = BASIC.createRule(BASIC.createHead(head), BASIC
-					.createBody(rule.getBody().getLiterals()));
+			head.set(index, BASIC .createLiteral(l.isPositive(), p, l.getTuple()));
+			return new AdornedRule(BASIC.createRule(
+						BASIC.createHead(head), 
+						BASIC.createBody(rule.getBody().getLiterals())), 
+					sip);
 		}
 
-		public void replaceBodyLiteral(final ILiteral l, final IPredicate p) {
+		public AdornedRule replaceBodyLiteral(final ILiteral l, final IPredicate p) {
 			if ((l == null) || (p == null)) {
 				throw new NullPointerException(
 						"The literal and the predcate must not be null");
@@ -741,10 +728,11 @@ public class AdornedProgram {
 						+ ") couldn't be found in body (" + body + ")");
 			}
 
-			body.set(index, BASIC
-					.createLiteral(l.isPositive(), p, l.getTuple()));
-			rule = BASIC.createRule(BASIC.createHead(rule.getHead().getLiterals()),
-					BASIC.createBody(body));
+			body.set(index, BASIC .createLiteral(l.isPositive(), p, l.getTuple()));
+			return new AdornedRule(BASIC.createRule(
+						BASIC.createHead(rule.getHead().getLiterals()), 
+						BASIC.createBody(body)), 
+					sip);
 		}
 
 		public String toString() {
@@ -772,37 +760,5 @@ public class AdornedProgram {
 		public boolean isRectified() {
 			return rule.isRectified();
 		}
-
-//		public int getHeadLenght() {
-//			return rule.getHead().getHeadLenght();
-//		}
-//
-//		public ILiteral getHeadLiteral(int arg) {
-//			return rule.getHead().getHeadLiteral(arg);
-//		}
-//
-//		public List<ILiteral> getHeadLiterals() {
-//			return Collections.unmodifiableList(rule.getHead().getHeadLiterals());
-//		}
-//
-//		public List<IVariable> getHeadVariables() {
-//			return Collections.unmodifiableList(rule.getHead().getHeadVariables());
-//		}
-//
-//		public int getBodyLenght() {
-//			return rule.getBody().getBodyLenght();
-//		}
-//
-//		public ILiteral getBodyLiteral(int arg) {
-//			return rule.getBody().getBodyLiteral(arg);
-//		}
-//
-//		public List<ILiteral> getBodyLiterals() {
-//			return Collections.unmodifiableList(rule.getBody().getBodyLiterals());
-//		}
-//
-//		public List<IVariable> getBodyVariables() {
-//			return Collections.unmodifiableList(rule.getBody().getBodyVariables());
-//		}
 	}
 }
