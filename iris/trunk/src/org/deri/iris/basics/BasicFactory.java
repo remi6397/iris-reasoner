@@ -87,10 +87,6 @@ public class BasicFactory implements IBasicFactory {
 		return new Literal(isPositive, atom);
 	}
 
-	public ILiteral createLiteral(boolean isPositive, IBuiltInAtom builtinAtom) {
-		return new Literal(isPositive, builtinAtom);
-	}
-
 	public ILiteral createLiteral(boolean isPositive, IPredicate predicate) {
 		return createLiteral(isPositive, createAtom(predicate));
 	}
