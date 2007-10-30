@@ -29,8 +29,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.deri.iris.api.basics.IAtom;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -67,22 +65,6 @@ public class BasicFactory implements IBasicFactory {
 		return new Atom(p, tuple);
 	}
 
-	public IBody createBody(ILiteral... literals) {
-		return createBody(Arrays.asList(literals));
-	}
-
-	public IBody createBody(List<ILiteral> literals) {
-		return new Body(literals);
-	}
-
-	public IHead createHead(ILiteral... literals) {
-		return createHead(Arrays.asList(literals));
-	}
-
-	public IHead createHead(List<ILiteral> literals) {
-		return new Head(literals);
-	}
-
 	public ILiteral createLiteral(boolean isPositive, IAtom atom) {
 		return new Literal(isPositive, atom);
 	}
@@ -109,21 +91,17 @@ public class BasicFactory implements IBasicFactory {
 	}
 
 	public IQuery createQuery(ILiteral... literals) {
-		return new Query(createBody(literals));
+		return createQuery(Arrays.asList(literals));
 	}
 
 	public IQuery createQuery(List<ILiteral> literals) {
-		return new Query(createBody(literals));
+		return new Query(literals);
 	}
 
-	public IRule createRule(IHead head, IBody body) {
+	public IRule createRule(List<ILiteral> head, List<ILiteral> body) {
 		return new Rule(head, body); 
 	}
 
-	public IRule copyRule(IHead head, IBody body){
-		return new Rule(head, body); 
-	}
-	
 	public ITuple createTuple(ITerm... terms) {
 		return createTuple(Arrays.asList(terms));
 	}

@@ -82,8 +82,7 @@ public abstract class GeneralSeminaiveEvaluation implements IBottomUpEvaluator {
 		throws DataModelException {
 		
 		/** EVAL (pi, R1,..., Rk, Q1,..., Qm); */
-		this.results.getResults().put(
-				q.getLiteral(0).getPredicate(), 
+		this.results.getResults().put(q.getLiterals().get(0).getPredicate(), 
 				this.method.evaluate(this.rr.translateQuery(q), mProgram));
 		
 		return true;

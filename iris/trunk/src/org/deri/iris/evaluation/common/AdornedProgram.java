@@ -35,8 +35,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.deri.iris.api.basics.IAtom;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -53,11 +51,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.32 2007-10-25 07:18:49 poettler_ric Exp $
+ * $Id: AdornedProgram.java,v 1.33 2007-10-30 08:28:28 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  */
 public class AdornedProgram {
 
@@ -117,7 +115,7 @@ public class AdornedProgram {
 					"The list of rules must not contain null");
 		}
 		for (IRule r : rules) {
-			if (r.getHead().getLiterals().size() != 1) {
+			if (r.getHead().size() != 1) {
 				throw new IllegalArgumentException("At the moment this class "
 						+ "only works with rules with one literal in the head.");
 			}
@@ -128,8 +126,8 @@ public class AdornedProgram {
 		if (query.getLiterals().size() > 1) { // if we got a conjunctive query
 			// construct the temp query and rule
 			final IRule tmpRule = BASIC.createRule(
-					BASIC.createHead(TEMP_QUERY_LITERAL), 
-					BASIC.createBody(query.getLiterals()));
+					Arrays.asList(new ILiteral[]{TEMP_QUERY_LITERAL}), 
+					query.getLiterals());
 			final IQuery tmpQuery = BASIC.createQuery(TEMP_QUERY_LITERAL);
 
 			// adorn it
@@ -140,10 +138,10 @@ public class AdornedProgram {
 			// remove the temp rule again and create the query out
 			// of it
 			for (final IRule r : adornedRules) {
-				if ((r.getHead().getLiterals().size() == 1) && 
-						(r.getHead().getLiterals().get(0).getPredicate().equals(AD_TEMP_QUERY_PREDICATE))) {
+				if ((r.getHead().size() == 1) && 
+						(r.getHead().get(0).getPredicate().equals(AD_TEMP_QUERY_PREDICATE))) {
 					adornedRules.remove(r);
-					newQuery = BASIC.createQuery(r.getBody().getLiterals());
+					newQuery = BASIC.createQuery(r.getBody());
 					break;
 				}
 			}
@@ -182,8 +180,7 @@ public class AdornedProgram {
 
 		// creating an adored predicate out of the query, and add it to the
 		// predicate sets
-		final AdornedPredicate qa = new AdornedPredicate(query
-				.getLiteral(0));
+		final AdornedPredicate qa = new AdornedPredicate(query.getLiterals().get(0));
 
 		final Set<AdornedPredicate> predicatesToProcess = new HashSet<AdornedPredicate>();
 		predicatesToProcess.add(qa);
@@ -195,7 +192,7 @@ public class AdornedProgram {
 			predicatesToProcess.remove(ap);
 
 			for (final IRule r : rules) {
-				final ILiteral lh = r.getHead().getLiteral(0);
+				final ILiteral lh = r.getHead().get(0);
 				final IPredicate ph = lh.getPredicate();
 
 				// if the headliteral and the adorned predicate have the
@@ -206,7 +203,7 @@ public class AdornedProgram {
 					AdornedRule ra = (new AdornedRule(r, sip)).replaceHeadLiteral(lh, ap);
 
 					// iterating through all bodyliterals of the
-					for (final ILiteral l : r.getBody().getLiterals()) {
+					for (final ILiteral l : r.getBody()) {
 						final AdornedPredicate newAP = checkDerivedLiteral(l, ra);
 						if (newAP != null) {
 							// replacing the literal in the rule
@@ -327,7 +324,7 @@ public class AdornedProgram {
 
 		final Set<IPredicate> derived = new HashSet<IPredicate>();
 		for (final IRule r : rules) {
-			for (final ILiteral l : r.getHead().getLiterals()) {
+			for (final ILiteral l : r.getHead()) {
 				derived.add(l.getPredicate());
 			}
 		}
@@ -640,7 +637,7 @@ public class AdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.32 $
+	 * @version $Revision: 1.33 $
 	 */
 	public static class AdornedRule implements IRule {
 		/** The inner rule represented by this object */
@@ -669,11 +666,11 @@ public class AdornedProgram {
 			sip = s;
 		}
 		
-		public IBody getBody() {
+		public List<ILiteral> getBody() {
 			return rule.getBody();
 		}
 
-		public IHead getHead() {
+		public List<ILiteral> getHead() {
 			return rule.getHead();
 		}
 
@@ -692,8 +689,7 @@ public class AdornedProgram {
 								+ "and the new predicate doesn't match.");
 			}
 
-			final List<ILiteral> head = new ArrayList<ILiteral>(rule
-					.getHead().getLiterals());
+			final List<ILiteral> head = new ArrayList<ILiteral>(rule.getHead());
 
 			final int index = head.indexOf(l);
 			if (index == -1) {
@@ -702,10 +698,7 @@ public class AdornedProgram {
 			}
 
 			head.set(index, BASIC .createLiteral(l.isPositive(), p, l.getTuple()));
-			return new AdornedRule(BASIC.createRule(
-						BASIC.createHead(head), 
-						BASIC.createBody(rule.getBody().getLiterals())), 
-					sip);
+			return new AdornedRule(BASIC.createRule(head, rule.getBody()), sip);
 		}
 
 		public AdornedRule replaceBodyLiteral(final ILiteral l, final IPredicate p) {
@@ -719,8 +712,7 @@ public class AdornedProgram {
 								+ "and the new predicate doesn't match.");
 			}
 
-			final List<ILiteral> body = new ArrayList<ILiteral>(rule
-					.getBody().getLiterals());
+			final List<ILiteral> body = new ArrayList<ILiteral>(rule.getBody());
 
 			final int index = body.indexOf(l);
 			if (index == -1) {
@@ -729,10 +721,7 @@ public class AdornedProgram {
 			}
 
 			body.set(index, BASIC .createLiteral(l.isPositive(), p, l.getTuple()));
-			return new AdornedRule(BASIC.createRule(
-						BASIC.createHead(rule.getHead().getLiterals()), 
-						BASIC.createBody(body)), 
-					sip);
+			return new AdornedRule(BASIC.createRule(rule.getHead(), body), sip);
 		}
 
 		public String toString() {

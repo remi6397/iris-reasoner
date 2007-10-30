@@ -25,57 +25,69 @@
  */
 package org.deri.iris.basics;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.deri.iris.api.basics.IBody;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.VariableExtractor;
 
 /**
- * @author richi
+ * <p>
+ * The query implementation.
+ * </p>
+ * <p>
+ * $Id$
+ * </p>
  *
+ * @author Richard Pöttler (richard dot poettler at deri dot at)
+ * @version $Revision$
  */
 public class Query implements IQuery {
 	
-	private IBody body = null;
+	private List<ILiteral> literals = null;
 	
-	Query(final IBody body) {
-		this.body = body;
-	}
-
-	public int getLength() {
-		return body.getLength();
-	}
-
-	public ILiteral getLiteral(int arg) {
-		return body.getLiteral(arg);
+	Query(final List<ILiteral> literals) {
+		if (literals == null) {
+			throw new IllegalArgumentException("The literals must not be null");
+		}
+		if (literals.contains(null)) {
+			throw new IllegalArgumentException("The literals must not contain null");
+		}
+		this.literals = Collections.unmodifiableList(new ArrayList<ILiteral>(literals));
 	}
 
 	public List<ILiteral> getLiterals() {
-		return body.getLiterals();
+		return literals;
 	}
 
 	public List<IVariable> getVariables() {
-		return body.getVariables();
+		return VariableExtractor.getLiteralVariablesList(literals);
 	}
 	
 	public int hashCode() {
-		return body.hashCode();
+		return literals.hashCode();
 	}
 	
 	public boolean equals(final Object o) {
 		if (o == this) {
 			return true;
 		}
-		if (!(o instanceof Query)) {
+		if (!(o instanceof IQuery)) {
 			return false;
 		}
-		Query q = (Query) o;
-		return body.equals(q.body);
+		IQuery q = (IQuery) o;
+		return literals.equals(q.getLiterals());
 	}
 	
 	public String toString() {
-		return body.toString();
+		final StringBuilder buffer = new StringBuilder();
+		for (final ILiteral l : literals) {
+			buffer.append(l).append(", ");
+		}
+		buffer.delete(buffer.length() - 2, buffer.length());
+		return buffer.toString();
 	}
 }

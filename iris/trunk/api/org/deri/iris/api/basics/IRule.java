@@ -25,6 +25,8 @@
  */
 package org.deri.iris.api.basics;
 
+import java.util.List;
+
 /**
  * <p>
  * Represents a rule in the program. 
@@ -39,11 +41,11 @@ package org.deri.iris.api.basics;
  * Only safe rules are supported. A rule is safe if its every variable
  * occurs in one of its positive, non built-in, atoms of the body.</p>
  * <p>
- * $Id: IRule.java,v 1.8 2007-10-14 14:48:59 bazbishop237 Exp $
+ * $Id: IRule.java,v 1.9 2007-10-30 08:28:27 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @date   14.11.2005 17:21:21
+ * @version $Revision: 1.9 $
  */
 public interface IRule
 {
@@ -51,13 +53,13 @@ public interface IRule
 	 * Get the rule head-
 	 * @return The rule head.
 	 */
-	public IHead getHead();
+	public List<ILiteral> getHead();
 	
 	/**
 	 * Get the rule body.
 	 * @return The rule body.
 	 */
-	public IBody getBody();
+	public List<ILiteral> getBody();
 
 	/**
 	 * <p>

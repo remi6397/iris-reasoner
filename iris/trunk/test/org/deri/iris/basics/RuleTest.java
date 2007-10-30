@@ -53,46 +53,37 @@ import org.deri.iris.api.basics.ILiteral;
  */
 public class RuleTest extends TestCase {
 
-	private Head HEAD;
+	private List<ILiteral> HEAD;
 
-	private Body BODY;
+	private List<ILiteral> BODY;
 
 	/**
 	 * setup for Rule2Relation tests
 	 */
 	public void setUp() {
-		List<ILiteral> tempLiterals = new ArrayList<ILiteral>();
-
+		HEAD = new ArrayList<ILiteral>();
 		ILiteral literal = BASIC.createLiteral(true, 
 				BASIC.createAtom(
 					BASIC.createPredicate("sin", 1), 
 					BASIC.createTuple(CONCRETE.createInteger(1))));
-		tempLiterals.add(literal);
-
-		tempLiterals.add(MiscHelper.createLiteral("cos", "X"));
-
+		HEAD.add(literal);
+		HEAD.add(MiscHelper.createLiteral("cos", "X"));
 		literal = BASIC.createLiteral(true, 
 				BASIC.createAtom(
 					BASIC.createPredicate("date", 3),
 					BASIC.createTuple(CONCRETE.createInteger(2005), 
 						CONCRETE.createInteger(12), 
 						CONCRETE.createInteger(24))));
-		tempLiterals.add(literal);
+		HEAD.add(literal);
 
-		HEAD = new Head(tempLiterals);
-
-		tempLiterals = new ArrayList<ILiteral>();
-
+		BODY = new ArrayList<ILiteral>();
 		literal = BASIC.createLiteral(true, 
 				BASIC.createAtom(
 					BASIC.createPredicate("sin", 1), 
 					BASIC.createTuple(CONCRETE.createInteger(1))));
-		tempLiterals.add(literal);
-
-		tempLiterals.add(MiscHelper.createLiteral("cos", "X"));
-		tempLiterals.add(MiscHelper.createLiteral("date", "J", "K", "L"));
-
-		BODY = new Body(tempLiterals);
+		BODY.add(literal);
+		BODY.add(MiscHelper.createLiteral("cos", "X"));
+		BODY.add(MiscHelper.createLiteral("date", "J", "K", "L"));
 	}
 
 	public static Test suite() {
@@ -101,11 +92,9 @@ public class RuleTest extends TestCase {
 	
 	public void testEquals() {
 		ObjectTests.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
-				new Rule(null, BODY));
+				new Rule(HEAD, HEAD));
 		ObjectTests.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
-				new Rule(HEAD, new Body(HEAD.getLiterals())));
-		ObjectTests.runTestEquals(new Rule(HEAD, BODY), new Rule(HEAD, BODY),
-				new Rule(new Head(BODY.getLiterals()), BODY));
+				new Rule(BODY, BODY));
 	}
 
 	public void testHashCode() {

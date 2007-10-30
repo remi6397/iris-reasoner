@@ -28,16 +28,17 @@ package org.deri.iris.evaluation.seminaive;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.Executor;
 import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
+import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
@@ -64,12 +65,12 @@ public class TestDatatypes {
 		
 		// solarPlanet(X) :- planet(?X), distanceFromSun(?X,?Y)
 		Set<IRule> rules = new HashSet<IRule>(2);
-		IHead h = BASIC.createHead(
+		List<ILiteral> h = Arrays.asList(
 				BASIC.createLiteral(true, BASIC.createAtom(
 						BASIC.createPredicate("solarPlanet", 1), 
 						BASIC.createTuple(TERM.createVariable("X")))));
 		
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> b = Arrays.asList(
 				BASIC.createLiteral(true, BASIC.createAtom(
 						BASIC.createPredicate("planet", 1), 
 						BASIC.createTuple(TERM.createVariable("X")))),
@@ -77,16 +78,16 @@ public class TestDatatypes {
 						BASIC.createPredicate("distanceFromSun", 2), 
 						BASIC.createTuple(TERM.createVariable("X"),TERM.createVariable("Y")))));
 
-		IRule r = Factory.BASIC.createRule(h, b);
+		IRule r = BASIC.createRule(h, b);
 		rules.add(r);
 
 		// nonSolarPlanet(X) :- planet(?X), not solarPlanet(?X)
-		h = BASIC.createHead(
+		h = Arrays.asList(
 				BASIC.createLiteral(true, BASIC.createAtom(
 						BASIC.createPredicate("nonSolarPlanet", 1), 
 						BASIC.createTuple(TERM.createVariable("X")))));
 		
-		b = Factory.BASIC.createBody(
+		b = Arrays.asList(
 				BASIC.createLiteral(true, BASIC.createAtom(
 						BASIC.createPredicate("planet", 1), 
 						BASIC.createTuple(TERM.createVariable("X")))),
@@ -94,7 +95,7 @@ public class TestDatatypes {
 						BASIC.createPredicate("solarPlanet", 1), 
 						BASIC.createTuple(TERM.createVariable("X")))));
 
-		r = Factory.BASIC.createRule(h, b);
+		r = BASIC.createRule(h, b);
 		rules.add(r);
 
 		// constructing facts
@@ -104,76 +105,59 @@ public class TestDatatypes {
 		 * Neptune and Pluto;
 		 * Non Solar planets: 51Pegasi_planet
 		 */
-		IPredicate p = Factory.BASIC.createPredicate("planet", 1);
+		IPredicate p = BASIC.createPredicate("planet", 1);
 		IMixedDatatypeRelation rel = Factory.RELATION.getMixedRelation(1);
 		
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("mercury")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("venus")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("earth")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("mars")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("jupiter")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("saturn")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("uranus")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("neptune")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("pluto")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("51pegasi_planet")));
+		rel.add(BASIC.createTuple(TERM.createString("mercury")));
+		rel.add(BASIC.createTuple(TERM.createString("venus")));
+		rel.add(BASIC.createTuple(TERM.createString("earth")));
+		rel.add(BASIC.createTuple(TERM.createString("mars")));
+		rel.add(BASIC.createTuple(TERM.createString("jupiter")));
+		rel.add(BASIC.createTuple(TERM.createString("saturn")));
+		rel.add(BASIC.createTuple(TERM.createString("uranus")));
+		rel.add(BASIC.createTuple(TERM.createString("neptune")));
+		rel.add(BASIC.createTuple(TERM.createString("pluto")));
+		rel.add(BASIC.createTuple(TERM.createString("51pegasi_planet")));
 		
 		facts.put(p, rel);
 		
 		// distanceFromSun(?X,?Y)
 		
-		p = Factory.BASIC.createPredicate("distanceFromSun", 2);
+		p = BASIC.createPredicate("distanceFromSun", 2);
 		rel = Factory.RELATION.getMixedRelation(2);
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("mercury"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("mercury"),
 				Factory.CONCRETE.createDecimal(1)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("venus"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("venus"),
 				Factory.CONCRETE.createDecimal(0.72)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("earth"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("earth"),
 				Factory.CONCRETE.createDecimal(1.0)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("mars"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("mars"),
 				Factory.CONCRETE.createDecimal(1.5)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("jupiter"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("jupiter"),
 				Factory.CONCRETE.createDecimal(5.2)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("saturn"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("saturn"),
 				Factory.CONCRETE.createDecimal(9.5)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("uranus"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("uranus"),
 				Factory.CONCRETE.createDecimal(19.2)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("neptune"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("neptune"),
 				Factory.CONCRETE.createDecimal(30.1)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("pluto"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("pluto"),
 				Factory.CONCRETE.createDecimal(39.5)));
-		
-		/*rel.add(Factory.BASIC.createTuple(
-				Factory.CONCRETE.createDecimal(1),
-				Factory.CONCRETE.createDecimal(1)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.CONCRETE.createDecimal(12),
-				Factory.CONCRETE.createDecimal(0.72)));*/
 		
 		facts.put(p, rel);
 
 		// constructing a query
 		// :- solarPlanet(X)
-		IQuery q = Factory.BASIC.createQuery(
+		IQuery q = BASIC.createQuery(
 				BASIC.createLiteral(true, BASIC.createAtom(
 					BASIC.createPredicate("nonSolarPlanet", 1), 
 					BASIC.createTuple(TERM.createVariable("X")))));
@@ -211,12 +195,12 @@ public class TestDatatypes {
 		
 		// s(?X[String]) :- p(?X[String],?Y[String]), p(?X[String],?Y[Integer]).
 		Set<IRule> rules = new HashSet<IRule>(2);
-		IHead h = BASIC.createHead(
+		List<ILiteral> h = Arrays.asList(
 				BASIC.createLiteral(true, BASIC.createAtom(
 						BASIC.createPredicate("s", 1), 
 						BASIC.createTuple(TERM.createVariable("X")))));
 		
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> b = Arrays.asList(
 				BASIC.createLiteral(true, BASIC.createAtom(
 						BASIC.createPredicate("p", 2), 
 						BASIC.createTuple(
@@ -228,7 +212,7 @@ public class TestDatatypes {
 								TERM.createVariable("X"),
 								TERM.createVariable("Y")))));
 
-		IRule r = Factory.BASIC.createRule(h, b);
+		IRule r = BASIC.createRule(h, b);
 		rules.add(r);
 
 		// constructing facts
@@ -236,71 +220,71 @@ public class TestDatatypes {
 		Set<IQuery> queries = new HashSet<IQuery>(1);
 		final IProgram e = Factory.PROGRAM.createProgram(facts, rules, queries);
 		
-		IPredicate p = Factory.BASIC.createPredicate("p", 2);
+		IPredicate p = BASIC.createPredicate("p", 2);
 		IMixedDatatypeRelation rel = Factory.RELATION.getMixedRelation(p.getArity());
 		
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("sun"),
-				Factory.TERM.createString("mercury")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("sun"),
-				Factory.TERM.createString("venus")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("sun"),
-				Factory.TERM.createString("earth")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("sun"),
-				Factory.TERM.createString("mars")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("sun"),
-				Factory.TERM.createString("jupiter")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("sun"),
-				Factory.TERM.createString("saturn")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("sun"),
-				Factory.TERM.createString("uranus")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("sun"),
-				Factory.TERM.createString("neptune")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("sun"),
-				Factory.TERM.createString("pluto")));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("sun"),
-				Factory.TERM.createString("51pegasi_planet")));
+		rel.add(BASIC.createTuple(
+				TERM.createString("sun"),
+				TERM.createString("mercury")));
+		rel.add(BASIC.createTuple(
+				TERM.createString("sun"),
+				TERM.createString("venus")));
+		rel.add(BASIC.createTuple(
+				TERM.createString("sun"),
+				TERM.createString("earth")));
+		rel.add(BASIC.createTuple(
+				TERM.createString("sun"),
+				TERM.createString("mars")));
+		rel.add(BASIC.createTuple(
+				TERM.createString("sun"),
+				TERM.createString("jupiter")));
+		rel.add(BASIC.createTuple(
+				TERM.createString("sun"),
+				TERM.createString("saturn")));
+		rel.add(BASIC.createTuple(
+				TERM.createString("sun"),
+				TERM.createString("uranus")));
+		rel.add(BASIC.createTuple(
+				TERM.createString("sun"),
+				TERM.createString("neptune")));
+		rel.add(BASIC.createTuple(
+				TERM.createString("sun"),
+				TERM.createString("pluto")));
+		rel.add(BASIC.createTuple(
+				TERM.createString("sun"),
+				TERM.createString("51pegasi_planet")));
 		
 		e.addFacts(p, rel);
 		
-		p = Factory.BASIC.createPredicate("p", 2);
+		p = BASIC.createPredicate("p", 2);
 		rel = Factory.RELATION.getMixedRelation(p.getArity());
 		
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("mercury"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("mercury"),
 				Factory.CONCRETE.createDecimal(1)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("venus"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("venus"),
 				Factory.CONCRETE.createDecimal(0.72)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("earth"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("earth"),
 				Factory.CONCRETE.createDecimal(1.0)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("mars"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("mars"),
 				Factory.CONCRETE.createDecimal(1.5)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("jupiter"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("jupiter"),
 				Factory.CONCRETE.createDecimal(5.2)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("saturn"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("saturn"),
 				Factory.CONCRETE.createDecimal(9.5)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("uranus"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("uranus"),
 				Factory.CONCRETE.createDecimal(19.2)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("neptune"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("neptune"),
 				Factory.CONCRETE.createDecimal(30.1)));
-		rel.add(Factory.BASIC.createTuple(
-				Factory.TERM.createString("pluto"),
+		rel.add(BASIC.createTuple(
+				TERM.createString("pluto"),
 				Factory.CONCRETE.createDecimal(39.5)));
 		
 		// TODO: At this point facts for the first predicate p will be overwritten with
@@ -312,7 +296,7 @@ public class TestDatatypes {
 		
 		// constructing a query
 		// :- s(X)
-		IQuery q = Factory.BASIC.createQuery(
+		IQuery q = BASIC.createQuery(
 				BASIC.createLiteral(true, BASIC.createAtom(
 					BASIC.createPredicate("s", 1), 
 					BASIC.createTuple(TERM.createVariable("X")))));

@@ -76,12 +76,11 @@ public class NaiveExecutor implements IExecutor {
 		if (q == null) {
 			throw new NullPointerException("The query must not be null");
 		}
-		if (q.getLength() != 1) {
-			throw new IllegalArgumentException(
-					"The length of the query literals must be 1");
+		if (q.getLiterals().isEmpty()) {
+			throw new IllegalArgumentException("The query must have more than one literal");
 		}
 		this.evaluator.runQuery(q);
-		return this.evaluator.getResultSet().getResults().get(q.getLiteral(0).getPredicate());
+		return this.evaluator.getResultSet().getResults().get(q.getLiterals().get(0).getPredicate());
 	}
 	
 	public Map<IPredicate, IMixedDatatypeRelation> computeSubstitutions() {

@@ -53,29 +53,24 @@ import org.deri.iris.api.basics.ILiteral;
  */
 public class QueryTest extends TestCase {
 
-	private static final Body BODY;
+	private static final List<ILiteral> BODY;
 
-	private static final Body BODYMORE;
+	private static final List<ILiteral> BODYMORE;
 
 	static {
-		List<ILiteral> tempLiterals = new ArrayList<ILiteral>();
+		BODY = new ArrayList<ILiteral>();
 
 		ILiteral literal = BASIC.createLiteral(true, 
 				BASIC.createAtom(
 					BASIC.createPredicate("sin", 1), 
 					BASIC.createTuple(CONCRETE.createInteger(1))));
-		tempLiterals.add(literal);
+		BODY.add(literal);
+		BODY.add(MiscHelper.createLiteral("cos", "X"));
+		BODY.add(MiscHelper.createLiteral("date", "J", "K", "L"));
 
-		tempLiterals.add(MiscHelper.createLiteral("cos", "X"));
-		tempLiterals.add(MiscHelper.createLiteral("date", "J", "K", "L"));
+		BODYMORE = new ArrayList<ILiteral>(BODY);
 
-		BODY = new Body(tempLiterals);
-
-		tempLiterals = new ArrayList<ILiteral>(BODY.getLiterals());
-
-		tempLiterals.set(2, MiscHelper.createLiteral("date", "J", "K", "M"));
-
-		BODYMORE = new Body(tempLiterals);
+		BODYMORE.set(2, MiscHelper.createLiteral("date", "J", "K", "M"));
 	}
 
 	public static Test suite() {
@@ -85,8 +80,6 @@ public class QueryTest extends TestCase {
 	public void testEquals() {
 		ObjectTests.runTestEquals(new Query(BODY), new Query(BODY), new Query(
 				BODYMORE));
-		ObjectTests.runTestEquals(new Query(BODY), new Query(BODY), new Query(
-				null));
 	}
 
 	public void testHashCode() {

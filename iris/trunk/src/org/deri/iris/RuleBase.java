@@ -129,10 +129,10 @@ public class RuleBase
 			while ((highest <= (ruleCount + BOTTOM_STRATUM) ) && change) {
 				change = false;
 				for (final IRule r : mRules) {
-					for (final ILiteral hl : r.getHead().getLiterals()) {
+					for (final ILiteral hl : r.getHead()) {
 						final IPredicate hp = hl.getPredicate();
 	
-						for (final ILiteral bl : r.getBody().getLiterals()) {
+						for (final ILiteral bl : r.getBody()) {
 							final IPredicate bp = bl.getPredicate();
 	
 							if (bl.isPositive()) {
@@ -168,7 +168,7 @@ public class RuleBase
 	 */
 	public boolean hasNegation() {
 		for (IRule r : mRules) {
-			for (ILiteral l : r.getBody().getLiterals()) {
+			for (ILiteral l : r.getBody()) {
 				if (!l.isPositive()) {
 					return true;
 				}
@@ -183,14 +183,14 @@ public class RuleBase
 	 */
 	public boolean hasConstructedTerms() {
 		for (IRule r : mRules) {
-			for (ILiteral l : r.getBody().getLiterals()) {
+			for (ILiteral l : r.getBody()) {
 				for (Object t : l.getTuple()) {
 					if (t instanceof ConstructedTerm) {
 						return true;
 					}
 				}
 			}
-			for (ILiteral l : r.getHead().getLiterals()) {
+			for (ILiteral l : r.getHead()) {
 				for (Object t : l.getTuple()) {
 					if (t instanceof ConstructedTerm) {
 						return true;
@@ -279,7 +279,7 @@ public class RuleBase
 		int strat = 0;
 		for( IRule rule : mRules )
 		{
-			for( ILiteral literal : rule.getHead().getLiterals() )
+			for( ILiteral literal : rule.getHead())
 			{
 				strat = Math.max(strat, getStratum( literal.getPredicate() ) );
 			}
@@ -322,11 +322,11 @@ public class RuleBase
 												mAllowArithmeticPredicatesToImplyLimited );
 		
 		// Add all the head variables
-		for( ILiteral headLiteral : rule.getHead().getLiterals() )
+		for( ILiteral headLiteral : rule.getHead())
 			rs.addHeadVariables( extractVariableNames( headLiteral ) );
 
 		// Then for each literal in the rule
-		for( ILiteral lit : rule.getBody().getLiterals() )
+		for( ILiteral lit : rule.getBody())
 		{
 			// If it has any variables at all
 			if ( ! lit.isGround() )

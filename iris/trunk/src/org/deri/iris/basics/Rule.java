@@ -25,13 +25,12 @@
  */
 package org.deri.iris.basics;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.terms.IVariable;
 
 /**
  * <p>
@@ -46,23 +45,32 @@ import org.deri.iris.api.terms.IVariable;
  */
 public class Rule implements IRule {
 	
-	private IHead head = null;
-	private IBody body = null;
+	private final List<ILiteral> head;
+
+	private final List<ILiteral> body;
 	
-	Rule(final IHead head, final IBody body) {
+	Rule(final List<ILiteral> head, final List<ILiteral> body) {
+		if (head == null) {
+			throw new IllegalArgumentException("The head must not be null");
+		}
+		if (head.contains(null)) {
+			throw new IllegalArgumentException("The head must not contain null");
+		}
 		if (body == null) {
 			throw new IllegalArgumentException("The body must not be null");
 		}
-		this.head = head;
-		this.body = body;
+		if (body.contains(null)) {
+			throw new IllegalArgumentException("The body must not contain null");
+		}
+		this.head = Collections.unmodifiableList(new ArrayList<ILiteral>(head));
+		this.body = Collections.unmodifiableList(new ArrayList<ILiteral>(body));
 	}
 	
-	public IHead getHead()
-	{
+	public List<ILiteral> getHead() {
 		return head;
 	}
 	
-	public IBody getBody()
+	public List<ILiteral> getBody()
 	{
 		return body;
 	}
@@ -72,38 +80,6 @@ public class Rule implements IRule {
 		return false;
 	}
 
-//	public int getHeadLenght() {
-//		return head.getHeadLenght();
-//	}
-//
-//	public ILiteral getHeadLiteral(int arg) {
-//		return head.getHeadLiteral(arg);
-//	}
-//
-//	public List<ILiteral> getHeadLiterals() {
-//		return head.getHeadLiterals();
-//	}
-//
-//	public List<IVariable> getHeadVariables() {
-//		return head.getHeadVariables();
-//	}
-//
-	public int getBodyLenght() {
-		return body.getLength();
-	}
-
-	public ILiteral getBodyLiteral(int arg) {
-		return body.getLiteral(arg);
-	}
-
-	public List<ILiteral> getBodyLiterals() {
-		return body.getLiterals();
-	}
-
-	public List<IVariable> getBodyVariables() {
-		return body.getVariables();
-	}
-	
 	public int hashCode() {
 		int result = 37;
 		result = result * 17 + body.hashCode();
@@ -115,14 +91,24 @@ public class Rule implements IRule {
 		if (o == this) {
 			return true;
 		}
-		if (!(o instanceof Rule)) {
+		if (!(o instanceof IRule)) {
 			return false;
 		}
-		Rule r = (Rule) o;
-		return body.equals(r.body) && head.equals(r.head);
+		IRule r = (IRule) o;
+		return body.equals(r.getBody()) && head.equals(r.getHead());
 	}
 	
 	public String toString() {
-		return head + " :- " + body;
+		final StringBuilder buffer = new StringBuilder();
+		for (final ILiteral l : head) {
+			buffer.append(l).append(", ");
+		}
+		buffer.delete(buffer.length() - 2, buffer.length());
+		buffer.append(" :- ");
+		for (final ILiteral l : body) {
+			buffer.append(l).append(", ");
+		}
+		buffer.delete(buffer.length() - 2, buffer.length());
+		return buffer.toString();
 	}
 }

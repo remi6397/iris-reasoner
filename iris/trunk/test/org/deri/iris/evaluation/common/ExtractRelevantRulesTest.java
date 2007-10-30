@@ -4,13 +4,12 @@ import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
@@ -46,137 +45,124 @@ public class ExtractRelevantRulesTest extends TestCase {
 		resultQuery5 = new HashSet<IRule>();
 		
 		// r0(X, Y) :- r11(X, Y)
-		IHead head = BASIC.createHead(createLiteral("r0", "X", "Y"));
-		IBody body = BASIC.createBody(createLiteral("r11", "X", "Y"));
+		List<ILiteral> head = Arrays.asList(createLiteral("r0", "X", "Y"));
+		List<ILiteral> body = Arrays.asList(createLiteral("r11", "X", "Y"));
 		IRule r0 = BASIC.createRule(head, body);
 		rs.add(r0);
 		
 		
 		// r11(X, Y) :- r21(X), r22(Y), r23(X,Y)
-		head = BASIC.createHead(createLiteral("r11", "X", "Y"));
-		List<ILiteral> bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("r21", "X"));
-		bodyLiterals.add(createLiteral("r22", "Y"));
-		bodyLiterals.add(createLiteral("r23", "X", "Y"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("r11", "X", "Y"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("r21", "X"));
+		body.add(createLiteral("r22", "Y"));
+		body.add(createLiteral("r23", "X", "Y"));
 		IRule r11 = BASIC.createRule(head, body);
 		rs.add(r11);
 		
 		// r23(X, Y) :- r31(X, Y)
-		head = BASIC.createHead(createLiteral("r23", "X", "Y"));
-		body = BASIC.createBody(createLiteral("r31", "X", "Y"));
+		head = Arrays.asList(createLiteral("r23", "X", "Y"));
+		body = Arrays.asList(createLiteral("r31", "X", "Y"));
 		IRule r23 = BASIC.createRule(head, body);
 		rs.add(r23);
 		
 		// r31(X, Y) :- r11(X, Y), r22(Y) // here comes a recursion (no a direct one!)
-		head = BASIC.createHead(createLiteral("r31", "X", "Y"));
-		bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("r11", "X", "Y"));
-		bodyLiterals.add(createLiteral("r22", "Y"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("r31", "X", "Y"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("r11", "X", "Y"));
+		body.add(createLiteral("r22", "Y"));
 		IRule r31 = BASIC.createRule(head, body);
 		rs.add(r31);
 		
 		// s0(X, Y) :- s11(X), s12(X,Y,Z)
-		head = BASIC.createHead(createLiteral("s0", "X", "Y"));
-		bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("s11", "X"));
-		bodyLiterals.add(createLiteral("s12", "Y", "Y", "Z"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("s0", "X", "Y"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("s11", "X"));
+		body.add(createLiteral("s12", "X", "Y", "Z"));
 		IRule s0 = BASIC.createRule(head, body);
 		rs.add(s0);
 		
 		//	s11(X) :- s21(X), r11(X,Y), s22(Q,R)
-		head = BASIC.createHead(createLiteral("s11", "X"));
-		bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("s21", "X"));
-		bodyLiterals.add(createLiteral("r11", "X", "Y"));
-		bodyLiterals.add(createLiteral("s21", "Q", "R"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("s11", "X"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("s21", "X"));
+		body.add(createLiteral("r11", "X", "Y"));
+		body.add(createLiteral("s21", "Q", "R"));
 		IRule s11 = BASIC.createRule(head, body);
 		rs.add(s11);
 	
 		// s12(X) :- s121(X,X), s122(Q,R)
-		head = BASIC.createHead(createLiteral("s12", "X"));
-		bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("s121", "X", "X"));
-		bodyLiterals.add(createLiteral("s122", "Q", "R"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("s12", "X"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("s121", "X", "X"));
+		body.add(createLiteral("s122", "Q", "R"));
 		IRule s12 = BASIC.createRule(head, body);
 		rs.add(s12);
 		
 		// s21(X) :- s21(X)
-		head = BASIC.createHead(createLiteral("s21", "X"));
-		bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("s21", "X"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("s21", "X"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("s21", "X"));
 		IRule s21 = BASIC.createRule(head, body);
 		rs.add(s21);
 		
 		// s22(X, Z) :-  s0(Z,Z), s21(X), s31(Z, Z, X)
-		head = BASIC.createHead(createLiteral("s22", "X", "Z"));
-		bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("s0", "Z", "Z"));
-		bodyLiterals.add(createLiteral("s21", "X"));
-		bodyLiterals.add(createLiteral("s31", "Z", "Z", "X"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("s22", "X", "Z"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("s0", "Z", "Z"));
+		body.add(createLiteral("s21", "X"));
+		body.add(createLiteral("s31", "Z", "Z", "X"));
 		IRule s22 = BASIC.createRule(head, body);
 		rs.add(s22);
 		
 		// s31(X, Y, R) :-  s0(Z,Z), s21(X), s31(Z, Z, X)
-		head = BASIC.createHead(createLiteral("s31", "X", "Y", "R"));
-		bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("s0", "Z", "Z"));
-		bodyLiterals.add(createLiteral("s21", "X"));
-		bodyLiterals.add(createLiteral("s31", "Z", "Z", "X"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("s31", "X", "Y", "R"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("s0", "Z", "Z"));
+		body.add(createLiteral("s21", "X"));
+		body.add(createLiteral("s31", "Z", "Z", "X"));
 		IRule s31 = BASIC.createRule(head, body);
 		rs.add(s31);
 		
 		
 		// t0(X) :-  t11(Z,Z)
-		head = BASIC.createHead(createLiteral("t0", "X"));
-		bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("t11", "Z", "Z"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("t0", "X"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("t11", "Z", "Z"));
 		IRule t0 = BASIC.createRule(head, body);
 		rs.add(t0);
 		
 		//	 t11(X,Z) :-  t21a(X), t22a(X), t23a(X), t24a(Z) 
-		head = BASIC.createHead(createLiteral("t11", "X", "Z"));
-		bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("t21a", "X"));
-		bodyLiterals.add(createLiteral("t22a", "X"));
-		bodyLiterals.add(createLiteral("t23a", "X"));
-		bodyLiterals.add(createLiteral("t24a", "Z"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("t11", "X", "Z"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("t21a", "X"));
+		body.add(createLiteral("t22a", "X"));
+		body.add(createLiteral("t23a", "X"));
+		body.add(createLiteral("t24a", "Z"));
 		IRule t11a = BASIC.createRule(head, body);
 		rs.add(t11a);
 		
 		//  t11(X,Z) :-  t21b(X), t22b(X), t23b(X), t24b(Z) 
-		head = BASIC.createHead(createLiteral("t11", "X", "Z"));
-		bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("t21b", "X"));
-		bodyLiterals.add(createLiteral("t22b", "X"));
-		bodyLiterals.add(createLiteral("t23b", "X"));
-		bodyLiterals.add(createLiteral("t24b", "Z"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("t11", "X", "Z"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("t21b", "X"));
+		body.add(createLiteral("t22b", "X"));
+		body.add(createLiteral("t23b", "X"));
+		body.add(createLiteral("t24b", "Z"));
 		IRule t11b = BASIC.createRule(head, body);
 		rs.add(t11b);
 		
 		//	t21b(X) :-  t21a(X)
-		head = BASIC.createHead(createLiteral("t21b", "X"));
-		bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("t21a", "X"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("t21b", "X"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("t21a", "X"));
 		IRule t21b = BASIC.createRule(head, body);
 		rs.add(t21b);
 		
 		//	t21a(X) :-  t21b(X)
-		head = BASIC.createHead(createLiteral("t21a", "X"));
-		bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("t21b", "X"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("t21a", "X"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("t21b", "X"));
 		IRule t21a = BASIC.createRule(head, body);
 		rs.add(t21a);
 		

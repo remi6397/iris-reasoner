@@ -31,6 +31,7 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
 import static org.deri.iris.factory.Factory.BUILTIN;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -52,11 +53,11 @@ import org.deri.iris.graph.LabeledEdge;
  * Runns various test on the sip.
  * </p>
  * <p>
- * $Id: SipImplTest.java,v 1.6 2007-10-23 07:48:40 poettler_ric Exp $
+ * $Id: SipImplTest.java,v 1.7 2007-10-30 08:28:32 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class SipImplTest extends TestCase {
 
@@ -77,8 +78,8 @@ public class SipImplTest extends TestCase {
 	public void setUp() {
 		// sg(X, Y) :- up(X, Z1), sg(Z1, Z2), flat(Z2, Z3), sg(Z3, Z4), down(Z4,
 		// Y)
-		final IRule r = BASIC.createRule(BASIC.createHead(createLiteral("sg",
-				"X", "Y")), BASIC.createBody(createLiteral("up", "X", "Z1"),
+		final IRule r = BASIC.createRule(Arrays.asList(createLiteral("sg",
+				"X", "Y")), Arrays.asList(createLiteral("up", "X", "Z1"),
 				createLiteral("sg", "Z1", "Z2"), createLiteral("flat", "Z2",
 						"Z3"), createLiteral("sg", "Z3", "Z4"), createLiteral(
 						"down", "Z4", "Y")));
@@ -90,8 +91,8 @@ public class SipImplTest extends TestCase {
 		sip = new SIPImpl(r, q);
 
 		// rsg(X, Y) :- up(X, X1), rsg(Y1, X1), down(Y1, Y)
-		final IRule r1 = BASIC.createRule(BASIC.createHead(createLiteral("rsg",
-				"X", "Y")), BASIC.createBody(createLiteral("up", "X", "X1"),
+		final IRule r1 = BASIC.createRule(Arrays.asList(createLiteral("rsg",
+				"X", "Y")), Arrays.asList(createLiteral("up", "X", "X1"),
 				createLiteral("rsg", "Y1", "X1"), createLiteral("down", "Y1",
 						"Y")));
 		// rsg(a, X)
@@ -102,8 +103,8 @@ public class SipImplTest extends TestCase {
 		sip1 = new SIPImpl(r1, q1);
 
 		// rsg(X, Y) :- up(X, X1), rsg(Y1, X1), Y1 = Y
-		final IRule r2 = BASIC.createRule(BASIC.createHead(createLiteral("rsg",
-				"X", "Y")), BASIC.createBody(createLiteral("up", "X", "X1"),
+		final IRule r2 = BASIC.createRule(Arrays.asList(createLiteral("rsg",
+				"X", "Y")), Arrays.asList(createLiteral("up", "X", "X1"),
 				createLiteral("rsg", "Y1", "X1"), BASIC.createLiteral(true,
 						BUILTIN.createEqual(TERM.createVariable("Y1"), TERM
 								.createVariable("Y")))));
@@ -173,11 +174,11 @@ public class SipImplTest extends TestCase {
 		// a(john, Y)
 		final ILiteral not_b = createLiteral(false, "b", "X", "Y1");
 		final IRule r = BASIC.createRule(
-				BASIC.createHead(createLiteral("a", "X", "Y")), 
-				BASIC.createBody(not_b, createLiteral("c", "Y1", "X1"), createLiteral("d", "X1", "Y")));
+				Arrays.asList(createLiteral("a", "X", "Y")), 
+				Arrays.asList(not_b, createLiteral("c", "Y1", "X1"), createLiteral("d", "X1", "Y")));
 		final IRule r_ref = BASIC.createRule(
-				BASIC.createHead(createLiteral( "a", "X", "Y")), 
-				BASIC.createBody( createLiteral("c", "Y1", "X1"), createLiteral("d", "X1", "Y"), not_b));
+				Arrays.asList(createLiteral( "a", "X", "Y")), 
+				Arrays.asList( createLiteral("c", "Y1", "X1"), createLiteral("d", "X1", "Y"), not_b));
 		assertEquals("The sorting order isn't correct", r_ref, SIPImpl.orderLiterals(r, Collections
 				.singleton(TERM.createVariable("X"))));
 	}
@@ -187,11 +188,11 @@ public class SipImplTest extends TestCase {
 		// a(john, Y)
 		final ILiteral gt = BASIC.createLiteral(true, BUILTIN.createGreater( TERM.createVariable("X1"), TERM.createVariable("Y1")));
 		final IRule r = BASIC.createRule(
-				BASIC.createHead( createLiteral("a", "X", "Y")), 
-				BASIC.createBody(createLiteral("b", "X", "Y1"), gt, createLiteral("d", "X1", "Y")));
+				Arrays.asList( createLiteral("a", "X", "Y")), 
+				Arrays.asList(createLiteral("b", "X", "Y1"), gt, createLiteral("d", "X1", "Y")));
 		final IRule r_ref = BASIC.createRule(
-				BASIC.createHead( createLiteral("a", "X", "Y")), 
-				BASIC.createBody(createLiteral("b", "X", "Y1"), gt, createLiteral("d", "X1", "Y")));
+				Arrays.asList( createLiteral("a", "X", "Y")), 
+				Arrays.asList(createLiteral("b", "X", "Y1"), gt, createLiteral("d", "X1", "Y")));
 		assertEquals("The sorting order isn't correct", r_ref, SIPImpl.orderLiterals(r, Collections.singleton(TERM.createVariable("X"))));
 	}
 

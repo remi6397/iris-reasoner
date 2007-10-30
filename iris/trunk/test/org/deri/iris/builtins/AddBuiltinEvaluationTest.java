@@ -45,8 +45,6 @@ import junit.framework.TestSuite;
 import org.deri.iris.Executor;
 import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -79,12 +77,12 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		// constructing the rules
 		Set<IRule> rules = new HashSet<IRule>(3);
 		// p(X) :- r(X)
-		IRule r = Factory.BASIC.createRule(Factory.BASIC.createHead(createLiteral(
-				"p", "X")), Factory.BASIC.createBody(createLiteral("r", "X")));
+		IRule r = Factory.BASIC.createRule(Arrays.asList(createLiteral(
+				"p", "X")), Arrays.asList(createLiteral("r", "X")));
 		rules.add(r);
 		// p(X) :- s(X), add(3, 4, X)
-		IHead h = Factory.BASIC.createHead(createLiteral("p", "X"));
-		IBody b = Factory.BASIC.createBody(createLiteral("s", "X"),
+		List<ILiteral> h = Arrays.asList(createLiteral("p", "X"));
+		List<ILiteral> b = Arrays.asList(createLiteral("s", "X"),
 				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
 						createAddBuiltin(
 								CONCRETE.createInteger(3),
@@ -133,8 +131,8 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		Set<IRule> rules = new HashSet<IRule>(3);
 		
 		// q(X, Y, Z) :- s(X), p(Y), add(X, Y, Z)
-		IHead h = Factory.BASIC.createHead(createLiteral("q", "X", "Y", "Z"));
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> h = Arrays.asList(createLiteral("q", "X", "Y", "Z"));
+		List<ILiteral> b = Arrays.asList(
 				createLiteral("s", "X"),
 				createLiteral("p", "Y"),
 				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
@@ -184,8 +182,8 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		Set<IRule> rules = new HashSet<IRule>(3);
 		
 		// p(X) :- add(3, 4, X)
-		IHead h = Factory.BASIC.createHead(createLiteral("p", "X"));
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> h = Arrays.asList(createLiteral("p", "X"));
+		List<ILiteral> b = Arrays.asList(
 				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
 						createAddBuiltin(
 								CONCRETE.createInteger(3),
@@ -224,8 +222,8 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		Set<IRule> rules = new HashSet<IRule>(3);
 		
 		// q(X, Y, Z) :- add(X, 4, Z), s(X), p(Y), add(X, Y, 10)
-		IHead h = Factory.BASIC.createHead(createLiteral("q", "X", "Y", "Z"));
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> h = Arrays.asList(createLiteral("q", "X", "Y", "Z"));
+		List<ILiteral> b = Arrays.asList(
 				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
 						createAddBuiltin(
 								TERM.createVariable("X"),
@@ -265,7 +263,7 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
 		
 		// Result: q(6,4,10)
-		IMixedDatatypeRelation res = RELATION.getMixedRelation(q.getLiteral(0).getPredicate().getArity());
+		IMixedDatatypeRelation res = RELATION.getMixedRelation(q.getLiterals().get(0).getPredicate().getArity());
 		res.add(BASIC.createTuple(CONCRETE.createInteger(6),CONCRETE.createInteger(4),CONCRETE.createInteger(10)));
 		
 		System.out.println("******** TEST 3: ********");

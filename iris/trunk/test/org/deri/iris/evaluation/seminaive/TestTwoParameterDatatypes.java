@@ -40,8 +40,6 @@ import java.util.Set;
 import org.deri.iris.Executor;
 import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -66,9 +64,9 @@ public class TestTwoParameterDatatypes {
 		// constructing the rules
 		// w(?X) :- s(?X), p(?X), ?X != 'd'
 		Set<IRule> rules = new HashSet<IRule>(3);
-		IHead h = Factory.BASIC.createHead(createLiteral("w", "X"));
+		List<ILiteral> h = Arrays.asList(createLiteral("w", "X"));
 		
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> b = Arrays.asList(
 				createLiteral("s", "X"),
 				createLiteral("p", "X"),
 				Factory.BASIC.createLiteral(true, Factory.BUILTIN.

@@ -42,8 +42,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.api.basics.IAtom;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -63,11 +61,11 @@ import org.deri.iris.MiscHelper;
  * Tests the magic sets.
  * </p>
  * <p>
- * $Id: MagicTest.java,v 1.7 2007-10-23 07:48:39 poettler_ric Exp $
+ * $Id: MagicTest.java,v 1.8 2007-10-30 08:28:32 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class MagicTest extends TestCase {
 
@@ -87,20 +85,19 @@ public class MagicTest extends TestCase {
 		// constructing the rules for ms0
 		rules0 = new HashSet<IRule>();
 		// sg(X, Y) :- flat(X, Y)
-		IHead head = BASIC.createHead(createLiteral("sg", "X", "Y"));
-		IBody body = BASIC.createBody(createLiteral("flat", "X", "Y"));
+		List<ILiteral> head = Arrays.asList(createLiteral("sg", "X", "Y"));
+		List<ILiteral> body = Arrays.asList(createLiteral("flat", "X", "Y"));
 		rules0.add(BASIC.createRule(head, body));
 
 		// sg(X, Y) :- up(X, Z1), sg(Z1, Z2), flat(Z2, Z3), sg(Z3, Z4), down(Z4,
 		// Y)
-		head = BASIC.createHead(createLiteral("sg", "X", "Y"));
-		List<ILiteral> bodyLiterals = new ArrayList<ILiteral>();
-		bodyLiterals.add(createLiteral("up", "X", "Z1"));
-		bodyLiterals.add(createLiteral("sg", "Z1", "Z2"));
-		bodyLiterals.add(createLiteral("flat", "Z2", "Z3"));
-		bodyLiterals.add(createLiteral("sg", "Z3", "Z4"));
-		bodyLiterals.add(createLiteral("down", "Z4", "Y"));
-		body = BASIC.createBody(bodyLiterals);
+		head = Arrays.asList(createLiteral("sg", "X", "Y"));
+		body = new ArrayList<ILiteral>();
+		body.add(createLiteral("up", "X", "Z1"));
+		body.add(createLiteral("sg", "Z1", "Z2"));
+		body.add(createLiteral("flat", "Z2", "Z3"));
+		body.add(createLiteral("sg", "Z3", "Z4"));
+		body.add(createLiteral("down", "Z4", "Y"));
 		rules0.add(BASIC.createRule(head, body));
 
 		// constructing the query for ms0
@@ -113,12 +110,12 @@ public class MagicTest extends TestCase {
 		// constructing the rules for ms1
 		rules1 = new HashSet<IRule>();
 		// a(X, Y, Z) :- c(X, Y, Z)
-		head = BASIC.createHead(createLiteral("a", "X", "Y", "Z"));
-		body = BASIC.createBody(createLiteral("c", "X", "Y", "Z"));
+		head = Arrays.asList(createLiteral("a", "X", "Y", "Z"));
+		body = Arrays.asList(createLiteral("c", "X", "Y", "Z"));
 		rules1.add(BASIC.createRule(head, body));
 		// a(X, Y, Z) :- b(X, A), a(X, A, B), c(B, Y, Z)
-		head = BASIC.createHead(createLiteral("a", "X", "Y", "Z"));
-		body = BASIC.createBody(createLiteral("b", "X", "A"), createLiteral(
+		head = Arrays.asList(createLiteral("a", "X", "Y", "Z"));
+		body = Arrays.asList(createLiteral("b", "X", "A"), createLiteral(
 				"a", "X", "A", "B"), createLiteral("c", "B", "Y", "Z"));
 		rules1.add(BASIC.createRule(head, body));
 		// constructing the query for ms1
@@ -298,20 +295,19 @@ public class MagicTest extends TestCase {
 
 		// constructing the magic rules
 		// magic_sg^bf(Z1) :- magic_sg^bf(X), up(X, Z1)
-		IHead head = BASIC.createHead(createMagicLiteral("sg", new Adornment[] {
+		List<ILiteral> head = Arrays.asList(createMagicLiteral("sg", new Adornment[] {
 				Adornment.BOUND, Adornment.FREE }, new ITerm[] { TERM
 				.createVariable("Z1") }));
-		IBody body = BASIC.createBody(createMagicLiteral("sg", new Adornment[] {
+		List<ILiteral> body = Arrays.asList(createMagicLiteral("sg", new Adornment[] {
 				Adornment.BOUND, Adornment.FREE }, new ITerm[] { TERM
 				.createVariable("X") }), createLiteral("up", "X", "Z1"));
 		ref.add(BASIC.createRule(head, body));
 		// magic_sg^bf(Z3) :- magic_sg^bf(X), up(X, Z1), sg^bf(Z1, Z2), flat(Z2,
 		// Z3)
-		head = BASIC.createHead(createMagicLiteral("sg", new Adornment[] {
+		head = Arrays.asList(createMagicLiteral("sg", new Adornment[] {
 				Adornment.BOUND, Adornment.FREE }, new ITerm[] { TERM
 				.createVariable("Z3") }));
-		body = BASIC
-				.createBody(createMagicLiteral("sg", new Adornment[] {
+		body = Arrays.asList(createMagicLiteral("sg", new Adornment[] {
 						Adornment.BOUND, Adornment.FREE }, new ITerm[] { TERM
 						.createVariable("X") }),
 						createLiteral("up", "X", "Z1"), createAdornedLiteral(
@@ -335,11 +331,11 @@ public class MagicTest extends TestCase {
 
 		// constructing the magic rules
 		// magic_a^bbf(X, A) :- magic_a^bbf(X, Y), b(X, A)
-		IHead head = BASIC.createHead(createMagicLiteral("a", new Adornment[] {
+		List<ILiteral> head = Arrays.asList(createMagicLiteral("a", new Adornment[] {
 				Adornment.BOUND, Adornment.BOUND, Adornment.FREE },
 				new ITerm[] { TERM.createVariable("X"),
 						TERM.createVariable("A") }));
-		IBody body = BASIC.createBody(createMagicLiteral("a", new Adornment[] {
+		List<ILiteral> body = Arrays.asList(createMagicLiteral("a", new Adornment[] {
 				Adornment.BOUND, Adornment.BOUND, Adornment.FREE },
 				new ITerm[] { TERM.createVariable("X"),
 						TERM.createVariable("Y") }), createLiteral("b", "X",
@@ -361,8 +357,7 @@ public class MagicTest extends TestCase {
 			final ILiteral head = createAdornedLiteral("sg", new Adornment[] {
 					Adornment.BOUND, Adornment.FREE }, new ITerm[] {
 					TERM.createVariable("X"), TERM.createVariable("Y") });
-			final List<ILiteral> body = new ArrayList<ILiteral>(r
-					.getBody().getLiterals());
+			final List<ILiteral> body = new ArrayList<ILiteral>(r.getBody());
 			int i = 0;
 			// adorning the sg's with bf
 			for (final ILiteral l : body) {
@@ -377,8 +372,7 @@ public class MagicTest extends TestCase {
 					Adornment.BOUND, Adornment.FREE }, new ITerm[] { TERM
 					.createVariable("X") }));
 			// adding the rule to the list
-			ref.add(BASIC.createRule(BASIC.createHead(head), BASIC
-					.createBody(body)));
+			ref.add(BASIC.createRule(Arrays.asList(head), body));
 		}
 		// sorting all rules
 		Collections.sort(ref, AdornmentsTest.RC);
@@ -408,8 +402,7 @@ public class MagicTest extends TestCase {
 							Adornment.FREE },
 					new ITerm[] { TERM.createVariable("X"),
 							TERM.createVariable("Y"), TERM.createVariable("Z") });
-			final List<ILiteral> body = new ArrayList<ILiteral>(r
-					.getBody().getLiterals());
+			final List<ILiteral> body = new ArrayList<ILiteral>(r.getBody());
 			int i = 0;
 			// adorning the sg's with bf
 			for (final ILiteral l : body) {
@@ -427,8 +420,7 @@ public class MagicTest extends TestCase {
 					new ITerm[] { TERM.createVariable("X"),
 							TERM.createVariable("Y") }));
 			// adding the rule to the list
-			ref.add(BASIC.createRule(BASIC.createHead(head), BASIC
-					.createBody(body)));
+			ref.add(BASIC.createRule(Arrays.asList(head), body));
 		}
 		// sorting all rules
 		Collections.sort(ref, AdornmentsTest.RC);
@@ -469,17 +461,17 @@ public class MagicTest extends TestCase {
 
 		final Set<IRule> ref = new HashSet<IRule>();
 		// magic_c^bbf(a, Z) :- magic_a^bf(X), b(X, Z)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("c", bbf, new ITerm[]{a, Z})), 
-					BASIC.createBody(createMagicLiteral("a", bf, new ITerm[]{X}), b)));
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("c", bbf, new ITerm[]{a, Z})), 
+					Arrays.asList(createMagicLiteral("a", bf, new ITerm[]{X}), b)));
 		// a^bf(X, Y) :- magic_a^bf(X), b(X, Z), c^bbf(a, Z, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("a", bf, new ITerm[]{X, Y})), 
-					BASIC.createBody(
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("a", bf, new ITerm[]{X, Y})), 
+					Arrays.asList(
 						createMagicLiteral("a", bf, new ITerm[]{X}), 
 						b, 
 						createAdornedLiteral("c", bbf, new ITerm[]{a, Z, Y}))));
 		// c^bbf(X, Y, Z) :- magic_c^bbf(X, Y), x(X, Y, Z)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("c", bbf, XYZ)), 
-					BASIC.createBody(createMagicLiteral("c", bbf, new ITerm[]{X, Y}), x)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("c", bbf, XYZ)), 
+					Arrays.asList(createMagicLiteral("c", bbf, new ITerm[]{X, Y}), x)));
 
 		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
 		rules.addAll(ms.getMagicRules());
@@ -521,17 +513,17 @@ public class MagicTest extends TestCase {
 
 		final Set<IRule> ref = new HashSet<IRule>();
 		// magic_r^b(X) :- magic_p^b(X)
-		ref.add(BASIC.createRule(BASIC.createHead(magic_r), BASIC.createBody(magic_p)));
+		ref.add(BASIC.createRule(Arrays.asList(magic_r), Arrays.asList(magic_p)));
 		// magic_p^b(X) :- magic_q^f(), s(X)
-		ref.add(BASIC.createRule(BASIC.createHead(magic_p), 
-					BASIC.createBody(createMagicLiteral("q", f, new ITerm[]{}), s)));
+		ref.add(BASIC.createRule(Arrays.asList(magic_p), 
+					Arrays.asList(createMagicLiteral("q", f, new ITerm[]{}), s)));
 		// q^f(X) :- magic_q^f(), s(X), -p^b(X)
-		ref.add(BASIC.createRule(BASIC.createHead(ad_q), 
-					BASIC.createBody(createMagicLiteral("q", f, new ITerm[]{}), s, neg_ad_p)));
+		ref.add(BASIC.createRule(Arrays.asList(ad_q), 
+					Arrays.asList(createMagicLiteral("q", f, new ITerm[]{}), s, neg_ad_p)));
 		// r^b(X) :- magic_r^b(X), t(X)
-		ref.add(BASIC.createRule(BASIC.createHead(ad_r), BASIC.createBody(magic_r, t)));
+		ref.add(BASIC.createRule(Arrays.asList(ad_r), Arrays.asList(magic_r, t)));
 		// p^b(X) :- magic_p^b(X), r^b(X)
-		ref.add(BASIC.createRule(BASIC.createHead(ad_p), BASIC.createBody(magic_p, ad_r)));
+		ref.add(BASIC.createRule(Arrays.asList(ad_p), Arrays.asList(magic_p, ad_r)));
 		
 		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
 		rules.addAll(ms.getMagicRules());
@@ -564,26 +556,26 @@ public class MagicTest extends TestCase {
 
 		final Set<IRule> ref = new HashSet<IRule>();
 		// magic_r^bbf(b, X) :- p^fb(X, a)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", bbf, 
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", bbf, 
 							new ITerm[]{TERM.createString("b"), X})), 
-					BASIC.createBody(createAdornedLiteral("p", fb, 
+					Arrays.asList(createAdornedLiteral("p", fb, 
 							new ITerm[]{X, TERM.createString("a")}))));
 		// magic_s^bb(e, Y) :- p^fb(X, a), r^bbf(b, X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", bb, 
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("s", bb, 
 							new ITerm[]{TERM.createString("e"), Y})),
-					BASIC.createBody(createAdornedLiteral("p", fb, 
+					Arrays.asList(createAdornedLiteral("p", fb, 
 							new ITerm[]{X, TERM.createString("a")}), 
 						createAdornedLiteral("r", bbf, 
 							new ITerm[]{TERM.createString("b"), X, Y}))));
 		// p^fb(X, Y) :- magic_p^fb(Y), c(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", fb, XY)), 
-					BASIC.createBody(createMagicLiteral("p", fb, new ITerm[]{Y}), c2)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", fb, XY)), 
+					Arrays.asList(createMagicLiteral("p", fb, new ITerm[]{Y}), c2)));
 		// r^bbf(X, Y, Z) :- magic_r^bbf(X, Y), c(X, Y, Z)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, XYZ)), 
-					BASIC.createBody(createMagicLiteral("r", bbf, XY), c3)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("r", bbf, XYZ)), 
+					Arrays.asList(createMagicLiteral("r", bbf, XY), c3)));
 		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)), 
-					BASIC.createBody(createMagicLiteral("s", bb, XY), c2)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bb, XY)), 
+					Arrays.asList(createMagicLiteral("s", bb, XY), c2)));
 
 		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
 		rules.addAll(ms.getMagicRules());
@@ -619,23 +611,23 @@ public class MagicTest extends TestCase {
 
 		final Set<IRule> ref = new HashSet<IRule>();
 		// magic_r^bbf(b, X) :- p^ff(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", bbf, 
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", bbf, 
 							new ITerm[]{TERM.createString("b"), X})), 
-					BASIC.createBody(createAdornedLiteral("p", ff, XY))));
+					Arrays.asList(createAdornedLiteral("p", ff, XY))));
 		// magic_s^bb(e, Z) :- p^ff(X, Y), r^bbf(b, X, Z)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", bb, 
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("s", bb, 
 							new ITerm[]{TERM.createString("e"), Z})), 
-					BASIC.createBody(createAdornedLiteral("p", ff, XY), 
+					Arrays.asList(createAdornedLiteral("p", ff, XY), 
 						createAdornedLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X, Z}))));
 		// r^bbf(X, Y, Z) :- magic_r^bbf(X, Y), c(X, Y, Z)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, XYZ)), 
-					BASIC.createBody(createMagicLiteral("r", bbf, XY), c3)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("r", bbf, XYZ)), 
+					Arrays.asList(createMagicLiteral("r", bbf, XY), c3)));
 		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)), 
-					BASIC.createBody(createMagicLiteral("s", bb, XY), c2)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bb, XY)), 
+					Arrays.asList(createMagicLiteral("s", bb, XY), c2)));
 		// p^ff(X, Y) :- magic_p^ff(), c(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", ff, XY)), 
-					BASIC.createBody(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", ff, XY)), 
+					Arrays.asList(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
 
 		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
 		rules.addAll(ms.getMagicRules());
@@ -670,26 +662,26 @@ public class MagicTest extends TestCase {
 
 		final Set<IRule> ref = new HashSet<IRule>();
 		// magic_r^bff(b) :- p^bb(b, a)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", bff, 
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", bff, 
 							new ITerm[]{TERM.createString("b")})), 
-					BASIC.createBody(createAdornedLiteral("p", bb, 
+					Arrays.asList(createAdornedLiteral("p", bb, 
 							new ITerm[]{TERM.createString("b"), TERM.createString("a")}))));
 		// magic_s^bb(e, Y) :- p^bb(b, a), r^bff(b, X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", bb, 
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("s", bb, 
 							new ITerm[]{TERM.createString("e"), Y})), 
-					BASIC.createBody(createAdornedLiteral("p", bb, 
+					Arrays.asList(createAdornedLiteral("p", bb, 
 							new ITerm[]{TERM.createString("b"), TERM.createString("a")}), 
 						createAdornedLiteral("r", bff, 
 							new ITerm[]{TERM.createString("b"), X, Y}))));
 		// p^bb(X, Y) :- magic_p^bb(X, Y), c(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", bb, XY)), 
-					BASIC.createBody(createMagicLiteral("p", bb, XY), c2)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", bb, XY)), 
+					Arrays.asList(createMagicLiteral("p", bb, XY), c2)));
 		// r^bff(X, Y, Z) :- magic_r^bff(X), c(X, Y, Z)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bff, XYZ)), 
-					BASIC.createBody(createMagicLiteral("r", bff, new ITerm[]{X}), c3)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("r", bff, XYZ)), 
+					Arrays.asList(createMagicLiteral("r", bff, new ITerm[]{X}), c3)));
 		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)), 
-					BASIC.createBody(createMagicLiteral("s", bb, XY), c2)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bb, XY)), 
+					Arrays.asList(createMagicLiteral("s", bb, XY), c2)));
 
 		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
 		rules.addAll(ms.getMagicRules());
@@ -727,21 +719,21 @@ public class MagicTest extends TestCase {
 
 		final Set<IRule> ref = new HashSet<IRule>();
 		// magic_s^bbbb(W, X, Y, Z) :- p^ff(W, X), r^ff(Y, Z)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", bbbb, WXYZ)), 
-					BASIC.createBody(createAdornedLiteral("p", ff, WX), 
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("s", bbbb, WXYZ)), 
+					Arrays.asList(createAdornedLiteral("p", ff, WX), 
 						createAdornedLiteral("r", ff, YZ))));
 		// magic_r^ff() :- p^ff(W, X)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", ff, new ITerm[]{})), 
-					BASIC.createBody(createAdornedLiteral("p", ff, WX))));
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", ff, new ITerm[]{})), 
+					Arrays.asList(createAdornedLiteral("p", ff, WX))));
 		// s^bbbb(W, X, Y, Z) :- magic_s^bbbb(W, X, Y, Z), c(W, X, Y, Z)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bbbb, WXYZ)), 
-					BASIC.createBody(createMagicLiteral("s", bbbb, WXYZ), c4)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bbbb, WXYZ)), 
+					Arrays.asList(createMagicLiteral("s", bbbb, WXYZ), c4)));
 		// r^ff(X, Y) :- magic_r^ff(), c(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", ff, XY)), 
-					BASIC.createBody(createMagicLiteral("r", ff, new ITerm[]{}), c2)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("r", ff, XY)), 
+					Arrays.asList(createMagicLiteral("r", ff, new ITerm[]{}), c2)));
 		// p^ff(X, Y) :- magic_p^ff(), c(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", ff, XY)), 
-					BASIC.createBody(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", ff, XY)), 
+					Arrays.asList(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
 
 		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
 		rules.addAll(ms.getMagicRules());
@@ -781,29 +773,29 @@ public class MagicTest extends TestCase {
 
 		final Set<IRule> ref = new HashSet<IRule>();
 		// magic_r^bbf(b, X) :- p^ff(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X})),
-					BASIC.createBody(createAdornedLiteral("p", ff, XY))));
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X})),
+					Arrays.asList(createAdornedLiteral("p", ff, XY))));
 		// magic_r^fbb(Y, X) :- magic_p^ff(), c(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", fbb, YX)), 
-					BASIC.createBody(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", fbb, YX)), 
+					Arrays.asList(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
 		// magic_s^bb(e, Z) :- p^ff(X, Y), r^bbf(b, X, Z)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", bb, new ITerm[]{TERM.createString("e"), Z})), 
-					BASIC.createBody(createAdornedLiteral("p", ff, XY), 
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("s", bb, new ITerm[]{TERM.createString("e"), Z})), 
+					Arrays.asList(createAdornedLiteral("p", ff, XY), 
 						createAdornedLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X, Z}))));
 		// r^fbb(X, Y, Z) :- magic_r^fbb(Y, Z), c(X, Y, Z)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", fbb, XYZ)), 
-					BASIC.createBody(createMagicLiteral("r", fbb, YZ), c3)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("r", fbb, XYZ)), 
+					Arrays.asList(createMagicLiteral("r", fbb, YZ), c3)));
 		// r^bbf(X, Y, Z) :- magic_r^bbf(X, Y), c(X, Y, Z)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, XYZ)), 
-					BASIC.createBody(createMagicLiteral("r", bbf, XY), c3)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("r", bbf, XYZ)), 
+					Arrays.asList(createMagicLiteral("r", bbf, XY), c3)));
 		// p^ff(X, Y) :- magic_p^ff(), c(X, Y), r^fbb(Z, Y, X)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", ff, XY)), 
-					BASIC.createBody(createMagicLiteral("p", ff, new ITerm[]{}), 
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", ff, XY)), 
+					Arrays.asList(createMagicLiteral("p", ff, new ITerm[]{}), 
 						c2, 
 						createAdornedLiteral("r", fbb, ZYX))));
 		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)), 
-					BASIC.createBody(createMagicLiteral("s", bb, XY), c2)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bb, XY)), 
+					Arrays.asList(createMagicLiteral("s", bb, XY), c2)));
 
 		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
 		rules.addAll(ms.getMagicRules());
@@ -840,29 +832,29 @@ public class MagicTest extends TestCase {
 
 		final Set<IRule> ref = new HashSet<IRule>();
 		// magic_r^bbf(b, X) :- p^ff(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X})),
-					BASIC.createBody(createAdornedLiteral("p", ff, XY))));
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X})),
+					Arrays.asList(createAdornedLiteral("p", ff, XY))));
 		// magic_s^bb(e, Z) :- p^ff(X, Y), r^bbf(b, X, Z)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", bb, new ITerm[]{TERM.createString("e"), Z})),
-					BASIC.createBody(createAdornedLiteral("p", ff, XY), 
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("s", bb, new ITerm[]{TERM.createString("e"), Z})),
+					Arrays.asList(createAdornedLiteral("p", ff, XY), 
 						createAdornedLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X, Z}))));
 		// magic_s^ff() :- magic_p^ff(), c(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createMagicLiteral("s", ff, new ITerm[]{})),
-					BASIC.createBody(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("s", ff, new ITerm[]{})),
+					Arrays.asList(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
 		// r^bbf(X, Y, Z) :- magic_r^bbf(X, Y), c(X, Y, Z)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("r", bbf, XYZ)),
-					BASIC.createBody(createMagicLiteral("r", bbf, XY), c3)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("r", bbf, XYZ)),
+					Arrays.asList(createMagicLiteral("r", bbf, XY), c3)));
 		// p^ff(X, Y) :- magic_p^ff(), c(X, Y), s^ff(Z, T)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("p", ff, XY)),
-					BASIC.createBody(createMagicLiteral("p", ff, new ITerm[]{}), 
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", ff, XY)),
+					Arrays.asList(createMagicLiteral("p", ff, new ITerm[]{}), 
 						c2, 
 						createAdornedLiteral("s", ff, new ITerm[]{Z, T}))));
 		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", bb, XY)),
-					BASIC.createBody(createMagicLiteral("s", bb, XY), c2)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bb, XY)),
+					Arrays.asList(createMagicLiteral("s", bb, XY), c2)));
 		// s^ff(X, Y) :- magic_s^ff(), c(X, Y)
-		ref.add(BASIC.createRule(BASIC.createHead(createAdornedLiteral("s", ff, XY)),
-					BASIC.createBody(createMagicLiteral("s", ff, new ITerm[]{}), c2)));
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", ff, XY)),
+					Arrays.asList(createMagicLiteral("s", ff, new ITerm[]{}), c2)));
 
 		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
 		rules.addAll(ms.getMagicRules());

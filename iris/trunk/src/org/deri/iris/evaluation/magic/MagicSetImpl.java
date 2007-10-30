@@ -34,8 +34,6 @@ import java.util.Set;
 
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IAtom;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -113,12 +111,12 @@ public final class MagicSetImpl {
 		// TODO: maybe a defensive copy should be made
 
 		for (final AdornedRule r : program.getAdornedRules()) {
-			if (r.getHead().getLength() != 1) {
+			if (r.getHead().size() != 1) {
 				throw new IllegalArgumentException("At the moment only heads "
 						+ "with length of 1 are allowed");
 			}
 
-			for (ILiteral l : r.getBody().getLiterals()) {
+			for (ILiteral l : r.getBody()) {
 				if (l.getPredicate() instanceof AdornedPredicate) {
 					// creating a magic rule for the literal
 					magicRules.addAll(generateRules(l, r));
@@ -148,12 +146,11 @@ public final class MagicSetImpl {
 		final Set<IRule> res = new HashSet<IRule>();
 		final List<ILiteral> query = q.getLiterals();
 		for (int i = 1, max = query.size(); i < max; i++) {
-			res.add(BASIC.createRule(
-						BASIC.createHead(
-							BASIC.createLiteral(
-								query.get(i).isPositive(), 
-								createMagicAtom(query.get(i)))), 
-						BASIC.createBody(slice(query, 0, i))));
+			res.add(BASIC.createRule(Arrays.asList(
+							new ILiteral[]{
+								BASIC.createLiteral(query.get(i).isPositive(), 
+									createMagicAtom(query.get(i)))}), 
+						slice(query, 0, i)));
 		}
 		return res;
 	}
@@ -202,16 +199,15 @@ public final class MagicSetImpl {
 		if (r == null) {
 			throw new NullPointerException("The rule must not be null");
 		}
-		if (r.getHead().getLength() != 1) {
+		if (r.getHead().size() != 1) {
 			throw new IllegalArgumentException("At the moment only heads "
 					+ "with length of 1 are allowed");
 		}
 
-		final ILiteral headL = r.getHead().getLiteral(0);
+		final ILiteral headL = r.getHead().get(0);
 
 		// computing the rewritten body
-		final List<ILiteral> rewrittenBody = new ArrayList<ILiteral>(
-				r.getBody().getLiterals());
+		final List<ILiteral> rewrittenBody = new ArrayList<ILiteral>(r.getBody());
 		Collections.sort(rewrittenBody, 
 				getAdornedSip(r).getLiteralComparator());
 
@@ -223,8 +219,7 @@ public final class MagicSetImpl {
 		rewrittenBody.add(0, magicL);
 
 		// creating the normal rule
-		final IRule tmpRule = BASIC.createRule(BASIC.createHead(r.getHead().getLiterals()),
-				BASIC.createBody(rewrittenBody));
+		final IRule tmpRule = BASIC.createRule(r.getHead(), rewrittenBody);
 
 		// creating the adorned rule
 		return new AdornedRule(tmpRule, new SIPImpl(tmpRule));
@@ -277,7 +272,7 @@ public final class MagicSetImpl {
 			throw new IllegalArgumentException(
 					"The predicate of the literal must be adorned");
 		}
-		if (r.getHead().getLength() != 1) {
+		if (r.getHead().size() != 1) {
 			throw new IllegalArgumentException(
 					"At the moment only heads with length 1 are allowed");
 		}
@@ -301,11 +296,11 @@ public final class MagicSetImpl {
 			final Set<ILiteral> bodyLiterals = new HashSet<ILiteral>(rules
 					.size());
 			for (final IRule rule : rules) {
-				bodyLiterals.add(rule.getHead().getLiteral(0));
+				bodyLiterals.add(rule.getHead().get(0));
 			}
 			final ILiteral hl = createMagicLiteral(true, l);
-			rules.add(BASIC.createRule(BASIC.createHead(hl),
-					BASIC.createBody(new ArrayList<ILiteral>(bodyLiterals))));
+			rules.add(BASIC.createRule(Arrays.asList(new ILiteral[]{hl}),
+					new ArrayList<ILiteral>(bodyLiterals)));
 			return rules;
 		} else {
 			// TODO: maybe return an empty set
@@ -339,40 +334,37 @@ public final class MagicSetImpl {
 			throw new IllegalArgumentException(
 					"The predicate of the literal must be adorned");
 		}
-		if (rule.getHead().getLength() != 1) {
+		if (rule.getHead().size() != 1) {
 			throw new IllegalArgumentException(
 					"At the moment only heads with length 1 are allowed");
 		}
 
 		// create head of the rule
 		final ILiteral hl = createMagicLiteral(true, l);
-		final IHead head = BASIC.createHead(hl);
 
 		// create the body of the rule
 		ISip adornedSip = getAdornedSip(rule);
-		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(adornedSip
+		final List<ILiteral> body = new ArrayList<ILiteral>(adornedSip
 				.getDepends(l));
-		Collections.sort(bodyLiterals, adornedSip.getLiteralComparator());
+		Collections.sort(body, adornedSip.getLiteralComparator());
 
 		// correct the literals -> make adorned literals -> magic literals
 		// if the head literal wasn't adorned (only happens if the query hasn't any constants
 		// skip the exchange of the literals, because there isn't anything to exchage, and 
 		// remove the first literal of the body (which is the headliteral)
-		final ILiteral headLiteral = rule.getHead().getLiteral(0);
+		final ILiteral headLiteral = rule.getHead().get(0);
 		if ((headLiteral.getPredicate() instanceof AdornedPredicate)) {
-			for (int i = 0, max = bodyLiterals.size(); i < max; i++) {
-				if (bodyLiterals.get(i).equals(headLiteral)) {
-					bodyLiterals.set(i, createMagicLiteral(bodyLiterals .get(i)));
+			for (int i = 0, max = body.size(); i < max; i++) {
+				if (body.get(i).equals(headLiteral)) {
+					body.set(i, createMagicLiteral(body .get(i)));
 					break;
 				}
 			}
 		} else {
-			bodyLiterals.remove(0);
+			body.remove(0);
 		}
 
-		final IBody body = BASIC.createBody(bodyLiterals);
-
-		return BASIC.createRule(head, body);
+		return BASIC.createRule(Arrays.asList(new ILiteral[]{hl}), body);
 	}
 
 	/**
@@ -422,36 +414,32 @@ public final class MagicSetImpl {
 			throw new IllegalArgumentException("The index must not be negative");
 		}
 
-		if (r.getHead().getLength() != 1) {
+		if (r.getHead().size() != 1) {
 			throw new IllegalArgumentException(
 					"At the moment only heads with length 1 are allowed");
 		}
 
-		final ILiteral headLiteral = r.getHead().getLiteral(0);
+		final ILiteral headLiteral = r.getHead().get(0);
 
 		// create head of the rule
 		final ILiteral hl = createLabeledLiteral(true, targetLiteral, index);
-		final IHead head = BASIC.createHead(hl);
 
 		// create body of the rule
 		final ISip adornedSip = getAdornedSip(r);
-		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(adornedSip
+		final List<ILiteral> body = new ArrayList<ILiteral>(adornedSip
 				.getDepends((ILiteral) sourceLiteral));
-		bodyLiterals.add(sourceLiteral);
-		Collections.sort(bodyLiterals, adornedSip.getLiteralComparator());
+		body.add(sourceLiteral);
+		Collections.sort(body, adornedSip.getLiteralComparator());
 
 		// correct the literals -> make adorned literals -> magic literals
-		for (int counter = 0, size = bodyLiterals.size(); counter < size; counter++) {
-			if (bodyLiterals.get(counter).equals(headLiteral)) {
-				bodyLiterals.set(counter, createMagicLiteral(bodyLiterals
-						.get(counter)));
+		for (int counter = 0, size = body.size(); counter < size; counter++) {
+			if (body.get(counter).equals(headLiteral)) {
+				body.set(counter, createMagicLiteral(body.get(counter)));
 				break;
 			}
 		}
 
-		final IBody body = BASIC.createBody(bodyLiterals);
-
-		return BASIC.createRule(head, body);
+		return BASIC.createRule(Arrays.asList(new ILiteral[]{hl}), body);
 	}
 
 	/**
@@ -828,8 +816,8 @@ public final class MagicSetImpl {
 		}
 
 		// comparing the head literals
-		final Iterator<ILiteral> h0 = r0.getHead().getLiterals().iterator();
-		final Iterator<ILiteral> h1 = r1.getHead().getLiterals().iterator();
+		final Iterator<ILiteral> h0 = r0.getHead().iterator();
+		final Iterator<ILiteral> h1 = r1.getHead().iterator();
 		while (h0.hasNext() && h1.hasNext()) {
 			if (!isSameLiteral(h0.next(), h1.next())) {
 				return false;
@@ -840,8 +828,8 @@ public final class MagicSetImpl {
 		}
 
 		// comparing the body literals
-		final Iterator<ILiteral> b0 = r0.getBody().getLiterals().iterator();
-		final Iterator<ILiteral> b1 = r1.getBody().getLiterals().iterator();
+		final Iterator<ILiteral> b0 = r0.getBody().iterator();
+		final Iterator<ILiteral> b1 = r1.getBody().iterator();
 		while (b0.hasNext() && b1.hasNext()) {
 			ILiteral l0 = b0.next();
 			while (l0.getPredicate().getPredicateSymbol().startsWith(

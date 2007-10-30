@@ -40,8 +40,6 @@ import java.util.Set;
 import org.deri.iris.Executor;
 import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -59,12 +57,12 @@ import org.deri.iris.parser.ProgramTest;
  * <p>
  * </p>
  * <p>
- * $Id: TestNeg.java,v 1.5 2007-09-27 12:05:58 bazbishop237 Exp $
+ * $Id: TestNeg.java,v 1.6 2007-10-30 08:28:32 poettler_ric Exp $
  * </p>
  * 
  * @author richi
- * @version $Revision: 1.5 $
- * @date $Date: 2007-09-27 12:05:58 $
+ * @version $Revision: 1.6 $
+ * @date $Date: 2007-10-30 08:28:32 $
  */
 public class TestNeg {
 
@@ -72,43 +70,43 @@ public class TestNeg {
 		// constructing the rules
 		// q(X) :- s(X), -p(X)
 		Set<IRule> rules = new HashSet<IRule>(3);
-		IHead h = Factory.BASIC.createHead(createLiteral("q", "X"));
-		IBody b = Factory.BASIC.createBody(createLiteral("s", "X"),
-				Factory.BASIC.createLiteral(false, Factory.BASIC
-						.createPredicate("p", 1), Factory.BASIC
-						.createTuple(Factory.TERM.createVariable("X"))));
+		List<ILiteral> h = Arrays.asList(createLiteral("q", "X"));
+		List<ILiteral> b = Arrays.asList(createLiteral("s", "X"),
+				BASIC.createLiteral(false, BASIC
+						.createPredicate("p", 1), BASIC
+						.createTuple(TERM.createVariable("X"))));
 
-		IRule r = Factory.BASIC.createRule(h, b);
+		IRule r = BASIC.createRule(h, b);
 		rules.add(r);
 
 		// p(X) :- r(X)
-		r = Factory.BASIC.createRule(Factory.BASIC.createHead(createLiteral(
-				"p", "X")), Factory.BASIC.createBody(createLiteral("r", "X")));
+		r = BASIC.createRule(Arrays.asList(createLiteral(
+				"p", "X")), Arrays.asList(createLiteral("r", "X")));
 		rules.add(r);
 
 		// p(X) :- p(X)
-		r = Factory.BASIC.createRule(Factory.BASIC.createHead(createLiteral(
-				"p", "X")), Factory.BASIC.createBody(createLiteral("p", "X")));
+		r = BASIC.createRule(Arrays.asList(createLiteral(
+				"p", "X")), Arrays.asList(createLiteral("p", "X")));
 		rules.add(r);
 
 		// create facts
 		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
 		// r(1), r(2)
-		IPredicate p = Factory.BASIC.createPredicate("r", 1);
+		IPredicate p = BASIC.createPredicate("r", 1);
 		IMixedDatatypeRelation rel = RELATION.getMixedRelation(1);
 		rel.add(createStringTuple("1"));
 		rel.add(createStringTuple("2"));
 		facts.put(p, rel);
 
 		// s(3), s(4)
-		p = Factory.BASIC.createPredicate("s", 1);
+		p = BASIC.createPredicate("s", 1);
 		rel = RELATION.getMixedRelation(1);
 		rel.add(createStringTuple("3"));
 		rel.add(createStringTuple("4"));
 		facts.put(p, rel);
 
 		// ?- q(x)
-		IQuery q0 = Factory.BASIC.createQuery(createLiteral("q", "X"));
+		IQuery q0 = BASIC.createQuery(createLiteral("q", "X"));
 		
 		Set<IQuery> queries = new HashSet<IQuery>();
 		queries.add(q0);
@@ -146,9 +144,9 @@ public class TestNeg {
 		}
 		final List<ITerm> t = new ArrayList<ITerm>(s.length);
 		for (final String str : s) {
-			t.add(Factory.TERM.createString(str));
+			t.add(TERM.createString(str));
 		}
-		return Factory.BASIC.createTuple(t);
+		return BASIC.createTuple(t);
 	}
 
 	/**

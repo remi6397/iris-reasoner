@@ -44,8 +44,6 @@ import junit.framework.TestSuite;
 import org.deri.iris.Executor;
 import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -79,8 +77,8 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		Set<IRule> rules = new HashSet<IRule>(3);
 		
 		// p(U,V,W) :- r(V,W), EQ(U, 'a').
-		IHead h = Factory.BASIC.createHead(createLiteral("p", "U", "V", "W"));
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> h = Arrays.asList(createLiteral("p", "U", "V", "W"));
+		List<ILiteral> b = Arrays.asList(
 				createLiteral("r", "V", "W"),
 				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
 					createEqual(
@@ -118,8 +116,8 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		Set<IRule> rules = new HashSet<IRule>(3);
 		
 		// p(U,V,W) :- r(V,W), EQ(W, U).
-		IHead h = Factory.BASIC.createHead(createLiteral("p", "U", "V", "W"));
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> h = Arrays.asList(createLiteral("p", "U", "V", "W"));
+		List<ILiteral> b = Arrays.asList(
 				createLiteral("r", "V", "W"),
 				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
 					createEqual(
@@ -157,8 +155,8 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		Set<IRule> rules = new HashSet<IRule>(3);
 		
 		// p(V,W) :- r(V,W), EQ('a', V).
-		IHead h = Factory.BASIC.createHead(createLiteral("p", "V", "W"));
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> h = Arrays.asList(createLiteral("p", "V", "W"));
+		List<ILiteral> b = Arrays.asList(
 				createLiteral("r", "V", "W"),
 				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
 					createEqual(

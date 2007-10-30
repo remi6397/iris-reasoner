@@ -41,7 +41,6 @@ import java.util.Set;
 import org.deri.iris.RuleUnsafeException;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IAtom;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
@@ -56,14 +55,14 @@ import org.deri.iris.builtins.EqualBuiltin;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.20 2007-10-24 15:07:59 bazbishop237 Exp $
+ * $Id: MiscOps.java,v 1.21 2007-10-30 08:28:28 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class MiscOps {
 
@@ -119,14 +118,14 @@ public class MiscOps {
 		if (r == null) {
 			throw new NullPointerException("The rule must not be null.");
 		}
-		if (r.getHead().getLength() != 1) {
+		if (r.getHead().size() != 1) {
 			throw new IllegalArgumentException(
 					"There must be only one literal in the head.");
 		}
-		final ILiteral hl = r.getHead().getLiteral(0);
+		final ILiteral hl = r.getHead().get(0);
 		final int arity = hl.getPredicate().getArity();
 		final List<ITerm> headTerms = new ArrayList<ITerm>(arity);
-		final List<ILiteral> eqSubGoals = new ArrayList<ILiteral>(r.getBody().getLength());
+		final List<ILiteral> eqSubGoals = new ArrayList<ILiteral>(r.getBody().size());
 		final Map<IVariable, List<ILiteral>> headVarsMap = new HashMap<IVariable, List<ILiteral>>();
 		
 		// iterating through the terms of the head
@@ -159,8 +158,8 @@ public class MiscOps {
 		}
 		// Substitute all body variables with new variables and unify introduced subgolas 
 		// when possible.
-		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(r.getBody().getLength());
-		for (final ILiteral l: r.getBody().getLiterals()) {
+		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(r.getBody().size());
+		for (final ILiteral l: r.getBody()) {
 			final List<ITerm> litTerms = new ArrayList<ITerm>(l.getPredicate().getArity());
 			for (final ITerm t : l.getTuple()) {
 				if(! t.isGround()){
@@ -199,9 +198,11 @@ public class MiscOps {
 				}
 			}
 		}
-		final IHead h = BASIC.createHead(BASIC.createLiteral(hl.isPositive(),
-				hl.getPredicate(), BASIC.createTuple(headTerms)));
-		return BASIC.copyRule(h, BASIC.createBody(bodyLiterals));
+		return BASIC.createRule(java.util.Arrays.asList(
+					new ILiteral[]{
+						BASIC.createLiteral(hl.isPositive(), hl.getPredicate(), 
+							BASIC.createTuple(headTerms))}), 
+				bodyLiterals);
 	}
 
 	/**
