@@ -64,11 +64,11 @@ import org.jgrapht.graph.SimpleDirectedGraph;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.27 2007-10-30 08:28:29 poettler_ric Exp $
+ * $Id: SIPImpl.java,v 1.28 2007-10-30 10:35:49 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 public final class SIPImpl implements ISip {
 	/**
@@ -113,8 +113,8 @@ public final class SIPImpl implements ISip {
 
 		final ILiteral headLiteral = r.getHead().get(0);
 		final ILiteral queryLiteral = q.getLiterals().get(0);
-		final IPredicate headPredicate = headLiteral.getPredicate();
-		final IPredicate queryPredicate = queryLiteral.getPredicate();
+		final IPredicate headPredicate = headLiteral.getAtom().getPredicate();
+		final IPredicate queryPredicate = queryLiteral.getAtom().getPredicate();
 
 		// this check is only neccessary for the first implementation
 		// allow only one head
@@ -132,8 +132,8 @@ public final class SIPImpl implements ISip {
 
 		// determining the known variables of the head
 		final Set<IVariable> assumedKnown = new HashSet<IVariable>();
-		for (final Iterator<ITerm> headTerms = headLiteral.getTuple()
-				.iterator(), queryTerms = queryLiteral.getTuple()
+		for (final Iterator<ITerm> headTerms = headLiteral.getAtom().getTuple()
+				.iterator(), queryTerms = queryLiteral.getAtom().getTuple()
 				.iterator(); (headTerms.hasNext() && queryTerms
 				.hasNext());) {
 			final ITerm headT = headTerms.next();
@@ -309,7 +309,7 @@ public final class SIPImpl implements ISip {
 
 		final Map<ILiteral, Set<IVariable>> connected = new HashMap<ILiteral, Set<IVariable>>();
 
-		final Set<IVariable> bounds = l.getTuple().getVariables();
+		final Set<IVariable> bounds = l.getAtom().getTuple().getVariables();
 		bounds.retainAll(known);
 		if (bounds.isEmpty()) {
 			return connected;
@@ -317,7 +317,7 @@ public final class SIPImpl implements ISip {
 
 		for (final ILiteral lit : r.getBody()) {
 			final Set<IVariable> variables = new HashSet<IVariable>(lit
-					.getTuple().getVariables());
+					.getAtom().getTuple().getVariables());
 			variables.retainAll(bounds);
 			if (!variables.isEmpty()) {
 				connected.put(lit, variables);
@@ -355,13 +355,13 @@ public final class SIPImpl implements ISip {
 		possibleSuccessors.remove(l);
 
 		// getting all unbound variables of this literal
-		final Set<IVariable> unbound = l.getTuple().getVariables();
+		final Set<IVariable> unbound = l.getAtom().getTuple().getVariables();
 		unbound.removeAll(getBoundVariables(l));
 		unbound.removeAll(initiallyKnown);
 
 		for (final ILiteral possible : possibleSuccessors) {
 			final Set<IVariable> commonVars = new HashSet<IVariable>(possible
-					.getTuple().getVariables());
+					.getAtom().getTuple().getVariables());
 			commonVars.retainAll(unbound);
 			if (!commonVars.isEmpty()) {
 				connected.put(possible, commonVars);
@@ -391,7 +391,7 @@ public final class SIPImpl implements ISip {
 		assert initiallyKnown != null: "The known variables must not be null";
 
 		final Set<IVariable> vars = new HashSet<IVariable>(initiallyKnown);
-		vars.addAll(l.getTuple().getVariables());
+		vars.addAll(l.getAtom().getTuple().getVariables());
 
 		// if the literal is the head literal -> return the first
 		// literal of the body
@@ -595,15 +595,15 @@ public final class SIPImpl implements ISip {
 			final ILiteral l = body.get(i);
 			if (!l.isPositive()) {
 				// check whether every var appears in a former literal
-				if (!bound.containsAll(l.getTuple().getVariables())) {
+				if (!bound.containsAll(l.getAtom().getTuple().getVariables())) {
 					// if a variable can't be found -> put literal at the end
 					body.add(body.size() - 1, body.remove(i));
 					i--;
 				} else { // consider the vars as already bound
-					bound.addAll(l.getTuple().getVariables());
+					bound.addAll(l.getAtom().getTuple().getVariables());
 				}
 			} else { // consider the vars as already bound
-				bound.addAll(l.getTuple().getVariables());
+				bound.addAll(l.getAtom().getTuple().getVariables());
 			}
 		}
 		return Factory.BASIC.createRule(r.getHead(), body);
@@ -706,10 +706,10 @@ public final class SIPImpl implements ISip {
 	 * The label of the edge will be <code>new HashSet<IVariable>()</code>.
 	 * </p>
 	 * <p>
-	 * $Id: SIPImpl.java,v 1.27 2007-10-30 08:28:29 poettler_ric Exp $
+	 * $Id: SIPImpl.java,v 1.28 2007-10-30 10:35:49 poettler_ric Exp $
 	 * </p>
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.27 $
+	 * @version $Revision: 1.28 $
 	 * @since 0.3
 	 */
 	private static class SipEdgeFactory implements EdgeFactory<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> {

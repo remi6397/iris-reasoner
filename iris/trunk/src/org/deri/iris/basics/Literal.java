@@ -41,7 +41,7 @@ import org.deri.iris.api.basics.ITuple;
  * @author Darko Anicic, DERI Innsbruck
  * @version $Revision$
  */
-public class Literal implements ILiteral{
+public class Literal implements ILiteral {
 
 	private final boolean positive;
 
@@ -60,23 +60,11 @@ public class Literal implements ILiteral{
 		return positive;
 	}
 
-	public IPredicate getPredicate() {
-		return atom.getPredicate();
-	}
-
-	public ITuple getTuple() {
-		return this.atom.getTuple();
-	}
-
 	public IAtom getAtom() {
 		return atom;
 	}
 	
-	public boolean isGround() {
-		return atom.isGround();
-	}
-
-	public int compareTo(final IAtom oo) {
+	public int compareTo(final ILiteral oo) {
 		ILiteral o = (ILiteral) oo;
 		if ((positive != o.isPositive()) && positive) {
 			return 1;
@@ -106,9 +94,5 @@ public class Literal implements ILiteral{
 	
 	public String toString() {
 		return (positive ? "" : "-") + atom;
-	}
-
-	public boolean isBuiltin() {
-		return atom.isBuiltin();
 	}
 }

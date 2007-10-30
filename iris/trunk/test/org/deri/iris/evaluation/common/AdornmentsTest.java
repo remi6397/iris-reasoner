@@ -64,11 +64,11 @@ import org.deri.iris.MiscHelper;
  * Tests the adornments.
  * </p>
  * <p>
- * $Id: AdornmentsTest.java,v 1.11 2007-10-30 08:28:31 poettler_ric Exp $
+ * $Id: AdornmentsTest.java,v 1.12 2007-10-30 10:35:50 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class AdornmentsTest extends TestCase {
 
@@ -330,10 +330,10 @@ public class AdornmentsTest extends TestCase {
 		final List<ILiteral> head = new ArrayList<ILiteral>(r.getHead());
 		int i = 0;
 		for (final ILiteral l : head) {
-			if (l.getPredicate() instanceof AdornedPredicate) {
+			if (l.getAtom().getPredicate() instanceof AdornedPredicate) {
 				head.set(i, BASIC.createLiteral(l.isPositive(),
-						((AdornedPredicate) l.getPredicate())
-								.getUnadornedPredicate(), l.getTuple()));
+						((AdornedPredicate) l.getAtom().getPredicate())
+								.getUnadornedPredicate(), l.getAtom().getTuple()));
 				changed = true;
 			}
 			i++;
@@ -341,10 +341,10 @@ public class AdornmentsTest extends TestCase {
 		final List<ILiteral> body= new ArrayList<ILiteral>(r.getBody());
 		i = 0;
 		for (final ILiteral l : body) {
-			if (l.getPredicate() instanceof AdornedPredicate) {
+			if (l.getAtom().getPredicate() instanceof AdornedPredicate) {
 				body.set(i, BASIC.createLiteral(l.isPositive(),
-						((AdornedPredicate) l.getPredicate())
-								.getUnadornedPredicate(), l.getTuple()));
+						((AdornedPredicate) l.getAtom().getPredicate())
+								.getUnadornedPredicate(), l.getAtom().getTuple()));
 				changed = true;
 			}
 			i++;
@@ -895,11 +895,11 @@ public class AdornmentsTest extends TestCase {
 	 * Compares two rules according to their predicate symbols.
 	 * </p>
 	 * <p>
-	 * $Id: AdornmentsTest.java,v 1.11 2007-10-30 08:28:31 poettler_ric Exp $
+	 * $Id: AdornmentsTest.java,v 1.12 2007-10-30 10:35:50 poettler_ric Exp $
 	 * </p>
 	 * 
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.11 $
+	 * @version $Revision: 1.12 $
 	 */
 	private static class RuleComparator implements Comparator<IRule> {
 		public int compare(IRule o1, IRule o2) {
@@ -934,8 +934,8 @@ public class AdornmentsTest extends TestCase {
 				throw new NullPointerException("The literals must not be null");
 			}
 			int res = 0;
-			final IPredicate p1 = l1.getPredicate();
-			final IPredicate p2 = l2.getPredicate();
+			final IPredicate p1 = l1.getAtom().getPredicate();
+			final IPredicate p2 = l2.getAtom().getPredicate();
 			// comparing the predicate symbol
 			if ((res = p1.getPredicateSymbol().compareTo(
 					p2.getPredicateSymbol())) != 0) {

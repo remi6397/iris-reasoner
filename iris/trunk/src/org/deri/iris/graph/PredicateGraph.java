@@ -112,11 +112,11 @@ public class PredicateGraph implements IPredicateGraph {
 		}
 
 		for (final ILiteral h : rule.getHead()) {
-			final IPredicate hp = h.getPredicate();
+			final IPredicate hp = h.getAtom().getPredicate();
 			g.addVertex(hp);
 
 			for (final ILiteral l : rule.getBody()) {
-				final IPredicate p = l.getPredicate();
+				final IPredicate p = l.getAtom().getPredicate();
 				final LabeledEdge<IPredicate, Boolean> e = 
 					new LabeledEdge<IPredicate, Boolean>(p, hp, l.isPositive());
 
@@ -258,8 +258,8 @@ public class PredicateGraph implements IPredicateGraph {
 				throw new IllegalArgumentException(
 						"Only rules with a headlength of 1 are allowed.");
 			}
-			return pc.compare(o1.getHead().get(0).getPredicate(), 
-					o2.getHead().get(0).getPredicate());
+			return pc.compare(o1.getHead().get(0).getAtom().getPredicate(), 
+					o2.getHead().get(0).getAtom().getPredicate());
 		}
 	}
 

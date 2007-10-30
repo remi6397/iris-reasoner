@@ -54,11 +54,11 @@ import org.deri.iris.VariableExtractor;
  * from Beeri's paper &quot;The Power Of Magic&quot;.
  * </p>
  * <p>
- * $Id: SupplementaryMSImpl.java,v 1.8 2007-10-30 08:28:29 poettler_ric Exp $
+ * $Id: SupplementaryMSImpl.java,v 1.9 2007-10-30 10:35:49 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class SupplementaryMSImpl {
 
@@ -118,7 +118,7 @@ public class SupplementaryMSImpl {
 				// modifying the magic rules
 				if (litCounter > 2) {
 					for (final ILiteral l : supmRule.getBody()) {
-						if (l.getPredicate() instanceof AdornedPredicate) {
+						if (l.getAtom().getPredicate() instanceof AdornedPredicate) {
 							findAndSubstituteMagicRule(l, litCounter,
 									ruleCounter);
 						}
@@ -159,7 +159,7 @@ public class SupplementaryMSImpl {
 			throw new NullPointerException(
 					"The literal and the rules collection must not be null");
 		}
-		if (!(l.getPredicate() instanceof AdornedPredicate)) {
+		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			throw new IllegalArgumentException(
 					"The predicate of the literal must be adorned");
 		}
@@ -211,7 +211,7 @@ public class SupplementaryMSImpl {
 			return null;
 		}
 		for (final ILiteral bodyL : r.getBody()) {
-			if (bodyL.getPredicate().getPredicateSymbol().startsWith(
+			if (bodyL.getAtom().getPredicate().getPredicateSymbol().startsWith(
 					MagicSetImpl.MAGIC_LABEL_PREFIX)) {
 				return null;
 			}
@@ -220,7 +220,7 @@ public class SupplementaryMSImpl {
 			throw new NullPointerException(
 					"The literal and the rules collection must not be null");
 		}
-		if (!(l.getPredicate() instanceof AdornedPredicate)) {
+		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			throw new IllegalArgumentException(
 					"The predicate of the literal must be adorned");
 		}
@@ -258,7 +258,7 @@ public class SupplementaryMSImpl {
 			throw new NullPointerException(
 					"The magic rules and the bounds must not be null");
 		}
-		if (!(l.getPredicate() instanceof AdornedPredicate)) {
+		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			throw new IllegalArgumentException(
 					"The the predicate of the literal must be adorned");
 		}
@@ -270,10 +270,10 @@ public class SupplementaryMSImpl {
 		final List<ITerm> bounds = MagicSetImpl.getBounds(l);
 		for (final IRule magicRule : magicRules) {
 			final ILiteral headLiteral = magicRule.getHead().get(0);
-			final List<ITerm> terms = headLiteral.getTuple();
-			if ((headLiteral.getPredicate().getPredicateSymbol()
+			final List<ITerm> terms = headLiteral.getAtom().getTuple();
+			if ((headLiteral.getAtom().getPredicate().getPredicateSymbol()
 					.startsWith(MagicSetImpl.MAGIC_PREDICATE_PREFIX
-							+ l.getPredicate().getPredicateSymbol()))
+							+ l.getAtom().getPredicate().getPredicateSymbol()))
 					&& (terms.size() == bounds.size())
 					&& bounds.containsAll(terms)) {
 				return magicRule;
@@ -392,8 +392,8 @@ public class SupplementaryMSImpl {
 		// compute head of the rule
 		// gathering all possible variables
 		final Set<ITerm> headVars = new HashSet<ITerm>();
-		headVars.addAll(getAllVariables(body[0].getTuple()));
-		headVars.addAll(getAllVariables(body[1].getTuple()));
+		headVars.addAll(getAllVariables(body[0].getAtom().getTuple()));
+		headVars.addAll(getAllVariables(body[1].getAtom().getTuple()));
 		// cleaning up the variables
 		headVars.retainAll(getNotDiscardedVars(literalIndex, r, sortedBody));
 		// computing the predicate
@@ -451,7 +451,7 @@ public class SupplementaryMSImpl {
 		final Set<IVariable> gotToStay = new HashSet<IVariable>();
 		gotToStay.addAll(VariableExtractor.getLiteralVariables(r.getHead()));
 		for (int counter = index, max = sortedBody.size(); counter < max; counter++) {
-			gotToStay.addAll(getAllVariables(sortedBody.get(counter).getTuple()
+			gotToStay.addAll(getAllVariables(sortedBody.get(counter).getAtom().getTuple()
 					));
 		}
 		return gotToStay;
@@ -582,7 +582,7 @@ public class SupplementaryMSImpl {
 
 		final ILiteral headLiteral = r.getHead().get(0);
 
-		if (!(headLiteral.getPredicate() instanceof AdornedPredicate)) {
+		if (!(headLiteral.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			throw new IllegalArgumentException(
 					"The predicate of the head must be adorned");
 		}
@@ -609,13 +609,13 @@ public class SupplementaryMSImpl {
 		if (l == null) {
 			throw new NullPointerException("The literal must not be null");
 		}
-		if (!(l.getPredicate() instanceof AdornedPredicate)) {
+		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			throw new IllegalArgumentException(
 					"The predicate of the literal must be adorned");
 		}
-		final AdornedPredicate p = (AdornedPredicate) l.getPredicate();
+		final AdornedPredicate p = (AdornedPredicate) l.getAtom().getPredicate();
 		final int realLength = p.getAdornment().length;
-		final ITuple t = l.getTuple();
+		final ITuple t = l.getAtom().getTuple();
 		final List<ITerm> queryTerms = new ArrayList<ITerm>(realLength);
 
 		if (t.size() == realLength) { // if the arity matches the lenght

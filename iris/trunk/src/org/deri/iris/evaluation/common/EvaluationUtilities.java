@@ -42,12 +42,12 @@ import org.deri.iris.api.graph.IPredicateGraph;
  * evaluation methods.
  * </p>
  * <p>
- * $Id: EvaluationUtilities.java,v 1.5 2007-10-30 08:28:29 poettler_ric Exp $
+ * $Id: EvaluationUtilities.java,v 1.6 2007-10-30 10:35:49 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author uwekel
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class EvaluationUtilities {
 
@@ -118,8 +118,8 @@ public class EvaluationUtilities {
 		final IPredicateGraph pg = org.deri.iris.factory.Factory.GRAPH.createPredicateGraph(r);
 		final Set<IPredicate> depends = new HashSet<IPredicate>();
 		for (final ILiteral l : q.getLiterals()) {
-			depends.add(l.getPredicate());
-			depends.addAll(pg.getDepends(l.getPredicate()));
+			depends.add(l.getAtom().getPredicate());
+			depends.addAll(pg.getDepends(l.getAtom().getPredicate()));
 		}
 		return depends;
 	}
@@ -143,7 +143,7 @@ public class EvaluationUtilities {
 			throw new NullPointerException("The predicates must not be null");
 		}
 		for (final ILiteral l : r.getHead()) {
-			if (p.contains(l.getPredicate())) {
+			if (p.contains(l.getAtom().getPredicate())) {
 				return true;
 			}
 		}

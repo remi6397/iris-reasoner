@@ -90,14 +90,6 @@ public class ConstLiteral implements ILiteral{
 		this.positive = arg;
 	}
 
-	public IPredicate getPredicate() {
-		return this.atom.getPredicate();
-	}
-
-	public ITuple getTuple() {
-		return this.atom.getTuple();
-	}
-
 	public boolean isBuiltin() {
 		return false;
 	}
@@ -117,7 +109,7 @@ public class ConstLiteral implements ILiteral{
 		return buffer.toString();
 	}
 
-	public int compareTo(IAtom o) {
+	public int compareTo(ILiteral o) {
 		throw new UnsupportedOperationException(
 			"This method is not supported by this literal.");
 	}
@@ -126,13 +118,10 @@ public class ConstLiteral implements ILiteral{
 		if (o == this) {
 			return true;
 		}
-		if (!(o instanceof Literal)) {
+		if (!(o instanceof ConstLiteral)) {
 			return false;
 		}
-		Literal l = (Literal) o;
-		if (!(l.getAtom() instanceof ConstLiteral)) {
-			return false;
-		}
+		ConstLiteral l = (ConstLiteral) o;
 		return atom.getTuple().equals(l.getAtom().getTuple()) && (positive == l.isPositive());
 	}
 }

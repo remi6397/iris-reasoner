@@ -55,14 +55,14 @@ import org.deri.iris.builtins.EqualBuiltin;
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.21 2007-10-30 08:28:28 poettler_ric Exp $
+ * $Id: MiscOps.java,v 1.22 2007-10-30 10:35:48 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public class MiscOps {
 
@@ -123,13 +123,13 @@ public class MiscOps {
 					"There must be only one literal in the head.");
 		}
 		final ILiteral hl = r.getHead().get(0);
-		final int arity = hl.getPredicate().getArity();
+		final int arity = hl.getAtom().getPredicate().getArity();
 		final List<ITerm> headTerms = new ArrayList<ITerm>(arity);
 		final List<ILiteral> eqSubGoals = new ArrayList<ILiteral>(r.getBody().size());
 		final Map<IVariable, List<ILiteral>> headVarsMap = new HashMap<IVariable, List<ILiteral>>();
 		
 		// iterating through the terms of the head
-		final Iterator<ITerm> terms = hl.getTuple().iterator();
+		final Iterator<ITerm> terms = hl.getAtom().getTuple().iterator();
 		for (int i = 0; i < arity; i++) {
 			final ITerm t = terms.next();
 			// Introduce a new variable for each of the arguments of the head predicate.
@@ -138,7 +138,7 @@ public class MiscOps {
 			// Create a ConstLiteral (i.e. {a}(?X) represents ?X='a') whenever an 
 			// argument of the head predicate is a ground term.
 			if(t.isGround()){
-				eqSubGoals.add(BASIC.createLiteral(true, new ConstLiteral(true, t, newVar)));
+				eqSubGoals.add(new ConstLiteral(true, t, newVar));
 			}else{
 				final IVariable v = (IVariable) t;
 				// If some of the arguments of the head predicate are equal (and they are 
@@ -160,12 +160,12 @@ public class MiscOps {
 		// when possible.
 		final List<ILiteral> bodyLiterals = new ArrayList<ILiteral>(r.getBody().size());
 		for (final ILiteral l: r.getBody()) {
-			final List<ITerm> litTerms = new ArrayList<ITerm>(l.getPredicate().getArity());
-			for (final ITerm t : l.getTuple()) {
+			final List<ITerm> litTerms = new ArrayList<ITerm>(l.getAtom().getPredicate().getArity());
+			for (final ITerm t : l.getAtom().getTuple()) {
 				if(! t.isGround()){
 					final List<ILiteral> eqLiterals = headVarsMap.get(t);
 					if (eqLiterals != null) { // if this var was substituted in the head
-						litTerms.add(eqLiterals.get(0).getTuple().get(1));
+						litTerms.add(eqLiterals.get(0).getAtom().getTuple().get(1));
 					} else {
 						litTerms.add(t);
 					}
@@ -177,7 +177,7 @@ public class MiscOps {
 			if (l.getAtom().isBuiltin()) {
 				a = dublicateAtom(l.getAtom(), litTerms);
 			} else {
-				a = BASIC.createAtom(l.getPredicate(), BASIC.createTuple(litTerms));
+				a = BASIC.createAtom(l.getAtom().getPredicate(), BASIC.createTuple(litTerms));
 			}
 			bodyLiterals.add(BASIC.createLiteral(l.isPositive(), a));
 		}
@@ -190,7 +190,7 @@ public class MiscOps {
 				// variable in the head -> reap out the origial var
 				ITerm last = null;
 				for (final ILiteral l : equals) {
-					final ITerm actual = l.getTuple().get(1);
+					final ITerm actual = l.getAtom().getTuple().get(1);
 					if (last != null) {
 						bodyLiterals.add(BASIC.createLiteral(true, BUILTIN.createEqual(last, actual)));
 					}
@@ -200,7 +200,7 @@ public class MiscOps {
 		}
 		return BASIC.createRule(java.util.Arrays.asList(
 					new ILiteral[]{
-						BASIC.createLiteral(hl.isPositive(), hl.getPredicate(), 
+						BASIC.createLiteral(hl.isPositive(), hl.getAtom().getPredicate(), 
 							BASIC.createTuple(headTerms))}), 
 				bodyLiterals);
 	}

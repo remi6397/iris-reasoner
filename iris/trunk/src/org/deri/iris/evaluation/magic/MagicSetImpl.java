@@ -117,7 +117,7 @@ public final class MagicSetImpl {
 			}
 
 			for (ILiteral l : r.getBody()) {
-				if (l.getPredicate() instanceof AdornedPredicate) {
+				if (l.getAtom().getPredicate() instanceof AdornedPredicate) {
 					// creating a magic rule for the literal
 					magicRules.addAll(generateRules(l, r));
 				}
@@ -149,7 +149,7 @@ public final class MagicSetImpl {
 			res.add(BASIC.createRule(Arrays.asList(
 							new ILiteral[]{
 								BASIC.createLiteral(query.get(i).isPositive(), 
-									createMagicAtom(query.get(i)))}), 
+									createMagicAtom(query.get(i).getAtom()))}), 
 						slice(query, 0, i)));
 		}
 		return res;
@@ -268,7 +268,7 @@ public final class MagicSetImpl {
 			throw new NullPointerException(
 					"The rule and the literal must not be null");
 		}
-		if (!(l.getPredicate() instanceof AdornedPredicate)) {
+		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			throw new IllegalArgumentException(
 					"The predicate of the literal must be adorned");
 		}
@@ -330,7 +330,7 @@ public final class MagicSetImpl {
 			throw new NullPointerException(
 					"The rule and the literal must not be null");
 		}
-		if (!(l.getPredicate() instanceof AdornedPredicate)) {
+		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			throw new IllegalArgumentException(
 					"The predicate of the literal must be adorned");
 		}
@@ -353,7 +353,7 @@ public final class MagicSetImpl {
 		// skip the exchange of the literals, because there isn't anything to exchage, and 
 		// remove the first literal of the body (which is the headliteral)
 		final ILiteral headLiteral = rule.getHead().get(0);
-		if ((headLiteral.getPredicate() instanceof AdornedPredicate)) {
+		if ((headLiteral.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			for (int i = 0, max = body.size(); i < max; i++) {
 				if (body.get(i).equals(headLiteral)) {
 					body.set(i, createMagicLiteral(body .get(i)));
@@ -405,7 +405,7 @@ public final class MagicSetImpl {
 		final ILiteral targetLiteral = (ILiteral) e.getTarget();
 		final ILiteral sourceLiteral = (ILiteral) e.getSource();
 
-		if (!(targetLiteral.getPredicate() instanceof AdornedPredicate)) {
+		if (!(targetLiteral.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			throw new IllegalArgumentException(
 					"The predicate of the literal must be adorned");
 		}
@@ -511,7 +511,7 @@ public final class MagicSetImpl {
 			throw new NullPointerException("The literal must not be null");
 		}
 		// if the literal isn't adorned then there isn't anything to do.
-		if (!(l.getPredicate() instanceof AdornedPredicate)) {
+		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			return l;
 		}
 		return BASIC.createLiteral(positive, createMagicAtom(l.getAtom()));
@@ -563,7 +563,7 @@ public final class MagicSetImpl {
 		if (l == null) {
 			throw new NullPointerException("The literal must not be null");
 		}
-		if (!(l.getPredicate() instanceof AdornedPredicate)) {
+		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			throw new IllegalArgumentException(
 					"The predicate of the literal must be adorned");
 		}
@@ -572,8 +572,8 @@ public final class MagicSetImpl {
 					"The index must not be smaller than 0");
 		}
 
-		final AdornedPredicate p = (AdornedPredicate) l.getPredicate();
-		final ITuple boundTuple = BASIC.createTuple(getBounds(p, l));
+		final AdornedPredicate p = (AdornedPredicate) l.getAtom().getPredicate();
+		final ITuple boundTuple = BASIC.createTuple(getBounds(p, l.getAtom()));
 		final AdornedPredicate labeledPredicatre = new AdornedPredicate(
 				MAGIC_LABEL_PREFIX + p.getPredicateSymbol() + "_" + index,
 				Collections.frequency(Arrays.asList(p.getAdornment()),
@@ -602,10 +602,10 @@ public final class MagicSetImpl {
 		if (l == null) {
 			throw new NullPointerException("The literal must not be null");
 		}
-		if (!(l.getPredicate() instanceof AdornedPredicate)) {
+		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			return EMPTY_TERM_LIST;
 		}
-		return getBounds((AdornedPredicate) l.getPredicate(), l);
+		return getBounds((AdornedPredicate) l.getAtom().getPredicate(), l.getAtom());
 	}
 
 	/**
@@ -832,13 +832,13 @@ public final class MagicSetImpl {
 		final Iterator<ILiteral> b1 = r1.getBody().iterator();
 		while (b0.hasNext() && b1.hasNext()) {
 			ILiteral l0 = b0.next();
-			while (l0.getPredicate().getPredicateSymbol().startsWith(
+			while (l0.getAtom().getPredicate().getPredicateSymbol().startsWith(
 					MAGIC_PREDICATE_PREFIX)
 					&& b0.hasNext()) {
 				l0 = b0.next();
 			}
 			ILiteral l1 = b1.next();
-			while (l1.getPredicate().getPredicateSymbol().startsWith(
+			while (l1.getAtom().getPredicate().getPredicateSymbol().startsWith(
 					MAGIC_PREDICATE_PREFIX)
 					&& b1.hasNext()) {
 				l1 = b1.next();
@@ -869,11 +869,11 @@ public final class MagicSetImpl {
 		if ((l0 == null) || (l1 == null)) {
 			throw new NullPointerException("The literals must not be null");
 		}
-		if (!isSamePredicate(l0.getPredicate(), l1.getPredicate())) {
+		if (!isSamePredicate(l0.getAtom().getPredicate(), l1.getAtom().getPredicate())) {
 			return false;
 		}
 		// compare the terms
-		return l0.getTuple().equals(l1.getTuple());
+		return l0.getAtom().getTuple().equals(l1.getAtom().getTuple());
 	}
 
 	/**

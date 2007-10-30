@@ -263,7 +263,7 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
 		
 		// Result: q(6,4,10)
-		IMixedDatatypeRelation res = RELATION.getMixedRelation(q.getLiterals().get(0).getPredicate().getArity());
+		IMixedDatatypeRelation res = RELATION.getMixedRelation(q.getLiterals().get(0).getAtom().getPredicate().getArity());
 		res.add(BASIC.createTuple(CONCRETE.createInteger(6),CONCRETE.createInteger(4),CONCRETE.createInteger(10)));
 		
 		System.out.println("******** TEST 3: ********");

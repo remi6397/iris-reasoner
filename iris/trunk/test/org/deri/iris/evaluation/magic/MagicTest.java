@@ -61,11 +61,11 @@ import org.deri.iris.MiscHelper;
  * Tests the magic sets.
  * </p>
  * <p>
- * $Id: MagicTest.java,v 1.8 2007-10-30 08:28:32 poettler_ric Exp $
+ * $Id: MagicTest.java,v 1.9 2007-10-30 10:35:51 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class MagicTest extends TestCase {
 
@@ -255,10 +255,10 @@ public class MagicTest extends TestCase {
 			throw new NullPointerException(
 					"The the adornents must not be or contain null");
 		}
-		final IPredicate lp = l.getPredicate();
+		final IPredicate lp = l.getAtom().getPredicate();
 		final AdornedPredicate p = new AdornedPredicate(
 				lp.getPredicateSymbol(), lp.getArity(), a);
-		return BASIC.createLiteral(l.isPositive(), p, l.getTuple());
+		return BASIC.createLiteral(l.isPositive(), p, l.getAtom().getTuple());
 	}
 
 	/**
@@ -361,7 +361,7 @@ public class MagicTest extends TestCase {
 			int i = 0;
 			// adorning the sg's with bf
 			for (final ILiteral l : body) {
-				if (l.getPredicate().getPredicateSymbol().equals("sg")) {
+				if (l.getAtom().getPredicate().getPredicateSymbol().equals("sg")) {
 					body.set(i, adornLiteral(l, new Adornment[] {
 							Adornment.BOUND, Adornment.FREE }));
 				}
@@ -406,7 +406,7 @@ public class MagicTest extends TestCase {
 			int i = 0;
 			// adorning the sg's with bf
 			for (final ILiteral l : body) {
-				if (l.getPredicate().getPredicateSymbol().equals("a")) {
+				if (l.getAtom().getPredicate().getPredicateSymbol().equals("a")) {
 					body
 							.set(i, adornLiteral(l, new Adornment[] {
 									Adornment.BOUND, Adornment.BOUND,
