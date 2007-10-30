@@ -41,9 +41,9 @@ import org.deri.iris.compiler.Parser;
  * Test the possibility of custom made builtins.
  * </p>
  * <p>
- * $Id: FahrenheitBuiltinTest.java,v 1.5 2007-10-14 14:49:04 bazbishop237 Exp $
+ * $Id: FahrenheitBuiltinTest.java,v 1.6 2007-10-30 08:28:31 poettler_ric Exp $
  * </p>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @author Richard Pöttler, richard dot poettler at deri dot org
  */
 public class FahrenheitBuiltinTest extends TestCase {
@@ -73,7 +73,7 @@ public class FahrenheitBuiltinTest extends TestCase {
 	public void testParsing() throws Exception {
 		p.getBuiltinRegister().registerBuiltin(FahrenheitToCelsiusBuiltin.class);
 		Parser.parse("fahrenheit(?X) :- ftoc(?X, 10).", p);
-		final ILiteral b = p.getRules().iterator().next().getBody().getLiteral(0);
+		final ILiteral b = p.getRules().iterator().next().getBody().get(0);
 		assertTrue("The atom must be a IBuiltInAtom", b.getAtom() instanceof IBuiltInAtom);
 	}
 }

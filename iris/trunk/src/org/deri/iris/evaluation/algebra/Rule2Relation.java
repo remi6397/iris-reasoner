@@ -55,6 +55,7 @@ import org.deri.iris.basics.seminaive.ConstLiteral;
 import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.relations.JoinCondition;
+import org.deri.iris.VariableExtractor;
 
 /**
  * <p>
@@ -108,13 +109,13 @@ public class Rule2Relation {
 		for (IRule rule : rls) {
 			/* Rectify rules */
 			r = MiscOps.rectify(rule);
-			p = r.getHead().getLiteral(0).getPredicate();
+			p = r.getHead().get(0).getPredicate();
 			
 			// TODO: If you don't need - remove it!
 			//m = new HashMap<ILiteral, List<IVariable>>();
 			//oVars = new HashSet<IVariable>();
 			
-			IComponent body = translateBody(r.getBody().getLiterals());
+			IComponent body = translateBody(r.getBody());
 			results.put(p, body);
 			/**
 			 * <p>
@@ -172,11 +173,11 @@ public class Rule2Relation {
 				pr.addVariables(filterProjectionVariables(pInds, c.getVariables()));
 				results.put(p, pr);
 			}*/
-			int[] pInds = getProjectionIndexes(r.getHead().getVariables(), c.getVariables());
+			int[] pInds = getProjectionIndexes(VariableExtractor.getLiteralVariablesList(r.getHead()), c.getVariables());
 			// TODO: don't use pInds! remove them from the constructor
 			pr = ALGEBRA.createProjectionDescriptor(pInds);
 			pr.addChild(c);
-			pr.addVariables(r.getHead().getVariables());
+			pr.addVariables(VariableExtractor.getLiteralVariablesList(r.getHead()));
 			results.put(p, pr);
 			
 			/**
@@ -226,7 +227,7 @@ public class Rule2Relation {
 		
 		for(IQuery q : queries){
 			results.put(
-					q.getLiteral(0).getPredicate(), 
+					q.getLiterals().get(0).getPredicate(), 
 					translateBody(q.getLiterals()));
 		}
 		return results;

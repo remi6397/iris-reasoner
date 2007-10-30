@@ -45,8 +45,6 @@ import junit.framework.TestSuite;
 import org.deri.iris.Executor;
 import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -79,12 +77,12 @@ public class LessBuiltinEvaluationTest extends TestCase {
 		// constructing the rules
 		Set<IRule> rules = new HashSet<IRule>(3);
 		// p(X) :- r(X)
-		IRule r = Factory.BASIC.createRule(Factory.BASIC.createHead(createLiteral(
-				"p", "X")), Factory.BASIC.createBody(createLiteral("r", "X")));
+		IRule r = Factory.BASIC.createRule(Arrays.asList(createLiteral(
+				"p", "X")), Arrays.asList(createLiteral("r", "X")));
 		rules.add(r);
 		// p(X) :- s(X), less(?X, ?Y), r(?Y).
-		IHead h = Factory.BASIC.createHead(createLiteral("p", "X"));
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> h = Arrays.asList(createLiteral("p", "X"));
+		List<ILiteral> b = Arrays.asList(
 				createLiteral("s", "X"),
 				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
 				createLess(
@@ -131,12 +129,12 @@ public class LessBuiltinEvaluationTest extends TestCase {
 		// constructing the rules
 		Set<IRule> rules = new HashSet<IRule>(3);
 		// p(X) :- r(X)
-		IRule r = Factory.BASIC.createRule(Factory.BASIC.createHead(createLiteral(
-				"p", "X")), Factory.BASIC.createBody(createLiteral("r", "X")));
+		IRule r = Factory.BASIC.createRule(Arrays.asList(createLiteral(
+				"p", "X")), Arrays.asList(createLiteral("r", "X")));
 		rules.add(r);
 		// p(X) :- s(X), less(4, 3), r(?Y).
-		IHead h = Factory.BASIC.createHead(createLiteral("p", "X"));
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> h = Arrays.asList(createLiteral("p", "X"));
+		List<ILiteral> b = Arrays.asList(
 				createLiteral("s", "X"),
 				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
 				createLess(
@@ -181,8 +179,8 @@ public class LessBuiltinEvaluationTest extends TestCase {
 		// constructing the rules
 		Set<IRule> rules = new HashSet<IRule>(3);
 		// p(?X,?Y) :- s(?X,?Y), less(?Y,?X).
-		IHead h = Factory.BASIC.createHead(createLiteral("p", "X", "Y"));
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> h = Arrays.asList(createLiteral("p", "X", "Y"));
+		List<ILiteral> b = Arrays.asList(
 				createLiteral("s", "X", "Y"),
 				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
 				createLess(
@@ -220,8 +218,8 @@ public class LessBuiltinEvaluationTest extends TestCase {
 		// constructing the rules
 		Set<IRule> rules = new HashSet<IRule>(3);
 		// p(?X,?Y) :- s(?X,?Y), less(?X,?Y).
-		IHead h = Factory.BASIC.createHead(createLiteral("p", "X", "Y"));
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> h = Arrays.asList(createLiteral("p", "X", "Y"));
+		List<ILiteral> b = Arrays.asList(
 				createLiteral("s", "X", "Y"),
 				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
 				createLess(

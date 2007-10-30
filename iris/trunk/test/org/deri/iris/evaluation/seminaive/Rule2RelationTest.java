@@ -30,6 +30,7 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.TERM;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,8 +45,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.MiscHelper;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
@@ -61,13 +60,12 @@ import org.deri.iris.operations.relations.JoinCondition;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic, DERI Innsbruck
- * @date $Date: 2007-10-18 13:31:11 $
- * @version $Id: Rule2RelationTest.java,v 1.10 2007-10-18 13:31:11 poettler_ric Exp $
+ * @date $Date: 2007-10-30 08:28:32 $
+ * @version $Id: Rule2RelationTest.java,v 1.11 2007-10-30 08:28:32 poettler_ric Exp $
  */
 public class Rule2RelationTest extends TestCase {
 
 	Rule2Relation r2r;
-	List<ILiteral> literals;
 	Set<IRule> rules;
 	
 	public static Test suite() {
@@ -79,7 +77,6 @@ public class Rule2RelationTest extends TestCase {
 	 */
 	public void setUp() {
 		r2r = new Rule2Relation();
-		literals = new ArrayList<ILiteral>();
 		rules = new HashSet<IRule>();		
 	}
 
@@ -100,16 +97,13 @@ public class Rule2RelationTest extends TestCase {
 	 */
 	public void testRule2Relation() {
 		// input
-		literals.add(MiscHelper.createLiteral("s", "X", "Y"));
-		IHead head = BASIC.createHead(literals);
+		final List<ILiteral> head = new ArrayList<ILiteral>();
+		head.add(MiscHelper.createLiteral("s", "X", "Y"));
 
-		literals.clear();
-		
-		literals.add(MiscHelper.createLiteral("p", "X", "Z"));
-		literals.add(MiscHelper.createLiteral("r", "Y", "Z"));
+		final List<ILiteral> body = new ArrayList<ILiteral>();
+		body.add(MiscHelper.createLiteral("p", "X", "Z"));
+		body.add(MiscHelper.createLiteral("r", "Y", "Z"));
 
-		IBody body = BASIC.createBody(literals);
-		
 		rules.add(BASIC.createRule(head, body));
 
 		// result
@@ -154,18 +148,15 @@ public class Rule2RelationTest extends TestCase {
 	 */
 	public void testRule2Relation_1a() {
 		// input
-		literals.add(MiscHelper.createLiteral("p", "X", "Y"));
-		IHead head = BASIC.createHead(literals);
-
-		literals.clear();
+		final List<ILiteral> head = new ArrayList<ILiteral>();
+		head.add(MiscHelper.createLiteral("p", "X", "Y"));
 		
-		literals.add(MiscHelper.createLiteral("r", "Z", "Y"));
+		final List<ILiteral> body = new ArrayList<ILiteral>();
+		body.add(MiscHelper.createLiteral("r", "Z", "Y"));
 
 		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
-		literals.add(literal);
+		body.add(literal);
 
-		IBody body = BASIC.createBody(literals);
-		
 		rules.add(BASIC.createRule(head, body));
 
 		// result
@@ -210,7 +201,7 @@ public class Rule2RelationTest extends TestCase {
 		literal.getTuple().setTerm(0, TERM.createVariable("X"));
 		literal.getTuple().setTerm(1, TERM.createVariable("Y"));
 		literals.add(literal);
-		IHead head = BASIC.createHead(literals);
+		List<ILiteral> head = Arrays.asList(literals);
 
 		literals.clear();
 		
@@ -222,7 +213,7 @@ public class Rule2RelationTest extends TestCase {
 		literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
 		literals.add(literal);
 
-		IBody body = BASIC.createBody(literals);
+		List<ILiteral> body = Arrays.asList(literals);
 		
 		rules.add(BASIC.createRule(head, body));
 

@@ -30,6 +30,7 @@ import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,8 +43,6 @@ import junit.framework.TestSuite;
 
 import org.deri.iris.MiscHelper;
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
@@ -57,18 +56,17 @@ import org.deri.iris.factory.Factory;
  * Tests for the datalog parser.
  * </p>
  * <p>
- * $Id: ParserTest.java,v 1.13 2007-10-18 13:31:13 poettler_ric Exp $
+ * $Id: ParserTest.java,v 1.14 2007-10-30 08:28:33 poettler_ric Exp $
  * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class ParserTest extends TestCase {
 
 	Parser pars;
 	IProgram prog;
 	
-	List<ILiteral> literals;
 	Set<org.deri.iris.api.basics.IRule> rules;
 	
 	public static Test suite() {
@@ -79,9 +77,8 @@ public class ParserTest extends TestCase {
 	 * setup for Parser tests
 	 */
 	public void setUp() {
-    	prog = Factory.PROGRAM.createProgram();
+		prog = Factory.PROGRAM.createProgram();
 
-		literals = new ArrayList<ILiteral>();
 		rules = new HashSet<org.deri.iris.api.basics.IRule>();		
 	}
 
@@ -105,17 +102,13 @@ public class ParserTest extends TestCase {
 		String expr = "s(?X, ?Y) :- p(?X, ?Z), r(?Y, ?Z).";
 		
 		// result
-		literals.add(MiscHelper.createLiteral("s", "X", "Y"));
+		final List<ILiteral> head = new ArrayList<ILiteral>();
+		head.add(MiscHelper.createLiteral("s", "X", "Y"));
 
-		IHead head = BASIC.createHead(literals);
+		final List<ILiteral> body = new ArrayList<ILiteral>();
+		body.add(MiscHelper.createLiteral("p", "X", "Z"));
+		body.add(MiscHelper.createLiteral("r", "Y", "Z"));
 
-		literals.clear();
-		
-		literals.add(MiscHelper.createLiteral("p", "X", "Z"));
-		literals.add(MiscHelper.createLiteral("r", "Y", "Z"));
-
-		IBody body = BASIC.createBody(literals);
-		
 		rules.add(BASIC.createRule(head, body));
 
 		runParser(expr, rules);
@@ -130,18 +123,14 @@ public class ParserTest extends TestCase {
 		String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X='a'.";
 		
 		// result
-		literals.add(MiscHelper.createLiteral("p", "X", "Y"));
+		final List<ILiteral> head = new ArrayList<ILiteral>();
+		head.add(MiscHelper.createLiteral("p", "X", "Y"));
 
-		IHead head = BASIC.createHead(literals);
-
-		literals.clear();
-		
-		literals.add(MiscHelper.createLiteral("r", "Z", "Y"));
-
-		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
-		literals.add(literal);
-
-		IBody body = BASIC.createBody(literals);
+		final List<ILiteral> body = new ArrayList<ILiteral>();
+		body.add(MiscHelper.createLiteral("r", "Z", "Y"));
+		body.add(BASIC.createLiteral(true, 
+					BUILTIN.createEqual(TERM.createVariable("X"), 
+						TERM.createString("a"))));
 		
 		rules.add(BASIC.createRule(head, body));
 				
@@ -157,19 +146,15 @@ public class ParserTest extends TestCase {
 		String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X!='a'.";
 
 		// result
-		literals.add(MiscHelper.createLiteral("p", "X", "Y"));
+		final List<ILiteral> head = new ArrayList<ILiteral>();
+		head.add(MiscHelper.createLiteral("p", "X", "Y"));
 
-		IHead head = BASIC.createHead(literals);
+		final List<ILiteral> body = new ArrayList<ILiteral>();
+		body.add(MiscHelper.createLiteral("r", "Z", "Y"));
+		body.add(BASIC.createLiteral(true, 
+					BUILTIN.createUnequal(TERM.createVariable("X"), 
+						TERM.createString("a"))));
 
-		literals.clear();
-		
-		literals.add(MiscHelper.createLiteral("r", "Z", "Y"));
-
-		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createUnequal(TERM.createVariable("X"), TERM.createString("a")));
-		literals.add(literal);
-
-		IBody body = BASIC.createBody(literals);
-		
 		rules.add(BASIC.createRule(head, body));
 
 		runParser(expr, rules);
@@ -311,7 +296,7 @@ public class ParserTest extends TestCase {
 			"9 = 10, \n" + 
 			"11 != 12.";
 		Parser.parse(toParse, prog);
-		final Collection<ILiteral> body = prog.getRules().iterator().next().getBody().getLiterals();
+		final Collection<ILiteral> body = prog.getRules().iterator().next().getBody();
 		assertTrue("Can't find '1 < 2' in " + body, body.contains(
 					BASIC.createLiteral(true, BUILTIN.createLess(CONCRETE.createInteger(1), CONCRETE.createInteger(2)))));
 		assertTrue("Can't find '3 <= 4' in " + body, body.contains(
@@ -333,7 +318,7 @@ public class ParserTest extends TestCase {
 			"7 * 8 = 9, \n" + 
 			"10 / 11 = 12.";
 		Parser.parse(toParse, prog);
-		final Collection<ILiteral> body = prog.getRules().iterator().next().getBody().getLiterals();
+		final Collection<ILiteral> body = prog.getRules().iterator().next().getBody();
 		assertTrue("Can't find '1 + 2 = 3' in " + body, body.contains(
 					BASIC.createLiteral(true, BUILTIN.createAddBuiltin(
 							CONCRETE.createInteger(1), CONCRETE.createInteger(2), CONCRETE.createInteger(3)))));

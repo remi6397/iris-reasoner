@@ -45,8 +45,6 @@ import junit.framework.TestSuite;
 import org.deri.iris.Executor;
 import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -79,8 +77,8 @@ public class MultiplyBuiltinEvaluationTest extends TestCase {
 		// constructing the rules
 		Set<IRule> rules = new HashSet<IRule>(1);
 		// p(?S,?K) :- p1(?S,?I), less(?I, 10), multiply(?I,?I,?K), p2(?S).
-		IHead h = Factory.BASIC.createHead(createLiteral("p", "S", "K"));
-		IBody b = Factory.BASIC.createBody(
+		List<ILiteral> h = Arrays.asList(createLiteral("p", "S", "K"));
+		List<ILiteral> b = Arrays.asList(
 				createLiteral("p1", "S", "I"),
 				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
 				createLess(

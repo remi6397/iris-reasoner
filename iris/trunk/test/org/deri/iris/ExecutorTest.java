@@ -30,6 +30,7 @@ import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import junit.framework.Test;
@@ -48,11 +49,11 @@ import org.deri.iris.factory.Factory;
  * Tests the Executor.
  * </p>
  * <p>
- * $Id: ExecutorTest.java,v 1.5 2007-09-27 08:56:28 bazbishop237 Exp $
+ * $Id: ExecutorTest.java,v 1.6 2007-10-30 08:28:29 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class ExecutorTest extends TestCase {
 	private IProgram p;
@@ -78,14 +79,14 @@ public class ExecutorTest extends TestCase {
 		p.addFact(createFact("r", "a"));
 		p.addFact(createFact("r", "c"));
 		p.addFact(createFact("p", "d"));
-		p.addRule(BASIC.createRule(BASIC.createHead(createLiteral("q", "X")),
-				BASIC.createBody(createLiteral("s", "X"), BASIC.createLiteral(
+		p.addRule(BASIC.createRule(Arrays.asList(createLiteral("q", "X")),
+				Arrays.asList(createLiteral("s", "X"), BASIC.createLiteral(
 						false, BASIC.createPredicate("p", 1), BASIC
 						.createTuple(TERM.createVariable("X"))))));
-		p.addRule(BASIC.createRule(BASIC.createHead(createLiteral("p", "X")),
-				BASIC.createBody(createLiteral("r", "X"))));
-//		p.addRule(BASIC.createRule(BASIC.createHead(createLiteral("p", "X")),
-//				BASIC.createBody(createLiteral("p", "X"))));
+		p.addRule(BASIC.createRule(Arrays.asList(createLiteral("p", "X")),
+				Arrays.asList(createLiteral("r", "X"))));
+//		p.addRule(BASIC.createRule(Arrays.asList(createLiteral("p", "X")),
+//				Arrays.asList(createLiteral("p", "X"))));
 		p.addQuery(BASIC.createQuery(createLiteral("q", "X")));
 	}
 

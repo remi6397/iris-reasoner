@@ -64,11 +64,11 @@ import org.jgrapht.graph.SimpleDirectedGraph;
  * methods.
  * </p>
  * <p>
- * $Id: SIPImpl.java,v 1.26 2007-10-25 07:18:49 poettler_ric Exp $
+ * $Id: SIPImpl.java,v 1.27 2007-10-30 08:28:29 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.27 $
  */
 public final class SIPImpl implements ISip {
 	/**
@@ -102,17 +102,17 @@ public final class SIPImpl implements ISip {
 		if ((r == null) || (q == null)) {
 			throw new NullPointerException();
 		}
-		if (r.getHead().getLength() != 1) {
+		if (r.getHead().size() != 1) {
 			throw new IllegalArgumentException(
 					"At the moment only rule heads with length 1 are allowed");
 		}
-		if (q.getLength() != 1) {
+		if (q.getLiterals().size() != 1) {
 			throw new IllegalArgumentException(
 					"At the moment only queries with length 1 are allowed");
 		}
 
-		final ILiteral headLiteral = r.getHead().getLiteral(0);
-		final ILiteral queryLiteral = q.getLiteral(0);
+		final ILiteral headLiteral = r.getHead().get(0);
+		final ILiteral queryLiteral = q.getLiterals().get(0);
 		final IPredicate headPredicate = headLiteral.getPredicate();
 		final IPredicate queryPredicate = queryLiteral.getPredicate();
 
@@ -159,7 +159,7 @@ public final class SIPImpl implements ISip {
 		}
 
 		final Set<IVariable> known = new HashSet<IVariable>();
-		for (final ILiteral l : r.getHead().getLiterals()) {
+		for (final ILiteral l : r.getHead()) {
 			if (l.getAtom().getPredicate() instanceof AdornedPredicate) {
 				final Adornment[] ad = ((AdornedPredicate) l.getAtom().getPredicate()).getAdornment();
 				int i = 0;
@@ -199,7 +199,7 @@ public final class SIPImpl implements ISip {
 	private void constructSip(final IRule r, final Set<IVariable> assumedKnown) {
 		assert r != null: "The rule must not be null";
 		assert assumedKnown != null: "The known collection must not be null";
-		assert r.getHead().getLength() == 1: "At the moment we only can " + 
+		assert r.getHead().size() == 1: "At the moment we only can " + 
 			"construct a sip for a rule with length of 1";
 
 		final List<ILiteral> literalsTodo = new ArrayList<ILiteral>();
@@ -258,10 +258,10 @@ public final class SIPImpl implements ISip {
 	 */
 	private Set<ILiteral> jumpFromHead(final IRule r, final Set<IVariable> bound) {
 		assert r != null: "The rule must not be null";
-		assert r.getHead().getLength() == 1: "At the moment sips can only handle rules with a headlength of 1";
+		assert r.getHead().size() == 1: "At the moment sips can only handle rules with a headlength of 1";
 		assert bound != null: "The bound set must not be null";
 
-		final ILiteral l = r.getHead().getLiteral(0);
+		final ILiteral l = r.getHead().get(0);
 		final Map<ILiteral, Set<IVariable>> next = getNextByRule(r, l, bound);
 		for (final ILiteral lit : next.keySet()) {
 			final Set<IVariable> vars = new HashSet<IVariable>(next.get(lit));
@@ -315,7 +315,7 @@ public final class SIPImpl implements ISip {
 			return connected;
 		}
 
-		for (final ILiteral lit : r.getBody().getLiterals()) {
+		for (final ILiteral lit : r.getBody()) {
 			final Set<IVariable> variables = new HashSet<IVariable>(lit
 					.getTuple().getVariables());
 			variables.retainAll(bounds);
@@ -350,7 +350,7 @@ public final class SIPImpl implements ISip {
 		final Map<ILiteral, Set<IVariable>> connected = new HashMap<ILiteral, Set<IVariable>>();
 
 		// determine all possible successors of this literal
-		final Set<ILiteral> possibleSuccessors = new HashSet<ILiteral>(r.getBody().getLiterals());
+		final Set<ILiteral> possibleSuccessors = new HashSet<ILiteral>(r.getBody());
 
 		possibleSuccessors.remove(l);
 
@@ -395,17 +395,17 @@ public final class SIPImpl implements ISip {
 
 		// if the literal is the head literal -> return the first
 		// literal of the body
-		if (l.equals(r.getHead().getLiteral(0))) {
-			return Collections.singletonMap(r.getBody().getLiteral(0), vars);
+		if (l.equals(r.getHead().get(0))) {
+			return Collections.singletonMap(r.getBody().get(0), vars);
 		}
 
 		// get the next literal -> ignore builtins
 		// FIXME: if two equal literals are in the body -> infinite loop
-		int newPos = r.getBody().getLiterals().indexOf(l) + 1;
-		if (newPos >= r.getBody().getLength()) {
+		int newPos = r.getBody().indexOf(l) + 1;
+		if (newPos >= r.getBody().size()) {
 			return EMPTY_LITERAL_VARIABLES_MAP;
 		}
-		return Collections.singletonMap(r.getBody().getLiteral(newPos), vars);
+		return Collections.singletonMap(r.getBody().get(newPos), vars);
 	}
 
 	/**
@@ -589,7 +589,7 @@ public final class SIPImpl implements ISip {
 					"The known set must not be, or contain null");
 		}
 
-		final List<ILiteral> body = new ArrayList<ILiteral>(r.getBody().getLiterals());
+		final List<ILiteral> body = new ArrayList<ILiteral>(r.getBody());
 		final Set<IVariable> bound = new HashSet<IVariable>(known);
 		for (int i = 0, max = body.size(); i < max; i++) {
 			final ILiteral l = body.get(i);
@@ -606,8 +606,7 @@ public final class SIPImpl implements ISip {
 				bound.addAll(l.getTuple().getVariables());
 			}
 		}
-		return Factory.BASIC.createRule(Factory.BASIC.createHead(r
-				.getHead().getLiterals()), Factory.BASIC.createBody(body));
+		return Factory.BASIC.createRule(r.getHead(), body);
 	}
 
 	/**
@@ -681,7 +680,7 @@ public final class SIPImpl implements ISip {
 			if (r == null) {
 				throw new IllegalArgumentException("The rule must not be null");
 			}
-			body = r.getBody().getLiterals();
+			body = r.getBody();
 		}
 
 		public int compare(ILiteral o1, ILiteral o2) {
@@ -707,10 +706,10 @@ public final class SIPImpl implements ISip {
 	 * The label of the edge will be <code>new HashSet<IVariable>()</code>.
 	 * </p>
 	 * <p>
-	 * $Id: SIPImpl.java,v 1.26 2007-10-25 07:18:49 poettler_ric Exp $
+	 * $Id: SIPImpl.java,v 1.27 2007-10-30 08:28:29 poettler_ric Exp $
 	 * </p>
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.26 $
+	 * @version $Revision: 1.27 $
 	 * @since 0.3
 	 */
 	private static class SipEdgeFactory implements EdgeFactory<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> {

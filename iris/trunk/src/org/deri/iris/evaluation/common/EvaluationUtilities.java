@@ -42,12 +42,12 @@ import org.deri.iris.api.graph.IPredicateGraph;
  * evaluation methods.
  * </p>
  * <p>
- * $Id: EvaluationUtilities.java,v 1.4 2007-10-14 15:11:58 bazbishop237 Exp $
+ * $Id: EvaluationUtilities.java,v 1.5 2007-10-30 08:28:29 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author uwekel
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class EvaluationUtilities {
 
@@ -142,7 +142,7 @@ public class EvaluationUtilities {
 		if (p == null) {
 			throw new NullPointerException("The predicates must not be null");
 		}
-		for (final ILiteral l : r.getHead().getLiterals()) {
+		for (final ILiteral l : r.getHead()) {
 			if (p.contains(l.getPredicate())) {
 				return true;
 			}

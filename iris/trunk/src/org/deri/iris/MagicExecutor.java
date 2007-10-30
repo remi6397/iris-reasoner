@@ -64,10 +64,10 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
  * the rules of those predicates into the upcomming query computations.
  * </p>
  * <p>
- * $Id: MagicExecutor.java,v 1.8 2007-10-24 15:04:50 bazbishop237 Exp $
+ * $Id: MagicExecutor.java,v 1.9 2007-10-30 08:28:27 poettler_ric Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class MagicExecutor implements IExecutor {
 
@@ -134,7 +134,7 @@ public class MagicExecutor implements IExecutor {
 		final Map<IPredicate, IMixedDatatypeRelation> res = 
 			new HashMap<IPredicate, IMixedDatatypeRelation>();
 		for (final IQuery q : program.getQueries()) {
-			res.put(shortenPredicate(q.getLiteral(0)), computeSubstitution(q));
+			res.put(shortenPredicate(q.getLiterals().get(0)), computeSubstitution(q));
 		}
 		return res;
 	}
@@ -203,7 +203,7 @@ public class MagicExecutor implements IExecutor {
 		final IBottomUpEvaluator eval = new SeminaiveEvaluation(e, p);
 		eval.evaluate();
 		eval.runQuery(q);
-		return eval.getResultSet().getResults().get(q.getLiteral(0).getPredicate());
+		return eval.getResultSet().getResults().get(q.getLiterals().get(0).getPredicate());
 	}
 
 	/**
@@ -218,7 +218,7 @@ public class MagicExecutor implements IExecutor {
 		if (q == null) {
 			throw new IllegalArgumentException("The query must not be null");
 		}
-		for (final ITerm t : q.getLiteral(0).getTuple()) {
+		for (final ITerm t : q.getLiterals().get(0).getTuple()) {
 			if (t.isGround()) {
 				return true;
 			}

@@ -41,8 +41,6 @@ public class AllBasicstest extends TestCase {
 		suite.addTest(TupleTest.suite());
 		suite.addTest(AtomTest.suite());
 		suite.addTest(LiteralTest.suite());
-		suite.addTest(HeadTest.suite());
-		suite.addTest(BodyTest.suite());
 		suite.addTest(RuleTest.suite());
 		suite.addTest(QueryTest.suite());
 		return suite;

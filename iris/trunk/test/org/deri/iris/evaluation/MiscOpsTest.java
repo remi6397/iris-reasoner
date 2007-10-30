@@ -32,6 +32,8 @@ import static org.deri.iris.factory.Factory.TERM;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.util.Arrays;
+
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
@@ -43,11 +45,11 @@ import org.deri.iris.basics.seminaive.ConstLiteral;
  * Tests the methods in the MiscOps class.
  * </p>
  * <p>
- * $Id: MiscOpsTest.java,v 1.10 2007-10-24 15:08:47 bazbishop237 Exp $
+ * $Id: MiscOpsTest.java,v 1.11 2007-10-30 08:28:31 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class MiscOpsTest extends TestCase {
 
@@ -70,11 +72,10 @@ public class MiscOpsTest extends TestCase {
 				"p", 3), BASIC.createTuple(TERM.createString("a"), TERM
 				.createVariable("X"), TERM.createVariable("Y")));
 	 	// p(a, X, Y) :- r(X, Y)
-		final IRule r0 = BASIC.createRule(BASIC.createHead(hl), BASIC
-				.createBody(createLiteral("r", "X", "Y")));
+		final IRule r0 = BASIC.createRule(Arrays.asList(hl), Arrays.asList(createLiteral("r", "X", "Y")));
 	 	// p(?X_0, ?X_1, ?X_2) :- r(?X_1, ?X_2), ?X_0 = a
-		final IRule rec0 = BASIC.createRule(BASIC.createHead(createLiteral("p",
-				"?X_0", "?X_1", "?X_2")), BASIC.createBody(createLiteral("r",
+		final IRule rec0 = BASIC.createRule(Arrays.asList(createLiteral("p",
+				"?X_0", "?X_1", "?X_2")), Arrays.asList(createLiteral("r",
 				"?X_1", "?X_2"), new ConstLiteral(
 						true,TERM.createString("a"),TERM.createVariable("?X_0"))));
 
@@ -85,11 +86,11 @@ public class MiscOpsTest extends TestCase {
 	 	// p(X, Y, X) :- r(Y, X)
 		final IRule r = BASIC
 				.createRule(
-						BASIC.createHead(createLiteral("p", "X", "Y", "X")),
-						BASIC.createBody(createLiteral("r", "Y", "X")));
+						Arrays.asList(createLiteral("p", "X", "Y", "X")),
+						Arrays.asList(createLiteral("r", "Y", "X")));
 	 	// p(?X_0, ?X_1, ?X_2) :- r(?X_1, ?X_0), EQUAL(?X_0, ?X_2)
-		final IRule rec = BASIC.createRule(BASIC.createHead(createLiteral("p",
-				"?X_0", "?X_1", "?X_2")), BASIC.createBody(createLiteral("r",
+		final IRule rec = BASIC.createRule(Arrays.asList(createLiteral("p",
+				"?X_0", "?X_1", "?X_2")), Arrays.asList(createLiteral("r",
 				"?X_1", "?X_0"), BASIC.createLiteral(true, BUILTIN.createEqual(
 				TERM.createVariable("?X_0"), TERM.createVariable("?X_2")))));
 
@@ -99,15 +100,15 @@ public class MiscOpsTest extends TestCase {
 
 	public void testRectifySimple2() {
 		// p(X, Y) :- p(X, Z), p(Z, Y)
-		final IRule in = BASIC.createRule(BASIC.createHead(BASIC.createLiteral(true, p, BASIC.createTuple(X, Y))), 
-				BASIC.createBody(BASIC.createLiteral(true, p, BASIC.createTuple(X, Z)), 
+		final IRule in = BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X, Y))), 
+				Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X, Z)), 
 					BASIC.createLiteral(true, p, BASIC.createTuple(Z, Y))));
-		final IRule inBackup = BASIC.createRule(BASIC.createHead(BASIC.createLiteral(true, p, BASIC.createTuple(X, Y))), 
-				BASIC.createBody(BASIC.createLiteral(true, p, BASIC.createTuple(X, Z)), 
+		final IRule inBackup = BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X, Y))), 
+				Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X, Z)), 
 					BASIC.createLiteral(true, p, BASIC.createTuple(Z, Y))));
 		// p(?X_0, ?X_1) :- p(?X_0, Z), p(Z, ?X_1)
-		final IRule out = BASIC.createRule(BASIC.createHead(BASIC.createLiteral(true, p, BASIC.createTuple(X0, X1))), 
-				BASIC.createBody(BASIC.createLiteral(true, p, BASIC.createTuple(X0, Z)), 
+		final IRule out = BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X0, X1))), 
+				Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X0, Z)), 
 					BASIC.createLiteral(true, p, BASIC.createTuple(Z, X1))));
 
 		assertEquals(out, MiscOps.rectify(in));
@@ -118,16 +119,16 @@ public class MiscOpsTest extends TestCase {
 
 	public void testRectifyExtreme() {
 		// q(X, X, X) :- p(X, X), p(X, X)
-		final IRule in = BASIC.createRule(BASIC.createHead(BASIC.createLiteral(true, BASIC.createPredicate("q", 3), BASIC.createTuple(X, X, X))), 
-				BASIC.createBody(BASIC.createLiteral(true, p, BASIC.createTuple(X, X)), 
+		final IRule in = BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, BASIC.createPredicate("q", 3), BASIC.createTuple(X, X, X))), 
+				Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X, X)), 
 					BASIC.createLiteral(true, p, BASIC.createTuple(X, X))));
-		final IRule backup = BASIC.createRule(BASIC.createHead(BASIC.createLiteral(true, BASIC.createPredicate("q", 3), BASIC.createTuple(X, X, X))), 
-				BASIC.createBody(BASIC.createLiteral(true, p, BASIC.createTuple(X, X)), 
+		final IRule backup = BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, BASIC.createPredicate("q", 3), BASIC.createTuple(X, X, X))), 
+				Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X, X)), 
 					BASIC.createLiteral(true, p, BASIC.createTuple(X, X))));
 		// q(?X_0, ?X_1, ?X_2) :- p(?X_0, ?X_0), p(?X_0, ?X_0), EQUAL(?X_0, ?X_1), EQUAL(?X_1, ?X_2)
 		final IRule out = BASIC.createRule(
-				BASIC.createHead(BASIC.createLiteral(true, BASIC.createPredicate("q", 3), BASIC.createTuple(X0, X1, X2))), 
-				BASIC.createBody(
+				Arrays.asList(BASIC.createLiteral(true, BASIC.createPredicate("q", 3), BASIC.createTuple(X0, X1, X2))), 
+				Arrays.asList(
 					BASIC.createLiteral(true, p, BASIC.createTuple(X0, X0)), 
 					BASIC.createLiteral(true, p, BASIC.createTuple(X0, X0)), 
 					BASIC.createLiteral(true, BUILTIN.createEqual(X0, X1)), 
@@ -140,15 +141,15 @@ public class MiscOpsTest extends TestCase {
 
 	public void testRectifyBuiltin() {
 		// p(X, Y) :- p(X, Z), Z = Y
-		final IRule in = BASIC.createRule(BASIC.createHead(BASIC.createLiteral(true, p, BASIC.createTuple(X, Y))), 
-				BASIC.createBody(BASIC.createLiteral(true, p, BASIC.createTuple(X, Z)), 
+		final IRule in = BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X, Y))), 
+				Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X, Z)), 
 					BASIC.createLiteral(true, BUILTIN.createEqual(Z, Y))));
-		final IRule backup = BASIC.createRule(BASIC.createHead(BASIC.createLiteral(true, p, BASIC.createTuple(X, Y))), 
-				BASIC.createBody(BASIC.createLiteral(true, p, BASIC.createTuple(X, Z)), 
+		final IRule backup = BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X, Y))), 
+				Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X, Z)), 
 					BASIC.createLiteral(true, BUILTIN.createEqual(Z, Y))));
 		// p(?X_0, ?X_1) :- p(?X_0, Z), Z = ?X_1
-		final IRule out = BASIC.createRule(BASIC.createHead(BASIC.createLiteral(true, p, BASIC.createTuple(X0, X1))), 
-				BASIC.createBody(BASIC.createLiteral(true, p, BASIC.createTuple(X0, Z)), 
+		final IRule out = BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X0, X1))), 
+				Arrays.asList(BASIC.createLiteral(true, p, BASIC.createTuple(X0, Z)), 
 					BASIC.createLiteral(true, BUILTIN.createEqual(Z, X1))));
 
 		assertEquals(out, MiscOps.rectify(in));

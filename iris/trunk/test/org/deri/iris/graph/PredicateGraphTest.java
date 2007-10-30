@@ -163,30 +163,30 @@ public class PredicateGraphTest extends TestCase {
 	public void setUp() {
 		// the cyceled predicate graph
 		// a(X) :- e(X)
-		r0.add(BASIC.createRule(BASIC.createHead(pa), BASIC.createBody(pe)));
+		r0.add(BASIC.createRule(Arrays.asList(pa), Arrays.asList(pe)));
 		// b(X) :- a(X), -c(X)
 		r0
-				.add(BASIC.createRule(BASIC.createHead(pb), BASIC.createBody(
+				.add(BASIC.createRule(Arrays.asList(pb), Arrays.asList(
 						pa, nc)));
 		// c(X) :- -a(X)
-		r0.add(BASIC.createRule(BASIC.createHead(pc), BASIC.createBody(na)));
+		r0.add(BASIC.createRule(Arrays.asList(pc), Arrays.asList(na)));
 		// d(X) :- c(X)
-		r0.add(BASIC.createRule(BASIC.createHead(pd), BASIC.createBody(pc)));
+		r0.add(BASIC.createRule(Arrays.asList(pd), Arrays.asList(pc)));
 		// e(X) :- d(X)
-		r0.add(BASIC.createRule(BASIC.createHead(pe), BASIC.createBody(pd)));
+		r0.add(BASIC.createRule(Arrays.asList(pe), Arrays.asList(pd)));
 
 		pg0 = new PredicateGraph();
 		pg0.addRule(r0);
 
 		// the unrecursive predicate graph
 		// a(X) :- b(X), c(X), d(X)
-		r1.add(BASIC.createRule(BASIC.createHead(pa), BASIC.createBody(pb, pc, pd)));
+		r1.add(BASIC.createRule(Arrays.asList(pa), Arrays.asList(pb, pc, pd)));
 		// b(X) :- c(X)
-		r1.add(BASIC.createRule(BASIC.createHead(pb), BASIC.createBody(pc)));
+		r1.add(BASIC.createRule(Arrays.asList(pb), Arrays.asList(pc)));
 		// c(X) :- e(X)
-		r1.add(BASIC.createRule(BASIC.createHead(pc), BASIC.createBody(pe)));
+		r1.add(BASIC.createRule(Arrays.asList(pc), Arrays.asList(pe)));
 		// d(X) :- b(X)
-		r1.add(BASIC.createRule(BASIC.createHead(pd), BASIC.createBody(pb)));
+		r1.add(BASIC.createRule(Arrays.asList(pd), Arrays.asList(pb)));
 
 		pg1 = new PredicateGraph();
 		pg1.addRule(r1);

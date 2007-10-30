@@ -28,8 +28,6 @@ package org.deri.iris.api.factory;
 import java.util.List;
 
 import org.deri.iris.api.basics.IAtom;
-import org.deri.iris.api.basics.IBody;
-import org.deri.iris.api.basics.IHead;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -44,11 +42,11 @@ import org.deri.iris.api.terms.ITerm;
  * such as predicates, atoms, rules, queries etc.
  * </p>
  * <p>
- * $Id: IBasicFactory.java,v 1.17 2007-10-29 16:56:10 bazbishop237 Exp $
+ * $Id: IBasicFactory.java,v 1.18 2007-10-30 08:28:27 poettler_ric Exp $
  * </p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public interface IBasicFactory {
 
@@ -65,12 +63,6 @@ public interface IBasicFactory {
 	 * @since 0.3
 	 */
 	public IAtom createAtom(final IAtom a);
-
-	public IBody createBody(ILiteral... literals);
-	public IBody createBody(List<ILiteral> literals);
-
-	public IHead createHead(ILiteral... literals);
-	public IHead createHead(List<ILiteral> literals);
 
 	public ILiteral createLiteral(boolean isPositive, IAtom atom);
 	public ILiteral createLiteral(boolean isPositive, IPredicate predicate);
@@ -96,8 +88,12 @@ public interface IBasicFactory {
 	public IQuery createQuery(ILiteral... literals);
 	public IQuery createQuery(List<ILiteral> literals);
 
-	public IRule createRule(IHead head, IBody body);
-	public IRule copyRule(IHead head, IBody body);
+	/**
+	 * Creates a rule out of a list of head and a list of body literals.
+	 * @param head the head literals
+	 * @param body the body literals
+	 */
+	public IRule createRule(List<ILiteral> head, List<ILiteral> body);
 	
 	public ITuple createTuple(ITerm... terms);
 	public ITuple createTuple(List<ITerm> terms);
