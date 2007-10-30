@@ -33,7 +33,6 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.terms.ITerm;
 
 /**
@@ -42,11 +41,11 @@ import org.deri.iris.api.terms.ITerm;
  * such as predicates, atoms, rules, queries etc.
  * </p>
  * <p>
- * $Id: IBasicFactory.java,v 1.18 2007-10-30 08:28:27 poettler_ric Exp $
+ * $Id: IBasicFactory.java,v 1.19 2007-10-30 09:15:07 bazbishop237 Exp $
  * </p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public interface IBasicFactory {
 
