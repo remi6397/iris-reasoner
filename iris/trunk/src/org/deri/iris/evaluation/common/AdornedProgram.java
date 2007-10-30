@@ -51,11 +51,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.33 2007-10-30 08:28:28 poettler_ric Exp $
+ * $Id: AdornedProgram.java,v 1.34 2007-10-30 10:35:49 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  */
 public class AdornedProgram {
 
@@ -139,7 +139,7 @@ public class AdornedProgram {
 			// of it
 			for (final IRule r : adornedRules) {
 				if ((r.getHead().size() == 1) && 
-						(r.getHead().get(0).getPredicate().equals(AD_TEMP_QUERY_PREDICATE))) {
+						(r.getHead().get(0).getAtom().getPredicate().equals(AD_TEMP_QUERY_PREDICATE))) {
 					adornedRules.remove(r);
 					newQuery = BASIC.createQuery(r.getBody());
 					break;
@@ -154,7 +154,7 @@ public class AdornedProgram {
 					ap.getAdornment().length) {
 				newQuery = BASIC.createQuery(BASIC.createLiteral(
 							ql.isPositive(), 
-							BASIC.createAtom(ap, BASIC.createTuple(ql.getTuple()))));
+							BASIC.createAtom(ap, BASIC.createTuple(ql.getAtom().getTuple()))));
 			}
 
 		}
@@ -193,7 +193,7 @@ public class AdornedProgram {
 
 			for (final IRule r : rules) {
 				final ILiteral lh = r.getHead().get(0);
-				final IPredicate ph = lh.getPredicate();
+				final IPredicate ph = lh.getAtom().getPredicate();
 
 				// if the headliteral and the adorned predicate have the
 				// same signature
@@ -306,7 +306,7 @@ public class AdornedProgram {
 		assert r != null: "The rule must not be null";
 
 		AdornedPredicate ap = null;
-		if (deriveredPredicates.contains(l.getPredicate())) {
+		if (deriveredPredicates.contains(l.getAtom().getPredicate())) {
 			ap = new AdornedPredicate(l, r.getSIP().getBoundVariables(l));
 		}
 		return ap;
@@ -325,7 +325,7 @@ public class AdornedProgram {
 		final Set<IPredicate> derived = new HashSet<IPredicate>();
 		for (final IRule r : rules) {
 			for (final ILiteral l : r.getHead()) {
-				derived.add(l.getPredicate());
+				derived.add(l.getAtom().getPredicate());
 			}
 		}
 		return derived;
@@ -357,7 +357,7 @@ public class AdornedProgram {
 			throw new NullPointerException(
 					"The predicate and literal must not be null");
 		}
-		if (hl.getPredicate().getArity() != ap.getArity()) {
+		if (hl.getAtom().getPredicate().getArity() != ap.getArity()) {
 			throw new IllegalArgumentException("The arity of the predicate of "
 					+ "the literal and the adorned predicate be equal");
 		}
@@ -369,7 +369,7 @@ public class AdornedProgram {
 				terms[iCounter] = EMPTY_CONSTANT_TERM;
 				break;
 			case FREE:
-				terms[iCounter] = hl.getTuple().get(iCounter);
+				terms[iCounter] = hl.getAtom().getTuple().get(iCounter);
 				break;
 			default:
 				throw new IllegalArgumentException(
@@ -464,7 +464,7 @@ public class AdornedProgram {
 			if (l == null) {
 				throw new NullPointerException("The literal must not be null");
 			}
-			p = l.getPredicate();
+			p = l.getAtom().getPredicate();
 
 			if ((p == null) || (bounds == null)) {
 				throw new NullPointerException(
@@ -475,7 +475,7 @@ public class AdornedProgram {
 			adornment = new Adornment[p.getArity()];
 
 			// computing the adornment
-			for (final ITerm t : l.getTuple()) {
+			for (final ITerm t : l.getAtom().getTuple()) {
 				if (isBound(t, bounds)) {
 					adornment[iCoutner] = Adornment.BOUND;
 				} else {
@@ -637,7 +637,7 @@ public class AdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.33 $
+	 * @version $Revision: 1.34 $
 	 */
 	public static class AdornedRule implements IRule {
 		/** The inner rule represented by this object */
@@ -683,7 +683,7 @@ public class AdornedProgram {
 				throw new NullPointerException(
 						"The literal and the predcate must not be null");
 			}
-			if (l.getPredicate().getArity() != p.getArity()) {
+			if (l.getAtom().getPredicate().getArity() != p.getArity()) {
 				throw new IllegalArgumentException(
 						"The arities of the predicate of the literal "
 								+ "and the new predicate doesn't match.");
@@ -697,7 +697,7 @@ public class AdornedProgram {
 						+ ") couldn't be found in head (" + head + ")");
 			}
 
-			head.set(index, BASIC .createLiteral(l.isPositive(), p, l.getTuple()));
+			head.set(index, BASIC .createLiteral(l.isPositive(), p, l.getAtom().getTuple()));
 			return new AdornedRule(BASIC.createRule(head, rule.getBody()), sip);
 		}
 
@@ -706,7 +706,7 @@ public class AdornedProgram {
 				throw new NullPointerException(
 						"The literal and the predcate must not be null");
 			}
-			if (l.getPredicate().getArity() != p.getArity()) {
+			if (l.getAtom().getPredicate().getArity() != p.getArity()) {
 				throw new IllegalArgumentException(
 						"The arities of the predicate of the literal "
 								+ "and the new predicate doesn't match.");
@@ -720,7 +720,7 @@ public class AdornedProgram {
 						+ ") couldn't be found in body (" + body + ")");
 			}
 
-			body.set(index, BASIC .createLiteral(l.isPositive(), p, l.getTuple()));
+			body.set(index, BASIC .createLiteral(l.isPositive(), p, l.getAtom().getTuple()));
 			return new AdornedRule(BASIC.createRule(rule.getHead(), body), sip);
 		}
 

@@ -109,7 +109,7 @@ public class Rule2Relation {
 		for (IRule rule : rls) {
 			/* Rectify rules */
 			r = MiscOps.rectify(rule);
-			p = r.getHead().get(0).getPredicate();
+			p = r.getHead().get(0).getAtom().getPredicate();
 			
 			// TODO: If you don't need - remove it!
 			//m = new HashMap<ILiteral, List<IVariable>>();
@@ -227,7 +227,7 @@ public class Rule2Relation {
 		
 		for(IQuery q : queries){
 			results.put(
-					q.getLiterals().get(0).getPredicate(), 
+					q.getLiterals().get(0).getAtom().getPredicate(), 
 					translateBody(q.getLiterals()));
 		}
 		return results;
@@ -318,17 +318,18 @@ public class Rule2Relation {
 	}
 
 	private IComponent translateOrdinaryLiteral(final ILiteral l) {
-		if(l.getAtom() instanceof ConstLiteral) 
-			return translateConstLiteral((ConstLiteral)l.getAtom());
+		if(l instanceof ConstLiteral) {
+			return translateConstLiteral((ConstLiteral) l);
+		}
 		
 		ITuple pattern = null;
-		int[] indexes = new int[l.getPredicate().getArity()];
-		int[] projectInds = org.deri.iris.operations.relations.
-				MiscOps.getInitProjectionIndexes(l.getPredicate().getArity());
-		List<ITerm> ts = new ArrayList<ITerm>(l.getPredicate().getArity());
+		final IPredicate pred = l.getAtom().getPredicate();
+		final int arity = pred.getArity();
+		int[] indexes = new int[arity];
+		int[] projectInds = org.deri.iris.operations.relations.MiscOps.getInitProjectionIndexes(arity);
+		List<ITerm> ts = new ArrayList<ITerm>(arity);
 		List<ITerm> terms = l.getAtom().getTuple();
-		List<IVariable> vars = new ArrayList<IVariable>(l.getPredicate()
-				.getArity());
+		List<IVariable> vars = new ArrayList<IVariable>(arity);
 		Map<IVariable, Integer> selIndexes = new HashMap<IVariable, Integer>();
 		int i = 0, j = 0, n = 0, m = 0;
 		boolean projectionNeeded = false;
@@ -352,8 +353,7 @@ public class Rule2Relation {
 			n++;
 		}
 		pattern = BASIC.createTuple(ts);
-		IRelationDescriptor le = ALGEBRA.createRelationDescriptor(
-				l.isPositive(), l.getPredicate());
+		IRelationDescriptor le = ALGEBRA.createRelationDescriptor(l.isPositive(), pred);
 
 		le.addVariables(vars);
 		ISelectionDescriptor s = null;

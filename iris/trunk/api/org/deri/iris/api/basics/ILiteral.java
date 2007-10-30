@@ -38,14 +38,13 @@ package org.deri.iris.api.basics;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: ILiteral.java,v 1.5 2007-10-23 07:48:38 poettler_ric Exp $
+ * $Id: ILiteral.java,v 1.6 2007-10-30 10:35:40 poettler_ric Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @date 14.11.2005 17:20:27
  */
-public interface ILiteral extends IAtom
-{
+public interface ILiteral extends Comparable<ILiteral> {
 	/**
 	 * <p>
 	 * Checks whether the literal is a positive atomic formula or a negated

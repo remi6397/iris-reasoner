@@ -80,7 +80,7 @@ public class NaiveExecutor implements IExecutor {
 			throw new IllegalArgumentException("The query must have more than one literal");
 		}
 		this.evaluator.runQuery(q);
-		return this.evaluator.getResultSet().getResults().get(q.getLiterals().get(0).getPredicate());
+		return this.evaluator.getResultSet().getResults().get(q.getLiterals().get(0).getAtom().getPredicate());
 	}
 	
 	public Map<IPredicate, IMixedDatatypeRelation> computeSubstitutions() {

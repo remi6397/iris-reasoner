@@ -130,10 +130,10 @@ public class RuleBase
 				change = false;
 				for (final IRule r : mRules) {
 					for (final ILiteral hl : r.getHead()) {
-						final IPredicate hp = hl.getPredicate();
+						final IPredicate hp = hl.getAtom().getPredicate();
 	
 						for (final ILiteral bl : r.getBody()) {
-							final IPredicate bp = bl.getPredicate();
+							final IPredicate bp = bl.getAtom().getPredicate();
 	
 							if (bl.isPositive()) {
 								int greater = Math.max(getStratum(hp), 
@@ -184,14 +184,14 @@ public class RuleBase
 	public boolean hasConstructedTerms() {
 		for (IRule r : mRules) {
 			for (ILiteral l : r.getBody()) {
-				for (Object t : l.getTuple()) {
+				for (Object t : l.getAtom().getTuple()) {
 					if (t instanceof ConstructedTerm) {
 						return true;
 					}
 				}
 			}
 			for (ILiteral l : r.getHead()) {
-				for (Object t : l.getTuple()) {
+				for (Object t : l.getAtom().getTuple()) {
 					if (t instanceof ConstructedTerm) {
 						return true;
 					}
@@ -281,7 +281,7 @@ public class RuleBase
 		{
 			for( ILiteral literal : rule.getHead())
 			{
-				strat = Math.max(strat, getStratum( literal.getPredicate() ) );
+				strat = Math.max(strat, getStratum( literal.getAtom().getPredicate() ) );
 			}
 		}
 		
@@ -329,7 +329,7 @@ public class RuleBase
 		for( ILiteral lit : rule.getBody())
 		{
 			// If it has any variables at all
-			if ( ! lit.isGround() )
+			if ( ! lit.getAtom().isGround() )
 			{
 				boolean builtin = lit.getAtom().isBuiltin();
 				boolean positive = lit.isPositive();
@@ -369,7 +369,7 @@ public class RuleBase
 	{
 		List<String> variables = new ArrayList<String>();
 		
-		for( ITerm term : literal.getTuple() )
+		for( ITerm term : literal.getAtom().getTuple() )
 		{
 			if( ! term.isGround() )
 				variables.add( term.toString() );
