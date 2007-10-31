@@ -34,7 +34,6 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.factory.IBasicFactory;
 import org.deri.iris.api.terms.ITerm;
 
