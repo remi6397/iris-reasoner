@@ -51,11 +51,11 @@ import org.deri.iris.evaluation.magic.SIPImpl;
  * this class only works with rules with one literal in the head.</b>
  * </p>
  * <p>
- * $Id: AdornedProgram.java,v 1.34 2007-10-30 10:35:49 poettler_ric Exp $
+ * $Id: AdornedProgram.java,v 1.35 2007-10-31 15:15:50 poettler_ric Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public class AdornedProgram {
 
@@ -150,18 +150,15 @@ public class AdornedProgram {
 
 			final ILiteral ql = query.getLiterals().get(0);
 			final AdornedPredicate ap = new AdornedPredicate(ql);
-			if (Collections.frequency(Arrays.asList(ap.getAdornment()), Adornment.FREE) == 
-					ap.getAdornment().length) {
-				newQuery = BASIC.createQuery(BASIC.createLiteral(
-							ql.isPositive(), 
-							BASIC.createAtom(ap, BASIC.createTuple(ql.getAtom().getTuple()))));
-			}
+			newQuery = BASIC.createQuery(BASIC.createLiteral(
+						ql.isPositive(), 
+						BASIC.createAtom(ap, BASIC.createTuple(ql.getAtom().getTuple()))));
 
 		}
 
 		// TODO: maybe defensive copy should be made.
 		this.rules = new HashSet<IRule>(rules);
-		this.query = (newQuery != null) ? newQuery : query;
+		this.query = newQuery;
 	}
 
 	/**
@@ -637,7 +634,7 @@ public class AdornedProgram {
 	 * </p>
 	 * 
 	 * @author richi
-	 * @version $Revision: 1.34 $
+	 * @version $Revision: 1.35 $
 	 */
 	public static class AdornedRule implements IRule {
 		/** The inner rule represented by this object */

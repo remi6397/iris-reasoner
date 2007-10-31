@@ -103,9 +103,8 @@ public class Facts
 	 * @param predicate The predicate identifying the relation.
 	 * @param relation The relation with all facts for the given predicate.
 	 */
-	public void setAll( IPredicate predicate, IMixedDatatypeRelation relation)
-	{
-		mFacts.put( predicate, relation );
+	public void setAll(final IPredicate predicate, final IMixedDatatypeRelation relation) {
+		mFacts.put(plainPredicateHash(predicate), relation );
 	}
 	
 	// Not used
@@ -173,24 +172,42 @@ public class Facts
 	}
 
 	/**
+	 * Generates a hash of a predicate only based on it's
+	 * symbol and arity.
+	 * This method was written to enable access to
+	 * the same relations for
+	 * ordinary predicates and adorned ones.
+	 * @param p the predicate for which to create the hash
+	 * @return the hash
+	 */
+	private static int plainPredicateHash(final IPredicate p) {
+		assert p != null: "The predicate must not be null";
+
+		int res = 17;
+		res = res * 37 + p.getPredicateSymbol().hashCode();
+		res = res * 37 + p.getArity();
+		return res;
+	}
+
+
+	/**
 	 * Get a relation for the requested predicate.
 	 * If such a relation does not exist then create one.
 	 * @param predicate The predicate identifying the relation.
 	 * @return The relation holding tuple values.
 	 */
-	private IMixedDatatypeRelation getRelation( IPredicate predicate )
-	{
+	private IMixedDatatypeRelation getRelation(final  IPredicate predicate) {
 		assert predicate!= null;
 		
-		IMixedDatatypeRelation result = mFacts.get( predicate );
-		if( result == null )
-		{
-			result = RELATION.getMixedRelation( predicate.getArity() );
-			mFacts.put(predicate, result );
+		IMixedDatatypeRelation result = mFacts.get(plainPredicateHash(predicate));
+		if(result == null) {
+			result = RELATION.getMixedRelation(predicate.getArity());
+			mFacts.put(plainPredicateHash(predicate), result);
 		}
 		return result;
 	}
 	
 	/** The facts of this program. */
-	private final Map<IPredicate, IMixedDatatypeRelation> mFacts = new HashMap<IPredicate, IMixedDatatypeRelation>();
+	private final Map<Integer, IMixedDatatypeRelation> mFacts = new 
+		HashMap<Integer, IMixedDatatypeRelation>();
 }
