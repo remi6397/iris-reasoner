@@ -93,6 +93,6 @@ public class Literal implements ILiteral {
 	}
 	
 	public String toString() {
-		return (positive ? "" : "-") + atom;
+		return (positive ? "" : "!") + atom;
 	}
 }
