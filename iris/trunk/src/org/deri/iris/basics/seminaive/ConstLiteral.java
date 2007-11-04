@@ -26,15 +26,11 @@
 package org.deri.iris.basics.seminaive;
 
 import static org.deri.iris.factory.Factory.BASIC;
-
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.basics.BasicFactory;
-import org.deri.iris.basics.Literal;
 
 /**
  * <p>

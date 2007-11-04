@@ -28,7 +28,6 @@ package org.deri.iris.evaluation;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.TERM;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,32 +36,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.deri.iris.RuleUnsafeException;
-import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.basics.seminaive.ConstLiteral;
-import org.deri.iris.builtins.ArithmeticBuiltin;
-import org.deri.iris.builtins.EqualBuiltin;
 
 /**
  * <p>
  * This class offers some miscellaneous operations.
  * </p>
  * <p>
- * $Id: MiscOps.java,v 1.22 2007-10-30 10:35:48 poettler_ric Exp $
+ * $Id: MiscOps.java,v 1.23 2007-11-04 13:36:34 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author graham
  * @author Darko Anicic, DERI Innsbruck
  * 
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public class MiscOps {
 
