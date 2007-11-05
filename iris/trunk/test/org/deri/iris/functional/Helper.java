@@ -167,15 +167,18 @@ public class Helper
 		Set<IRule> r = new HashSet<IRule>();
 		Set<IQuery> q = new HashSet<IQuery>();
 
-		IProgram p = Factory.PROGRAM.createProgram( f, r, q );
-		Parser.parse( expected, p );
+		IProgram pExpected = Factory.PROGRAM.createProgram( f, r, q );
+		Parser.parse( expected, pExpected );
 
 		if ( PRINT_RESULTS )
 			System.out.println( ExecutionHelper.resultsTostring( actual ) );
 
-		for( IPredicate pr : p.getPredicates() )
+		Map<IPredicate, IMixedDatatypeRelation> expectedFacts = pExpected.getFacts();
+
+		for( Map.Entry<IPredicate, IMixedDatatypeRelation> entry : expectedFacts.entrySet() )
 		{
-			IMixedDatatypeRelation expectedPredicate = p.getFacts( pr );
+			IPredicate pr = entry.getKey();
+			IMixedDatatypeRelation expectedPredicate = entry.getValue();
 			
 			IMixedDatatypeRelation actualPredicate = actual.get( pr );
 			
