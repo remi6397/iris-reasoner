@@ -25,14 +25,11 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
-import java.util.Set;
-
-import org.deri.iris.RuleBase;
+import java.util.Collection;
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.exception.DataModelException;
 
 /**
@@ -80,25 +77,25 @@ public class NaiveEvaluation extends GeneralSeminaiveEvaluation {
 
 		boolean newTupleAdded = false, cont = true;
 		IMixedDatatypeRelation r = null;
-		Set<IPredicate> preds = null;
 		
 		// Evaluate rules
-		for (int i = RuleBase.BOTTOM_STRATUM, maxStrat = mProgram.getMaxStratum(this.idbMap.keySet()); 
-				i <= maxStrat; i++) {
+		for( int stratum = 0; stratum < mProgram.getRuleStrataSize(); ++stratum )
+		{
 
-			preds = mProgram.getPredicatesOfStratum(this.idbMap.keySet(), i);
+			Collection<IRule> rules = mProgram.getRulesOfStratum( stratum );
 			cont = true;
-			while (cont) {
-				if(preds.size() == 0) break;
+			while (cont)
+			{
 				cont = false;
 				// Iterating through all predicates of the stratum
-				for (final IPredicate pr : preds) {
-					
+				for (final IRule rule : rules )
+				{
 					newTupleAdded = false;
 					// EVAL (pi, R1,..., Rk, Q1,..., Qm);
-					r = method.evaluate(this.idbMap.get(pr), mProgram);
-					if (r != null && r.size() > 0) {
-						newTupleAdded = mProgram.addFacts(pr, r);
+					r = method.evaluate(this.idbMap.get(rule), mProgram);
+					if (r != null && r.size() > 0)
+					{
+						newTupleAdded = mProgram.addFacts(rule.getHead().get( 0 ).getAtom().getPredicate(), r);
 						cont = cont || newTupleAdded;
 					}
 				}

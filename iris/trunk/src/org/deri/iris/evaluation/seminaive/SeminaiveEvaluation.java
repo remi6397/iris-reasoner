@@ -25,17 +25,16 @@
  */
 package org.deri.iris.evaluation.seminaive;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.RuleBase;
 
 /**
  * Algorithm 3.4: Semi-Naive Evaluation of Datalog Equations
@@ -59,100 +58,115 @@ public class SeminaiveEvaluation extends GeneralSeminaiveEvaluation {
 	public SeminaiveEvaluation(IExpressionEvaluator e, IProgram program) {
 		super(e, program);
 	}
-
+		
 	/**
-	 * Algorithm from Ullman, Principles of Database and Knowledge-base Systems, page 127
+	 * Algorithm from Ullman, Principles of Database and Knowledge-base Systems,
+	 * page 127, adapted for strata of rules instead of strata of predicates.
 	 */
 	public boolean evaluate()
 	{
 		// Evaluate all the rules one stratum at a time
-		for (int i = RuleBase.BOTTOM_STRATUM, maxStrat = mProgram.getMaxStratum(this.idbMap.keySet()); 
-				i <= maxStrat; i++)
+		for( int stratum = 0; stratum < mProgram.getRuleStrataSize(); ++stratum )
 		{
 			// A map of IDB predicates and their incremental relations
-			Map<IPredicate, IMixedDatatypeRelation> dP = new HashMap<IPredicate, IMixedDatatypeRelation>();
+			//Map<IPredicate, IMixedDatatypeRelation> dP = new HashMap<IPredicate, IMixedDatatypeRelation>();
+			IncrementalRelations dP = new IncrementalRelations();
 			
 			// All head predicates of each rule
-			Set<IPredicate> preds = mProgram.getPredicatesOfStratum(this.idbMap.keySet(), i);
+			Collection<IRule> rules = mProgram.getRulesOfStratum( stratum );
 			
-			/**
-			 * <p>Algorithm:</p>
-			 * <p>
-			 * 		for i := 1 to m 
-			 * 			dPi := EVAL(pi, R1,...,Rk,0,...0); 
-			 * 			Pi := dPi; 
-			 * </p>
-			 */
-			for( final IPredicate pr : preds )
+			for( final IRule rule : rules )
 			{
-				IMixedDatatypeRelation dPi = method.evaluate( idbMap.get( pr ), mProgram );
+				IPredicate predicate = rule.getHead().get( 0 ).getAtom().getPredicate();
+				IMixedDatatypeRelation dPi = method.evaluate( idbMap.get( rule ), mProgram );
 				
-				//dP.put( pr, RELATION.getMixedRelation( dPi.getArity() ) );
+				if( ! dPi.isEmpty() )
+					dP.add( predicate, dPi );
 				
-				/*
-				dP.put( pr, dPi ); // On its own, this line breaks testTransitiveClosure()
-				
-				IMixedDatatypeRelation programFacts = mProgram.getFacts(pr);
-				programFacts.addAll( dPi );
-				dPi.addAll( programFacts );
-				*/
-				
-				mProgram.addFacts( pr, dPi );
+				mProgram.addFacts( predicate, dPi );
 			}
-			/**
-			 * <p>Algorithm:</p>
-			 * <p>
-			 * 	repeat 
-			 * 		for i := 1 to m 
-			 * 			dQi := dPi; 
-			 * 		for i := 1 to m 
-			 * 			dPi := EVAL-INCR(pi, R1,...,Rk, P1,..., Pm, dQ1,...,dQm); 
-			 * 			dPi := dPi - Pi; 
-			 * 		for i := 1 to m 
-			 * 			Pi := Pi U dPi; 
-			 * 	until dPi = 0 for all i;
-			 * </p>
-			 */
-			boolean newTuples = true;
-			while (newTuples)
+
+			boolean newTuples;
+			for(;;)
 			{
 				newTuples = false;
 				
-				for (final IPredicate pr : preds)
+				IncrementalRelations dQ = dP;
+				
+				dP = new IncrementalRelations();
+				
+				for (final IRule rule : rules)
 				{
-					IMixedDatatypeRelation dPi = method.evaluateIncrementally(idbMap.get(pr), mProgram, dP);
+					IPredicate predicate = rule.getHead().get( 0 ).getAtom().getPredicate();
+					
+					IMixedDatatypeRelation dPi = method.evaluateIncrementally(idbMap.get(rule), mProgram, dQ.getRelations() );
 					
 					// Anything to do?
 					if ( dPi.size() > 0 )
 					{
-						IMixedDatatypeRelation programFacts = mProgram.getFacts(pr);
-						if(programFacts != null )
+						IMixedDatatypeRelation programFacts = mProgram.getFacts(predicate);
+						if( programFacts == null )
 						{
-							if ( ! programFacts.containsAll(dPi) )
-							{
+							newTuples = true;
+						}
+						else
+						{
+							if ( programFacts.containsAll(dPi) )
+								dPi.clear();
+							else
 								removeDeducedTuples(dPi, programFacts);
-								dP.put(pr, dPi);
-								newTuples = true;
-							}
 						}
 					}
-					if ( ! newTuples )
-						dP.remove( pr );
-//						dP.get( pr ).clear();
+
+					if( ! dPi.isEmpty() )
+					{
+						newTuples = true;
+					
+						dP.add( predicate, dPi );
+					}
 				}
+				
+				if( ! newTuples )
+					break;
 
 				// Iterate new tuples in dP[i] and add to program
-				Iterator<Map.Entry<IPredicate, IMixedDatatypeRelation>> iterdP = dP.entrySet().iterator();
-				while( iterdP.hasNext() )
+				for( Map.Entry<IPredicate, IMixedDatatypeRelation> e : dP.getRelations().entrySet() )
 				{
-					Map.Entry<IPredicate, IMixedDatatypeRelation> e = iterdP.next();
 					mProgram.addFacts( e.getKey(), e.getValue() );
 				}
 			}
 		}
+
 		return true;
 	}
-	
+
+	/**
+	 * Helper for holding the incremental tuples from each iteration.
+	 */
+	private static class IncrementalRelations
+	{
+		void add( IPredicate predicate, IMixedDatatypeRelation relation )
+		{
+			IMixedDatatypeRelation existing_dPi = mRelations.get( predicate );
+			if( existing_dPi == null )
+				mRelations.put( predicate, relation );
+			else
+				existing_dPi.addAll( relation );
+		}
+		
+		Map<IPredicate, IMixedDatatypeRelation> getRelations()
+		{
+			return mRelations;
+		}
+		
+		void clear()
+		{
+			mRelations.clear();
+		}
+		
+		final Map<IPredicate, IMixedDatatypeRelation> mRelations = new HashMap<IPredicate, IMixedDatatypeRelation>();
+	}
+
 	/**<p>
 	 * Removes tuples from the last iteration that have already been deduced 
 	 * (in the previous iterations)
