@@ -28,10 +28,8 @@ package org.deri.iris.terms.concrete;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.deri.iris.ObjectTests;
 import org.deri.iris.TermTests;
-import org.deri.iris.factory.Factory;
 
 /**
  * <p>
@@ -58,7 +56,6 @@ public class DoubleTest extends TestCase {
 
 	public void testBasic() {
 		DoubleTerm basic = new DoubleTerm(BASIC);
-		DoubleTerm changed = new DoubleTerm(MORE);
 
 		assertEquals("object not initialized correctly", BASIC, basic
 				.getValue());

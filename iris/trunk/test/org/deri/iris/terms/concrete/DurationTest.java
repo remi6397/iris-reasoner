@@ -25,16 +25,11 @@
  */
 package org.deri.iris.terms.concrete;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-
-import org.deri.iris.ObjectTests;
-import org.deri.iris.TermTests;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 public class DurationTest extends TestCase {
 

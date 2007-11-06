@@ -27,17 +27,13 @@ package org.deri.iris.basics;
 
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
-import static org.deri.iris.factory.Factory.TERM;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.deri.iris.ObjectTests;
 import org.deri.iris.MiscHelper;
+import org.deri.iris.ObjectTests;
 import org.deri.iris.api.basics.ILiteral;
 
 /**

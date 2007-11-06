@@ -720,7 +720,7 @@ public class ProgramTest extends TestCase {
     }
 	
 	public static void printResults(IMixedDatatypeRelation r){
-    	Iterator i = r.iterator();
+    	Iterator<ITuple> i = r.iterator();
 		while(i.hasNext()){
 			System.out.println(i.next());
 		}

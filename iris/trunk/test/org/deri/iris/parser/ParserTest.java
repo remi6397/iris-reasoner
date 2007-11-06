@@ -29,18 +29,14 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
-
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.deri.iris.MiscHelper;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.ILiteral;
@@ -56,11 +52,11 @@ import org.deri.iris.factory.Factory;
  * Tests for the datalog parser.
  * </p>
  * <p>
- * $Id: ParserTest.java,v 1.14 2007-10-30 08:28:33 poettler_ric Exp $
+ * $Id: ParserTest.java,v 1.15 2007-11-06 21:04:14 bazbishop237 Exp $
  * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class ParserTest extends TestCase {
 

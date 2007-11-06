@@ -44,8 +44,8 @@ import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * @author Darko Anicic, DERI Innsbruck
- * @date $Date: 2007-06-14 21:54:48 $
- * @version $Id: DifferenceTest.java,v 1.7 2007-06-14 21:54:48 darko_anicic Exp $
+ * @date $Date: 2007-11-06 21:04:13 $
+ * @version $Id: DifferenceTest.java,v 1.8 2007-11-06 21:04:13 bazbishop237 Exp $
  */
 public class DifferenceTest extends TestCase {
 
@@ -223,8 +223,7 @@ public class DifferenceTest extends TestCase {
 	 */
 	public void testDifference_paramsnull() {
 		try {
-			IDifference differenceOperator = RELATION_OPERATION
-					.createDifferenceOperator(null, null);
+			RELATION_OPERATION.createDifferenceOperator(null, null);
 			fail("should have raised an java.lang.IllegalArgumentException");
 		} catch (java.lang.IllegalArgumentException e) {
 		}
@@ -248,8 +247,7 @@ public class DifferenceTest extends TestCase {
 		rel1.add(MiscHelper.createTuple("a", "a", "a", "a"));
 
 		try {
-			IDifference differenceOperator = RELATION_OPERATION
-					.createDifferenceOperator(rel0, rel1);
+			RELATION_OPERATION.createDifferenceOperator(rel0, rel1);
 			fail("should have raised an java.lang.IllegalArgumentException");
 		} catch (java.lang.IllegalArgumentException e) {
 		}
@@ -268,8 +266,7 @@ public class DifferenceTest extends TestCase {
 		rel1.add(MiscHelper.createTuple("a", "a", "a"));
 
 		try {
-			IDifference differenceOperator = RELATION_OPERATION
-					.createDifferenceOperator(rel0, rel1);
+			RELATION_OPERATION.createDifferenceOperator(rel0, rel1);
 			fail("should have raised an java.lang.IllegalArgumentException");
 		} catch (java.lang.IllegalArgumentException e) {
 		}

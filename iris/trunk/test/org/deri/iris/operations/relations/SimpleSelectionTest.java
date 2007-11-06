@@ -26,32 +26,27 @@
 
 package org.deri.iris.operations.relations;
 
-import static org.deri.iris.factory.Factory.BASIC;
-import static org.deri.iris.factory.Factory.CONCRETE;
+import static org.deri.iris.MiscHelper.createTuple;
 import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.TERM;
-import static org.deri.iris.MiscHelper.createTuple;
-
-import java.util.Set;
 import java.util.HashSet;
-
+import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
  * Tests for the SimpelSelection.
  * </p>
  * <p>
- * $Id: SimpleSelectionTest.java,v 1.1 2007-07-18 14:32:17 poettler_ric Exp $
+ * $Id: SimpleSelectionTest.java,v 1.2 2007-11-06 21:04:13 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SimpleSelectionTest extends TestCase {
 
