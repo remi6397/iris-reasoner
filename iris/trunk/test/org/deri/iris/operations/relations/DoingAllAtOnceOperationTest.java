@@ -25,34 +25,29 @@
  */
 package org.deri.iris.operations.relations;
 
+import static org.deri.iris.MiscHelper.createTuple;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.RELATION;
-import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 import static org.deri.iris.factory.Factory.TERM;
-import static org.deri.iris.MiscHelper.createTuple;
-
 import java.util.Collection;
-import java.util.Set;
 import java.util.HashSet;
-
+import java.util.Set;
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
  * Demonstrates use of the SortMergeJoin operator implementation. 
  * </p>
  * <p>
- * $Id: DoingAllAtOnceOperationTest.java,v 1.1 2007-06-20 09:48:03 poettler_ric Exp $
+ * $Id: DoingAllAtOnceOperationTest.java,v 1.2 2007-11-06 21:04:13 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  */
