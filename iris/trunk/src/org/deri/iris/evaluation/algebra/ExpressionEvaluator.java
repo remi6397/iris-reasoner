@@ -28,15 +28,10 @@ package org.deri.iris.evaluation.algebra;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.RELATION_OPERATION;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.evaluation.algebra.IBuiltinDescriptor;
@@ -78,44 +73,81 @@ import org.deri.iris.operations.relations.MiscOps;
  * @author Darko Anicic, DERI Innsbruck
  * @date Dec 18, 2006 
  */
-public class ExpressionEvaluator implements IExpressionEvaluator {
-
+public class ExpressionEvaluator implements IExpressionEvaluator
+{
 	/** A program to be evaluated */
-	private IProgram p = null;
+	private IProgram mProgram = null;
 	
 	/** A map of IDB predicates and their incremental relations */
-	Map<IPredicate, IMixedDatatypeRelation> aq = null;
+	Map<IPredicate, IMixedDatatypeRelation> mDq = null;
 	
-	/** List of IDB predicates for which one incremental relation is already 
-	 *  substituted */
-	private List<IPredicate> duplicateIDB = null;
+	/** Used to count the number of positive ordinary predicates for a single evaluation of a rule. */
+	private int mPositivePredicateCounter;
 	
-	/** Set of IDB predicates for a particular rule that is being evaluated */
-	private Set<IPredicate> ruleIDBpredicates = null;
-	
-	/** First incremental relation that is substituted */
-	private boolean firstIDB = true;
-	
-	public ExpressionEvaluator() {
+	/** The number of loops when evaluating incrementally. */
+	private int mIncrementalCounter;
+
+	/**
+	 * Constructor.
+	 */
+	public ExpressionEvaluator()
+	{
 	}
 
-	public IMixedDatatypeRelation evaluate(IComponent c, IProgram p) {
-		this.p = p;
-		this.ruleIDBpredicates = new HashSet<IPredicate>();
-		this.duplicateIDB = new ArrayList<IPredicate>();
-		return evalRuleIncr(c, p, null);
+	public IMixedDatatypeRelation evaluate(IComponent component, IProgram program) {
+		mProgram = program;
+		mDq = null;
+		
+		return evalRuleIncr( component, mProgram );
 	}
 
-	public IMixedDatatypeRelation evaluateIncrementally(IComponent c, IProgram p,
-			Map<IPredicate, IMixedDatatypeRelation> aq) {
+	public IMixedDatatypeRelation evaluateIncrementally(IComponent component, IProgram program,
+			Map<IPredicate, IMixedDatatypeRelation> dQ)
+	{
+		mProgram = program;
+		mDq = dQ;
 
-		this.p = p;
-		this.aq = aq;
-		this.duplicateIDB = new ArrayList<IPredicate>();
-		this.ruleIDBpredicates = new HashSet<IPredicate>();
-		return evalRuleIncr(c, p, aq);
+		return evalRuleIncr( component, mProgram );
 	}
 
+	private IMixedDatatypeRelation evalRuleIncr(IComponent c, IProgram p )
+	{
+		assert c != null;
+
+		if(mDq != null){
+			List<IMixedDatatypeRelation> rels = new ArrayList<IMixedDatatypeRelation>();
+			
+			// Counts how many times we evaluate the relational expression (with a different
+			// substitution with dQ each time).
+			mIncrementalCounter = 0;
+			do
+			{
+				// This variable is incremented in every relation evaluation
+				mPositivePredicateCounter = 0;
+				rels.add(evaluate(c));
+				// So by here, mPositivePredicateCounter is equal to the number of
+				// positive, ordinary predicates in the rule
+				
+				++mIncrementalCounter;
+			} while( mIncrementalCounter < mPositivePredicateCounter );
+
+			// Return result for the evaluated EDB relation
+			if(rels.size() == 1)
+			{
+				IMixedDatatypeRelation rel = rels.get( 0 );
+				IMixedDatatypeRelation result = RELATION.getMixedRelation(rel.getArity());
+				result.addAll( rel );
+				return result;
+			}
+			// Return result for the evaluated IDB relation
+			IUnion un = Factory.RELATION_OPERATION.createUnionOperator(rels);
+			return un.union();
+		}else{
+			// There are no incremental tuples => use the full relations for the evaluation 
+			return evaluate(c);
+		}
+	}
+	
 	private IMixedDatatypeRelation evaluate(IComponent c) {
 		switch (c.getType()) {
 		case BUILTIN:
@@ -140,54 +172,10 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		}
 	}
 	
-	private IMixedDatatypeRelation evalRuleIncr(IComponent c, IProgram p,
-			Map<IPredicate, IMixedDatatypeRelation> aq) {
-		
-		if (c == null) {
-			throw new IllegalArgumentException(
-				"Please provide a non null component, " +
-				"otherwise the evalRuleIncr cannot be performed!");
-		}
-		if(aq != null){
-			List<IMixedDatatypeRelation> rels = new ArrayList<IMixedDatatypeRelation>(aq.size());
-			this.duplicateIDB.clear();
-			this.firstIDB = true;
-			boolean firstRound = true;
-			while(firstRound || getNextIDB(aq)){
-				rels.add(evaluate(c));
-				firstRound = false;
-			}
-			// Return result for the evaluated EDB relation
-			if(rels.size() == 1) return rels.get(0);
-			// Return result for the evaluated IDB relation
-			IUnion un = Factory.RELATION_OPERATION.createUnionOperator(rels);
-			return un.union();
-		}else{
-			// There are no incremental tuples => use the full relations for the evaluation 
-			return evaluate(c);
-		}
-	}
-	
-	private boolean getNextIDB(Map<IPredicate, IMixedDatatypeRelation> aq){
-		if(aq == null) return false;
-		this.ruleIDBpredicates.removeAll(this.duplicateIDB);
-		Iterator<IPredicate> it = this.ruleIDBpredicates.iterator();
-		while(it.hasNext()){
-			if(aq.containsKey(it.next())){
-				this.firstIDB = true;
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private IMixedDatatypeRelation evaluateDifference(IComponent c) {
+	private IMixedDatatypeRelation evaluateDifference(IComponent c)
+	{
+		assert c.getChildren().size() == 2;
 
-		if (c.getChildren().size() != 2) {
-			throw new IllegalArgumentException(
-					"Please provide the component with two subcomponents (children), " +
-					"otherwise the evaluateDifference cannot be performed!");
-		}
 		IDifferenceDescriptor d = (IDifferenceDescriptor) c;
 		IDifference diff = Factory.RELATION_OPERATION.createDifferenceOperator(
 				evaluate(d.getChildren().get(0)), 
@@ -197,13 +185,10 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	}
 
 	@SuppressWarnings("deprecation")
-	private IMixedDatatypeRelation evaluateJoin(IComponent c, int[] pInds) {
+	private IMixedDatatypeRelation evaluateJoin(IComponent c, int[] pInds)
+	{
+		assert c.getChildren().size() >= 2;
 
-		if (c.getChildren().size() < 2) {
-			throw new IllegalArgumentException(
-					"Please provide the component with at least two subcomponents " +
-					"(children), otherwise the join operation cannot be performed!");
-		}
 		IJoinDescriptor j = (IJoinDescriptor) c;
 		IJoin jo = null;
 		List<IVariable> vars = new ArrayList<IVariable>();
@@ -259,13 +244,10 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		return r0;
 	}
 
-	private IMixedDatatypeRelation evaluateProjection(IComponent c) {
+	private IMixedDatatypeRelation evaluateProjection(IComponent c)
+	{
+		assert c.getChildren().size() == 1;
 
-		if (c.getChildren().size() != 1) {
-			throw new IllegalArgumentException(
-				"Please provide the component with only one subcomponent "
-				+ "(child),otherwise the evaluateProjection cannot be performed!");
-		}
 		IProjectionDescriptor pr = (IProjectionDescriptor) c;
 		IMixedDatatypeRelation rel = evaluate(pr.getChildren().get(0));
 		if (!Arrays.equals(pr.getVariables().toArray(), 
@@ -283,45 +265,74 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 		return rel;
 	}
 
-	private IMixedDatatypeRelation evaluateRelation(IComponent c) {
+	private IMixedDatatypeRelation evaluateRelation(IComponent c)
+	{
+		assert c.getChildren().size() == 0;
 
-		if (c.getChildren().size() != 0) {
-			throw new IllegalArgumentException(
-				"Please provide the component with no subcomponent (no child), " +
-				"otherwise evaluateRelation cannot be performed!");
-		}
 		IRelationDescriptor r = (IRelationDescriptor) c;
+		IPredicate predicate = r.getPredicate();
 		IMixedDatatypeRelation rel = null;
 		
-		if(aq != null && aq.get(r.getPredicate()) != null && aq.get(r.getPredicate()).size()>0 && c.isPositive()) {
-			if(this.firstIDB && (! this.duplicateIDB.contains(r.getPredicate()))){
-				// Return tuples from the last iteration only!
-				rel = aq.get(r.getPredicate());
-				this.duplicateIDB.add(r.getPredicate());
-				this.firstIDB = false;
-			} else {
-				// Return all tuples from the KB!
-				rel = p.getFacts(r.getPredicate());
+		if( mDq == null )
+		{
+			// EVAL
+			rel = mProgram.getFacts( predicate );
+		}
+		else
+		{
+			// EVAL-INCR
+			
+			// Do we have a dQi for this relation?
+			boolean haveIncrementForThisRelation = false;
+
+			if( r.isPositive() )
+			{
+				rel = mDq.get( predicate );
+				if( rel != null && rel.size() > 0 )
+				{
+					haveIncrementForThisRelation = true;
+				}
 			}
-			this.ruleIDBpredicates.add(r.getPredicate());
-		} else {
-			// Return all tuples from the KB!
-			rel = p.getFacts(r.getPredicate());
+			
+			if( haveIncrementForThisRelation && mPositivePredicateCounter == mIncrementalCounter )
+			{
+				// Use dQi
+			}
+			else
+				rel = mProgram.getFacts( predicate );
+
+			if( haveIncrementForThisRelation )
+				++mPositivePredicateCounter;
 		}
-		if (rel == null) {
+		
+		// ##################################################################################
+		// This is a simpler method that doesn't check for dQi being empty for this relation.
+//		if( r.isPositive() && mDq != null && mPositivePredicateCounter == mIncrementalCounter )
+//		{
+//			// Get the tuples from the last increment
+//			rel = mDq.get( predicate );
+//		}
+//		else
+//		{
+//			// Return all tuples from the KB!
+//			rel = mProgram.getFacts( predicate );
+//		}
+//		
+//		if( r.isPositive() )
+//			++mPositivePredicateCounter;
+		
+		// ##################################################################################
+
+		if (rel == null)
 			return RELATION.getMixedRelation(r.getPredicate().getArity());
-		} else {
+		else
 			return rel;
-		}
 	}
 
-	private IMixedDatatypeRelation evaluateSelection(IComponent c) {
+	private IMixedDatatypeRelation evaluateSelection(IComponent c)
+	{
+		assert c.getChildren().size() == 1;
 
-		if (c.getChildren().size() != 1) {
-			throw new IllegalArgumentException(
-				"Please provide the component with one subcomponent (child), " +
-				"otherwise the evaluateSelection cannot be performed!");
-		}
 		ISelectionDescriptor s = (ISelectionDescriptor) c;
 		ISelection sel = Factory.RELATION_OPERATION.createSelectionOperator(
 				evaluate(s.getChildren().get(0)), 
@@ -338,29 +349,19 @@ public class ExpressionEvaluator implements IExpressionEvaluator {
 	 * </p>
 	 * 
 	 * @param c
-	 * @param p
-	 * @param aq
+	 * @param mProgram
+	 * @param mDq
 	 * @return
 	 */
-	private IMixedDatatypeRelation evaluateUnion(IComponent c) {
+	private IMixedDatatypeRelation evaluateUnion(IComponent c)
+	{
+		assert c.getChildren().size() > 0;
 
-		if (c.getChildren().size() == 0) {
-			throw new IllegalArgumentException(
-				"Please provide the component with at least one subcomponent "
-				+ "(child), otherwise the evaluateUnion cannot be performed!");
-		}
 		IUnionDescriptor u = (IUnionDescriptor) c;
 		List<IMixedDatatypeRelation> rels = new ArrayList<IMixedDatatypeRelation>(u.getChildren().size());
-		for (int i = 0; i < u.getChildren().size(); i++) {
-			this.duplicateIDB.clear();
-			this.ruleIDBpredicates.clear();
-			// The first round must be taken
-			boolean firstRound = true;
-			this.firstIDB = true;
-			while((firstRound || getNextIDB(aq))){	
-				rels.add(evaluate(u.getChildren().get(i)));
-				firstRound = false;
-			}
+		for (int i = 0; i < u.getChildren().size(); i++)
+		{
+			rels.add(evaluate(u.getChildren().get(i)));
 		}
 		IUnion un = Factory.RELATION_OPERATION.createUnionOperator(rels);
 		return un.union();
