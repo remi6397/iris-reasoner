@@ -30,7 +30,6 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.TERM;
 
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,7 +45,6 @@ import junit.framework.TestSuite;
 
 import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.evaluation.algebra.IComponent;
 import org.deri.iris.api.evaluation.algebra.IConstantDescriptor;
@@ -60,8 +58,8 @@ import org.deri.iris.operations.relations.JoinCondition;
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck
  * @author Darko Anicic, DERI Innsbruck
- * @date $Date: 2007-10-30 08:28:32 $
- * @version $Id: Rule2RelationTest.java,v 1.11 2007-10-30 08:28:32 poettler_ric Exp $
+ * @date $Date: 2007-11-06 20:36:54 $
+ * @version $Id: Rule2RelationTest.java,v 1.12 2007-11-06 20:36:54 bazbishop237 Exp $
  */
 public class Rule2RelationTest extends TestCase {
 
@@ -84,9 +82,12 @@ public class Rule2RelationTest extends TestCase {
 	 * run rule2relation test
 	 *
 	 */
-	protected void runRule2Relation(final Set<IRule> rul, final Map<IPredicate, IComponent> rel) {
+	protected void runRule2Relation(final Set<IRule> rul, final Map<IRule, IComponent> rel) {
 
-		Map<IPredicate, IComponent> res = this.r2r.translateRules(rul);
+//		Map<IPredicate, IComponent> res = this.r2r.translateRules(rul);
+//		System.out.println("in: " + rul + "\nrel: "+ rel + "\nres: " + res + "\n");
+//		assertResults(rel, res);
+		Map<IRule, IComponent> res = this.r2r.translateRules(rul);
 		System.out.println("in: " + rul + "\nrel: "+ rel + "\nres: " + res + "\n");
 		assertResults(rel, res);
 	}
@@ -104,10 +105,11 @@ public class Rule2RelationTest extends TestCase {
 		body.add(MiscHelper.createLiteral("p", "X", "Z"));
 		body.add(MiscHelper.createLiteral("r", "Y", "Z"));
 
-		rules.add(BASIC.createRule(head, body));
+		IRule irule = BASIC.createRule(head, body);
+		rules.add( irule );
 
 		// result
-		HashMap<IPredicate, IComponent> result = new HashMap<IPredicate, IComponent>();
+		HashMap<IRule, IComponent> result = new HashMap<IRule, IComponent>();
 		// head
 		IRelationDescriptor tree = ALGEBRA.createRelationDescriptor(true, BASIC.createPredicate("s", 2));
 		List<IVariable> vars = new ArrayList<IVariable>();
@@ -138,7 +140,7 @@ public class Rule2RelationTest extends TestCase {
 		IComponent tree2 = proj;
 		tree2.addChild(proj);
 		
-		result.put(tree.getPredicate(), tree2);
+		result.put(irule, tree2);
 				
 		runRule2Relation(rules, result);
 	}
@@ -157,10 +159,11 @@ public class Rule2RelationTest extends TestCase {
 		ILiteral literal = BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")));
 		body.add(literal);
 
-		rules.add(BASIC.createRule(head, body));
+		IRule irule = BASIC.createRule(head, body);
+		rules.add( irule );
 
 		// result
-		HashMap<IPredicate, IComponent> result = new HashMap<IPredicate, IComponent>();
+		HashMap<IRule, IComponent> result = new HashMap<IRule, IComponent>();
 		// head
 		IRelationDescriptor tree = ALGEBRA.createRelationDescriptor(
 				true, BASIC.createPredicate("p", 2));
@@ -186,7 +189,7 @@ public class Rule2RelationTest extends TestCase {
 		IComponent tree2 = proj;
 		tree2.addChild(proj);
 		
-		result.put(tree.getPredicate(), tree2);
+		result.put(irule, tree2);
 				
 		runRule2Relation(rules, result);
 	}
@@ -245,18 +248,18 @@ public class Rule2RelationTest extends TestCase {
 		runRule2Relation(rules, result);
 	}*/
 	
-	protected static void assertResults(final Map<IPredicate, IComponent> a, 
-			final Map<IPredicate, IComponent> b) {
+	protected static void assertResults(final Map<IRule, IComponent> a, 
+			final Map<IRule, IComponent> b) {
 		
-		Assert.assertEquals("The length of relation and the list of"
-				+ " expected tuples must be equal", a.size(), b.size());
-		Set<IPredicate> keyseta = a.keySet();
-		Set<IPredicate> keysetb = b.keySet();
-		Iterator it = keyseta.iterator();
-		Iterator it2 = keysetb.iterator();
+		Assert.assertEquals("The number of actual and expected rule-component pairs "
+				+ "must be equal", a.size(), b.size());
+		Set<IRule> keyseta = a.keySet();
+		Set<IRule> keysetb = b.keySet();
+		Iterator<IRule> it = keyseta.iterator();
+		Iterator<IRule> it2 = keysetb.iterator();
 		while(it.hasNext() && it2.hasNext()) {
-			IPredicate keya = (IPredicate)it.next();
-			IPredicate keyb = (IPredicate)it2.next();
+			IRule keya = it.next();
+			IRule keyb = it2.next();
 			assertTrue("The keys must be equal.", keya.equals(keyb));
 		}
 	}

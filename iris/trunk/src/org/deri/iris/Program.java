@@ -25,10 +25,10 @@
  */
 package org.deri.iris;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
@@ -111,14 +111,14 @@ public class Program implements IProgram{
 		}
 	}
 
-	public Set<IPredicate> getPredicatesOfStratum( final Set<IPredicate> preds, final int s)
+	public int getRuleStrataSize()
 	{
-		return mRuleBase.getPredicatesOfStratum( preds, s );
+		return mRuleBase.getRuleStrataSize();
 	}
 	
-	public int getMaxStratum(final Set<IPredicate> h)
+	public Collection<IRule> getRulesOfStratum( int stratum )
 	{
-		return mRuleBase.getMaxStratum( h );
+		return mRuleBase.getRulesOfStratum( stratum );
 	}
 
 	/** ***************************** */
@@ -162,6 +162,11 @@ public class Program implements IProgram{
 	public IMixedDatatypeRelation getFacts(final IPredicate p){
 		return mFacts.getFacts( p );
 	}
+	
+//	public Map<IPredicate, IMixedDatatypeRelation> getFacts()
+//	{
+//		return mFacts.getFacts();
+//	}
 	
 	public Map<IPredicate, IMixedDatatypeRelation> getFacts(){
 		final Map<IPredicate, IMixedDatatypeRelation> ret = 
