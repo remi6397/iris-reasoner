@@ -184,6 +184,25 @@ public class NegationTest extends TestCase
 	/**
 	 * Test stratification algorithm.
 	 */
+	public void testIsStratified6() throws Exception
+	{
+		String program =
+			"p( ?X ) :- r( ?X ), s(?X)." +
+			"p( ?X ) :- r( ?X ), t(?X)." +
+			"p( ?X ) :- s( ?X ), t(?X)." +
+			"p( ?X ) :- not u( ?X ), t(?X)." +
+			"p( ?X ) :- s(?X), u( ?X )." +
+			
+			"u( ?X ) :- s(?X)." +
+			"u( ?X ) :- t(?X)." +
+			"u( ?X ) :- v(?X).";
+		
+       	Helper.evaluateWithAllStrategies( program, "" );
+	}
+
+	/**
+	 * Test stratification algorithm.
+	 */
 	public void testNotStratified1()
 	{
 		String program =
@@ -222,6 +241,28 @@ public class NegationTest extends TestCase
 			
 			"p7( ?X ) :- t(?X), not p6(?X)." +
 			"p6( ?X ) :- t(?X), p7(?X).";
+			
+		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+	}
+
+	/**
+	 * Test stratification algorithm.
+	 */
+	public void testNotStratifiedMultipleRulesWithSameHeadPredicate()
+	{
+		String program =
+			"p( ?X ) :- r( ?X ), s(?X)." +
+			"p( ?X ) :- r( ?X ), t(?X)." +
+			"p( ?X ) :- s( ?X ), t(?X)." +
+			"p( ?X ) :- not u( ?X ), t(?X)." +
+			"p( ?X ) :- s(?X), u( ?X )." +
+			"p( ?X ) :- s(?X), w( ?X )." +
+			
+			"u( ?X ) :- s(?X)." +
+			"u( ?X ) :- w(?X)." +
+			"u( ?X ) :- t(?X), not p(?X)." +
+			"u( ?X ) :- x(?X)." +
+			"u( ?X ) :- v(?X).";
 			
 		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
 	}
@@ -341,4 +382,120 @@ public class NegationTest extends TestCase
     
        	Helper.evaluateWithAllStrategies( program, expectedResults );
     }
+
+	public void testLocallyStratified_SelfDependency() throws Exception
+	{
+		String program = 
+ 			"s(1)." +
+		    "s(2)." +
+		    "s(3)." +
+		    "s(4)." +
+		    
+		    "p('b', 2)." +
+		    "p('b', 4)." +
+		    
+		    "p('a', ?X) :- s(?X), not p('b', ?X)." +
+		    "?- p(?X,?Y).";
+		
+		String expectedResults =
+		    "p('b', 2)." +
+		    "p('b', 4)." +
+			"p('a', 1)." +
+			"p('a', 3).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testLocallyStratified_CircularDependency() throws Exception
+	{
+		String program = 
+ 			"r(1)." +
+		    "r(2)." +
+		    "r(3)." +
+		    "r(4)." +
+		    
+		    "q('b', 2)." +
+		    "q('b', 4)." +
+		    
+		    "p('a',?X) :- r(?X), not q('b',?X)." +
+		    "q(?X,?Y) :- p(?X,?Y)." +
+
+		    "?- p(?X, ?Y).";
+		
+		String expectedResults =
+			"p('a', 1)." +
+			"p('a', 3).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testLocallyStratified_DoubleNegativeDependency() throws Exception
+	{
+		String program = 
+ 			"r(1)." +
+		    "r(2)." +
+		    "r(3)." +
+		    "r(4)." +
+		    
+		    "p('b', 2)." +
+		    "p('b', 4)." +
+		    
+		    "p('a',?X) :- r(?X), not p('b',?X)." +
+		    "p('c',?X) :- r(?X), not p('a',?X)." +
+
+		    "?- p(?X, ?Y).";
+		
+		String expectedResults =
+			"p('b', 2)." +
+			"p('b', 4)." +
+			"p('a', 1)." +
+			"p('a', 3)." +
+			"p('c', 2)." +
+			"p('c', 4).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	/**
+	 * Test stratification algorithm.
+	 */
+	public void testNotLocallyStratified_RuleDependsOnSelfWithConstant()
+	{
+		String program = 
+ 			"r(1)." +
+		    "r(2)." +
+		    "r(3)." +
+		    "r(4)." +
+		    
+		    "q('b', 2)." +
+		    "q('b', 4)." +
+		    
+		    "p('b',?X) :- r(?X), not q('b',?X)." +
+		    "q(?X,?Y) :- p(?X,?Y).";
+			
+		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+	}
+
+	public void testNotLocallyStratified_RuleDependsOnSelfWithVariable()
+	{
+		String program = 
+			"p('b', ?X) :- q(?X,?Y), ! p(?X,?Y).";
+			
+		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+	}
+	/**
+	 * Test stratification algorithm.
+	 */
+	public void testNotLocallyStratified_Recursion()
+	{
+		String program = 
+		    "p('b',?X) :- r(?X), not q('c',?X)." +
+		    "p(?X, ?Y) :- r(?X), p(?X, ?Y)." +
+		    
+		    "q(?X, ?Y) :- r(?X), q(?X, ?Y)." +
+		    "q('c',?X) :- r(?X), not p('b',?X).";
+			
+		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+	}
+
 }
