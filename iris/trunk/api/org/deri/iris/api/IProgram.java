@@ -25,6 +25,7 @@
  */
 package org.deri.iris.api;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,12 +57,12 @@ import org.deri.iris.builtins.BuiltinRegister;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IProgram.java,v 1.15 2007-10-24 15:02:00 bazbishop237 Exp $
+ * $Id: IProgram.java,v 1.16 2007-11-06 20:04:38 bazbishop237 Exp $
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public interface IProgram {
 
@@ -319,17 +320,15 @@ public interface IProgram {
 	public boolean isStratified();
 
 	/**
-	 * Get all the predicates (rule heads) that belong to the given stratum.
-	 * @param predicates
-	 * @param stratum The stratum (lowest level is RuleBase.BOTTOM_STRATUM).
-	 * @return The set of all (head) predicates that bellong to this stratum.
+	 * Get the number of strata of rules.
+	 * @return The number of rule strata. 
 	 */
-	public Set<IPredicate> getPredicatesOfStratum( final Set<IPredicate> predicates, int stratum );
-
+	public int getRuleStrataSize();
+	
 	/**
-	 * The the highest stratum level of all the given (rule head) predicates.
-	 * @param predicates The (rule head) predicates of interest.
-	 * @return The highest stratum level of each predicate.
+	 * Get all the rules of the given stratum.
+	 * @param stratum A number such that: 0 <= stratum < getRuleStrataSize()
+	 * @return The rules that belong to the given stratum.
 	 */
-	public int getMaxStratum(final Set<IPredicate> predicates );
+	public Collection<IRule> getRulesOfStratum( int stratum );
 }
