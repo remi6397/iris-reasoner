@@ -67,11 +67,11 @@ import org.deri.iris.api.terms.ITerm;
  * <code>null</code> is not permitted by this relation, nor by its subsets.
  * </p>
  * <p>
- * $Id: MixedDatatypeRelation.java,v 1.5 2007-10-19 07:37:18 poettler_ric Exp $
+ * $Id: MixedDatatypeRelation.java,v 1.6 2007-11-06 20:19:45 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixedDatatypeRelation {
 
@@ -190,9 +190,8 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 
 	public int size() {
 		int size = 0;
-		for (final IRelation r : datatypeRelations.values()) {
-			size += r.size();
-		}
+		for( Map.Entry<Integer, IRelation> e : datatypeRelations.entrySet() )
+			size += e.getValue().size();
 		return size;
 	}
 
@@ -330,9 +329,9 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 	 * Iterator designed to iterate over a set of Relations.
 	 * </p>
 	 * <p>
-	 * $Id: MixedDatatypeRelation.java,v 1.5 2007-10-19 07:37:18 poettler_ric Exp $
+	 * $Id: MixedDatatypeRelation.java,v 1.6 2007-11-06 20:19:45 bazbishop237 Exp $
 	 * </p>
-	 * @version $Revision: 1.5 $
+	 * @version $Revision: 1.6 $
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
 	 */
 	private class CompoundIterator implements Iterator<ITuple> {
@@ -396,9 +395,9 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 	 * and added internally.
 	 * </p>
 	 * <p>
-	 * $Id: MixedDatatypeRelation.java,v 1.5 2007-10-19 07:37:18 poettler_ric Exp $
+	 * $Id: MixedDatatypeRelation.java,v 1.6 2007-11-06 20:19:45 bazbishop237 Exp $
 	 * </p>
-	 * @version $Revision: 1.5 $
+	 * @version $Revision: 1.6 $
 	 * @author Richard Pöttler (richard dot poettler at deri dot at)
 	 */
 	private class CompoundRelation extends AbstractSet<ITuple> implements IMixedDatatypeRelation {
