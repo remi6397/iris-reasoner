@@ -36,22 +36,16 @@ public class RelationDescriptor extends Component implements IRelationDescriptor
 	
 	private IPredicate p = null;
 	
-	private boolean positive = true;
-	
 	RelationDescriptor(final boolean isPositive, final IPredicate p){
 		
 		super(ComponentType.RELATION);
 		if (p == null) {
 			throw new IllegalArgumentException("Predicate p must not be null!");
 		}
-		this.positive = isPositive;
+		setPositive( isPositive );
 		this.p = p;
 	}
 
-	public boolean isPositive() {
-		return this.positive;
-	}
-	
 	public IPredicate getPredicate() {
 		return this.p;
 	}
@@ -60,7 +54,7 @@ public class RelationDescriptor extends Component implements IRelationDescriptor
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(ComponentType.RELATION + 
 				"['");
-		if (!this.positive)
+		if (!isPositive())
 			buffer.append("NOT_");
 		buffer.append(this.p);
 		buffer.append("', ");
