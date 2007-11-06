@@ -27,14 +27,13 @@ package org.deri.iris.evaluation.algebra;
 
 import static org.deri.iris.factory.Factory.ALGEBRA;
 import static org.deri.iris.factory.Factory.BASIC;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import org.deri.iris.VariableExtractor;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -48,14 +47,11 @@ import org.deri.iris.api.evaluation.algebra.IJoinDescriptor;
 import org.deri.iris.api.evaluation.algebra.IProjectionDescriptor;
 import org.deri.iris.api.evaluation.algebra.IRelationDescriptor;
 import org.deri.iris.api.evaluation.algebra.ISelectionDescriptor;
-import org.deri.iris.api.evaluation.algebra.IUnionDescriptor;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.basics.seminaive.ConstLiteral;
-import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.relations.JoinCondition;
-import org.deri.iris.VariableExtractor;
 
 /**
  * <p>
@@ -95,129 +91,25 @@ public class Rule2Relation {
 	 * @return A map of IDB predicates with corresponding relational algebra
 	 *        	  expressions
 	 */
-	public Map<IPredicate, IComponent> translateRules(final Set<IRule> rls) {
+	public Map<IRule, IComponent> translateRules(final Set<IRule> rls) {
 
-		Map<IPredicate, IComponent> results = new Hashtable<IPredicate, IComponent>();		
+		Map<IRule, IComponent> results = new Hashtable<IRule, IComponent>();		
 		
-		Map<IPredicate, IUnionDescriptor> unionMap = new Hashtable<IPredicate, IUnionDescriptor>();		
-				
-		IComponent c = null;
-		
-		IRule r = null;
-		IPredicate p = null;
-		
-		for (IRule rule : rls) {
+		for (IRule rule : rls)
+		{
 			/* Rectify rules */
-			r = MiscOps.rectify(rule);
-			p = r.getHead().get(0).getAtom().getPredicate();
-			
-			// TODO: If you don't need - remove it!
-			//m = new HashMap<ILiteral, List<IVariable>>();
-			//oVars = new HashSet<IVariable>();
+			IRule r = rule;	//MiscOps.rectify(rule);
 			
 			IComponent body = translateBody(r.getBody());
-			results.put(p, body);
-			/**
-			 * <p>
-			 * SELECTION
-			 * </p>
-			 * <p>
-			 * EVAL-RULE(r, R1,...,Rn) = SELECTION_F(E) F conjunction of
-			 * built-in subgoals appearing in the rule body.
-			 * </p>
-			 */
-			/*for (ILiteral l : r.getBodyLiterals()) {
-				a = l.getAtom();
-				if (a.isBuiltin()) {
-					if (a.getTuple().getTerm(0) instanceof IVariable &&
-							a.getTuple().getTerm(1) instanceof IVariable) {
-						
-						if (a instanceof EqualBuiltin) {
-							s = ALGEBRA.createSelectionDescriptor(
-									// TODO: Add tuple pattern, e.g.: for a built-In case: EQUAL(?X, 'a')
-									null,
-									getSelectionIndexes(a.getTuple(), body.getVariables(), true));
-						}
-						if (a instanceof UnEqualBuiltin) {
-							// TODO: Remove/don't use: NonEqualityTerm
-							List<ITerm> terms = new ArrayList<ITerm>(a.getTuple()
-									.getArity());
-							for (ITerm t : a.getTuple()) {
-								terms.add(new NonEqualityTerm(t));
-							}
-							s = ALGEBRA.createSelectionDescriptor(
-									// TODO: Add tuple pattern, e.g.: for a built-In case: NON-EQUAL(?X, 'a')
-									getSelectionIndexes(a.getTuple(), body.getVariables(), false));
-						}
-						IComponent tmp = results.get(p); 
-						if(tmp != null) s.addChild(tmp);
-						s.addVariables(body.getVariables());
-						results.put(p, s);
-					}
-				}
-			}*/
-			/**
-			 * <p>
-			 * PROJECTION
-			 * </p>
-			 * <p>
-			 * Overall projection considering the rule head.
-			 * </p>
-			 */
-			IProjectionDescriptor pr = null;
-			c = results.get(p);
-			/*if (!Arrays.equals(r.getHeadVariables().toArray(), c.getVariables().toArray())) {	
-				int[] pInds = getProjectionIndexes(r.getHeadVariables(), c.getVariables());
-				pr = ALGEBRA.createProjectionDescriptor(pInds);
-				pr.addChild(c);
-				pr.addVariables(filterProjectionVariables(pInds, c.getVariables()));
-				results.put(p, pr);
-			}*/
-			int[] pInds = getProjectionIndexes(VariableExtractor.getLiteralVariablesList(r.getHead()), c.getVariables());
+
+			int[] pInds = getProjectionIndexes(VariableExtractor.getLiteralVariablesList(r.getHead()), body.getVariables());
+
 			// TODO: don't use pInds! remove them from the constructor
-			pr = ALGEBRA.createProjectionDescriptor(pInds);
-			pr.addChild(c);
-			pr.addVariables(VariableExtractor.getLiteralVariablesList(r.getHead()));
-			results.put(p, pr);
+			IProjectionDescriptor projection = ALGEBRA.createProjectionDescriptor(pInds);
+			projection.addChild(body);
+			projection.addVariables(VariableExtractor.getLiteralVariablesList(r.getHead()));
+			results.put(r, projection);
 			
-			/**
-			 * <p>
-			 * UNION
-			 * </p>
-			 * <p>
-			 * Overall union considering the rules with identical rule heads.
-			 * </p>
-			 * <p>
-			 * Check whether there exist rules with the same head predicate; 
-			 * if there are, their bodies must be merged in the union.
-			 * </p>
-			 * <p>
-			 * The relations should be union-compatible: 
-			 * (a) Same number of fields. 
-			 * (b) Corresponding fields have the same type.
-			 * <p>
-			 */
-			IUnionDescriptor u = null;
-			c = unionMap.get(p);
-			IComponent comp = results.get(p);
-			if(c != null){
-				c.addChild(comp);
-				unionMap.put(p, (IUnionDescriptor)c);
-			}else{
-				u = ALGEBRA.createUnionDescriptor();
-				u.addChild(comp);
-				u.addVariables(comp.getVariables());
-				unionMap.put(p, u);
-			}
-		}
-		results.clear();
-		for(IPredicate pred : unionMap.keySet()){
-			c = unionMap.get(pred);
-			if(c.getChildren().size() > 1){
-				results.put(pred, c);
-			}else{
-				results.put(pred, c.getChildren().get(0));
-			}
 		}
 		return results;
 	}
