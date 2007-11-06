@@ -26,11 +26,10 @@
 package org.deri.iris;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
@@ -39,7 +38,18 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.ArithmeticBuiltin;
 import org.deri.iris.builtins.EqualBuiltin;
+import org.deri.iris.evaluation.MiscOps;
 import org.deri.iris.evaluation.RuleValidator;
+import org.deri.iris.rules.IRuleOptimiser;
+import org.deri.iris.rules.IRuleReOrderingOptimiser;
+import org.deri.iris.rules.IRuleStratifier;
+import org.deri.iris.rules.optimisation.JoinConditionOptimiser;
+import org.deri.iris.rules.optimisation.ReOrderLiteralsOptimiser;
+import org.deri.iris.rules.optimisation.RemoveDuplicateLiteralOptimiser;
+import org.deri.iris.rules.optimisation.ReplaceVariablesWithConstantsOptimiser;
+import org.deri.iris.rules.ordering.SimpleReOrdering;
+import org.deri.iris.rules.stratification.GlobalStratifier;
+import org.deri.iris.rules.stratification.LocalStratifier;
 import org.deri.iris.terms.ConstructedTerm;
 
 /**
@@ -47,14 +57,20 @@ import org.deri.iris.terms.ConstructedTerm;
  */
 public class RuleBase
 {
-	/** The lowest stratum level. */
-	public static final int BOTTOM_STRATUM = 0;
-
 	/**
 	 * Constructor.
 	 */
 	public RuleBase()
 	{
+		mStratifiers.add( new GlobalStratifier() );
+		mStratifiers.add( new LocalStratifier() );
+		
+		mReOrderingOptimisers.add( new SimpleReOrdering() ); 
+
+		mRuleOptimisers.add( new JoinConditionOptimiser() );
+		mRuleOptimisers.add( new ReplaceVariablesWithConstantsOptimiser() );
+		mRuleOptimisers.add( new ReOrderLiteralsOptimiser() );
+		mRuleOptimisers.add( new RemoveDuplicateLiteralOptimiser() );
 	}
 
 	/**
@@ -63,7 +79,7 @@ public class RuleBase
 	public void clear()
 	{
 		mRules.clear();
-		mStrata.clear();
+		mRuleStrata = null;
 
 		mDirtyStratum = true;
 		mIsStratified = false;
@@ -71,30 +87,30 @@ public class RuleBase
 
 	/**
 	 * Add a rule.
-	 * @param r the rule to add
+	 * @param rule the rule to add
 	 * @return <code>false</code> if the rule was already in the program,
 	 * otherwise <code>true</code>
-	 * @throws NullPointerException if the rule was <code>null</code>
+	 * @throws IllegalArgumentException if the rule was <code>null</code>
 	 */
-	public boolean addRule(final IRule r) {
-		if (r == null) {
-			throw new NullPointerException("The rule must not be null");
+	public boolean addRule(final IRule rule) {
+		if (rule == null) {
+			throw new IllegalArgumentException("The rule must not be null");
 		}
 
 		mDirtyStratum = true;
 
-		return mRules.add(r);
+		return mRules.add(rule);
 	}
 
 	/**
 	 * Remove a rule. This feature will be removed soon.
 	 * TODO deprecate
-	 * @param r The rule to remove.
+	 * @param rule The rule to remove.
 	 * @return True if the rule was removed.
 	 */
-	public boolean removeRule(IRule r){
-		if (r == null) {
-			throw new NullPointerException("The rule must not be null");
+	public boolean removeRule(IRule rule){
+		if (rule == null) {
+			throw new IllegalArgumentException("The rule must not be null");
 		}
 		
 		mDirtyStratum = true;
@@ -110,56 +126,71 @@ public class RuleBase
 		return Collections.unmodifiableSet(mRules);
 	}
 	
-	/**
-	 * Calculates and sets the stratum for every predicate of a program.
-	 * @return {@code true} if the program is stratified, otherwise
-	 *         {@code false}
-	 */
 	public boolean stratify()
 	{
 		if( mDirtyStratum )
 		{
-			final int ruleCount = mRules.size();
-			int highest = BOTTOM_STRATUM;
-			boolean change = true;
-	
-			// Clear the strata map, i.e. set all strata to BOTTOM_STRATUM
-			mStrata.clear();
-			
-			while ((highest <= (ruleCount + BOTTOM_STRATUM) ) && change) {
-				change = false;
-				for (final IRule r : mRules) {
-					for (final ILiteral hl : r.getHead()) {
-						final IPredicate hp = hl.getAtom().getPredicate();
-	
-						for (final ILiteral bl : r.getBody()) {
-							final IPredicate bp = bl.getAtom().getPredicate();
-	
-							if (bl.isPositive()) {
-								int greater = Math.max(getStratum(hp), 
-												getStratum(bp));
-								if (getStratum(hp) < greater) {
-									setStratum(hp, greater);
-									change = true;
-								}
-								highest = Math.max(highest, greater);
-							} else {
-								int current = getStratum(bp);
-								if (current >= getStratum(hp)) {
-									setStratum(hp, current + 1);
-									highest = Math.max(highest, current + 1);
-									change = true;
-								}
-							}
-						}
-					}
-				}
+			for( IRuleStratifier stratifier : mStratifiers )
+			{
+				mRuleStrata = stratifier.stratify( mRules );
+				if( mRuleStrata != null )
+					break;
 			}
+
+			mIsStratified = mRuleStrata != null;
 			
-			mIsStratified = highest <= (ruleCount+BOTTOM_STRATUM);
+			// Stratification might involve re-writing the rules, so reset our rule collection.
+			if( mIsStratified )
+			{
+				final List<Collection<IRule>> rectifiedRuleStrata = new ArrayList<Collection<IRule>>();
+
+				mRules.clear();
+
+				for( Collection<IRule> stratum : mRuleStrata )
+				{
+					final Set<IRule> rectifiedStratum = new HashSet<IRule>();
+					
+					for( IRule rule : stratum )
+					{
+						IRule r = optimise( rule ); 
+						r = MiscOps.rectify( r );
+						rectifiedStratum.add( r );
+						mRules.add( r );
+					}
+
+					rectifiedRuleStrata.add( reOrderRules( rectifiedStratum ) );
+				}
+				mRuleStrata = rectifiedRuleStrata;
+			}
 		}
 
 		return mIsStratified;
+	}
+	
+	/**
+	 * Attempt to re-order rules such that dependent rules are evaluated first.
+	 * @param rules The strata of rules to re-order.
+	 * @return The re-ordered rules.
+	 */
+	private Collection<IRule> reOrderRules( Collection<IRule> rules )
+	{
+		for( IRuleReOrderingOptimiser optimiser : mReOrderingOptimisers )
+			rules = optimiser.reOrder( rules );
+		
+		return rules;
+	}
+	
+	/**
+	 * Perform some rule optimisations.
+	 * @param rule The rule to optimise.
+	 * @return The optimised rule.
+	 */
+	private IRule optimise( IRule rule )
+	{
+		for( IRuleOptimiser optimiser : mRuleOptimisers )
+			rule = optimiser.optimise( rule );
+		
+		return rule;
 	}
 	
 	/**
@@ -213,59 +244,14 @@ public class RuleBase
 	 * Return the currently known predicates.
 	 * @return The predicates.
 	 */
-	public Set<IPredicate> getPredicates() {
-		return Collections.unmodifiableSet(mStrata.keySet());
-	}
-
-	/**
-	 * Determines (out of a set of literals) all literals whose predicates have a given stratum.
-	 * 
-	 * @param preds
-	 *            the set of predicates.
-	 * @param s
-	 *            the stratum to look for
-	 * @return the set of predicates at the given stratum
-	 * @throws NullPointerException
-	 *             if the set of predicates is {@code null}
-	 * @throws NullPointerException
-	 *             if the set of predicates contains {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the stratum is smaller than BOTTOM_STRATUM
-	 */
-	public Set<IPredicate> getPredicatesOfStratum( final Set<IPredicate> preds, final int s) {
-		if (preds == null) {
-			throw new NullPointerException("The predicates must not be null");
-		}
-		if (s < BOTTOM_STRATUM) {
-			throw new IllegalArgumentException(s + " is not a valid stratum");
-		}
-
-		final Set<IPredicate> predicates = new HashSet<IPredicate>();
-		for (final IPredicate pred : preds) {
-			if (getStratum(pred) == s) {
-				predicates.add(pred);
-			}
-		}
-		return predicates;
-	}
-	
-	/**
-	 * Returns the highest stratum of a set of predicates.
-	 * 
-	 * @param h	The set of idb predicates.
-	 * @return 	The highest stratum.
-	 * @throws 	NullPointerException
-	 *             	if the set of predicates is {@code null}.
-	 */
-	public int getMaxStratum(final Set<IPredicate> h) {
-		if (h == null) {
-			throw new NullPointerException("The predicates must not be null");
-		}
-		int strat = 0;
-		for (final IPredicate pred : h) {
-			strat = Math.max(strat, getStratum( pred ));
-		}
-		return strat;
+	public Set<IPredicate> getPredicates()
+	{
+		Set<IPredicate> result = new HashSet<IPredicate>();
+		
+		for( IRule rule : mRules )
+			result.add( rule.getHead().get( 0 ).getAtom().getPredicate() );
+		
+		return result;
 	}
 	
 	// TODO
@@ -274,20 +260,16 @@ public class RuleBase
 	 * Get the highest stratum of all rule predicates.
 	 * @return The highest stratum level.
 	 */
-	public int getMaxStratumForAllRuleHeadLiterals()
+	public int getRuleStrataSize()
 	{
-		int strat = 0;
-		for( IRule rule : mRules )
-		{
-			for( ILiteral literal : rule.getHead())
-			{
-				strat = Math.max(strat, getStratum( literal.getAtom().getPredicate() ) );
-			}
-		}
-		
-		return strat;
+		return mRuleStrata.size();
 	}
 	
+	public Collection<IRule> getRulesOfStratum( int stratum )
+	{
+		return mRuleStrata.get( stratum );
+	}
+
 	/**
 	 * Indicates if all the rules in the rule base are safe.
 	 * @return true If all the rules are safe.
@@ -397,48 +379,18 @@ public class RuleBase
 	{
 		return  atom instanceof ArithmeticBuiltin;
 	}
+	
+	private final List<IRuleStratifier> mStratifiers = new ArrayList<IRuleStratifier>();
+	
+	private final List<IRuleOptimiser> mRuleOptimisers = new ArrayList<IRuleOptimiser>();
+	
+	private final List<IRuleReOrderingOptimiser> mReOrderingOptimisers = new ArrayList<IRuleReOrderingOptimiser>();
 
-	/**
-	 * Get the stratum for a particular (rule head) predicate.
-	 * @param predicate The rule-head predicate.
-	 * @return The stratum level.
-	 */
-	private int getStratum( final IPredicate predicate )
-	{
-		assert predicate!= null;
-		
-		Integer stratum = mStrata.get( predicate );
-		
-		if( stratum == null )
-		{
-			stratum = BOTTOM_STRATUM;
-			mStrata.put(  predicate, stratum );
-		}
-		
-		
-		return stratum;
-	}
-	
-	/**
-	 * Set the stratum for a (rule-head) predicate.
-	 * @param predicate predicate
-	 * @param stratum stratum level
-	 */
-	private void setStratum(final IPredicate predicate, final int stratum)
-	{
-		assert predicate != null;
-		assert mStrata.keySet().contains(predicate);
-		assert stratum >= 0 : "The stratum must not be negative, but was: " + stratum;
-		
-		mStrata.put(predicate, Integer.valueOf(stratum));
-	}
-	
 	/** The rules of this program. */
 	private final Set<IRule> mRules = new HashSet<IRule>();
-
-	/** Map for the strata of the different predicates. */
-	private final Map<IPredicate, Integer> mStrata = new HashMap<IPredicate, Integer>();
 	
+	private List<Collection<IRule>> mRuleStrata;
+
 	/** Whether the rules have changed since the latest stratum computation. */ 
 	private boolean mDirtyStratum = true;
 	
