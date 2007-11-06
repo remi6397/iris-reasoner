@@ -639,7 +639,7 @@ public class EvaluationTest extends TestCase
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
 
-	public void testqueryForUnknownPredicate() throws Exception
+	public void testQueryForUnknownPredicate() throws Exception
 	{
     	String program = 
 		    "p(1)." +
@@ -652,4 +652,36 @@ public class EvaluationTest extends TestCase
 
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
+	
+	/**
+	 * Assert that the evaluation of 3 rules that have a unified head predicate evaluate correctly.
+	 * Internally, the 3 rules for p(X) will be converted to relational algebra with a union.
+	 */
+	public void testUnion() throws Exception
+	{
+		String program = 
+ 			"r(1)." +
+		    "r(2)." +
+		    
+ 			"s(3)." +
+		    "s(4)." +
+		    
+ 			"t(5)." +
+		    "t(6)." +
+		    
+		    "p(?X) :- r(?X)." +
+		    "p(?X) :- s(?X)." +
+		    "p(?X) :- t(?X)." +
+		    "?- p(?X).";
+		
+		String expectedResults =
+			"p(1)." +
+			"p(2)." +
+			"p(3)." +
+			"p(4)." +
+			"p(5)." +
+			"p(6).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
 }
