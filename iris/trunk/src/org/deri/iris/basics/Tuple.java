@@ -28,7 +28,6 @@ package org.deri.iris.basics;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -45,11 +44,11 @@ import org.deri.iris.api.terms.IVariable;
  * A simple tuple implementation. This implementation is thread-safe.
  * </p>
  * <p>
- * $Id: Tuple.java,v 1.19 2007-10-19 07:37:16 poettler_ric Exp $
+ * $Id: Tuple.java,v 1.20 2007-11-07 16:14:44 nathaliest Exp $
  * </p>
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class Tuple extends AbstractList<ITerm> implements ITuple {
 
