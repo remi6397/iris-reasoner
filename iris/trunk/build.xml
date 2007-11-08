@@ -182,16 +182,32 @@
 				<include name="**/*.java" />
 			</zipfileset>
 		</zip>
+		
+		<zip destfile="${file.javadoc.zip}">
+			<zipfileset dir="${dir.javadoc}">
+				<include name="**/*" />
+			</zipfileset>
+		</zip>
+		
 		<zip destfile="${file.release.zip}">
 			<zipfileset dir="${dir.jar}">
 				<include name="**/*.jar" />
 			</zipfileset>
 			<zipfileset dir="${dir.lib}/ext/log4j" prefix="lib/log4j" />
 			<zipfileset dir="${dir.lib}/ext/jgrapht" prefix="lib/jgrapht" />
-			<zipfileset dir="${dir.javadoc}" prefix="doc/javadoc" />
-			<zipfileset dir="doc" prefix="doc">
-				<include name="**/*" />
+			
+			<zipfileset dir=".">
+				<include name="${file.javadoc.zip}" />
 			</zipfileset>
+			
+			<zipfileset dir=".">
+				<include name="${file.src.zip}" />
+			</zipfileset>
+			
+			<zipfileset dir="doc" prefix="doc">
+				<include name="user_guide.pdf" />
+			</zipfileset>
+			
 			<zipfileset dir="${basedir}">
 				<include name="LICENSE.txt" />
 				<include name="ChangeLog" />
