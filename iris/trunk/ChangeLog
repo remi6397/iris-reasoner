@@ -1,6 +1,49 @@
 The IRIS ChangeLog:
 ===================
 
+Changes since 0.4:
+==================
+
+New features
+1798276 	Magic Sets evaluation must allow conjunctive queries
+1810724 	Built-in predicates must support all data types.
+1810725 	Negated built-ins must behave as NAF
+1803612 	Improve unsafe rule detection and throw specific exception.
+1803623 	Throw specific exception for non-stratified program.
+1803626  	IRIS parser should have better failure semantics.
+1811460 	Create MODULUS built-in predicate
+1811468 	Create missing unary built-in predicates.
+1812263  	Create new SAME_TYPE built-in.
+1822569  	Implement Local Stratification algorithm
+
+
+Bug fixes
+1822055  	Magic Sets gives different results to Naive and Semi-Naive
+1814410  	Some term types accept invalid values.
+1810126  	Queries of an adorned program are not adorned
+1808896 	Numeric type coercion error
+1808292 	Floating point round-off error
+1807797 	Negated built-ins do not evaluate correctly.
+1804145 	Infinite loop with unary built-in (unsafe rule problem)
+1794766 	Incorrect results with (positive) built-in predicate
+
+
+Maintenance
+1815907  	ILiteral extends Atom, but this is a has-a relationship
+1815904 	Query uses Body instead of a List
+1814958 	tuple, head, body and query? should be lists
+1814955 	All objects up to Rule and AdornedRule should be immutable
+1817654  	Re-implement Program
+1814955 	All objects up to Rule and AdornedRule should be immutable
+1815048  	Allow predicate names to have underscores and digits.
+1814418  	toString() for some terms types is too verbose.
+1812121 	Revise safe-rule checks.
+1811653 	Rename UNEQUAL to NOT_EQUAL
+1811425 	Refactor built-in predicates
+1775365  	Create IRIS API guide
+1775368  	Create IRIS 'datalog' support guide.
+
+
 Changes since 0.3:
 ==================
 
@@ -52,4 +95,4 @@ Changes since 0.2:
 	- some bugfixes in the magic sets
 	- some bugfixes in the Join operator and SeminaiveEvaluation classes
 
-$Id: ChangeLog,v 1.9 2007-09-20 06:13:21 bazbishop237 Exp $
+$Id: ChangeLog,v 1.10 2007-11-08 15:41:45 bazbishop237 Exp $
