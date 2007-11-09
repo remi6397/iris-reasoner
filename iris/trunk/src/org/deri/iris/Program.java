@@ -163,19 +163,19 @@ public class Program implements IProgram{
 		return mFacts.getFacts( p );
 	}
 	
-//	public Map<IPredicate, IMixedDatatypeRelation> getFacts()
-//	{
-//		return mFacts.getFacts();
-//	}
-	
-	public Map<IPredicate, IMixedDatatypeRelation> getFacts(){
-		final Map<IPredicate, IMixedDatatypeRelation> ret = 
-			new HashMap<IPredicate, IMixedDatatypeRelation>();
-		for (final IPredicate p : getPredicates()) {
-			ret.put(p, getFacts(p));
-		}
-		return ret;
+	public Map<IPredicate, IMixedDatatypeRelation> getFacts()
+	{
+		return mFacts.getFacts();
 	}
+	
+//	public Map<IPredicate, IMixedDatatypeRelation> getFacts(){
+//		final Map<IPredicate, IMixedDatatypeRelation> ret = 
+//			new HashMap<IPredicate, IMixedDatatypeRelation>();
+//		for (final IPredicate p : getPredicates()) {
+//			ret.put(p, getFacts(p));
+//		}
+//		return ret;
+//	}
 	
 	/********************************/
 	/*		rules                   */

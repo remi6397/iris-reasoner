@@ -68,7 +68,9 @@ public class RuleBase
 		mReOrderingOptimisers.add( new SimpleReOrdering() ); 
 
 		mRuleOptimisers.add( new JoinConditionOptimiser() );
-		mRuleOptimisers.add( new ReplaceVariablesWithConstantsOptimiser() );
+		// Can not do this, because p(X),X=2 (where X is any numeric type)
+		// is not the same as p(2) (which assumes integer)
+//		mRuleOptimisers.add( new ReplaceVariablesWithConstantsOptimiser() );
 		mRuleOptimisers.add( new ReOrderLiteralsOptimiser() );
 		mRuleOptimisers.add( new RemoveDuplicateLiteralOptimiser() );
 	}
