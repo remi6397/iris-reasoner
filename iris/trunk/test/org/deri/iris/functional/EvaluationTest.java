@@ -684,4 +684,98 @@ public class EvaluationTest extends TestCase
 
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}	
+
+	/**
+	 * Assert that the evaluation of 3 rules that have a unified head predicate evaluate correctly.
+	 * Internally, the 3 rules for p(X) will be converted to relational algebra with a union.
+	 */
+	public void testFibonacci() throws Exception
+	{
+		String program = 
+			"fib(0,0)." +
+			"fib(1,1)." +
+
+			"fib(?n, ?f ) :- ?n > 1," +
+			                "?n1 + 1 = ?n," +
+			                "?n2 + 2 = ?n," +
+			                "fib( ?n1, ?f1 )," +
+			                "fib( ?n2, ?f2 )," +
+			                "?f1 + ?f2 = ?f," +
+			                "?f < 1000000000," +  // To add a higher limit
+			                "?f > 0." +           // To catch integer overflow
+			"?- fib(?n,?f).";
+
+		String expectedResults =
+			"fib(0, 0)." +
+			"fib(1, 1)." +
+			"fib(2, 1)." +
+			"fib(3, 2)." +
+			"fib(4, 3)." +
+			"fib(5, 5)." +
+			"fib(6, 8)." +
+			"fib(7, 13)." +
+			"fib(8, 21)." +
+			"fib(9, 34)." +
+			"fib(10, 55)." +
+			"fib(11, 89)." +
+			"fib(12, 144)." +
+			"fib(13, 233)." +
+			"fib(14, 377)." +
+			"fib(15, 610)." +
+			"fib(16, 987)." +
+			"fib(17, 1597)." +
+			"fib(18, 2584)." +
+			"fib(19, 4181)." +
+			"fib(20, 6765)." +
+			"fib(21, 10946)." +
+			"fib(22, 17711)." +
+			"fib(23, 28657)." +
+			"fib(24, 46368)." +
+			"fib(25, 75025)." +
+			"fib(26, 121393)." +
+			"fib(27, 196418)." +
+			"fib(28, 317811)." +
+			"fib(29, 514229)." +
+			"fib(30, 832040)." +
+			"fib(31, 1346269)." +
+			"fib(32, 2178309)." +
+			"fib(33, 3524578)." +
+			"fib(34, 5702887)." +
+			"fib(35, 9227465)." +
+			"fib(36, 14930352)." +
+			"fib(37, 24157817)." +
+			"fib(38, 39088169)." +
+			"fib(39, 63245986)." +
+			"fib(40, 102334155)." +
+			"fib(41, 165580141)." +
+			"fib(42, 267914296)." +
+			"fib(43, 433494437)." +
+			"fib(44, 701408733).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testMagic() throws Exception
+	{
+		String program = 
+			"p(?X,?Y) :- b(?X,?Y)." +
+			"p(?X,?Y) :- b(?X,?U), p(?U,?Y)." +
+
+			"e(?X,?Y) :- g(?X,?Y)." +
+			"e(?X,?Y) :- g(?X,?U), e(?U,?Y)." +
+
+			"a(?X,?Y) :- e(?X,?Y), not p(?X,?Y)." +
+
+			"b(1,2)." +
+			"b(2,1)." +
+			"g(2,3)." +
+			"g(3,2)." +
+			"?- a(2,?Y).";
+		
+		String expectedResults =
+			"a(3).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
 }
+
