@@ -18,7 +18,7 @@ public class Demo
 	{
 		if ( args.length < 3 )
 		{
-			System.out.println( "Usage: java org.deri.iris.FunctionalTest <datalog_program> [1|2|3] max_evaluation_time(ms)" );
+			System.out.println( "Usage: java org.deri.iris.Demo <datalog_program> [1|2|3] max_evaluation_time(ms)" );
 			System.out.println( "where 1=naive, 2=semi-naive, 3=magic-sets" ); 
 		}
 		else
