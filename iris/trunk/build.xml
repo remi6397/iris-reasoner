@@ -181,6 +181,9 @@
 			<zipfileset dir="${dir.src}">
 				<include name="**/*.java" />
 			</zipfileset>
+			<zipfileset dir="${dir.api}">
+				<include name="**/*.java" />
+			</zipfileset>
 		</zip>
 		
 		<zip destfile="${file.javadoc.zip}">
