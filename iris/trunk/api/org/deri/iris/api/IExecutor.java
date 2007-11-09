@@ -49,12 +49,12 @@ import org.deri.iris.api.storage.IMixedDatatypeRelation;
  * This interface is used to promote modularity of the inference engine.
  * </p>
  * <p>
- * $Id: IExecutor.java,v 1.8 2007-09-27 12:26:29 bazbishop237 Exp $
+ * $Id: IExecutor.java,v 1.9 2007-11-09 09:12:16 bazbishop237 Exp $
  * </p>
  * 
  * @author Richard Pöttler
  * @author Darko Anicic, DERI Innsbruck
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public interface IExecutor {
 
@@ -84,7 +84,7 @@ public interface IExecutor {
 	 *            The query for which to compute the substitutions.
 	 * @return A set of substitutions (IRelation) for the given query.
 	 */
-	public IMixedDatatypeRelation computeSubstitution(final IQuery q);
+	public IMixedDatatypeRelation computeSubstitution(final IQuery q) throws EvaluationException;
 
 	/**
 	 * <p>
@@ -95,5 +95,5 @@ public interface IExecutor {
 	 * 			one literal) as a key, and the retrieved substitutions 
 	 * 			as values for those queries.
 	 */
-	public Map<IPredicate, IMixedDatatypeRelation> computeSubstitutions();	
+	public Map<IPredicate, IMixedDatatypeRelation> computeSubstitutions() throws EvaluationException;	
 }
