@@ -27,6 +27,7 @@ package org.deri.iris;
 
 import static org.deri.iris.factory.Factory.RELATION;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
@@ -56,7 +57,7 @@ public class Facts
 			throw new IllegalArgumentException("Predicate " + predicate + " is assigned with " +
 					"a relation that has a non-matching arity.");
 		}
-
+		
 		boolean modified = false;
 		final IMixedDatatypeRelation rel = getRelation( predicate );
 		for (final ITuple t : relation) {
@@ -105,6 +106,7 @@ public class Facts
 	 */
 	public void setAll(final IPredicate predicate, final IMixedDatatypeRelation relation) {
 		mFacts.put(plainPredicateHash(predicate), relation );
+		mPredicates.add( predicate );
 	}
 	
 	// Not used
@@ -134,6 +136,17 @@ public class Facts
 		return getRelation( predicate );
 	}
 	
+	public Map<IPredicate, IMixedDatatypeRelation> getFacts()
+	{
+		final Map<IPredicate, IMixedDatatypeRelation> ret = 
+			new HashMap<IPredicate, IMixedDatatypeRelation>();
+
+		for( final IPredicate p : mPredicates ) {
+			ret.put(p, getFacts(p));
+		}
+		return ret;
+	}
+
 	/**
 	 * Remove a fact.
 	 * @param atom The atom to remove.
@@ -168,6 +181,7 @@ public class Facts
 	 */
 	public void clear()
 	{
+		mPredicates.clear();
 		mFacts.clear();
 	}
 
@@ -199,6 +213,8 @@ public class Facts
 	private IMixedDatatypeRelation getRelation(final  IPredicate predicate) {
 		assert predicate!= null;
 		
+		mPredicates.add( predicate );
+
 		IMixedDatatypeRelation result = mFacts.get(plainPredicateHash(predicate));
 		if(result == null) {
 			result = RELATION.getMixedRelation(predicate.getArity());
@@ -210,4 +226,6 @@ public class Facts
 	/** The facts of this program. */
 	private final Map<Integer, IMixedDatatypeRelation> mFacts = new 
 		HashMap<Integer, IMixedDatatypeRelation>();
+	
+	private final Set<IPredicate> mPredicates = new HashSet<IPredicate>();
 }
