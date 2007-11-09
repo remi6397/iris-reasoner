@@ -15,6 +15,7 @@ New features
 1811468 	Create missing unary built-in predicates.
 1812263  	Create new SAME_TYPE built-in.
 1822569  	Implement Local Stratification algorithm
+1773196  	Query Containment stage 1
 
 
 Bug fixes
@@ -95,4 +96,4 @@ Changes since 0.2:
 	- some bugfixes in the magic sets
 	- some bugfixes in the Join operator and SeminaiveEvaluation classes
 
-$Id: ChangeLog,v 1.10 2007-11-08 15:41:45 bazbishop237 Exp $
+$Id: ChangeLog,v 1.11 2007-11-09 07:43:19 bazbishop237 Exp $
