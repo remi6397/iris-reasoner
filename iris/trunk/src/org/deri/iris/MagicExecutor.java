@@ -64,10 +64,10 @@ import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
  * the rules of those predicates into the upcomming query computations.
  * </p>
  * <p>
- * $Id: MagicExecutor.java,v 1.10 2007-10-30 10:35:47 poettler_ric Exp $
+ * $Id: MagicExecutor.java,v 1.11 2007-11-09 09:11:20 bazbishop237 Exp $
  * </p>
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class MagicExecutor implements IExecutor {
 
@@ -99,7 +99,7 @@ public class MagicExecutor implements IExecutor {
 		evaluator = e;
 	}
 
-	public IMixedDatatypeRelation computeSubstitution(final IQuery q) {
+	public IMixedDatatypeRelation computeSubstitution(final IQuery q) throws EvaluationException {
 		if (!program.isStratified()) {
 			throw new RuntimeException("The input program is not strtifed");
 		}
@@ -130,7 +130,7 @@ public class MagicExecutor implements IExecutor {
 		return runEvaluation(finProgram, finQuery, evaluator);
 	}
 
-	public Map<IPredicate, IMixedDatatypeRelation> computeSubstitutions() {
+	public Map<IPredicate, IMixedDatatypeRelation> computeSubstitutions() throws EvaluationException {
 		final Map<IPredicate, IMixedDatatypeRelation> res = 
 			new HashMap<IPredicate, IMixedDatatypeRelation>();
 		for (final IQuery q : program.getQueries()) {
@@ -190,7 +190,7 @@ public class MagicExecutor implements IExecutor {
 	 * @throws IllegalArgumentException if the query doesn't have 1 literal
 	 */
 	private static IMixedDatatypeRelation runEvaluation(final IProgram p, 
-			final IQuery q, final IExpressionEvaluator e) {
+			final IQuery q, final IExpressionEvaluator e) throws EvaluationException {
 		if (p == null) {
 			throw new NullPointerException("The program must not be null");
 		}
@@ -200,6 +200,14 @@ public class MagicExecutor implements IExecutor {
 		if (e == null) {
 			throw new NullPointerException("The expression evaluator must not be null");
 		}
+		
+		if( ! p.isStratified() )
+			throw new ProgramNotStratifiedException( "The input program is not stratified" );
+
+		if( ! p.rulesAreSafe() )
+			throw new RuleUnsafeException( "The input program contains an unsafe rule" );
+		
+
 		final IBottomUpEvaluator eval = new SeminaiveEvaluation(e, p);
 		eval.evaluate();
 		eval.runQuery(q);
