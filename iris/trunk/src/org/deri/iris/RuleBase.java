@@ -82,6 +82,7 @@ public class RuleBase
 	{
 		mRules.clear();
 		mRuleStrata = null;
+		mProcessedRules.clear();
 
 		mDirtyStratum = true;
 		mIsStratified = false;
@@ -125,7 +126,17 @@ public class RuleBase
 	 * @return The rules from this IDB.
 	 */
 	public Set<IRule> getRules() {
-		return Collections.unmodifiableSet(mRules);
+//		return Collections.unmodifiableSet(mRules);
+		return Collections.unmodifiableSet(mProcessedRules);
+	}
+	
+	/**
+	 * Get all the rules.
+	 * @return The rules from this IDB.
+	 */
+	public Set<IRule> getProcessedRules() {
+//		return Collections.unmodifiableSet(mRules);
+		return Collections.unmodifiableSet(mProcessedRules);
 	}
 	
 	public boolean stratify()
@@ -146,7 +157,8 @@ public class RuleBase
 			{
 				final List<Collection<IRule>> rectifiedRuleStrata = new ArrayList<Collection<IRule>>();
 
-				mRules.clear();
+				//mRules.clear();
+				mProcessedRules.clear();
 
 				for( Collection<IRule> stratum : mRuleStrata )
 				{
@@ -157,7 +169,7 @@ public class RuleBase
 						IRule r = optimise( rule ); 
 						r = MiscOps.rectify( r );
 						rectifiedStratum.add( r );
-						mRules.add( r );
+						mProcessedRules.add( r );
 					}
 
 					rectifiedRuleStrata.add( reOrderRules( rectifiedStratum ) );
@@ -379,7 +391,7 @@ public class RuleBase
 	 */
 	private static boolean isArithmetic( IAtom atom )
 	{
-		return  atom instanceof ArithmeticBuiltin;
+		return atom instanceof ArithmeticBuiltin;
 	}
 	
 	private final List<IRuleStratifier> mStratifiers = new ArrayList<IRuleStratifier>();
@@ -388,11 +400,14 @@ public class RuleBase
 	
 	private final List<IRuleReOrderingOptimiser> mReOrderingOptimisers = new ArrayList<IRuleReOrderingOptimiser>();
 
-	/** The rules of this program. */
+	/** The original rules of this program. */
 	private final Set<IRule> mRules = new HashSet<IRule>();
 	
 	private List<Collection<IRule>> mRuleStrata;
 
+	/** The post-processing rules of this program. */
+	private final Set<IRule> mProcessedRules = new HashSet<IRule>();
+	
 	/** Whether the rules have changed since the latest stratum computation. */ 
 	private boolean mDirtyStratum = true;
 	
