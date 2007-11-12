@@ -80,22 +80,45 @@ more strategies will be created over time.
 `Naive' evaluation is a bottom up approach where all the known facts are
 applied in turn to each of the rules and thus new facts are inferred.
 The evaluation process continues iteratively until no new facts are generated.
-In this way the minimal fixed point for the knowledge base is computed
+In this way the fixed point for the knowledge base is computed
 before searching for the variable substitutions for the query.
 
 \subsubsection{Semi-Naive}
 
-The `Semi-Naive' algorithm is similar to the `Naive' strategy except that
-in every iteration only the new tuples generated in the previous step for each relation
-are used instead of the whole relation for this predicate.
+The `Semi-Naive' algorithm is similar to the `Naive' strategy. However, in
+every iteration an attempt is made to make better use of the tuples generated
+in the previous step.
+
+Consider a rule with two literals:
+\begin{verbatim}
+p(?X) :- q(?X), r(?X)
+\end{verbatim}
+
+In the first round the whole relation for `q' is joined with the whole relation
+for `r' to produce new tuples for the relation `p'.
+
+During this iteration, other rules might also generate new tuples for `q' and
+`r', such that the rule must be evaluated again in the next iteration. However,
+in an attempt to avoid generating tuples for `p' that are already known, the
+join is made twice using only the incremental tuples from the previous
+iteration.
+
+Iteration 1: New tuples for p, q, r are generated: $\delta{}p_{1}$, $\delta{}q_{1}$, $\delta{}r_{1}$
+
+Iteration 2: New tuples are generated for the rule above by joining $\delta{}q_{1}$ and r
+(the whole relation for `r') and by joining q and $\delta{}r_{1}$
+
+In other words, in each iteration a rule with N literals labeled $l_{1-N}$ is evaluated
+N times substituting the incremental relations from the previous step for each each literal in turn.
 
 \subsubsection{Semi-naive with Magic Sets}
-
+ 
 The `Magic-Sets' strategy first transforms the rules according to the variable
-bindings of the query so that the computation of the fixed point is as
-restricted as much as possible (see `On the Power of
-Magic'\footnote{http://portal.acm.org/citation.cfm?id=28659.28689} by Beeri and
-Ramakrishan). After the transformation the `Semi-Naive' evaluation is performed.
+bindings of the query so that the computation of the fixed point is restricted as
+much as possible to those tuples that `might' produce something that satisfies the query.
+(see `On the Power of Magic'\footnote{http://portal.acm.org/citation.cfm?id=28659.28689}
+by Beeri and Ramakrishan).
+After the transformation the `Semi-Naive' evaluation is performed.
 
 \section{What can go wrong}
 
@@ -115,13 +138,99 @@ stratified (see \ref{stratneg} on page \pageref{stratneg}).
 
 \subsection{Stratified negation}
 \label{stratneg}
-The logic program must be stratified.
-This is a property of a logic program such that for any rule with a
-negated predicate, it is possible to first evaluate
-all possible tuples for the negated predicate.
-In this way it is possible to show that logic program evaluation is monotone (increasing).
-In other words, any tuples for any predicate generated during one iteration,
-will never be removed again in a later iteration.
+The 'meaning' of negation in logic programs has been discussed at length in literature.
+Here we adopt the relational model and describe the following construct:
+\begin{verbatim}
+p(X) :- q(X), not r(X)
+\end{verbatim}
+
+as meaning, that the relation associated with predicate `p' contains all those values
+from predicate `q' that are not in predicate `r'.
+In other words, the set difference of `q' and `r'.
+
+Traditional forward chaining methods for evaluating logic programs involve simply using
+the values of tuples from predicates and applying them to the program's rules to generate
+more tuples.
+
+Without negation such techniques are guaranteed to be monotone.
+However, in the presence of negation, rules that generate tuples for a predicate
+that is used in negated sub-goals of other rules, must be 'fully' evaluated before
+evaluation of the dependant rules begins.
+
+Consider what would happen if we have the following:
+\begin{verbatim}
+p(X) :- q(X), not r(X)	...(1)
+r(X) :- t(X)	        ...(2)
+q(a)
+q(b)
+t(a)
+\end{verbatim}
+
+If the known facts are applied to rule (1) first, the following new facts are generated:
+\begin{verbatim}
+p(a)
+p(b)
+\end{verbatim}
+
+Then applying the known facts to rule (2) produces the following:
+\begin{verbatim}
+r(a)
+\end{verbatim}
+
+However, the existence of fact r(a) should have precluded the inference of fact p(a) in rule (1).
+
+In order to ensure that rule evaluation is monotone, rules must be evaluated in a specific order.
+
+For any general rule:
+
+
+$p :- L_{1}...L_{m}, N_{1}...N_{p}$
+
+
+where $L_{1}...L_{m}$ are positive literals and $N_{1}...N_{p}$ are negative literals,
+existing stratification algorithms require that the rule `p' be allocated to a strata
+that is at least as high as each of its positive literals and at least one higher than
+each of its negative literals.
+
+Such a scheme would therefore require that rule (2) above is evaluated before rule(1).
+
+However, this approach precludes the evaluation of any logic program containing a rule that
+has a negative dependency upon itself.
+
+In order for IRIS to evaluate a logic program, it must be stratified.
+
+\subsection{Locally stratified negation}
+\label{localstratneg}
+There are genuine reasoning activities that can lead to the creation of logic programs
+containing rules that do contain a negative dependency to themselves,
+but can still be evaluated in a meaningful way,
+because of the presence of constants in the rules that separate the domains of tuples
+used as input to the rule and tuples produced by the rule.
+
+Consider:
+\begin{verbatim}
+p(a,X) :- q(X), not p(b,X)
+\end{verbatim}
+
+This rule can produce tuples (a,?) for the relation associated with predicate `p'
+from tuples (b,?) also associated with the relation for `p'.
+However, no special treatment is required, because nothing produced by the rule can be
+used as input to the rule, because of the presence of constants `a' and `b'.
+
+A more complicated scenario is as follows:
+\begin{verbatim}
+p(a,X) :- r(X), not q(b,X)
+q(X,Y) :- p(X,Y)
+\end{verbatim}
+
+Here the second rule can produce tuples for input to the first rule and vice versa.
+However, if we consider the second rule to be two rules:
+\begin{verbatim}
+q(b,Y) :- p(b,Y)
+q(X,Y) :- p(X,Y), X != b
+\end{verbatim}
+Then we see that the complete set of rules is still stratified.
+
 
 \subsection{Unsafe rules}
 \label{safe}
@@ -164,8 +273,11 @@ can be created (see \ref{custom_builtins} on page \pageref{custom_builtins}).
 \subsection{Behaviour of built-ins with incompatible datatypes}
 \label{naf}
 
-The built-in predicates will evaluate to false if the operands are incompatible with the
-predicate, e.g. multiplying two dates, or incompatible with each other, e.g. adding an integer to a string.
+Built-in predicates will evaluate to false if the operands are incompatible with the predicate,
+e.g. multiplying two dates.
+
+Built-in predicates will evaluate to false if the operands are incompatible with each other,
+e.g. adding an integer to a string.
 
 
 \subsection{Negated built-ins}
@@ -198,7 +310,7 @@ q(x,y) :- p(x,y) and not x < y.
 \end{verbatim}
 Produces this result set:
 \begin{verbatim}p(4,3) p(`a',4)\end{verbatim}
-As can be seen from this example, $not X < Y$ is not the same as $X \ge Y$
+As can be seen from this example, `not $X < Y$' is not the same as `$X \ge Y$'
 
 
 \subsection{Arithmetic built-ins}
@@ -210,7 +322,7 @@ type for both terms, e.g. a $double$ value + a $float$ value will result in a $d
 
 \subsection{Custom built-in predicates}
 \label{custom_builtins}
-To create and use a custom built-in predicate there are only a few steps to follow:
+To create and use a custom built-in predicate there are a few steps to follow:
 
 \begin{itemize}
 \item Extend one of the built-in base classes (AbstractBuiltin, ArithmeticBuiltin, BooleanBuiltin)
@@ -218,7 +330,7 @@ To create and use a custom built-in predicate there are only a few steps to foll
 \end{itemize}
 
 \subsubsection{Extend one of the base classes}
-There are only 3 things you must to implement:
+There are 3 things that must be implemented:
 
 \begin{enumerate}
 \item a constructor taking an ITerm array as input that will contain the constants and variables occurring during evaluation
@@ -246,7 +358,7 @@ There are two ways to register a built-in:
 
 To register the built-in automatically, the fully qualified name of the custom built-in java class
 must be added to a file called `builtins.load'.
-This file must be accessible through the classpath and IRIS will the use first
+This file must be accessible through the classpath and IRIS will use the first
 occurrence of a file with this name, ignoring any others.
 Only one class name can occur on each line in the file.
 
@@ -257,7 +369,7 @@ To register the built-in explicitly, call BuiltinRegister.registerBuiltin() pass
     .registerBuiltin(FahrenheitToCelsiusBuiltin.class);
 \end{verbatim}
 The built-in should now be recognised when you evaluate a logic program. Note that the built-in must
-be explicitly registered for every program object.
+be explicitly registered for every program instance.
 
 
 \section{API guide}
