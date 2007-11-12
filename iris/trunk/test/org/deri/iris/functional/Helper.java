@@ -95,7 +95,7 @@ public class Helper
 
 		p = ExecutionHelper.parseProgram( program );
 		
-		results = ExecutionHelper.evaluateSeminaive( p );
+		results = ExecutionHelper.evaluateSeminaiveWithMagicSets( p );
 		timer.show( "Magic sets" );
 
 		checkResults( results, expectedResults, "Magic sets" );
