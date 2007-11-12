@@ -755,7 +755,12 @@ public class EvaluationTest extends TestCase
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}	
 
-	public void testMagic() throws Exception
+	/**
+	 * This program is known to cause the magic sets evaluation to give incorrect results
+	 * if the Facts class does not hash the predicate names correctly.
+	 * See bug 1822055
+	 */
+	public void testMagic1() throws Exception
 	{
 		String program = 
 			"p(?X,?Y) :- b(?X,?Y)." +
@@ -777,5 +782,22 @@ public class EvaluationTest extends TestCase
 
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}	
+
+	/**
+	 * This reproduces bug: 1829204 Repeated literal in query fails with magic sets
+	 * @throws Exception
+	 */
+	public void testMagic2() throws Exception
+	{
+		String program = 
+			"p(1)."+
+			"?-p(1),p(1).";
+		
+		String expectedResults =
+			"p.";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
 }
 
