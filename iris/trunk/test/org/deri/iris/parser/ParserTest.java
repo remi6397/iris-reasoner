@@ -60,34 +60,10 @@ import org.deri.iris.factory.Factory;
  */
 public class ParserTest extends TestCase {
 
-	Parser pars;
-	IProgram prog;
-	
-	Set<org.deri.iris.api.basics.IRule> rules;
-	
 	public static Test suite() {
 		return new TestSuite(ParserTest.class, ParserTest.class.getSimpleName());
 	}
 
-	/**
-	 * setup for Parser tests
-	 */
-	public void setUp() {
-		prog = Factory.PROGRAM.createProgram();
-
-		rules = new HashSet<org.deri.iris.api.basics.IRule>();		
-	}
-
-	/**
-	 * run parser test
-	 * @throws ParserException 
-	 *
-	 */
-	protected void runParser(final String expr, final Set<IRule> rul) throws ParserException {
-		Parser.parse(expr, prog);
-		assertCol(rul, prog.getRules());
-	}
-	
 	/**
 	 * s(X, Y) :- p(Y, Z), r(Y, Z)
 	 *
@@ -105,9 +81,10 @@ public class ParserTest extends TestCase {
 		body.add(MiscHelper.createLiteral("p", "X", "Z"));
 		body.add(MiscHelper.createLiteral("r", "Y", "Z"));
 
+		final Set<IRule> rules = new HashSet<IRule>();
 		rules.add(BASIC.createRule(head, body));
 
-		runParser(expr, rules);
+		assertEquals("Couldn't parse all rules", rules, Parser.parse(expr).getRules());
 	}
 	/**
 	 * p(?X,?Y) :- r(?Z, ?Y) and ?X='a'
@@ -128,9 +105,10 @@ public class ParserTest extends TestCase {
 					BUILTIN.createEqual(TERM.createVariable("X"), 
 						TERM.createString("a"))));
 		
+		final Set<IRule> rules = new HashSet<IRule>();
 		rules.add(BASIC.createRule(head, body));
 				
-		runParser(expr, rules);
+		assertEquals("Couldn't parse all rules", rules, Parser.parse(expr).getRules());
 	}
 	/**
 	 * p(?X,?Y) :- r(?X, ?Y) and ?X!='a'
@@ -151,9 +129,10 @@ public class ParserTest extends TestCase {
 					BUILTIN.createUnequal(TERM.createVariable("X"), 
 						TERM.createString("a"))));
 
+		final Set<IRule> rules = new HashSet<IRule>();
 		rules.add(BASIC.createRule(head, body));
 
-		runParser(expr, rules);
+		assertEquals("Couldn't parse all rules", rules, Parser.parse(expr).getRules());
 	}
 
 	/**
@@ -186,7 +165,7 @@ public class ParserTest extends TestCase {
 			"base(_base64binary('45df')).\n" + 
 			"hex(_hexbinary('a1df')).\n";
 
-		Parser.parse(expr, prog);
+		final IProgram prog = Parser.parse(expr);
 
 		// TODO: test the function term
 		// asserting the short int
@@ -291,7 +270,7 @@ public class ParserTest extends TestCase {
 			"7 >= 8, \n" + 
 			"9 = 10, \n" + 
 			"11 != 12.";
-		Parser.parse(toParse, prog);
+		final IProgram prog = Parser.parse(toParse);
 		final Collection<ILiteral> body = prog.getRules().iterator().next().getBody();
 		assertTrue("Can't find '1 < 2' in " + body, body.contains(
 					BASIC.createLiteral(true, BUILTIN.createLess(CONCRETE.createInteger(1), CONCRETE.createInteger(2)))));
@@ -313,7 +292,7 @@ public class ParserTest extends TestCase {
 			"4 - 5 = 6, \n" + 
 			"7 * 8 = 9, \n" + 
 			"10 / 11 = 12.";
-		Parser.parse(toParse, prog);
+		final IProgram prog = Parser.parse(toParse);
 		final Collection<ILiteral> body = prog.getRules().iterator().next().getBody();
 		assertTrue("Can't find '1 + 2 = 3' in " + body, body.contains(
 					BASIC.createLiteral(true, BUILTIN.createAddBuiltin(
@@ -345,21 +324,5 @@ public class ParserTest extends TestCase {
 		Parser.parse( program2, prog2 );
 		
 		assertEquals( prog1.getRules(), prog2.getRules() );
-	}
-
-	/**
-	 * Checks whether two collections contains the same elements. The size of the collecions will be asserted, too.
-	 * @param c0 the reference collection
-	 * @param c1 the collection to check
-	 * @throws NullPointerException if one collection is <code>null</code>
-	 */
-	private static void assertCol(final Collection<? extends Object> c0, final Collection<? extends Object> c1) {
-		if((c0 == null) || (c1 == null)) {
-			throw new NullPointerException("The collections must not be null");
-		}
-		assertEquals("The sizes of the collections must be equal", c0.size(), c1.size());
-		for(final Object o : c0) {
-			assertTrue("Couldn't find the term: " + o + " in " + c1, c1.contains(o));
-		}
 	}
 }
