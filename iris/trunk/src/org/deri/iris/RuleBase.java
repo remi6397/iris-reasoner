@@ -126,8 +126,8 @@ public class RuleBase
 	 * @return The rules from this IDB.
 	 */
 	public Set<IRule> getRules() {
-//		return Collections.unmodifiableSet(mRules);
-		return Collections.unmodifiableSet(mProcessedRules);
+		return Collections.unmodifiableSet(mRules);
+//		return Collections.unmodifiableSet(mProcessedRules);
 	}
 	
 	/**
@@ -157,8 +157,8 @@ public class RuleBase
 			{
 				final List<Collection<IRule>> rectifiedRuleStrata = new ArrayList<Collection<IRule>>();
 
-				//mRules.clear();
-				mProcessedRules.clear();
+				mRules.clear();
+//				mProcessedRules.clear();
 
 				for( Collection<IRule> stratum : mRuleStrata )
 				{
@@ -169,7 +169,7 @@ public class RuleBase
 						IRule r = optimise( rule ); 
 						r = MiscOps.rectify( r );
 						rectifiedStratum.add( r );
-						mProcessedRules.add( r );
+						mRules.add( r );
 					}
 
 					rectifiedRuleStrata.add( reOrderRules( rectifiedStratum ) );
