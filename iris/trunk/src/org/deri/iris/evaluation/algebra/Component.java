@@ -70,8 +70,7 @@ public abstract class Component implements IComponent{
 		this.variables = vars;
 	}
 	
-	private List<IComponent> components = 
-		Collections.synchronizedList(new ArrayList<IComponent>());
+	private List<IComponent> components = new ArrayList<IComponent>();
 	
 	public ComponentType getType() {
 		return this.type;
