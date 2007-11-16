@@ -415,4 +415,31 @@ public class ArithmeticTest extends TestCase
 
        	Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
+
+	/**
+	 * Check for round-off errors and proper +/- comparison (see bug 1832140).
+	 * @throws Exception
+	 */
+	public void testFloatingPointComparison() throws Exception
+	{
+		String program =
+			"a(0.0)." +
+			"a(1.0000000000001)." +
+			"a(_float(2.000001))." +
+
+			"b(-0.0)." +
+			"b(1.0000000000002)." +
+			"b(_float(2.000002))." +
+	
+			"p(?x) :- a(?x), b(?x)." +
+	
+			"?- p(?x).";
+
+       	String expectedResults = 
+       		"p(0.0)." +
+       		"p(1.0000000000001)." +
+       		"p(_float(2.000001)).";
+
+       	Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
 }
