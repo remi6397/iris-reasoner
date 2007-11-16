@@ -34,3 +34,6 @@ org.deri.iris.builtins.IsStringBuiltin
 org.deri.iris.builtins.IsTimeBuiltin
 
 org.deri.iris.builtins.SameTypeBuiltin
+
+org.deri.iris.builtins.TrueBuiltin
+org.deri.iris.builtins.FalseBuiltin
