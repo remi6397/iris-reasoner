@@ -73,6 +73,12 @@ public class DecimalTest extends TestCase {
 				BASIC), new DecimalTerm(MORE), new DecimalTerm(MORE1));
 	}
 
+	public void testEqualsPositiveNegativeZero() {
+		ObjectTests.runTestCompareTo(new DecimalTerm(+0.0),
+				new DecimalTerm(-0.0), new DecimalTerm(0.000000001), new DecimalTerm(
+								0.000000002));
+	}
+
 	public void testHashCode() {
 		ObjectTests.runTestHashCode(new DecimalTerm(BASIC), new DecimalTerm(
 				BASIC));

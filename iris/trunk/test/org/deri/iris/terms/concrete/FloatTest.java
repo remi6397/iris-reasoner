@@ -71,6 +71,12 @@ public class FloatTest extends TestCase {
 				new FloatTerm(MORE), new FloatTerm(MORE1));
 	}
 
+	public void testEqualsPositiveNegativeZero() {
+		ObjectTests.runTestCompareTo(new FloatTerm(+0.0f),
+				new FloatTerm(-0.0f), new FloatTerm(0.0001f), new FloatTerm(
+								0.0002f));
+	}
+
 	public void testHashCode() {
 		ObjectTests.runTestHashCode(new FloatTerm(BASIC), new FloatTerm(BASIC));
 	}
