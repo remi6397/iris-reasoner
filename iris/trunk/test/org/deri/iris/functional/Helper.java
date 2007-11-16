@@ -177,41 +177,41 @@ public class Helper
 
 		for( Map.Entry<IPredicate, IMixedDatatypeRelation> entry : expectedFacts.entrySet() )
 		{
-			IPredicate pr = entry.getKey();
-			IMixedDatatypeRelation expectedPredicate = entry.getValue();
+			IPredicate predicate = entry.getKey();
+			IMixedDatatypeRelation expectedRelation = entry.getValue();
 			
-			IMixedDatatypeRelation actualPredicate = actual.get( pr );
+			IMixedDatatypeRelation actualRelation = actual.get( predicate );
 			
 			// TODO - see bug 1794659
 			// Strange behaviour - the arity of the predicate that indexes the relation
 			// that is the result of a query is very hard to predict, i.e. it might
 			// not have the same arity as the relations! Try expected or zero or others...
-			if ( actualPredicate == null )
+			if ( actualRelation == null )
 			{
 				for( int arity = 0; arity < 10; ++arity )
 				{
-					IPredicate tempPred = makePredicate( pr.getPredicateSymbol(), arity );
+					IPredicate tempPred = makePredicate( predicate.getPredicateSymbol(), arity );
 			
-					actualPredicate = actual.get( tempPred );
-					if ( actualPredicate != null )
+					actualRelation = actual.get( tempPred );
+					if ( actualRelation != null )
 						break;
 				}
 			}
 			
-			if ( expectedPredicate != null && actualPredicate == null )
+			if ( expectedRelation != null && actualRelation == null )
 				junit.framework.Assert.fail();
 
-			if ( expectedPredicate == null && actualPredicate != null )
+			if ( expectedRelation == null && actualRelation != null )
 				junit.framework.Assert.fail();
 			
-			if ( expectedPredicate != null )
+			if ( expectedRelation != null )
 			{
-				junit.framework.Assert.assertEquals( evaluationStrategy + ": The relation did not have the expected number of tuples",
-								expectedPredicate.size(), actualPredicate.size() );
-				junit.framework.Assert.assertTrue( evaluationStrategy + ": The relation did not contain all the expected tuples",
-								expectedPredicate.containsAll( actualPredicate ) );
-				junit.framework.Assert.assertTrue( evaluationStrategy + ": The relation contains tuples that were not expected",
-								actualPredicate.containsAll( expectedPredicate ) );
+				junit.framework.Assert.assertEquals( evaluationStrategy + ": The " + predicate + " relation did not have the expected number of tuples",
+								expectedRelation.size(), actualRelation.size() );
+				junit.framework.Assert.assertTrue( evaluationStrategy + ": The " + predicate + " relation did not contain all the expected tuples",
+								expectedRelation.containsAll( actualRelation ) );
+				junit.framework.Assert.assertTrue( evaluationStrategy + ": The " + predicate + " relation contains tuples that were not expected",
+								actualRelation.containsAll( expectedRelation ) );
 			}
 		}
 	}
