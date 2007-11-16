@@ -37,3 +37,5 @@ org.deri.iris.builtins.SameTypeBuiltin
 
 org.deri.iris.builtins.TrueBuiltin
 org.deri.iris.builtins.FalseBuiltin
+
+org.deri.iris.builtins.RegexBuiltin

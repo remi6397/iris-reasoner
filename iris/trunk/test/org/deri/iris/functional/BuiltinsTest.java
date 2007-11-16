@@ -23,6 +23,8 @@
  */
 package org.deri.iris.functional;
 
+import org.deri.iris.ProgramNotStratifiedException;
+import org.deri.iris.compiler.ParserException;
 import junit.framework.TestCase;
 
 /**
@@ -242,6 +244,80 @@ public class BuiltinsTest extends TestCase
 		    "p(2.0)." +
 		    "p(_float(2.0))." +
 		    "p('b').";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Check that a program containing the built-in equality predicate is
+	 * correctly evaluated.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_ExactEquality() throws Exception
+	{
+		String program = 
+ 			"s(1)." +
+		    "s(2)." +
+		    "s(3)." +
+		    
+		    "s('a')." +
+		    "s('b')." +
+		    "s('c')." +
+		    
+		    "s(1.2)." +
+		    "s(2.0)." +
+		    "s(_float(2.0))." +
+
+		    "s(_date(1997,2,20))." +
+		    
+		    "p(?X) :- s(?X), EXACT_EQUAL(?X, _float(2.0))." +
+		    "p(?X) :- s(?X), EXACT_EQUAL(?X, 'b')." +
+		    "?- p(?X).";
+
+		String expectedResults =
+		    "p(_float(2.0))." +
+		    "p('b').";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Check that a program containing the built-in equality predicate is
+	 * correctly evaluated.
+	 * @throws Exception
+	 */
+	public void testBuiltIn_NotExactEquality() throws Exception
+	{
+		String program = 
+ 			"s(1)." +
+		    "s(2)." +
+		    "s(3)." +
+		    
+		    "s('a')." +
+		    "s('b')." +
+		    "s('c')." +
+		    
+		    "s(1.2)." +
+		    "s(2.0)." +
+		    "s(_float(2.0))." +
+
+		    "s(_date(1997,2,20))." +
+		    
+		    "p(?X) :- s(?X), NOT_EXACT_EQUAL(?X, _float(2.0))." +
+		    "?- p(?X).";
+
+		String expectedResults =
+ 			"p(1)." +
+		    "p(2)." +
+		    "p(3)." +
+		    
+		    "p('a')." +
+		    "p('b')." +
+		    "p('c')." +
+
+		    "p(1.2)." +
+		    "p(2.0)." +
+		    "p(_date(1997,2,20)).";
 
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
@@ -1226,5 +1302,131 @@ public class BuiltinsTest extends TestCase
 			"p('s',3).";
 
 		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testOnlyEquality_OneVariableInRuleBodyAndHead() throws Exception
+	{
+		String program = 
+		    "p(?X) :- ?X=3." +
+		    "?- p(?X).";
+
+		String expectedResults =
+			"p(3).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testOnlyEquality_NoVariablesInRuleHeadOrBody() throws Exception
+	{
+		String program = 
+		    "p :- 3=3." +
+		    "?- p.";
+
+		String expectedResults =
+			"p.";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testOnlyEquality_OneVariableInRuleBodyNoVariablesInRuleHead() throws Exception
+	{
+		String program = 
+		    "p :- ?X=3." +
+		    "?- p.";
+
+		String expectedResults =
+			"p.";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testOnlyAddInRuleBody() throws Exception
+	{
+		String program = 
+		    "p(?X) :- 1 + 2 = ?X." +
+		    "?- p(?X).";
+
+		String expectedResults =
+			"p(3).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testOnlyAddInRuleBodyNoVariables() throws Exception
+	{
+		String program = 
+		    "p :- 1 + 2 = 3." +
+		    "?- p.";
+
+		String expectedResults =
+			"";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testTrue() throws Exception
+	{
+		String program = 
+		    "p(?X) :- ?X = 1, TRUE." +
+		    "?- p(?X).";
+
+		String expectedResults =
+			"p(1).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testFalse() throws Exception
+	{
+		String program = 
+		    "p(?X) :- ?X = 1, ! FALSE." +
+		    "?- p(?X).";
+
+		String expectedResults =
+			"p(1).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testRegex() throws Exception
+	{
+		String program =
+			"p(2)." +
+			"p(_float(3.3))." +
+
+			"p('aaaaa')." +
+			"p('aaaab')." +
+			"p('aaabb')." +
+			
+			"p('BAZ')." +
+			"p('AaA')." +
+			
+			"p('Hello this is a sentence that end with milk')." +
+
+			"a_b(?x) :- p(?x), REGEX(?x, 'a*b?')." +
+		    "upper(?x) :- p(?x), REGEX(?x, '[A-Z]*')." +
+		    "ends_milk(?x) :- p(?x), REGEX(?x, '.*milk')." +
+		    
+		    "?- a_b(?X)." +
+		    "?- upper(?X)." +
+			"?- ends_milk(?X).";
+			
+		String expectedResults =
+			"a_b('aaaaa')." +
+			"a_b('aaaab')." +
+
+			"upper('BAZ')." +
+
+			"ends_milk('Hello this is a sentence that end with milk').";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testRegexIllegalPattern() throws Exception
+	{
+		String program =
+			"p(?x) :- p(?x), REGEX(?x, 2).";
+		
+		Helper.checkFailureWithAllStrategies( program, ParserException.class );
 	}
 }
