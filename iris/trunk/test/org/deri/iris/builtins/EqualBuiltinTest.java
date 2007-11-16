@@ -57,6 +57,14 @@ public class EqualBuiltinTest extends TestCase {
 					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createInteger(5))));
 		assertNotNull("5 should be equal to 5.0", xy.evaluate(
 					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createDouble(5d))));
+		
+		assertNotNull("+0.0 should be equal to -0.0", xy.evaluate(
+						BASIC.createTuple(CONCRETE.createDecimal(+0.0), CONCRETE.createDecimal(-0.0))));
+		assertNotNull("+0.0 should be equal to -0.0", xy.evaluate(
+						BASIC.createTuple(CONCRETE.createDouble(+0.0), CONCRETE.createDouble(-0.0))));
+		assertNotNull("+0.0 should be equal to -0.0", xy.evaluate(
+						BASIC.createTuple(CONCRETE.createFloat(+0.0f), CONCRETE.createFloat(-0.0f))));
+
 		assertNull("5 should not equal to 2", xy.evaluate(
 					BASIC.createTuple(CONCRETE.createInteger(2), CONCRETE.createInteger(5))));
 		assertNull("5 should not be equal to a", xy.evaluate(
