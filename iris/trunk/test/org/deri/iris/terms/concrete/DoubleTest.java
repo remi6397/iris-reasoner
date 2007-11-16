@@ -72,6 +72,12 @@ public class DoubleTest extends TestCase {
 						MORE1));
 	}
 
+	public void testEqualsPositiveNegativeZero() {
+		ObjectTests.runTestCompareTo(new DoubleTerm(+0.0),
+				new DoubleTerm(-0.0), new DoubleTerm(0.000000001), new DoubleTerm(
+								0.000000002));
+	}
+
 	public void testHashCode() {
 		ObjectTests
 				.runTestHashCode(new DoubleTerm(BASIC), new DoubleTerm(BASIC));
