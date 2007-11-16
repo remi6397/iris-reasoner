@@ -107,7 +107,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 	}
 
 	@Override
-	public synchronized boolean add(final ITuple t) {
+	public boolean add(final ITuple t) {
 		if (t == null) {
 			throw new NullPointerException("The tuple to add must not be null");
 		}
@@ -132,7 +132,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 	 * @return <code>true</code> if the collection was changed by this call,
 	 * otherwise <code>false</code>
 	 */
-	private synchronized boolean intRemove(final Object o) {
+	private boolean intRemove(final Object o) {
 		boolean changed = false;
 		if (primary.remove(o)) {
 			changed = true;
