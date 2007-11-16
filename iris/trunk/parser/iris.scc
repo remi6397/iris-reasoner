@@ -16,7 +16,7 @@ Helpers
 	alpha = ['a' .. 'z'] | ['A' .. 'Z'];
 	num = ['0' .. '9'];
 	alphanum = alpha | num;
-	anychar = alphanum | ' ' | tab | '/' | '#' | ':' | '.' | ',' | ';';
+	anychar = alphanum | ' ' | tab | '/' | '#' | ':' | '.' | ',' | ';' | '[' | ']' | '*' | '^' | '-' | '&' | '+' | '?' | '{' | '}' | '|';
 	min = '-';
 	dot = '.';
 	comma = ',';
