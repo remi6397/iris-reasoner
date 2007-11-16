@@ -27,6 +27,7 @@ package org.deri.iris.terms.concrete;
 
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.builtins.FloatingPoint;
 
 /**
  * <p>
@@ -64,7 +65,7 @@ public class DoubleTerm implements IDoubleTerm {
 		}
 		
 		DoubleTerm dt = (DoubleTerm) o;
-		return d.compareTo(dt.getValue());
+		return FloatingPoint.getDouble().compare( d, dt.d );
 	}
 	
 	public boolean equals(final Object o) {
@@ -72,7 +73,8 @@ public class DoubleTerm implements IDoubleTerm {
 			return false;
 		}
 		DoubleTerm dt = (DoubleTerm) o;
-		return d.equals( dt.d );
+		// Use the floating point comparer to allow for round-off errors.
+		return FloatingPoint.getDouble().equals( d, dt.d );
 	}
 	
 	public int hashCode() {

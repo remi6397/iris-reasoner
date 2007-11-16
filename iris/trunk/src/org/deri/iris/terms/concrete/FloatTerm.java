@@ -27,6 +27,7 @@ package org.deri.iris.terms.concrete;
 
 import org.deri.iris.api.terms.concrete.IFloatTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.builtins.FloatingPoint;
 
 /**
  * <p>
@@ -71,7 +72,7 @@ public class FloatTerm implements IFloatTerm {
 		}
 		
 		FloatTerm ft = (FloatTerm) o;
-		return f.compareTo(ft.getValue());
+		return FloatingPoint.getFloat().compare( f, ft.f );
 	}
 
 	public int hashCode() {
@@ -83,7 +84,8 @@ public class FloatTerm implements IFloatTerm {
 			return false;
 		}
 		FloatTerm ft = (FloatTerm) o;
-		return f.equals(ft.f);
+		// Use the floating point comparer to allow for round-off errors.
+		return FloatingPoint.getFloat().equals( f, ft.f );
 	}
 	
 	public String toString() {
