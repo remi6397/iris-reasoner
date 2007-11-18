@@ -234,6 +234,45 @@ public class BuiltinHelper {
 	}
 
 	/**
+	 * Two terms are exactly equal if they:
+	 * 
+	 * a) have exactly the same type, AND
+	 * b) have the same value
+	 * 
+	 * This comparison respects floating point round-off errors.
+	 * @param t0
+	 * @param t1
+	 * @return
+	 */
+	static boolean exactlyEqual( ITerm t0, ITerm t1 )
+	{
+		assert t0 != null;
+		assert t1 != null;
+		
+		// For two floating point terms (implemented with Float or Double) the normal
+		// Object.equals() method can not be used, because it hides proper ieee floating
+		// point behaviour.
+		// Specifically, -0.0 should equal to +0.0, Nan != NaN etc
+		// In any case, the floating point comparison should allow for round-off errors.
+		if( t0.getClass() == t1.getClass() )
+		{
+			Object ot0 = t0.getValue();
+			Object ot1 = t1.getValue();
+			
+			if( ot0 instanceof Float && ot1 instanceof Float )
+			{
+				return FloatingPoint.getFloat().equals( ( (Float)ot0).floatValue(), ( (Float) ot1).floatValue() );
+			}
+			else if( ot0 instanceof Double && ot1 instanceof Double )
+			{
+				return FloatingPoint.getDouble().equals( ( (Double) ot0).doubleValue(), ( (Double) ot1).doubleValue() );
+			}
+		}
+	    return t0.equals( t1 );
+	}
+
+
+	/**
 	 * Returns the Double value from a <code>INumericTerm</code> <b>This
 	 * method assumes that only numbers are stored in <code>INumericTerm</code>.</b>
 	 * 

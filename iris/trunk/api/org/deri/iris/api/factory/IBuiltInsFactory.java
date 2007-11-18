@@ -126,6 +126,23 @@ public interface IBuiltInsFactory {
 	public abstract IBuiltInAtom createUnequal(final ITerm t0, final ITerm t1);
 
 	/**
+	 * Create an EXACT_EQUAL built-in.
+	 * @param t0 The first term.
+	 * @param t1 The second term.
+	 * @return The built-in instance
+	 */
+	IBuiltInAtom createExactEqual(final ITerm t0, final ITerm t1);
+
+	/**
+	 * Create a NOT_EXACT_EQUAL built-in.
+	 * @param t0 The first term.
+	 * @param t1 The second term.
+	 * @return The built-in instance
+	 */
+
+	IBuiltInAtom createNotExactEqual(final ITerm t0, final ITerm t1);
+
+	/**
 	 * Creates a less builtin.
 	 * 
 	 * @param t0
