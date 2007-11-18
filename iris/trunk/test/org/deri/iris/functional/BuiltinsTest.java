@@ -23,9 +23,8 @@
  */
 package org.deri.iris.functional;
 
-import org.deri.iris.ProgramNotStratifiedException;
-import org.deri.iris.compiler.ParserException;
 import junit.framework.TestCase;
+import org.deri.iris.compiler.ParserException;
 
 /**
  * Tests for IRIS built-in predicates.
