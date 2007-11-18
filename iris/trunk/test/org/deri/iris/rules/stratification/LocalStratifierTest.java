@@ -86,7 +86,7 @@ public class LocalStratifierTest extends TestCase
 		
 		rules.add( p );
 		
-		LocalStratifier ls = new LocalStratifier();
+		LocalStratifier ls = new LocalStratifier( true );
 		
 		List<Collection<IRule>> sRules = ls.stratify( rules );
 		
@@ -109,7 +109,7 @@ public class LocalStratifierTest extends TestCase
 		rules.add( p );
 		rules.add( q );
 		
-		LocalStratifier ls = new LocalStratifier();
+		LocalStratifier ls = new LocalStratifier( true );
 		
 		List<Collection<IRule>> sRules = ls.stratify( rules );
 		
@@ -133,7 +133,7 @@ public class LocalStratifierTest extends TestCase
 		rules.add( p );
 		rules.add( q );
 		
-		LocalStratifier ls = new LocalStratifier();
+		LocalStratifier ls = new LocalStratifier( true );
 		
 		List<Collection<IRule>> sRules = ls.stratify( rules );
 		

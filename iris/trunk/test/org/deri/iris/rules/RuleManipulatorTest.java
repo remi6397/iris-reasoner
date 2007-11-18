@@ -89,12 +89,12 @@ public class RuleManipulatorTest extends TestCase
 		//LocalStratifier ls = new LocalStratifier
 		RuleManipulator rm = new RuleManipulator();
 		
-		IRule rule2 = rm.replaceVariablesWithConstants( rule );
+		IRule rule2 = rm.replaceVariablesWithConstants( rule, true );
 		IRule rule3 = rm.removeUnnecessaryEqualityBuiltins( rule2 );
 
 		IRule rule4 = rm.addEquality( rule3, TERM.createVariable( "Y" ), CONCRETE.createInteger( 3 ) );
 
-		IRule rule5 = rm.replaceVariablesWithConstants( rule4 );
+		IRule rule5 = rm.replaceVariablesWithConstants( rule4, false );
 		IRule rule6 = rm.removeUnnecessaryEqualityBuiltins( rule5 );
 
 		ILiteral h1 = rule6.getHead().get( 0 );

@@ -41,7 +41,7 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.basics.seminaive.ConstLiteral;
+import org.deri.iris.builtins.ExactEqualBuiltin;
 
 /**
  * <p>
@@ -131,11 +131,12 @@ public class MiscOps {
 			// Create a ConstLiteral (i.e. {a}(?X) represents ?X='a') whenever an 
 			// argument of the head predicate is a ground term.
 			if(t.isGround()){
-				eqSubGoals.add(new ConstLiteral(true, t, newVar));
+//				eqSubGoals.add(new ConstLiteral(true, t, newVar));
+				eqSubGoals.add(BASIC.createLiteral(true, new ExactEqualBuiltin( newVar, t ) ) );
 			}else{
 				final IVariable v = (IVariable) t;
 				// If some of the arguments of the head predicate are equal (and they are 
-				// variables) a map is created so we can unify such subgolas later on. For 
+				// variables) a map is created so we can unify such subgoals later on. For 
 				// instance subgoals: U=X and V=X will be unified in U=V and X will be 
 				// replaced from all body literals with U. 
 				if(headVarsMap.containsKey(v)){

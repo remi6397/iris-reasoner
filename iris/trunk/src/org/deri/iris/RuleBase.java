@@ -63,14 +63,13 @@ public class RuleBase
 	public RuleBase()
 	{
 		mStratifiers.add( new GlobalStratifier() );
-		mStratifiers.add( new LocalStratifier() );
+		mStratifiers.add( new LocalStratifier( true ) );
+		mStratifiers.add( new LocalStratifier( false ) );
 		
 		mReOrderingOptimisers.add( new SimpleReOrdering() ); 
 
 		mRuleOptimisers.add( new JoinConditionOptimiser() );
-		// Can not do this, because p(X),X=2 (where X is any numeric type)
-		// is not the same as p(2) (which assumes integer)
-//		mRuleOptimisers.add( new ReplaceVariablesWithConstantsOptimiser() );
+		mRuleOptimisers.add( new ReplaceVariablesWithConstantsOptimiser() );
 		mRuleOptimisers.add( new ReOrderLiteralsOptimiser() );
 		mRuleOptimisers.add( new RemoveDuplicateLiteralOptimiser() );
 	}
