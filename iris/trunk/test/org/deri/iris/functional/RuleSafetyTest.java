@@ -414,4 +414,36 @@ public class RuleSafetyTest extends TestCase
         	
 		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
     }
+
+    public void testSafe_EquateToConstant() throws Exception
+    {
+    	String program = 
+    		"p(?X) :- ?X = 1.";
+        	
+       	Helper.evaluateWithAllStrategies( program, "" );
+    }
+
+    public void testSafe_EquateToConstantNoHeadVariables() throws Exception
+    {
+    	String program = 
+    		"p :- ?X = 1.";
+        	
+       	Helper.evaluateWithAllStrategies( program, "" );
+    }
+
+    public void testUnsafe_EquateToSelf() throws Exception
+    {
+    	String program = 
+    		"p(?X) :- ?X = ?X.";
+        	
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    }
+
+    public void testUnsafe_AddToSelf() throws Exception
+    {
+    	String program = 
+    		"p(?X) :- ?X + ?X = 2.";
+        	
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    }
 }
