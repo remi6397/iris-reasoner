@@ -6,6 +6,8 @@ org.deri.iris.builtins.ModulusBuiltin
 
 org.deri.iris.builtins.EqualBuiltin
 org.deri.iris.builtins.UnEqualBuiltin
+org.deri.iris.builtins.ExactEqualBuiltin
+org.deri.iris.builtins.NotExactEqualBuiltin
 
 org.deri.iris.builtins.LessBuiltin
 org.deri.iris.builtins.LessEqualBuiltin

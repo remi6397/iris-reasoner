@@ -100,4 +100,14 @@ public class BuiltinsFactory implements IBuiltInsFactory {
 	public IBuiltInAtom createUnequal(ITerm t0, ITerm t1) {
 		return new UnEqualBuiltin(t0, t1);
 	}
+	
+	public IBuiltInAtom createExactEqual(final ITerm t0, final ITerm t1)
+	{
+		return new ExactEqualBuiltin(t0, t1);
+	}
+
+	public IBuiltInAtom createNotExactEqual(final ITerm t0, final ITerm t1)
+	{
+		return new NotExactEqualBuiltin(t0, t1);
+	}
 }
