@@ -65,7 +65,7 @@ public abstract class ArithmeticBuiltin extends AbstractBuiltin
 				return null;
 			
 			// Indicate TRUE if the operation is equal to the constant result.
-			return BuiltinHelper.equal( terms[ resultIndex ], result ) ? EMPTY_TERM : null;
+			return testForEquality( terms[ resultIndex ], result ) ? EMPTY_TERM : null;
 		}
 		else // variableIndexes.length == 1
 		{
@@ -74,6 +74,11 @@ public abstract class ArithmeticBuiltin extends AbstractBuiltin
 			
 			return computeMissingTerm( variableIndexes[ 0 ], terms );
 		}
+	}
+	
+	protected boolean testForEquality( ITerm t1, ITerm t2 )
+	{
+		return BuiltinHelper.equal( t1, t2 );
 	}
 
 	/**
