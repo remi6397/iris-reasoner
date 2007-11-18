@@ -798,6 +798,119 @@ public class EvaluationTest extends TestCase
 
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}	
+	
+	public void testIncompatibaleAssignments() throws Exception
+	{
+		String program = 
+			"p(?X) :- ?X = 1, ?X = 2." +
+			"?-p(?X).";
+		
+		String expectedResults = "";
 
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testCompatibaleAssignments() throws Exception
+	{
+		String program = 
+			"p(?X) :- ?X = 2, ?X = 2." +
+			"?-p(?X).";
+		
+		String expectedResults =
+			"p(2).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	/**
+     * Test lots of sequences of built-ins and ordinary predicates to check for
+     * errors in relational algebra expression evaluation.
+     * @throws Exception
+     */
+    public void testMultipleOrdinaryBuiltinSequences() throws Exception
+    {
+    	String program =
+    		"r(1)." +
+    		"r(2)." +
+    		"r(3)." +
+    		
+    		"s(2)." +
+    		"s(3)." +
+
+    		"p1(?X) :- ?X = 1." +
+    		"p2(?X) :- ?X = 1, r(?X)." +
+    		"p3(?X) :- r(?X), ?X = 1." +
+    		"p4(?X) :- ?X = 1, ?X = 2." +
+    		"p5(?X) :- ?X = 2, ?X = 2." +
+    		
+    		"?-p1(?X)." +
+    		"?-p2(?X)." +
+    		"?-p3(?X)." +
+    		"?-p4(?X)." +
+    		"?-p5(?X).";
+        	
+		String expectedResults =
+			"p1(1)." +
+			"p2(1)." +
+			"p3(1)." +
+
+			"p5(2).";
+
+       	Helper.evaluateWithAllStrategies( program, expectedResults );
+    }
+	/**
+     * Test lots of sequences of built-ins and ordinary predicates to check for
+     * errors in relational algebra expression evaluation.
+     * @throws Exception
+     */
+    public void testMultipleOrdinaryBuiltinNegationSequences() throws Exception
+    {
+    	String program =
+    		"r(1)." +
+    		"r(2)." +
+    		"r(3)." +
+    		
+    		"s(2)." +
+    		"s(3)." +
+
+    		"s1(?X) :- ?X = 1, not s(?X)." +
+    		"s2(?X) :- not s(?X), ?X = 1." +
+
+    		"s3(?X) :- ?X = 1, r(?X), not s(?X)." +
+    		"s4(?X) :- not s(?X), ?X = 1, r(?X)." +
+    		
+    		"s5(?X) :- r(?X), ?X = 1, not s(?X)." +
+    		"s6(?X) :- not s(?X), r(?X), ?X = 1." +
+    		
+    		"s7(?X) :- ?X = 1, ?X = 2, not s(?X)." +
+    		"s7(?X) :- not s(?X), ?X = 1, ?X = 2." +
+    		
+    		"s9(?X) :- ?X = 1, ?X = 1, not s(?X)." +
+    		"s0(?X) :- not s(?X), ?X = 1, ?X = 1." +
+    		
+    		"?-s1(?X)." +
+    		"?-s2(?X)." +
+    		"?-s3(?X)." +
+    		"?-s4(?X)." +
+    		"?-s5(?X)." +
+    		"?-s6(?X)." +
+    		"?-s7(?X)." +
+    		"?-s8(?X)." +
+    		"?-s9(?X)." +
+    		"?-s0(?X).";
+    		
+		String expectedResults =
+			"s1(1)." +
+			"s2(1)." +
+			"s3(1)." +
+			"s4(1)." +
+			"s5(1)." +
+			"s6(1)." +
+
+			"s9(1)." +
+			"s0(1).";
+
+       	Helper.evaluateWithAllStrategies( program, expectedResults );
+    }
 }
 
