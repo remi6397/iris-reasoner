@@ -93,4 +93,11 @@ public abstract interface IBuiltInAtom extends IAtom {
 	 * optimal result (and then this method be eleminated, too).
 	 */
 	public boolean isEvaluable(final Collection<IVariable> v);
+
+	/**
+	 * The maximum number of unknown variables allowed such that the
+	 * predicate can still be evaluated.
+	 * @return The maximum number of unknown variables.
+	 */
+	public int maxUnknownVariables();
 }

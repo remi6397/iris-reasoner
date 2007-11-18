@@ -42,14 +42,12 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.evaluation.algebra.IBuiltinDescriptor;
 import org.deri.iris.api.evaluation.algebra.IComponent;
-import org.deri.iris.api.evaluation.algebra.IConstantDescriptor;
 import org.deri.iris.api.evaluation.algebra.IJoinDescriptor;
 import org.deri.iris.api.evaluation.algebra.IProjectionDescriptor;
 import org.deri.iris.api.evaluation.algebra.IRelationDescriptor;
 import org.deri.iris.api.evaluation.algebra.ISelectionDescriptor;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.basics.seminaive.ConstLiteral;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.operations.relations.JoinCondition;
 
@@ -146,8 +144,8 @@ public class Rule2Relation {
 	 */
 	private IComponent translateBody(final List<ILiteral> lits) {
 		IJoinDescriptor j = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
-		IJoinDescriptor jTmp0 = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
-		IJoinDescriptor jTmp1 = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
+		IJoinDescriptor jNegative = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
+		IJoinDescriptor jBuiltin = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
 		IComponent cPos, cNeg, cBuilt;
 		
 		for (ILiteral l : lits) {
@@ -168,7 +166,7 @@ public class Rule2Relation {
 					cNeg = translateOrdinaryLiteral(l);
 					if(cNeg != null){
 						cNeg.setPositive(false);
-						jTmp0.addChild(cNeg);
+						jNegative.addChild(cNeg);
 						//jTmp0.addVariables(cNeg.getVariables());
 					}
 				}
@@ -190,18 +188,21 @@ public class Rule2Relation {
 					jTmp1.addChild(cBuilt);
 					jTmp1.addVariables(cBuilt.getVariables());
 				}*/
-				jTmp1.addChild(cBuilt);
+				jBuiltin.addChild(cBuilt);
 				//jTmp1.addVariables(cBuilt.getVariables());
 			}
 		}
-		if(jTmp0.getChildren().size() > 0){
-			j.addChildren(jTmp0.getChildren());
-			//j.addVariables(jTmp0.getVariables());	
-		}
-		if(jTmp1.getChildren().size() > 0){
-			j.addChildren(jTmp1.getChildren());
+		
+		if(jBuiltin.getChildren().size() > 0){
+			j.addChildren(jBuiltin.getChildren());
 			//j.addVariables(jTmp1.getVariables());
 		}
+		
+		if(jNegative.getChildren().size() > 0){
+			j.addChildren(jNegative.getChildren());
+			//j.addVariables(jTmp0.getVariables());	
+		}
+
 		if(j.getChildren().size() == 1){
 			return j.getChildren().get(0);
 		} else {
@@ -210,9 +211,6 @@ public class Rule2Relation {
 	}
 
 	private IComponent translateOrdinaryLiteral(final ILiteral l) {
-		if(l instanceof ConstLiteral) {
-			return translateConstLiteral((ConstLiteral) l);
-		}
 		
 		ITuple pattern = null;
 		final IPredicate pred = l.getAtom().getPredicate();
@@ -266,13 +264,6 @@ public class Rule2Relation {
 		return le;
 	}
 	
-	private IComponent translateConstLiteral(final ConstLiteral constL) {
-		IConstantDescriptor con = ALGEBRA.createConstantDescriptor(
-				(ITerm)constL.getAtom().getTuple().get(0), 
-				(IVariable)constL.getAtom().getTuple().get(1));
-		return con;
-	}
-
 	/*private IComponent translateBuiltInAtom(final IAtom a) {
 		ITerm t1 = a.getTuple().getTerm(0);
 		ITerm t2 = a.getTuple().getTerm(1);

@@ -207,10 +207,6 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 		return unknownVariables.size() <= maxUnknownVariables();
 	}
 
-	/**
-	 * The maximum number of unknown variables that allows the predicate to be evaluated.
-	 * @return The maximum number of unknown variables.
-	 */
 	public int maxUnknownVariables()
 	{
 		return 0;
