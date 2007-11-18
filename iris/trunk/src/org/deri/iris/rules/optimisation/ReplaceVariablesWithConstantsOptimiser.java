@@ -49,7 +49,9 @@ public class ReplaceVariablesWithConstantsOptimiser implements IRuleOptimiser
 {
 	public IRule optimise( IRule rule )
 	{
-		rule = mManipulator.replaceVariablesWithConstants( rule );
+		rule = mManipulator.replaceVariablesWithConstants( rule, true );
+		rule = mManipulator.removeDuplicateLiterals( rule );
+		rule = mManipulator.removeUnnecessaryEqualityBuiltins( rule );
 		
 		return rule;
 	}

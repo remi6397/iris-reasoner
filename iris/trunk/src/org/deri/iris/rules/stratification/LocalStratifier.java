@@ -50,6 +50,11 @@ import org.deri.iris.rules.stratification.LocalStratificationDecorator.MatchType
  */
 public class LocalStratifier implements IRuleStratifier
 {
+	public LocalStratifier( boolean strict )
+	{
+		mStrict = strict;
+	}
+	
 	public List<Collection<IRule>> stratify( Collection<IRule> rules )
 	{
 		mRules.clear();
@@ -265,7 +270,7 @@ public class LocalStratifier implements IRuleStratifier
 				IVariable variable = (IVariable) headTerm;
 				
 				rule = rm.addEquality( rule, variable, subGoalTerm );
-				rule = rm.replaceVariablesWithConstants( rule );
+				rule = rm.replaceVariablesWithConstants( rule, mStrict );
 				rule = rm.removeUnnecessaryEqualityBuiltins( rule );
 				
 				adornment = adornment.setConstantTerm( subGoalTerm );
@@ -345,7 +350,7 @@ public class LocalStratifier implements IRuleStratifier
 		
 		for( IRule rule : rules )
 		{
-			IRule r = rm.replaceVariablesWithConstants( rule );
+			IRule r = rm.replaceVariablesWithConstants( rule, mStrict );
 			r = rm.removeUnnecessaryEqualityBuiltins( r );
 			
 			List<Adornment> adornments = new ArrayList<Adornment>();
@@ -368,4 +373,6 @@ public class LocalStratifier implements IRuleStratifier
 	
 	/** The list of rules to process. */
 	private final List<LocalStratificationDecorator> mRules = new ArrayList<LocalStratificationDecorator>();
+	
+	private boolean mStrict;
 }

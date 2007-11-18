@@ -29,16 +29,14 @@ import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.TERM;
+import java.util.Arrays;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import java.util.Arrays;
-
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.basics.seminaive.ConstLiteral;
+import org.deri.iris.builtins.ExactEqualBuiltin;
 
 /**
  * <p>
@@ -76,8 +74,7 @@ public class MiscOpsTest extends TestCase {
 	 	// p(?X_0, ?X_1, ?X_2) :- r(?X_1, ?X_2), ?X_0 = a
 		final IRule rec0 = BASIC.createRule(Arrays.asList(createLiteral("p",
 				"?X_0", "?X_1", "?X_2")), Arrays.asList(createLiteral("r",
-				"?X_1", "?X_2"), new ConstLiteral(
-						true,TERM.createString("a"),TERM.createVariable("?X_0"))));
+				"?X_1", "?X_2"), BASIC.createLiteral(true, new ExactEqualBuiltin(TERM.createVariable("?X_0"),TERM.createString("a")))));
 
 		assertEquals(rec0, MiscOps.rectify(r0));
 	}

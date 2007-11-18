@@ -38,6 +38,9 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.basics.Tuple;
 import org.deri.iris.builtins.EqualBuiltin;
+import org.deri.iris.builtins.ExactEqualBuiltin;
+import org.deri.iris.builtins.NotExactEqualBuiltin;
+import org.deri.iris.builtins.TrueBuiltin;
 import org.deri.iris.builtins.UnEqualBuiltin;
 import org.deri.iris.factory.Factory;
 
@@ -55,7 +58,8 @@ public class RuleManipulator
 	 */
 	public IRule addEquality( IRule rule, ITerm term1, ITerm term2 )
 	{
-		ILiteral literal = Factory.BASIC.createLiteral( true, new EqualBuiltin( term1, term2 ) );
+//		ILiteral literal = Factory.BASIC.createLiteral( true, new EqualBuiltin( term1, term2 ) );
+		ILiteral literal = Factory.BASIC.createLiteral( true, new ExactEqualBuiltin( term1, term2 ) );
 		
 		return addBodyLiteral( rule, literal );
 	}
@@ -69,7 +73,8 @@ public class RuleManipulator
 	 */
 	public IRule addInequality( IRule rule, ITerm term1, ITerm term2 )
 	{
-		ILiteral literal = Factory.BASIC.createLiteral( true, new UnEqualBuiltin( term1, term2 ) );
+//		ILiteral literal = Factory.BASIC.createLiteral( true, new UnEqualBuiltin( term1, term2 ) );
+		ILiteral literal = Factory.BASIC.createLiteral( true, new NotExactEqualBuiltin( term1, term2 ) );
 		
 		return addBodyLiteral( rule, literal );
 	}
@@ -179,12 +184,14 @@ public class RuleManipulator
 	}
 	
 	/**
-	 * Iterate the rule looking for positive variable=constant equalities.
+	 * Iterate the rule looking for positive variable==constant exact equalities.
 	 * For each one found, replace the variable with the constant in the other rule literals.
 	 * @param rule The rule to process
+	 * @param strict True, do replacements only for exact equalities.
+	 * False, use any equality.
 	 * @return A new rule
 	 */
-	public IRule replaceVariablesWithConstants( IRule rule )
+	public IRule replaceVariablesWithConstants( IRule rule, boolean strict )
 	{
 		boolean changed;
 		
@@ -194,37 +201,50 @@ public class RuleManipulator
 			
 			for( ILiteral literal : rule.getBody() )
 			{
-				if( literal.isPositive() )
+				boolean positive = literal.isPositive();
+				
+				boolean equality = literal.getAtom() instanceof EqualBuiltin;
+				boolean in_equality = literal.getAtom() instanceof UnEqualBuiltin;
+				boolean is = literal.getAtom() instanceof ExactEqualBuiltin;
+				boolean is_not = literal.getAtom() instanceof NotExactEqualBuiltin;
+				
+				boolean canReplace = (is && positive) || (is_not && ! positive);
+				
+				if( ! strict && ! canReplace )
 				{
-					if( literal.getAtom() instanceof EqualBuiltin )
+					canReplace = (equality && positive) || (in_equality && ! positive);
+				}
+				
+				if( canReplace )
+				{
+					Tuple tuple = (Tuple) literal.getAtom().getTuple();
+					
+					assert tuple.size() == 2;
+					
+					IVariable variable = null;
+					ITerm constant = null;
+					
+					for( ITerm term : tuple )
 					{
-						Tuple tuple = (Tuple) literal.getAtom().getTuple();
+						if( term instanceof IVariable )
+	                        variable = (IVariable) term;
+						if( term.isGround() )
+							constant = term;
+					}
+					
+					// If a equality between a variable and constant then...
+					if( variable != null && constant != null )
+					{
+						// ... re-write the rule replacing the variable with the constant
+						IRule rule2 = replace( rule, true, variable, constant );
 						
-						IVariable variable = null;
-						ITerm constant = null;
-						
-						for( ITerm term : tuple )
+						if( ! rule2.equals( rule ) )
 						{
-							if( term instanceof IVariable )
-		                        variable = (IVariable) term;
-							if( term.isGround() )
-								constant = term;
-						}
-						
-						// If a positive equality between a variable and constant then...
-						if( variable != null && constant != null )
-						{
-							// ... re-write the rule replacing the variable with the constant
-							IRule rule2 = replace( rule, true, variable, constant );
+							rule = rule2;
+							changed = true;
 							
-							if( ! rule2.equals( rule ) )
-							{
-								rule = rule2;
-								changed = true;
-								
-								// Start again at the beginning
-								break;
-							}
+							// Start again at the beginning
+							break;
 						}
 					}
 				}
@@ -247,26 +267,31 @@ public class RuleManipulator
 		for( ILiteral literal : rule.getBody() )
 		{
 			boolean add = true;
+			boolean positive = literal.isPositive();
+			boolean equality = literal.getAtom() instanceof EqualBuiltin || literal.getAtom() instanceof ExactEqualBuiltin;
+			boolean in_equality = literal.getAtom() instanceof UnEqualBuiltin || literal.getAtom() instanceof NotExactEqualBuiltin;
+
+			boolean canReplace = (positive && equality) || (!positive && in_equality);
 			
-			if( literal.isPositive() )
+			if( canReplace )
 			{
-				if( literal.getAtom() instanceof EqualBuiltin )
-				{
-					Tuple tuple = (Tuple) literal.getAtom().getTuple();
-					
-					assert tuple.size() == 2;
-					
-					ITerm t1 = tuple.get( 0 );
-					ITerm t2 = tuple.get( 1 );
-					
-					if( t1.equals( t2 ) )
-						add = false;	// Don't add it!
-				}
+				Tuple tuple = (Tuple) literal.getAtom().getTuple();
+				
+				assert tuple.size() == 2;
+				
+				ITerm t1 = tuple.get( 0 );
+				ITerm t2 = tuple.get( 1 );
+				
+				if( t1.equals( t2 ) )
+					add = false;	// Don't add it!
 			}
 			
 			if( add )
 				body.add( literal );
 		}
+		
+		if( body.size() == 0 )
+			body.add( Factory.BASIC.createLiteral( true, new TrueBuiltin() ) );
 		
 		return Factory.BASIC.createRule( rule.getHead(), body );
 	}
@@ -365,6 +390,24 @@ public class RuleManipulator
 			ITuple newTuple = replace( atom.getTuple(), remove, replaceWith );
 			
 			return new EqualBuiltin( newTuple.toArray( new ITerm[ 2 ] ) );
+		}
+		else if( atom instanceof UnEqualBuiltin )
+		{
+			ITuple newTuple = replace( atom.getTuple(), remove, replaceWith );
+			
+			return new UnEqualBuiltin( newTuple.toArray( new ITerm[ 2 ] ) );
+		}
+		else if( atom instanceof ExactEqualBuiltin )
+		{
+			ITuple newTuple = replace( atom.getTuple(), remove, replaceWith );
+			
+			return new ExactEqualBuiltin( newTuple.toArray( new ITerm[ 2 ] ) );
+		}
+		else if( atom instanceof NotExactEqualBuiltin )
+		{
+			ITuple newTuple = replace( atom.getTuple(), remove, replaceWith );
+			
+			return new NotExactEqualBuiltin( newTuple.toArray( new ITerm[ 2 ] ) );
 		}
 		
 		return atom;
