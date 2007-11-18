@@ -351,7 +351,9 @@ public class LocalStratifier implements IRuleStratifier
 		for( IRule rule : rules )
 		{
 			IRule r = rm.replaceVariablesWithConstants( rule, mStrict );
+			r = rm.replaceVariablesWithVariables( r );
 			r = rm.removeUnnecessaryEqualityBuiltins( r );
+			r = rm.removeDuplicateLiterals( r );
 			
 			List<Adornment> adornments = new ArrayList<Adornment>();
 
@@ -363,6 +365,15 @@ public class LocalStratifier implements IRuleStratifier
 				
 				if( term.isGround() )
 					adornment = adornment.setConstantTerm( term );
+				else
+				{
+					// Term is a variable
+					// Scan rule body looking for BIN_OP( variable, constant )
+					// (Equality has already been taken care of by pushing constants in to variables)
+					// !=, <, >, not =, not >=, not <=, imply variable != constant adornment
+					// If constant is numeric, then can add adornment for not every numeric type
+					
+				}
 
 				adornments.add( adornment );
 			}
