@@ -29,7 +29,8 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
 
 /**
- * Base class of all boolean built-in predicates that:
+ * Base class of all boolean built-in predicates.
+ * This kind of built-in ...
  * a) can have any arity
  * b) can only be evaluated when all the terms are known (i.e. no unknown variables)
  * c) evaluates to true or false
