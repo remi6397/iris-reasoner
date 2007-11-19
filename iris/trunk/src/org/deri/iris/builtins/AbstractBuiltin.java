@@ -103,15 +103,6 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 	}
 
 	/**
-	 * Returns the number of terms stored in this builtin.
-	 * 
-	 * @return the number of terms
-	 */
-	protected int getTermsLength() {
-		return a.getPredicate().getArity();
-	}
-
-	/**
 	 * <p>
 	 * Returns a short description of the inner atom. <b>The format of the
 	 * returned String is undocumented and subject to change.</b>
