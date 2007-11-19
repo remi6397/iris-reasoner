@@ -153,7 +153,7 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 		// calculating the needed term indexes from the submitted tuple
 		int[] outstanding = BuiltinHelper.determineUnground(getTuple());
 		
-		// retrieving the constants of this builin
+		// retrieving the constants of this builtin
 		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple(), 
 				BuiltinHelper.complement(outstanding, getTuple().size()));
 
@@ -183,7 +183,8 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 	 * Evaluate the predicate once the terms and variable indexes have been found.
 	 * 
 	 * @param terms The array of all terms for this evaluation.
-	 * @param variableIndexes The indexes of the positions of variables in the 'terms' array.
+	 * @param variableIndexes the indexes of the terms which should be
+	 * computed (starting at 0)
 	 * @return The result of the evaluation.
 	 */
 	protected ITerm evaluateTerms( ITerm[] terms, int[] variableIndexes )
