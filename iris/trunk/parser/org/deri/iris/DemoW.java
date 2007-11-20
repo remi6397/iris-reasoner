@@ -60,9 +60,6 @@ public class DemoW
 		{
 			setLayout( new BorderLayout() );
 			
-			mProgram = new JTextArea();
-			mOutput = new JTextArea();
-			
 			mProgram.setText( 
 				"man('homer').\r\n" +
 				"woman('marge').\r\n" +
@@ -74,14 +71,10 @@ public class DemoW
 				"?-isMale(?x)."
 				);
 			
-			mRun = new JButton( "Evaluate" );
-			mAbort = new JButton( "Abort" );
-			mAbort.setEnabled( false );
-
 			mRun.addActionListener( this );
+
 			mAbort.addActionListener( this );
-			
-			mEvaluationStrategy = new JComboBox( new String[] { "Naive", "Semi-naive", "Magic Sets" } );
+			mAbort.setEnabled( false );
 
 			JScrollPane programScroller = new JScrollPane( mProgram );
 			JScrollPane outputScroller = new JScrollPane( mOutput );
@@ -113,13 +106,13 @@ public class DemoW
 			
 		}
 
-		private  JTextArea mProgram;
-		private JTextArea mOutput;
+		private final JTextArea mProgram = new JTextArea();
+		private final JTextArea mOutput = new JTextArea();
 		
-		private JButton mRun;
-		private JButton mAbort;
+		private final JButton mRun = new JButton( "Evaluate" );
+		private final JButton mAbort = new JButton( "Abort" );
 		
-		private JComboBox mEvaluationStrategy;
+		private final JComboBox mEvaluationStrategy = new JComboBox( new String[] { "Naive", "Semi-naive", "Magic Sets" } );
 		
 		Thread mExecutionThread;
 		
@@ -180,8 +173,6 @@ public class DemoW
 
 			mExecutionThread.setPriority( Thread.MIN_PRIORITY );
 			mExecutionThread.start();
-			
-			
 		}
 		
 		/**
@@ -249,9 +240,8 @@ public class DemoW
 				}
 	        }
 			
-			private String program;
-			private int evaluationStrategy;
+			private final String program;
+			private final int evaluationStrategy;
 		}
-
 	}
 }
