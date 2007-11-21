@@ -36,6 +36,9 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.rules.IRuleStratifier;
 
+// TEST LINE
+// 2
+
 /**
  * The global stratification algorithm.
  * This algorithm does not modify/create/delete any rules.
