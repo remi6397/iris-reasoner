@@ -16,9 +16,9 @@
 We describe the following construct:
 </p>
 
-<code>
-p(X) :- q(X), not r(X)
-</code>
+<code><pre>
+    p(X) :- q(X), not r(X)
+</pre></code>
 
 <p>
 as meaning, that the relation associated with predicate 'p' contains all those values from
@@ -40,30 +40,30 @@ rules, must be 'fully' evaluated before evaluation of the dependent rules begins
 Consider what would happen if we have the following:
 </p>
 
-<code>
-p(X) :- q(X), not r(X)	(1)
-r(X) :- t(X)	(2)
-q(a)
-q(b)
-t(a)
-</code>
+<code><pre>
+    p(X) :- q(X), not r(X)	(1)
+    r(X) :- t(X)	        (2)
+    q(a)
+    q(b)
+    t(a)
+</pre></code>
 
 <p>
 If the known facts are applied to rule (1) first, the following new facts are generated:
 </p>
 
-<code>
-p(a)
-p(b)
-</code>
+<code><pre>
+    p(a)
+    p(b)
+</pre></code>
 
 <p>
 Then applying the known facts to rule (2) produces the following:
 </p>
 
-<code>
-r(a)
-</code>
+<code><pre>
+    r(a)
+</pre></code>
 
 <p>
 However, the existence of fact <code>r(a)</code> should have precluded the deduction of fact
@@ -78,9 +78,9 @@ In order to ensure that rule evaluation is monotone, rules must be evaluated in 
 For any general rule:
 </p>
 
-<code>
-p :- L<sub>1</sub>...L<sub>m</sub>, N<sub>1</sub>...N<sub>p</sub>
-</code>
+<code><pre>
+    p :- L<sub>1</sub>...L<sub>m</sub>, N<sub>1</sub>...N<sub>p</sub>
+</pre></code>
 
 <p>
 where L<sub>1</sub>...L<sub>m</sub> are positive literals and N<sub>1</sub>...N<sub>p</sub> are
@@ -121,9 +121,9 @@ tuples used as input to the rule and tuples produced by the rule.
 Consider:
 </p>
 
-<code>
-p(a,X) :- q(X), not p(b,X)	(3)
-</code>
+<code><pre>
+    p(a,X) :- q(X), not p(b,X)	(3)
+</pre></code>
 
 <p>
 This rule can produce tuples (a,?) for the relation associated with predicate 'p' from tuples (b,?)
@@ -136,10 +136,10 @@ input to the rule, because of the presence of constants 'a' and 'b'.
 A more complicated scenario is as follows:
 </p>
 
-<code>
-p(a,X) :- r(X), not q(b,X)	(4)
-q(X,Y) :- p(X,Y)	(5)
-</code>
+<code><pre>
+    p(a,X) :- r(X), not q(b,X)	(4)
+    q(X,Y) :- p(X,Y)	        (5)
+</pre></code>
 
 <p>
 Here rule (5) can produce tuples for input to rule (4) and vice versa.
@@ -160,17 +160,17 @@ extent of the domain over which the rule can produce new facts.
 The following rule:
 </p>
 
-<code>
-p(Z,X) :- r(X), not q(b,X), Z=a,	(6)
-</code>
+<code><pre>
+    p(Z,X) :- r(X), not q(b,X), Z=a,	(6)
+</pre></code>
 
 <p>
 would be re-written as:
 </p>
 
-<code>
-p(a,X) :- r(X), not q(b,X)	(7)
-</code>
+<code><pre>
+    p(a,X) :- r(X), not q(b,X)	        (7)
+</pre></code>
 
 <p>
 being equivalent to (4) above. It is now clear that this rule can only produce tuples for
@@ -196,10 +196,10 @@ The significance of the third adornment type will be shown later.
 The rules (4) and (5) above would thus be written:
 </p>
 
-<code>
-p<sup>a,?</sup>(a,X) :- r(X), not q(b,X)	(7)
-q<sup>?,?</sup>(X,Y) :- p(X,Y)	(8)
-</code>
+<code><pre>
+    p<sup>a,?</sup>(a,X) :- r(X), not q(b,X)	(7)
+    q<sup>?,?</sup>(X,Y) :- p(X,Y)	            (8)
+</pre></code>
 
 <p>
 Step 3 now involves iterating through the body literals of every rule.
@@ -255,8 +255,8 @@ One that can produce tuples for 'not q(b,X)' and one that can not:
 </p>
 
 <code><pre>
-q<sup>b,?</sup>(b,Y) :- p(b,Y)	(9)
-q<sup>!b,?</sup>(X,Y) :- p(X,Y), X != b	(10)
+    q<sup>b,?</sup>(b,Y) :- p(b,Y)	            (9)
+    q<sup>!b,?</sup>(X,Y) :- p(X,Y), X != b	    (10)
 </pre></code>
 
 <p>
@@ -265,9 +265,9 @@ the resulting set of rules looks like this:
 </p>
 
 <code><pre>
-p<sup>a,?</sup>(a,X) :- r(X), not q(b,X)	(11)
-q<sup>b,?</sup>(b,Y) :- p(b,Y)	(12)
-q<sup>!b,?</sup>(X,Y) :- p(X,Y), X != b	(13)
+    p<sup>a,?</sup>(a,X) :- r(X), not q(b,X)	(11)
+    q<sup>b,?</sup>(b,Y) :- p(b,Y)	            (12)
+    q<sup>!b,?</sup>(X,Y) :- p(X,Y), X != b	    (13)
 </pre></code>
 
 <p>
@@ -290,8 +290,10 @@ that only produces tuples with the constant value 'b' in the first term.
 By inspection then, it can be seen that the order of evaluation of this logic program is as follows:
 </p>
 
+<pre>
 stratum 0: rule 12
 stratum 1: rules 11 and 13
+</pre>
 
 <p>
 Once the stratum have been decided, the adornments can be removed and evaluation can progress
@@ -300,13 +302,13 @@ as normal:
 
 Stratum 0:
 <code><pre>
-q(b,Y) :- p(b,Y)
+    q(b,Y) :- p(b,Y)
 </pre></code>
 
 Stratum 1:
 <code><pre>
-p(a,X) :- r(X), not q(b,X)
-q(X,Y) :- p(X,Y), X != b
+    p(a,X) :- r(X), not q(b,X)
+    q(X,Y) :- p(X,Y), X != b
 </pre></code>
 
 <p>
@@ -315,7 +317,7 @@ The algorithm would cause this rule to be re-written as follows:
 </p>
 
 <code><pre>
-p<sup>a,?</sup>(a,X) :- q(X), not p(b,X)	(14)
+    p<sup>a,?</sup>(a,X) :- q(X), not p(b,X)	(14)
 </pre></code>
 
 <p>
@@ -328,7 +330,7 @@ The situation is more interesting with the addition of a second rule:
 </p>
 
 <code><pre>
-p(X,Y) :- p(Y,X)	(15)
+    p(X,Y) :- p(Y,X)	                        (15)
 </pre></code>
 
 <p>
@@ -337,9 +339,9 @@ complete set of rules as:
 </p>
 
 <code><pre>
-p<sup>a,?</sup>(a,X) :- q(X), not p(b,X)	(16)
-p<sup>b,?</sup>(b,Y) :- p(Y,b)	(17)
-p<sup>!b,?</sup>(X,Y) :- p(Y,X), X != b	(18)
+    p<sup>a,?</sup>(a,X) :- q(X), not p(b,X)	(16)
+    p<sup>b,?</sup>(b,Y) :- p(Y,b)	            (17)
+    p<sup>!b,?</sup>(X,Y) :- p(Y,X), X != b	    (18)
 </pre></code>
 
 <p>
@@ -361,7 +363,7 @@ More complicated cases can arise where a rule is split more than once, either on
 </p>
 
 <code><pre>
-p<sup>?,?,?</sup>(X,Y,Z) :- q(X,Y,Z)
+    p<sup>?,?,?</sup>(X,Y,Z) :- q(X,Y,Z)
 </pre></code>
 
 <p>
@@ -369,8 +371,8 @@ could be split like this:
 </p>
 
 <code><pre>
-p<sup>a,b,?</sup>(a,b,Z) :- q(a,b,Z)
-p<sup>!a,!b,?</sup>(X,Y,Z) :- q(X,Y,Z), X != a, Y != b
+    p<sup>a,b,?</sup>(a,b,Z) :- q(a,b,Z)
+    p<sup>!a,!b,?</sup>(X,Y,Z) :- q(X,Y,Z), X != a, Y != b
 </pre></code>
 
 <p>
@@ -378,9 +380,9 @@ and then further like this:
 </p>
 
 <code><pre>
-p<sup>a,b,?</sup>(a,b,Z) :- q(a,b,Z)	(19)
-p<sup>!a!c,!b,?</sup>(X,Y,Z) :- q(X,Y,Z), X != a, X != c, Y != b	(20)
-p<sup>c,!b,?</sup>(X,Y,Z) :- q(X,Y,Z), X =c, Y != b	(21)
+    p<sup>a,b,?</sup>(a,b,Z) :- q(a,b,Z)	                            (19)
+    p<sup>!a!c,!b,?</sup>(X,Y,Z) :- q(X,Y,Z), X != a, X != c, Y != b	(20)
+    p<sup>c,!b,?</sup>(X,Y,Z) :- q(X,Y,Z), X =c, Y != b	                (21)
 </pre></code>
 
 <p>
