@@ -21,19 +21,19 @@ p(X) :- q(X), not r(X)
 </code>
 
 <p>
-as meaning, that the relation associated with predicate 'p’ contains all those values from
-predicate 'q’ that are not in predicate 'r’. In other words, the set difference of 'q’ and 'r’.
+as meaning, that the relation associated with predicate 'p' contains all those values from
+predicate 'q' that are not in predicate 'r'. In other words, the set difference of 'q' and 'r'.
 </p>
 
 <p>
 Traditional forward chaining methods for evaluating logic programs involve simply using the values
-of tuples from predicates and applying them to the program’s rules to generate more tuples.
+of tuples from predicates and applying them to the program's rules to generate more tuples.
 </p>
 
 <p>
 Without negation such techniques are guaranteed to be monotone. However, in the presence of
 negation, rules that generate tuples for a predicate that is used in negated sub-goals of other
-rules, must be 'fully’ evaluated before evaluation of the dependent rules begins.
+rules, must be 'fully' evaluated before evaluation of the dependent rules begins.
 </p>
 
 <p>
@@ -85,7 +85,7 @@ p :- L<sub>1</sub>...L<sub>m</sub>, N<sub>1</sub>...N<sub>p</sub>
 <p>
 where L<sub>1</sub>...L<sub>m</sub> are positive literals and N<sub>1</sub>...N<sub>p</sub> are
 negative literals,
-monotone evaluation using forward chaining techniques can only be assured if the rule 'p’ be
+monotone evaluation using forward chaining techniques can only be assured if the rule 'p' be
 allocated to a stratum that is at least as high as each of its positive literals and at least one
 higher than each of its negative literals.
 </p>
@@ -126,10 +126,10 @@ p(a,X) :- q(X), not p(b,X)	(3)
 </code>
 
 <p>
-This rule can produce tuples (a,?) for the relation associated with predicate 'p’ from tuples (b,?)
-also associated with the relation for 'p’.
+This rule can produce tuples (a,?) for the relation associated with predicate 'p' from tuples (b,?)
+also associated with the relation for 'p'.
 However, no special treatment is required, because nothing produced by the rule can be used as
-input to the rule, because of the presence of constants 'a’ and 'b’.
+input to the rule, because of the presence of constants 'a' and 'b'.
 </p>
 
 <p>
@@ -174,18 +174,18 @@ p(a,X) :- r(X), not q(b,X)	(7)
 
 <p>
 being equivalent to (4) above. It is now clear that this rule can only produce tuples for
-predicate 'p’ that have the constant value 'a’ as their first term.
+predicate 'p' that have the constant value 'a' as their first term.
 </p>
 
 <p>
-The second step is to adorn all the rule head predicates to show their 'domain of influence’.
+The second step is to adorn all the rule head predicates to show their 'domain of influence'.
 For each head predicate an adornment is added for each term that indicates if the term is either:
 </p>
 
 <ul>
-	<li>free, i.e. it is a variable and is represented with '?’</li>
+	<li>free, i.e. it is a variable and is represented with '?'</li>
 	<li>a constant, which is represented by the constant value itself</li>
-	<li>not a specific constant, which is indicated by '!’ followed by the constant value</li>
+	<li>not a specific constant, which is indicated by '!' followed by the constant value</li>
 </ul>
 
 <p>
@@ -229,7 +229,7 @@ one which is an exact match and one that does not match for the interesting nega
 
 <p>
 For a given negated sub-goal <code>N<sub>1</sub>...N<sub>p</sub>)</code>,
-the 'perfect match’ rule is created by taking a copy of the rule and
+the 'perfect match' rule is created by taking a copy of the rule and
 replacing the variables in the head with the constants from the
 negated sub-goal and so on in to the rule body.
 Then the rule adornments are updated with the constant values from each position in the rule head.
@@ -240,18 +240,18 @@ To create the non-matching rule, in-equality literals are added to the rule body
 one for each variable-constant pair, where the variables are from the rule head and the constants
 from <code>N<sub>1</sub>...N<sub>p</sub>)</code>.
 For each in-equality literal added, the adornment for this position in the rule head is updated
-by adding '!’<constant_value>.
+by adding '!'<constant_value>.
 </p>
 
 <p>
-Following our example, the 'not q(b,X)’ literal from (7) would therefore match with the
+Following our example, the 'not q(b,X)' literal from (7) would therefore match with the
 head of rule (8).
 </p>
 
 <p>
-However, the literal 'not q(b,X)’ contains a constant, which enables the re-writing of rule (8)
+However, the literal 'not q(b,X)' contains a constant, which enables the re-writing of rule (8)
 in to two separate rules:
-One that can produce tuples for 'not q(b,X)’ and one that can not:
+One that can produce tuples for 'not q(b,X)' and one that can not:
 </p>
 
 <code><pre>
@@ -260,7 +260,7 @@ q<sup>!b,?</sup>(X,Y) :- p(X,Y), X != b	(10)
 </pre></code>
 
 <p>
-This process is repeated until no more rules can be found to 'split’. From our example,
+This process is repeated until no more rules can be found to 'split'. From our example,
 the resulting set of rules looks like this:
 </p>
 
@@ -276,14 +276,14 @@ as well as their names are now taken in to consideration.
 </p>
 
 <p>
-From the above, it can be seen that negated literal 'not q(b,X)’ from rule (11) can not have
-a dependency on rule (13) with head predicate 'q!b,?(X,Y)’,
-since no tuples are generated from rule (13) with constant value 'b’ in the first term.
+From the above, it can be seen that negated literal 'not q(b,X)' from rule (11) can not have
+a dependency on rule (13) with head predicate 'q!b,?(X,Y)',
+since no tuples are generated from rule (13) with constant value 'b' in the first term.
 </p>
 
 <p>
-However, the negated literal 'not q(b,X)’ from rule (11) does have a dependency on rule (12)
-that only produces tuples with the constant value 'b’ in the first term.
+However, the negated literal 'not q(b,X)' from rule (11) does have a dependency on rule (12)
+that only produces tuples with the constant value 'b' in the first term.
 </p>
 
 <p>
@@ -319,7 +319,7 @@ p<sup>a,?</sup>(a,X) :- q(X), not p(b,X)	(14)
 </pre></code>
 
 <p>
-The negated sub-goal 'not p(b,X)’ has no dependency on head predicate 'pa,?(a,X)’,
+The negated sub-goal 'not p(b,X)' has no dependency on head predicate 'pa,?(a,X)',
 so no cyclic dependency exists.
 </p>
 
@@ -343,12 +343,12 @@ p<sup>!b,?</sup>(X,Y) :- p(Y,X), X != b	(18)
 </pre></code>
 
 <p>
-The negated sub-goal 'not p(b,X)’ from rule (16) requires that rule (16) exist in a
+The negated sub-goal 'not p(b,X)' from rule (16) requires that rule (16) exist in a
 higher stratum than (17), with no direct dependency on rule (18).
 </p>
 
 <p>
-However, the literal 'p(Y,b)’ from rule (17) matches with the head literal of every other rule,
+However, the literal 'p(Y,b)' from rule (17) matches with the head literal of every other rule,
 requiring that rule (17) exist in at least as high a stratum as the other two rules.
 </p>
 
@@ -384,7 +384,7 @@ p<sup>c,!b,?</sup>(X,Y,Z) :- q(X,Y,Z), X =c, Y != b	(21)
 </pre></code>
 
 <p>
-Here the adornments for rule (20) indicate that it produces tuple for predicate 'p’, where the first term is neither 'a’ nor 'c’, the second term is not 'b’ and the third term is not determined.
+Here the adornments for rule (20) indicate that it produces tuple for predicate 'p', where the first term is neither 'a' nor 'c', the second term is not 'b' and the third term is not determined.
 </p>
 
 <p>Summary of Algorithm</p>
@@ -392,7 +392,7 @@ Here the adornments for rule (20) indicate that it produces tuple for predicate 
 <ul>
 	<li>Move as many constants as possible in to rule heads.</li>
 	<li>Adorn rule heads</li>
-	<li>Follow every negated sub-goal containing constants and split any matching rules in to those that can 'feed’ the negated sub-goal and those that can not</li>
+	<li>Follow every negated sub-goal containing constants and split any matching rules in to those that can 'feed' the negated sub-goal and those that can not</li>
 	<li>When no more modifications to rules can be made, attempt the normal stratification process, but take adornments as well as predicate names in to account when detecting dependencies.</li>
 </ul>
 
