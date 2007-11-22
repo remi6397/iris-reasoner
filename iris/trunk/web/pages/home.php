@@ -4,9 +4,9 @@
 	reasoning engine for expressive rule-based languages. 
 	Currently IRIS supports the following features:
 	<ul>
-		<li>Safe datalog with stratified 'negation as failure'</li>
+		<li>Safe datalog with (locally) stratified 'negation as failure'</li>
 		<li>Detection of un-safe rules <a href="/saferules">(algorithm description here)</a></li>
-		<li>Detection of non-stratified programs with negation</li>
+		<li>Detection of non-stratified programs with negation<a href="/stratification">(algorithm descriptions here)</a></li>
 		<li>Extended and extensible set of built-in predicates and data types</li>
 		<li>Propositional logic</li>
 	</ul>
@@ -22,9 +22,8 @@
 </p>
 
 <p>
-	To learn more about the internals of the reasoner
-	have a look at the <a href="foundations">theoretical results</a> 
-	IRIS is	built upon.
+	To learn more about the theoretical results that the reasoner
+	is based upon have a look at the <a href="foundations">theoretical results</a>. 
 </p>
 	
 <h2>IRIS Applications</h2>
