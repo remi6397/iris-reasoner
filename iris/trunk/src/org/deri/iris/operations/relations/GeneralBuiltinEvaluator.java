@@ -36,6 +36,10 @@ import org.deri.iris.api.operations.relation.IBuiltinEvaluator;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.builtins.AddBuiltin;
+import org.deri.iris.builtins.DivideBuiltin;
+import org.deri.iris.builtins.MultiplyBuiltin;
+import org.deri.iris.builtins.SubtractBuiltin;
 
 /**
  * <p>
@@ -105,52 +109,29 @@ public class GeneralBuiltinEvaluator implements IBuiltinEvaluator {
 	 * 
 	 * @see org.deri.iris.api.operations.relation.IBuiltinEvaluator#evaluate()
 	 */
-	public IMixedDatatypeRelation evaluate()
-	{
-		final int resultArity = relation0.getArity() + outVras.size();
-		
-		final IMixedDatatypeRelation resultRel = RELATION.getMixedRelation( resultArity );
-
-		if (relation0.isEmpty())
-		{
-			/*
-			 If the rule only contains a built-in predicate, then there will
-			 be no existing relation to join to.
-			 This is allowed in certain circumstances, e.g.
-				 p(?X) :- ?X = 3
-				 p :- 1 = 2
-				 p(?X) :- 1 + ?X = 2
-			*/
-			int numVariables = builtin.getTuple().getAllVariables().size();
-			int maxUnknownVariables = builtin.maxUnknownVariables();
-			if(	numVariables <= maxUnknownVariables )
-			{
-				ITuple inTuple = builtin.getTuple();
-				ITuple outTuple = builtin.evaluate( inTuple );
-				
-				// TODO
-				// This is certainly not correct, but it works.
-				// The arity if the relation0 is not predictable, because it depends
-				// on what literal (if any) was previously evaluated.
-				if( outTuple != null )
-				{
-					if( resultArity == outTuple.size() )
-						resultRel.add( outTuple );
-					else
-					{
-						ITuple t2 = substituteTuple( outTuple );
-						resultRel.add( t2 );
-					}
-				}
-			}
-		}
-		else
-		{
+	public IMixedDatatypeRelation evaluate() {
+		final IMixedDatatypeRelation resultRel = RELATION.getMixedRelation(
+				relation0.getArity() + outVras.size());
+		if (!relation0.isEmpty()) {
 			for (final ITuple t0 : relation0) {
 				final ITuple t1 = builtin.evaluate(getInTuple(t0));
 				if (((t1 != null) && positive) || ((t1 == null) && !positive)) {
 					resultRel.add((outVras.isEmpty()) ? t0 : t0.append(t1));
 				}
+			}
+		} else {
+			// e.g., add(3, 4, ?X)
+			// TODO: Sometimes this.relation0 is empty but builtin is not
+			// evaluable with the bindings from the rule
+			// Correct this once the isEvaluable method is correctly implemented
+			
+			if(this.builtin.getTuple().getAllVariables().size() == 1 &&
+					(this.builtin instanceof AddBuiltin ||
+					 this.builtin instanceof DivideBuiltin ||
+					 this.builtin instanceof MultiplyBuiltin ||
+					 this.builtin instanceof SubtractBuiltin
+					)){
+				resultRel.add(builtin.evaluate(builtin.getTuple())); 
 			}
 		}
 		return resultRel;

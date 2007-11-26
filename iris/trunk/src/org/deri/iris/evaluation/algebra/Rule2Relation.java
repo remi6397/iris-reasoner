@@ -144,8 +144,8 @@ public class Rule2Relation {
 	 */
 	private IComponent translateBody(final List<ILiteral> lits) {
 		IJoinDescriptor j = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
-		IJoinDescriptor jNegative = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
-		IJoinDescriptor jBuiltin = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
+		IJoinDescriptor jTmp0 = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
+		IJoinDescriptor jTmp1 = ALGEBRA.createJoinDescriptor(JoinCondition.EQUALS);
 		IComponent cPos, cNeg, cBuilt;
 		
 		for (ILiteral l : lits) {
@@ -166,7 +166,7 @@ public class Rule2Relation {
 					cNeg = translateOrdinaryLiteral(l);
 					if(cNeg != null){
 						cNeg.setPositive(false);
-						jNegative.addChild(cNeg);
+						jTmp0.addChild(cNeg);
 						//jTmp0.addVariables(cNeg.getVariables());
 					}
 				}
@@ -188,21 +188,18 @@ public class Rule2Relation {
 					jTmp1.addChild(cBuilt);
 					jTmp1.addVariables(cBuilt.getVariables());
 				}*/
-				jBuiltin.addChild(cBuilt);
+				jTmp1.addChild(cBuilt);
 				//jTmp1.addVariables(cBuilt.getVariables());
 			}
 		}
-		
-		if(jBuiltin.getChildren().size() > 0){
-			j.addChildren(jBuiltin.getChildren());
-			//j.addVariables(jTmp1.getVariables());
-		}
-		
-		if(jNegative.getChildren().size() > 0){
-			j.addChildren(jNegative.getChildren());
+		if(jTmp0.getChildren().size() > 0){
+			j.addChildren(jTmp0.getChildren());
 			//j.addVariables(jTmp0.getVariables());	
 		}
-
+		if(jTmp1.getChildren().size() > 0){
+			j.addChildren(jTmp1.getChildren());
+			//j.addVariables(jTmp1.getVariables());
+		}
 		if(j.getChildren().size() == 1){
 			return j.getChildren().get(0);
 		} else {
