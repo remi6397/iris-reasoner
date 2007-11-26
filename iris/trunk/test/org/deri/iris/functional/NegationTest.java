@@ -406,6 +406,48 @@ public class NegationTest extends TestCase
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
 
+	public void testLocallyStratified_SelfDependency_NotEqualFromRuleBody() throws Exception
+	{
+		String program = 
+ 			"s(1)." +
+		    "s(2)." +
+		    "s(3)." +
+		    "s(4)." +
+		    
+		    "p('b', 2)." +
+		    "p('b', 4)." +
+		    
+		    "p(?Y, ?X) :- s(?X), not p('b', ?X), p(?Y, ?Z), ?Y != 'b'." +
+		    "?- p(?X,?Y).";
+		
+		String expectedResults =
+		    "p('b', 2)." +
+		    "p('b', 4).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testLocallyStratified_SelfDependency_NotEqualFromRuleBody2() throws Exception
+	{
+		String program = 
+ 			"s(1)." +
+		    "s(2)." +
+		    "s(3)." +
+		    "s(4)." +
+		    
+		    "p('b', 2)." +
+		    "p('b', 4)." +
+		    
+		    "p(?Y, ?X) :- s(?X), not p('b', ?X), p(?Y, ?Z), not ?Y >= 'b'." +
+		    "?- p(?X,?Y).";
+		
+		String expectedResults =
+		    "p('b', 2)." +
+		    "p('b', 4).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
 	public void testLocallyStratified_CircularDependency() throws Exception
 	{
 		String program = 
@@ -483,6 +525,7 @@ public class NegationTest extends TestCase
 			
 		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
 	}
+	
 	/**
 	 * Test stratification algorithm.
 	 */
@@ -496,6 +539,21 @@ public class NegationTest extends TestCase
 		    "q('c',?X) :- r(?X), not p('b',?X).";
 			
 		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+	}
+
+	/**
+	 * Test stratification algorithm.
+	 */
+	public void testLocallyStratified_OverlappingCycles() throws Exception
+	{
+		String program = 
+			"p(1,?x) :- r(?x), not q(2,?x)." +
+
+			"q(?x,?y) :- p(?x,?y), s(?x,?y)." +
+
+			"s(3,?x) :- r(?x), not q(4,?x).";
+			
+		Helper.evaluateWithAllStrategies( program, "" );
 	}
 
 }
