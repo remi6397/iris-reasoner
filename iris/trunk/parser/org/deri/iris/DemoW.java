@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
@@ -29,6 +30,15 @@ public class DemoW
 	 */
 	public static void main( String[] args )
 	{
+		// Set up the native look and feel
+		try
+		{
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}
+		catch(Exception e)
+		{
+		}
+
 		// Create the main window and show it.
 		MainFrame mainFrame = new MainFrame();
 		mainFrame.setSize( 800, 600 );
