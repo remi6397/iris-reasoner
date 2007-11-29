@@ -160,12 +160,12 @@ public abstract class AbstractRelationTest<Type extends IRelation> extends
 
 		r.addAll(allTup);
 
-		final SortedSet<ITuple> rel_0132 = r.indexOn(new Integer[] { 0, 1, 3, 2 });
+		final SortedSet<ITuple> rel_0132 = r.indexOn(new int[] { 0, 1, 3, 2 });
 		final ITuple abkl = createTuple("a", "b", "k", "l");
 		assertEquals("The first tuple of relation 0132 must be " + abkl, abkl, rel_0132.first());
 
 		// test whether the order of the previous set remains the same
-		final SortedSet<ITuple> rel_3412 = r.indexOn(new Integer[] { 3, 4, 1, 2 });
+		final SortedSet<ITuple> rel_3412 = r.indexOn(new int[] { 3, 4, 1, 2 });
 		final ITuple xyab = createTuple("x", "y", "a", "b");
 		assertEquals("The first tuple of relation 0132 must be " + xyab, xyab, rel_3412.first());
 		assertEquals("The first tuple of relation 0132 must be still " + abkl, abkl, rel_0132.first());
@@ -174,8 +174,8 @@ public abstract class AbstractRelationTest<Type extends IRelation> extends
 	public void testIndexOnAdd() {
 		r.addAll(Arrays.asList(allTup));
 
-		final SortedSet<ITuple> rel_0123 = r.indexOn(new Integer[] { 0, 1, 2, 3 });
-		final SortedSet<ITuple> rel_3210 = r.indexOn(new Integer[] { 3, 2, 1, 0 });
+		final SortedSet<ITuple> rel_0123 = r.indexOn(new int[] { 0, 1, 2, 3 });
+		final SortedSet<ITuple> rel_3210 = r.indexOn(new int[] { 3, 2, 1, 0 });
 
 		// test whether adding to r would have an effect to the index
 		// relations
@@ -197,8 +197,8 @@ public abstract class AbstractRelationTest<Type extends IRelation> extends
 	public void testIndexOnRemove() {
 		r.addAll(Arrays.asList(allTup));
 
-		final SortedSet<ITuple> rel_0123 = r.indexOn(new Integer[] { 0, 1, 2, 3 });
-		final SortedSet<ITuple> rel_3210 = r.indexOn(new Integer[] { 3, 2, 1, 0 });
+		final SortedSet<ITuple> rel_0123 = r.indexOn(new int[] { 0, 1, 2, 3 });
+		final SortedSet<ITuple> rel_3210 = r.indexOn(new int[] { 3, 2, 1, 0 });
 
 		// test whether removing to r would have an effect to the index
 		// relations

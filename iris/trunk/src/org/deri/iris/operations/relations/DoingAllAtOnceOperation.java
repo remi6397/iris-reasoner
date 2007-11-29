@@ -381,12 +381,10 @@ public class DoingAllAtOnceOperation implements IJoin {
 	 * <code>[0]</code> and the indexes for the second relation at index
 	 * <code>[1]</code>
 	 */
-	private Integer[][] sortIndexes() {
-		final Integer[][] res = new Integer[2][];
-		res[0] = new Integer[r0.getArity()];
-		res[1] = new Integer[r1.getArity()];
-		Arrays.fill(res[0], 0);
-		Arrays.fill(res[1], 0);
+	private int[][] sortIndexes() {
+		final int[][] res = new int[2][];
+		res[0] = new int[r0.getArity()];
+		res[1] = new int[r1.getArity()];
 		int j = 1;
 		for (int i = 0; i < jidx.length; i++) {
 			if (jidx[i] >= 0) {
@@ -503,7 +501,7 @@ public class DoingAllAtOnceOperation implements IJoin {
 
 	public IMixedDatatypeRelation evaluate() {
 		// sort
-		final Integer[][] sortIndexes = sortIndexes();
+		final int[][] sortIndexes = sortIndexes();
 		final IMixedDatatypeRelation sr0;
 		if (sidx0 != null) {
 			sr0 = new SimpleSelection(r0, sidx0, sthreshold0, sc0).evaluate().indexOn(sortIndexes[0]);

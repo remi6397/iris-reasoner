@@ -172,12 +172,10 @@ public class SortMergeJoin implements IMixedDatatypeRelationOperation, IJoin {
 	 * <code>[0]</code> and the indexes for the second relation at index
 	 * <code>[1]</code>
 	 */
-	private Integer[][] sortIndexes() {
-		final Integer[][] res = new Integer[2][];
-		res[0] = new Integer[r0.getArity()];
-		res[1] = new Integer[r1.getArity()];
-		Arrays.fill(res[0], 0);
-		Arrays.fill(res[1], 0);
+	private int[][] sortIndexes() {
+		final int[][] res = new int[2][];
+		res[0] = new int[r0.getArity()];
+		res[1] = new int[r1.getArity()];
 		int j = 1;
 		for (int i = 0; i < idx.length; i++) {
 			if (idx[i] >= 0) {
@@ -288,7 +286,7 @@ public class SortMergeJoin implements IMixedDatatypeRelationOperation, IJoin {
 
 	public IMixedDatatypeRelation evaluate() {
 		// sort
-		final Integer[][] sortIndexes = sortIndexes();
+		final int[][] sortIndexes = sortIndexes();
 		final IMixedDatatypeRelation sr0 = r0.indexOn(sortIndexes[0]);
 		final IMixedDatatypeRelation sr1 = r1.indexOn(sortIndexes[1]);
 		// merge

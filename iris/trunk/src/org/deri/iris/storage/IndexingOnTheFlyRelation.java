@@ -67,9 +67,6 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 	/** The primary index. */
 	private final SortedSet<ITuple> primary;
 
-	/** The index array specifying on which the primary key is sorting. */
-	private final Integer[] primaryI;
-
 	/** The arity of the relation. */
 	private final int arity;
 
@@ -84,8 +81,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 		}
 
 		// creating the primary index
-		primaryI = new Integer[a];
-		Arrays.fill(primaryI, 0);
+		final int[] primaryI = new int[a];
 		if (a > 0) {
 			primaryI[0] = 1;
 		}
@@ -176,7 +172,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 		return new SubRelation(primary.tailSet(from), from, null);
 	}
 
-	public IRelation indexOn(final Integer[] idx) {
+	public IRelation indexOn(final int[] idx) {
 		if (idx == null) {
 			throw new NullPointerException("The index must not be null");
 		}
@@ -216,7 +212,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 		 * Array holding the position and the priority of the indexes on which
 		 * to sort.
 		 */
-		private final Integer[] indexOrder;
+		private final int[] indexOrder;
 
 		/**
 		 * <p>
@@ -235,14 +231,14 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 		 * </p>
 		 * <p>
 		 * The index array will be normalized according to {@link
-		 * #indexComparisonOrder(Integer[])
-		 * indexComparisonOrder(Integer[])} before any comparisons will
+		 * #indexComparisonOrder(int[])
+		 * indexComparisonOrder(int[])} before any comparisons will
 		 * be done.
 		 * </p>
 		 * @param indexes the indexes on which to sort the tuples
-		 * @see #indexComparisonOrder(Index[])
+		 * @see #indexComparisonOrder(int[])
 		 */
-		public TupleComparator(final Integer[] indexes) {
+		public TupleComparator(final int[] indexes) {
 			if (indexes == null) {
 				throw new NullPointerException("The indexes must not be null");
 			}
@@ -261,37 +257,45 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 		 * </p>
 		 * <p>
 		 * To see how the submitted index should be constructed, look at
-		 * {@link #TupleComparator(Integer[])
-		 * TupleComparator(Integer[])}.
+		 * {@link #TupleComparator(int[])
+		 * TupleComparator(int[])}.
 		 * </p>
 		 * @param indexes the indexes on which to sort the tuples
 		 * @return the normalized index order
 		 * @throws NullPointerException if the index array is
 		 * <code>null</code>
-		 * @see #TupleComparator(Integer[])
+		 * @see #TupleComparator(int[])
 		 */
-		public static Integer[] indexComparisonOrder(final Integer[] indexes) {
+		public static int[] indexComparisonOrder(final int[] indexes) {
 			if (indexes == null) {
 				throw new NullPointerException("The index array must not be null");
 			}
-			final List<Integer> order = new ArrayList<Integer>(indexes.length);
-			final List<Integer> idx = Arrays.asList(indexes);
+
+			final int[] order = new int[indexes.length];
 			if (indexes.length > 0) {
-				// constructing the order on which the columns will be comparedc
-				int pos = 0;
+				final List<Integer> idx = new ArrayList<Integer>(indexes.length);
+				// transforming from int -> Integer
+				for (final int i : indexes) {
+					idx.add(i);
+				}
+
+				// constructing the order on which the columns will be compared
+				int j = 0;
 				for (int i = Math.max(1, Collections.min(idx)), max = Collections
 						.max(idx); i <= max; i++) {
+					int pos = 0;
 					if ((pos = idx.indexOf(i)) > -1) {
-						order.add(pos);
+						order[j++] = pos;
 					}
 				}
-				for (int i = 0, max = indexes.length; i < max; i++) {
-					if (!order.contains(i)) {
-						order.add(i);
+				for (int i = 0; j < indexes.length; i++) {
+					if (indexes[i] <= 0) {
+						order[j++] = i;
 					}
 				}
 			}
-			return order.toArray(new Integer[order.size()]);
+
+			return order;
 		}
 
 		public int compare(ITuple o1, ITuple o2) {
@@ -493,7 +497,7 @@ public class IndexingOnTheFlyRelation extends AbstractSet<ITuple> implements IRe
 			return IndexingOnTheFlyRelation.this.arity;
 		}
 
-		public IRelation indexOn(final Integer[] idx) {
+		public IRelation indexOn(final int[] idx) {
 			final SortedSet<ITuple> temp = IndexingOnTheFlyRelation.this.indexOn(idx);
 			if ((from != null) && (to != null)) {
 				return new SubRelation(temp.subSet(from, to), from, to);

@@ -348,7 +348,7 @@ public class SortAgainRelation implements IRelation {
 		return arity;
 	}
 
-	public IRelation indexOn(Integer[] idx) {
+	public IRelation indexOn(int[] idx) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by this relation.");
 	}
