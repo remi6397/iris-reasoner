@@ -99,7 +99,7 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 	private final int arity;
 
 	/** The default sorting index. */
-	private final Integer[] idx;
+	private final int[] idx;
 
 	/**
 	 * Constructs a relation with the given arity.
@@ -112,10 +112,9 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 					"The arity of the relation must not be negative, but was: " + arity);
 		}
 		// constructing the default index
-		idx = new Integer[arity];
-		Arrays.fill(idx, new Integer(0));
+		idx = new int[arity];
 		if (arity > 0) {
-			idx[0] = new Integer(1);
+			idx[0] = 1;
 		}
 		this.arity = arity;
 	}
@@ -251,7 +250,7 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 		return datatypeRelations.values().iterator().next().comparator();
 	}
 
-	public IMixedDatatypeRelation indexOn(Integer[] idx) {
+	public IMixedDatatypeRelation indexOn(int[] idx) {
 		return new CompoundRelation(idx);
 	}
 
@@ -413,7 +412,7 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 			new HashMap<Integer, SortedSet<ITuple>>();
 
 		/** The indexes to sort on. */
-		private final Integer[] idx;
+		private final int[] idx;
 
 		/** 
 		 * The lower bound of this set. Is <code>null</code> if there
@@ -438,7 +437,7 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 		 * @param idx the indexes to sort on
 		 * @throws NullPointerException if idx is <code>null</code>
 		 */
-		public CompoundRelation(final Integer[] idx) {
+		public CompoundRelation(final int[] idx) {
 			this(idx, null, null);
 		}
 
@@ -454,7 +453,7 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 		 * @throws IllegalArgumentException if the lenght of the index
 		 * array doesn't match the arity of the relation
 		 */
-		public CompoundRelation(final Integer[] idx, final ITuple from, final ITuple to) {
+		public CompoundRelation(final int[] idx, final ITuple from, final ITuple to) {
 			if (idx == null) {
 				throw new NullPointerException("The index array must not be null");
 			}
@@ -628,7 +627,7 @@ public class MixedDatatypeRelation extends AbstractSet<ITuple> implements IMixed
 			return MixedDatatypeRelation.this.arity;
 		}
 
-		public IMixedDatatypeRelation indexOn(final Integer[] idx) {
+		public IMixedDatatypeRelation indexOn(final int[] idx) {
 			// parameter checking will be done in the CompoundRelation
 			// constructor
 			return new CompoundRelation(idx, from, to);

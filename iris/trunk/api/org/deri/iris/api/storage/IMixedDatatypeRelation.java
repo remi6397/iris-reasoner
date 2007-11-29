@@ -93,5 +93,5 @@ public interface IMixedDatatypeRelation extends IRelation {
 	 * supported by the relation implementation
 	 * @see IRelation#indexOn(Integer[])
 	 */
-	public abstract IMixedDatatypeRelation indexOn(final Integer[] idx);
+	public abstract IMixedDatatypeRelation indexOn(final int[] idx);
 }

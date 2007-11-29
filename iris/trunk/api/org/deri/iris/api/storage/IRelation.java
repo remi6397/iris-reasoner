@@ -79,5 +79,5 @@ public interface IRelation extends SortedSet<ITuple>, Cloneable {
 	 *             if the actual relation implementation doesn't support this
 	 *             method
 	 */
-	public abstract IRelation indexOn(final Integer[] idx);
+	public abstract IRelation indexOn(final int[] idx);
 }

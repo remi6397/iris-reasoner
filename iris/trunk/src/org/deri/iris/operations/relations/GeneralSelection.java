@@ -315,9 +315,8 @@ public class GeneralSelection implements ISelection {
 	 * @return array with the sort indexes required for the ongoing select
 	 *         operation based on pattern case.
 	 */
-	private Integer[] sortPatternIndexes(ITuple pattern) {
-		final Integer[] res = new Integer[pattern.size()];
-		Arrays.fill(res, 0);
+	private int[] sortPatternIndexes(ITuple pattern) {
+		final int[] res = new int[pattern.size()];
 		int j = 1;
 		for (int i = 0; i < pattern.size(); i++) {
 			if (pattern.get(i) != null) {
