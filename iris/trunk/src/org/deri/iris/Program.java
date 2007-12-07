@@ -34,6 +34,7 @@ import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.storage.IDataSource;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.builtins.BuiltinRegister;
 
@@ -168,14 +169,9 @@ public class Program implements IProgram{
 		return mFacts.getFacts();
 	}
 	
-//	public Map<IPredicate, IMixedDatatypeRelation> getFacts(){
-//		final Map<IPredicate, IMixedDatatypeRelation> ret = 
-//			new HashMap<IPredicate, IMixedDatatypeRelation>();
-//		for (final IPredicate p : getPredicates()) {
-//			ret.put(p, getFacts(p));
-//		}
-//		return ret;
-//	}
+	public void registerDataSource(final IDataSource ds) {
+		mFacts.registerDataSource(ds);
+	}
 	
 	/********************************/
 	/*		rules                   */

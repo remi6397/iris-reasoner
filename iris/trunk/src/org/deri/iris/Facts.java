@@ -30,16 +30,33 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.storage.IDataSource;
+import org.deri.iris.api.storage.IMixedDatatypeRelation;
 
 /**
  * The extensional database - EDB. The set of known facts.
  */
-public class Facts
-{
+public class Facts {
+
+	/** Holds all registered data sources. */
+	final Set<IDataSource> datasources = new HashSet<IDataSource>();
+
+	/**
+	 * Registers a new data source.
+	 * @param ds the data source to register
+	 * @throws IllegalArgumentException if the data source is
+	 * <code>null</code>
+	 */
+	public void registerDataSource(final IDataSource ds) {
+		if (ds == null) {
+			throw new IllegalArgumentException("The datasource must not be null");
+		}
+		datasources.add(ds);
+	}
+
 	/**
 	 * Add a relation of facts for the given predicate.
 	 * @param predicate The predicate identifying the facts.
@@ -216,9 +233,15 @@ public class Facts
 		mPredicates.add( predicate );
 
 		IMixedDatatypeRelation result = mFacts.get(plainPredicateHash(predicate));
-		if(result == null) {
+		if (result == null) { // if there is on such relation -> create a new one and put it in the map
 			result = RELATION.getMixedRelation(predicate.getArity());
 			mFacts.put(plainPredicateHash(predicate), result);
+
+			// fill the relation with the tuples from the
+			// data sources
+			for (final IDataSource ds : datasources) {
+				ds.get(predicate, null, null, result);
+			}
 		}
 		return result;
 	}
