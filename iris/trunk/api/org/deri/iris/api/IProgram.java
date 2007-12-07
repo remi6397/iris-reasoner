@@ -33,6 +33,7 @@ import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.storage.IDataSource;
 import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.builtins.BuiltinRegister;
 
@@ -187,6 +188,12 @@ public interface IProgram {
 	 *         relations.
 	 */
 	public Map<IPredicate, IMixedDatatypeRelation> getFacts();
+
+	/**
+	 * Registers a new data source.
+	 * @param ds the data source to register
+	 */
+	public void registerDataSource(final IDataSource ds);
 
 	/**
 	 * Set of methods for handling the rules:
