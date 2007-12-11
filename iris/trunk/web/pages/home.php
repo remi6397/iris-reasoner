@@ -7,8 +7,8 @@
 		<li>Safe datalog with (locally) stratified 'negation as failure'</li>
 		<li>Detection of un-safe rules <a href="/saferules">(algorithm description here)</a></li>
 		<li>Detection of non-stratified programs with negation <a href="/stratification">(algorithm descriptions here)</a></li>
-		<li>Extended and extensible set of built-in predicates and data types</li>
-		<li>Propositional logic</li>
+		<li>Extended and extensible set of built-in predicates</li>
+		<li>Support for all the XML schema data types</li>
 	</ul>
 </p>
 
