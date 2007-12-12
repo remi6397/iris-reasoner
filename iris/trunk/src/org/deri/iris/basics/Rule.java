@@ -108,7 +108,7 @@ public class Rule implements IRule {
 		for (final ILiteral l : body) {
 			buffer.append(l).append(", ");
 		}
-		buffer.delete(buffer.length() - 2, buffer.length());
+		buffer.delete(buffer.length() - 2, buffer.length()).append(".");;
 		return buffer.toString();
 	}
 }

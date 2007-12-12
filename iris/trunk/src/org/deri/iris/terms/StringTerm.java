@@ -78,10 +78,11 @@ public class StringTerm implements IStringTerm {
 
 	/**
 	 * Simple toString() method wich only returns the holded value
+	 * surrounded by &quot;'&quot;.
 	 * 
 	 * @return the containing String
 	 */
 	public String toString() {
-		return value;
+		return "'" + value + "'";
 	}
 }

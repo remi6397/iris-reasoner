@@ -74,12 +74,12 @@ public class Variable implements IVariable {
 	/**
 	 * Returns a String representation of this object. The subject of the string
 	 * format is to change. An example return value might be
-	 * &quot;org.deri.iris.terms.Variable[name=unknown0]&quot;
+	 * &quot;?date&quot;
 	 * 
 	 * @return the String representation
 	 */
 	public String toString() {
-		return name;
+		return "?" + name;
 	}
 
 	public String getValue() {

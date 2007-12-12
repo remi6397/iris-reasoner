@@ -87,7 +87,7 @@ public class Query implements IQuery {
 		for (final ILiteral l : literals) {
 			buffer.append(l).append(", ");
 		}
-		buffer.delete(buffer.length() - 2, buffer.length());
+		buffer.delete(buffer.length() - 2, buffer.length()).append(".");
 		return buffer.toString();
 	}
 }
