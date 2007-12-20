@@ -48,6 +48,50 @@
 </p>
 
 <h2>News</h2>
-<p>
-<tt>2007-07-13</tt> We have created an initial draft of our web site and introduced a <a href="snapshot">daily build</a> system
-</p>
+
+<table>
+	<tr valign=top>
+		<td width=150>
+			<p align=left>
+				08 Nov 2007
+			</p>
+		</td>
+		<td>
+			<p align=left>
+				IRIS version 0.5 released.<br />
+				More built-in predicates, local stratification and query containment
+				Fixes for magic sets (conjunctive queries)
+				New behaviour for built-ins and inconsistent data types.
+			</p>
+		</td>
+	</tr>
+
+	<tr valign=top>
+		<td width=150>
+			<p align=left>
+				19 Sep 2007
+			</p>
+		</td>
+		<td>
+			<p align=left>
+				IRIS version 0.4 released.<br />
+				Some database integration work started,
+				lots of modifications to the date/time data types and many bug fixes.
+			</p>
+		</td>
+	</tr>
+
+	<tr valign=top>
+		<td width=150>
+			<p align=left>
+				13 Jul 2007
+			</p>
+		</td>
+		<td>
+			<p align=left>
+				We have created an initial draft of our web site and introduced a <a href="snapshot">daily build</a> system.
+			</p>
+		</td>
+	</tr>
+</table>
+
