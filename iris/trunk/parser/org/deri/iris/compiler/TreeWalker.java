@@ -26,22 +26,63 @@
 package org.deri.iris.compiler;
 
 import static org.deri.iris.factory.Factory.BASIC;
-import static org.deri.iris.factory.Factory.TERM;
-import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.BUILTIN;
+import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.PROGRAM;
-
+import static org.deri.iris.factory.Factory.TERM;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.log4j.Logger;
-
-import org.deri.iris.parser.analysis.DepthFirstAdapter;
-import org.deri.iris.parser.node.*;
+import org.deri.iris.api.IProgram;
+import org.deri.iris.api.basics.IAtom;
+import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.*;
-import org.deri.iris.api.basics.*;
-import org.deri.iris.factory.*;
+import org.deri.iris.parser.analysis.DepthFirstAdapter;
+import org.deri.iris.parser.node.ABase64binaryTerm;
+import org.deri.iris.parser.node.ABinaryBuiltin;
+import org.deri.iris.parser.node.ABooleanTerm;
+import org.deri.iris.parser.node.ABuiltinLiteral;
+import org.deri.iris.parser.node.ADateTerm;
+import org.deri.iris.parser.node.ADatetimeTerm;
+import org.deri.iris.parser.node.ADecimalTerm;
+import org.deri.iris.parser.node.ADecimallTerm;
+import org.deri.iris.parser.node.ADoubleTerm;
+import org.deri.iris.parser.node.ADurationTerm;
+import org.deri.iris.parser.node.AEqualsBuiltin;
+import org.deri.iris.parser.node.AFact;
+import org.deri.iris.parser.node.AFloatTerm;
+import org.deri.iris.parser.node.AFunctionTerm;
+import org.deri.iris.parser.node.AGdayTerm;
+import org.deri.iris.parser.node.AGmonthTerm;
+import org.deri.iris.parser.node.AGmonthdayTerm;
+import org.deri.iris.parser.node.AGyearTerm;
+import org.deri.iris.parser.node.AGyearmonthTerm;
+import org.deri.iris.parser.node.AHexbinaryTerm;
+import org.deri.iris.parser.node.AIntIntlist;
+import org.deri.iris.parser.node.AIntegerTerm;
+import org.deri.iris.parser.node.AIntegerlTerm;
+import org.deri.iris.parser.node.AIntlist;
+import org.deri.iris.parser.node.AIriTerm;
+import org.deri.iris.parser.node.AIrilTerm;
+import org.deri.iris.parser.node.ALiteral;
+import org.deri.iris.parser.node.ALitlist;
+import org.deri.iris.parser.node.ANegatedLiteral;
+import org.deri.iris.parser.node.ANegatedbuiltinLiteral;
+import org.deri.iris.parser.node.APredicate;
+import org.deri.iris.parser.node.AQuery;
+import org.deri.iris.parser.node.ARule;
+import org.deri.iris.parser.node.ASqnameTerm;
+import org.deri.iris.parser.node.ASqnamelTerm;
+import org.deri.iris.parser.node.AStringTerm;
+import org.deri.iris.parser.node.AStringlTerm;
+import org.deri.iris.parser.node.ATernaryBuiltin;
+import org.deri.iris.parser.node.ATimeTerm;
+import org.deri.iris.parser.node.AVarTerm;
+import org.deri.iris.parser.node.PIntlist;
 
 /**
  * <p>
@@ -59,50 +100,12 @@ public class TreeWalker extends DepthFirstAdapter {
 	/** The Logger for this class. */
 	private static final Logger LOGGER = Logger.getLogger(TreeWalker.class);
 
-	private List<ITerm> terms;
 	private List<ILiteral> literals;
-	private boolean inFunc = false;
-	private List<ITerm> func_terms;
 	
     private IProgram p;
 	
     public TreeWalker(IProgram p){
         this.p = (p == null) ? PROGRAM.createProgram() : p;
-    }
-
-    //
-    // resetting all fields again
-    //
-
-    public void inALiteral(final ALiteral l) {
-	    super.inALiteral(l);
-
-	    terms = new ArrayList<ITerm>();
-    }
-
-    public void inABuiltinLiteral(final ABuiltinLiteral l) {
-	    super.inABuiltinLiteral(l);
-
-	    terms = new ArrayList<ITerm>();
-    }
-
-    public void inANegatedLiteral(final ANegatedLiteral l) {
-	    super.inANegatedLiteral(l);
-
-	    terms = new ArrayList<ITerm>();
-    }
-
-    public void inANegatedbuiltinLiteral(final ANegatedbuiltinLiteral l) {
-	    super.inANegatedbuiltinLiteral(l);
-
-	    terms = new ArrayList<ITerm>();
-    }
-    
-    public void inAFunctionTerm(final AFunctionTerm t) {
-	    super.inAFunctionTerm(t);
-
-	    inFunc = true;
-	    func_terms = new ArrayList<ITerm>();
     }
 
     public void inALitlist(final ALitlist l) {
@@ -111,11 +114,42 @@ public class TreeWalker extends DepthFirstAdapter {
 	    literals = new ArrayList<ILiteral>();
     }
 
+    public void inALiteral(final ALiteral l) {
+	    super.inALiteral(l);
+    }
+
+    @Override
+    public void inAPredicate( APredicate arg0 )
+    {
+	    super.inAPredicate( arg0 );
+	    pushTerms();
+    }
+
+	public void inABuiltinLiteral(final ABuiltinLiteral l) {
+	    super.inABuiltinLiteral(l);
+
+	    pushTerms();
+    }
+
+    public void inANegatedLiteral(final ANegatedLiteral l) {
+	    super.inANegatedLiteral(l);
+    }
+
+    public void inANegatedbuiltinLiteral(final ANegatedbuiltinLiteral l) {
+	    super.inANegatedbuiltinLiteral(l);
+	    pushTerms();
+    }
+    
+    public void inAFunctionTerm(final AFunctionTerm t) {
+	    super.inAFunctionTerm(t);
+
+	    pushTerms();
+    }
+
     public void inAFact(final AFact f) {
 	    super.inAFact(f);
 
 	    literals = new ArrayList<ILiteral>();
-	    terms = new ArrayList<ITerm>();
     }
 
     public void inAQuery(final AQuery q) {
@@ -130,22 +164,6 @@ public class TreeWalker extends DepthFirstAdapter {
 	    literals = new ArrayList<ILiteral>();
     }
 
-    //
-    // some functions (i don't know the reason for them)
-    //
-    
-    /*public IAtom getLastFact() {
-    	return Factory.BASIC.createAtom(Factory.BASIC.createPredicate("test",0));
-    }
-    
-    public IRule getLastRule() {
-    	return Factory.BASIC.createRule(Factory.BASIC.createHead(literals), Factory.BASIC.createBody(literals));
-    }*/
-
-    //
-    // functions to transform the nodes
-    //
-    
     public void outARule(final ARule r) {
     	super.outARule(r);
 
@@ -160,8 +178,9 @@ public class TreeWalker extends DepthFirstAdapter {
     	super.outAFact(f);
 
     	p.addFact(literals.get(0).getAtom());
+    	
     }
-    
+
     public void outAQuery(final AQuery _q) {
     	super.outAQuery(_q);
 
@@ -182,6 +201,9 @@ public class TreeWalker extends DepthFirstAdapter {
 
 	public void outABinaryBuiltin(final ABinaryBuiltin b) {
     	final String op = b.getTBinOp().getText().trim();
+    	
+    	List<ITerm> terms = popTerms();
+    	
     	if (op.equals(">")) {
     		literals.add(BASIC.createLiteral(true, 
 					BUILTIN.createGreater(terms.get(0), terms.get(1))));
@@ -204,31 +226,35 @@ public class TreeWalker extends DepthFirstAdapter {
     }
 
     public void outAEqualsBuiltin(final AEqualsBuiltin b) {
-	literals.add(BASIC.createLiteral(true, BUILTIN.createEqual(terms.get(0), terms.get(1))));
+    	List<ITerm> terms = popTerms();
+    	literals.add(BASIC.createLiteral(true, BUILTIN.createEqual(terms.get(0), terms.get(1))));
     }
 
     
     public void outATernaryBuiltin(final ATernaryBuiltin b) {
     	final String op = b.getTTerOp().getText().trim();
-	if (op.equals("+")) {
-		literals.add(BASIC.createLiteral(true, BUILTIN.createAddBuiltin(
-						terms.get(0), terms.get(1), terms.get(2))));
-	} else if (op.equals("-")) {
-		literals.add(BASIC.createLiteral(true, BUILTIN.createSubtractBuiltin(
-						terms.get(0), terms.get(1), terms.get(2))));
-	} else if (op.equals("*")) {
-		literals.add(BASIC.createLiteral(true, BUILTIN.createMultiplyBuiltin(
-						terms.get(0), terms.get(1), terms.get(2))));
-	} else if (op.equals("/")) {
-		literals.add(BASIC.createLiteral(true, BUILTIN.createDivideBuiltin(
-						terms.get(0), terms.get(1), terms.get(2))));
-	} else if (op.equals("%")) {
-		literals.add(BASIC.createLiteral(true, BUILTIN.createModulusBuiltin(
-						terms.get(0), terms.get(1), terms.get(2))));
-	} else {
-		LOGGER.error("Couldn't handle the operator " + op);
-    		throw new IllegalArgumentException("Couldn't handle the operator " + op);
-	}
+
+    	List<ITerm> terms = popTerms();
+
+    	if (op.equals("+")) {
+			literals.add(BASIC.createLiteral(true, BUILTIN.createAddBuiltin(
+							terms.get(0), terms.get(1), terms.get(2))));
+		} else if (op.equals("-")) {
+			literals.add(BASIC.createLiteral(true, BUILTIN.createSubtractBuiltin(
+							terms.get(0), terms.get(1), terms.get(2))));
+		} else if (op.equals("*")) {
+			literals.add(BASIC.createLiteral(true, BUILTIN.createMultiplyBuiltin(
+							terms.get(0), terms.get(1), terms.get(2))));
+		} else if (op.equals("/")) {
+			literals.add(BASIC.createLiteral(true, BUILTIN.createDivideBuiltin(
+							terms.get(0), terms.get(1), terms.get(2))));
+		} else if (op.equals("%")) {
+			literals.add(BASIC.createLiteral(true, BUILTIN.createModulusBuiltin(
+							terms.get(0), terms.get(1), terms.get(2))));
+		} else {
+			LOGGER.error("Couldn't handle the operator " + op);
+	    		throw new IllegalArgumentException("Couldn't handle the operator " + op);
+		}
     }
     
 	
@@ -236,7 +262,9 @@ public class TreeWalker extends DepthFirstAdapter {
     	super.outAPredicate(p);
 	final String symbol = p.getTId().getText().trim();
 	final IAtom a;
-	final Class builtinClass = this.p.getBuiltinRegister().getBuiltinClass(symbol);
+	final Class<?> builtinClass = this.p.getBuiltinRegister().getBuiltinClass(symbol);
+
+	List<ITerm> terms = popTerms();
 
 	if (builtinClass == null) { // this predicate is not a builtin
 		a = BASIC.createAtom(
@@ -267,13 +295,18 @@ public class TreeWalker extends DepthFirstAdapter {
     public void outAVarTerm(AVarTerm v) {
     	super.outAVarTerm(v);
 
-	final String n = v.getTVariable().getText().trim();
-    	terms.add(TERM.createVariable(n.startsWith("?") ? n.substring(1) : n));
+    	final String n = v.getTVariable().getText().trim();
+    	addTerm(TERM.createVariable(n.startsWith("?") ? n.substring(1) : n));
     }
 
-	public void outAFunctionTerm(AFunctionTerm _ft) {
-		super.outAFunctionTerm(_ft);
-		inFunc = false;
+	public void outAFunctionTerm(AFunctionTerm ft)
+	{
+		super.outAFunctionTerm(ft);
+		
+		String name = peeleStr( ft.getTId().getText().trim() );
+		List<ITerm> terms = popTerms();
+		
+		addTerm( TERM.createConstruct( name, terms ) );
 	}
 	
 	/**
@@ -310,72 +343,72 @@ public class TreeWalker extends DepthFirstAdapter {
 	}
 
 	public void outAStringTerm(final AStringTerm st) {
-		terms.add(TERM.createString(peeleStr(st.getTStr().toString().trim())));
+		addTerm(TERM.createString(peeleStr(st.getTStr().toString().trim())));
 	}
 
 	public void outAStringlTerm(final AStringlTerm st) {
-		terms.add(TERM.createString(peeleStr(st.getTStr().toString().trim())));
+		addTerm(TERM.createString(peeleStr(st.getTStr().toString().trim())));
 	}
 
 	public void outAIntegerTerm(final AIntegerTerm it) {
-		terms.add(CONCRETE.createInteger(Integer.parseInt(it.getTInt().toString().trim())));
+		addTerm(CONCRETE.createInteger(Integer.parseInt(it.getTInt().toString().trim())));
 	}
 
 	public void outAIntegerlTerm(final AIntegerlTerm it) {
-		terms.add(CONCRETE.createInteger(Integer.parseInt(it.getTInt().toString().trim())));
+		addTerm(CONCRETE.createInteger(Integer.parseInt(it.getTInt().toString().trim())));
 	}
 
 	public void outADecimalTerm(final ADecimalTerm dt) {
-		terms.add(CONCRETE.createDecimal(Double.parseDouble(dt.getTDec().toString().trim())));
+		addTerm(CONCRETE.createDecimal(Double.parseDouble(dt.getTDec().toString().trim())));
 	}
 
 	public void outADecimallTerm(final ADecimallTerm dt) {
-		terms.add(CONCRETE.createDecimal(Double.parseDouble(dt.getTDec().toString().trim())));
+		addTerm(CONCRETE.createDecimal(Double.parseDouble(dt.getTDec().toString().trim())));
 	}
 
 	public void outASqnameTerm(final ASqnameTerm st) {
-		terms.add(CONCRETE.createSqName(st.getTSq().toString().trim()));
+		addTerm(CONCRETE.createSqName(st.getTSq().toString().trim()));
 	}
 
 	public void outASqnamelTerm(final ASqnamelTerm st) {
-		terms.add(CONCRETE.createSqName(st.getTSq().toString().trim()));
+		addTerm(CONCRETE.createSqName(st.getTSq().toString().trim()));
 	}
 
 	public void outAIriTerm(final AIriTerm i) {
-		terms.add(CONCRETE.createIri(peeleStr(i.getTStr().toString().trim())));
+		addTerm(CONCRETE.createIri(peeleStr(i.getTStr().toString().trim())));
 	}
 
 	public void outAIrilTerm(final AIrilTerm i) {
-		terms.add(CONCRETE.createIri(peeleStr(i.getTStr().toString().trim())));
+		addTerm(CONCRETE.createIri(peeleStr(i.getTStr().toString().trim())));
 	}
 
 	public void outABooleanTerm(final ABooleanTerm b) {
 		String value = peeleStr(b.getTStr().toString().trim());
-		terms.add(CONCRETE.createBoolean( value ) );
+		addTerm(CONCRETE.createBoolean( value ) );
 	}
 
 	public void outADoubleTerm(final ADoubleTerm d) {
-		terms.add(CONCRETE.createDouble(Double.parseDouble(d.getTDec().toString().trim())));
+		addTerm(CONCRETE.createDouble(Double.parseDouble(d.getTDec().toString().trim())));
 	}
 
 	public void outAFloatTerm(final AFloatTerm f) {
-		terms.add(CONCRETE.createFloat(Float.parseFloat(f.getTDec().toString().trim())));
+		addTerm(CONCRETE.createFloat(Float.parseFloat(f.getTDec().toString().trim())));
 	}
 
 	public void outABase64binaryTerm(final ABase64binaryTerm b) {
-		terms.add(CONCRETE.createBase64Binary(peeleStr(b.getTStr().getText().trim())));
+		addTerm(CONCRETE.createBase64Binary(peeleStr(b.getTStr().getText().trim())));
 	}
 
 	public void outAHexbinaryTerm(final AHexbinaryTerm h) {
-		terms.add(CONCRETE.createHexBinary(peeleStr(h.getTStr().getText().trim())));
+		addTerm(CONCRETE.createHexBinary(peeleStr(h.getTStr().getText().trim())));
 	}
 
 	public void outADateTerm(final ADateTerm d) {
 		Integer[] params = transfromIntList(d.getIntlist());
 		if (params.length == 3) {
-			terms.add(CONCRETE.createDate(params[0], params[1], params[2]));
+			addTerm(CONCRETE.createDate(params[0], params[1], params[2]));
 		} else if (params.length == 5) {
-			terms.add(CONCRETE.createDate(params[0], params[1], params[2], params[3], params[4]));
+			addTerm(CONCRETE.createDate(params[0], params[1], params[2], params[3], params[4]));
 		} else {
 			throw new IllegalArgumentException("The number of integers in a date must be 3 or 5, but was " + 
 					params.length + ": " + Arrays.toString(params));
@@ -385,10 +418,10 @@ public class TreeWalker extends DepthFirstAdapter {
 	public void outADurationTerm(final ADurationTerm d) {
 		Integer[] params = transfromIntList(d.getIntlist());
 		if (params.length == 6) {
-			terms.add(CONCRETE.createDuration(params[0], params[1], params[2], 
+			addTerm(CONCRETE.createDuration(params[0], params[1], params[2], 
 						params[3], params[4], params[5]));
 		} else if (params.length == 7) {
-			terms.add(CONCRETE.createDuration(params[0], params[1], params[2], 
+			addTerm(CONCRETE.createDuration(params[0], params[1], params[2], 
 						params[3], params[4], params[5], params[6]));
 		} else {
 			throw new IllegalArgumentException("The number of integers in a duration must be 6 or 7, but was " + 
@@ -399,12 +432,12 @@ public class TreeWalker extends DepthFirstAdapter {
 	public void outADatetimeTerm(final ADatetimeTerm d) {
 		Integer[] params = transfromIntList(d.getIntlist());
 		if (params.length == 6) {
-			terms.add(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5]));
+			addTerm(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5]));
 		} else if (params.length == 8) {
-			terms.add(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5], 
+			addTerm(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5], 
 						params[6], params[7]));
 		} else if (params.length == 9) {
-			terms.add(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5], 
+			addTerm(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5], 
 						params[6], params[7], params[8]));
 		} else {
 			throw new IllegalArgumentException("The number of integers in a datetime must be 6, 8 or 9, but was " + 
@@ -415,11 +448,11 @@ public class TreeWalker extends DepthFirstAdapter {
 	public void outATimeTerm(final ATimeTerm t) {
 		Integer[] params = transfromIntList(t.getIntlist());
 		if (params.length == 3) {
-			terms.add(CONCRETE.createTime(params[0], params[1], params[2]));
+			addTerm(CONCRETE.createTime(params[0], params[1], params[2]));
 		} else if (params.length == 5) {
-			terms.add(CONCRETE.createTime(params[0], params[1], params[2], params[3], params[4]));
+			addTerm(CONCRETE.createTime(params[0], params[1], params[2], params[3], params[4]));
 		} else if (params.length == 6) {
-			terms.add(CONCRETE.createTime(params[0], params[1], params[2], params[3], params[4], params[5]));
+			addTerm(CONCRETE.createTime(params[0], params[1], params[2], params[3], params[4], params[5]));
 		} else {
 			throw new IllegalArgumentException("The number of integers in a time must be 3, 5 or 6, but was " + 
 					params.length + ": " + Arrays.toString(params));
@@ -427,15 +460,15 @@ public class TreeWalker extends DepthFirstAdapter {
 	}
 
 	public void outAGyearTerm(final AGyearTerm g) {
-		terms.add(CONCRETE.createGYear(Integer.parseInt(g.getTInt().getText().trim())));
+		addTerm(CONCRETE.createGYear(Integer.parseInt(g.getTInt().getText().trim())));
 	}
 
 	public void outAGmonthTerm(final AGmonthTerm g) {
-		terms.add(CONCRETE.createGMonth(Integer.parseInt(g.getTInt().getText().trim())));
+		addTerm(CONCRETE.createGMonth(Integer.parseInt(g.getTInt().getText().trim())));
 	}
 
 	public void outAGdayTerm(final AGdayTerm g) {
-		terms.add(CONCRETE.createGDay(Integer.parseInt(g.getTInt().getText().trim())));
+		addTerm(CONCRETE.createGDay(Integer.parseInt(g.getTInt().getText().trim())));
 	}
 
 	public void outAGyearmonthTerm(final AGyearmonthTerm g) {
@@ -444,7 +477,7 @@ public class TreeWalker extends DepthFirstAdapter {
 			throw new IllegalArgumentException("The number of integers in a gyearmonth must be 2, but was " + 
 					params.length + ": " + Arrays.toString(params));
 		}
-		terms.add(CONCRETE.createGYearMonth(params[0], params[1]));
+		addTerm(CONCRETE.createGYearMonth(params[0], params[1]));
 	}
 
 	public void outAGmonthdayTerm(final AGmonthdayTerm g) {
@@ -453,7 +486,7 @@ public class TreeWalker extends DepthFirstAdapter {
 			throw new IllegalArgumentException("The number of integers in a gmonthday must be 2, but was " + 
 					params.length + ": " + Arrays.toString(params));
 		}
-		terms.add(CONCRETE.createGMonthDay(params[0], params[1]));
+		addTerm(CONCRETE.createGMonthDay(params[0], params[1]));
 	}
 
 	/**
@@ -471,5 +504,27 @@ public class TreeWalker extends DepthFirstAdapter {
 		return ((s.charAt(0) == '\'') && (s.charAt(s.length() - 1) == '\'')) ? 
 			s.substring(1, s.length() - 1) : s;
 	}
+	
+	private void pushTerms()
+	{
+		mTermStack.add( new ArrayList<ITerm>() );
+	}
+
+	private void addTerm( ITerm term )
+	{
+		mTermStack.get( mTermStack.size() - 1 ).add( term );
+	}
+
+	private List<ITerm> popTerms()
+	{
+		int last = mTermStack.size() - 1;
+		
+		List<ITerm> result = mTermStack.get( last );
+		mTermStack.remove( last );
+		
+		return result;
+	}
+
+	private List<List<ITerm>> mTermStack = new ArrayList<List<ITerm>>();
 }
 
