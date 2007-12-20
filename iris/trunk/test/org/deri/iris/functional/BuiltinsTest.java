@@ -162,52 +162,52 @@ public class BuiltinsTest extends TestCase
 		Helper.evaluateWithAllStrategies( program, "p( _duration( 1970, 2, 2, 2, 2, 2 ) )." );
 
 		program = mAllDataTypes +
-			"?- p(?X), ?X < p( _datetime( 1980, 3, 3, 3, 3, 4 ) ).";
+			"?- p(?X), ?X < _datetime( 1980, 3, 3, 3, 3, 4 ).";
 
 		Helper.evaluateWithAllStrategies( program, "p( _datetime( 1980, 3, 3, 3, 3, 3 ) )." );
 
 		program = mAllDataTypes +
-			"?- p(?X), ?X < p( _date( 1990, 4, 5 ) ).";
+			"?- p(?X), ?X < _date( 1990, 4, 5 ).";
 
 		Helper.evaluateWithAllStrategies( program, "p( _date( 1990, 4, 4 ) )." );
 
 		program = mAllDataTypes +
-			"?- p(?X), ?X < p( _time( 5, 5, 6 ) ).";
+			"?- p(?X), ?X < _time( 5, 5, 6 ).";
 
 		Helper.evaluateWithAllStrategies( program, "p( _time( 5, 5, 5 ) )." );
 
 		program = mAllDataTypes +
-			"?- p(?X), ?X < p( _gyear( 1992 ) ).";
+			"?- p(?X), ?X < _gyear( 1992 ).";
 
 		Helper.evaluateWithAllStrategies( program, "p( _gyear( 1991 ) )." );
 
 		program = mAllDataTypes +
-			"?- p(?X), ?X < p( _gyearmonth( 1992, 3 ) ).";
+			"?- p(?X), ?X < _gyearmonth( 1992, 3 ).";
 		
 		Helper.evaluateWithAllStrategies( program, "p( _gyearmonth( 1992, 2 ) )." );
 		
 		program = mAllDataTypes +
-			"?- p(?X), ?X < p( _gmonth( 4 ) ).";
+			"?- p(?X), ?X < _gmonth( 4 ).";
 		
 		Helper.evaluateWithAllStrategies( program, "p( _gmonth( 3 ) )." );
 		
 		program = mAllDataTypes +
-			"?- p(?X), ?X < p( _gmonthday( 4, 5 ) ).";
+			"?- p(?X), ?X < _gmonthday( 4, 5 ).";
 		
 		Helper.evaluateWithAllStrategies( program, "p( _gmonthday( 4, 4 ) )." );
 		
 		program = mAllDataTypes +
-			"?- p(?X), ?X < p( _gday( 6 ) ).";
+			"?- p(?X), ?X < _gday( 6 ).";
 		
 		Helper.evaluateWithAllStrategies( program, "p( _gday( 5 ) )." );
 		
 		program = mAllDataTypes +
-			"?- p(?X), ?X < p( _hexbinary( '0FB7abce' ) ).";
+			"?- p(?X), ?X < _hexbinary( '0FB7abce' ).";
 		
 		Helper.evaluateWithAllStrategies( program, "p( _hexbinary( '0FB7abcd' ) )." );
 		
 		program = mAllDataTypes +
-			"?- p(?X), ?X < p( _base64binary( 'QmFycnkgQmlzaG9y' ) ).";
+			"?- p(?X), ?X < _base64binary( 'QmFycnkgQmlzaG9y' ).";
 		
 		Helper.evaluateWithAllStrategies( program, "p( _base64binary( 'QmFycnkgQmlzaG9w' ) )." );
 	}
