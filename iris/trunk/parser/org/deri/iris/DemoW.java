@@ -1,6 +1,7 @@
 package org.deri.iris;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -24,6 +25,9 @@ import org.deri.iris.api.storage.IMixedDatatypeRelation;
  */
 public class DemoW
 {
+	public static final int FONT_SIZE = 20;
+	public static final boolean SHOW_QUERY_TIME = true;
+
 	/**
 	 * Application entry point.
 	 * @param args
@@ -88,6 +92,10 @@ public class DemoW
 
 			JScrollPane programScroller = new JScrollPane( mProgram );
 			JScrollPane outputScroller = new JScrollPane( mOutput );
+			
+			Font f = new Font( "courier", Font.BOLD, FONT_SIZE );
+			mProgram.setFont( f );
+			mOutput.setFont( f );
 
 			JSplitPane mainSplitter = new JSplitPane( JSplitPane.VERTICAL_SPLIT, false, programScroller, outputScroller );
 
@@ -173,6 +181,8 @@ public class DemoW
 		 */
 		synchronized void run()
 		{
+			mOutput.setText( "" );
+
 			mRun.setEnabled( false );
 			mAbort.setEnabled( true );
 			
@@ -215,7 +225,7 @@ public class DemoW
 				{
 					Map<IPredicate, IMixedDatatypeRelation> results;
 					
-					long t = -System.currentTimeMillis();
+					long queryDuration = -System.currentTimeMillis();
 					
 					IProgram p = ExecutionHelper.parseProgram( program );
 			
@@ -237,11 +247,16 @@ public class DemoW
 						break;
 					}
 
-					t += System.currentTimeMillis();
-					output += "Time: " + t + "ms\r\n";
-			
+					queryDuration += System.currentTimeMillis();
+
 					output += ExecutionHelper.resultsTostring( results );
 
+					if( SHOW_QUERY_TIME )
+					{
+						output += "-----------------\r\n";
+						output += ( "Time: " + queryDuration + "ms" );
+					}
+			
 					SwingUtilities.invokeLater( new NotifyOutput( output ) );
 				}
 				catch( Exception e )
