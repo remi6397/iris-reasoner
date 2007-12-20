@@ -7,8 +7,7 @@
 
 <h2>Release History</h2>
 
-<p><b><a href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=552735">v0.5</a></b> 2007-11-08</p> 
-
+<p><b><a id="v5" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=552735">v0.5</a></b> 2007-11-08</p> 
 <p>New features</p>
 <ul>
 	<li>1798276 - Magic Sets evaluation allows conjunctive queries</li>
@@ -54,7 +53,7 @@
 </ul>
 
 
-<p><b><a href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=540609">v0.4</a></b> 2007-09-19</p> 
+<p><b><a id="v4" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=540609">v0.4</a></b> 2007-09-19</p>
 <p>New features</p>
 <ul>
 	<li>1773193 - IRIS is now able to persist facts in a relational database</li>
@@ -76,12 +75,12 @@
     <li>1798276 - Magic Sets evaluation does not allow conjunctive queries. (This will be fixed for the next release.)</li>
 </ul>
 
-<p><b><a href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=516287">v0.3</a></b> 2007-06-15</p> 
+<p><b><a id="v3" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=516287">v0.3</a></b> 2007-06-15</p>  
 <ul>
 	<li>enabled multiple programs per vm</li>
 </ul>
 
-<p><b><a href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=485199">v0.2</a></b> 2007-02-09</p> 
+<p><b><a id="v2" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=485199">v0.2</a></b> 2007-02-09</p> 
 <ul>
 	<li>support for all data types supported by WSML</li>
 	<li>a number of built-ins implemented</li>
@@ -93,7 +92,7 @@
 	<li>bugfixes</li>
 </ul>
 
-<p><b><a href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=484835">v0.1</a></b> 2007-02-08</p> 
+<p><b><a id="v1" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=484835">v0.1</a></b> 2007-02-08</p>
 <ul><li>initial release</li></ul>
 
 <h2>Daily Snapshot</h2>
