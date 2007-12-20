@@ -58,9 +58,9 @@
 		</td>
 		<td>
 			<p align=left>
-				IRIS version 0.5 released.<br />
-				More built-in predicates, local stratification and query containment
-				Fixes for magic sets (conjunctive queries)
+				IRIS <a href="download#v5">version 0.5</a> released.<br />
+				More built-in predicates, local stratification and query containment.
+				Fixes for magic sets (conjunctive queries).
 				New behaviour for built-ins and inconsistent data types.
 			</p>
 		</td>
@@ -74,7 +74,7 @@
 		</td>
 		<td>
 			<p align=left>
-				IRIS version 0.4 released.<br />
+				IRIS <a href="download#v4">version 0.4</a> released.<br />
 				Some database integration work started,
 				lots of modifications to the date/time data types and many bug fixes.
 			</p>
