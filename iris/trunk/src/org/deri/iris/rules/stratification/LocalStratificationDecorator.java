@@ -178,7 +178,6 @@ public class LocalStratificationDecorator
 		assert rule.getHead().get( 0 ).getAtom().getTuple().size() == adornments.size();
 		
 		mRule = rule;
-		mOriginalRule = rule;
 		mAdornments = adornments;
 	}
 
@@ -230,15 +229,6 @@ public class LocalStratificationDecorator
 	}
 	
 	/**
-	 * Get the original unmodified rule.
-	 * @return The rule.
-	 */
-	public IRule getOriginalRule()
-	{
-		return mOriginalRule;
-	}
-	
-	/**
 	 * Get the adornments for this rule.
 	 * @return The list of adornments.
 	 */
@@ -258,7 +248,4 @@ public class LocalStratificationDecorator
 	
 	/** The rule. */
 	private final IRule mRule;
-
-	/** The original rule. */
-	private final IRule mOriginalRule;
 }
