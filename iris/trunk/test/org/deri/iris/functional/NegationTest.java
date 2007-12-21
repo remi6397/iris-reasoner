@@ -556,4 +556,47 @@ public class NegationTest extends TestCase
 		Helper.evaluateWithAllStrategies( program, "" );
 	}
 
+	public void testLocallyStratified_NotEqualInBody() throws Exception
+	{
+		String program = 
+ 			"r(1, 2)." +
+		    "r(2, 3)." +
+		    "r(3, 4)." +
+		    "r(4, 5)." +
+		    
+		    "q('b', 2)." +
+		    "q('b', 4)." +
+		    
+		    "p(?X,?Y) :- r(?X,?Y), not p(2,?Y), ?X != 2." +
+
+		    "?- p(?X, ?Y).";
+		
+		String expectedResults =
+			"p(1, 2)." +
+			"p(3, 4)." +
+			"p(4, 5).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testLocallyStratified_NotEqualImpliedByLess() throws Exception
+	{
+		String program = 
+ 			"r(1, 2)." +
+		    "r(2, 3)." +
+		    "r(3, 4)." +
+		    "r(4, 5)." +
+		    
+		    "q('b', 2)." +
+		    "q('b', 4)." +
+		    
+		    "p(?X,?Y) :- r(?X,?Y), not p(2,?Y), ?X < 2." +
+
+		    "?- p(?X, ?Y).";
+		
+		String expectedResults =
+			"p(1, 2).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
 }
