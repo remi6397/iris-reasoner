@@ -36,6 +36,8 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.EqualBuiltin;
+import org.deri.iris.builtins.LessBuiltin;
+import org.deri.iris.builtins.UnEqualBuiltin;
 
 public class LocalStratifierTest extends TestCase
 {
@@ -54,6 +56,14 @@ public class LocalStratifierTest extends TestCase
 		if( predicateName.equals( "=" ) )
 			return BASIC.createLiteral( positive,
 							new EqualBuiltin( terms.toArray( new ITerm[ 2 ] ) ) );
+		
+		if( predicateName.equals( "!=" ) )
+			return BASIC.createLiteral( positive,
+							new UnEqualBuiltin( terms.toArray( new ITerm[ 2 ] ) ) );
+		
+		if( predicateName.equals( "<" ) )
+			return BASIC.createLiteral( positive,
+							new LessBuiltin( terms.toArray( new ITerm[ 2 ] ) ) );
 		
 		return BASIC.createLiteral( positive, 
 									BASIC.createAtom(
@@ -91,6 +101,9 @@ public class LocalStratifierTest extends TestCase
 		List<Collection<IRule>> sRules = ls.stratify( rules );
 		
 		// This rule is already locally stratified
+		assertNotNull( sRules );
+		assertEquals( sRules.size(), 1 );
+
 		assertEquals( sRules.get( 0 ).iterator().next(), p );
 	}
 
@@ -114,8 +127,34 @@ public class LocalStratifierTest extends TestCase
 		List<Collection<IRule>> sRules = ls.stratify( rules );
 		
 		// One of these rules needs splitting
+		assertNotNull( sRules );
+		assertEquals( sRules.size(), 2 );
+
 		assertEquals( sRules.get( 0 ).size(), 1 );
 		assertEquals( sRules.get( 1 ).size(), 2 );
+	}
+
+	public void testNoNeedToSplit_NotEqualImpliedByLess()
+	{
+		List<IRule> rules = new ArrayList<IRule>();
+		
+		IRule p = createRule( 	createLiteral( true, "p", "X", "Y" ),
+								createLiteral( true, "r", "X", "Y" ),
+								createLiteral( false, "p", 2, "Y" ),
+								createLiteral( true, "<", "X", 2 )
+								);
+		
+		rules.add( p );
+		
+		LocalStratifier ls = new LocalStratifier( true );
+		
+		List<Collection<IRule>> sRules = ls.stratify( rules );
+		
+		// This rule does not need splitting
+		assertNotNull( sRules );
+		assertEquals( sRules.size(), 1 );
+
+		assertEquals( sRules.get( 0 ).size(), 1 );
 	}
 
 	public void testNotStratified()
@@ -138,6 +177,6 @@ public class LocalStratifierTest extends TestCase
 		List<Collection<IRule>> sRules = ls.stratify( rules );
 		
 		// Can not be stratified, so result is null
-		assertEquals( sRules, null );
+		assertNull( sRules );
 	}
 }
