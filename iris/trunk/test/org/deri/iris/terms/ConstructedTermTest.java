@@ -55,8 +55,9 @@ public class ConstructedTermTest extends TestCase {
 	private static ConstructedTerm BASIC2;
 
 	private static ConstructedTerm MORE;
+	private static ConstructedTerm MORE2;
 
-	private static ConstructedTerm MORE1;
+	private static ConstructedTerm NOT_GROUND;
 
 	public static Test suite() {
 		return new TestSuite(ConstructedTermTest.class,
@@ -65,29 +66,36 @@ public class ConstructedTermTest extends TestCase {
 
 	public void setUp() {
 		List<ITerm> terms = new ArrayList<ITerm>();
-		terms.add(0, new StringTerm("a"));
-		terms.add(1, new StringTerm("b"));
+		terms.add( new StringTerm("a"));
+		terms.add( new StringTerm("b"));
 
 		BASIC = new ConstructedTerm(SYMBOL, terms);
 
 		terms = new ArrayList<ITerm>();
-		terms.add(0, new StringTerm("a"));
-		terms.add(1, new StringTerm("b"));
+		terms.add( new StringTerm("a"));
+		terms.add( new StringTerm("b"));
 
 		BASIC2 = new ConstructedTerm(SYMBOL, terms);
 
 		terms = new ArrayList<ITerm>();
-		terms.add(0, new StringTerm("a"));
-		terms.add(1, new StringTerm("c"));
+		terms.add( new StringTerm("b"));
+		terms.add( new StringTerm("a"));
 
 		MORE = new ConstructedTerm(SYMBOL, terms);
 
 		terms = new ArrayList<ITerm>();
-		terms.add(0, new StringTerm("a"));
-		terms.add(1, new StringTerm("c"));
-		terms.add(2, new StringTerm("a"));
+		terms.add( new StringTerm("a"));
+		terms.add( new StringTerm("c"));
+		terms.add( new StringTerm("a"));
 
-		MORE1 = new ConstructedTerm(SYMBOL, terms);
+		MORE2 = new ConstructedTerm(SYMBOL, terms);
+		
+		terms = new ArrayList<ITerm>();
+		terms.add( new StringTerm("a"));
+		terms.add( new Variable("X"));
+		terms.add( new StringTerm("a"));
+
+		NOT_GROUND = new ConstructedTerm(SYMBOL, terms);
 	}
 
 	public void testBasic() {
@@ -104,7 +112,11 @@ public class ConstructedTermTest extends TestCase {
 	}
 
 	public void testEquals() {
-		ObjectTests.runTestEquals(BASIC, BASIC2, MORE1);
+		ObjectTests.runTestEquals(BASIC, BASIC2, MORE);
+		ObjectTests.runTestEquals(BASIC, BASIC2, MORE2);
+		
+		assertFalse( BASIC.equals( MORE ) );
+		assertFalse( MORE.equals( BASIC ) );
 	}
 
 	public void testHashCode() {
@@ -113,5 +125,36 @@ public class ConstructedTermTest extends TestCase {
 
 	public void testCompareTo() {
 		assertEquals( BASIC.compareTo( BASIC2 ), 0 );
+		assertEquals( BASIC2.compareTo( BASIC ), 0 );
+
+		assertTrue( BASIC.compareTo( MORE ) < 0 );
+		assertTrue( MORE.compareTo( BASIC ) > 0 );
+
+		assertTrue( BASIC.compareTo( MORE2 ) < 0 );
+		assertTrue( MORE2.compareTo( BASIC ) > 0 );
+	}
+	
+	public void testGetFunctionSymbol()
+	{
+		assertEquals( BASIC.getFunctionSymbol(), SYMBOL );
+	}
+	
+	public void testGetParameters()
+	{
+		List<ITerm> terms = BASIC.getParameters();
+		
+		assertEquals( terms.size(), 2 );
+		assertEquals( terms.get( 0 ), new StringTerm("a") );
+		assertEquals( terms.get( 1 ), new StringTerm("b") );
+	}
+	
+	public void testIsGround()
+	{
+		assertTrue( BASIC.isGround() );
+		assertTrue( BASIC2.isGround() );
+		assertTrue( MORE.isGround() );
+		assertTrue( MORE2.isGround() );
+		
+		assertFalse( NOT_GROUND.isGround() );
 	}
 }
