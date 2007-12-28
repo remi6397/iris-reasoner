@@ -57,6 +57,13 @@ public class ConstructedTerm implements IConstructedTerm {
 	/** The function symbol itself. */
 	private final String symbol;
 	
+	/** The cached hash code of this object. */
+	private int mHashCode;
+	
+	/** Indicates if this object represents a ground term: 0 = not calculated, 1 = yes, 2 = no */
+	private int mIsGround;
+
+
 	/**
 	 * Constructor (for factory method).
 	 * @param symbol The function symbol
@@ -74,33 +81,37 @@ public class ConstructedTerm implements IConstructedTerm {
 		return symbol;
 	}
 
-	public int getArity() {
-		return terms.size();
-	}
-
-	public ITerm getParameter(int arg) throws IndexOutOfBoundsException {
-		return terms.get(arg);
-	}
-
 	public List<ITerm> getParameters() {
 		return terms;
 	}
-
-	public boolean isGround() {
-		for(ITerm term : terms){
-			if (! term.isGround() )
-				return false;
-				
+	
+	public boolean isGround()
+	{
+		if( mIsGround == 0 )
+		{
+			mIsGround = 1;
+			for(ITerm term : terms)
+			{
+				if( ! term.isGround() )
+				{
+					mIsGround = 2;
+					break;
+				}
+			}
 		}
-		return true;
+		
+		return mIsGround == 1;
 	}
 	
-	public int hashCode() {
-		int result = symbol.hashCode();
-		for (Object t : terms) {
-			result = result * 37 + t.hashCode();
+	public int hashCode()
+	{
+		if( mHashCode == 0 )
+		{
+			mHashCode = symbol.hashCode();
+			for (Object t : terms)
+				mHashCode = mHashCode * 37 + t.hashCode();
 		}
-		return result;
+		return mHashCode;
 	}
 
 	public String toString()
@@ -121,13 +132,27 @@ public class ConstructedTerm implements IConstructedTerm {
 		return result.toString();
 	}
 	
-	public boolean equals(final Object o) {
-		if (!(o instanceof ConstructedTerm)) {
+	public boolean equals(final Object o)
+	{
+		if( this == o )
+			return true;
+		
+		if( ! (o instanceof ConstructedTerm ) )
 			return false;
-		}
+		
 		ConstructedTerm t = (ConstructedTerm) o;
-		return (symbol.equals(t.symbol)) && (terms.size() == t.terms.size())
-				&& (terms.containsAll(t.terms));
+		
+		if( ! symbol.equals(t.symbol) )
+			return false;
+		
+		if( terms.size() != t.terms.size() )
+			return false;
+		
+		for( int i = 0; i < terms.size(); ++i )
+			if( ! terms.get( i ).equals( t.terms.get( i ) ) )
+				return false;
+		
+		return true;
 	}
 
 	public int compareTo(final ITerm oo) {

@@ -49,23 +49,6 @@ public interface IConstructedTerm extends ITerm{
 	public String getFunctionSymbol();
 	
 	/**
-	 * Returns the arity of the constructed term (function symbol).
-	 * 
-	 * @return The arity of the constructed term.
-	 */
-	public int getArity();
-	
-	/**
-	 * Returns the parameter at the specified position in this constructed term.
-	 * 
-	 * @param arg	Index of parameter to return.
-	 * @return		The parameter at the specified position in this list.
-	 * @throws 		java.lang.IndexOutOfBoundsException - 
-	 * 				if the index is out of range (index < 0 || index >= size()).
-	 */
-	public ITerm getParameter(int arg) throws java.lang.IndexOutOfBoundsException;
-
-	/**
 	 * Returns a list of all terms from this constructed term (function symbol).
 	 * 
 	 * @return	List of all terms from this constructed term.
@@ -73,9 +56,9 @@ public interface IConstructedTerm extends ITerm{
 	public List<ITerm> getParameters();
 	
 	/**
-	 * Returns all distinct variables from this tupple.
+	 * Returns all distinct variables from this tuple.
 	 * 
-	 * @return All distinct variables from this tupple.
+	 * @return All distinct variables from this tuple.
 	 */
 	public Set<IVariable> getVariables();
 }
