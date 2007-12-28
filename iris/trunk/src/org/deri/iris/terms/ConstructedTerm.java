@@ -85,6 +85,10 @@ public class ConstructedTerm implements IConstructedTerm {
 		return terms;
 	}
 	
+	public List<ITerm> getValue() {
+		return terms;
+	}
+
 	public boolean isGround()
 	{
 		if( mIsGround == 0 )
@@ -145,40 +149,29 @@ public class ConstructedTerm implements IConstructedTerm {
 		if( ! symbol.equals(t.symbol) )
 			return false;
 		
-		if( terms.size() != t.terms.size() )
-			return false;
-		
-		for( int i = 0; i < terms.size(); ++i )
-			if( ! terms.get( i ).equals( t.terms.get( i ) ) )
-				return false;
-		
-		return true;
+		return terms.equals( t.terms );
 	}
 
-	public int compareTo(final ITerm oo) {
+	public int compareTo(final ITerm o) {
 		
-		assert oo instanceof IConstructedTerm : "Invalid argument type for ConstructedTerm.compare()";
+		assert o instanceof IConstructedTerm : "Invalid argument type for ConstructedTerm.compare()";
 	
-		final IConstructedTerm o = (IConstructedTerm) oo;
+		final IConstructedTerm t = (IConstructedTerm) o;
 		
-		int result = symbol.compareTo(o.getFunctionSymbol());
+		int result = symbol.compareTo(t.getFunctionSymbol());
 		if (result != 0)
 			return result;
 		
-		List<ITerm> oTerms = (List<ITerm>) o.getValue();
+		List<ITerm> tTerms = (List<ITerm>) t.getValue();
 		
-		int min = Math.min( terms.size(), oTerms.size() );
+		int min = Math.min( terms.size(), tTerms.size() );
 		
 		for (int iCounter = 0; iCounter < min; iCounter++) {
-			result = terms.get(iCounter).compareTo(oTerms.get(iCounter));
+			result = terms.get(iCounter).compareTo(tTerms.get(iCounter));
 			if (result != 0)
 				return result;
 		}
-		return terms.size() - o.getValue().size();
-	}
-
-	public List<ITerm> getValue() {
-		return terms;
+		return terms.size() - t.getValue().size();
 	}
 
 	public Set<IVariable> getVariables() {
