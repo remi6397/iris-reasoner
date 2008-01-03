@@ -28,9 +28,7 @@ package org.deri.iris.evaluation.algebra;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-
 import org.deri.iris.api.evaluation.algebra.IComponent;
 import org.deri.iris.api.terms.IVariable;
 
