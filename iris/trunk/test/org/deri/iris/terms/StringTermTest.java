@@ -28,10 +28,8 @@ package org.deri.iris.terms;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.deri.iris.ObjectTests;
 import org.deri.iris.TermTests;
-import org.deri.iris.factory.Factory;
 
 /**
  * <p>
