@@ -92,4 +92,26 @@ public class QueryContainmentTest extends TestCase {
 		assertFalse(result);
 	}
 	
+	/**
+	 * Tests whether one query is contained within another query.
+	 * 
+	 * @throws Exception 
+	 */
+	public void testTransitiveQueryContaiment() throws Exception {
+		final String prog = 
+			"path(?X, ?Y) :- path(?X, ?Z), path(?Z, ?Y).";
+		final String q2 = "?-path(?X, ?Y).";
+		final String q1 = "?-path(?X, ?Z), path(?Z, ?Y).";
+		final IProgram program = Parser.parse(prog);
+		final IProgram query1Prog = Parser.parse(q1);
+		final IQuery query1 = query1Prog.getQueries().iterator().next();
+		final IProgram query2Prog = Parser.parse(q2);
+		final IQuery query2 = query2Prog.getQueries().iterator().next();
+		final QueryContainment queryCont = new QueryContainment(program);
+
+		boolean result = queryCont.checkQueryContainment(query1, query2);
+		
+		assertTrue(result);
+	}
+	
 }
