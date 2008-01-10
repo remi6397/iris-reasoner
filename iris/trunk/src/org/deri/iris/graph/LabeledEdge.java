@@ -25,6 +25,8 @@
  */
 package org.deri.iris.graph;
 
+import org.jgrapht.graph.DefaultEdge;
+
 /**
  * <p>
  * This class represents a simple implementation of a labeled edge.
@@ -44,7 +46,7 @@ package org.deri.iris.graph;
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  * @version $Revision: 1.2 $
  */
-public class LabeledEdge<V, L> {
+public class LabeledEdge<V, L> extends DefaultEdge {
 
 	/** Label of this edge. */
 	private L label;
