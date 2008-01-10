@@ -31,6 +31,7 @@ import static org.deri.iris.factory.Factory.TERM;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -48,6 +49,7 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.evaluation.common.AdornedProgram;
 import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
@@ -60,112 +62,28 @@ import org.deri.iris.MiscHelper;
  * <p>
  * Tests the magic sets.
  * </p>
- * <p>
- * $Id: MagicTest.java,v 1.9 2007-10-30 10:35:51 poettler_ric Exp $
- * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.9 $
  */
 public class MagicTest extends TestCase {
 
-	/** The 1st magic sets. */
-	private MagicSetImpl ms0;
+	/** The prefix for magic literals. */
+	private static final String MAGIC_PREFIX = "magic_";
 
-	/** Rules used to create the 1st magic sets. */
-	private Set<IRule> rules0;
-
-	/** The 2nd magic sets. */
-	private MagicSetImpl ms1;
-
-	/** Rules used to create the 2nd magic sets. */
-	private Set<IRule> rules1;
-
-	public void setUp() {
-		// constructing the rules for ms0
-		rules0 = new HashSet<IRule>();
-		// sg(X, Y) :- flat(X, Y)
-		List<ILiteral> head = Arrays.asList(createLiteral("sg", "X", "Y"));
-		List<ILiteral> body = Arrays.asList(createLiteral("flat", "X", "Y"));
-		rules0.add(BASIC.createRule(head, body));
-
-		// sg(X, Y) :- up(X, Z1), sg(Z1, Z2), flat(Z2, Z3), sg(Z3, Z4), down(Z4,
-		// Y)
-		head = Arrays.asList(createLiteral("sg", "X", "Y"));
-		body = new ArrayList<ILiteral>();
-		body.add(createLiteral("up", "X", "Z1"));
-		body.add(createLiteral("sg", "Z1", "Z2"));
-		body.add(createLiteral("flat", "Z2", "Z3"));
-		body.add(createLiteral("sg", "Z3", "Z4"));
-		body.add(createLiteral("down", "Z4", "Y"));
-		rules0.add(BASIC.createRule(head, body));
-
-		// constructing the query for ms0
-		// sg(john, Y)
-		IQuery query = BASIC.createQuery(BASIC.createLiteral(true, BASIC
-				.createPredicate("sg", 2), BASIC.createTuple(TERM
-				.createString("john"), TERM.createVariable("Y"))));
-		ms0 = new MagicSetImpl(new AdornedProgram(rules0, query));
-
-		// constructing the rules for ms1
-		rules1 = new HashSet<IRule>();
-		// a(X, Y, Z) :- c(X, Y, Z)
-		head = Arrays.asList(createLiteral("a", "X", "Y", "Z"));
-		body = Arrays.asList(createLiteral("c", "X", "Y", "Z"));
-		rules1.add(BASIC.createRule(head, body));
-		// a(X, Y, Z) :- b(X, A), a(X, A, B), c(B, Y, Z)
-		head = Arrays.asList(createLiteral("a", "X", "Y", "Z"));
-		body = Arrays.asList(createLiteral("b", "X", "A"), createLiteral(
-				"a", "X", "A", "B"), createLiteral("c", "B", "Y", "Z"));
-		rules1.add(BASIC.createRule(head, body));
-		// constructing the query for ms1
-		// a(john, mary, Y)
-		query = BASIC.createQuery(BASIC.createLiteral(true, BASIC
-				.createPredicate("a", 3), BASIC.createTuple(TERM
-				.createString("john"), TERM.createString("mary"), TERM
-				.createVariable("Y"))));
-		ms1 = new MagicSetImpl(new AdornedProgram(rules1, query));
-	}
+	/** The prefix for labeled literals. */
+	private static final String LABELED_PREFIX = "label_";
 
 	/**
 	 * Creates a magic literal.
 	 * 
-	 * @param symbol
-	 *            the predicate symbot to use for the literal
-	 * @param ad
-	 *            the adornments
-	 * @param t
-	 *            the terms for the literal
+	 * @param symbol the predicate symbot to use for the literal
+	 * @param ad the adornments
+	 * @param t the terms for the literal
 	 * @return the constructed magic literal
-	 * @throws NullPointerException
-	 *             if the symbol is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the symbol is 0 sighns long
-	 * @throws NullPointerException
-	 *             if the adornments is or contains {@code null}
-	 * @throws NullPointerException
-	 *             if the terms is or contains {@code null}
 	 */
 	private static ILiteral createMagicLiteral(final String symbol,
 			final Adornment[] ad, final ITerm[] t) {
-		if (symbol == null) {
-			throw new NullPointerException("The symbol must not be null");
-		}
-		if (symbol.length() == 0) {
-			throw new IllegalArgumentException(
-					"The symbol must be longer than 0 characters");
-		}
-		if ((ad == null) || Arrays.asList(ad).contains(null)) {
-			throw new NullPointerException(
-					"The adornments must not be, or contain null");
-		}
-		if ((t == null) || Arrays.asList(t).contains(null)) {
-			throw new NullPointerException(
-					"The terms must not be, or contain null");
-		}
-		final IPredicate p = new AdornedProgram.AdornedPredicate("magic_"
-				+ symbol, t.length, ad);
-		return BASIC.createLiteral(true, p, BASIC.createTuple(t));
+		return createAdornedLiteral("magic_" + symbol, ad, t);
 	}
 
 	/**
@@ -178,14 +96,6 @@ public class MagicTest extends TestCase {
 	 * @param t
 	 *            the terms for the literal
 	 * @return the constructed magic literal
-	 * @throws NullPointerException
-	 *             if the symbol is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the symbol is 0 sighns long
-	 * @throws NullPointerException
-	 *             if the adornments is or contains {@code null}
-	 * @throws NullPointerException
-	 *             if the terms is or contains {@code null}
 	 */
 	private static ILiteral createAdornedLiteral(final String symbol,
 			final Adornment[] ad, final ITerm[] t) {
@@ -197,41 +107,23 @@ public class MagicTest extends TestCase {
 	 * 
 	 * @param positive <code>true</code> whether the resulting literal
 	 * should be positive, or not.
-	 * @param symbol
-	 *            the predicate symbot to use for the literal
-	 * @param ad
-	 *            the adornments
-	 * @param t
-	 *            the terms for the literal
+	 * @param symbol the predicate symbot to use for the literal
+	 * @param ad the adornments
+	 * @param t the terms for the literal
 	 * @return the constructed magic literal
-	 * @throws NullPointerException
-	 *             if the symbol is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the symbol is 0 sighns long
-	 * @throws NullPointerException
-	 *             if the adornments is or contains {@code null}
-	 * @throws NullPointerException
-	 *             if the terms is or contains {@code null}
 	 */
 	private static ILiteral createAdornedLiteral(final boolean positive, final String symbol,
 			final Adornment[] ad, final ITerm[] t) {
-		if (symbol == null) {
-			throw new NullPointerException("The symbol must not be null");
-		}
-		if (symbol.length() == 0) {
-			throw new IllegalArgumentException(
-					"The symbol must be longer than 0 characters");
-		}
-		if ((ad == null) || Arrays.asList(ad).contains(null)) {
-			throw new NullPointerException(
-					"The adornments must not be, or contain null");
-		}
-		if ((t == null) || Arrays.asList(t).contains(null)) {
-			throw new NullPointerException(
-					"The terms must not be, or contain null");
-		}
-		return BASIC.createLiteral(positive, new AdornedProgram.AdornedPredicate(
-				symbol, t.length, ad), BASIC.createTuple(t));
+		assert symbol != null: "The symbol must not be null";
+		assert symbol.length() > 0: "The symbol must not be an empty string";
+		assert ad != null: "The adornments must not be null";
+		assert !Arrays.asList(ad).contains(null): "The adornments must not contain null";
+		assert t != null: "The terms must not be null";
+		assert !Arrays.asList(t).contains(null): "The terms must not contain null";
+
+		return BASIC.createLiteral(positive, 
+				new AdornedProgram.AdornedPredicate(symbol, t.length, ad), 
+				BASIC.createTuple(t));
 	}
 
 	/**
@@ -242,19 +134,12 @@ public class MagicTest extends TestCase {
 	 * @param a
 	 *            the adornments with which to adorn the literal
 	 * @return the adorned literal
-	 * @throws NullPointerException
-	 *             if the literal is {@code null}
-	 * @throws NullPointerException
-	 *             it the adornemnts is or contains {@code null}
 	 */
 	private static ILiteral adornLiteral(final ILiteral l, Adornment... a) {
-		if (l == null) {
-			throw new NullPointerException("The literal must not be null");
-		}
-		if ((a == null) || Arrays.asList(a).contains(null)) {
-			throw new NullPointerException(
-					"The the adornents must not be or contain null");
-		}
+		assert l != null: "The literal must not be null";
+		assert a != null: "The adornments must not be null";
+		assert !Arrays.asList(a).contains(null): "The adornments must not contain null";
+
 		final IPredicate lp = l.getAtom().getPredicate();
 		final AdornedPredicate p = new AdornedPredicate(
 				lp.getPredicateSymbol(), lp.getArity(), a);
@@ -264,33 +149,51 @@ public class MagicTest extends TestCase {
 	/**
 	 * Tests whether the seed was constructed as it should be.
 	 */
-	public void testSeed0() {
-		IPredicate p = new AdornedProgram.AdornedPredicate("magic_sg", 1,
+	public void testSeed0() throws Exception {
+		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y)."
+					      + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y)."
+					      + "?- sg('john', ?Y).";
+		final IProgram p = Parser.parse(prog);
+		final IQuery q = p.getQueries().iterator().next();
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), q));
+
+		final IPredicate pred = new AdornedProgram.AdornedPredicate("magic_sg", 1,
 				new Adornment[] { Adornment.BOUND, Adornment.FREE });
-		final IAtom ref = BASIC.createAtom(p, BASIC.createTuple(TERM.createString("john")));
-		assertEquals("The seed wasn't constructed correctly", ref, ms0
-				.getSeed());
+		final IAtom ref = BASIC.createAtom(pred, BASIC.createTuple(TERM.createString("john")));
+		assertEquals("The seed wasn't constructed correctly", ref, ms.getSeed());
 	}
 
 	/**
 	 * Tests whether the seed was constructed as it should be.
 	 */
-	public void testSeed1() {
-		IPredicate p = new AdornedProgram.AdornedPredicate("magic_a", 2,
+	public void testSeed1() throws Exception {
+		final String prog = "a(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z)." 
+						   + "a(?X, ?Y, ?Z) :- b(?X, ?A), a(?X, ?A, ?B), c(?B, ?Y, ?Z)."
+						   + "?- a('john', 'mary', ?Y).";
+		final IProgram p = Parser.parse(prog);
+		final IQuery q = p.getQueries().iterator().next();
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), q));
+
+		final IPredicate pred = new AdornedProgram.AdornedPredicate("magic_a", 2,
 				new Adornment[] { Adornment.BOUND, Adornment.BOUND,
 						Adornment.FREE });
-		final IAtom ref = BASIC.createAtom(p, BASIC
-				.createTuple(TERM.createString("john"), TERM
-						.createString("mary")));
-		assertEquals("The seed wasn't constructed correctly", ref, ms1
-				.getSeed());
+		final IAtom ref = BASIC.createAtom(pred, BASIC.createTuple(TERM.createString("john"), 
+					TERM.createString("mary")));
+		assertEquals("The seed wasn't constructed correctly", ref, ms.getSeed());
 	}
 
 	/**
 	 * Tests for the magic rules.
 	 */
-	public void testMagicRules0() {
-		final List<IRule> rules = new ArrayList<IRule>(ms0.getMagicRules());
+	public void testMagicRules0() throws Exception {
+		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y)."
+					      + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y)."
+					      + "?- sg('john', ?Y).";
+		final IProgram p = Parser.parse(prog);
+		final IQuery q = p.getQueries().iterator().next();
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), q));
+
+		final List<IRule> rules = new ArrayList<IRule>(ms.getMagicRules());
 		final List<IRule> ref = new ArrayList<IRule>();
 
 		// constructing the magic rules
@@ -302,8 +205,7 @@ public class MagicTest extends TestCase {
 				Adornment.BOUND, Adornment.FREE }, new ITerm[] { TERM
 				.createVariable("X") }), createLiteral("up", "X", "Z1"));
 		ref.add(BASIC.createRule(head, body));
-		// magic_sg^bf(Z3) :- magic_sg^bf(X), up(X, Z1), sg^bf(Z1, Z2), flat(Z2,
-		// Z3)
+		// magic_sg^bf(Z3) :- magic_sg^bf(X), up(X, Z1), sg^bf(Z1, Z2), flat(Z2, Z3)
 		head = Arrays.asList(createMagicLiteral("sg", new Adornment[] {
 				Adornment.BOUND, Adornment.FREE }, new ITerm[] { TERM
 				.createVariable("Z3") }));
@@ -325,35 +227,59 @@ public class MagicTest extends TestCase {
 	/**
 	 * Tests for the magic rules.
 	 */
-	public void testMagicRules1() {
-		final List<IRule> rules = new ArrayList<IRule>(ms1.getMagicRules());
+	public void testMagicRules1() throws Exception {
+		final String prog = "a(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" 
+						   + "a(?X, ?Y, ?Z) :- b(?X, ?A), a(?X, ?A, ?B), c(?B, ?Y, ?Z).\n"
+						   + "?- a('john', 'mary', ?Y).\n";
+		final IProgram p = Parser.parse(prog);
+		final IQuery q = p.getQueries().iterator().next();
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), q));
+
+		final List<IRule> rules = new ArrayList<IRule>(ms.getMagicRules());
 		final List<IRule> ref = new ArrayList<IRule>();
 
 		// constructing the magic rules
-		// magic_a^bbf(X, A) :- magic_a^bbf(X, Y), b(X, A)
-		List<ILiteral> head = Arrays.asList(createMagicLiteral("a", new Adornment[] {
-				Adornment.BOUND, Adornment.BOUND, Adornment.FREE },
-				new ITerm[] { TERM.createVariable("X"),
-						TERM.createVariable("A") }));
-		List<ILiteral> body = Arrays.asList(createMagicLiteral("a", new Adornment[] {
-				Adornment.BOUND, Adornment.BOUND, Adornment.FREE },
-				new ITerm[] { TERM.createVariable("X"),
-						TERM.createVariable("Y") }), createLiteral("b", "X",
-				"A"));
+		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final IVariable A = TERM.createVariable("A");
+		final IVariable X = TERM.createVariable("X");
+		final IVariable Y = TERM.createVariable("Y");
+		final IVariable[] XA = new IVariable[]{X, A};
+		final IVariable[] XY = new IVariable[]{X, Y};
+		// label_a_1^bbf(X, A) :- magic_a^bbf(X, Y)
+		List<ILiteral> head = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_1", bbf, XA));
+		List<ILiteral> body = Arrays.asList(createMagicLiteral("a", bbf, XY));
+		ref.add(BASIC.createRule(head, body));
+		// label_a_2^bbf(X, A) :- magic_a^bbf(X, Y), b(X, A)
+		head = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_2", bbf, XA));
+		body = Arrays.asList(createMagicLiteral("a", bbf, XY), createLiteral("b", "X", "A"));
+		ref.add(BASIC.createRule(head, body));
+		// magic_a^bbf(X, A) :- label_a_1^bbf(X, A), label_a_2^bbf(X, A)
+		head = Arrays.asList(createMagicLiteral("a", bbf, XA));
+		body = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_2", bbf, XA), 
+			createAdornedLiteral(LABELED_PREFIX + "a_1", bbf, XA));
 		ref.add(BASIC.createRule(head, body));
 
 		Collections.sort(rules, AdornmentsTest.RC);
+		Collections.sort(ref, AdornmentsTest.RC);
+
 		assertEquals(ref, rules);
 	}
 
 	/**
 	 * Tests the rewritten rules.
 	 */
-	public void testRewrittenRules0() {
+	public void testRewrittenRules0() throws Exception {
+		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y)."
+					      + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y)."
+					      + "?- sg('john', ?Y).";
+		final IProgram p = Parser.parse(prog);
+		final IQuery q = p.getQueries().iterator().next();
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), q));
+
 		final List<IRule> ref = new ArrayList<IRule>();
-		final List<IRule> mrules = new ArrayList<IRule>(ms0.getRewrittenRules());
+		final List<IRule> mrules = new ArrayList<IRule>(ms.getRewrittenRules());
 		// constructing the reference rules out of the normal ones
-		for (final IRule r : rules0) {
+		for (final IRule r : p.getRules()) {
 			final ILiteral head = createAdornedLiteral("sg", new Adornment[] {
 					Adornment.BOUND, Adornment.FREE }, new ITerm[] {
 					TERM.createVariable("X"), TERM.createVariable("Y") });
@@ -391,11 +317,18 @@ public class MagicTest extends TestCase {
 	/**
 	 * Tests the rewritten rules.
 	 */
-	public void testRewrittenRules1() {
+	public void testRewrittenRules1() throws Exception {
+		final String prog = "a(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z)." 
+						   + "a(?X, ?Y, ?Z) :- b(?X, ?A), a(?X, ?A, ?B), c(?B, ?Y, ?Z)."
+						   + "?- a('john', 'mary', ?Y).";
+		final IProgram p = Parser.parse(prog);
+		final IQuery q = p.getQueries().iterator().next();
+		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), q));
+
 		final List<IRule> ref = new ArrayList<IRule>();
-		final List<IRule> mrules = new ArrayList<IRule>(ms1.getRewrittenRules());
+		final List<IRule> mrules = new ArrayList<IRule>(ms.getRewrittenRules());
 		// constructing the reference rules out of the normal ones
-		for (final IRule r : rules1) {
+		for (final IRule r : p.getRules()) {
 			final ILiteral head = createAdornedLiteral(
 					"a",
 					new Adornment[] { Adornment.BOUND, Adornment.BOUND,
@@ -514,12 +447,10 @@ public class MagicTest extends TestCase {
 		final Set<IRule> ref = new HashSet<IRule>();
 		// magic_r^b(X) :- magic_p^b(X)
 		ref.add(BASIC.createRule(Arrays.asList(magic_r), Arrays.asList(magic_p)));
-		// magic_p^b(X) :- magic_q^f(), s(X)
-		ref.add(BASIC.createRule(Arrays.asList(magic_p), 
-					Arrays.asList(createMagicLiteral("q", f, new ITerm[]{}), s)));
-		// q^f(X) :- magic_q^f(), s(X), -p^b(X)
-		ref.add(BASIC.createRule(Arrays.asList(ad_q), 
-					Arrays.asList(createMagicLiteral("q", f, new ITerm[]{}), s, neg_ad_p)));
+		// magic_p^b(X) :- s(X)
+		ref.add(BASIC.createRule(Arrays.asList(magic_p), Arrays.asList(s)));
+		// q^f(X) :- s(X), -p^b(X)
+		ref.add(BASIC.createRule(Arrays.asList(ad_q), Arrays.asList(s, neg_ad_p)));
 		// r^b(X) :- magic_r^b(X), t(X)
 		ref.add(BASIC.createRule(Arrays.asList(ad_r), Arrays.asList(magic_r, t)));
 		// p^b(X) :- magic_p^b(X), r^b(X)
@@ -625,9 +556,8 @@ public class MagicTest extends TestCase {
 		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bb, XY)), 
 					Arrays.asList(createMagicLiteral("s", bb, XY), c2)));
-		// p^ff(X, Y) :- magic_p^ff(), c(X, Y)
-		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", ff, XY)), 
-					Arrays.asList(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
+		// p^ff(X, Y) :- c(X, Y)
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", ff, XY)), Arrays.asList(c2)));
 
 		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
 		rules.addAll(ms.getMagicRules());
@@ -722,18 +652,15 @@ public class MagicTest extends TestCase {
 		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("s", bbbb, WXYZ)), 
 					Arrays.asList(createAdornedLiteral("p", ff, WX), 
 						createAdornedLiteral("r", ff, YZ))));
-		// magic_r^ff() :- p^ff(W, X)
-		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", ff, new ITerm[]{})), 
-					Arrays.asList(createAdornedLiteral("p", ff, WX))));
 		// s^bbbb(W, X, Y, Z) :- magic_s^bbbb(W, X, Y, Z), c(W, X, Y, Z)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bbbb, WXYZ)), 
 					Arrays.asList(createMagicLiteral("s", bbbb, WXYZ), c4)));
-		// r^ff(X, Y) :- magic_r^ff(), c(X, Y)
+		// r^ff(X, Y) :- c(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("r", ff, XY)), 
-					Arrays.asList(createMagicLiteral("r", ff, new ITerm[]{}), c2)));
-		// p^ff(X, Y) :- magic_p^ff(), c(X, Y)
+					Arrays.asList(c2)));
+		// p^ff(X, Y) :- c(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", ff, XY)), 
-					Arrays.asList(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
+					Arrays.asList(c2)));
 
 		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
 		rules.addAll(ms.getMagicRules());
@@ -775,9 +702,8 @@ public class MagicTest extends TestCase {
 		// magic_r^bbf(b, X) :- p^ff(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X})),
 					Arrays.asList(createAdornedLiteral("p", ff, XY))));
-		// magic_r^fbb(Y, X) :- magic_p^ff(), c(X, Y)
-		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", fbb, YX)), 
-					Arrays.asList(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
+		// magic_r^fbb(Y, X) :- c(X, Y)
+		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", fbb, YX)), Arrays.asList(c2)));
 		// magic_s^bb(e, Z) :- p^ff(X, Y), r^bbf(b, X, Z)
 		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("s", bb, new ITerm[]{TERM.createString("e"), Z})), 
 					Arrays.asList(createAdornedLiteral("p", ff, XY), 
@@ -788,10 +714,9 @@ public class MagicTest extends TestCase {
 		// r^bbf(X, Y, Z) :- magic_r^bbf(X, Y), c(X, Y, Z)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("r", bbf, XYZ)), 
 					Arrays.asList(createMagicLiteral("r", bbf, XY), c3)));
-		// p^ff(X, Y) :- magic_p^ff(), c(X, Y), r^fbb(Z, Y, X)
+		// p^ff(X, Y) :- c(X, Y), r^fbb(Z, Y, X)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", ff, XY)), 
-					Arrays.asList(createMagicLiteral("p", ff, new ITerm[]{}), 
-						c2, 
+					Arrays.asList(c2, 
 						createAdornedLiteral("r", fbb, ZYX))));
 		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bb, XY)), 
@@ -838,23 +763,17 @@ public class MagicTest extends TestCase {
 		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("s", bb, new ITerm[]{TERM.createString("e"), Z})),
 					Arrays.asList(createAdornedLiteral("p", ff, XY), 
 						createAdornedLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X, Z}))));
-		// magic_s^ff() :- magic_p^ff(), c(X, Y)
-		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("s", ff, new ITerm[]{})),
-					Arrays.asList(createMagicLiteral("p", ff, new ITerm[]{}), c2)));
 		// r^bbf(X, Y, Z) :- magic_r^bbf(X, Y), c(X, Y, Z)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("r", bbf, XYZ)),
 					Arrays.asList(createMagicLiteral("r", bbf, XY), c3)));
-		// p^ff(X, Y) :- magic_p^ff(), c(X, Y), s^ff(Z, T)
+		// p^ff(X, Y) :- c(X, Y), s^ff(Z, T)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", ff, XY)),
-					Arrays.asList(createMagicLiteral("p", ff, new ITerm[]{}), 
-						c2, 
-						createAdornedLiteral("s", ff, new ITerm[]{Z, T}))));
+					Arrays.asList(c2, createAdornedLiteral("s", ff, new ITerm[]{Z, T}))));
 		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bb, XY)),
 					Arrays.asList(createMagicLiteral("s", bb, XY), c2)));
-		// s^ff(X, Y) :- magic_s^ff(), c(X, Y)
-		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", ff, XY)),
-					Arrays.asList(createMagicLiteral("s", ff, new ITerm[]{}), c2)));
+		// s^ff(X, Y) :- c(X, Y)
+		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", ff, XY)), Arrays.asList(c2)));
 
 		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
 		rules.addAll(ms.getMagicRules());
@@ -863,6 +782,23 @@ public class MagicTest extends TestCase {
 		assertEquals("The seed is not correct", 
 				createMagicLiteral("p", ff, new ITerm[]{}).getAtom(), 
 				ms.getSeed());
+	}
+
+	private static void printSortedRules(final Collection<? extends IRule> rules, final Collection<? extends IRule> ref) {
+		final List<IRule> lrules = new ArrayList<IRule>(rules);
+		final List<IRule> lref = new ArrayList<IRule>(ref);
+		Collections.sort(lrules, AdornmentsTest.RC);
+		Collections.sort(lref, AdornmentsTest.RC);
+		System.out.println("rules:");
+		for (final IRule r : lrules) {
+			System.out.println(r);
+		}
+		System.out.println();
+		System.out.println("ref:");
+		for (final IRule r : lref) {
+			System.out.println(r);
+		}
+		System.out.println();
 	}
 
 	/**
