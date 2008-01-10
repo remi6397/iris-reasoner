@@ -57,9 +57,6 @@ import org.deri.iris.graph.LabeledEdge;
  * Simple implementation of the &quot;Generalized Magic Sets&quot; according to
  * the &quot;The Power of Magic&quot; paper.
  * </p>
- * <p>
- * $Id$
- * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
@@ -146,11 +143,12 @@ public final class MagicSetImpl {
 		final Set<IRule> res = new HashSet<IRule>();
 		final List<ILiteral> query = q.getLiterals();
 		for (int i = 1, max = query.size(); i < max; i++) {
-			res.add(BASIC.createRule(Arrays.asList(
-							new ILiteral[]{
-								BASIC.createLiteral(query.get(i).isPositive(), 
-									createMagicAtom(query.get(i).getAtom()))}), 
-						slice(query, 0, i)));
+			final IAtom magicAtom = createMagicAtom(query.get(i).getAtom());
+			if (!magicAtom.getTuple().isEmpty()) {
+				res.add(BASIC.createRule(Arrays.asList(
+								BASIC.createLiteral(query.get(i).isPositive(), magicAtom)), 
+							slice(query, 0, i)));
+			}
 		}
 		return res;
 	}
@@ -196,13 +194,9 @@ public final class MagicSetImpl {
 	 *             if the length of the head is unequal to 1
 	 */
 	private AdornedRule getRewrittenRule(final AdornedRule r) {
-		if (r == null) {
-			throw new NullPointerException("The rule must not be null");
-		}
-		if (r.getHead().size() != 1) {
-			throw new IllegalArgumentException("At the moment only heads "
-					+ "with length of 1 are allowed");
-		}
+		assert r != null: "The rule must not be null";
+		assert r.getHead().size() == 1: 
+			"The head must have a length of 1, but was " + r.getHead().size();
 
 		final ILiteral headL = r.getHead().get(0);
 
@@ -214,6 +208,12 @@ public final class MagicSetImpl {
 		final ILiteral magicL = createMagicLiteral(headL);
 		if (magicL == headL) { // the head literal is not adorned 
 			// -> the query was not adorned -> nothing to exchange
+			return r;
+		}
+		if (magicL.getAtom().getTuple().isEmpty()) { // the literal wouldn't produce 
+			// any bindings, so it is better to leave it out (since
+			// with the new sip we wouldn't have the rules for this
+			// literal constructed anyway
 			return r;
 		}
 		rewrittenBody.add(0, magicL);
@@ -251,31 +251,16 @@ public final class MagicSetImpl {
 	 * many arcs are entering the specific literal and constructs the
 	 * corresponding rules.
 	 * 
-	 * @param l
-	 *            for which to create the rule
-	 * @param r
-	 *            the original rule containing the given literal
+	 * @param l literal for which to create the rule
+	 * @param r the original rule containing the given literal
 	 * @return the set of generated rules
-	 * @throws NullPointerException
-	 *             if the literal of the rule is null
-	 * @throws IllegalArgumentException
-	 *             if the predicate of the given literal isn't adorned
-	 * @throws IllegalArgumentException
-	 *             if the length of the head is unequal to 1
 	 */
 	private Set<IRule> generateRules(final ILiteral l, final AdornedRule r) {
-		if ((l == null) || (r == null)) {
-			throw new NullPointerException(
-					"The rule and the literal must not be null");
-		}
-		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
-			throw new IllegalArgumentException(
-					"The predicate of the literal must be adorned");
-		}
-		if (r.getHead().size() != 1) {
-			throw new IllegalArgumentException(
-					"At the moment only heads with length 1 are allowed");
-		}
+		assert l != null: "The literal must not be null";
+		assert r != null: "The rule must not be null";
+		assert l.getAtom().getPredicate() instanceof AdornedPredicate: 
+			"The predicate of the literal must be adorned";
+		assert r.getHead().size() == 1: "The head must have a size of 1, but was " + r.getHead().size();
 
 		final Set<LabeledEdge<ILiteral, Set<IVariable>>> enteringEdges = getAdornedSip(
 				r).getEdgesEnteringLiteral(l);
@@ -302,12 +287,9 @@ public final class MagicSetImpl {
 			rules.add(BASIC.createRule(Arrays.asList(new ILiteral[]{hl}),
 					new ArrayList<ILiteral>(bodyLiterals)));
 			return rules;
-		} else {
-			// TODO: maybe return an empty set
-			throw new IllegalArgumentException(
-					"There are no arcs entering this literal"
-							+ ", so no magics can be created");
 		}
+		// there are no edges entering this literal -> all would be free
+		return Collections.EMPTY_SET;
 	}
 
 	/**
