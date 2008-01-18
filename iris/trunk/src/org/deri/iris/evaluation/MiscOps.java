@@ -60,7 +60,7 @@ import org.deri.iris.builtins.ExactEqualBuiltin;
 public class MiscOps {
 
 	/** prefix for the variables in rectified rules. */
-	private static final String VAR_PREFIX = "?X_";
+	private static final String VAR_PREFIX = "X_";
 
 	private MiscOps() {
 		// prevent subclassing
