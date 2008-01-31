@@ -3,7 +3,7 @@
 \usepackage{hyperref}
 
 \title{IRIS - Integrated Rule Inference System - API and User Guide}
-\date{\today}
+
 \author{Richard P\"ottler}
 
 \begin{document}
@@ -112,7 +112,7 @@ In other words, in each iteration a rule with N literals labeled $l_{1-N}$ is ev
 N times substituting the incremental relations from the previous step for each each literal in turn.
 
 \subsubsection{Semi-naive with Magic Sets}
- 
+
 The `Magic-Sets' strategy first transforms the rules according to the variable
 bindings of the query so that the computation of the fixed point is restricted as
 much as possible to those tuples that `might' produce something that satisfies the query.
@@ -580,6 +580,9 @@ greater-equal & \verb|?X >= ?Y| & any type $ \ge $ same type \\
 & \verb|GREATER_EQUAL(?X, ?Y)| & numeric type $ \ge $ numeric type \\
 \hline
 same type & \verb|SAME_TYPE(?X, ?Y)| & any type same\_type\_as any type \\
+\hline
+regular expression match & \verb|REGEX(?X, ?Y)| & string matches pattern (string term) \\
+& & any other type is false \\
 \hline
 \end{tabular}
 \caption{All supported binary and ternary built-in predicates}
