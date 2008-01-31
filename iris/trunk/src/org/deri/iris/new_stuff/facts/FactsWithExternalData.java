@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.storage_old.IDataSource;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.new_stuff.storage.IRelation;
