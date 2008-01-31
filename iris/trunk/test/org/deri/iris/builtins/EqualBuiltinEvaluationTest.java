@@ -26,9 +26,7 @@
 package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.BASIC;
-import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.TERM;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,26 +34,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.deri.iris.Executor;
-import org.deri.iris.api.IExecutor;
-import org.deri.iris.api.IProgram;
+import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.evaluation_old.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.evaluation_old.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.parser.ProgramTest;
+import org.deri.iris.new_stuff.KnowledgeBaseFactory;
+import org.deri.iris.new_stuff.storage.IRelation;
+import org.deri.iris.new_stuff.storage.simple.SimpleRelationFactory;
 
 /**
  * <p>
@@ -74,7 +66,7 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 
 	public void testEvaluate0() throws Exception{
 		// constructing the rules
-		Set<IRule> rules = new HashSet<IRule>(3);
+		List<IRule> rules = new ArrayList<IRule>(3);
 		
 		// p(U,V,W) :- r(V,W), EQ(U, 'a').
 		List<ILiteral> h = Arrays.asList(createLiteral("p", "U", "V", "W"));
@@ -89,10 +81,10 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
+		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
 		// r(b,b), r(c,c).
 		IPredicate p = Factory.BASIC.createPredicate("r", 2);
-		IMixedDatatypeRelation rel = RELATION.getMixedRelation(p.getArity());
+		IRelation rel = new SimpleRelationFactory().createRelation();
 		rel.add(BASIC.createTuple(TERM.createString("b"),TERM.createString("b")));
 		rel.add(BASIC.createTuple(TERM.createString("c"),TERM.createString("c")));
 		facts.put(p, rel);
@@ -100,20 +92,20 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		IQuery q = Factory.BASIC.createQuery(createLiteral("p", "U", "V", "W"));
 		Set<IQuery> queries = new HashSet<IQuery>(1);
 		queries.add(q);
-		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
 		
 		// Result: p(b,b,a),p(c,c,a)
-		IMixedDatatypeRelation res = RELATION.getMixedRelation(3);
+		IRelation res = new SimpleRelationFactory().createRelation();
 		res.add(BASIC.createTuple(TERM.createString("a"),TERM.createString("b"),TERM.createString("b")));
 		res.add(BASIC.createTuple(TERM.createString("a"),TERM.createString("c"),TERM.createString("c")));
 		
 		System.out.println("******** TEST 0: ********");
-		executeTest(pr, res);
+		ExecutionHelper.executeTest(pr, q, res);
 	}
 	
 	public void testEvaluate1() throws Exception{
 		// constructing the rules
-		Set<IRule> rules = new HashSet<IRule>(3);
+		List<IRule> rules = new ArrayList<IRule>(3);
 		
 		// p(U,V,W) :- r(V,W), EQ(W, U).
 		List<ILiteral> h = Arrays.asList(createLiteral("p", "U", "V", "W"));
@@ -128,10 +120,10 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
+		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
 		// r(b,b), r(c,c).
 		IPredicate p = Factory.BASIC.createPredicate("r", 2);
-		IMixedDatatypeRelation rel = RELATION.getMixedRelation(p.getArity());
+		IRelation rel = new SimpleRelationFactory().createRelation();
 		rel.add(BASIC.createTuple(TERM.createString("b"),TERM.createString("b")));
 		rel.add(BASIC.createTuple(TERM.createString("c"),TERM.createString("c")));
 		facts.put(p, rel);
@@ -139,20 +131,20 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		IQuery q = Factory.BASIC.createQuery(createLiteral("p", "U", "V", "W"));
 		Set<IQuery> queries = new HashSet<IQuery>(1);
 		queries.add(q);
-		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
 		
 		// Result: p(b,b,b),p(c,c,c)
-		IMixedDatatypeRelation res = RELATION.getMixedRelation(3);
+		IRelation res = new SimpleRelationFactory().createRelation();
 		res.add(BASIC.createTuple(TERM.createString("b"),TERM.createString("b"),TERM.createString("b")));
 		res.add(BASIC.createTuple(TERM.createString("c"),TERM.createString("c"),TERM.createString("c")));
 		
 		System.out.println("******** TEST 1: ********");
-		executeTest(pr, res);
+		ExecutionHelper.executeTest(pr, q, res);
 	}
 	
 	public void testEvaluate2() throws Exception{
 		// constructing the rules
-		Set<IRule> rules = new HashSet<IRule>(3);
+		List<IRule> rules = new ArrayList<IRule>(3);
 		
 		// p(V,W) :- r(V,W), EQ('a', V).
 		List<ILiteral> h = Arrays.asList(createLiteral("p", "V", "W"));
@@ -167,10 +159,10 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
+		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
 		// r(a,a), r(b,b), r(c,c).
 		IPredicate p = Factory.BASIC.createPredicate("r", 2);
-		IMixedDatatypeRelation rel = RELATION.getMixedRelation(p.getArity());
+		IRelation rel = new SimpleRelationFactory().createRelation();
 		rel.add(BASIC.createTuple(TERM.createString("a"),TERM.createString("a")));
 		rel.add(BASIC.createTuple(TERM.createString("b"),TERM.createString("b")));
 		rel.add(BASIC.createTuple(TERM.createString("c"),TERM.createString("c")));
@@ -179,14 +171,14 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		IQuery q = Factory.BASIC.createQuery(createLiteral("p", "V", "W"));
 		Set<IQuery> queries = new HashSet<IQuery>(1);
 		queries.add(q);
-		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
 		
 		// Result: p(a,a)
-		IMixedDatatypeRelation res = RELATION.getMixedRelation(2);
+		IRelation res = new SimpleRelationFactory().createRelation();
 		res.add(BASIC.createTuple(TERM.createString("a"),TERM.createString("a")));
 		
 		System.out.println("******** TEST 2: ********");
-		executeTest(pr, res);
+		ExecutionHelper.executeTest(pr, q, res);
 	}
 	
 	/**
@@ -244,37 +236,6 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 			v.add(TERM.createVariable(var));
 		}
 		return v;
-	}
-	
-	/**
-	 * Eexecutes a program and print results.
-	 * 
-	 * @param p	A program to be evaluated.
-	 */
-	private static void executeTest(final IProgram p, IMixedDatatypeRelation res)throws Exception{
-		System.out.println("--- input ---");
-		for (final IRule rule : p.getRules()) {
-			System.out.println(rule);
-		}
-		System.out.println("--- facts ---");
-		System.out.println(p.getPredicates());
-		for (final IPredicate pred : p.getPredicates()) {
-			System.out.printf("%s -> %s\n", pred.getPredicateSymbol(), p
-					.getFacts(pred));
-			for (ITuple t : p.getFacts(pred)) {
-				System.out.println(pred.getPredicateSymbol() + t);
-			}
-		}
-		
-		IExpressionEvaluator method = new ExpressionEvaluator();
-		IExecutor exec = new Executor(p, method);
-		exec.execute();
-		System.out.println("Result: ");
-		Map<IPredicate, IMixedDatatypeRelation> results = exec.computeSubstitutions();
-		ProgramTest.printResults(results);
-		
-		assertTrue(results.get(results.keySet().iterator().next()).containsAll(res));
-		assertTrue(res.containsAll(results.get(results.keySet().iterator().next())));
 	}
 }
 

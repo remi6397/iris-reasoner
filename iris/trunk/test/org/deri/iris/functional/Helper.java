@@ -33,7 +33,7 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.builtins.BuiltinRegister;
-import org.deri.iris.compiler.Parser2;
+import org.deri.iris.compiler.Parser;
 import org.deri.iris.new_stuff.Configuration;
 import org.deri.iris.new_stuff.KnowledgeBaseFactory;
 import org.deri.iris.new_stuff.evaluation.IEvaluatorFactory;
@@ -80,7 +80,7 @@ public class Helper
 	
 	private static void executeAndCheckResults( String program, String expected, IEvaluatorFactory factory, String evaluatioName ) throws Exception
 	{
-		Parser2 parser = new Parser2( mBuiltinRegister );
+		Parser parser = new Parser( mBuiltinRegister );
 		parser.parse( program );
 		List<IQuery> queries = parser.getQueries();
 
@@ -119,7 +119,7 @@ public class Helper
 		{
 			junit.framework.Assert.assertNotNull( actualResults );
 
-			Parser2 parser = new Parser2( mBuiltinRegister );
+			Parser parser = new Parser( mBuiltinRegister );
 			parser.parse( expected );
 
 			Map<IPredicate,IRelation> expectedFacts = parser.getFacts();
@@ -172,7 +172,7 @@ public class Helper
 		try
 		{
 			// Parse the program (facts and rules)
-			Parser2 parser = new Parser2( mBuiltinRegister );
+			Parser parser = new Parser( mBuiltinRegister );
 			parser.parse( knowledgeBase );
 			
 			Map<IPredicate,IRelation> facts = parser.getFacts();

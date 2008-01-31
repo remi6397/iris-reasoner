@@ -27,36 +27,26 @@ package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
-import static org.deri.iris.factory.Factory.RELATION;
 import static org.deri.iris.factory.Factory.TERM;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.deri.iris.Executor;
-import org.deri.iris.api.IExecutor;
-import org.deri.iris.api.IProgram;
+import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.evaluation_old.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.evaluation_old.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.parser.ProgramTest;
+import org.deri.iris.new_stuff.KnowledgeBaseFactory;
+import org.deri.iris.new_stuff.storage.IRelation;
+import org.deri.iris.new_stuff.storage.simple.SimpleRelationFactory;
 
 /**
  * <p>
@@ -75,7 +65,7 @@ public class AddBuiltinEvaluationTest extends TestCase {
 
 	public void testEvaluate0() throws Exception{
 		// constructing the rules
-		Set<IRule> rules = new HashSet<IRule>(3);
+		List<IRule> rules = new ArrayList<IRule>(3);
 		// p(X) :- r(X)
 		IRule r = Factory.BASIC.createRule(Arrays.asList(createLiteral(
 				"p", "X")), Arrays.asList(createLiteral("r", "X")));
@@ -93,11 +83,11 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
+		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
 		// s(3), s(7), s(11), s(15)
 		IPredicate p = Factory.BASIC.createPredicate("s", 1);
-		IMixedDatatypeRelation rel = RELATION.getMixedRelation(1);
-		rel = RELATION.getMixedRelation(1);
+		IRelation rel = new SimpleRelationFactory().createRelation();
+
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(3)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(7)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(11)));
@@ -106,29 +96,28 @@ public class AddBuiltinEvaluationTest extends TestCase {
 
 		// r(1), r(2)
 		p = Factory.BASIC.createPredicate("r", 1);
-		rel = RELATION.getMixedRelation(p.getArity());
+		rel = new SimpleRelationFactory().createRelation();
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(1)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(2)));
 		facts.put(p, rel);
 		
 		IQuery q = Factory.BASIC.createQuery(createLiteral("p", "X"));
-		Set<IQuery> queries = new HashSet<IQuery>(1);
-		queries.add(q);
-		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
+
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
 		
 		// Result: p(1), p(2), p(7)
-		IMixedDatatypeRelation res = RELATION.getMixedRelation(1);
+		IRelation res = new SimpleRelationFactory().createRelation();
 		res.add(BASIC.createTuple(CONCRETE.createInteger(1)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(2)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(7)));
 		
 		System.out.println("******** TEST 0: ********");
-		executeTest(pr, res);
+		ExecutionHelper.executeTest(pr, q, res);
 	}
 	
 	public void testEvaluate1() throws Exception{
 		// constructing the rules
-		Set<IRule> rules = new HashSet<IRule>(3);
+		List<IRule> rules = new ArrayList<IRule>(3);
 		
 		// q(X, Y, Z) :- s(X), p(Y), add(X, Y, Z)
 		List<ILiteral> h = Arrays.asList(createLiteral("q", "X", "Y", "Z"));
@@ -145,41 +134,40 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
+		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
 		// s(3), s(7)
 		IPredicate p = Factory.BASIC.createPredicate("s", 1);
-		IMixedDatatypeRelation rel = RELATION.getMixedRelation(1);
-		rel = RELATION.getMixedRelation(1);
+		IRelation rel = new SimpleRelationFactory().createRelation();
+
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(3)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(7)));
 		facts.put(p, rel);
 
 		/// p(1), p(2)
 		p = Factory.BASIC.createPredicate("p", 1);
-		rel = RELATION.getMixedRelation(p.getArity());
+		rel = new SimpleRelationFactory().createRelation();
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(1)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(2)));
 		facts.put(p, rel);
 		
 		IQuery q = Factory.BASIC.createQuery(createLiteral("q", "X", "Y", "Z"));
-		Set<IQuery> queries = new HashSet<IQuery>(1);
-		queries.add(q);
-		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
+
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
 		
 		// Result: q(3,1,4), q(3,2,5), q(7,1,8), q(7,2,9)
-		IMixedDatatypeRelation res = RELATION.getMixedRelation(3);
+		IRelation res = new SimpleRelationFactory().createRelation();
 		res.add(BASIC.createTuple(CONCRETE.createInteger(3),CONCRETE.createInteger(1),CONCRETE.createInteger(4)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(3),CONCRETE.createInteger(2),CONCRETE.createInteger(5)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(7),CONCRETE.createInteger(1),CONCRETE.createInteger(8)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(7),CONCRETE.createInteger(2),CONCRETE.createInteger(9)));
 		
 		System.out.println("******** TEST 1: ********");
-		executeTest(pr, res);
+		ExecutionHelper.executeTest(pr, q, res);
 	}
 
 	public void testEvaluate2() throws Exception{
 		// constructing the rules
-		Set<IRule> rules = new HashSet<IRule>(3);
+		List<IRule> rules = new ArrayList<IRule>(3);
 		
 		// p(X) :- add(3, 4, X)
 		List<ILiteral> h = Arrays.asList(createLiteral("p", "X"));
@@ -194,32 +182,31 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
+		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
 		// p(3), p(7)
 		IPredicate p = Factory.BASIC.createPredicate("p", 1);
-		IMixedDatatypeRelation rel = RELATION.getMixedRelation(p.getArity());
+		IRelation rel = new SimpleRelationFactory().createRelation();
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(3)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(9)));
 		facts.put(p, rel);
 		
 		IQuery q = Factory.BASIC.createQuery(createLiteral("p", "X"));
-		Set<IQuery> queries = new HashSet<IQuery>(1);
-		queries.add(q);
-		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
+
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
 		
 		// Result: p(3), p(7), p(9)
-		IMixedDatatypeRelation res = RELATION.getMixedRelation(1);
+		IRelation res = new SimpleRelationFactory().createRelation();
 		res.add(BASIC.createTuple(CONCRETE.createInteger(3)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(7)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(9)));
 		
 		System.out.println("******** TEST 2: ********");
-		executeTest(pr, res);
+		ExecutionHelper.executeTest(pr, q, res);
 	}
 	
 	public void testEvaluate3() throws Exception{
 		// constructing the rules
-		Set<IRule> rules = new HashSet<IRule>(3);
+		List<IRule> rules = new ArrayList<IRule>(3);
 		
 		// q(X, Y, Z) :- add(X, 4, Z), s(X), p(Y), add(X, Y, 10)
 		List<ILiteral> h = Arrays.asList(createLiteral("q", "X", "Y", "Z"));
@@ -241,10 +228,10 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		rules.add(r);
 
 		// create facts
-		Map<IPredicate, IMixedDatatypeRelation> facts = new HashMap<IPredicate, IMixedDatatypeRelation>();
+		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
 		// s(3), s(6), s(9)
 		IPredicate p = Factory.BASIC.createPredicate("s", 1);
-		IMixedDatatypeRelation rel = RELATION.getMixedRelation(p.getArity());
+		IRelation rel = new SimpleRelationFactory().createRelation();
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(3)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(6)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(9)));
@@ -252,22 +239,21 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		
 		// p(2), p(4)
 		p = Factory.BASIC.createPredicate("p", 1);
-		rel = RELATION.getMixedRelation(p.getArity());
+		rel = new SimpleRelationFactory().createRelation();
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(2)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(4)));
 		facts.put(p, rel);
 		
 		IQuery q = Factory.BASIC.createQuery(createLiteral("q", "X", "Y", "Z"));
-		Set<IQuery> queries = new HashSet<IQuery>(1);
-		queries.add(q);
-		final IProgram pr = Factory.PROGRAM.createProgram(facts, rules, queries);
+
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
 		
 		// Result: q(6,4,10)
-		IMixedDatatypeRelation res = RELATION.getMixedRelation(q.getLiterals().get(0).getAtom().getPredicate().getArity());
+		IRelation res = new SimpleRelationFactory().createRelation();
 		res.add(BASIC.createTuple(CONCRETE.createInteger(6),CONCRETE.createInteger(4),CONCRETE.createInteger(10)));
 		
 		System.out.println("******** TEST 3: ********");
-		executeTest(pr, res);
+		ExecutionHelper.executeTest(pr, q, res);
 	}
 	
 	/**
@@ -327,35 +313,4 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		return v;
 	}
 	
-	/**
-	 * Eexecutes a program and print results.
-	 * 
-	 * @param p	A program to be evaluated.
-	 */
-	private static void executeTest(final IProgram p, IMixedDatatypeRelation res)throws Exception{
-		System.out.println("--- input ---");
-		for (final IRule rule : p.getRules()) {
-			System.out.println(rule);
-		}
-		System.out.println("--- facts ---");
-		System.out.println(p.getPredicates());
-		for (final IPredicate pred : p.getPredicates()) {
-			System.out.printf("%s -> %s\n", pred.getPredicateSymbol(), p
-					.getFacts(pred));
-			for (ITuple t : p.getFacts(pred)) {
-				System.out.println(pred.getPredicateSymbol() + t);
-			}
-		}
-		
-		IExpressionEvaluator method = new ExpressionEvaluator();
-		IExecutor exec = new Executor(p, method);
-		exec.execute();
-		System.out.println("Result: ");
-		Map<IPredicate, IMixedDatatypeRelation> results = exec.computeSubstitutions();
-		ProgramTest.printResults(results);
-		
-		assertTrue(results.get(results.keySet().iterator().next()).containsAll(res));
-		assertTrue(res.containsAll(results.get(results.keySet().iterator().next())));
-	}
-			
 }
