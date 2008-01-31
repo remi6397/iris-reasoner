@@ -21,10 +21,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.new_stuff;
+package org.deri.iris.utils;
 
 import java.util.Iterator;
-import org.deri.iris.new_stuff.utils.UniqueList;
+import org.deri.iris.utils.UniqueList;
 import junit.framework.TestCase;
 
 public class TestUniqueList extends TestCase

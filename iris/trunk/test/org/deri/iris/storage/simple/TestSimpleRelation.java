@@ -21,13 +21,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.new_stuff.storage.simple;
+package org.deri.iris.storage.simple;
 
 import junit.framework.TestCase;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.new_stuff.Helper;
-import org.deri.iris.new_stuff.storage.IRelation;
-import org.deri.iris.new_stuff.storage.simple.SimpleRelation;
+import org.deri.iris.rules.compiler.Helper;
+import org.deri.iris.storage.IRelation;
+import org.deri.iris.storage.simple.SimpleRelation;
 
 public class TestSimpleRelation extends TestCase
 {

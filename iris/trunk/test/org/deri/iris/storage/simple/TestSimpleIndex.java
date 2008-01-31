@@ -21,19 +21,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.new_stuff.storage.simple;
+package org.deri.iris.storage.simple;
 
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.TestCase;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.new_stuff.Helper;
-import org.deri.iris.new_stuff.storage.IRelation;
-import org.deri.iris.new_stuff.storage.simple.SimpleIndex;
-import org.deri.iris.new_stuff.storage.simple.SimpleRelation;
+import org.deri.iris.rules.compiler.Helper;
 import org.deri.iris.rules.compiler.Utils;
 import org.deri.iris.rules.compiler.View;
+import org.deri.iris.storage.IRelation;
+import org.deri.iris.storage.simple.SimpleIndex;
+import org.deri.iris.storage.simple.SimpleRelation;
+import org.deri.iris.storage.simple.SimpleRelationFactory;
 
 public class TestSimpleIndex extends TestCase
 {

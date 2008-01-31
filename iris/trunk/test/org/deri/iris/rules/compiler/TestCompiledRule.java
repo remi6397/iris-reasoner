@@ -21,19 +21,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.new_stuff;
+package org.deri.iris.rules.compiler;
 
 import static org.deri.iris.factory.Factory.BASIC;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.TestCase;
+import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.new_stuff.facts.Facts;
-import org.deri.iris.new_stuff.facts.IFacts;
-import org.deri.iris.new_stuff.storage.IRelation;
+import org.deri.iris.facts.Facts;
+import org.deri.iris.facts.IFacts;
 import org.deri.iris.rules.compiler.ICompiledRule;
 import org.deri.iris.rules.compiler.RuleCompiler;
+import org.deri.iris.storage.IRelation;
 
 
 public class TestCompiledRule extends TestCase

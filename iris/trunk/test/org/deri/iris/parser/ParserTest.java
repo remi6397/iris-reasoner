@@ -45,7 +45,7 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.new_stuff.storage.IRelation;
+import org.deri.iris.storage.IRelation;
 
 /**
  * 

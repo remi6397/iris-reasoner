@@ -6,7 +6,7 @@ import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.new_stuff.storage.IRelation;
+import org.deri.iris.storage.IRelation;
 
 class ExecutionHelper
 {

@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.new_stuff;
+package org.deri.iris.rules.compiler;
 
 import java.util.HashMap;
 import java.util.Map;
