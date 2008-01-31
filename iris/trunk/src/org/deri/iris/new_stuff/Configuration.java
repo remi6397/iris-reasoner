@@ -25,9 +25,9 @@ package org.deri.iris.new_stuff;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.deri.iris.api.storage_old.IDataSource;
 import org.deri.iris.new_stuff.evaluation.IEvaluatorFactory;
 import org.deri.iris.new_stuff.evaluation.bottomup.compiledrules.seminaive.SemiNaiveEvaluatorFactory;
+import org.deri.iris.new_stuff.facts.IDataSource;
 import org.deri.iris.new_stuff.storage.IIndexFactory;
 import org.deri.iris.new_stuff.storage.IRelationFactory;
 import org.deri.iris.new_stuff.storage.simple.SimpleIndexFactory;
