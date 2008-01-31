@@ -28,7 +28,7 @@ package org.deri.iris.operations.relations;
 import static org.deri.iris.factory.Factory.RELATION;
 
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage_old.IRelation;
 
 /**
  * @author Joachim Adi Schuetz, DERI Innsbruck

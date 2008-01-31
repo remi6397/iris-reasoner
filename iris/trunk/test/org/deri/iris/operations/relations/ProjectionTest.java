@@ -44,8 +44,8 @@ import junit.framework.TestSuite;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IProjection;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IRelation;
 
 /**
  * @author Darko Anicic, DERI Innsbruck

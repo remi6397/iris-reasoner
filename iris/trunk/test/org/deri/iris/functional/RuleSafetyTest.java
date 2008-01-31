@@ -446,4 +446,20 @@ public class RuleSafetyTest extends TestCase
         	
 		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
     }
+
+    public void testUnsafe_VariableInNegatedSubGoalAndHead() throws Exception
+    {
+    	String program = 
+    		"p(?X) :- not q(?X).";
+        	
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    }
+
+    public void testUnsafe_VariablesInNegatedSubGoalAndHead() throws Exception
+    {
+    	String program = 
+    		"d(?X, ?Y) :- not s(?X, ?Y).";
+        	
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    }
 }

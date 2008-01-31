@@ -50,11 +50,11 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.evaluation_old.algebra.IExpressionEvaluator;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
+import org.deri.iris.evaluation_old.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.parser.ProgramTest;
 

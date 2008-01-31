@@ -33,7 +33,7 @@ import java.util.List;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.operations.relation.IBuiltinEvaluator;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.builtins.AddBuiltin;

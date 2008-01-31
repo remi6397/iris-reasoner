@@ -23,19 +23,23 @@
  */
 package org.deri.iris.functional;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.deri.iris.ExecutionHelper;
-import org.deri.iris.api.IProgram;
+import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.basics.BasicFactory;
-import org.deri.iris.compiler.Parser;
-import org.deri.iris.factory.Factory;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.builtins.BuiltinRegister;
+import org.deri.iris.compiler.Parser2;
+import org.deri.iris.new_stuff.Configuration;
+import org.deri.iris.new_stuff.KnowledgeBaseFactory;
+import org.deri.iris.new_stuff.evaluation.IEvaluatorFactory;
+import org.deri.iris.new_stuff.evaluation.bottomup.compiledrules.naive.NaiveEvaluatorFactory;
+import org.deri.iris.new_stuff.evaluation.bottomup.compiledrules.seminaive.SemiNaiveEvaluatorFactory;
+import org.deri.iris.new_stuff.storage.IRelation;
 
 public class Helper
 {
@@ -70,35 +74,90 @@ public class Helper
 	 */
 	public static void evaluateWithAllStrategies( String program, String expectedResults ) throws Exception
 	{
+		executeAndCheckResults( program, expectedResults, new NaiveEvaluatorFactory(), "Naive" );
+		executeAndCheckResults( program, expectedResults, new SemiNaiveEvaluatorFactory(), "Semi-Naive" );
+	}
+	
+	private static void executeAndCheckResults( String program, String expected, IEvaluatorFactory factory, String evaluatioName ) throws Exception
+	{
+		Parser2 parser = new Parser2( mBuiltinRegister );
+		parser.parse( program );
+		List<IQuery> queries = parser.getQueries();
+
+		assert queries.size() <= 1;
+		
+		IQuery query = null;
+		if( queries.size() == 1 )
+			query = queries.get( 0 );
+		
+		// Execute the program with naive
+
+		Configuration config = KnowledgeBaseFactory.getDefaultConfiguration();
+		config.evaluationTechnique = factory;
+		IKnowledgeBase kb = KnowledgeBaseFactory.createKnowledgeBase( parser.getFacts(), parser.getRules(), config );
+
 		Timer timer = new Timer();
-
-		IProgram p = ExecutionHelper.parseProgram( program );
-		timer.show( "Parsing" );
 		
-		Map<IPredicate, IMixedDatatypeRelation> results = ExecutionHelper.evaluateNaive( p );
-		timer.show( "Naive evaluation" );
-
-		checkResults( results, expectedResults, "Naive" );
+		IRelation actualResults = kb.execute( query );
 		
-		// =========================================================================================
-		timer = new Timer();
+		timer.show( evaluatioName + " evaluation" );
 
-		p = ExecutionHelper.parseProgram( program );
+		checkResults( expected, actualResults );
+	}
+	
+	private static void checkResults( String expected, IRelation actualResults ) throws Exception
+	{
+		if ( PRINT_RESULTS )
+			if( actualResults != null )
+				System.out.println( resultsTostring( actualResults ) );
+
+		if( expected == null || expected.trim().length() == 0 )
+		{
+			junit.framework.Assert.assertEquals( 0, actualResults == null ? 0 : actualResults.size() );
+		}
+		else
+		{
+			junit.framework.Assert.assertNotNull( actualResults );
+
+			Parser2 parser = new Parser2( mBuiltinRegister );
+			parser.parse( expected );
+
+			Map<IPredicate,IRelation> expectedFacts = parser.getFacts();
+			Set<IPredicate> predicates = expectedFacts.keySet();
+			
+			assert predicates.size() == 1;
+			IRelation expectedResults = expectedFacts.get( predicates.iterator().next() );
+			junit.framework.Assert.assertTrue( same( actualResults, expectedResults ) );
+		}
+	}
+
+	private static boolean same( IRelation actualResults, IRelation expectedResults )
+	{
+		Set<ITuple> actual = new HashSet<ITuple>();
+		Set<ITuple> expected = new HashSet<ITuple>();
 		
-		results = ExecutionHelper.evaluateSeminaive( p );
-		timer.show( "Semi-naive evaluation" );
-
-		checkResults( results, expectedResults, "Semi-naive" );
-
-		// =========================================================================================
-		timer = new Timer();
-
-		p = ExecutionHelper.parseProgram( program );
+		for( int t = 0; t < actualResults.size(); ++t )
+			actual.add( actualResults.get( t ) );
 		
-		results = ExecutionHelper.evaluateSeminaiveWithMagicSets( p );
-		timer.show( "Magic sets" );
+		for( int t = 0; t < expectedResults.size(); ++t )
+			expected.add( expectedResults.get( t ) );
+		
+		return actual.equals( expected );
+	}
+	
+	private static final BuiltinRegister mBuiltinRegister = new BuiltinRegister();
 
-		checkResults( results, expectedResults, "Magic sets" );
+	/**
+	 * Evaluate the given logic program with all evaluation strategies and ensure that
+	 * each fails with the expected exception. 
+	 * @param program The logic program
+	 * @param expectedExceptionClass The exception class object expected or null for an
+	 * unknown exception type. 
+	 */
+	public static void checkFailureWithAllStrategies( String program, Class<?> expectedExceptionClass )
+	{
+		checkFailure( program, expectedExceptionClass, new NaiveEvaluatorFactory(), "Naive" );
+		checkFailure( program, expectedExceptionClass, new SemiNaiveEvaluatorFactory(), "Semi-naive" );
 	}
 	
 	/**
@@ -108,12 +167,30 @@ public class Helper
 	 * @param expectedExceptionClass The exception class object expected or null for an
 	 * unknown exception type. 
 	 */
-	public  static void checkFailureWithAllStrategies( String program, Class<?> expectedExceptionClass )
+	public static void checkFailure( String knowledgeBase, Class<?> expectedExceptionClass, IEvaluatorFactory factory, String evaluatio )
 	{
 		try
 		{
-			IProgram p = ExecutionHelper.parseProgram( program );
-			ExecutionHelper.evaluateNaive( p );
+			// Parse the program (facts and rules)
+			Parser2 parser = new Parser2( mBuiltinRegister );
+			parser.parse( knowledgeBase );
+			
+			Map<IPredicate,IRelation> facts = parser.getFacts();
+			List<IRule> rules = parser.getRules();
+			List<IQuery> queries = parser.getQueries();
+
+			assert queries.size() <= 1;
+			
+			IQuery query = null;
+			if( queries.size() == 1 )
+				query = queries.get( 0 );
+			
+			Configuration config = KnowledgeBaseFactory.getDefaultConfiguration();
+			config.evaluationTechnique = factory;
+			IKnowledgeBase kb = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
+
+			kb.execute( query, null );
+
 			junit.framework.Assert.fail( "Naive evaluation did not throw the correct exception." );
 		}
 		catch( Exception e )
@@ -123,101 +200,28 @@ public class Helper
 				junit.framework.Assert.assertTrue( expectedExceptionClass.isInstance( e ) );
 			}
 		}
-
-		try
-		{
-			IProgram p = ExecutionHelper.parseProgram( program );
-			ExecutionHelper.evaluateSeminaive( p );
-			junit.framework.Assert.fail( "Semi-naive evaluation did not throw the correct exception." );
-		}
-		catch( Exception e )
-		{
-			if ( expectedExceptionClass != null )
-			{
-				junit.framework.Assert.assertTrue( expectedExceptionClass.isInstance( e ) );
-			}
-		}
-
-		try
-		{
-			IProgram p = ExecutionHelper.parseProgram( program );
-			ExecutionHelper.evaluateSeminaiveWithMagicSets( p );
-			junit.framework.Assert.fail( "Magic sets evaluation did not throw the correct exception." );
-		}
-		catch( Exception e )
-		{
-			if ( expectedExceptionClass != null )
-			{
-				junit.framework.Assert.assertTrue( expectedExceptionClass.isInstance( e ) );
-			}
-		}
 	}
-
 
 	/**
-	 * Parse the correct facts in to a dummy program, then compare these facts with
-	 * what is provided from the result of evaluating a logic program.
-	 * @param test
-	 * @param correct
-	 * @throws Exception
+	 * Format logic program evaluation results as a string.
+	 * @param results The map of results.
+	 * @return The human-readable results.
 	 */
-	public static void checkResults( Map<IPredicate, IMixedDatatypeRelation> actual, String expected, String evaluationStrategy ) throws Exception
+	public static String resultsTostring( IRelation results )
 	{
-		Map<IPredicate, IMixedDatatypeRelation> f = new HashMap<IPredicate, IMixedDatatypeRelation>();
-		Set<IRule> r = new HashSet<IRule>();
-		Set<IQuery> q = new HashSet<IQuery>();
+		StringBuilder result = new StringBuilder();
 
-		IProgram pExpected = Factory.PROGRAM.createProgram( f, r, q );
-		Parser.parse( expected, pExpected );
+		formatResults( result, results );
 
-		if ( PRINT_RESULTS )
-			System.out.println( ExecutionHelper.resultsTostring( actual ) );
+		return result.toString();
+    }
 
-		Map<IPredicate, IMixedDatatypeRelation> expectedFacts = pExpected.getFacts();
-
-		for( Map.Entry<IPredicate, IMixedDatatypeRelation> entry : expectedFacts.entrySet() )
+	public static void formatResults( StringBuilder builder, IRelation m )
+	{
+		for(int t = 0; t < m.size(); ++t )
 		{
-			IPredicate predicate = entry.getKey();
-			IMixedDatatypeRelation expectedRelation = entry.getValue();
-			
-			IMixedDatatypeRelation actualRelation = actual.get( predicate );
-			
-			// TODO - see bug 1794659
-			// Strange behaviour - the arity of the predicate that indexes the relation
-			// that is the result of a query is very hard to predict, i.e. it might
-			// not have the same arity as the relations! Try expected or zero or others...
-			if ( actualRelation == null )
-			{
-				for( int arity = 0; arity < 10; ++arity )
-				{
-					IPredicate tempPred = makePredicate( predicate.getPredicateSymbol(), arity );
-			
-					actualRelation = actual.get( tempPred );
-					if ( actualRelation != null )
-						break;
-				}
-			}
-			
-			if ( expectedRelation != null && actualRelation == null )
-				junit.framework.Assert.fail();
-
-			if ( expectedRelation == null && actualRelation != null )
-				junit.framework.Assert.fail();
-			
-			if ( expectedRelation != null )
-			{
-				junit.framework.Assert.assertEquals( evaluationStrategy + ": The " + predicate + " relation did not have the expected number of tuples",
-								expectedRelation.size(), actualRelation.size() );
-				junit.framework.Assert.assertTrue( evaluationStrategy + ": The " + predicate + " relation did not contain all the expected tuples",
-								expectedRelation.containsAll( actualRelation ) );
-				junit.framework.Assert.assertTrue( evaluationStrategy + ": The " + predicate + " relation contains tuples that were not expected",
-								actualRelation.containsAll( expectedRelation ) );
-			}
+			ITuple tuple = m.get( t );
+			builder.append( tuple.toString() ).append( "\r\n" );
 		}
-	}
-
-	public static IPredicate makePredicate( String symbol, int arity )
-	{
-		return BasicFactory.getInstance().createPredicate( symbol, arity );
-	}
+    }
 }

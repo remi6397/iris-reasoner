@@ -28,16 +28,12 @@ package org.deri.iris.rules.stratification;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.rules.IRuleStratifier;
-
-// TEST LINE
-// 2
 
 /**
  * The global stratification algorithm.
@@ -46,7 +42,7 @@ import org.deri.iris.rules.IRuleStratifier;
  */
 public class GlobalStratifier implements IRuleStratifier
 {
-	public List<Collection<IRule>> stratify( Collection<IRule> rules )
+	public List<List<IRule>> stratify( Collection<IRule> rules )
 	{
 		final int ruleCount = rules.size();
 		int highest = 0;
@@ -64,29 +60,38 @@ public class GlobalStratifier implements IRuleStratifier
 				{
 					final IPredicate hp = hl.getAtom().getPredicate();
 
-					for (final ILiteral bl : r.getBody())
+					if( r.getBody().size() == 0 )
 					{
-						final IPredicate bp = bl.getAtom().getPredicate();
-
-						if (bl.isPositive())
+						// Has the effect of setting to stratum to zero if this predicate
+						// has not been seen before
+						getStratum( hp );
+					}
+					else
+					{
+						for (final ILiteral bl : r.getBody())
 						{
-							int greater = Math.max(getStratum(hp), 
-											getStratum(bp));
-							if (getStratum(hp) < greater)
+							final IPredicate bp = bl.getAtom().getPredicate();
+	
+							if (bl.isPositive())
 							{
-								setStratum(hp, greater);
-								change = true;
+								int greater = Math.max(getStratum(hp), 
+												getStratum(bp));
+								if (getStratum(hp) < greater)
+								{
+									setStratum(hp, greater);
+									change = true;
+								}
+								highest = Math.max(highest, greater);
 							}
-							highest = Math.max(highest, greater);
-						}
-						else
-						{
-							int current = getStratum(bp);
-							if (current >= getStratum(hp))
+							else
 							{
-								setStratum(hp, current + 1);
-								highest = Math.max(highest, current + 1);
-								change = true;
+								int current = getStratum(bp);
+								if (current >= getStratum(hp))
+								{
+									setStratum(hp, current + 1);
+									highest = Math.max(highest, current + 1);
+									change = true;
+								}
 							}
 						}
 					}
@@ -96,10 +101,10 @@ public class GlobalStratifier implements IRuleStratifier
 		
 		if( highest <= ruleCount )
 		{
-			List<Collection<IRule>> result = new ArrayList<Collection<IRule>>();
+			List<List<IRule>> result = new ArrayList<List<IRule>>();
 			
 			for( int stratum = 0; stratum <= highest; ++stratum )
-				result.add( new HashSet<IRule>() );
+				result.add( new ArrayList<IRule>() );
 
 			for( Map.Entry<IPredicate, Integer> entry : mStrata.entrySet() )
 			{

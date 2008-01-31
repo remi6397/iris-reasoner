@@ -25,6 +25,7 @@
  */
 package org.deri.iris.rules;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import org.deri.iris.api.basics.IAtom;
@@ -342,19 +343,25 @@ public class RuleManipulator
 
 	private ITuple replace( ITuple tuple, ITerm remove, ITerm replaceWith )
 	{
-		List<ITerm> newTerms = new ArrayList<ITerm>();
+		return Factory.BASIC.createTuple( replaceTerms( tuple, remove, replaceWith ) );
+	}
+	
+	private ITerm[] replaceTerms( ITuple tuple, ITerm remove, ITerm replaceWith )
+	{
+		ITerm[] newTerms = new ITerm[ tuple.size() ];
 		
-		for( ITerm oldTerm : tuple )
+		for( int t = 0; t < tuple.size(); ++t )
 		{
+			ITerm oldTerm = tuple.get( t );
 			if( oldTerm instanceof IConstructedTerm )
-				newTerms.add( replace( (IConstructedTerm) oldTerm, remove, replaceWith ) );
+				newTerms[ t ] = replace( (IConstructedTerm) oldTerm, remove, replaceWith );
 			else if( oldTerm.equals( remove ) )
-				newTerms.add( replaceWith );
+				newTerms[ t ] = replaceWith;
 			else
-				newTerms.add( oldTerm );
+				newTerms[ t ] = oldTerm;
 		}
 		
-		return Factory.BASIC.createTuple(  newTerms );
+		return newTerms;
 	}
 	
 	private IConstructedTerm replace( IConstructedTerm constructed, ITerm remove, ITerm replaceWith )
@@ -385,31 +392,17 @@ public class RuleManipulator
 	 */
 	private IAtom replace( IBuiltInAtom atom, ITerm remove, ITerm replaceWith )
 	{
-		if( atom instanceof EqualBuiltin )
+		ITerm[] newTerms = replaceTerms( atom.getTuple(), remove, replaceWith );
+
+		try
 		{
-			ITuple newTuple = replace( atom.getTuple(), remove, replaceWith );
-			
-			return new EqualBuiltin( newTuple.toArray( new ITerm[ 2 ] ) );
+			Constructor<IBuiltInAtom> constructor = (Constructor<IBuiltInAtom>) atom.getClass().getConstructor( newTerms.getClass() );
+			return constructor.newInstance( (Object) newTerms );
 		}
-		else if( atom instanceof UnEqualBuiltin )
+		catch( Exception e )
 		{
-			ITuple newTuple = replace( atom.getTuple(), remove, replaceWith );
-			
-			return new UnEqualBuiltin( newTuple.toArray( new ITerm[ 2 ] ) );
+			// should never actually get here unless soemone's been fiddling about.
+			throw new RuntimeException( "Unknown built in class type in RuleManipulator: " + atom.getClass().getName() );
 		}
-		else if( atom instanceof ExactEqualBuiltin )
-		{
-			ITuple newTuple = replace( atom.getTuple(), remove, replaceWith );
-			
-			return new ExactEqualBuiltin( newTuple.toArray( new ITerm[ 2 ] ) );
-		}
-		else if( atom instanceof NotExactEqualBuiltin )
-		{
-			ITuple newTuple = replace( atom.getTuple(), remove, replaceWith );
-			
-			return new NotExactEqualBuiltin( newTuple.toArray( new ITerm[ 2 ] ) );
-		}
-		
-		return atom;
 	}
 }

@@ -25,11 +25,8 @@
  */
 package org.deri.iris.api.querycontainment;
 
-import java.util.Map;
-
-import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.new_stuff.storage.IRelation;
 
 /**
  * <p>
@@ -85,7 +82,7 @@ public interface IQueryContainment {
 	 * 
 	 * @return a set of substitutions resulting from the query containment check.
 	 */
-	public Map<IPredicate, IMixedDatatypeRelation> getContainmentMappings();
+	public IRelation getContainmentMappings();
 	
 }
 

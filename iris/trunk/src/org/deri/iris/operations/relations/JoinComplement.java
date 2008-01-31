@@ -30,7 +30,7 @@ import static org.deri.iris.factory.Factory.RELATION_OPERATION;
 
 import org.deri.iris.api.operations.relation.IDifference;
 import org.deri.iris.api.operations.relation.IJoin;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 
 /**
  * <p>

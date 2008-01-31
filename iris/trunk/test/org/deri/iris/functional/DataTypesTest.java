@@ -85,15 +85,12 @@ public class DataTypesTest extends TestCase
 			
 			"p( _hexbinary( '0FB7abcd' ) )." +
 			"p( _base64binary( 'QmFycnkgQmlzaG9w' ) )." +
-			"";
-
-		String program =
-			allDataTypes +
+			
 			"?- p( ?X ).";
-		
+
        	String expectedResults = allDataTypes;
 
-       	Helper.evaluateWithAllStrategies( program, expectedResults );
+       	Helper.evaluateWithAllStrategies( allDataTypes, expectedResults );
 	}
 	
 	/**

@@ -27,7 +27,6 @@ package org.deri.iris.rules.stratification;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
@@ -63,12 +62,27 @@ import org.deri.iris.rules.stratification.LocalStratificationDecorator.MatchType
  */
 public class LocalStratifier implements IRuleStratifier
 {
+	/**
+	 * Constructor.
+	 * @param strict true, if the stratifier is permitted to substitute variables with constants
+	 * when they appear in equality built-ins.
+	 * false, if the substitution may only occur when the built-in is an exact equality
+	 */
 	public LocalStratifier( boolean strict )
 	{
 		mStrict = strict;
 	}
 	
-	public List<Collection<IRule>> stratify( Collection<IRule> rules )
+	/**
+	 * Indicates if the stratifier is applying strict variable-constant substitutions only.
+	 * @return true, if strict, false otherwise.
+	 */
+	public boolean isStrict()
+	{
+		return mStrict;
+	}
+	
+	public List<List<IRule>> stratify( Collection<IRule> rules )
 	{
 		mRules.clear();
 		
@@ -93,35 +107,40 @@ public class LocalStratifier implements IRuleStratifier
 				currentRule = rm.replaceVariablesWithConstants( currentRule, mStrict );
 				currentRule = rm.removeUnnecessaryEqualityBuiltins( currentRule );
 
-				for (final ILiteral bl : currentRule.getBody())
+				if( currentRule.getBody().size() == 0 )
+					ruleStratum[ r ] = 0;
+				else
 				{
-					for( int r2 = 0; r2 < mRules.size(); ++r2 )
+					for (final ILiteral bl : currentRule.getBody())
 					{
-						// We even check for a negative dependency on self!
-						LocalStratificationDecorator adaptor = mRules.get( r2 );
-
-						if( adaptor.getRule().getHead().get( 0 ).getAtom().getPredicate().equals( bl.getAtom().getPredicate() ) )
+						for( int r2 = 0; r2 < mRules.size(); ++r2 )
 						{
-							MatchType match = adaptor.match( bl.getAtom().getTuple() );
-							if( match != MatchType.NONE )
-							{							
-								if( bl.isPositive() )
-								{
-									if( ruleStratum[ r ] < ruleStratum[ r2 ] )
+							// We even check for a negative dependency on self!
+							LocalStratificationDecorator adaptor = mRules.get( r2 );
+	
+							if( adaptor.getRule().getHead().get( 0 ).getAtom().getPredicate().equals( bl.getAtom().getPredicate() ) )
+							{
+								MatchType match = adaptor.match( bl.getAtom().getTuple() );
+								if( match != MatchType.NONE )
+								{							
+									if( bl.isPositive() )
 									{
-										ruleStratum[ r ] = ruleStratum[ r2 ];
-										change = true;
+										if( ruleStratum[ r ] < ruleStratum[ r2 ] )
+										{
+											ruleStratum[ r ] = ruleStratum[ r2 ];
+											change = true;
+										}
 									}
-								}
-								else
-								{
-									if( ruleStratum[ r ] <= ruleStratum[ r2 ] )
+									else
 									{
-										ruleStratum[ r ] = ruleStratum[ r2 ] + 1;
-										change = true;
+										if( ruleStratum[ r ] <= ruleStratum[ r2 ] )
+										{
+											ruleStratum[ r ] = ruleStratum[ r2 ] + 1;
+											change = true;
+										}
 									}
+									highest = Math.max( ruleStratum[ r ], highest );
 								}
-								highest = Math.max( ruleStratum[ r ], highest );
 							}
 						}
 					}
@@ -131,10 +150,10 @@ public class LocalStratifier implements IRuleStratifier
 		
 		if( highest < ruleCount )
 		{
-			List<Collection<IRule>> result = new ArrayList<Collection<IRule>>();
+			List<List<IRule>> result = new ArrayList<List<IRule>>();
 			
 			for( int stratum = 0; stratum <= highest; ++stratum )
-				result.add( new HashSet<IRule>() );
+				result.add( new ArrayList<IRule>() );
 
 			for( int r = 0; r < mRules.size(); ++r )
 				result.get( ruleStratum[ r ] ).add(  mRules.get( r ).getRule() );
@@ -512,5 +531,6 @@ public class LocalStratifier implements IRuleStratifier
 	/** The list of rules to process. */
 	private final List<LocalStratificationDecorator> mRules = new ArrayList<LocalStratificationDecorator>();
 	
+	/** The strictness flag. */
 	private boolean mStrict;
 }

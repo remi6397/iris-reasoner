@@ -34,8 +34,8 @@ import junit.framework.TestSuite;
 import org.deri.iris.MiscHelper;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.evaluation.common.AdornedProgram.AdornedPredicate;
-import org.deri.iris.evaluation.common.Adornment;
+import org.deri.iris.evaluation_old.common.Adornment;
+import org.deri.iris.evaluation_old.common.AdornedProgram.AdornedPredicate;
 
 /**
  * <p>

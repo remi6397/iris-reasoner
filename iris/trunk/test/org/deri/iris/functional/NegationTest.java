@@ -91,6 +91,24 @@ public class NegationTest extends TestCase
 
        	Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
+	
+	/**
+	 * This test is to ensure that both rules are propely stratified. The rule with the empty body
+	 * could be in stratum 0, but the second rule means it must be one higher than predicate 's'.
+	 * @throws Exception
+	 */
+	public void testGloballyStratifiedEmptyRuleBody() throws Exception
+	{
+    	String program = 
+			"p('a'):-." +
+			"p(?X) :- r(?X), not s(?Y)." +
+			"?- p(?X).";
+        	
+       	String expectedResults = 
+		    "p('a').";
+
+       	Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
 
 	/**
 	 * This test makes sure that sub-goals are evaluated in the correct order,
@@ -299,18 +317,10 @@ public class NegationTest extends TestCase
     		"r(4)." +
     		
     		"v(?X) :- r(?X), not  ?X > 2." +
-    		"w(?X) :- r(?X),      ?X > 2." +
-    	    "?- v(?X)." +
-    	    "?- w(?X).";
-        	
-       	String expectedResults = 
-    	    "v(0)." +
-    	    "v(1)." +
-    	    "v(2)." +
-    	    "w(3)." +
-    	    "w(4).";
-    
-       	Helper.evaluateWithAllStrategies( program, expectedResults );
+    		"w(?X) :- r(?X),      ?X > 2.";
+    	
+       	Helper.evaluateWithAllStrategies( program + "?- v(?X).", "v(0).v(1).v(2)." );
+       	Helper.evaluateWithAllStrategies( program + "?- w(?X).", "w(3).w(4)." );
     }
 
 	/**
@@ -326,17 +336,10 @@ public class NegationTest extends TestCase
     		"r('b')." +
     		
     		"v(?X) :- r(?X), not  IS_STRING( ?X )." +
-    		"w(?X) :- r(?X),      IS_STRING( ?X )." +
-    	    "?- v(?X)." +
-    	    "?- w(?X).";
-        	
-       	String expectedResults = 
-    	    "v(1)." +
-    	    "v(2)." +
-    	    "w('a')." +
-    	    "w('b').";
-    
-       	Helper.evaluateWithAllStrategies( program, expectedResults );
+    		"w(?X) :- r(?X),      IS_STRING( ?X ).";
+
+       	Helper.evaluateWithAllStrategies( program + "?- v(?X).", "v(1).v(2)." );
+       	Helper.evaluateWithAllStrategies( program + "?- w(?X).", "w('a').w('b')." );
     }
 
 	/**
@@ -357,14 +360,15 @@ public class NegationTest extends TestCase
     		"s(8)." +
     		
     		"v(?X,?Y) :- r(?X), s(?Y),     ?X + ?Y = 7." +
-    		"w(?X,?Y) :- r(?X), s(?Y), not ?X + ?Y = 7." +
-    	    "?- v(?X,?Y)." +
-    	    "?- w(?X,?Y).";
+    		"w(?X,?Y) :- r(?X), s(?Y), not ?X + ?Y = 7.";
         	
        	String expectedResults = 
     	    "v(1,6)." +
-    	    "v(2,5)." +
+    	    "v(2,5).";
     	    
+       	Helper.evaluateWithAllStrategies( program + "?- v(?X,?Y).", expectedResults );
+
+       	expectedResults = 
     	    "w(1,5)." +
     	    "w(1,7)." +
     	    "w(1,8)." +
@@ -380,7 +384,7 @@ public class NegationTest extends TestCase
     	    "w(4,7)." +
     	    "w(4,8).";
     
-       	Helper.evaluateWithAllStrategies( program, expectedResults );
+       	Helper.evaluateWithAllStrategies( program + "?- w(?X,?Y).", expectedResults );
     }
 
 	public void testLocallyStratified_SelfDependency() throws Exception

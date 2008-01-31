@@ -111,7 +111,7 @@ Productions
                    {fact} fact |
                    {query} query;
     
-	rule = 		[head]:litlist t_impliedby [body]:litlist t_dot;
+	rule = 		[head]:litlist t_impliedby [body]:litlist? t_dot;
     
 	fact = 		predicate t_dot;
     

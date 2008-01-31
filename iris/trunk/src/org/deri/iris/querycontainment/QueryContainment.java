@@ -25,28 +25,25 @@
  */
 package org.deri.iris.querycontainment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
-
 import org.deri.iris.EvaluationException;
-import org.deri.iris.NaiveExecutor;
-import org.deri.iris.api.IExecutor;
-import org.deri.iris.api.IProgram;
+import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
+import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.querycontainment.IQueryContainment;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
+import org.deri.iris.new_stuff.KnowledgeBaseFactory;
+import org.deri.iris.new_stuff.storage.IRelation;
+import org.deri.iris.new_stuff.storage.simple.SimpleRelationFactory;
 
 /**
  * <p>
@@ -58,14 +55,13 @@ import org.deri.iris.factory.Factory;
  */
 public class QueryContainment implements IQueryContainment {
 
-	/** The program to use with the query containment check. */
-	private final IProgram knowledgebase;
+	private final List<IRule> mRules;
 	
 	/** The substitution resulting from the query evaluation */
-	private Map<IPredicate, IMixedDatatypeRelation> result;
+	private IRelation result;
 	
 	/** Namespace containing the constants that are used to replace variables */
-	private final String namespace = "http://queryContainment/constants#";
+//	private final String namespace = "http://queryContainment/constants#";
 	
 	/**
 	 * <p>
@@ -78,18 +74,19 @@ public class QueryContainment implements IQueryContainment {
 	 *             If the program or the evaluator is {@code null}, or
 	 *             If the program contains queries
 	 */
-	public QueryContainment(final IProgram program) {
-		if (program == null) {
-			throw new IllegalArgumentException(
-					"The program must not be null");
-		}
-		if (program.getQueries().size() > 0) {
-			throw new IllegalArgumentException( 
-					"The program must not contain queries");
-		}
-		this.knowledgebase = program;
+	public QueryContainment( List<IRule> rules ) {
+		// Make a knowledge base with the given rules.
+		mRules = rules;
 	}
-	
+
+	public QueryContainment( IKnowledgeBase kb ) {
+		if( kb == null )
+			throw new IllegalArgumentException( "Parameter 'kb' must not be null in QueryContainment constructor." );
+		
+		// Make a knowledge base with the given rules.
+		mRules = new ArrayList<IRule>( kb.getRules() );
+	}
+
 	/*
 	 * We use the Frozen Fact Algorithm for checking query containment. The 
 	 * algorithm can be summarized as follows:
@@ -107,58 +104,87 @@ public class QueryContainment implements IQueryContainment {
 	{
 		if (query1 == null || query2 == null) {
 			throw new IllegalArgumentException(
-					"The two queries may not be null");
+					"The two queries must not be null");
 		}
-		
-		// query 1 is 'frozen' and added to the knowledge base
-		knowledgebase.addFacts(freezeQuery(query1));
-		
-		// add query 2 to the knowledge base to be evaluated
-		knowledgebase.addQuery(query2);
-		
-		// evaluate query2
-		IExpressionEvaluator method = new ExpressionEvaluator();
-		IExecutor exec = new NaiveExecutor( knowledgebase, method );
-		exec.execute();
-		result =  exec.computeSubstitutions();
 
+		// query 1 is 'frozen' in to facts
+		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
+		freezeQuery( query1, facts );
 		
-		return result.entrySet().iterator().next().getValue().size() > 0;
+		// Create the knowledge-base with these facts
+		IKnowledgeBase knowledgebase = KnowledgeBaseFactory.createKnowledgeBase( facts, mRules );
+
+		// run query 2 against the knowledge base to be evaluated
+		result = knowledgebase.execute( query2 );
+		
+		return result.size() > 0;
 	}
 	
-	public Map<IPredicate, IMixedDatatypeRelation> getContainmentMappings() {
+	public IRelation getContainmentMappings() {
 		return result;
 	}
 	
+//	/*
+//	 * Method to substitute the variables in query1 by constants
+//	 */
+//	private void freezeQuery(IQuery query, Map<IPredicate, IRelation> facts) {
+//		Map<IVariable, ITerm> variableMapping = new HashMap<IVariable, ITerm>();
+//		IAtom atom = null;
+//		List<ITerm> terms = new Vector<ITerm>();
+//		for (ILiteral literal : query.getLiterals()) {
+//			
+//			// build mapping for all variables
+//			for (IVariable variable : literal.getAtom().getTuple().getVariables()) {
+//				if (! variableMapping.containsKey(variable))
+//					variableMapping.put(variable, Factory.CONCRETE.createIri(
+//								namespace + new java.rmi.dgc.VMID().toString()));
+//			}
+//			
+//			// build 'frozen' Atom by actually substituting the variables
+//			for (ITerm term : literal.getAtom().getTuple()) {
+//				if (term instanceof IVariable)
+//					terms.add(variableMapping.get((IVariable) term));
+//				else
+//					terms.add(term);
+//			}
+//			atom = Factory.BASIC.createAtom(literal.getAtom().getPredicate(), 
+//					Factory.BASIC.createTuple(terms));
+//			IRelation relation = facts.get( atom.getPredicate() );
+//			
+//			if( relation == null )
+//			{
+//				relation = new SimpleRelation( true );
+//				facts.put( atom.getPredicate(), relation );
+//			}
+//			
+//			relation.add( atom.getTuple());
+//		}
+//	}
+
 	/*
 	 * Method to substitute the variables in query1 by constants
 	 */
-	private Set<IAtom> freezeQuery(IQuery query) {
-		Set<IAtom> facts = new HashSet<IAtom>();
-		Map<IVariable, ITerm> variableMapping = new HashMap<IVariable, ITerm>();
-		IAtom atom = null;
-		List<ITerm> terms = new Vector<ITerm>();
+	private void freezeQuery(IQuery query, Map<IPredicate, IRelation> facts) {
 		for (ILiteral literal : query.getLiterals()) {
-			
-			// build mapping for all variables
-			for (IVariable variable : literal.getAtom().getTuple().getVariables()) {
-				if (! variableMapping.containsKey(variable))
-					variableMapping.put(variable, Factory.CONCRETE.createIri(
-								namespace + new java.rmi.dgc.VMID().toString()));
-			}
-			
+			List<ITerm> terms = new Vector<ITerm>();
 			// build 'frozen' Atom by actually substituting the variables
 			for (ITerm term : literal.getAtom().getTuple()) {
 				if (term instanceof IVariable)
-					terms.add(variableMapping.get((IVariable) term));
+					terms.add(Factory.TERM.createString( "FROZEN_VARIABLE_"+ ((IVariable) term).getValue() ) );
 				else
 					terms.add(term);
 			}
-			atom = Factory.BASIC.createAtom(literal.getAtom().getPredicate(), 
+			IAtom atom = Factory.BASIC.createAtom(literal.getAtom().getPredicate(), 
 					Factory.BASIC.createTuple(terms));
-			facts.add(atom);
+			IRelation relation = facts.get( atom.getPredicate() );
+			
+			if( relation == null )
+			{
+				relation = new SimpleRelationFactory().createRelation();
+				facts.put( atom.getPredicate(), relation );
+			}
+			
+			relation.add( atom.getTuple());
 		}
-		return facts;
 	}
-	
 }

@@ -36,8 +36,8 @@ import org.deri.iris.api.operations.relation.IJoin;
 import org.deri.iris.api.operations.relation.IProjection;
 import org.deri.iris.api.operations.relation.ISelection;
 import org.deri.iris.api.operations.relation.IUnion;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IRelation;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.operations.relations.JoinCondition;
 

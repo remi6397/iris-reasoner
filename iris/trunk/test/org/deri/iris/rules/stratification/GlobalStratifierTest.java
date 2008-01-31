@@ -26,10 +26,9 @@
 package org.deri.iris.rules.stratification;
 
 import static org.deri.iris.factory.Factory.BASIC;
-import static org.deri.iris.factory.Factory.TERM;
 import static org.deri.iris.factory.Factory.CONCRETE;
+import static org.deri.iris.factory.Factory.TERM;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import junit.framework.TestCase;
 import org.deri.iris.api.basics.ILiteral;
@@ -100,7 +99,7 @@ public class GlobalStratifierTest extends TestCase
 		
 		GlobalStratifier gs = new GlobalStratifier();
 		
-		List<Collection<IRule>> sRules = gs.stratify( rules );
+		List<List<IRule>> sRules = gs.stratify( rules );
 		
 		assertEquals( sRules.get( 0 ).iterator().next(), r );
 		assertEquals( sRules.get( 1 ).iterator().next(), q );

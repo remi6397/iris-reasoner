@@ -37,16 +37,16 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
-import org.deri.iris.api.evaluation.IBottomUpEvaluator;
+import org.deri.iris.api.evaluation_old.IBottomUpEvaluator;
+import org.deri.iris.api.evaluation_old.algebra.IExpressionEvaluator;
 import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.evaluation.common.AdornedProgram;
-import org.deri.iris.evaluation.common.EvaluationUtilities;
-import org.deri.iris.evaluation.magic.MagicSetImpl;
-import org.deri.iris.evaluation.seminaive.SeminaiveEvaluation;
+import org.deri.iris.evaluation_old.common.AdornedProgram;
+import org.deri.iris.evaluation_old.common.EvaluationUtilities;
+import org.deri.iris.evaluation_old.magic.MagicSetImpl;
+import org.deri.iris.evaluation_old.seminaive.SeminaiveEvaluation;
 
 /**
  * <p>

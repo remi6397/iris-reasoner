@@ -25,14 +25,16 @@
  */
 package org.deri.iris.querycontainment;
 
-import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.api.IProgram;
-import org.deri.iris.compiler.Parser;
-import org.deri.iris.querycontainment.QueryContainment;
-
+import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.deri.iris.api.IProgram;
+import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.builtins.BuiltinRegister;
+import org.deri.iris.compiler.Parser;
+import org.deri.iris.compiler.Parser2;
 
 /**
  * <p>
@@ -56,15 +58,20 @@ public class QueryContainmentTest extends TestCase {
 	 * @throws Exception 
 	 */
 	public void testQueryContaiment() throws Exception {
-		final String prog = "vehicle(?X) :- car(?X).";
-		final String q1 = "?-car(?x).";
-		final String q2 = "?-vehicle(?x).";
-		final IProgram program = Parser.parse(prog);
-		final IProgram query1Prog = Parser.parse(q1);
-		final IQuery query1 = query1Prog.getQueries().iterator().next();
-		final IProgram query2Prog = Parser.parse(q2);
-		final IQuery query2 = query2Prog.getQueries().iterator().next();
-		final QueryContainment queryCont = new QueryContainment(program);
+		final String prog =
+			"vehicle(?X) :- car(?X)." +
+			"?-car(?x)." +
+			"?-vehicle(?x).";
+		
+		Parser2 parser = new Parser2( new BuiltinRegister() );
+		parser.parse( prog );
+		List<IRule> rules = parser.getRules();
+		List<IQuery> queries = parser.getQueries();
+
+		final IQuery query1 = queries.get( 0 );
+		final IQuery query2 = queries.get( 1 );
+		
+		final QueryContainment queryCont = new QueryContainment(rules);
 
 		boolean result = queryCont.checkQueryContainment(query1, query2);
 		
@@ -77,15 +84,20 @@ public class QueryContainmentTest extends TestCase {
 	 * @throws Exception 
 	 */
 	public void testQueryContaiment2() throws Exception {
-		final String prog = "vehicle(?X) :- car(?X).";
-		final String q1 = "?-vehicle(?X).";
-		final String q2 = "?-car(?X).";
-		final IProgram program = Parser.parse(prog);
-		final IProgram query1Prog = Parser.parse(q1);
-		final IQuery query1 = query1Prog.getQueries().iterator().next();
-		final IProgram query2Prog = Parser.parse(q2);
-		final IQuery query2 = query2Prog.getQueries().iterator().next();
-		final QueryContainment queryCont = new QueryContainment(program);
+		final String prog =
+			"vehicle(?X) :- car(?X)." +
+			"?-vehicle(?x)." +
+			"?-car(?x).";
+		
+		Parser2 parser = new Parser2( new BuiltinRegister() );
+		parser.parse( prog );
+		List<IRule> rules = parser.getRules();
+		List<IQuery> queries = parser.getQueries();
+
+		final IQuery query1 = queries.get( 0 );
+		final IQuery query2 = queries.get( 1 );
+		
+		final QueryContainment queryCont = new QueryContainment(rules);
 
 		boolean result = queryCont.checkQueryContainment(query1, query2);
 		
@@ -99,19 +111,49 @@ public class QueryContainmentTest extends TestCase {
 	 */
 	public void testTransitiveQueryContaiment() throws Exception {
 		final String prog = 
-			"path(?X, ?Y) :- path(?X, ?Z), path(?Z, ?Y).";
-		final String q2 = "?-path(?X, ?Y).";
-		final String q1 = "?-path(?X, ?Z), path(?Z, ?Y).";
-		final IProgram program = Parser.parse(prog);
-		final IProgram query1Prog = Parser.parse(q1);
-		final IQuery query1 = query1Prog.getQueries().iterator().next();
-		final IProgram query2Prog = Parser.parse(q2);
-		final IQuery query2 = query2Prog.getQueries().iterator().next();
-		final QueryContainment queryCont = new QueryContainment(program);
+			"path(?X, ?Y) :- path(?X, ?Z), path(?Z, ?Y)." +
+			"?-path(?X, ?Y)." +
+			"?-path(?X, ?Z), path(?Z, ?Y).";
+		
+		Parser2 parser = new Parser2( new BuiltinRegister() );
+		parser.parse( prog );
+		List<IRule> rules = parser.getRules();
+		List<IQuery> queries = parser.getQueries();
+
+		final IQuery query1 = queries.get( 0 );
+		final IQuery query2 = queries.get( 1 );
+		
+		final QueryContainment queryCont = new QueryContainment(rules);
+
+		boolean result = queryCont.checkQueryContainment(query1, query2);
+		
+		assertFalse(result);
+	}
+
+	/**
+	 * Tests whether one query is contained within another query.
+	 * 
+	 * @throws Exception 
+	 */
+	public void testTransitiveQueryContaiment2() throws Exception {
+		final String prog = 
+			"path(?X, ?Y) :- path(?X, ?Z), path(?Z, ?Y)." +
+			"?-path(?X, ?Z), path(?Z, ?Y)." +
+			"?-path(?X, ?Z1), path(?Z1, ?Y).";
+		
+		Parser2 parser = new Parser2( new BuiltinRegister() );
+		parser.parse( prog );
+		List<IRule> rules = parser.getRules();
+		List<IQuery> queries = parser.getQueries();
+
+		final IQuery query1 = queries.get( 0 );
+		final IQuery query2 = queries.get( 1 );
+		
+		final QueryContainment queryCont = new QueryContainment(rules);
 
 		boolean result = queryCont.checkQueryContainment(query1, query2);
 		
 		assertTrue(result);
 	}
-	
+
 }
