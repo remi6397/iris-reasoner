@@ -25,12 +25,9 @@
  */
 package org.deri.iris.builtins;
 
-import static org.deri.iris.factory.Factory.PROGRAM;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.builtins.IBuiltInAtom;
@@ -48,18 +45,12 @@ import org.deri.iris.compiler.Parser;
  */
 public class FahrenheitBuiltinTest extends TestCase {
 
-	private IProgram p;
-
 	public static Test suite() {
 		return new TestSuite(FahrenheitBuiltinTest.class, FahrenheitBuiltinTest.class.getSimpleName());
 	}
 
-	public void setUp() {
-		p = PROGRAM.createProgram();
-	}
-
 	public void testAdding() {
-		final BuiltinRegister reg = p.getBuiltinRegister();
+		final BuiltinRegister reg = new BuiltinRegister();
 		reg.registerBuiltin(FahrenheitToCelsiusBuiltin.class);
 		final IPredicate ftoc = FahrenheitToCelsiusBuiltin.getBuiltinPredicate();
 		assertNotNull("It seems that the builtin wasn't registered correctly", 
@@ -71,9 +62,12 @@ public class FahrenheitBuiltinTest extends TestCase {
 	}
 
 	public void testParsing() throws Exception {
-		p.getBuiltinRegister().registerBuiltin(FahrenheitToCelsiusBuiltin.class);
-		Parser.parse("fahrenheit(?X) :- ftoc(?X, 10).", p);
-		final ILiteral b = p.getRules().iterator().next().getBody().get(0);
+		final BuiltinRegister reg = new BuiltinRegister();
+		reg.registerBuiltin(FahrenheitToCelsiusBuiltin.class);
+
+		Parser parser = new Parser( reg );
+		parser.parse("fahrenheit(?X) :- ftoc(?X, 10).");
+		final ILiteral b = parser.getRules().iterator().next().getBody().get(0);
 		assertTrue("The atom must be a IBuiltInAtom", b.getAtom() instanceof IBuiltInAtom);
 	}
 }

@@ -29,12 +29,10 @@ import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.compiler.Parser2;
 
 /**
  * <p>
@@ -63,7 +61,7 @@ public class QueryContainmentTest extends TestCase {
 			"?-car(?x)." +
 			"?-vehicle(?x).";
 		
-		Parser2 parser = new Parser2( new BuiltinRegister() );
+		Parser parser = new Parser( new BuiltinRegister() );
 		parser.parse( prog );
 		List<IRule> rules = parser.getRules();
 		List<IQuery> queries = parser.getQueries();
@@ -89,7 +87,7 @@ public class QueryContainmentTest extends TestCase {
 			"?-vehicle(?x)." +
 			"?-car(?x).";
 		
-		Parser2 parser = new Parser2( new BuiltinRegister() );
+		Parser parser = new Parser( new BuiltinRegister() );
 		parser.parse( prog );
 		List<IRule> rules = parser.getRules();
 		List<IQuery> queries = parser.getQueries();
@@ -115,7 +113,7 @@ public class QueryContainmentTest extends TestCase {
 			"?-path(?X, ?Y)." +
 			"?-path(?X, ?Z), path(?Z, ?Y).";
 		
-		Parser2 parser = new Parser2( new BuiltinRegister() );
+		Parser parser = new Parser( new BuiltinRegister() );
 		parser.parse( prog );
 		List<IRule> rules = parser.getRules();
 		List<IQuery> queries = parser.getQueries();
@@ -141,7 +139,7 @@ public class QueryContainmentTest extends TestCase {
 			"?-path(?X, ?Z), path(?Z, ?Y)." +
 			"?-path(?X, ?Z1), path(?Z1, ?Y).";
 		
-		Parser2 parser = new Parser2( new BuiltinRegister() );
+		Parser parser = new Parser( new BuiltinRegister() );
 		parser.parse( prog );
 		List<IRule> rules = parser.getRules();
 		List<IQuery> queries = parser.getQueries();
