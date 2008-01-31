@@ -33,7 +33,7 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.factory.IProgramFactory;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 
 /**
  * <p>

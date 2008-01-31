@@ -41,7 +41,7 @@ import junit.framework.TestSuite;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.operations.relation.IUnion;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 
 /**
  * @author Darko Anicic, DERI Innsbruck

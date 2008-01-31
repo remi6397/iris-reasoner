@@ -25,7 +25,7 @@
  */
 package org.deri.iris.api.operations.relation;
 
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 
 /**
  * <p>

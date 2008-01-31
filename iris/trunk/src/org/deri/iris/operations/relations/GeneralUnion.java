@@ -30,7 +30,7 @@ import static org.deri.iris.factory.Factory.RELATION;
 import java.util.List;
 
 import org.deri.iris.api.operations.relation.IUnion;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 
 /**
  * <p>

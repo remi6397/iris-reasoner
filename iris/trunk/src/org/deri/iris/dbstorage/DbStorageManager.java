@@ -25,7 +25,7 @@ import org.deri.iris.basics.BasicFactory;
 import org.deri.iris.terms.concrete.GMonthDay;
 import org.deri.iris.terms.concrete.GYearMonth;
 
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 
 import static org.deri.iris.factory.Factory.RELATION;

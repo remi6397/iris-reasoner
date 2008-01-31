@@ -29,13 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.basics.BasicFactory;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.storage.RelationFactory;
+import org.deri.iris.storage_old.RelationFactory;
 import org.deri.iris.terms.TermFactory;
 
 import junit.framework.Test;

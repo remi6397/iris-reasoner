@@ -191,18 +191,11 @@ public class ArithmeticTest extends TestCase
 			
 			"r( ?Z ) :- one( ?X ), ten( ?Y ), ?X + ?Y = ?Z." +
 			"s( ?Z ) :- one( ?X ), nine( ?Z ), ten( ?Y ), ?Z + ?X = ?Y." +
-			"t( ?Z ) :- nine( ?X ), one( ?Z ), ten( ?Y ), ?X + ?Z = ?Y." +
-			
-			"?- r(?X)." +
-			"?- s(?X)." +
-			"?- t(?X).";
-		
-       	String expectedResults = 
-			"r( 11 )." +
-			"s( 9 )." +
-			"t( 1 ).";
+			"t( ?Z ) :- nine( ?X ), one( ?Z ), ten( ?Y ), ?X + ?Z = ?Y.";
 
-       	Helper.evaluateWithAllStrategies( program, expectedResults );
+       	Helper.evaluateWithAllStrategies( program + "?- r(?X).", "r( 11 )." );
+       	Helper.evaluateWithAllStrategies( program + "?- s(?X).", "s( 9 )." );
+       	Helper.evaluateWithAllStrategies( program + "?- t(?X).", "t( 1 )." );
 	}
 
 	public void testSubtractTwoVariables() throws Exception
@@ -430,8 +423,8 @@ public class ArithmeticTest extends TestCase
 			"b(-0.0)." +
 			"b(1.0000000000002)." +
 			"b(_float(2.000002))." +
-	
-			"p(?x) :- a(?x), b(?x)." +
+			
+			"p(?x) :- a(?x), b(?y), ! ?x < ?y, ! ?x > ?y." +
 	
 			"?- p(?x).";
 

@@ -35,11 +35,12 @@ import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.builtins.ArithmeticBuiltin;
 import org.deri.iris.builtins.EqualBuiltin;
-import org.deri.iris.evaluation.MiscOps;
-import org.deri.iris.evaluation.RuleValidator;
+import org.deri.iris.evaluation_old.RuleValidator;
 import org.deri.iris.rules.IRuleOptimiser;
 import org.deri.iris.rules.IRuleReOrderingOptimiser;
 import org.deri.iris.rules.IRuleStratifier;
@@ -154,19 +155,19 @@ public class RuleBase
 			// Stratification might involve re-writing the rules, so reset our rule collection.
 			if( mIsStratified )
 			{
-				final List<Collection<IRule>> rectifiedRuleStrata = new ArrayList<Collection<IRule>>();
+				final List<List<IRule>> rectifiedRuleStrata = new ArrayList<List<IRule>>();
 
 				mRules.clear();
 //				mProcessedRules.clear();
 
-				for( Collection<IRule> stratum : mRuleStrata )
+				for( List<IRule> stratum : mRuleStrata )
 				{
-					final Set<IRule> rectifiedStratum = new HashSet<IRule>();
+					final List<IRule> rectifiedStratum = new ArrayList<IRule>();
 					
 					for( IRule rule : stratum )
 					{
 						IRule r = optimise( rule ); 
-						r = MiscOps.rectify( r );
+//						r = MiscOps.rectify( r );
 						rectifiedStratum.add( r );
 						mRules.add( r );
 					}
@@ -185,7 +186,7 @@ public class RuleBase
 	 * @param rules The strata of rules to re-order.
 	 * @return The re-ordered rules.
 	 */
-	private Collection<IRule> reOrderRules( Collection<IRule> rules )
+	private List<IRule> reOrderRules( List<IRule> rules )
 	{
 		for( IRuleReOrderingOptimiser optimiser : mReOrderingOptimisers )
 			rules = optimiser.reOrder( rules );
@@ -366,8 +367,18 @@ public class RuleBase
 		
 		for( ITerm term : literal.getAtom().getTuple() )
 		{
-			if( ! term.isGround() )
-				variables.add( term.toString() );
+			if( term instanceof IConstructedTerm )
+			{
+				IConstructedTerm constructed = (IConstructedTerm) term;
+				
+				for( IVariable variable : constructed.getVariables() )
+					variables.add( variable.getValue() );
+			}
+			else if( term instanceof IVariable )
+			{
+				IVariable variable = (IVariable) term;
+				variables.add( variable.getValue() );
+			}
 		}
 		
 		return variables;
@@ -402,7 +413,7 @@ public class RuleBase
 	/** The original rules of this program. */
 	private final Set<IRule> mRules = new HashSet<IRule>();
 	
-	private List<Collection<IRule>> mRuleStrata;
+	private List<List<IRule>> mRuleStrata;
 
 	/** The post-processing rules of this program. */
 	private final Set<IRule> mProcessedRules = new HashSet<IRule>();

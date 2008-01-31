@@ -61,24 +61,18 @@ public class EvaluationTest extends TestCase
 			"p(2)." +
 			"p.";
 		
-		String program = facts +
-			"?-p(?x,?y,?z,?a)." +
-			"?-p(?x,?y,?z)." +
-			"?-p(?x,?y)." +
-			"?- p(?x)." +
-			"?- p.";
+		Helper.evaluateWithAllStrategies( facts + "?-p(?x,?y,?z,?a).", "p(8,9,10,11).p(12,13,14,15)." );
 		
-		String expectedResults = facts;
-			
-		Helper.evaluateWithAllStrategies( program, expectedResults );
+		Helper.evaluateWithAllStrategies( facts + "?-p(?x,?y,?z).", "p(5,6,7).p(6,6,8)." );
+		Helper.evaluateWithAllStrategies( facts + "?-p(?x,?y).", "p(3,4)." );
+		Helper.evaluateWithAllStrategies( facts + "?- p(?x).", "p(1).p(2)." );
+		Helper.evaluateWithAllStrategies( facts + "?- p.", "p." );
 	}
 
 	
 	/**
 	 * Test that a query with more than one predicate is correctly
 	 * evaluated.
-	 * TODO Semi-naive with Magic Sets evaluation is expected to fail, because
-	 * this strategy can not currently have multiple predicates in a query.
 	 * @throws Exception 
 	 */
 	public void testConjunctiveQuery() throws Exception
@@ -172,7 +166,7 @@ public class EvaluationTest extends TestCase
 	 */
 	public void testRecursiveRules2() throws Exception
 	{
-		String program =
+		String facts =
    			"parent('c','a')." +
 			"parent('d','a')." +
 			"parent('d','b')." +
@@ -194,12 +188,8 @@ public class EvaluationTest extends TestCase
 		    
 		    "related(?X,?Y) :- sibling(?X, ?Y)." +
 		    "related(?X,?Y) :- related(?X, ?Z), parent(?Y, ?Z)." +
-		    "related(?X,?Y) :- related(?Z, ?Y), parent(?X, ?Z)." +
+		    "related(?X,?Y) :- related(?Z, ?Y), parent(?X, ?Z).";
 		    
-		    "?- sibling(?X,?Y)." +
-		    "?- cousin (?X,?Y)."  +
-		    "?- related(?X,?Y)." ;
-		
 		String expectedResults =
     		"sibling('c','d')." +
     		"sibling('d','c')." +
@@ -210,8 +200,11 @@ public class EvaluationTest extends TestCase
 			"sibling('h','i')." +
 			"sibling('i','h')." +
 			"sibling('f','i')." +
-    		"sibling('i','f')." +
-		
+    		"sibling('i','f').";
+
+		Helper.evaluateWithAllStrategies( facts + "?- sibling(?X,?Y).", expectedResults );
+
+		expectedResults =
     		"cousin('f','h')." +
     		"cousin('h','f')." +
 			"cousin('f','i')." +
@@ -226,8 +219,11 @@ public class EvaluationTest extends TestCase
     		"cousin('j','k')." +
 			"cousin('k','j')." +
 			"cousin('j','j')." +
-			"cousin('k','k')." +
+			"cousin('k','k').";
 			
+		Helper.evaluateWithAllStrategies( facts + "?- cousin (?X,?Y).", expectedResults );
+
+		expectedResults =
     		"related('c','d')." +
     		"related('d','c')." +
 			"related('d','e')." +
@@ -295,8 +291,8 @@ public class EvaluationTest extends TestCase
 			
 			"related('j','j')." +
 			"related('k','k').";
-			
-		Helper.evaluateWithAllStrategies( program, expectedResults );
+
+		Helper.evaluateWithAllStrategies( facts + "?- related(?X,?Y).", expectedResults );
 	}
 
 	/**
@@ -533,44 +529,37 @@ public class EvaluationTest extends TestCase
 	 * We do this here for a 'chain' of 676 rules.
 	 * @throws Exception
 	 */
-	public void testLongChainOfRules() throws Exception
+	public void XXXX__testLongChainOfRules() throws Exception
 	{
 		StringBuilder buffer = new StringBuilder();
 		
-		String lastName = "first";
-
+		final String p = "p";
+		
 		// Starting facts
-		buffer.append( lastName ).append( "('a','b')." ).append( lastName ).append( "(1,2)." );
+		buffer.append( "p1" ).append( "('a','b')." ).append( "p1" ).append( "(1,2)." );
 		
 		// Some more facts along the chain.
-		buffer.append( "ba" ).append( "(3,4)." );
-		buffer.append( "ma" ).append( "(5,6)." );
-		buffer.append( "za" ).append( "(7,8)." );
-		buffer.append( "zz" ).append( "(9,10)." );
+		buffer.append( "p10" ).append( "(3,4)." );
+		buffer.append( "p15" ).append( "(5,6)." );
+		buffer.append( "p50" ).append( "(7,8)." );
+		buffer.append( "p52" ).append( "(9,10)." );
 		
-		buffer.append( lastName ).append( "('a','b')." ).append( lastName ).append( "(1,2)." );
-
-		for ( char i = 'a'; i <= 'z'; ++i )
+		final int count = 1000;
+		
+		for ( int predicate = 1; predicate < count; ++predicate )
 		{
-			for ( char j = 'a'; j <= 'z'; ++j )
-			{
-				String nextName = "" + i + j;
-				
-				buffer.append( nextName ).append( "(?X,?Y ) :- " ).append( lastName ).append( "(?X,?Y )." );
-				
-				lastName = nextName;
-			}
+			buffer.append( p + (predicate + 1) ).append( "(?X,?Y ) :- " ).append( p + predicate ).append( "(?X,?Y )." );
 		}
-		buffer.append( "?- zz(?x,?y)." );
+		buffer.append( "?- " + p + count + "(?x,?y)." );
 		
 		String program = buffer.toString();
 		String expectedResults =
-			"zz('a','b')." + 
-			"zz(1,2)." +
-			"zz(3,4)." +
-			"zz(5,6)." +
-			"zz(7,8)." +
-			"zz(9,10).";
+			"dummy('a','b')." + 
+			"dummy(1,2)." +
+			"dummy(3,4)." +
+			"dummy(5,6)." +
+			"dummy(7,8)." +
+			"dummy(9,10).";
 		
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
@@ -619,7 +608,7 @@ public class EvaluationTest extends TestCase
 		StringBuilder p = new StringBuilder();
 		StringBuilder r = new StringBuilder();
 		
-		final int MAX = 50;
+		final int MAX = 500;
 		
 		for( int i = 0; i < MAX; ++i )
 		{
@@ -841,22 +830,13 @@ public class EvaluationTest extends TestCase
     		"p2(?X) :- ?X = 1, r(?X)." +
     		"p3(?X) :- r(?X), ?X = 1." +
     		"p4(?X) :- ?X = 1, ?X = 2." +
-    		"p5(?X) :- ?X = 2, ?X = 2." +
-    		
-    		"?-p1(?X)." +
-    		"?-p2(?X)." +
-    		"?-p3(?X)." +
-    		"?-p4(?X)." +
-    		"?-p5(?X).";
+    		"p5(?X) :- ?X = 2, ?X = 2.";
         	
-		String expectedResults =
-			"p1(1)." +
-			"p2(1)." +
-			"p3(1)." +
-
-			"p5(2).";
-
-       	Helper.evaluateWithAllStrategies( program, expectedResults );
+       	Helper.evaluateWithAllStrategies( program + "?-p1(?X).", "p1(1)." );
+       	Helper.evaluateWithAllStrategies( program + "?-p2(?X).", "p2(1)." );
+       	Helper.evaluateWithAllStrategies( program + "?-p3(?X).", "p3(1)." );
+       	Helper.evaluateWithAllStrategies( program + "?-p4(?X).", "" );
+       	Helper.evaluateWithAllStrategies( program + "?-p5(?X).", "p5(2)." );
     }
 	/**
      * Test lots of sequences of built-ins and ordinary predicates to check for
@@ -886,31 +866,100 @@ public class EvaluationTest extends TestCase
     		"s7(?X) :- not s(?X), ?X = 1, ?X = 2." +
     		
     		"s9(?X) :- ?X = 1, ?X = 1, not s(?X)." +
-    		"s0(?X) :- not s(?X), ?X = 1, ?X = 1." +
+    		"s0(?X) :- not s(?X), ?X = 1, ?X = 1.";
     		
-    		"?-s1(?X)." +
-    		"?-s2(?X)." +
-    		"?-s3(?X)." +
-    		"?-s4(?X)." +
-    		"?-s5(?X)." +
-    		"?-s6(?X)." +
-    		"?-s7(?X)." +
-    		"?-s8(?X)." +
-    		"?-s9(?X)." +
-    		"?-s0(?X).";
-    		
-		String expectedResults =
-			"s1(1)." +
-			"s2(1)." +
-			"s3(1)." +
-			"s4(1)." +
-			"s5(1)." +
-			"s6(1)." +
-
-			"s9(1)." +
-			"s0(1).";
-
-       	Helper.evaluateWithAllStrategies( program, expectedResults );
+       	Helper.evaluateWithAllStrategies( program + "?-s1(?X).", "dummy(1)." );
+       	Helper.evaluateWithAllStrategies( program + "?-s2(?X).", "dummy(1)." );
+       	Helper.evaluateWithAllStrategies( program + "?-s3(?X).", "dummy(1)." );
+       	Helper.evaluateWithAllStrategies( program + "?-s4(?X).", "dummy(1)." );
+       	Helper.evaluateWithAllStrategies( program + "?-s5(?X).", "dummy(1)." );
+       	Helper.evaluateWithAllStrategies( program + "?-s6(?X).", "dummy(1)." );
+       	Helper.evaluateWithAllStrategies( program + "?-s7(?X).", "" );
+       	Helper.evaluateWithAllStrategies( program + "?-s8(?X).", "" );
+       	Helper.evaluateWithAllStrategies( program + "?-s9(?X).", "dummy(1)." );
+       	Helper.evaluateWithAllStrategies( program + "?-s0(?X).", "dummy(1)." );
     }
-}
 
+    /**
+     * Check that the evaluation produces tuples for the rule head of the correct arity,
+     * despite the fact that some of the terms in the head are constants.
+     * @throws Exception
+     */
+	public void testConstantsInRuleHead() throws Exception
+	{
+    	String program = 
+		    "r('a', 'a')." +
+		    "r('b', 'c')." +
+		    "r('c', 'd')." +
+		    
+		    "p(?X, 'a') :- r(?X, ?Y)." +
+		    "?- p(?X, ?Y).";
+	  	
+    	String expectedResults =
+		    "p('a','a')." +
+		    "p('b','a')." +
+		    "p('c','a').";
+		    
+    	Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	/**
+	 * A similar test was failing in GeneralProgramTest.testEvaluate1()
+	 */
+	public void testOldCopiedTest() throws Exception
+	{
+    	String program =
+    		"p(?U, ?V, ?W) :- r(?V, ?W), ?W = ?U." +
+    		"r('b', 'b')." +
+    		"r('c', 'c')." +
+    		"?-p(?U, ?V, ?W).";
+    	
+    	String expectedResults =
+    		"p('b', 'b', 'b')." +
+    		"p('c', 'c', 'c').";
+    	
+    	Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	/**
+	 * Test for bug 1871777 - rule optimisation error.
+	 */
+	public void testRuleOptimisation_JoinConditionOptimisation() throws Exception
+	{
+    	String program =
+    		"triple(0,0,0,1)." +
+    		"triple(?n, ?x, ?y, ?z) :- triple(?n1, ?x1, ?y1, ?z1), ?n1 + 1 = ?n, ?n/16=?x, ?n%16=?y2, ?y2/4=?y, ?n%4=?zz, ?zz+1=?z, ?n < 64." +
+    		"congruent( ?X, ?Y, ?K ) :- triple(?N, ?X, ?Y, ?K ), ?X % ?K = ?XK, ?Y % ?K = ?YK, ?XK = ?YK." +
+    		"mul( ?x, ?y, ?n ) :- congruent( ?a1, ?a2, ?n ), congruent( ?b1, ?b2, ?n ), ?a1*?b1=?x, ?a2*?b2=?y." +
+    		"left_over( ?x,?y,?n ) :- mul( ?x,?y,?n), ?x % ?n = ?x1, ?y % ?n = ?y1, ?x1 != ?y1." +
+    		"?- lef_over( ?x,?y, ?n ).";
+    	
+    	String expectedResults = "";
+    	
+    	Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testRuleWithOnlyConstantsInHead() throws Exception
+	{
+    	String program =
+    		"p('a') :- TRUE." +
+    		"?-p(?X).";
+    	
+    	String expectedResults =
+    		"p('a').";
+    	
+    	Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testRuleWithNoBodyAndOnlyConstantsInHead() throws Exception
+	{
+    	String program =
+    		"p('a') :- ." +
+    		"?-p(?X).";
+    	
+    	String expectedResults =
+    		"p('a').";
+    	
+    	Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+}

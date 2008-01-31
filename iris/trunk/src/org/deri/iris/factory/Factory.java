@@ -26,7 +26,7 @@
 package org.deri.iris.factory;
 
 import org.deri.iris.ProgramFactory;
-import org.deri.iris.api.evaluation.IEvaluationFactory;
+import org.deri.iris.api.evaluation_old.IEvaluationFactory;
 import org.deri.iris.api.factory.IAlgebraFactory;
 import org.deri.iris.api.factory.IBasicFactory;
 import org.deri.iris.api.factory.IBuiltInsFactory;
@@ -38,11 +38,11 @@ import org.deri.iris.api.factory.IRelationOperationsFactory;
 import org.deri.iris.api.factory.ITermFactory;
 import org.deri.iris.basics.BasicFactory;
 import org.deri.iris.builtins.BuiltinsFactory;
-import org.deri.iris.evaluation.EvaluationFactory;
-import org.deri.iris.evaluation.algebra.AlgebraFactory;
+import org.deri.iris.evaluation_old.EvaluationFactory;
+import org.deri.iris.evaluation_old.algebra.AlgebraFactory;
 import org.deri.iris.graph.GraphFactory;
 import org.deri.iris.operations.relations.RelationOperationsFactory;
-import org.deri.iris.storage.RelationFactory;
+import org.deri.iris.storage_old.RelationFactory;
 import org.deri.iris.terms.TermFactory;
 import org.deri.iris.terms.concrete.ConcreteFactory;
 

@@ -33,8 +33,8 @@ import java.util.Set;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.storage.IDataSource;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IDataSource;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 
 /**
  * The extensional database - EDB. The set of known facts.

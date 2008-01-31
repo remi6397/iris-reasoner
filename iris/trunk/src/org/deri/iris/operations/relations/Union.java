@@ -30,7 +30,7 @@ import static org.deri.iris.factory.Factory.RELATION;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deri.iris.api.storage.IRelation;
+import org.deri.iris.api.storage_old.IRelation;
 
 /**
  * @deprecated use GeneralUnion.

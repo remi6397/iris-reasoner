@@ -48,8 +48,7 @@ import org.deri.iris.rules.IRuleReOrderingOptimiser;
  */
 public class SimpleReOrdering implements IRuleReOrderingOptimiser
 {
-
-	public Collection<IRule> reOrder( final Collection<IRule> rules )
+	public List<IRule> reOrder( final Collection<IRule> rules )
     {
 		tempRules = new HashSet<IRule>( rules );
 		

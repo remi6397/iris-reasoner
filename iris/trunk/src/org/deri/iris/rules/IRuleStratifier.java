@@ -45,5 +45,5 @@ public interface IRuleStratifier
 	 * @return A set of stratified rules, or null if the rules can not be
 	 * stratified with this algorithm.
 	 */
-	List<Collection<IRule>> stratify( Collection<IRule> rules );
+	List<List<IRule>> stratify( Collection<IRule> rules );
 }

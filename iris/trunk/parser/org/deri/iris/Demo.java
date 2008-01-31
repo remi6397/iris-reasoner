@@ -3,7 +3,7 @@ package org.deri.iris;
 import java.util.Map;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 
 /**
  * A command line demonstrator for IRIS.

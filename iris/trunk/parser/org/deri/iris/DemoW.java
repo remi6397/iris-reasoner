@@ -1,3 +1,26 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions.
+ * 
+ * Copyright (C) 2007 Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
 package org.deri.iris;
 
 import java.awt.BorderLayout;
@@ -18,15 +41,17 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 
 /**
  * A GUI version of the Demo application.
  */
 public class DemoW
 {
-	public static final int FONT_SIZE = 20;
+	public static final int FONT_SIZE = 12;
+	public static String NEW_LINE = "\r\n";
 	public static final boolean SHOW_QUERY_TIME = true;
+	public static final boolean SHOW_ROW_COUNT = true;
 
 	/**
 	 * Application entry point.
@@ -62,7 +87,7 @@ public class DemoW
          */
 		public MainFrame()
 		{
-			super( "IRIS" );
+			super( "IRIS - Old" );
 
 			setup();
 		}
@@ -229,35 +254,41 @@ public class DemoW
 					
 					IProgram p = ExecutionHelper.parseProgram( program );
 			
-					String output;
+					StringBuilder output = new StringBuilder();;
 					switch( evaluationStrategy )
 					{
 					case 0:
-						output = "Naive evaluation\r\n";
+						output.append( "Naive evaluation\r\n" );
 						results = ExecutionHelper.evaluateNaive( p );
 						break;
 					case 1:
 					default:
-						output = "Semi-naive evaluation\r\n";
+						output.append( "Semi-naive evaluation\r\n" );
 						results = ExecutionHelper.evaluateSeminaive( p );
 						break;
 					case 2:
-						output = "Semi-naive evaluation with magic sets\r\n";
+						output.append( "Semi-naive evaluation with magic sets\r\n" );
 						results = ExecutionHelper.evaluateSeminaiveWithMagicSets( p );
 						break;
 					}
 
 					queryDuration += System.currentTimeMillis();
 
-					output += ExecutionHelper.resultsTostring( results );
+					output.append( ExecutionHelper.resultsTostring( results ) );
 
+//					if( SHOW_QUERY_TIME )
+//					{
+//						output += "-----------------\r\n";
+//						output += ( "Time: " + queryDuration + "ms" );
+//					}
+					if( SHOW_ROW_COUNT || SHOW_QUERY_TIME )
+						output.append( "-----------------" ).append( NEW_LINE );
+					if( SHOW_ROW_COUNT )
+						output.append( "Rows: " ).append( countRows( results ) ).append( NEW_LINE );
 					if( SHOW_QUERY_TIME )
-					{
-						output += "-----------------\r\n";
-						output += ( "Time: " + queryDuration + "ms" );
-					}
+						output.append( "Time: " ).append( queryDuration ).append( "ms" ).append( NEW_LINE );
 			
-					SwingUtilities.invokeLater( new NotifyOutput( output ) );
+					SwingUtilities.invokeLater( new NotifyOutput( output.toString() ) );
 				}
 				catch( Exception e )
 				{
@@ -269,4 +300,15 @@ public class DemoW
 			private final int evaluationStrategy;
 		}
 	}
+	public static int countRows( Map<IPredicate, IMixedDatatypeRelation> m )
+	{
+		int count = 0;
+		for( IPredicate pr : m.keySet() )
+		{
+			count += m.get( pr ).size();
+    	}
+
+		return count;
+    }
+
 }

@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.deri.iris.api.operations.relation.IMixedDatatypeRelationOperation;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.ITerm;
 
 /**

@@ -27,7 +27,7 @@ package org.deri.iris.api.operations.relation;
 
 import java.util.List;
 
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 import org.deri.iris.api.terms.IVariable;
 
 /**

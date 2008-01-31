@@ -5,11 +5,11 @@ import org.deri.iris.api.IExecutor;
 import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.evaluation.algebra.IExpressionEvaluator;
-import org.deri.iris.api.storage.IMixedDatatypeRelation;
+import org.deri.iris.api.evaluation_old.algebra.IExpressionEvaluator;
+import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserException;
-import org.deri.iris.evaluation.algebra.ExpressionEvaluator;
+import org.deri.iris.evaluation_old.algebra.ExpressionEvaluator;
 import org.deri.iris.factory.Factory;
 
 /**

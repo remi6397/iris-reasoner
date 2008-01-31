@@ -29,7 +29,6 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import junit.framework.TestCase;
 import org.deri.iris.api.basics.ILiteral;
@@ -98,7 +97,7 @@ public class LocalStratifierTest extends TestCase
 		
 		LocalStratifier ls = new LocalStratifier( true );
 		
-		List<Collection<IRule>> sRules = ls.stratify( rules );
+		List<List<IRule>> sRules = ls.stratify( rules );
 		
 		// This rule is already locally stratified
 		assertNotNull( sRules );
@@ -124,7 +123,7 @@ public class LocalStratifierTest extends TestCase
 		
 		LocalStratifier ls = new LocalStratifier( true );
 		
-		List<Collection<IRule>> sRules = ls.stratify( rules );
+		List<List<IRule>> sRules = ls.stratify( rules );
 		
 		// One of these rules needs splitting
 		assertNotNull( sRules );
@@ -148,7 +147,7 @@ public class LocalStratifierTest extends TestCase
 		
 		LocalStratifier ls = new LocalStratifier( true );
 		
-		List<Collection<IRule>> sRules = ls.stratify( rules );
+		List<List<IRule>> sRules = ls.stratify( rules );
 		
 		// This rule does not need splitting
 		assertNotNull( sRules );
@@ -174,7 +173,7 @@ public class LocalStratifierTest extends TestCase
 		
 		LocalStratifier ls = new LocalStratifier( true );
 		
-		List<Collection<IRule>> sRules = ls.stratify( rules );
+		List<List<IRule>> sRules = ls.stratify( rules );
 		
 		// Can not be stratified, so result is null
 		assertNull( sRules );

@@ -1358,7 +1358,7 @@ public class BuiltinsTest extends TestCase
 		    "?- p.";
 
 		String expectedResults =
-			"";
+			"p.";
 
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
@@ -1404,21 +1404,11 @@ public class BuiltinsTest extends TestCase
 
 			"a_b(?x) :- p(?x), REGEX(?x, 'a*b?')." +
 		    "upper(?x) :- p(?x), REGEX(?x, '[A-Z]*')." +
-		    "ends_milk(?x) :- p(?x), REGEX(?x, '.*milk')." +
+		    "ends_milk(?x) :- p(?x), REGEX(?x, '.*milk').";
 		    
-		    "?- a_b(?X)." +
-		    "?- upper(?X)." +
-			"?- ends_milk(?X).";
-			
-		String expectedResults =
-			"a_b('aaaaa')." +
-			"a_b('aaaab')." +
-
-			"upper('BAZ')." +
-
-			"ends_milk('Hello this is a sentence that end with milk').";
-
-		Helper.evaluateWithAllStrategies( program, expectedResults );
+		Helper.evaluateWithAllStrategies( program + "?- a_b(?X).", "a_b('aaaaa').a_b('aaaab')." );
+		Helper.evaluateWithAllStrategies( program + "?- upper(?X).", "upper('BAZ')." );
+		Helper.evaluateWithAllStrategies( program + "?- ends_milk(?X).", "ends_milk('Hello this is a sentence that end with milk')." );
 	}
 
 	public void testRegexIllegalPattern() throws Exception
