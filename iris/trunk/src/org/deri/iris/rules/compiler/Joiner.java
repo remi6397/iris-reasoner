@@ -30,11 +30,11 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.new_stuff.facts.IFacts;
-import org.deri.iris.new_stuff.storage.IIndex;
-import org.deri.iris.new_stuff.storage.IIndexFactory;
-import org.deri.iris.new_stuff.storage.IRelation;
-import org.deri.iris.new_stuff.storage.IRelationFactory;
+import org.deri.iris.facts.IFacts;
+import org.deri.iris.storage.IIndex;
+import org.deri.iris.storage.IIndexFactory;
+import org.deri.iris.storage.IRelation;
+import org.deri.iris.storage.IRelationFactory;
 
 /**
  * A compiled rule element representing a join from previous literals to this one.

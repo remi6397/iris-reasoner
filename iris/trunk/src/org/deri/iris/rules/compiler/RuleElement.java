@@ -25,8 +25,8 @@ package org.deri.iris.rules.compiler;
 
 import java.util.List;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.new_stuff.facts.IFacts;
-import org.deri.iris.new_stuff.storage.IRelation;
+import org.deri.iris.facts.IFacts;
+import org.deri.iris.storage.IRelation;
 
 /**
  * A base class for all compiled rule elements.

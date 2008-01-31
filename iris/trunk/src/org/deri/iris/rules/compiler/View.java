@@ -29,8 +29,8 @@ import java.util.Set;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.new_stuff.storage.IRelation;
-import org.deri.iris.new_stuff.storage.IRelationFactory;
+import org.deri.iris.storage.IRelation;
+import org.deri.iris.storage.IRelationFactory;
 
 /**
  * <p>

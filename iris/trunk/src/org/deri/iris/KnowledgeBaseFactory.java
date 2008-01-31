@@ -21,43 +21,49 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.rules.compiler;
+package org.deri.iris;
 
 import java.util.List;
+import java.util.Map;
+import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.facts.IFacts;
+import org.deri.iris.api.basics.IRule;
 import org.deri.iris.storage.IRelation;
 
 /**
- * Interface for a compiled rule.
+ * The factory for creating a knowledge-base.
  */
-public interface ICompiledRule
+public class KnowledgeBaseFactory
 {
 	/**
-	 * Evaluate rule with all known facts.
-	 * @return The result relation for this rule.
+	 * Create a knowledge base with default configuration.
+	 * @param facts The starting facts.
+	 * @param rules The rules to use.
+	 * @return A new knowledge-base instance.
 	 */
-	IRelation evaluate();
-
-	/**
-	 * Evaluate the rule using deltas (see semi-naive evaluation) to more intelligently seek out
-	 * tuples that have not already been computed.
-	 * @param deltas The collection of recently discovered facts.
-	 * @return The result relation for this rule.
-	 */
-	IRelation evaluateIteratively( IFacts deltas );
+	public static IKnowledgeBase createKnowledgeBase( Map<IPredicate,IRelation> facts, List<IRule> rules )
+	{
+		return createKnowledgeBase( facts, rules, new Configuration() );
+	}
 	
 	/**
-	 * If this compiled rule represents a rule, then return the head predicate.
-	 * @return The head predicate.
+	 * Create a knowledge base with a custom configuration.
+	 * @param facts The starting facts.
+	 * @param rules The rules to use.
+	 * @param configuration The configuration to use for the new knowledge-base.
+	 * @return A new knowledge-base instance.
 	 */
-	IPredicate headPredicate();
+	public static IKnowledgeBase createKnowledgeBase( Map<IPredicate,IRelation> facts, List<IRule> rules, Configuration configuration )
+	{
+		return new KnowledgeBase( facts, rules, configuration );
+	}
 	
 	/**
-	 * If this compiled rule represents a query, then return the variables bindings of the
-	 * result relation.
-	 * @return The list of variables in the order in which they are bound to terms of the result relation. 
+	 * Create a new default configuration and return it.
+	 * @return The new configuration.
 	 */
-	List<IVariable> getVariablesBindings();
+	public static Configuration getDefaultConfiguration()
+	{
+		return new Configuration();
+	}
 }
