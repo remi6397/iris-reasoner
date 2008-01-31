@@ -27,6 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.deri.iris.Configuration;
+import org.deri.iris.KnowledgeBaseFactory;
 import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -34,12 +36,10 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.new_stuff.Configuration;
-import org.deri.iris.new_stuff.KnowledgeBaseFactory;
-import org.deri.iris.new_stuff.evaluation.IEvaluatorFactory;
-import org.deri.iris.new_stuff.evaluation.bottomup.compiledrules.naive.NaiveEvaluatorFactory;
-import org.deri.iris.new_stuff.evaluation.bottomup.compiledrules.seminaive.SemiNaiveEvaluatorFactory;
-import org.deri.iris.new_stuff.storage.IRelation;
+import org.deri.iris.evaluation.IEvaluatorFactory;
+import org.deri.iris.evaluation.bottomup.compiledrules.naive.NaiveEvaluatorFactory;
+import org.deri.iris.evaluation.bottomup.compiledrules.seminaive.SemiNaiveEvaluatorFactory;
+import org.deri.iris.storage.IRelation;
 
 public class Helper
 {

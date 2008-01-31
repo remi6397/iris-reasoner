@@ -36,6 +36,7 @@ import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.deri.iris.KnowledgeBaseFactory;
 import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
@@ -44,9 +45,8 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.new_stuff.KnowledgeBaseFactory;
-import org.deri.iris.new_stuff.storage.IRelation;
-import org.deri.iris.new_stuff.storage.simple.SimpleRelationFactory;
+import org.deri.iris.storage.IRelation;
+import org.deri.iris.storage.simple.SimpleRelationFactory;
 
 /**
  * <p>
