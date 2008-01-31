@@ -35,10 +35,10 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.builtins.BuiltinRegister;
-import org.deri.iris.new_stuff.storage.IRelation;
 import org.deri.iris.parser.lexer.Lexer;
 import org.deri.iris.parser.lexer.LexerException;
 import org.deri.iris.parser.parser.ParserException;
+import org.deri.iris.storage.IRelation;
 
 /**
  * Parses a datalog program in human readable form in to an IRIS object model.
