@@ -1,0 +1,182 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions.
+ * 
+ * Copyright (C) 2007 Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
+package org.deri.iris.rules.compiler;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.deri.iris.EvaluationException;
+import org.deri.iris.api.basics.IAtom;
+import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.new_stuff.Configuration;
+import org.deri.iris.new_stuff.facts.IFacts;
+import org.deri.iris.new_stuff.storage.IRelation;
+
+/**
+ * A rule compiler for creating objects that compute new facts using forward-chaining techniques.
+ */
+public class RuleCompiler
+{
+	/**
+	 * Constructor.
+	 * @param facts The facts that will be used by the compiled rules.
+	 */
+	public RuleCompiler( IFacts facts, Configuration configuration )
+	{
+		mFacts = facts;
+		mConfiguration = configuration;
+	}
+	
+	/**
+	 * Compile a rule.
+	 * No optimisations of any kind are attempted.
+	 * @param rule The rule to be compiled
+	 * @return The compiled rule, ready to be evaluated
+	 * @throws EvaluationException If the query can not be compiled for any reason.
+	 */
+	public ICompiledRule compile( IRule rule ) throws EvaluationException
+	{
+		List<RuleElement> elements = compileBody( rule.getBody() );
+		
+		RuleElement lastElement = elements.size() == 0 ? null : elements.get( elements.size() - 1 );
+		
+		// Rule head
+		ITuple headTuple = rule.getHead().get( 0 ).getAtom().getTuple();
+		HeadSubstituter substituter = new HeadSubstituter( lastElement.getOutputVariables(), headTuple, mConfiguration );
+		elements.add( substituter );
+		
+		return new CompiledRule( elements, rule.getHead().get( 0 ).getAtom().getPredicate(), mConfiguration );
+	}
+
+	/**
+	 * Compile a query.
+	 * No optimisations of any kind are attempted.
+	 * @param query The query to be compiled
+	 * @return The compiled query, ready to be evaluated
+	 * @throws EvaluationException If the query can not be compiled for any reason.
+	 */
+	public ICompiledRule compile( IQuery query ) throws EvaluationException
+	{
+		List<RuleElement> elements = compileBody( query.getLiterals() );
+		
+		return new CompiledRule( elements, null, mConfiguration );
+	}
+
+	/**
+	 * Compile a rule body (or query).
+	 * The literals are compiled in the order given.
+	 * However, if one literal can not be compiled, because one or more of its variables are
+	 * not bound from the proceeding literal, then it is skipped an re-tried later.
+	 * @param bodyLiterals The list of literals to compile
+	 * @return The compiled rule elements.
+	 * @throws EvaluationException If a rule construct can not be compiled (e.g. a built-in has constructed terms)
+	 */
+	private List<RuleElement> compileBody( Collection<ILiteral> bodyLiterals ) throws EvaluationException
+	{
+		List<ILiteral> literals = new ArrayList<ILiteral>( bodyLiterals );
+		
+		List<RuleElement> elements = new ArrayList<RuleElement>();
+		
+		List<IVariable> previousVariables = null;
+		
+		while( elements.size() < bodyLiterals.size() )
+		{
+			EvaluationException lastException = null;
+			
+			boolean added = false;
+			for( int l = 0; l < literals.size(); ++l )
+			{
+				ILiteral literal = literals.get( l );
+				IAtom atom = literal.getAtom();
+				boolean positive = literal.isPositive();
+	
+				RuleElement element;
+				
+				try
+				{
+					if( atom instanceof IBuiltInAtom)
+					{
+						IBuiltInAtom builtinAtom = (IBuiltInAtom) atom;
+						
+						element = new Builtin( previousVariables, builtinAtom, positive, mConfiguration );
+					}
+					else
+					{
+						IPredicate predicate = atom.getPredicate();
+						IRelation relation = mFacts.get( predicate );
+						ITuple viewCriteria = atom.getTuple();
+						
+						if( previousVariables == null )
+						{
+							if( ! positive )
+								throw new EvaluationException( "First literal can not be negated." );
+							
+							// First sub-goal
+							element = new FirstSubgoal( predicate, relation, viewCriteria, mConfiguration );
+						}
+						else
+						{
+							if( positive )
+							{
+								element = new Joiner( previousVariables, predicate, relation, viewCriteria,
+												mConfiguration.indexFactory,
+												mConfiguration.relationFactory );
+							}
+							else
+							{
+								element = new Differ( previousVariables, relation, viewCriteria, mConfiguration );
+							}
+						}
+					}
+					previousVariables = element.getOutputVariables();
+					
+					elements.add( element );
+					
+					literals.remove( l );
+					added = true;
+					break;
+				}
+				catch( EvaluationException e )
+				{
+					// Oh dear
+					lastException = e;
+				}
+			}
+			if( ! added )
+				throw lastException;
+		}		
+		return elements;
+	}
+	
+	/** The knowledge-base facts used to attach to the compiled rule elements. */
+	private final IFacts mFacts;
+	
+	private final Configuration mConfiguration;
+}
