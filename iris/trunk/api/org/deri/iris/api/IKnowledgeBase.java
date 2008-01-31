@@ -31,7 +31,7 @@ import org.deri.iris.RuleUnsafeException;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.new_stuff.storage.IRelation;
+import org.deri.iris.storage.IRelation;
 
 /**
  * The interface of a knowledge-base as seen by a user of IRIS.
