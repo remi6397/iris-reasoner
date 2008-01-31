@@ -40,7 +40,6 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.builtins.ArithmeticBuiltin;
 import org.deri.iris.builtins.EqualBuiltin;
-import org.deri.iris.evaluation_old.RuleValidator;
 import org.deri.iris.new_stuff.Configuration;
 
 /**
