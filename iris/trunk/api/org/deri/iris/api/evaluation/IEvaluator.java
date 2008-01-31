@@ -25,7 +25,6 @@
  */
 package org.deri.iris.api.evaluation;
 
-import org.deri.iris.exception.DataModelException;
 
 /**
  * <p>
@@ -52,7 +51,7 @@ public interface IEvaluator {
 	 * @return {@code true} if the evaluation has terminated normally, otherwise
 	 *         {@code false}
 	 */
-	public boolean evaluate() throws DataModelException;
+	public boolean evaluate();
 	
 	/**
 	 * <p>

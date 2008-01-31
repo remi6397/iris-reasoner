@@ -26,9 +26,7 @@
 package org.deri.iris.api.evaluation;
 
 import java.util.Set;
-
 import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.exception.DataModelException;
 
 /**
  * <p>
@@ -54,8 +52,7 @@ public interface IBottomUpEvaluator extends IEvaluator{
 	 *         	otherwise false.
 	 * @throws 	DataModelException
 	 */
-	public boolean runQuery(IQuery q) 
-		throws DataModelException;
+	public boolean runQuery(IQuery q);
 	
 	/**
 	 * Evaluates a set of queries against a pre-computed program. 
@@ -65,6 +62,5 @@ public interface IBottomUpEvaluator extends IEvaluator{
 	 *         			otherwise false.
 	 * @throws 			DataModelException
 	 */
-	public boolean runQueries(Set<IQuery> queries) 
-		throws DataModelException;
+	public boolean runQueries(Set<IQuery> queries);
 }
