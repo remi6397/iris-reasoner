@@ -26,7 +26,7 @@
 package org.deri.iris.api.querycontainment;
 
 import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.new_stuff.storage.IRelation;
+import org.deri.iris.storage.IRelation;
 
 /**
  * <p>
