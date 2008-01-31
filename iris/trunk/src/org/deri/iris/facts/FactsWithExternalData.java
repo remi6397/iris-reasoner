@@ -37,7 +37,7 @@ public class FactsWithExternalData implements IFacts
 	    	
 	    	// TODO Change IDataSource to use the correct IRelation type
 	    	for( IDataSource dataSource : mExternalDataSources )
-	    		; // dataSource.get( predicate, from, to, result );
+	    		dataSource.get( predicate, from, to, result );
 
 	    }
 	    
