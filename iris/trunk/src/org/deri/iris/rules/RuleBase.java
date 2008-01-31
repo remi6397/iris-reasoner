@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.deri.iris.Configuration;
 import org.deri.iris.ProgramNotStratifiedException;
 import org.deri.iris.RuleUnsafeException;
 import org.deri.iris.api.basics.IAtom;
@@ -40,7 +41,6 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.builtins.ArithmeticBuiltin;
 import org.deri.iris.builtins.EqualBuiltin;
-import org.deri.iris.new_stuff.Configuration;
 
 /**
  * The set of rules and utility methods, i.e. the IDB for a logic program

@@ -21,43 +21,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.rules.compiler;
+package org.deri.iris.evaluation;
 
-import java.util.List;
-import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.Configuration;
 import org.deri.iris.facts.IFacts;
-import org.deri.iris.storage.IRelation;
+import org.deri.iris.rules.RuleBase;
 
 /**
- * Interface for a compiled rule.
+ * Interface of all evaluator factories.
  */
-public interface ICompiledRule
+public interface IEvaluatorFactory
 {
 	/**
-	 * Evaluate rule with all known facts.
-	 * @return The result relation for this rule.
+	 * Create a new evaluator.
+	 * @param facts The facts to be used for evaluation.
+	 * @param ruleBase The rule-base to be used for evaluation.
+	 * @return The new evaluator instance.
 	 */
-	IRelation evaluate();
-
-	/**
-	 * Evaluate the rule using deltas (see semi-naive evaluation) to more intelligently seek out
-	 * tuples that have not already been computed.
-	 * @param deltas The collection of recently discovered facts.
-	 * @return The result relation for this rule.
-	 */
-	IRelation evaluateIteratively( IFacts deltas );
-	
-	/**
-	 * If this compiled rule represents a rule, then return the head predicate.
-	 * @return The head predicate.
-	 */
-	IPredicate headPredicate();
-	
-	/**
-	 * If this compiled rule represents a query, then return the variables bindings of the
-	 * result relation.
-	 * @return The list of variables in the order in which they are bound to terms of the result relation. 
-	 */
-	List<IVariable> getVariablesBindings();
+	IEvaluator createEvaluator( IFacts facts, RuleBase ruleBase, Configuration configuration );
 }

@@ -34,7 +34,7 @@ import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.new_stuff.utils.UniqueList;
+import org.deri.iris.utils.UniqueList;
 
 /**
  * A collection of utility methods for term/tuple matching and variable substitution.
