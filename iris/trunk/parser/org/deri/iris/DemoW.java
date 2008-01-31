@@ -29,6 +29,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -39,17 +41,28 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import org.deri.iris.api.IProgram;
+import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
+import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.builtins.BuiltinRegister;
+import org.deri.iris.compiler.Parser;
+import org.deri.iris.new_stuff.Configuration;
+import org.deri.iris.new_stuff.KnowledgeBaseFactory;
+import org.deri.iris.new_stuff.evaluation.bottomup.compiledrules.naive.NaiveEvaluatorFactory;
+import org.deri.iris.new_stuff.evaluation.bottomup.compiledrules.seminaive.SemiNaiveEvaluatorFactory;
+import org.deri.iris.new_stuff.storage.IRelation;
 
 /**
  * A GUI version of the Demo application.
  */
 public class DemoW
 {
-	public static final int FONT_SIZE = 12;
+	public static final int FONT_SIZE = 16;
 	public static String NEW_LINE = "\r\n";
+	public static final boolean SHOW_VARIABLE_BINDINGS = true;
 	public static final boolean SHOW_QUERY_TIME = true;
 	public static final boolean SHOW_ROW_COUNT = true;
 
@@ -87,7 +100,7 @@ public class DemoW
          */
 		public MainFrame()
 		{
-			super( "IRIS - Old" );
+			super( "IRIS - new" );
 
 			setup();
 		}
@@ -110,6 +123,46 @@ public class DemoW
 				"?-isMale(?x)."
 				);
 			
+			mProgram.setText( "p(h(?X)) :- q(?X)." );
+			
+			mProgram.setText(	"p(succ(?X), ?Y) :- p(?X,?Z), ?Z+1=?Y, ?Y < 7.\r\n" +
+								"p(?X,?Y) :- ?X=1, ?Y=1.\r\n" +
+								"?-p(?X,?Y).\r\n" );
+			
+			mProgram.setText(	
+							"p('a'):-.\r\n" +
+							"p(?X) :- r(?X), not s(?Y).\r\n" +
+							"?- p(?X)." );
+
+
+			mProgram.setText(
+							"p(?X) :- a(?X), d(?X, ?Y)." + NEW_LINE +
+							"d(?X, ?Y) :- not s(?X, ?Y), UNIVERSE(?X), UNIVERSE(?Y)." + NEW_LINE +
+							"s(?U, ?U) :- UNIVERSE(?U)." + NEW_LINE +
+							"a(1)." + NEW_LINE +
+							NEW_LINE +
+							"?- p(?X)." + NEW_LINE +
+							NEW_LINE +
+							"UNIVERSE(1)." + NEW_LINE +
+							"UNIVERSE(2)." + NEW_LINE
+							);
+			
+			mProgram.setText(
+							"triple(0,0,0,1)." + NEW_LINE +
+							"triple(?n, ?x, ?y, ?z) :- triple(?n1, ?x1, ?y1, ?z1), ?n1 + 1 = ?n, ?n/100=?x, ?n%100=?y2, ?y2/10=?y, ?n%10=?zz, ?zz+1=?z, ?n < 1000." + NEW_LINE +
+							NEW_LINE +
+							"// get all those triples where a % n = b % n (definition of congruent)" + NEW_LINE +
+							"congruent( ?a, ?b, ?n ) :- triple(?k, ?a, ?b, ?n ), ?a % ?n = ?amodn, ?b % ?n = ?bmodn, ?amodn = ?bmodn." + NEW_LINE +
+							NEW_LINE +
+							"// Proove that if a1 congruent a2 mod n and b1 congruent b2 mod n, then a1b1 congruent a2b2 mod n" + NEW_LINE +
+							"mul( ?a1b1, ?a2b2, ?n ) :- congruent( ?a1, ?a2, ?n ), congruent( ?b1, ?b2, ?n ), ?a1*?b1=?a1b1, ?a2*?b2=?a2b2." + NEW_LINE +
+							NEW_LINE +
+							"// The multiplied triples where the congruency rule does not hold." + NEW_LINE +
+							"exceptions_to_rule( ?x,?y,?n ) :- mul( ?x,?y,?n), ?x % ?n = ?xmodn, ?y % ?n = ?ymodn, ?xmodn != ?ymodn." + NEW_LINE +
+							NEW_LINE +
+							"// Ths should be empty if the congruency rule is correct and the reasoner behaves correctly." + NEW_LINE +
+							"?-exceptions_to_rule( ?a1b1,?a2b2,?n )." + NEW_LINE
+											);
 			mRun.addActionListener( this );
 
 			mAbort.addActionListener( this );
@@ -125,6 +178,8 @@ public class DemoW
 			JSplitPane mainSplitter = new JSplitPane( JSplitPane.VERTICAL_SPLIT, false, programScroller, outputScroller );
 
 			getContentPane().add( mainSplitter, BorderLayout.CENTER );
+			
+			mEvaluationStrategy.setSelectedIndex( 1 );
 			
 			JPanel panel = new JPanel();
 			panel.add( mEvaluationStrategy );
@@ -155,7 +210,7 @@ public class DemoW
 		private final JButton mRun = new JButton( "Evaluate" );
 		private final JButton mAbort = new JButton( "Abort" );
 		
-		private final JComboBox mEvaluationStrategy = new JComboBox( new String[] { "Naive", "Semi-naive", "Magic Sets" } );
+		private final JComboBox mEvaluationStrategy = new JComboBox( new String[] { "Naive", "Semi-naive" } );	//, "Magic Sets" } );
 		
 		Thread mExecutionThread;
 		
@@ -248,43 +303,67 @@ public class DemoW
 	        {
 				try
 				{
-					Map<IPredicate, IMixedDatatypeRelation> results;
+					Parser parser = new Parser( mBuiltinRegister );
+					parser.parse( program );
+					Map<IPredicate,IRelation> facts = parser.getFacts();
+					List<IRule> rules = parser.getRules();
+					List<IQuery> queries = parser.getQueries();
 					
-					long queryDuration = -System.currentTimeMillis();
+					if( queries.size() > 1 )
+					{
+						SwingUtilities.invokeLater( new NotifyOutput( "Only one query at a time" ) );
+						return;
+					}
+					IQuery query = queries.size() == 1 ? queries.iterator().next() : null;
 					
-					IProgram p = ExecutionHelper.parseProgram( program );
-			
-					StringBuilder output = new StringBuilder();;
+					StringBuilder output = new StringBuilder();
+					
+					Configuration config = KnowledgeBaseFactory.getDefaultConfiguration();
+					
 					switch( evaluationStrategy )
 					{
 					case 0:
-						output.append( "Naive evaluation\r\n" );
-						results = ExecutionHelper.evaluateNaive( p );
+						output.append( "Naive evaluation" ).append( NEW_LINE );
+						config.evaluationTechnique = new NaiveEvaluatorFactory();
 						break;
-					case 1:
+					
 					default:
-						output.append( "Semi-naive evaluation\r\n" );
-						results = ExecutionHelper.evaluateSeminaive( p );
+					case 1:
+						output.append( "Semi-naive evaluation" ).append( NEW_LINE );
+						config.evaluationTechnique = new SemiNaiveEvaluatorFactory();
 						break;
-					case 2:
-						output.append( "Semi-naive evaluation with magic sets\r\n" );
-						results = ExecutionHelper.evaluateSeminaiveWithMagicSets( p );
-						break;
+					
 					}
 
+					IKnowledgeBase knowledgeBase = KnowledgeBaseFactory.createKnowledgeBase( facts, rules, config );
+					
+					List<IVariable> variableBindings = new ArrayList<IVariable>();
+
+					// Execute the query
+					long queryDuration = -System.currentTimeMillis();
+					IRelation results = knowledgeBase.execute( query, variableBindings );
 					queryDuration += System.currentTimeMillis();
 
-					output.append( ExecutionHelper.resultsTostring( results ) );
+					if( SHOW_VARIABLE_BINDINGS )
+					{
+						boolean first = true;
+						for( IVariable variable : variableBindings )
+						{
+							if( first )
+								first = false;
+							else
+								output.append( ", " );
+							output.append( variable );
+						}
+						output.append( NEW_LINE );
+					}
+					
+					formatResults( output, results );
 
-//					if( SHOW_QUERY_TIME )
-//					{
-//						output += "-----------------\r\n";
-//						output += ( "Time: " + queryDuration + "ms" );
-//					}
 					if( SHOW_ROW_COUNT || SHOW_QUERY_TIME )
 						output.append( "-----------------" ).append( NEW_LINE );
 					if( SHOW_ROW_COUNT )
-						output.append( "Rows: " ).append( countRows( results ) ).append( NEW_LINE );
+						output.append( "Rows: " ).append( results.size() ).append( NEW_LINE );
 					if( SHOW_QUERY_TIME )
 						output.append( "Time: " ).append( queryDuration ).append( "ms" ).append( NEW_LINE );
 			
@@ -298,17 +377,16 @@ public class DemoW
 			
 			private final String program;
 			private final int evaluationStrategy;
+			private BuiltinRegister mBuiltinRegister = new BuiltinRegister();
 		}
 	}
-	public static int countRows( Map<IPredicate, IMixedDatatypeRelation> m )
+
+	public static void formatResults( StringBuilder builder, IRelation m )
 	{
-		int count = 0;
-		for( IPredicate pr : m.keySet() )
+		for(int t = 0; t < m.size(); ++t )
 		{
-			count += m.get( pr ).size();
-    	}
-
-		return count;
+			ITuple tuple = m.get( t );
+			builder.append( tuple.toString() ).append( "\r\n" );
+		}
     }
-
 }
