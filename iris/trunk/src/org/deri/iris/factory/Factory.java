@@ -25,24 +25,14 @@
  */
 package org.deri.iris.factory;
 
-import org.deri.iris.ProgramFactory;
-import org.deri.iris.api.evaluation_old.IEvaluationFactory;
-import org.deri.iris.api.factory.IAlgebraFactory;
 import org.deri.iris.api.factory.IBasicFactory;
 import org.deri.iris.api.factory.IBuiltInsFactory;
 import org.deri.iris.api.factory.IConcreteFactory;
 import org.deri.iris.api.factory.IGraphFactory;
-import org.deri.iris.api.factory.IProgramFactory;
-import org.deri.iris.api.factory.IRelationFactory;
-import org.deri.iris.api.factory.IRelationOperationsFactory;
 import org.deri.iris.api.factory.ITermFactory;
 import org.deri.iris.basics.BasicFactory;
 import org.deri.iris.builtins.BuiltinsFactory;
-import org.deri.iris.evaluation_old.EvaluationFactory;
-import org.deri.iris.evaluation_old.algebra.AlgebraFactory;
 import org.deri.iris.graph.GraphFactory;
-import org.deri.iris.operations.relations.RelationOperationsFactory;
-import org.deri.iris.storage_old.RelationFactory;
 import org.deri.iris.terms.TermFactory;
 import org.deri.iris.terms.concrete.ConcreteFactory;
 
@@ -60,18 +50,6 @@ public class Factory {
 
 	public static final IGraphFactory GRAPH = GraphFactory.getInstance();
 
-	public static final IRelationOperationsFactory RELATION_OPERATION = RelationOperationsFactory
-			.getInstance();
-
-	public static final IProgramFactory PROGRAM = ProgramFactory.getInstance();
-
 	public static final IBuiltInsFactory BUILTIN = BuiltinsFactory
 			.getInstance();
-
-	public static final IEvaluationFactory EVALUATION = EvaluationFactory
-			.getInstance();
-	
-	public static final IAlgebraFactory ALGEBRA = AlgebraFactory.getInstance();
-
-	public static final IRelationFactory RELATION = RelationFactory.getInstance();
 }
