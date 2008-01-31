@@ -27,8 +27,6 @@ package org.deri.iris.basics;
 
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.basics.ITuple;
 
 /**
  * <p>
