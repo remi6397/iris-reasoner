@@ -61,7 +61,7 @@
 				IRIS <a href="download#v5_5">version 0.55</a> released.<br />
 				This is an interim release for function symbols and an all new,
 				faster evaluation implementation.<br />
-				Also included is a GUI user environment (org.dri.iris.DemoW),
+				Also included is a GUI user environment (org.deri.iris.DemoW),
 				new built-in predicates (including a regular expression matcher)
 				and numerous bug fixes.<br />
 				However, the magic sets optimisation is disabled for this release,
