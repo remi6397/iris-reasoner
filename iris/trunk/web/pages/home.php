@@ -53,6 +53,25 @@
 	<tr valign=top>
 		<td width=150>
 			<p align=left>
+				01 Feb 2008
+			</p>
+		</td>
+		<td>
+			<p align=left>
+				IRIS <a href="download#v5_5">version 0.55</a> released.<br />
+				This is an interim release for function symbols and an all new,
+				faster evaluation implementation.<br />
+				Also included is a GUI user environment (org.dri.iris.DemoW),
+				new built-in predicates (including a regular expression matcher)
+				and numerous bug fixes.<br />
+				However, the magic sets optimisation is disabled for this release,
+				but will be included in version 0.6
+			</p>
+		</td>
+	</tr>
+	<tr valign=top>
+		<td width=150>
+			<p align=left>
 				08 Nov 2007
 			</p>
 		</td>
