@@ -94,7 +94,7 @@ public class Builtin extends RuleElement
 			}
 			else if( term instanceof IConstructedTerm )
 			{
-				// TODO - decide if function symbols are allowed as build-in terms.
+				// TODO - decide if function symbols are allowed as built-in terms.
 				// Maybe only assignment or equality/inequality????
 				throw new EvaluationException( "Can't handle constructed terms in built-ins yet" );
 			}

@@ -39,7 +39,7 @@ import org.deri.iris.utils.UniqueList;
 /**
  * A collection of utility methods for term/tuple matching and variable substitution.
  */
-public class TermMatcher
+public class TermMatchingAndSubstitution
 {
 	/**
 	 * Extract the variables in the same order that they are discovered during term matching.

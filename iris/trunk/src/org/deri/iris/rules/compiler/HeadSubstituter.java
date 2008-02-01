@@ -50,7 +50,7 @@ public class HeadSubstituter extends RuleElement
 		mHeadTuple = headTuple;
 
 		// Work out the indices of variables in substitution order
-		List<IVariable> variablesToSubstitute = TermMatcher.getVariables( mHeadTuple, false );
+		List<IVariable> variablesToSubstitute = TermMatchingAndSubstitution.getVariables( mHeadTuple, false );
 		mIndices = new int[ variablesToSubstitute.size() ];
 		
 		int i = 0;
@@ -72,7 +72,7 @@ public class HeadSubstituter extends RuleElement
 		{
 			ITuple tuple = previous.get( i );
 			
-			ITuple outputTuple = TermMatcher.substituteVariablesInToTuple( mHeadTuple, tuple, mIndices );
+			ITuple outputTuple = TermMatchingAndSubstitution.substituteVariablesInToTuple( mHeadTuple, tuple, mIndices );
 			
 			result.add( outputTuple );
 		}
