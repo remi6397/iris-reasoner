@@ -89,7 +89,7 @@ public class View
 	public View( IRelation relation, ITuple viewCriteria, IRelationFactory relationFactory )
 	{
 		mViewCriteria = viewCriteria;
-		mVariables = TermMatcher.getVariables( mViewCriteria, true );
+		mVariables = TermMatchingAndSubstitution.getVariables( mViewCriteria, true );
 		mInputRelation = relation;
 		mRelationFactory = relationFactory;
 
@@ -188,7 +188,7 @@ public class View
 		{
 			ITuple tuple = mInputRelation.get( mLastIndex );
 			
-			ITuple viewTuple = TermMatcher.matchTuple( mViewCriteria, tuple );
+			ITuple viewTuple = TermMatchingAndSubstitution.matchTuple( mViewCriteria, tuple );
 			if( viewTuple != null )
 				mViewTuples.add( viewTuple );
 		}
