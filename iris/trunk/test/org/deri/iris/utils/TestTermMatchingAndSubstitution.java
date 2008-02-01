@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.rules.compiler;
+package org.deri.iris.utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,9 +31,9 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.rules.compiler.TermMatcher;
+import org.deri.iris.utils.TermMatchingAndSubstitution;
 
-public class TestTermMatcher extends TestCase
+public class TestTermMatchingAndSubstitution extends TestCase
 {
 	public void testConstantMatch()
 	{
@@ -43,7 +43,7 @@ public class TestTermMatcher extends TestCase
 		
 		Map<IVariable, ITerm> variableMap = new HashMap<IVariable, ITerm>();
 		
-		assertTrue( TermMatcher.match( body, relation, variableMap ) );
+		assertTrue( TermMatchingAndSubstitution.match( body, relation, variableMap ) );
 		
 		assertEquals( variableMap.size(), 0 );
 	}
@@ -55,7 +55,7 @@ public class TestTermMatcher extends TestCase
 		
 		Map<IVariable, ITerm> variableMap = new HashMap<IVariable, ITerm>();
 		
-		assertFalse( TermMatcher.match( body, relation, variableMap ) );
+		assertFalse( TermMatchingAndSubstitution.match( body, relation, variableMap ) );
 		
 		assertEquals( variableMap.size(), 0 );
 	}
@@ -69,7 +69,7 @@ public class TestTermMatcher extends TestCase
 		
 		Map<IVariable, ITerm> variableMap = new HashMap<IVariable, ITerm>();
 		
-		assertTrue( TermMatcher.match( body, relation, variableMap ) );
+		assertTrue( TermMatchingAndSubstitution.match( body, relation, variableMap ) );
 		
 		assertEquals( variableMap.size(), 1 );
 		ITerm matchedTerm = variableMap.get( body );
@@ -99,7 +99,7 @@ public class TestTermMatcher extends TestCase
 		
 		ITuple headTuple = Factory.BASIC.createTuple( g );
 
-		ITuple substitutedHead = TermMatcher.substituteVariablesInToTuple( headTuple, variableMap );
+		ITuple substitutedHead = TermMatchingAndSubstitution.substituteVariablesInToTuple( headTuple, variableMap );
 		
 		// => g(f('x',h(j('y'),'x')))
 		ITerm y2 = Factory.TERM.createString( "y" );
