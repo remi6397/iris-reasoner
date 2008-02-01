@@ -31,6 +31,7 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.storage.IRelationFactory;
+import org.deri.iris.utils.TermMatchingAndSubstitution;
 
 /**
  * <p>

@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.rules.compiler;
+package org.deri.iris.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +34,6 @@ import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.utils.UniqueList;
 
 /**
  * A collection of utility methods for term/tuple matching and variable substitution.
