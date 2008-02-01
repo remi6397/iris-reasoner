@@ -28,6 +28,7 @@ import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.storage.IRelation;
+import org.deri.iris.utils.TermMatchingAndSubstitution;
 
 /**
  * A compiled rule element representing the substitution of variable bindings in to the rule head.
