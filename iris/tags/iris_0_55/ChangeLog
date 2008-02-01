@@ -1,0 +1,130 @@
+The IRIS ChangeLog:
+===================
+
+Changes for release 0.55
+========================
+
+New features
+1884201 Add support for reasoning with function symbols.
+1846034 Create an interface to plug in external data sources
+1830962 Create new unified equality built-in
+1833148 Create regular expression pattern matching built-in predicate
+1832132 Create a zero-arity TRUE built-in predicate.
+
+Bug fixes
+1829173 Queries need check for unbound variables
+1832127 Safe rules with no ordinary literals not evaluated correctly
+1794659 Query result has incorrect arity.
+1792979 Wrong return type - IExecutor.computeSubstitutions()
+1840174 Predicate/Tuple arity mismatch
+1871777 Rule optimisation error: Join condition optimiser
+1859608 ConstructedTerm.equals() does not check order of terms.
+1830958 Can not locally stratify twice.
+1832140 Floating point terms have incorrect equality behaviour.
+
+Maintenance
+1832347 Unnecessary synchronisation constructs.
+1834583 Create demo GUI application
+1846030 IRelation.indexOn(...) method should take a primitive array
+1833230 Enhance local stratification
+1872409 Parser does not allow rules with empty bodies.
+
+Known Problems
+1884197 Certain built-ins should accept constructed term arguments.
+1884378 Reintroduce magic sets and predicate filtering optimisations
+
+
+Changes for release 0.5
+=======================
+
+New features
+1798276 Magic Sets evaluation must allow conjunctive queries
+1810724 Built-in predicates must support all data types.
+1810725 Negated built-ins must behave as NAF
+1803612 Improve unsafe rule detection and throw specific exception.
+1803623 Throw specific exception for non-stratified program.
+1803626 IRIS parser should have better failure semantics.
+1811460 Create MODULUS built-in predicate
+1811468 Create missing unary built-in predicates.
+1812263 Create new SAME_TYPE built-in.
+1822569 Implement Local Stratification algorithm
+1773196 Query Containment stage 1
+
+
+Bug fixes
+1822055 Magic Sets gives different results to Naive and Semi-Naive
+1814410 Some term types accept invalid values.
+1810126 Queries of an adorned program are not adorned
+1808896 Numeric type coercion error
+1808292 Floating point round-off error
+1807797 Negated built-ins do not evaluate correctly.
+1804145 Infinite loop with unary built-in (unsafe rule problem)
+1794766 Incorrect results with (positive) built-in predicate
+
+
+Maintenance
+1815907 ILiteral extends Atom, but this is a has-a relationship
+1815904 Query uses Body instead of a List
+1814958 tuple, head, body and query? should be lists
+1814955 All objects up to Rule and AdornedRule should be immutable
+1817654 Re-implement Program
+1814955 All objects up to Rule and AdornedRule should be immutable
+1815048 Allow predicate names to have underscores and digits.
+1814418 toString() for some terms types is too verbose.
+1812121 Revise safe-rule checks.
+1811653 Rename UNEQUAL to NOT_EQUAL
+1811425 Refactor built-in predicates
+1775365 Create IRIS API guide
+1775368 Create IRIS 'datalog' support guide.
+
+
+Changes for release 0.4
+=======================
+
+New features
+1773193 IRIS is now able to persist facts in a relational database
+1773182 Add subtraction builtin for dateTime
+	
+Bug fixes
+1716628 MiscOps.statify(...) method is broken
+1749168 satisfiability checks broken
+1778705 it is possible to specify inconsistent timezones
+1780055 Duration should hold the timespan in millis
+1792385 DateTime datatype handles months incorrectly
+1792822 Exceptionally long evaluation time
+	
+Known problems
+--------------
+1798276 Magic Sets evaluation does not allow conjunctive queries. (This will
+        will be fixed for the next release.)
+	
+
+Changes for release 0.3
+=======================
+	Additions:
+	----------
+	- Support for all data types supported by WSML
+	- A number of built-ins implemented
+	- The evaluation modified to properly handle built-ins.
+	- added the IMixedDatatypeRelation  and corresponding implementations
+	- added the IndexingOnTheFlyRelation and corresponding implementations
+	- Relational algebra operators modified to handle IMixedDatatypeRelation
+	- Added the IRelationFactory interface (not all calls 
+	  to the Relation constructor are exchanged, yet)
+	- modified the IBuiltinInterface
+	- reimplemented the Complementor class (used for the construction 
+	  of the DOM)
+	- modified the parser to distinguish the datatypes (according 
+	  to the wsml datatype specification)
+	- added the ITime interface, including the implementation, and so on...
+	
+	Fixes:
+	------
+	- added the possibility to make custom builitns (see doc folder for a
+	  howto)
+	- added relations to accept tuples with various datatypes at any
+	  position
+	- some bugfixes in the magic sets
+	- some bugfixes in the Join operator and SeminaiveEvaluation classes
+
+

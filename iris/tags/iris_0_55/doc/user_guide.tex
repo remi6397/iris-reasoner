@@ -1,0 +1,650 @@
+\documentclass{article}
+
+\usepackage{hyperref}
+
+\title{IRIS - Integrated Rule Inference System - API and User Guide}
+
+\author{Richard P\"ottler}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+
+\section{Introduction}
+
+\subsection{Purpose}
+
+This document is intended to give a short introduction to using the
+Integrated Rule Inference System (IRIS) and its application programming interface (API).
+
+\subsection{Audience}
+
+This guide is for software developers who will be integrating IRIS in to their application
+as well as logicians/researchers who wish to understand the capabilities of the IRIS reasoner.
+
+\subsection{Scope}
+
+The creation of logic programs and their evaluation is described.
+The logic program can be created in one of two ways: Using the API
+to construct a program fragment by fragment, or using the parser to
+process a logic program written in human-readable format (datalog).
+
+However, this document does not attempt to explain the theory of
+logic programming and only provides a brief description of the
+evaluation strategies employed.
+
+\section{Description}
+
+\subsection{What it does}
+
+IRIS is a datalog reasoner that can evaluate safe-datalog with
+stratified negation as failure.
+
+It is delivered in two java `jar' files. One of which contains
+the reasoner and the other contains the parser.
+
+\subsection{What is input}
+
+IRIS evaluates queries over a knowledge base.
+The knowledge base consists of facts (instances of predicates) and rules.
+The combination of facts, rules and queries is known as a logic program
+and forms the input to a reasoning (query-answering) task.
+
+The creation of the logic program is achieved in one of two ways:
+Create the java objects representing the components of the program using the API
+(described in section \ref{api} on page \pageref{api})
+or parse an entire datalog program written in human-readable form using the parser.
+The grammar supported by IRIS is described in the datalog grammar guide in section
+\ref{parser} on page \pageref{parser}).
+
+\subsection{What is output}
+
+For each query in the datalog program, IRIS will return the variable bindings,
+i.e. the set of all tuples that can be found or inferred from the knowledge base that satisfy the query.
+
+\section{Evaluation Process}
+
+\subsection{Supported Strategies}
+
+A number of evaluation strategies are supported and it is intended that
+more strategies will be created over time.
+
+\subsubsection{Naive}
+
+`Naive' evaluation is a bottom up approach where all the known facts are
+applied in turn to each of the rules and thus new facts are inferred.
+The evaluation process continues iteratively until no new facts are generated.
+In this way the fixed point for the knowledge base is computed
+before searching for the variable substitutions for the query.
+
+\subsubsection{Semi-Naive}
+
+The `Semi-Naive' algorithm is similar to the `Naive' strategy. However, in
+every iteration an attempt is made to make better use of the tuples generated
+in the previous step.
+
+Consider a rule with two literals:
+\begin{verbatim}
+p(?X) :- q(?X), r(?X)
+\end{verbatim}
+
+In the first round the whole relation for `q' is joined with the whole relation
+for `r' to produce new tuples for the relation `p'.
+
+During this iteration, other rules might also generate new tuples for `q' and
+`r', such that the rule must be evaluated again in the next iteration. However,
+in an attempt to avoid generating tuples for `p' that are already known, the
+join is made twice using only the incremental tuples from the previous
+iteration.
+
+Iteration 1: New tuples for p, q, r are generated: $\delta{}p_{1}$, $\delta{}q_{1}$, $\delta{}r_{1}$
+
+Iteration 2: New tuples are generated for the rule above by joining $\delta{}q_{1}$ and r
+(the whole relation for `r') and by joining q and $\delta{}r_{1}$
+
+In other words, in each iteration a rule with N literals labeled $l_{1-N}$ is evaluated
+N times substituting the incremental relations from the previous step for each each literal in turn.
+
+\subsubsection{Semi-naive with Magic Sets}
+
+The `Magic-Sets' strategy first transforms the rules according to the variable
+bindings of the query so that the computation of the fixed point is restricted as
+much as possible to those tuples that `might' produce something that satisfies the query.
+(see `On the Power of Magic'\footnote{http://portal.acm.org/citation.cfm?id=28659.28689}
+by Beeri and Ramakrishan).
+After the transformation the `Semi-Naive' evaluation is performed.
+
+\section{What can go wrong}
+
+\subsection{Exceptions}
+
+A number of problems can occur that can halt the evaluation of a logic program.
+These problems are indicated by throwing an exception of one of the following types:
+
+\begin{description}
+\item[EvaluationException] is the superclass of all exceptions that halt
+the evaluation process.
+\item[ProgramNotStratifiedException] indicates, that the program is not
+stratified (see \ref{stratneg} on page \pageref{stratneg}).
+\item[RuleUnsafeException] indicates, that an unsafe rule was detected
+(see \ref{safe} on page \pageref{safe}).
+\end{description}
+
+\subsection{Stratified negation}
+\label{stratneg}
+The 'meaning' of negation in logic programs has been discussed at length in literature.
+Here we adopt the relational model and describe the following construct:
+\begin{verbatim}
+p(X) :- q(X), not r(X)
+\end{verbatim}
+
+as meaning, that the relation associated with predicate `p' contains all those values
+from predicate `q' that are not in predicate `r'.
+In other words, the set difference of `q' and `r'.
+
+Traditional forward chaining methods for evaluating logic programs involve simply using
+the values of tuples from predicates and applying them to the program's rules to generate
+more tuples.
+
+Without negation such techniques are guaranteed to be monotone.
+However, in the presence of negation, rules that generate tuples for a predicate
+that is used in negated sub-goals of other rules, must be 'fully' evaluated before
+evaluation of the dependant rules begins.
+
+Consider what would happen if we have the following:
+\begin{verbatim}
+p(X) :- q(X), not r(X)	...(1)
+r(X) :- t(X)	        ...(2)
+q(a)
+q(b)
+t(a)
+\end{verbatim}
+
+If the known facts are applied to rule (1) first, the following new facts are generated:
+\begin{verbatim}
+p(a)
+p(b)
+\end{verbatim}
+
+Then applying the known facts to rule (2) produces the following:
+\begin{verbatim}
+r(a)
+\end{verbatim}
+
+However, the existence of fact r(a) should have precluded the inference of fact p(a) in rule (1).
+
+In order to ensure that rule evaluation is monotone, rules must be evaluated in a specific order.
+
+For any general rule:
+
+
+$p :- L_{1}...L_{m}, N_{1}...N_{p}$
+
+
+where $L_{1}...L_{m}$ are positive literals and $N_{1}...N_{p}$ are negative literals,
+existing stratification algorithms require that the rule `p' be allocated to a strata
+that is at least as high as each of its positive literals and at least one higher than
+each of its negative literals.
+
+Such a scheme would therefore require that rule (2) above is evaluated before rule(1).
+
+However, this approach precludes the evaluation of any logic program containing a rule that
+has a negative dependency upon itself.
+
+In order for IRIS to evaluate a logic program, it must be stratified.
+
+\subsection{Locally stratified negation}
+\label{localstratneg}
+There are genuine reasoning activities that can lead to the creation of logic programs
+containing rules that do contain a negative dependency to themselves,
+but can still be evaluated in a meaningful way,
+because of the presence of constants in the rules that separate the domains of tuples
+used as input to the rule and tuples produced by the rule.
+
+Consider:
+\begin{verbatim}
+p(a,X) :- q(X), not p(b,X)
+\end{verbatim}
+
+This rule can produce tuples (a,?) for the relation associated with predicate `p'
+from tuples (b,?) also associated with the relation for `p'.
+However, no special treatment is required, because nothing produced by the rule can be
+used as input to the rule, because of the presence of constants `a' and `b'.
+
+A more complicated scenario is as follows:
+\begin{verbatim}
+p(a,X) :- r(X), not q(b,X)
+q(X,Y) :- p(X,Y)
+\end{verbatim}
+
+Here the second rule can produce tuples for input to the first rule and vice versa.
+However, if we consider the second rule to be two rules:
+\begin{verbatim}
+q(b,Y) :- p(b,Y)
+q(X,Y) :- p(X,Y), X != b
+\end{verbatim}
+Then we see that the complete set of rules is still stratified.
+
+
+\subsection{Unsafe rules}
+\label{safe}
+
+The algorithm for detecting unsafe rules is taken from `Principles of Database
+and Knowledgebase Systems', Ullman, page 105.
+A rule is safe if all the variables occurring in the head and body are limited.
+Limited means, that the variable appears at least once in a positive ordinary predicate,
+is equated with a constant in a positive equality predicate, is equated with
+another variable known to be limited or occurs in an arithmetic predicate where
+the other two variables are limited.
+A more precise explanation of safeness can be found on the
+homepage\footnote{http://www.iris-reasoner.org/saferules}
+
+
+
+\section{Datatypes and Built-in Predicates}
+
+\subsection{Supported datatypes}
+\label{data}
+
+IRIS supports the datatypes defined in the WSML specification\footnote{http://www.wsmo.org/TR/d16/d16.1/v0.21/\#sec:wsml-builtin-datatypes},
+which are a subset of the XML schema datatypes.
+
+These datatypes are also discussed in the appendix \ref{grammar_datatypes} on page \pageref{grammar_datatypes}.
+
+\subsection{Built-in Predicates}
+\label{builtins}
+
+The built-in predicates defined in the WSML
+specification\footnote{http://www.wsmo.org/TR/d16/d16.1/v0.21/\#sec:wsml-built-ins}
+are supported plus some IS\_$<$type$>$() predicates used to confirm the type of a variable.
+
+The complete list of built-in predicates is given in the appendix \ref{grammar_builtins} on page \pageref{grammar_builtins}).
+
+Additionally, user-defined built-in predicates
+can be created (see \ref{custom_builtins} on page \pageref{custom_builtins}).
+
+
+\subsection{Behaviour of built-ins with incompatible datatypes}
+\label{naf}
+
+Built-in predicates will evaluate to false if the operands are incompatible with the predicate,
+e.g. multiplying two dates.
+
+Built-in predicates will evaluate to false if the operands are incompatible with each other,
+e.g. adding an integer to a string.
+
+
+\subsection{Negated built-ins}
+
+Negation in IRIS means `negation as failure', so the meaning of the expression `p(X) and not q(X)'
+is the relation containing every value of X for which p() is true, removing every value of X for which q() is true.
+In this context, care must be taken when using negation with built-in predicates. Consider the following program:
+\begin{verbatim}
+p(1,2).
+p(2,3).
+p(4,3).
+p(`a',4).
+
+q(x,y) :- p(x,y), x >= y.
+
+?-q(x,y).
+\end{verbatim}
+This produces the result set:
+\begin{verbatim}p(4,3)\end{verbatim}
+However this program:
+\begin{verbatim}
+p(1,2).
+p(2,3).
+p(4,3).
+p(`a',4).
+
+q(x,y) :- p(x,y) and not x < y.
+
+?-q(x,y).
+\end{verbatim}
+Produces this result set:
+\begin{verbatim}p(4,3) p(`a',4)\end{verbatim}
+As can be seen from this example, `not $X < Y$' is not the same as `$X \ge Y$'
+
+
+\subsection{Arithmetic built-ins}
+
+IRIS will automatically convert the result of an arithmetic evaluation to the most precise
+type for both terms, e.g. a $double$ value + a $float$ value will result in a $double$, and a $float$ value + an $integer$ value will also result in a $double$.
+
+
+
+\subsection{Custom built-in predicates}
+\label{custom_builtins}
+To create and use a custom built-in predicate there are a few steps to follow:
+
+\begin{itemize}
+\item Extend one of the built-in base classes (AbstractBuiltin, ArithmeticBuiltin, BooleanBuiltin)
+\item Register the built-in with the BuiltinRegister class
+\end{itemize}
+
+\subsubsection{Extend one of the base classes}
+There are 3 things that must be implemented:
+
+\begin{enumerate}
+\item a constructor taking an ITerm array as input that will contain the constants and variables occurring during evaluation
+\item depending on which base class was extended, implement one of:
+\begin{itemize}
+\item AbstractBuiltin.evaluateTerms(ITerm[] terms, int[] variableIndexes)
+\item BooleanBuiltin.computeResult(ITerm[] terms)
+\item ArithmeticBuiltin.computeMissingTerm(int missingTermIndex, ITerm[] terms)
+\end{itemize}
+\item provide a static getBuiltinPredicate() method which returns the predicate object describing your built-in (with attributes
+`name' and `arity')
+\end{enumerate}
+
+Note: The BuiltinHelper class has some utility methods that might be useful.
+The javadoc for this class has more details.
+For an example, see FahrenheitToCelsiusBuiltin.java in test/org.deri.iris.builtins.
+
+
+\subsubsection{Register the built-in}
+There are two ways to register a built-in:
+\begin{itemize}
+\item automatically by adding the class name to the `builtins.load' load file
+\item  explicitly by calling the BuiltinRegister.registerBuiltin() method
+\end{itemize}
+
+To register the built-in automatically, the fully qualified name of the custom built-in java class
+must be added to a file called `builtins.load'.
+This file must be accessible through the classpath and IRIS will use the first
+occurrence of a file with this name, ignoring any others.
+Only one class name can occur on each line in the file.
+
+
+To register the built-in explicitly, call BuiltinRegister.registerBuiltin() passing the built-in class's class object as the parameter, e.g.
+\begin{verbatim}
+<IProgram object>.getBuiltinRegister()
+    .registerBuiltin(FahrenheitToCelsiusBuiltin.class);
+\end{verbatim}
+The built-in should now be recognised when you evaluate a logic program. Note that the built-in must
+be explicitly registered for every program instance.
+
+
+\section{API guide}
+
+\subsection{Creating objects with the Java API}
+\label{api}
+
+Most of the objects created in IRIS are created with factories. There's a
+factory for every purpose. The most important ones are described below:
+\begin{description}
+\item[org.deri.iris.api.factory.IProgramFactory] creates programs with or
+without initial values.
+\item[org.deri.iris.api.factory.IBasicFactory] creates tuples, atoms,
+literals, rules and queries.
+\item[org.deri.iris.api.factory.ITermFactory] creates variables, strings and
+constructed terms.
+\item[org.deri.iris.api.factory.IConcreteFactory] creates all other sorts of
+terms (see section \ref{data} on page \pageref{data}).
+\item[org.deri.iris.api.factory.IBuiltinsFactory] creates built-in atoms provided
+by IRIS (see section \ref{builtins} on page \pageref{builtins}).
+\end{description}
+
+The \verb|org.deri.iris.factory.Factory| class holds \verb|static final|
+instances of all the factories, so they can be easily \\
+(e.g~\verb|import static org.deri.iris.factory.Factory.CONCRETE;|).
+
+For a more complete list of methods, input parameters and return values it is
+recommended to read the
+javadoc\footnote{http://www.iris-reasoner.org/snapshot/javadoc/}.
+
+\subsection{Creating objects using the parser}
+\label{parser}
+
+Instead of creating the java objects by hand, you could also use the \\
+\verb|org.deri.iris.compiler.Paser| to parse a datalog program. The grammar
+used by the parser is described in the grammar guide.
+
+\subsection{Evaluating a program}
+
+% will be written after the api change
+
+\pagebreak
+\appendix
+
+\section{Datalog Grammar Support}
+\label{grammar}
+Datalog is a database query language that is syntactically a subset of Prolog.
+Its origins date back to around 1978 when Herve Gallaire and Jack Minker
+organized a workshop on logic and databases.
+\footnote{http://en.wikipedia.org/wiki/Datalog}
+
+\subsection{Datalog}
+
+IRIS evaluates logic programs that contain rules and facts (the knowledge base) and
+queries to be evaluated against this knowledge base.
+
+All rules, facts and queries must be terminated by a `\verb|.|'.
+\begin{description}
+\item[rules]
+consist of a head and a body. Both, the head and the body, are lists of
+literals where the literals are separated by `\verb|,|' and the head and the body
+are separated by `\verb|:-|'. The `\verb|,|' means `and', e.g.\\
+~`\verb|ancestor(?X, ?Y) :- ancestor(?X, ?Z), ancestor(?Z, ?Y).|'
+\item[facts]
+are instances of predicates with constant terms, e.g.~`\verb|ancestor('john', 'odin').|'
+\item[queries]
+are literals prefixed with a `\verb|?-|'.
+\item[literals]
+ are positive or negative atoms `\verb|<atom>|' or `\verb|not <atom>|'.
+\item[atoms]
+ have the format `\verb|<predicate-symbol>(<terms>)|'. The terms must be
+separated by `\verb|,|', e.g.~`\verb|ancestor('john', 'garfield')|'.
+\item[terms]
+are either constants or variables.
+\item[variables]
+are simple strings prefixed with a `\verb|?|', e.g.~'\verb|?VAR|'.
+\end{description}
+
+\subsection{Data types}
+\label{grammar_datatypes}
+The data types that IRIS supports are described in table \ref{datatypes} on page
+\pageref{datatypes}.
+
+\begin{table}[hbp]
+\begin{tabular}{|l|l|}
+\hline
+\hline
+datatype & syntax \\
+\hline
+\hline
+string & \verb|'<string>'| \\
+& \verb|_string('<string>')| \\
+\hline
+decimal & \verb"'-'?<integer>.<fraction>" \\
+& \verb"_decimal('-'?<integer>.<fraction>)" \\
+\hline
+integer & \verb|'-'?<integer>| \\
+& \verb|_integer('-'?<integer>)| \\
+\hline
+float &  \verb|_float(<integer>.<fraction>)| \\
+\hline
+double &  \verb|_double(<integer>.<fraction>)| \\
+\hline
+iri &  \verb|_'<iri>'| \\
+&  \verb|_iri('<iri>')| \\
+\hline
+sqname &  \verb|<string>#<string>| \\
+&  \verb|_sqname('<string>#<string>')| \\
+\hline
+boolean & \verb|_boolean(<string>)| \\
+\hline
+duration & \verb|_duration(<year>, <month>, <day>, <hour>, <minute>, | \\
+& \hspace{1cm} \verb|<second>)| \\
+& \verb|_duration(<year>, <month>, <day>, <hour>, <minute>, | \\
+& \hspace{1cm} \verb|<second>, <millisec>)| \\
+\hline
+datetime & \verb|_datetime(<year>, <month>, <day>, <hour>, <minute>, | \\
+& \hspace{1cm} \verb|<second>)| \\
+& \verb|_datetime(<year>, <month>, <day>, <hour>, <minute>, | \\
+& \hspace{1cm} \verb|<second>, <tzHour>, <tzMinute>)| \\
+& \verb|_datetime(<year>, <month>, <day>, <hour>, <minute>, | \\
+& \hspace{1cm} \verb|<second>, <millisec>, <tzHour>, <tzMinute>)| \\
+\hline
+date & \verb|_date(<year>, <month>, <day>)| \\
+& \verb|_date(<year>, <month>, <day>, <tzHour>, <tzMinute>)| \\
+\hline
+time & \verb|_time(<hour>, <minute>, <second>)| \\
+& \verb|_time(<hour>, <minute>, <second>, | \\
+& \hspace{1cm} \verb|<tzHour>, <tzMinute>)| \\
+& \verb|_time(<hour>, <minute>, <second>, <millisec>, | \\
+& \hspace{1cm} \verb|<tzHour>, <tzMinute>)| \\
+\hline
+gyear & \verb|_gyear(<year>)| \\
+\hline
+gyearmonth & \verb|_gyearmonth(<year>, <month>)| \\
+\hline
+gmonth & \verb|_gmonth(<month>)| \\
+\hline
+gmonthday & \verb|_gmonthday(<month>, <day>)| \\
+\hline
+gday & \verb|_gday(<day>)| \\
+\hline
+hexbinary & \verb|_hexbinary(<hexbin>)| \\
+\hline
+base64binary & \verb|_base64binary(<base64binary>)| \\
+\hline
+\end{tabular}
+\caption{All supported datatypes}
+\label{datatypes}
+\end{table}
+
+\subsection{Built-in predicates}
+\label{grammar_builtins}
+
+A built-in can be written instead of a literal and IRIS will do its best to
+evaluate it. All supported built-in predicates are described in table \ref{builtins} at
+page \pageref{builtins}.
+
+\begin{table}[hbp]
+\begin{tabular}{|l|l|l|}
+\hline
+\hline
+name & syntax & supported operations \\
+\hline
+\hline
+add & \verb|?X + ?Y = ?Z| & numeric + numeric = numeric \\
+& \verb|ADD(?X, ?Y, ?Z)| & date + duration = date \\
+& & duration + date = date \\
+& & time + duration = time \\
+& & duration + time = time \\
+& & datetime + duration = datetime \\
+& & duration + datetime = datetime \\
+& & duration + duration = duration \\
+\hline
+subtract & \verb|?X - ?Y = ?Z| & numeric - numeric = numeric \\
+& \verb|SUBTRACT(?X, ?Y, ?Z)| & date - duration = date \\
+& & date - date = duration \\
+& & time - duration = time \\
+& & time - time = duration \\
+& & datetime - duration = datetime \\
+& & datetime - datetime = duration \\
+& & duration - duration = duration \\
+\hline
+multiply & \verb|?X * ?Y = ?Z| & numeric x numeric = numeric \\
+& \verb|MULTIPLY(?X, ?Y, ?Z)| & \\
+\hline
+divide & \verb|?X / ?Y = ?Z| & numeric / numeric = numeric \\
+& \verb|DIVIDE(?X, ?Y, ?Z)| & \\
+\hline
+equal & \verb|?X = ?Y| & any type = same type \\
+& \verb|EQUAL(?X, ?Y)| & numeric = numeric\\
+&  & any type = different type (always false)\\
+\hline
+not equal & \verb|?X != ?Y| & any type $ \ne $ same type \\
+& \verb|NOT_EQUAL(?X, ?Y)| & numeric $ \ne $ numeric\\
+&  & any type $ \ne $ different type (always true)\\
+\hline
+less & \verb|?X < ?Y| & any type $ < $ same type \\
+& \verb|LESS(?X, ?Y)| & numeric type $ < $ numeric type \\
+\hline
+less-equal & \verb|?X <= ?Y| & any type $ \le $ same type \\
+& \verb|LESS_EQUAL(?X, ?Y)| & numeric type $ \le $ numeric type \\
+\hline
+greater & \verb|?X > ?Y| & any type $>$ same type \\
+& \verb|GREATER(?X, ?Y)| & numeric type $>$ numeric type \\
+\hline
+greater-equal & \verb|?X >= ?Y| & any type $ \ge $ same type \\
+& \verb|GREATER_EQUAL(?X, ?Y)| & numeric type $ \ge $ numeric type \\
+\hline
+same type & \verb|SAME_TYPE(?X, ?Y)| & any type same\_type\_as any type \\
+\hline
+regular expression match & \verb|REGEX(?X, ?Y)| & string matches pattern (string term) \\
+& & any other type is false \\
+\hline
+\end{tabular}
+\caption{All supported binary and ternary built-in predicates}
+\label{builtins}
+\end{table}
+
+
+\begin{table}[hbp]
+\begin{tabular}{|l|l|l|}
+\hline
+\hline
+name & syntax & supported operations \\
+\hline
+\hline
+is base64binary & \verb|IS_BASE64BINARY(?X)| & true iff ?X is of type base64binary \\
+\hline
+is boolean & \verb|IS_BOOLEAN(?X)| & true iff ?X is of type boolean \\
+\hline
+is date & \verb|IS_DATE(?X)| & true iff ?X is of type date \\
+\hline
+is datetime & \verb|IS_DATETIME(?X)| & true iff ?X is of type datetime \\
+\hline
+is decimal & \verb|IS_DECIMAL(?X)| & true iff ?X is of type decimal \\
+\hline
+is double & \verb|IS_DOUBLE(?X)| & true iff ?X is of type decimal \\
+\hline
+is duration & \verb|IS_DURATION(?X)| & true iff ?X is of type duration \\
+\hline
+is float & \verb|IS_FLOAT(?X)| & true iff ?X is of type float \\
+\hline
+is gday & \verb|IS_GDAY(?X)| & true iff ?X is of type gday \\
+\hline
+is gmonth & \verb|IS_GMONTH(?X)| & true iff ?X is of type gmonth \\
+\hline
+is gmonthday & \verb|IS_GMONTHDAY(?X)| & true iff ?X is of type gmonthday \\
+\hline
+is gyear & \verb|IS_GYEAR(?X)| & true iff ?X is of type gyear \\
+\hline
+is gyearmonth & \verb|IS_GYEARMONTH(?X)| & true iff ?X is of type gyearmonth \\
+\hline
+is hexbinary & \verb|IS_HEXBINARY(?X)| & true iff ?X is of type hexbinary \\
+\hline
+is integer & \verb|IS_INTEGER(?X)| & true iff ?X is of type integer \\
+\hline
+is iri & \verb|IS_IRI(?X)| & true iff ?X is of type iri \\
+\hline
+is numeric & \verb|IS_NUMERIC(?X)| & true iff ?X is of any numeric type \\
+ &  & (integer, float, double, decimal) \\
+\hline
+is sqname & \verb|IS_SQNAME(?X)| & true iff ?X is of type sqname \\
+\hline
+is string & \verb|IS_STRING(?X)| & true iff ?X is of type string \\
+\hline
+is time & \verb|IS_TIME(?X)| & true iff ?X is of type time \\
+\hline
+\end{tabular}
+\caption{All supported unary built-in predicates}
+\label{builtins}
+\end{table}
+
+Custom built-ins can also be registered, e.g. if a built-in with the
+predicate symbol `\verb|ATOI|' is registered then the syntax will be
+`\verb|ATOI(?MY_STRING, ?MY_INT)|'.
+
+\end{document}
