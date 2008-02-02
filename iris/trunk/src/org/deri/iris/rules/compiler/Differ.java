@@ -51,9 +51,9 @@ public class Differ extends RuleElement
 		
 		mConfiguration = configuration;
 		
-		mThisLiteralsRelation = thisLiteralsRelation;
+//		mThisLiteralsRelation = thisLiteralsRelation;
 		
-		mView = new View( mThisLiteralsRelation, viewCriteria, mConfiguration.relationFactory );
+		mView = new View( thisLiteralsRelation, viewCriteria, mConfiguration.relationFactory );
 		
 		// Find the indices of the variables used in the natural join
 		List<Integer> join1 = new ArrayList<Integer>();
@@ -113,7 +113,7 @@ public class Differ extends RuleElement
 	private final View mView;
 
 	/** The relation for this literal. */
-	private final IRelation mThisLiteralsRelation;
+//	private final IRelation mThisLiteralsRelation;
 	
 	/** The join indices from the previous rule element's output tuple. */
 	private final int[] mJoinIndices1;

@@ -63,8 +63,6 @@ class Joiner extends RuleElement
 		mRelationFactory = relationFactory;
 
 		mPredicate = predicate;
-		mThisLiteralsRelation = thisLiteralsRelation;
-
 		mViewCriteria = viewCriteria;
 		
 		mView = new View( thisLiteralsRelation, viewCriteria, mRelationFactory );
@@ -160,7 +158,6 @@ class Joiner extends RuleElement
 					IRelationFactory relationFactory )
 	{
 		mPredicate = predicate;
-		mThisLiteralsRelation = thisLiteralsRelation;
 		
 		mViewCriteria = viewCriteria;
 		mViewVariables = viewVariables;
@@ -168,7 +165,7 @@ class Joiner extends RuleElement
 		mIndexFactory = indexFactory;
 		mRelationFactory = relationFactory;
 		
-		mView = new View( mThisLiteralsRelation, viewCriteria, viewVariables, simple, mRelationFactory );
+		mView = new View( thisLiteralsRelation, viewCriteria, viewVariables, simple, mRelationFactory );
 
 		mJoinIndicesInput = joinIndicesInput;
 		mJoinIndicesThisLiteral = joinIndicesThisLiteral;
@@ -258,9 +255,6 @@ class Joiner extends RuleElement
 
 	/** The predicate for this literal. */
 	private final IPredicate mPredicate;
-	
-	/** The relation for this literal. */
-	private final IRelation mThisLiteralsRelation;
 	
 	/** The view on this literal's relation. */
 	private final View mView;
