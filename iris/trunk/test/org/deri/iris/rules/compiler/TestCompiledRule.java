@@ -143,7 +143,7 @@ public class TestCompiledRule extends TestCase
 		IRelation S = facts.get( BASIC.createPredicate( "s", 2 ) );
 		
 		int v = 0;
-		final int count = 50000;
+		final int count = 20000;
 		for( int i = 0; i < count; ++i, ++v )
 		{
 			Q.add( Helper.createTuple( v, v+1 ) );
