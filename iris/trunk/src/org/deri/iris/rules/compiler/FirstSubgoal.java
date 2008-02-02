@@ -55,7 +55,6 @@ public class FirstSubgoal extends RuleElement
 		mView = new View( relation, viewCriteria, mConfiguration.relationFactory );
 
 		mPredicate = predicate;
-		mRelation = mView.getView();
 		mViewCriteria = viewCriteria;
 		mOutputVariables = mView.variables();
 	}
@@ -82,7 +81,6 @@ public class FirstSubgoal extends RuleElement
 		mView = new View( relation, viewCriteria, variables, simple, mConfiguration.relationFactory );
 
 		mPredicate = predicate;
-		mRelation = mView.getView();
 		mViewCriteria = viewCriteria;
 		mOutputVariables = mView.variables();
 	}
@@ -92,7 +90,7 @@ public class FirstSubgoal extends RuleElement
 	{
 		assert previous == null;
 		
-		return mRelation;
+		return mView.getView();
 	}
 	
 	@Override
@@ -108,9 +106,6 @@ public class FirstSubgoal extends RuleElement
 
 	/** Predicate of the literal. */
 	private final IPredicate mPredicate;
-	
-	/** Relation for this literal. */
-	private IRelation mRelation;
 	
 	/** The tuple from the sub-goal in the rule. */
 	private final ITuple mViewCriteria;
