@@ -58,7 +58,7 @@ import org.deri.iris.storage.IRelation;
  */
 public class DemoW
 {
-	public static final int FONT_SIZE = 16;
+	public static final int FONT_SIZE = 12;
 	public static String NEW_LINE = "\r\n";
 	public static final boolean SHOW_VARIABLE_BINDINGS = true;
 	public static final boolean SHOW_QUERY_TIME = true;
@@ -169,7 +169,7 @@ public class DemoW
 			JScrollPane programScroller = new JScrollPane( mProgram );
 			JScrollPane outputScroller = new JScrollPane( mOutput );
 			
-			Font f = new Font( "courier", Font.BOLD, FONT_SIZE );
+			Font f = new Font( "courier", Font.PLAIN, FONT_SIZE );
 			mProgram.setFont( f );
 			mOutput.setFont( f );
 
