@@ -80,4 +80,88 @@ public class FunctionSymbolsTest extends TestCase
 
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}	
+
+	public void testSubstitution() throws Exception
+	{
+		String program =
+			"p( 1, 2 )." +
+			
+			"q( 'a', ?x, f(?x), f(g(?x)), h(j(4,k(?x,r(?y),5))) ) :- p(?x,?y)." +
+			
+			"?- q(?x, ?y, ?z, ?v, ?w).";
+		
+		String expectedResults = 
+			"dummy( 'a', 1, f(1), f(g(1)), h(j(4,k(1,r(2),5)) )).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testSuccession10() throws Exception
+	{
+		String program =
+			"p(1,1)." +
+			"p( s(?x),?n1 ) :- p( ?x, ?n ), ?n + 1 = ?n1, ?n1 <= 10." +
+			"?- p( ?x,?n).";
+		
+		String expectedResults = 
+			"dummy(1, 1)." +
+			"dummy(s(1), 2)." +
+			"dummy(s(s(1)), 3)." +
+			"dummy(s(s(s(1))), 4)." +
+			"dummy(s(s(s(s(1)))), 5)." +
+			"dummy(s(s(s(s(s(1))))), 6)." +
+			"dummy(s(s(s(s(s(s(1)))))), 7)." +
+			"dummy(s(s(s(s(s(s(s(1))))))), 8)." +
+			"dummy(s(s(s(s(s(s(s(s(1)))))))), 9)." +
+			"dummy(s(s(s(s(s(s(s(s(s(1))))))))), 10).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testRecession10() throws Exception
+	{
+		String program =
+			"p(s(s(s(s(s(s(s(s(s(1))))))))), 10)." +
+			"p( ?x,?n1 ) :- p( s(?x), ?n ), ?n - 1 = ?n1." +
+			"?- p( ?x,?n).";
+		
+		String expectedResults = 
+			"dummy(s(s(s(s(s(s(s(s(s(1))))))))), 10)." +
+			"dummy(s(s(s(s(s(s(s(s(1)))))))), 9)." +
+			"dummy(s(s(s(s(s(s(s(1))))))), 8)." +
+			"dummy(s(s(s(s(s(s(1)))))), 7)." +
+			"dummy(s(s(s(s(s(1))))), 6)." +
+			"dummy(s(s(s(s(1)))), 5)." +
+			"dummy(s(s(s(1))), 4)." +
+			"dummy(s(s(1)), 3)." +
+			"dummy(s(1), 2)." +
+			"dummy(1, 1).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	/**
+	 * Uncomment the 'OR' parts after support for unsafe rules is added.
+	 * @throws Exception
+	 */
+	public void testLogicalExpressionsAsFunctionSymbol() throws Exception
+	{
+		String kb =
+			"and_(?x,?y) :- true(?x), true(?y)." +
+//			"or_(?x,?y) :- true(?x)." +
+//			"or_(?x,?y) :- true(?y)." +
+
+			"true('a')." +
+			"true('b').";
+		
+		Helper.evaluateWithAllStrategies( kb + "?- and_('a', 'b').", "dummy()." );	// TRUE
+		Helper.evaluateWithAllStrategies( kb + "?- and_('a', 'c').", "" );	// FALSE
+		Helper.evaluateWithAllStrategies( kb + "?- and_('d', 'b').", "" );
+		Helper.evaluateWithAllStrategies( kb + "?- and_('e', 'f').", "" );
+		
+//		Helper.evaluateWithAllStrategies( kb + "?- or_('a', 'b').", "dummy()." );
+//		Helper.evaluateWithAllStrategies( kb + "?- or_('a', 'c').", "dummy()." );
+//		Helper.evaluateWithAllStrategies( kb + "?- or_('d', 'b').", "dummy()." );
+//		Helper.evaluateWithAllStrategies( kb + "?- or_('e', 'f').", "" );
+	}	
 }
