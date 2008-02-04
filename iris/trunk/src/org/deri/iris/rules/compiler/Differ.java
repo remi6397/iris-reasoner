@@ -45,8 +45,7 @@ public class Differ extends RuleElement
 	 */
 	public Differ( List<IVariable> inputVariables, IRelation thisLiteralsRelation, ITuple viewCriteria, Configuration configuration )
 	{
-		// If there are no input variables (first sub-goal), then this literal must be grounded.
-		assert inputVariables != null || (inputVariables == null && viewCriteria.isGround());
+		// If there are no input variables then this is the first sub-goal.
 		assert thisLiteralsRelation != null;
 		assert viewCriteria != null;
 		assert configuration != null;
@@ -89,7 +88,7 @@ public class Differ extends RuleElement
 		// Create the index for the second relation
 		mIndex2 = mConfiguration.indexFactory.createIndex( mView.getView(), mJoinIndices2 );
 		
-		mOutputVariables = inputVariables;
+		mOutputVariables = inputVariables == null ? new ArrayList<IVariable>() : inputVariables;
 	}
 
 	@Override
