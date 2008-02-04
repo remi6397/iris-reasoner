@@ -195,6 +195,18 @@ public class View
 		}
 	}
 	
+	@Override
+    public String toString()
+    {
+		update();
+		
+		StringBuilder result = new StringBuilder();
+
+		result.append( "View [" ).append( mViewCriteria ).append( "] => " ).append( mViewTuples );
+
+	    return result.toString();
+    }
+
 	/** The filtered view of the relation. */
 	private final IRelation mViewTuples;
 	

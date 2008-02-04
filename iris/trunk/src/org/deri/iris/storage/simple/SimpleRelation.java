@@ -76,6 +76,12 @@ public class SimpleRelation implements IRelation
 		return mTuples.size();
 	}
 
+	@Override
+    public String toString()
+    {
+		return mTuples.toString();
+    }
+
 	/** The array list (or unique list) of tuples. */
 	private final List<ITuple> mTuples;
 }
