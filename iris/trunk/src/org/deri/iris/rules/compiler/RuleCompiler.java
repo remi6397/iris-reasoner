@@ -133,26 +133,27 @@ public class RuleCompiler
 						IRelation relation = mFacts.get( predicate );
 						ITuple viewCriteria = atom.getTuple();
 						
-						if( previousVariables == null )
+						if( positive )
 						{
-							if( ! positive )
-								throw new EvaluationException( "First literal can not be negated." );
-							
-							// First sub-goal
-							element = new FirstSubgoal( predicate, relation, viewCriteria, mConfiguration );
-						}
-						else
-						{
-							if( positive )
+							if( previousVariables == null )
+							{
+								// First sub-goal
+								element = new FirstSubgoal( predicate, relation, viewCriteria, mConfiguration );
+							}
+							else
 							{
 								element = new Joiner( previousVariables, predicate, relation, viewCriteria,
 												mConfiguration.indexFactory,
 												mConfiguration.relationFactory );
 							}
-							else
-							{
-								element = new Differ( previousVariables, relation, viewCriteria, mConfiguration );
-							}
+						}
+						else
+						{
+							// This is allowed to be the first literal for rules such as:
+							//     p('a') :- q('b')
+							// or even:
+							//     p('a') :- q(?X)
+							element = new Differ( previousVariables, relation, viewCriteria, mConfiguration );
 						}
 					}
 					previousVariables = element.getOutputVariables();

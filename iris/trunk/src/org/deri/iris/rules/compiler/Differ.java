@@ -28,6 +28,7 @@ import java.util.List;
 import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IIndex;
 import org.deri.iris.storage.IRelation;
 
@@ -44,14 +45,13 @@ public class Differ extends RuleElement
 	 */
 	public Differ( List<IVariable> inputVariables, IRelation thisLiteralsRelation, ITuple viewCriteria, Configuration configuration )
 	{
-		assert inputVariables != null;
+		// If there are no input variables (first sub-goal), then this literal must be grounded.
+		assert inputVariables != null || (inputVariables == null && viewCriteria.isGround());
 		assert thisLiteralsRelation != null;
 		assert viewCriteria != null;
 		assert configuration != null;
 		
 		mConfiguration = configuration;
-		
-//		mThisLiteralsRelation = thisLiteralsRelation;
 		
 		mView = new View( thisLiteralsRelation, viewCriteria, mConfiguration.relationFactory );
 		
@@ -61,21 +61,24 @@ public class Differ extends RuleElement
 		
 		List<IVariable> vars2 = mView.variables();
 		
-		for( int i1 = 0; i1 < inputVariables.size(); ++i1 )
+		if( inputVariables != null )
 		{
-			IVariable var1 = inputVariables.get( i1 );
-			
-			for( int i2 = 0; i2 < vars2.size(); ++i2 )
+			for( int i1 = 0; i1 < inputVariables.size(); ++i1 )
 			{
-				IVariable var2 = vars2.get( i2 );
+				IVariable var1 = inputVariables.get( i1 );
 				
-				if( var1.equals( var2 ) )
+				for( int i2 = 0; i2 < vars2.size(); ++i2 )
 				{
-					join1.add( i1 );
-					join2.add( i2 );
+					IVariable var2 = vars2.get( i2 );
 					
-					// NB Variables in views occur only once
-					break;
+					if( var1.equals( var2 ) )
+					{
+						join1.add( i1 );
+						join2.add( i2 );
+						
+						// NB Variables in views occur only once
+						break;
+					}
 				}
 			}
 		}
@@ -92,18 +95,30 @@ public class Differ extends RuleElement
 	@Override
     public IRelation process( IRelation previous )
     {
-		assert previous != null;
-		
 		IRelation result = mConfiguration.relationFactory.createRelation();
 
-		for( int f = 0; f < previous.size(); ++f )
+		if( previous == null  )
 		{
-			ITuple first = previous.get( f );
-			
-			List<ITuple> seconds = mIndex2.get( Utils.makeKey( first, mJoinIndices1 ) );
-
-			if( seconds == null || seconds.size() == 0 )
-				result.add( first );
+			// In this case (where the negated literal is first) the negated literal
+			// must be grounded, so there is nothing to index,
+			// the view either contains the expected tuple or not.
+			if( mView.getView().size() == 0 )
+			{
+				// No it doesn't, so the negated sub-goal is true.
+				result.add( Factory.BASIC.createTuple() );
+			}
+		}
+		else
+		{
+			for( int f = 0; f < previous.size(); ++f )
+			{
+				ITuple first = previous.get( f );
+				
+				List<ITuple> seconds = mIndex2.get( Utils.makeKey( first, mJoinIndices1 ) );
+	
+				if( seconds == null || seconds.size() == 0 )
+					result.add( first );
+			}
 		}
 		
 		return result;
@@ -112,9 +127,6 @@ public class Differ extends RuleElement
 	/** The view on the relation (as seen with the view criteria). */
 	private final View mView;
 
-	/** The relation for this literal. */
-//	private final IRelation mThisLiteralsRelation;
-	
 	/** The join indices from the previous rule element's output tuple. */
 	private final int[] mJoinIndices1;
 

@@ -24,6 +24,7 @@
 package org.deri.iris.functional;
 
 import org.deri.iris.ProgramNotStratifiedException;
+import org.deri.iris.RuleUnsafeException;
 import junit.framework.TestCase;
 
 public class NegationTest extends TestCase
@@ -602,5 +603,65 @@ public class NegationTest extends TestCase
 			"p(1, 2).";
 
 		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	public void testRuleWithOnlyNegatedGroundedLiteral_FactExists() throws Exception
+	{
+		String program =
+			"p('b') :- not r('a')." +
+			"r('a')." +
+			"?- p(?x).";		
+
+		String expectedResults =
+			"";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testRuleWithOnlyNegatedGroundedLiteral_FactDoesNotExists() throws Exception
+	{
+		String program =
+			"p('b') :- not r('a')." +
+			"r('b')." +
+			"?- p(?x).";		
+
+		String expectedResults =
+			"p('b').";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testRuleWithOnlyNegatedNonGroundLiteral_FactExists() throws Exception
+	{
+		String program =
+			"p('b') :- not r(?X)." +
+			"r('a')." +
+			"?- p(?x).";		
+
+		String expectedResults =
+			"";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testRuleWithOnlyNegatedNonGroundLiteral_FactsDoesNotExist() throws Exception
+	{
+		String program =
+			"p('b') :- not r(?X)." +
+			"?- p(?x).";		
+
+		String expectedResults =
+			"p('b').";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	public void testUnsafeRuleWithOnlyNegatedNonGroundLiteral() throws Exception
+	{
+		String program =
+			"p(?Y) :- not r(?X)." +
+			"?- p(?x).";		
+
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
 	}
 }
