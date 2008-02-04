@@ -24,6 +24,7 @@
 package org.deri.iris.storage.simple;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +97,17 @@ public class SimpleIndex implements IIndex
 		return key;
 	}
 	
+	@Override
+    public String toString()
+    {
+		StringBuilder result = new StringBuilder();
+		
+		result.append( "Indices: " );
+		result.append( Arrays.toString( mIndices ) );
+
+	    return result.toString();
+    }
+
 	/** The index of the last last known tuple from the relation. */ 
 	private int mLastIndexOfView = 0;
 	

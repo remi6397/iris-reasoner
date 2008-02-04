@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.storage.IRelationFactory;
 import org.deri.iris.storage.simple.SimpleRelationFactory;
@@ -78,6 +79,32 @@ public class Facts implements IFacts
 		return mPredicateRelationMap.keySet();
 	}
 	
+	
+	
+	@Override
+    public String toString()
+    {
+		StringBuilder result = new StringBuilder();
+		
+		for( Map.Entry<IPredicate, IRelation> entry : mPredicateRelationMap.entrySet() )
+		{
+			IRelation relation = entry.getValue();
+			IPredicate predicate = entry.getKey();
+			
+			for( int t = 0; t < relation.size(); ++t )
+			{
+				ITuple tuple = relation.get( t );
+				result.append( predicate.getPredicateSymbol() );
+				result.append( tuple );
+				result.append( '.' );
+			}
+		}
+
+	    return result.toString();
+    }
+
+
+
 	/** The map storing the predicate-relation relationship. */
 	private final Map<IPredicate, IRelation> mPredicateRelationMap = new HashMap<IPredicate, IRelation>();
 	

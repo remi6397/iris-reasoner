@@ -178,6 +178,17 @@ public class RuleBase
 		return mRuleStrata.get( stratum );
 	}
 
+	@Override
+    public String toString()
+    {
+		StringBuilder result = new StringBuilder();
+		
+		for( IRule rule : mOriginalRules )
+			result.append( rule.toString() );
+	    
+		return result.toString();
+    }
+
 	/**
 	 * Check the given rules for rule-safety (unbound variables).
 	 * In the future, this method will be allowed to modify the input rules.
