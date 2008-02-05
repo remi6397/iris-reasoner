@@ -529,7 +529,7 @@ public class EvaluationTest extends TestCase
 	 * We do this here for a 'chain' of 676 rules.
 	 * @throws Exception
 	 */
-	public void XXXX__testLongChainOfRules() throws Exception
+	public void testLongChainOfRules() throws Exception
 	{
 		StringBuilder buffer = new StringBuilder();
 		
@@ -959,6 +959,39 @@ public class EvaluationTest extends TestCase
     	
     	String expectedResults =
     		"p('a').";
+    	
+    	Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
+	/**
+	 * The point of this test is that the rule body can legally be
+	 * evaluated in any order. If the negated subgoal is first then
+	 * the whole rule body will fail if *any* facts for q exist.
+	 * If the positive subgoal is evaluated first, then only those
+	 * facts in r() that also appear in q() are removed.
+	 * i.e. The rule produces different results.
+	 * However, it should be the case that positive literals are
+	 * evaluated first when there are negative literals that share
+	 * some of the same variables.
+	 * If rule optimisation is turned off (see ReOrderLiteralsOptimiser)
+	 * then the rule compiler will just try to compile the rule in the
+	 * order given. This test is to catch situations when this re-ordering
+	 * has not occurred for some reason.
+	 * @throws Exception
+	 */
+	public void testSubgoalOrdering() throws Exception
+	{
+    	String program =
+    		"p(?x, ?y) :- not q(?x, ?y), r(?x, ?y)." +
+
+    		"r(1, 2)." +
+    		"r(3, 4)." +
+    		"q(1, 2)." +
+    		
+    		"?-p(?x, ?y).";
+    	
+    	String expectedResults =
+    		"p(3, 4).";	// Will be empty if 'not q(?x, ?y)' is evaluated first.
     	
     	Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
