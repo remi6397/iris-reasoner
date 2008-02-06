@@ -34,7 +34,7 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.storage.IRelation;
@@ -121,9 +121,9 @@ public class RuleCompiler
 				
 				try
 				{
-					if( atom instanceof IBuiltInAtom)
+					if( atom instanceof IBuiltinAtom)
 					{
-						IBuiltInAtom builtinAtom = (IBuiltInAtom) atom;
+						IBuiltinAtom builtinAtom = (IBuiltinAtom) atom;
 						
 						element = new Builtin( previousVariables, builtinAtom, positive, mConfiguration );
 					}

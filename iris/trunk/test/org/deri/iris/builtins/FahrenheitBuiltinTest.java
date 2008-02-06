@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.compiler.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
@@ -72,7 +72,7 @@ public class FahrenheitBuiltinTest extends TestCase {
 		Parser parser = new Parser( reg );
 		parser.parse("fahrenheit(?X) :- ftoc(?X, 10).");
 		final ILiteral b = parser.getRules().iterator().next().getBody().get(0);
-		assertTrue("The atom must be a IBuiltInAtom", b.getAtom() instanceof IBuiltInAtom);
+		assertTrue("The atom must be a IBuiltInAtom", b.getAtom() instanceof IBuiltinAtom);
 	}
 
 	private final ITerm t1 = Factory.TERM.createVariable( "a" );

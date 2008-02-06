@@ -30,7 +30,7 @@ import java.util.Arrays;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.factory.Factory;
 
@@ -45,7 +45,7 @@ import org.deri.iris.factory.Factory;
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  * @version $Revision: 1.11 $
  */
-public abstract class AbstractBuiltin implements IBuiltInAtom {
+public abstract class AbstractBuiltin implements IBuiltinAtom {
 
 	/** Holds the inner atom. */
 	private IAtom a;

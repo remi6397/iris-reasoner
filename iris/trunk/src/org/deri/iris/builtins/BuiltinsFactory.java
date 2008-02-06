@@ -25,8 +25,8 @@
  */
 package org.deri.iris.builtins;
 
-import org.deri.iris.api.builtins.IBuiltInAtom;
-import org.deri.iris.api.factory.IBuiltInsFactory;
+import org.deri.iris.api.builtins.IBuiltinAtom;
+import org.deri.iris.api.factory.IBuiltinsFactory;
 import org.deri.iris.api.terms.ITerm;
 
 /**
@@ -40,9 +40,9 @@ import org.deri.iris.api.terms.ITerm;
  * @author Richard Pöttler, richard dot poettler at deri dot org
  * @version $Revision: 1.4 $
  */
-public class BuiltinsFactory implements IBuiltInsFactory {
+public class BuiltinsFactory implements IBuiltinsFactory {
 
-	private static final IBuiltInsFactory INSTANCE = new BuiltinsFactory();
+	private static final IBuiltinsFactory INSTANCE = new BuiltinsFactory();
 
 	private BuiltinsFactory() {
 		// this is a singelton
@@ -53,60 +53,60 @@ public class BuiltinsFactory implements IBuiltInsFactory {
 	 * 
 	 * @return a instane of this factory
 	 */
-	public static IBuiltInsFactory getInstance() {
+	public static IBuiltinsFactory getInstance() {
 		return INSTANCE;
 	}
 
-	public IBuiltInAtom createAddBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
+	public IBuiltinAtom createAddBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
 		return new AddBuiltin(t0, t1, t2);
 	}
 
-	public IBuiltInAtom createSubtractBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
+	public IBuiltinAtom createSubtractBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
 		return new SubtractBuiltin(t0, t1, t2);
 	}
 
-	public IBuiltInAtom createMultiplyBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
+	public IBuiltinAtom createMultiplyBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
 		return new MultiplyBuiltin(t0, t1, t2);
 	}
 
-	public IBuiltInAtom createDivideBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
+	public IBuiltinAtom createDivideBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
 		return new DivideBuiltin(t0, t1, t2);
 	}
 
-	public IBuiltInAtom createModulusBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
+	public IBuiltinAtom createModulusBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
 		return new ModulusBuiltin(t0, t1, t2);
 	}
 
-	public IBuiltInAtom createEqual(ITerm t0, ITerm t1) {
+	public IBuiltinAtom createEqual(ITerm t0, ITerm t1) {
 		return new EqualBuiltin(t0, t1);
 	}
 
-	public IBuiltInAtom createGreater(ITerm t0, ITerm t1) {
+	public IBuiltinAtom createGreater(ITerm t0, ITerm t1) {
 		return new GreaterBuiltin(t0, t1);
 	}
 
-	public IBuiltInAtom createGreaterEqual(ITerm t0, ITerm t1) {
+	public IBuiltinAtom createGreaterEqual(ITerm t0, ITerm t1) {
 		return new GreaterEqualBuiltin(t0, t1);
 	}
 
-	public IBuiltInAtom createLess(ITerm t0, ITerm t1) {
+	public IBuiltinAtom createLess(ITerm t0, ITerm t1) {
 		return new LessBuiltin(t0, t1);
 	}
 
-	public IBuiltInAtom createLessEqual(ITerm t0, ITerm t1) {
+	public IBuiltinAtom createLessEqual(ITerm t0, ITerm t1) {
 		return new LessEqualBuiltin(t0, t1);
 	}
 
-	public IBuiltInAtom createUnequal(ITerm t0, ITerm t1) {
+	public IBuiltinAtom createUnequal(ITerm t0, ITerm t1) {
 		return new UnEqualBuiltin(t0, t1);
 	}
 	
-	public IBuiltInAtom createExactEqual(final ITerm t0, final ITerm t1)
+	public IBuiltinAtom createExactEqual(final ITerm t0, final ITerm t1)
 	{
 		return new ExactEqualBuiltin(t0, t1);
 	}
 
-	public IBuiltInAtom createNotExactEqual(final ITerm t0, final ITerm t1)
+	public IBuiltinAtom createNotExactEqual(final ITerm t0, final ITerm t1)
 	{
 		return new NotExactEqualBuiltin(t0, t1);
 	}

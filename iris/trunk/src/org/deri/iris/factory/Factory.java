@@ -26,7 +26,7 @@
 package org.deri.iris.factory;
 
 import org.deri.iris.api.factory.IBasicFactory;
-import org.deri.iris.api.factory.IBuiltInsFactory;
+import org.deri.iris.api.factory.IBuiltinsFactory;
 import org.deri.iris.api.factory.IConcreteFactory;
 import org.deri.iris.api.factory.IGraphFactory;
 import org.deri.iris.api.factory.ITermFactory;
@@ -50,6 +50,6 @@ public class Factory {
 
 	public static final IGraphFactory GRAPH = GraphFactory.getInstance();
 
-	public static final IBuiltInsFactory BUILTIN = BuiltinsFactory
+	public static final IBuiltinsFactory BUILTIN = BuiltinsFactory
 			.getInstance();
 }

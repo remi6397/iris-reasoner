@@ -27,7 +27,7 @@ package org.deri.iris.compiler;
 import java.util.HashMap;
 import java.util.Map;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.factory.Factory;
 
@@ -122,7 +122,7 @@ public final class BuiltinRegister {
 	 * @param builtin an instance of the built-in to register
 	 * @throws IllegalArgumentException if the class is <code>null</code>
 	 */
-	public void registerBuiltin( IBuiltInAtom builtin ) {
+	public void registerBuiltin( IBuiltinAtom builtin ) {
 		if( builtin == null )
 			throw new IllegalArgumentException( "The builtin atom must not be null" );
 
@@ -137,7 +137,7 @@ public final class BuiltinRegister {
 	 * @param builtin an instance of the built-in to de-register
 	 * @throws IllegalArgumentException if the class is <code>null</code>
 	 */
-	public void unregisterBuiltin(IBuiltInAtom builtin) {
+	public void unregisterBuiltin(IBuiltinAtom builtin) {
 		if( builtin == null )
 			throw new IllegalArgumentException( "The builtin atom must not be null" );
 		

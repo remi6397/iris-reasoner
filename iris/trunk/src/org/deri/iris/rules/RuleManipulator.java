@@ -33,7 +33,7 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
@@ -331,8 +331,8 @@ public class RuleManipulator
 	
 	private IAtom replace( IAtom atom, ITerm remove, ITerm replaceWith )
 	{
-		if( atom instanceof IBuiltInAtom )
-			return replace( (IBuiltInAtom) atom, remove, replaceWith );
+		if( atom instanceof IBuiltinAtom )
+			return replace( (IBuiltinAtom) atom, remove, replaceWith );
 		
 		IPredicate predicate = atom.getPredicate();
 		
@@ -390,13 +390,13 @@ public class RuleManipulator
 	 * @param replaceWith The term to replace with.
 	 * @return The new atom.
 	 */
-	private IAtom replace( IBuiltInAtom atom, ITerm remove, ITerm replaceWith )
+	private IAtom replace( IBuiltinAtom atom, ITerm remove, ITerm replaceWith )
 	{
 		ITerm[] newTerms = replaceTerms( atom.getTuple(), remove, replaceWith );
 
 		try
 		{
-			Constructor<IBuiltInAtom> constructor = (Constructor<IBuiltInAtom>) atom.getClass().getConstructor( newTerms.getClass() );
+			Constructor<IBuiltinAtom> constructor = (Constructor<IBuiltinAtom>) atom.getClass().getConstructor( newTerms.getClass() );
 			return constructor.newInstance( (Object) newTerms );
 		}
 		catch( Exception e )
