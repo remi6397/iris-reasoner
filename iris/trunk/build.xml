@@ -31,7 +31,6 @@
 			destdir="${dir.classes}" deprecation="on">
 			<compilerarg value="-Xlint:unchecked" compiler="modern" />
 			<compilerarg value="-Xlint:unchecked" compiler="classic" />
-			<exclude name="**/qsq/**" />
 			<include name="**/*.java" />
 		</javac>
 	</target>
@@ -149,7 +148,6 @@
 					<include name="**/*Test.java" />
 					<exclude name="**/Abstract*Test.java" />
 					<exclude name="**/All*Test*.java" />
-					<exclude name="**/qsq/**" />
 				</fileset>
 			</batchtest>
 		</junit>
@@ -162,17 +160,7 @@
 		</junitreport>
 	</target>
 
-	<target name="copyconfig" description="copies the config files" depends="init,prepareclasses">
-		<copy todir="${dir.classes}" flatten="true">
-			<fileset dir="${basedir}">
-				<include name="**/*.load" />
-				<include name="**/*.properties" />
-				<exclude name="build.properties" />
-			</fileset>
-		</copy>
-	</target>
-
-	<target name="jar" description="creates the jar file" depends="init,compile,copyconfig,preparejar">
+	<target name="jar" description="creates the jar file" depends="init,compile,preparejar">
 		<jar basedir="${dir.classes}" destfile="${file.jar.main}" index="true" />
 	</target>
 
@@ -196,7 +184,6 @@
 			<zipfileset dir="${dir.jar}">
 				<include name="**/*.jar" />
 			</zipfileset>
-			<zipfileset dir="${dir.lib}/ext/log4j" prefix="lib/log4j" />
 			<zipfileset dir="${dir.lib}/ext/jgrapht" prefix="lib/jgrapht" />
 			
 			<zipfileset dir=".">
@@ -220,7 +207,6 @@
 			<tarfileset dir="${dir.jar}">
 				<include name="**/*.jar" />
 			</tarfileset>
-			<tarfileset dir="${dir.lib}/ext/log4j" prefix="lib/log4j" />
 			<tarfileset dir="${dir.lib}/ext/jgrapht" prefix="lib/jgrapht" />
 			<tarfileset dir="${dir.javadoc}" prefix="doc/javadoc" />
 			<tarfileset dir="doc" prefix="doc">

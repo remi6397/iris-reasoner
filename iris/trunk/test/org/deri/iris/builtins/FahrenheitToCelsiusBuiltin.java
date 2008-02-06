@@ -31,14 +31,8 @@ import static org.deri.iris.builtins.BuiltinHelper.multiply;
 import static org.deri.iris.builtins.BuiltinHelper.subtract;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
-
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.IVariable;
 
 /**
  * <p>
@@ -83,7 +77,7 @@ public class FahrenheitToCelsiusBuiltin extends ArithmeticBuiltin {
 			return divide(multiply(subtract(terms[ 0 ], t32), t5), t9);
     }
 
-	public static IPredicate getBuiltinPredicate() {
+	public IPredicate getBuiltinPredicate() {
 		return PREDICATE;
 	}
 }

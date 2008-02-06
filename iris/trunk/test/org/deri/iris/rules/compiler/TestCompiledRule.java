@@ -32,16 +32,15 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.facts.Facts;
 import org.deri.iris.facts.IFacts;
-import org.deri.iris.rules.compiler.ICompiledRule;
-import org.deri.iris.rules.compiler.RuleCompiler;
 import org.deri.iris.storage.IRelation;
+import org.deri.iris.storage.simple.SimpleRelationFactory;
 
 
 public class TestCompiledRule extends TestCase
 {
 	public void testEvaluate() throws Exception
 	{
-		IFacts facts = new Facts();
+		IFacts facts = new Facts( new SimpleRelationFactory() );
 
 		IRelation Q = facts.get( BASIC.createPredicate( "q", 2 ) );
 		// q( 1, f(2) )
@@ -93,7 +92,7 @@ public class TestCompiledRule extends TestCase
 	
 	public void testLargeDataSetWithFunctionSymbols() throws Exception
 	{
-		IFacts facts = new Facts();
+		IFacts facts = new Facts( new SimpleRelationFactory() );
 
 		IRelation Q = facts.get( BASIC.createPredicate( "q", 2 ) );
 		IRelation R = facts.get( BASIC.createPredicate( "r", 2 ) );
@@ -136,7 +135,7 @@ public class TestCompiledRule extends TestCase
 
 	public void testLargeDataSetWithoutFunctionSymbols() throws Exception
 	{
-		IFacts facts = new Facts();
+		IFacts facts = new Facts( new SimpleRelationFactory() );
 
 		IRelation Q = facts.get( BASIC.createPredicate( "q", 2 ) );
 		IRelation R = facts.get( BASIC.createPredicate( "r", 2 ) );

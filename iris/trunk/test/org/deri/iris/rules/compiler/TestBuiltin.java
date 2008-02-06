@@ -29,11 +29,7 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.AddBuiltin;
-import org.deri.iris.rules.compiler.Builtin;
-import org.deri.iris.rules.compiler.View;
 import org.deri.iris.storage.IRelation;
-import org.deri.iris.storage.simple.SimpleRelation;
-import org.deri.iris.storage.simple.SimpleRelationFactory;
 
 public class TestBuiltin extends TestCase
 {

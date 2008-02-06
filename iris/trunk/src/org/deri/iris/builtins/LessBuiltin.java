@@ -48,11 +48,6 @@ public class LessBuiltin extends BooleanBuiltin
 		return BuiltinHelper.less( terms[ 0 ], terms[ 1 ] );
 	}
 
-	public static IPredicate getBuiltinPredicate()
-	{
-		return PREDICATE;
-	}
-
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate( "LESS", 2 );
 }

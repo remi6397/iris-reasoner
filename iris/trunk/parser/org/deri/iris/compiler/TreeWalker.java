@@ -43,7 +43,6 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.parser.analysis.DepthFirstAdapter;
 import org.deri.iris.parser.node.ABase64binaryTerm;
 import org.deri.iris.parser.node.ABinaryBuiltin;

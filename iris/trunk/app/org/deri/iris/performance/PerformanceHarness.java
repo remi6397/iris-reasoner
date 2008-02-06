@@ -33,7 +33,6 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.KnowledgeBaseFactory;
 import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserException;
 
@@ -92,7 +91,7 @@ public class PerformanceHarness
 		 */
 		Program( String filename ) throws IOException, ParserException
 		{
-			Parser parser = new Parser( new BuiltinRegister() );
+			Parser parser = new Parser();
 			
 			FileReader r = new FileReader( filename );
 			

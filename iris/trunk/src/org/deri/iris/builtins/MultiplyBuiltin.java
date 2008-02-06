@@ -73,9 +73,4 @@ public class MultiplyBuiltin extends ArithmeticBuiltin {
 			return BuiltinHelper.multiply( terms[ 0 ], terms[ 1 ] );
 		}
 	}
-
-	public static IPredicate getBuiltinPredicate()
-	{
-		return PREDICATE;
-	}
 }

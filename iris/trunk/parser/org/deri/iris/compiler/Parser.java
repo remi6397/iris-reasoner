@@ -34,7 +34,6 @@ import java.util.Map;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.parser.lexer.Lexer;
 import org.deri.iris.parser.lexer.LexerException;
 import org.deri.iris.parser.parser.ParserException;
@@ -45,9 +44,31 @@ import org.deri.iris.storage.IRelation;
  */
 public class Parser
 {
+	/**
+	 * Default constructor.
+	 * Uses a default BuiltinRegister.
+	 */
+	public Parser()
+	{
+		mBuiltinRegister = new BuiltinRegister();
+	}
+	
+	/**
+	 * Constructor for custom BuitinRegister.
+	 * @param builtinRegister The built-in register to use.
+	 */
 	public Parser( BuiltinRegister builtinRegister )
 	{
 		mBuiltinRegister = builtinRegister;
+	}
+	
+	/**
+	 * Get the built-in register instance for adding or removing built-ins.
+	 * @return The built-in register instance
+	 */
+	public BuiltinRegister getBuiltinRegister()
+	{
+		return mBuiltinRegister;
 	}
 	
 	/**

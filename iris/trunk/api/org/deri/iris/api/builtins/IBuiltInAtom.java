@@ -25,11 +25,8 @@
  */
 package org.deri.iris.api.builtins;
 
-import java.util.Collection;
-
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.IVariable;
 
 /**
  * <p>
@@ -78,21 +75,6 @@ public abstract interface IBuiltInAtom extends IAtom {
 	 * @throws NullPointerException if the collection was <code>null</code>
 	 */
 	public ITuple evaluate(final ITuple t);
-
-	/**
-	 * <p>
-	 * Determines whether a builtin is evaluable with a given set of
-	 * variables. The variables passed to this method are the variables <b>of
-	 * this builtin</b> where substitutions are given.
-	 * </p>
-	 * @param v the collection of known variables
-	 * @return <code>true</code> if the builtin would be evaluable,
-	 * otherwise </code>false</code>
-	 * This should in the end be needless, because sometime
-	 * there will be a heuristic so order literals of a rule to get an
-	 * optimal result (and then this method be eleminated, too).
-	 */
-	public boolean isEvaluable(final Collection<IVariable> v);
 
 	/**
 	 * The maximum number of unknown variables allowed such that the

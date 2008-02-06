@@ -56,10 +56,6 @@ public class ExactEqualBuiltin extends ArithmeticBuiltin
 		return terms[ missingTermIndex == 0 ? 1 : 0 ];
 	}
 	
-	public static IPredicate getBuiltinPredicate() {
-		return PREDICATE;
-	}
-
 	@Override
     protected boolean testForEquality( ITerm t0, ITerm t1 )
     {

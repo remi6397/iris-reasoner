@@ -27,19 +27,16 @@ package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
-
 import java.util.Arrays;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
+import org.deri.iris.api.terms.INumericTerm;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IDateTerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
 import org.deri.iris.api.terms.concrete.IDuration;
 import org.deri.iris.api.terms.concrete.ITime;
-import org.deri.iris.api.terms.INumericTerm;
-import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>
@@ -75,8 +72,6 @@ public class BuiltinHelperTest extends TestCase {
 	private static final ITerm A = TERM.createVariable("A");
 	private static final ITerm B = TERM.createVariable("B");
 	private static final ITerm C = TERM.createVariable("C");
-	private static final ITerm D = TERM.createVariable("D");
-	private static final ITerm E = TERM.createVariable("E");
 
 	public static Test suite() {
 		return new TestSuite(BuiltinHelperTest.class, BuiltinHelperTest.class.getSimpleName());

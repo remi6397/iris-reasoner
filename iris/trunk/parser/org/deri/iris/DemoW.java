@@ -47,7 +47,6 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.evaluation.bottomup.compiledrules.naive.NaiveEvaluatorFactory;
 import org.deri.iris.evaluation.bottomup.compiledrules.seminaive.SemiNaiveEvaluatorFactory;
@@ -301,7 +300,7 @@ public class DemoW
 	        {
 				try
 				{
-					Parser parser = new Parser( mBuiltinRegister );
+					Parser parser = new Parser();
 					parser.parse( program );
 					Map<IPredicate,IRelation> facts = parser.getFacts();
 					List<IRule> rules = parser.getRules();
@@ -375,7 +374,6 @@ public class DemoW
 			
 			private final String program;
 			private final int evaluationStrategy;
-			private BuiltinRegister mBuiltinRegister = new BuiltinRegister();
 		}
 	}
 

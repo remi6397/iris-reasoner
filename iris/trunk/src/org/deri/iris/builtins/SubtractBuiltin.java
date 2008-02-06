@@ -70,11 +70,6 @@ public class SubtractBuiltin extends ArithmeticBuiltin
 		}
 	}
 
-	public static IPredicate getBuiltinPredicate()
-	{
-		return PREDICATE;
-	}
-		
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate( "SUBTRACT", 3 );
 }
