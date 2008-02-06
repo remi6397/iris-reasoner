@@ -164,4 +164,54 @@ public class FunctionSymbolsTest extends TestCase
 //		Helper.evaluateWithAllStrategies( kb + "?- or_('d', 'b').", "dummy()." );
 //		Helper.evaluateWithAllStrategies( kb + "?- or_('e', 'f').", "" );
 	}	
+
+	public void testGroundedConstructedTerm_Assignment() throws Exception
+	{
+		String program =
+			"p(?x, ?y) :- q(?x), ?y = f(2)." +
+			"q(3)." +
+			
+			"?- p(?x, ?y).";
+		
+		String expectedResults = 
+			"dummy( 3, f(2) ).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testGroundedConstructedTerm_Equality() throws Exception
+	{
+		String program =
+			"p(?x, ?y) :- q(?x, ?y), ?y = f(2)." +
+			"q(1, f(1) )." +
+			"q(2, f(2) )." +
+			"q(3, g(2) )." +
+			"q(4, 2)." +
+			
+			"?- p(?x, ?y).";
+		
+		String expectedResults = 
+			"dummy( 2, f(2) ).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testGroundedConstructedTerm_Inequality() throws Exception
+	{
+		String program =
+			"p(?x, ?y) :- q(?x, ?y), ?y != f(2)." +
+			"q(1, f(1) )." +
+			"q(2, f(2) )." +
+			"q(3, g(2) )." +
+			"q(4, 2)." +
+			
+			"?- p(?x, ?y).";
+		
+		String expectedResults = 
+			"dummy(1, f(1) )." +
+			"dummy(3, g(2) )." +
+			"dummy(4, 2).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
 }
