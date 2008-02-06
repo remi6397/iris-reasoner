@@ -21,7 +21,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package org.deri.iris.evaluation_old.common;
+package org.deri.iris.optimisations;
 
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
@@ -39,11 +39,12 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.evaluation_old.magic.ISip;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.evaluation_old.magic.SIPImpl;
+
+import org.deri.iris.optimisations.ISip;
+import org.deri.iris.optimisations.SIPImpl;
 
 /**
  * <p>

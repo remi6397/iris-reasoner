@@ -21,7 +21,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package org.deri.iris.evaluation_old.magic;
+package org.deri.iris.optimisations;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,14 +38,15 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.evaluation_old.magic.ISip;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.evaluation_old.common.Adornment;
-import org.deri.iris.evaluation_old.common.AdornedProgram.AdornedPredicate;
+
 import org.deri.iris.factory.Factory;
 import org.deri.iris.graph.LabeledEdge;
+import org.deri.iris.optimisations.AdornedProgram.AdornedPredicate;
+import org.deri.iris.optimisations.Adornment;
+import org.deri.iris.optimisations.ISip;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
