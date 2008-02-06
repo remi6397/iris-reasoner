@@ -49,7 +49,7 @@ public class SemiNaiveEvaluator extends AbstractCompiledRulesEvaluator
 
 	protected void evaluateRules( Collection<ICompiledRule> rules, IFacts facts, Configuration configuration )
 	{
-		IFacts deltas = new Facts();
+		IFacts deltas = new Facts( configuration.relationFactory );
 		
 		// One pass with simple evaluation to generate deltas
 		// For each rule in the collection (stratum)
@@ -75,7 +75,7 @@ public class SemiNaiveEvaluator extends AbstractCompiledRulesEvaluator
 			
 			IFacts previousDeltas = deltas;
 			
-			deltas = new Facts();
+			deltas = new Facts( configuration.relationFactory );
 			
 			for (final ICompiledRule rule : rules )
 			{

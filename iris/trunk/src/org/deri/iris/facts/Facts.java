@@ -30,7 +30,6 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.storage.IRelationFactory;
-import org.deri.iris.storage.simple.SimpleRelationFactory;
 
 /**
  * A manager for all facts stored in a knowledge-base.
@@ -40,9 +39,9 @@ public class Facts implements IFacts
 	/**
 	 * Constructor.
 	 */
-	public Facts()
+	public Facts( IRelationFactory relationFactory )
 	{
-		mRelationFactory = new SimpleRelationFactory();
+		mRelationFactory = relationFactory;
 	}
 	
 	/**
@@ -79,8 +78,6 @@ public class Facts implements IFacts
 		return mPredicateRelationMap.keySet();
 	}
 	
-	
-	
 	@Override
     public String toString()
     {
@@ -102,8 +99,6 @@ public class Facts implements IFacts
 
 	    return result.toString();
     }
-
-
 
 	/** The map storing the predicate-relation relationship. */
 	private final Map<IPredicate, IRelation> mPredicateRelationMap = new HashMap<IPredicate, IRelation>();
