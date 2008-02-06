@@ -26,7 +26,7 @@ package org.deri.iris.rules.compiler;
 import junit.framework.TestCase;
 import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.AddBuiltin;
 import org.deri.iris.storage.IRelation;
@@ -51,7 +51,7 @@ public class TestBuiltin extends TestCase
 		ITuple criteria = Helper.createTuple( "X", "Y", "Z" );
 		View view = new View( inputRelation, criteria, configuration.relationFactory );
 		
-		IBuiltInAtom builtinPredicate = new AddBuiltin( criteria.toArray( new ITerm[0]) );
+		IBuiltinAtom builtinPredicate = new AddBuiltin( criteria.toArray( new ITerm[0]) );
 		
 		Builtin builtin = new Builtin( view.variables(), builtinPredicate, true, configuration );
 		
@@ -68,7 +68,7 @@ public class TestBuiltin extends TestCase
 		View view = new View( inputRelation, criteria, configuration.relationFactory );
 		
 		ITuple builtinTuple = Helper.createTuple( "X", "Y", "Z" );
-		IBuiltInAtom builtinPredicate = new AddBuiltin( builtinTuple.toArray( new ITerm[0]) );
+		IBuiltinAtom builtinPredicate = new AddBuiltin( builtinTuple.toArray( new ITerm[0]) );
 		
 		try
 		{
@@ -95,7 +95,7 @@ public class TestBuiltin extends TestCase
 		
 
 		ITuple builtinTuple = Helper.createTuple( "X", "Y", "Z" );
-		IBuiltInAtom builtinPredicate = new AddBuiltin( builtinTuple.toArray( new ITerm[0]) );
+		IBuiltinAtom builtinPredicate = new AddBuiltin( builtinTuple.toArray( new ITerm[0]) );
 		
 		Builtin builtin = new Builtin( view.variables(), builtinPredicate, true, configuration );
 		
@@ -111,7 +111,7 @@ public class TestBuiltin extends TestCase
 	{
 		Configuration configuration = new Configuration();
 		ITuple builtinTuple = Helper.createTuple( 3, 4, "X" );
-		IBuiltInAtom builtinPredicate = new AddBuiltin( builtinTuple.toArray( new ITerm[0]) );
+		IBuiltinAtom builtinPredicate = new AddBuiltin( builtinTuple.toArray( new ITerm[0]) );
 		
 		Builtin builtin = new Builtin( null, builtinPredicate, true, configuration );
 		

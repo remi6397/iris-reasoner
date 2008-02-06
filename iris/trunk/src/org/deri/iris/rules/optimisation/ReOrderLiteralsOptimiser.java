@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.rules.IRuleOptimiser;
@@ -71,7 +71,7 @@ public class ReOrderLiteralsOptimiser implements IRuleOptimiser
 		{
 			Set<IVariable> variables = literal.getAtom().getTuple().getVariables();
 
-			if( literal.getAtom() instanceof IBuiltInAtom )
+			if( literal.getAtom() instanceof IBuiltinAtom )
 			{
 				variablesNotInNegatedOrdinaries.addAll( variables );
 				
@@ -194,7 +194,7 @@ public class ReOrderLiteralsOptimiser implements IRuleOptimiser
 			// Try and add a built-in with enough variables bound
 			for( ILiteral literal : builtin )
 			{
-				IBuiltInAtom builtinAtom = (IBuiltInAtom) literal.getAtom();
+				IBuiltinAtom builtinAtom = (IBuiltinAtom) literal.getAtom();
 				
 				if( literal.isPositive() )
 				{

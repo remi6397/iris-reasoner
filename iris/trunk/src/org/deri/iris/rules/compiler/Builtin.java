@@ -30,7 +30,7 @@ import java.util.Set;
 import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
@@ -49,7 +49,7 @@ public class Builtin extends RuleElement
 	 * @param positive true, if the built-in is positive, false if it is negative.
 	 * @throws EvaluationException If constructed terms are used with a built-in or there are unbound variables.
 	 */
-	public Builtin( List<IVariable> inputVariables, IBuiltInAtom builtinAtom, boolean positive, Configuration configuration ) throws EvaluationException
+	public Builtin( List<IVariable> inputVariables, IBuiltinAtom builtinAtom, boolean positive, Configuration configuration ) throws EvaluationException
 	{
 		assert builtinAtom != null;
 		assert configuration != null;
@@ -219,7 +219,7 @@ public class Builtin extends RuleElement
 	}
 
 	/** The built-in atom at this positio in the rule. */
-	private final IBuiltInAtom mBuiltinAtom;
+	private final IBuiltinAtom mBuiltinAtom;
 	
 	/** Indicator of this literal is positive or negated. */
 	private final boolean mPositive;

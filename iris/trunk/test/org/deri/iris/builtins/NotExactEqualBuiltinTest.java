@@ -28,7 +28,7 @@ package org.deri.iris.builtins;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
-import org.deri.iris.api.builtins.IBuiltInAtom;
+import org.deri.iris.api.builtins.IBuiltinAtom;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -44,7 +44,7 @@ public class NotExactEqualBuiltinTest extends TestCase {
 	}
 
 	public void testEvaluation() {
-		final IBuiltInAtom xy = BuiltinsFactory.getInstance().createNotExactEqual( TERM.createVariable("X"), TERM.createVariable("Y"));
+		final IBuiltinAtom xy = BuiltinsFactory.getInstance().createNotExactEqual( TERM.createVariable("X"), TERM.createVariable("Y"));
 
 		assertNull("5 should not be not exactly equal to 5", xy.evaluate(
 					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createInteger(5))));
@@ -75,7 +75,7 @@ public class NotExactEqualBuiltinTest extends TestCase {
 	}
 	
 	public void test_isBuiltin() {
-		final IBuiltInAtom xy = BuiltinsFactory.getInstance().createNotExactEqual( TERM.createVariable("X"), TERM.createVariable("Y"));
+		final IBuiltinAtom xy = BuiltinsFactory.getInstance().createNotExactEqual( TERM.createVariable("X"), TERM.createVariable("Y"));
 		assertTrue("buitin predicates should be identifiable as builtins", xy.isBuiltin());
 	}
 }
