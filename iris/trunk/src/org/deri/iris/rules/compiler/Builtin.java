@@ -112,7 +112,10 @@ public class Builtin extends RuleElement
 					// but only if they are ground.
 				}
 				else
-					throw new EvaluationException( "Can't handle constructed terms in built-ins yet" );
+					throw new EvaluationException(
+									"Built-in predicates can not have constructed terms as arguments," +
+									"except when the built-in is equality or inequality and" +
+									"the argument is a ground constructed term." );
 			}
 
 			mIndicesFromInputRelationToMakeInputTuple[ t ] = indexFromInput;
