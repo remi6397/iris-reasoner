@@ -45,47 +45,57 @@ public class FactsTest extends TestCase
 {
 	IFacts mFacts;
 	
-	final IPredicate A = createPredicate( "PREDICATE", 1 );
-	final IPredicate B = createPredicate( "PREDICATE", 2 );
-	final IPredicate C = createPredicate( "PREDICATE", 3 );
+	final static IPredicate A = createPredicate( "PREDICATE", 1 );
+	final static IPredicate B = createPredicate( "PREDICATE", 2 );
+	final static IPredicate C = createPredicate( "PREDICATE", 3 );
 	
 	protected void setUp() throws Exception
 	{
 		mFacts = new Facts( new SimpleRelationFactory() );
 	}
-
-	public void testAdd()
+	
+	public static void helperTestAdd( IFacts facts )
 	{
 		ITuple one = createTuple( 1 );
 		ITuple two = createTuple( 1, 2 );
 		ITuple three = createTuple( 1, 2, 3 );
 		
-		mFacts.get( A ).add( one );
-		mFacts.get( B ).add( two );
-		mFacts.get( C ).add( three );
+		facts.get( A ).add( one );
+		facts.get( B ).add( two );
+		facts.get( C ).add( three );
 		
-		assertEquals( mFacts.get( A ).size(), 1 );
-		assertEquals( mFacts.get( B ).size(), 1 );
-		assertEquals( mFacts.get( C ).size(), 1 );
+		assertEquals( facts.get( A ).size(), 1 );
+		assertEquals( facts.get( B ).size(), 1 );
+		assertEquals( facts.get( C ).size(), 1 );
 
-		assertEquals( mFacts.get( A ).get( 0 ), one );
-		assertEquals( mFacts.get( B ).get( 0 ), two );
-		assertEquals( mFacts.get( C ).get( 0 ), three );
+		assertEquals( facts.get( A ).get( 0 ), one );
+		assertEquals( facts.get( B ).get( 0 ), two );
+		assertEquals( facts.get( C ).get( 0 ), three );
 	}
-	
-	public void testGetPredicates()
+
+	public static void helperTestGetPredicates( IFacts facts )
 	{
-		mFacts.get( A );
-		mFacts.get( B );
-		mFacts.get( C );
+		facts.get( A );
+		facts.get( B );
+		facts.get( C );
 		
-		Set<IPredicate> predicates = mFacts.getPredicates();
+		Set<IPredicate> predicates = facts.getPredicates();
 		
 		assertEquals( 3, predicates.size() );
 		
 		assertTrue( predicates.contains( A ) );
 		assertTrue( predicates.contains( B ) );
 		assertTrue( predicates.contains( C ) );
+	}
+	
+	public void testAdd()
+	{
+		helperTestAdd( mFacts );
+	}
+	
+	public void testGetPredicates()
+	{
+		helperTestGetPredicates( mFacts );
 	}
 	
 	public void testConstructor()
@@ -109,12 +119,12 @@ public class FactsTest extends TestCase
 		assertEquals( 1, newFacts.getPredicates().size() );
 	}
 	
-	private IPredicate createPredicate( String symbol, int arity )
+	public static IPredicate createPredicate( String symbol, int arity )
 	{
 		return Factory.BASIC.createPredicate( symbol, arity );
 	}
 	
-	private ITuple createTuple( Object ... termObjects )
+	public static ITuple createTuple( Object ... termObjects )
 	{
 		List<ITerm> terms = new ArrayList<ITerm>();
 
