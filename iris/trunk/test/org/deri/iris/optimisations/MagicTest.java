@@ -34,10 +34,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -187,7 +185,7 @@ public class MagicTest extends TestCase {
 		final IQuery q = p.getQueries().iterator().next();
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), q);
 
-		final Set<IRule> ref = new HashSet<IRule>();
+		final List<IRule> ref = new ArrayList<IRule>();
 
 		final IPredicate SG_BF = new AdornedProgram.AdornedPredicate("sg", 2, 
 				new Adornment[] { Adornment.BOUND, Adornment.FREE });
@@ -230,6 +228,8 @@ public class MagicTest extends TestCase {
 				createLiteral("down", "Z4", "Y"));
 		ref.add(BASIC.createRule(head, body));
 
+		Collections.sort(ref, AdornmentsTest.RC);
+		Collections.sort(result.rules, AdornmentsTest.RC);
 		assertEquals("The rules don't match", ref, result.rules);
 		// TODO: match the query
 	}
@@ -246,7 +246,7 @@ public class MagicTest extends TestCase {
 		final IQuery q = p.getQueries().iterator().next();
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), q);
 
-		final Set<IRule> ref = new HashSet<IRule>();
+		final List<IRule> ref = new ArrayList<IRule>();
 
 		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
 		final IVariable A = TERM.createVariable("A");
@@ -295,6 +295,8 @@ public class MagicTest extends TestCase {
 				createLiteral("c", "B", "Y", "Z"));
 		ref.add(BASIC.createRule(head, body));
 
+		Collections.sort(ref, AdornmentsTest.RC);
+		Collections.sort(result.rules, AdornmentsTest.RC);
 		assertEquals("The rules don't match", ref, result.rules);
 		// TODO: match the query
 	}
@@ -321,7 +323,7 @@ public class MagicTest extends TestCase {
 		final ILiteral b = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("b", 2), BASIC.createTuple(X, Z)));
 		final ILiteral x = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("x", 3), BASIC.createTuple(X, Y, Z)));
 
-		final Set<IRule> ref = new HashSet<IRule>();
+		final List<IRule> ref = new ArrayList<IRule>();
 		// magic_c^bbf(a, Z) :- magic_a^bf(X), b(X, Z)
 		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("c", bbf, new ITerm[]{a, Z})), 
 					Arrays.asList(createMagicLiteral("a", bf, new ITerm[]{X}), b)));
@@ -337,6 +339,8 @@ public class MagicTest extends TestCase {
 		// magic_a^bf('john') :- TRUE
 		ref.add(seedRule(createMagicLiteral("a", bf, new ITerm[]{TERM.createString("john")})));
 
+		Collections.sort(ref, AdornmentsTest.RC);
+		Collections.sort(result.rules, AdornmentsTest.RC);
 		assertEquals("The rules don't match", ref, result.rules);
 	}
 
@@ -367,7 +371,7 @@ public class MagicTest extends TestCase {
 		final ILiteral magic_p = createMagicLiteral("p", b, X);
 		final ILiteral magic_r = createMagicLiteral("r", b, X);
 
-		final Set<IRule> ref = new HashSet<IRule>();
+		final List<IRule> ref = new ArrayList<IRule>();
 		// magic_r^b(X) :- magic_p^b(X)
 		ref.add(BASIC.createRule(Arrays.asList(magic_r), Arrays.asList(magic_p)));
 		// magic_p^b(X) :- s(X)
@@ -381,6 +385,8 @@ public class MagicTest extends TestCase {
 		// magic_p^f() :- TRUE
 		ref.add(seedRule(createMagicLiteral("q", f, new ITerm[]{})));
 		
+		Collections.sort(ref, AdornmentsTest.RC);
+		Collections.sort(result.rules, AdornmentsTest.RC);
 		assertEquals("The rules don't match", ref, result.rules);
 	}
 
@@ -409,7 +415,7 @@ public class MagicTest extends TestCase {
 		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
 		final ILiteral c3 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
 
-		final Set<IRule> ref = new HashSet<IRule>();
+		final List<IRule> ref = new ArrayList<IRule>();
 		// magic_r^bbf(b, X) :- p^fb(X, a)
 		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", bbf, 
 							new ITerm[]{TERM.createString("b"), X})), 
@@ -434,6 +440,8 @@ public class MagicTest extends TestCase {
 		// p^fb('a') :- TRUE
 		ref.add(seedRule(createMagicLiteral("p", fb, new ITerm[]{TERM.createString("a")})));
 
+		Collections.sort(ref, AdornmentsTest.RC);
+		Collections.sort(result.rules, AdornmentsTest.RC);
 		assertEquals("The rules don't match", ref, result.rules);
 	}
 
@@ -462,7 +470,7 @@ public class MagicTest extends TestCase {
 		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
 		final ILiteral c3 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
 
-		final Set<IRule> ref = new HashSet<IRule>();
+		final List<IRule> ref = new ArrayList<IRule>();
 		// magic_r^bbf(b, X) :- p^ff(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", bbf, 
 							new ITerm[]{TERM.createString("b"), X})), 
@@ -483,6 +491,8 @@ public class MagicTest extends TestCase {
 		// p^ff() :- TRUE
 		ref.add(seedRule(createMagicLiteral("p", ff, new ITerm[]{})));
 
+		Collections.sort(ref, AdornmentsTest.RC);
+		Collections.sort(result.rules, AdornmentsTest.RC);
 		assertEquals("The rules don't match", ref, result.rules);
 	}
 
@@ -510,7 +520,7 @@ public class MagicTest extends TestCase {
 		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
 		final ILiteral c3 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
 
-		final Set<IRule> ref = new HashSet<IRule>();
+		final List<IRule> ref = new ArrayList<IRule>();
 		// magic_r^bff(b) :- p^bb(b, a)
 		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", bff, 
 							new ITerm[]{TERM.createString("b")})), 
@@ -535,6 +545,8 @@ public class MagicTest extends TestCase {
 		// p^ff() :- TRUE
 		ref.add(seedRule(createMagicLiteral("p", bb, new ITerm[]{TERM.createString("b"), TERM.createString("a")})));
 
+		Collections.sort(ref, AdornmentsTest.RC);
+		Collections.sort(result.rules, AdornmentsTest.RC);
 		assertEquals("The rules don't match", ref, result.rules);
 	}
 
@@ -565,7 +577,7 @@ public class MagicTest extends TestCase {
 		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
 		final ILiteral c4 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 4), BASIC.createTuple(WXYZ)));
 
-		final Set<IRule> ref = new HashSet<IRule>();
+		final List<IRule> ref = new ArrayList<IRule>();
 		// magic_s^bbbb(W, X, Y, Z) :- p^ff(W, X), r^ff(Y, Z)
 		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("s", bbbb, WXYZ)), 
 					Arrays.asList(createAdornedLiteral("p", ff, WX), 
@@ -582,6 +594,8 @@ public class MagicTest extends TestCase {
 		// p^ff() :- TRUE
 		ref.add(seedRule(createMagicLiteral("p", ff, new ITerm[]{})));
 
+		Collections.sort(ref, AdornmentsTest.RC);
+		Collections.sort(result.rules, AdornmentsTest.RC);
 		assertEquals("The rules don't match", ref, result.rules);
 	}
 
@@ -614,7 +628,7 @@ public class MagicTest extends TestCase {
 		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
 		final ILiteral c3 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
 
-		final Set<IRule> ref = new HashSet<IRule>();
+		final List<IRule> ref = new ArrayList<IRule>();
 		// magic_r^bbf(b, X) :- p^ff(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X})),
 					Arrays.asList(createAdornedLiteral("p", ff, XY))));
@@ -640,6 +654,8 @@ public class MagicTest extends TestCase {
 		// p^ff() :- TRUE
 		ref.add(seedRule(createMagicLiteral("p", ff, new ITerm[]{})));
 
+		Collections.sort(ref, AdornmentsTest.RC);
+		Collections.sort(result.rules, AdornmentsTest.RC);
 		assertEquals("The rules don't match", ref, result.rules);
 	}
 
@@ -669,7 +685,7 @@ public class MagicTest extends TestCase {
 		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
 		final ILiteral c3 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 3), BASIC.createTuple(XYZ)));
 
-		final Set<IRule> ref = new HashSet<IRule>();
+		final List<IRule> ref = new ArrayList<IRule>();
 		// magic_r^bbf(b, X) :- p^ff(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("r", bbf, new ITerm[]{TERM.createString("b"), X})),
 					Arrays.asList(createAdornedLiteral("p", ff, XY))));
@@ -691,6 +707,8 @@ public class MagicTest extends TestCase {
 		// p^ff() :- TRUE
 		ref.add(seedRule(createMagicLiteral("p", ff, new ITerm[]{})));
 
+		Collections.sort(ref, AdornmentsTest.RC);
+		Collections.sort(result.rules, AdornmentsTest.RC);
 		assertEquals("The rules don't match", ref, result.rules);
 	}
 
