@@ -50,8 +50,8 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.IProgram;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.evaluation_old.common.AdornedProgram;
 import org.deri.iris.evaluation_old.common.Adornment;
@@ -76,6 +76,9 @@ public class AdornmentsTest extends TestCase {
 
 	public static final Comparator<IRule> RC = new RuleComparator();
 
+	/** The builtin register for the parser. */
+	private static final BuiltinRegister builtinReg = new BuiltinRegister();
+
 	public static Test suite() {
 		return new TestSuite(AdornmentsTest.class, AdornmentsTest.class
 				.getSimpleName());
@@ -88,7 +91,8 @@ public class AdornmentsTest extends TestCase {
 		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y).\n"
 				  + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y).\n"
 				  + "?- sg('john', ?Y).\n";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		// constructing the reference adorned predicate set
@@ -107,7 +111,8 @@ public class AdornmentsTest extends TestCase {
 		final String prog = "rsg(?X, ?Y) :- flat(?X, ?Y).\n"
 				  + "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), down(?Y1, ?Y).\n"
 				  + "?- rsg('a', ?Y).\n";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		// constructing the reference adorned predicate set
@@ -136,7 +141,8 @@ public class AdornmentsTest extends TestCase {
 		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y).\n"
 				  + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y).\n"
 				  + "?- sg('john', ?Y).\n";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm X = TERM.createVariable("X");
@@ -182,7 +188,8 @@ public class AdornmentsTest extends TestCase {
 		final String prog = "rsg(?X, ?Y) :- flat(?X, ?Y).\n"
 				  + "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), down(?Y1, ?Y).\n"
 				  + "?- rsg('a', ?Y).\n";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm X = TERM.createVariable("X");
@@ -276,7 +283,8 @@ public class AdornmentsTest extends TestCase {
 	public void testFreeQuery() throws Exception {
 		final String prog = "w(?Y) :- k(?X, ?Y), l(?X).\n" + 
 			"?- w(?X).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm X = TERM.createVariable("X");
@@ -311,7 +319,8 @@ public class AdornmentsTest extends TestCase {
 	public void testFreeQuery1() throws Exception {
 		final String prog = "w(?X, ?Y) :- k(?X, ?B), l(?B, ?C), w(?C, ?Y).\n" + 
 			"?- w(?X, ?Y).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm C = TERM.createVariable("C");
@@ -357,7 +366,8 @@ public class AdornmentsTest extends TestCase {
 	public void testFreeQuery2() throws Exception {
 		final String prog = "w(?X, ?Y) :- k(?X, ?B), l(?B, ?C), w(?D, ?Y).\n" + 
 			"?- w(?X, ?Y).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		//final ITerm C = TERM.createVariable("C");
@@ -485,11 +495,11 @@ public class AdornmentsTest extends TestCase {
 	 * Tests that constants in literals in the body will be marked as bound.
 	 */
 	public void testConstantsInBody() throws Exception {
-		final String program = "a(?X, ?Y) :- b(?X, ?Z), c('a', ?Z, ?Y). \n" + 
+		final String prog = "a(?X, ?Y) :- b(?X, ?Z), c('a', ?Z, ?Y). \n" + 
 			"c(?X, ?Y, ?Z) :- x(?X, ?Y, ?Z). \n" + 
 			"?-a('john', ?Y).";
-		final IProgram p = Factory.PROGRAM.createProgram();
-		Parser.parse(program, p);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm X = TERM.createVariable("X");
@@ -521,7 +531,8 @@ public class AdornmentsTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, 'a'), r('b', ?X, ?Y), s('e', ?Y).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm X = TERM.createVariable("X");
@@ -562,7 +573,8 @@ public class AdornmentsTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm X = TERM.createVariable("X");
@@ -603,7 +615,8 @@ public class AdornmentsTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p('b', 'a'), r('b', ?X, ?Y), s('e', ?Y).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm X = TERM.createVariable("X");
@@ -644,7 +657,8 @@ public class AdornmentsTest extends TestCase {
 			"r(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"s(?W, ?X, ?Y, ?Z) :- c(?W, ?X, ?Y, ?Z).\n" + 
 			"?- p(?W, ?X), r(?Y, ?Z), s(?W, ?X, ?Y, ?Z).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm W = TERM.createVariable("W");
@@ -687,7 +701,8 @@ public class AdornmentsTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm X = TERM.createVariable("X");
@@ -736,7 +751,8 @@ public class AdornmentsTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm T = TERM.createVariable("T");
