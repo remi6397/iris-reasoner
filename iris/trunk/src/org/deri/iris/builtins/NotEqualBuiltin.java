@@ -32,14 +32,14 @@ import org.deri.iris.factory.Factory;
 /**
  * Builtin to compare two terms for inequality.
  */
-public class UnEqualBuiltin extends BooleanBuiltin
+public class NotEqualBuiltin extends BooleanBuiltin
 {
 	/**
 	 * Constructs a built-in. Two terms must be passed to the constructor,
 	 * otherwise an exception will be thrown.
 	 * @param terms the terms
 	 */
-	public UnEqualBuiltin( final ITerm... terms )
+	public NotEqualBuiltin( final ITerm... terms )
 	{
 		super( PREDICATE, terms );
 	}

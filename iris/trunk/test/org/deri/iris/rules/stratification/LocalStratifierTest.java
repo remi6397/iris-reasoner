@@ -36,7 +36,7 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.EqualBuiltin;
 import org.deri.iris.builtins.LessBuiltin;
-import org.deri.iris.builtins.UnEqualBuiltin;
+import org.deri.iris.builtins.NotEqualBuiltin;
 
 public class LocalStratifierTest extends TestCase
 {
@@ -58,7 +58,7 @@ public class LocalStratifierTest extends TestCase
 		
 		if( predicateName.equals( "!=" ) )
 			return BASIC.createLiteral( positive,
-							new UnEqualBuiltin( terms.toArray( new ITerm[ 2 ] ) ) );
+							new NotEqualBuiltin( terms.toArray( new ITerm[ 2 ] ) ) );
 		
 		if( predicateName.equals( "<" ) )
 			return BASIC.createLiteral( positive,
