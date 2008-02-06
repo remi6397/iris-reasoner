@@ -29,36 +29,23 @@ import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.MiscHelper.createVarList;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
+import org.deri.iris.api.IProgramOptimisation.Result;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.IProgramOptimisation.Result;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-
-import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.factory.Factory;
-import org.deri.iris.MiscHelper;
-import org.deri.iris.optimisations.AdornedProgram;
 import org.deri.iris.optimisations.AdornedProgram.AdornedPredicate;
-import org.deri.iris.optimisations.Adornment;
-import org.deri.iris.optimisations.AdornmentsTest;
-import org.deri.iris.optimisations.MagicSetImpl;
 
 /**
  * <p>
@@ -68,9 +55,6 @@ import org.deri.iris.optimisations.MagicSetImpl;
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  */
 public class MagicTest extends TestCase {
-
-	/** The builtin register for the parser. */
-	private static final BuiltinRegister builtinReg = new BuiltinRegister();
 
 	/** The prefix for magic literals. */
 	private static final String MAGIC_PREFIX = "magic_";
@@ -180,7 +164,7 @@ public class MagicTest extends TestCase {
 		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y)."
 					      + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y)."
 					      + "?- sg('john', ?Y).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final IQuery q = p.getQueries().iterator().next();
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), q);
@@ -241,7 +225,7 @@ public class MagicTest extends TestCase {
 		final String prog = "a(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z)." 
 						   + "a(?X, ?Y, ?Z) :- b(?X, ?A), a(?X, ?A, ?B), c(?B, ?Y, ?Z)."
 						   + "?- a('john', 'mary', ?Y).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final IQuery q = p.getQueries().iterator().next();
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), q);
@@ -308,7 +292,7 @@ public class MagicTest extends TestCase {
 		final String prog = "a(?X, ?Y) :- b(?X, ?Z), c('a', ?Z, ?Y). \n" + 
 			"c(?X, ?Y, ?Z) :- x(?X, ?Y, ?Z). \n" + 
 			"?-a('john', ?Y).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
@@ -353,7 +337,7 @@ public class MagicTest extends TestCase {
 			"p(?X) :- r(?X).\n" + 
 			"r(?X) :- t(?X).\n" + 
 			"?- q(?X).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
@@ -399,7 +383,7 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, 'a'), r('b', ?X, ?Y), s('e', ?Y).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
@@ -454,7 +438,7 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
@@ -505,7 +489,7 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p('b', 'a'), r('b', ?X, ?Y), s('e', ?Y).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
@@ -559,7 +543,7 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"s(?W, ?X, ?Y, ?Z) :- c(?W, ?X, ?Y, ?Z).\n" + 
 			"?- p(?W, ?X), r(?Y, ?Z), s(?W, ?X, ?Y, ?Z).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
@@ -608,7 +592,7 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
@@ -668,7 +652,7 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());

@@ -26,32 +26,22 @@
 package org.deri.iris.optimisations;
 
 import static org.deri.iris.MiscHelper.createLiteral;
-import static org.deri.iris.MiscHelper.createVarList;
 import static org.deri.iris.factory.Factory.BASIC;
-import static org.deri.iris.factory.Factory.TERM;
 import static org.deri.iris.factory.Factory.BUILTIN;
-
+import static org.deri.iris.factory.Factory.TERM;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
-
-import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.compiler.ParserException;
-import org.deri.iris.factory.Factory;
 import org.deri.iris.graph.LabeledEdge;
-import org.deri.iris.optimisations.SIPImpl;
 
 /**
  * <p>
@@ -61,9 +51,6 @@ import org.deri.iris.optimisations.SIPImpl;
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  */
 public class SipImplTest extends TestCase {
-
-	/** The builtin register for the parser. */
-	private static final BuiltinRegister builtinReg = new BuiltinRegister();
 
 	public static Test suite() {
 		return new TestSuite(SipImplTest.class, SipImplTest.class
@@ -76,7 +63,7 @@ public class SipImplTest extends TestCase {
 	public void testForEdges0() throws Exception {
 		final String prog = "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y).\n"
 						 + "?- sg('john', ?X).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final IRule r = p.getRules().iterator().next();
 		final IQuery q = p.getQueries().iterator().next();
@@ -104,7 +91,7 @@ public class SipImplTest extends TestCase {
 	public void testForEdges1() throws Exception {
 		final String prog = "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), down(?Y1, ?Y).\n"
 						  + "?- rsg('a', ?X).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final IRule r = p.getRules().iterator().next();
 		final IQuery q = p.getQueries().iterator().next();
@@ -128,7 +115,7 @@ public class SipImplTest extends TestCase {
 	public void testEqualBuiltinSip() throws Exception {
 		final String prog = "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), ?Y1 = ?Y.\n"
 						  + "?- rsg('a', ?X).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final IRule r = p.getRules().iterator().next();
 		final IQuery q = p.getQueries().iterator().next();
@@ -189,7 +176,7 @@ public class SipImplTest extends TestCase {
 	public void testEqualLiterals() throws Exception {
 		final String prog = "tmp(?X) :- p(?X), p(?X), p(?X).\n"
 					      + "?- tmp(?X).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final IRule r = p.getRules().iterator().next();
 		final IQuery q = p.getQueries().iterator().next();
@@ -210,7 +197,7 @@ public class SipImplTest extends TestCase {
 	public void testBounds0() throws Exception {
 		final String prog = "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), down(?X, ?Z1, ?Z2, ?Z3), again(?X, ?Z1, ?Z3, ?Y).\n"
 						 + "?- sg('john', ?X).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final IRule r = p.getRules().iterator().next();
 		final IQuery q = p.getQueries().iterator().next();
@@ -239,7 +226,7 @@ public class SipImplTest extends TestCase {
 	public void testBounds1() throws Exception {
 		final String prog = "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), down(?Y1, ?Y).\n"
 						  + "?- rsg('a', ?X).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final IRule r = p.getRules().iterator().next();
 		final IQuery q = p.getQueries().iterator().next();

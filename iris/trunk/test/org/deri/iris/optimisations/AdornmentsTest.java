@@ -27,11 +27,10 @@ package org.deri.iris.optimisations;
 
 // TODO: test handling of builtins
 
-import static org.deri.iris.factory.Factory.BASIC;
-import static org.deri.iris.factory.Factory.TERM;
 import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.MiscHelper.createVarList;
-
+import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.TERM;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,26 +40,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
-
-import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.factory.Factory;
-import org.deri.iris.MiscHelper;
-import org.deri.iris.optimisations.AdornedProgram;
 import org.deri.iris.optimisations.AdornedProgram.AdornedPredicate;
 import org.deri.iris.optimisations.AdornedProgram.AdornedRule;
-import org.deri.iris.optimisations.Adornment;
-import org.deri.iris.optimisations.SIPImpl;
 
 /**
  * <p>
@@ -77,9 +67,6 @@ public class AdornmentsTest extends TestCase {
 
 	public static final Comparator<IRule> RC = new RuleComparator();
 
-	/** The builtin register for the parser. */
-	private static final BuiltinRegister builtinReg = new BuiltinRegister();
-
 	public static Test suite() {
 		return new TestSuite(AdornmentsTest.class, AdornmentsTest.class
 				.getSimpleName());
@@ -92,7 +79,7 @@ public class AdornmentsTest extends TestCase {
 		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y).\n"
 				  + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y).\n"
 				  + "?- sg('john', ?Y).\n";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
@@ -112,7 +99,7 @@ public class AdornmentsTest extends TestCase {
 		final String prog = "rsg(?X, ?Y) :- flat(?X, ?Y).\n"
 				  + "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), down(?Y1, ?Y).\n"
 				  + "?- rsg('a', ?Y).\n";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
@@ -142,7 +129,7 @@ public class AdornmentsTest extends TestCase {
 		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y).\n"
 				  + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y).\n"
 				  + "?- sg('john', ?Y).\n";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
@@ -189,7 +176,7 @@ public class AdornmentsTest extends TestCase {
 		final String prog = "rsg(?X, ?Y) :- flat(?X, ?Y).\n"
 				  + "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), down(?Y1, ?Y).\n"
 				  + "?- rsg('a', ?Y).\n";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
@@ -284,7 +271,7 @@ public class AdornmentsTest extends TestCase {
 	public void testFreeQuery() throws Exception {
 		final String prog = "w(?Y) :- k(?X, ?Y), l(?X).\n" + 
 			"?- w(?X).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
@@ -320,7 +307,7 @@ public class AdornmentsTest extends TestCase {
 	public void testFreeQuery1() throws Exception {
 		final String prog = "w(?X, ?Y) :- k(?X, ?B), l(?B, ?C), w(?C, ?Y).\n" + 
 			"?- w(?X, ?Y).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
@@ -367,7 +354,7 @@ public class AdornmentsTest extends TestCase {
 	public void testFreeQuery2() throws Exception {
 		final String prog = "w(?X, ?Y) :- k(?X, ?B), l(?B, ?C), w(?D, ?Y).\n" + 
 			"?- w(?X, ?Y).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
@@ -499,7 +486,7 @@ public class AdornmentsTest extends TestCase {
 		final String prog = "a(?X, ?Y) :- b(?X, ?Z), c('a', ?Z, ?Y). \n" + 
 			"c(?X, ?Y, ?Z) :- x(?X, ?Y, ?Z). \n" + 
 			"?-a('john', ?Y).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
@@ -532,7 +519,7 @@ public class AdornmentsTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, 'a'), r('b', ?X, ?Y), s('e', ?Y).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
@@ -574,7 +561,7 @@ public class AdornmentsTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
@@ -616,7 +603,7 @@ public class AdornmentsTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p('b', 'a'), r('b', ?X, ?Y), s('e', ?Y).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
@@ -658,7 +645,7 @@ public class AdornmentsTest extends TestCase {
 			"r(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"s(?W, ?X, ?Y, ?Z) :- c(?W, ?X, ?Y, ?Z).\n" + 
 			"?- p(?W, ?X), r(?Y, ?Z), s(?W, ?X, ?Y, ?Z).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
@@ -702,7 +689,7 @@ public class AdornmentsTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
@@ -752,7 +739,7 @@ public class AdornmentsTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final Parser p = new Parser(builtinReg);
+		final Parser p = new Parser();
 		p.parse(prog);
 		final AdornedProgram ap = new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 
