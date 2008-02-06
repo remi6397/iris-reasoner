@@ -65,7 +65,7 @@ public class BuiltinRegisterTest extends TestCase {
 		checkRegisteredBuiltin("MODULUS", org.deri.iris.builtins.ModulusBuiltin.class, 3);
 
 		checkRegisteredBuiltin("EQUAL", org.deri.iris.builtins.EqualBuiltin.class, 2);
-		checkRegisteredBuiltin("NOT_EQUAL", org.deri.iris.builtins.UnEqualBuiltin.class, 2);
+		checkRegisteredBuiltin("NOT_EQUAL", org.deri.iris.builtins.NotEqualBuiltin.class, 2);
 
 		checkRegisteredBuiltin("LESS", org.deri.iris.builtins.LessBuiltin.class, 2);
 		checkRegisteredBuiltin("LESS_EQUAL", org.deri.iris.builtins.LessEqualBuiltin.class, 2);

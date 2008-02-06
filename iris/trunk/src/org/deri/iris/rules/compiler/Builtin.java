@@ -34,6 +34,10 @@ import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.builtins.EqualBuiltin;
+import org.deri.iris.builtins.ExactEqualBuiltin;
+import org.deri.iris.builtins.NotExactEqualBuiltin;
+import org.deri.iris.builtins.NotEqualBuiltin;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IRelation;
 
@@ -96,7 +100,18 @@ public class Builtin extends RuleElement
 			{
 				// TODO - decide if function symbols are allowed as built-in terms.
 				// Maybe only assignment or equality/inequality????
-				throw new EvaluationException( "Can't handle constructed terms in built-ins yet" );
+				
+				if( term.isGround() && 
+								(	mBuiltinAtom instanceof EqualBuiltin ||
+									mBuiltinAtom instanceof NotEqualBuiltin ||
+									mBuiltinAtom instanceof ExactEqualBuiltin ||
+									mBuiltinAtom instanceof NotExactEqualBuiltin )
+												)
+				{
+					// Ok for now
+				}
+				else
+					throw new EvaluationException( "Can't handle constructed terms in built-ins yet" );
 			}
 
 			mIndicesFromInputRelationToMakeInputTuple[ t ] = indexFromInput;

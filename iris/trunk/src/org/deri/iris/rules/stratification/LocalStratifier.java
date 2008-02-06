@@ -47,7 +47,7 @@ import org.deri.iris.builtins.GreaterEqualBuiltin;
 import org.deri.iris.builtins.LessBuiltin;
 import org.deri.iris.builtins.LessEqualBuiltin;
 import org.deri.iris.builtins.NotExactEqualBuiltin;
-import org.deri.iris.builtins.UnEqualBuiltin;
+import org.deri.iris.builtins.NotEqualBuiltin;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.rules.IRuleStratifier;
 import org.deri.iris.rules.RuleManipulator;
@@ -443,7 +443,7 @@ public class LocalStratifier implements IRuleStratifier
 				if( positive )
 				{
 					// Positive literal
-					if( atom instanceof UnEqualBuiltin ||
+					if( atom instanceof NotEqualBuiltin ||
 						atom instanceof NotExactEqualBuiltin ||
 						atom instanceof LessBuiltin ||
 						atom instanceof GreaterBuiltin )

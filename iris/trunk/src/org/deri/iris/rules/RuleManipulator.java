@@ -42,7 +42,7 @@ import org.deri.iris.builtins.EqualBuiltin;
 import org.deri.iris.builtins.ExactEqualBuiltin;
 import org.deri.iris.builtins.NotExactEqualBuiltin;
 import org.deri.iris.builtins.TrueBuiltin;
-import org.deri.iris.builtins.UnEqualBuiltin;
+import org.deri.iris.builtins.NotEqualBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -205,7 +205,7 @@ public class RuleManipulator
 				boolean positive = literal.isPositive();
 				
 				boolean equality = literal.getAtom() instanceof EqualBuiltin;
-				boolean in_equality = literal.getAtom() instanceof UnEqualBuiltin;
+				boolean in_equality = literal.getAtom() instanceof NotEqualBuiltin;
 				boolean is = literal.getAtom() instanceof ExactEqualBuiltin;
 				boolean is_not = literal.getAtom() instanceof NotExactEqualBuiltin;
 				
@@ -270,7 +270,7 @@ public class RuleManipulator
 			boolean add = true;
 			boolean positive = literal.isPositive();
 			boolean equality = literal.getAtom() instanceof EqualBuiltin || literal.getAtom() instanceof ExactEqualBuiltin;
-			boolean in_equality = literal.getAtom() instanceof UnEqualBuiltin || literal.getAtom() instanceof NotExactEqualBuiltin;
+			boolean in_equality = literal.getAtom() instanceof NotEqualBuiltin || literal.getAtom() instanceof NotExactEqualBuiltin;
 
 			boolean canReplace = (positive && equality) || (!positive && in_equality);
 			

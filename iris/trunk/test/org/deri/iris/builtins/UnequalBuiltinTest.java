@@ -54,13 +54,13 @@ public class UnequalBuiltinTest extends TestCase {
 
 	public void testEvaluation() {
 		final ITuple x2 = BASIC.createTuple(TERM.createVariable("X"), TERM.createVariable("X"));
-		assertNull("5 shouldn't be unequal to 5", (new UnEqualBuiltin(CONCRETE
+		assertNull("5 shouldn't be unequal to 5", (new NotEqualBuiltin(CONCRETE
 				.createInteger(5), CONCRETE.createInteger(5))).evaluate(x2));
-		assertNull("5 shouldn't be unequal to 5.0", (new UnEqualBuiltin(CONCRETE
+		assertNull("5 shouldn't be unequal to 5.0", (new NotEqualBuiltin(CONCRETE
 				.createInteger(5), CONCRETE.createDouble(5d))).evaluate(x2));
-		assertNotNull("5 should be unequal to 2", (new UnEqualBuiltin(CONCRETE
+		assertNotNull("5 should be unequal to 2", (new NotEqualBuiltin(CONCRETE
 				.createInteger(2), CONCRETE.createInteger(5))).evaluate(x2));
-		assertNotNull("5 should be unequal to a", (new UnEqualBuiltin(CONCRETE
+		assertNotNull("5 should be unequal to a", (new NotEqualBuiltin(CONCRETE
 				.createInteger(5), TERM.createString("a"))).evaluate(x2));
 	}
 }
