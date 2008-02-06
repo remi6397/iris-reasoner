@@ -108,7 +108,8 @@ public class Builtin extends RuleElement
 									mBuiltinAtom instanceof NotExactEqualBuiltin )
 												)
 				{
-					// Ok for now
+					// For now, allow constructed terms as arguments to equality and inequality,
+					// but only if they are ground.
 				}
 				else
 					throw new EvaluationException( "Can't handle constructed terms in built-ins yet" );
