@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.evaluation_old.common;
+package org.deri.iris.optimisations;
 
 // TODO: test handling of builtins
 
@@ -51,15 +51,16 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
+
 import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.evaluation_old.common.AdornedProgram;
-import org.deri.iris.evaluation_old.common.Adornment;
-import org.deri.iris.evaluation_old.common.AdornedProgram.AdornedPredicate;
-import org.deri.iris.evaluation_old.common.AdornedProgram.AdornedRule;
-import org.deri.iris.evaluation_old.magic.SIPImpl;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.MiscHelper;
+import org.deri.iris.optimisations.AdornedProgram;
+import org.deri.iris.optimisations.AdornedProgram.AdornedPredicate;
+import org.deri.iris.optimisations.AdornedProgram.AdornedRule;
+import org.deri.iris.optimisations.Adornment;
+import org.deri.iris.optimisations.SIPImpl;
 
 /**
  * <p>
