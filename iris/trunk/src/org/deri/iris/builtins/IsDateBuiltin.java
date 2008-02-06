@@ -53,14 +53,6 @@ public class IsDateBuiltin extends BooleanBuiltin {
 		return terms[ 0 ] instanceof IDateTerm;
 	}
 
-	/**
-	 * Returns the predicate for this built-in.
-	 * @return the predicate
-	 */
-	public static IPredicate getBuiltinPredicate() {
-		return PREDICATE;
-	}
-
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = 
 		org.deri.iris.factory.Factory.BASIC.createPredicate("IS_DATE", 1);

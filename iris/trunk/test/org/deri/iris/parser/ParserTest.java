@@ -42,7 +42,6 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IRelation;
@@ -84,7 +83,7 @@ public class ParserTest extends TestCase {
 
 		IRule rule = Factory.BASIC.createRule(head, body);
 
-		Parser parser = new Parser( new BuiltinRegister() );
+		Parser parser = new Parser();
 		parser.parse( expr );
 		assertEquals("Couldn't parse all rules", rule, parser.getRules().iterator().next());
 	}
@@ -109,7 +108,7 @@ public class ParserTest extends TestCase {
 		
 		IRule rule = Factory.BASIC.createRule(head, body);
 				
-		Parser parser = new Parser( new BuiltinRegister() );
+		Parser parser = new Parser();
 		parser.parse( expr );
 
 		assertEquals("Couldn't parse all rules", rule, parser.getRules().iterator().next());
@@ -135,7 +134,7 @@ public class ParserTest extends TestCase {
 
 		IRule rule = Factory.BASIC.createRule(head, body);
 
-		Parser parser = new Parser( new BuiltinRegister() );
+		Parser parser = new Parser();
 		parser.parse( expr );
 		
 		assertEquals("Couldn't parse all rules", rule, parser.getRules().iterator().next());
@@ -171,7 +170,7 @@ public class ParserTest extends TestCase {
 			"base(_base64binary('45df')).\n" + 
 			"hex(_hexbinary('a1df')).\n";
 
-		Parser parser = new Parser( new BuiltinRegister() );
+		Parser parser = new Parser();
 		parser.parse( expr );
 		
 		// TODO: test the function term
@@ -304,7 +303,7 @@ public class ParserTest extends TestCase {
 			"7 >= 8, \n" + 
 			"9 = 10, \n" + 
 			"11 != 12.";
-		Parser parser = new Parser( new BuiltinRegister() );
+		Parser parser = new Parser();
 		parser.parse( toParse );
 		final Collection<ILiteral> body = parser.getRules().iterator().next().getBody();
 		assertTrue("Can't find '1 < 2' in " + body, body.contains(
@@ -327,7 +326,7 @@ public class ParserTest extends TestCase {
 			"4 - 5 = 6, \n" + 
 			"7 * 8 = 9, \n" + 
 			"10 / 11 = 12.";
-		Parser parser = new Parser( new BuiltinRegister() );
+		Parser parser = new Parser();
 		parser.parse( toParse );
 		final Collection<ILiteral> body = parser.getRules().iterator().next().getBody();
 		assertTrue("Can't find '1 + 2 = 3' in " + body, body.contains(
@@ -353,8 +352,8 @@ public class ParserTest extends TestCase {
 		String program1 = "p(?X, ?Y) :- q(?X), not LESS( ?X, ?Y ), not ADD( ?X, ?Y, 3 ).";
 		String program2 = "p(?X, ?Y) :- q(?X), not ?X < ?Y, not ?X +?Y = 3.";
 		
-		Parser parser1 = new Parser( new BuiltinRegister() );
-		Parser parser2 = new Parser( new BuiltinRegister() );
+		Parser parser1 = new Parser();
+		Parser parser2 = new Parser();
 		parser1.parse( program1 );
 		parser2.parse( program2 );
 		

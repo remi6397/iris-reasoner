@@ -62,11 +62,6 @@ public class GreaterBuiltin extends BooleanBuiltin {
 		return BuiltinHelper.less( terms[ 1 ], terms[ 0 ] );
 	}
 
-	public static IPredicate getBuiltinPredicate()
-	{
-		return PREDICATE;
-	}
-
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate( "GREATER", 2 );
 }

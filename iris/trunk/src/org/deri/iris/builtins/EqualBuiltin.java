@@ -50,10 +50,6 @@ public class EqualBuiltin extends ArithmeticBuiltin
 	{
 		return terms[ missingTermIndex == 0 ? 1 : 0 ];
 	}
-	
-	public static IPredicate getBuiltinPredicate() {
-		return PREDICATE;
-	}
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate( "EQUAL", 2 );

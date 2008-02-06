@@ -23,8 +23,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.builtins;
+package org.deri.iris.parser;
 
+import org.deri.iris.compiler.BuiltinRegister;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

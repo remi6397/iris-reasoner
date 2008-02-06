@@ -63,11 +63,6 @@ public class GreaterEqualBuiltin extends BooleanBuiltin
 		return BuiltinHelper.lessEquals( terms[ 1 ], terms[ 0 ] );
 	}
 
-	public static IPredicate getBuiltinPredicate()
-	{
-		return PREDICATE;
-	}
-
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate( "GREATER_EQUAL", 2);
 }

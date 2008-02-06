@@ -73,11 +73,6 @@ public class RegexBuiltin extends BooleanBuiltin
 			return false;
 	}
 
-	public static IPredicate getBuiltinPredicate()
-	{
-		return PREDICATE;
-	}
-	
 	private final Pattern mPattern;
 
 	/** The predicate defining this built-in. */

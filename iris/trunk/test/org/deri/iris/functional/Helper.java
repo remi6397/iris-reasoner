@@ -34,7 +34,6 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.evaluation.IEvaluatorFactory;
 import org.deri.iris.evaluation.bottomup.compiledrules.naive.NaiveEvaluatorFactory;
@@ -80,7 +79,7 @@ public class Helper
 	
 	private static void executeAndCheckResults( String program, String expected, IEvaluatorFactory factory, String evaluatioName ) throws Exception
 	{
-		Parser parser = new Parser( mBuiltinRegister );
+		Parser parser = new Parser();
 		parser.parse( program );
 		List<IQuery> queries = parser.getQueries();
 
@@ -119,7 +118,7 @@ public class Helper
 		{
 			junit.framework.Assert.assertNotNull( actualResults );
 
-			Parser parser = new Parser( mBuiltinRegister );
+			Parser parser = new Parser();
 			parser.parse( expected );
 
 			Map<IPredicate,IRelation> expectedFacts = parser.getFacts();
@@ -145,8 +144,6 @@ public class Helper
 		return actual.equals( expected );
 	}
 	
-	private static final BuiltinRegister mBuiltinRegister = new BuiltinRegister();
-
 	/**
 	 * Evaluate the given logic program with all evaluation strategies and ensure that
 	 * each fails with the expected exception. 
@@ -172,7 +169,7 @@ public class Helper
 		try
 		{
 			// Parse the program (facts and rules)
-			Parser parser = new Parser( mBuiltinRegister );
+			Parser parser = new Parser();
 			parser.parse( knowledgeBase );
 			
 			Map<IPredicate,IRelation> facts = parser.getFacts();

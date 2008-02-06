@@ -50,15 +50,6 @@ public class IsBooleanBuiltin extends BooleanBuiltin
 		return terms[ 0 ] instanceof IBooleanTerm;
 	}
 
-	/**
-	 * Returns the predicate for this built-in.
-	 * @return the predicate
-	 */
-	public static IPredicate getBuiltinPredicate()
-	{
-		return PREDICATE;
-	}
-
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = 
 		org.deri.iris.factory.Factory.BASIC.createPredicate("IS_BOOLEAN", 1);

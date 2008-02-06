@@ -76,9 +76,4 @@ public class DivideBuiltin extends ArithmeticBuiltin {
 			return BuiltinHelper.divide( terms[ 0 ], terms[ 1 ] );
 		}
 	}
-
-	public static IPredicate getBuiltinPredicate()
-	{
-		return PREDICATE;
-	}
 }

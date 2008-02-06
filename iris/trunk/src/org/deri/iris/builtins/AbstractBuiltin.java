@@ -27,15 +27,11 @@ package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.BASIC;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltInAtom;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -183,22 +179,6 @@ public abstract class AbstractBuiltin implements IBuiltInAtom {
 		return null;
 	}
 	
-	/**
-	 * Find out if the predicate can be evaluated. It can be if the total number of unknown
-	 * variables is less than or equal to the result of maxUnknownVariables().
-	 * @return true is evaluatable.
-	 */
-	public boolean isEvaluable( final Collection<IVariable> variables )
-	{
-		if( variables == null )
-			throw new IllegalArgumentException( "The variables must not be null");
-		
-		final List<IVariable> unknownVariables = getTuple().getAllVariables();
-		unknownVariables.removeAll( variables );
-		
-		return unknownVariables.size() <= maxUnknownVariables();
-	}
-
 	public int maxUnknownVariables()
 	{
 		return 0;

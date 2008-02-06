@@ -53,14 +53,6 @@ public class IsDecimalBuiltin extends BooleanBuiltin {
 		return terms[ 0 ] instanceof IDecimalTerm;
 	}
 
-	/**
-	 * Returns the predicate for this built-in.
-	 * @return the predicate
-	 */
-	public static IPredicate getBuiltinPredicate() {
-		return PREDICATE;
-	}
-
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = 
 		org.deri.iris.factory.Factory.BASIC.createPredicate("IS_DECIMAL", 1);

@@ -54,11 +54,6 @@ public class AddBuiltin extends ArithmeticBuiltin
 		super(PREDICATE, t);
 	}
 
-	public static IPredicate getBuiltinPredicate()
-	{
-		return PREDICATE;
-	}
-	
 	protected ITerm computeMissingTerm( int missingTermIndex, ITerm[] terms )
 	{
 		switch( missingTermIndex )
