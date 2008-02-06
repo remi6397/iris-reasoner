@@ -17,22 +17,17 @@
  */
 package org.deri.iris.evaluation_old.magic;
 
-// TODO: create hashCode, equals
-
 import static org.deri.iris.factory.Factory.BASIC;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.deri.iris.api.IProgram;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
@@ -40,7 +35,7 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.evaluation_old.magic.ISip;
-import org.deri.iris.api.storage_old.IMixedDatatypeRelation;
+import org.deri.iris.api.IProgramOptimisation;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
@@ -49,7 +44,6 @@ import org.deri.iris.evaluation_old.common.Adornment;
 import org.deri.iris.evaluation_old.common.AdornedProgram.AdornedPredicate;
 import org.deri.iris.evaluation_old.common.AdornedProgram.AdornedRule;
 import org.deri.iris.evaluation_old.magic.SIPImpl;
-import org.deri.iris.factory.Factory;
 import org.deri.iris.graph.LabeledEdge;
 
 /**
@@ -61,7 +55,7 @@ import org.deri.iris.graph.LabeledEdge;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public final class MagicSetImpl {
+public final class MagicSetImpl implements IProgramOptimisation {
 
 	/** The prefix for the magic predicates. */
 	static final String MAGIC_PREDICATE_PREFIX = "magic_";
@@ -69,67 +63,56 @@ public final class MagicSetImpl {
 	/** The prefix for the labeled predicates. */
 	static final String MAGIC_LABEL_PREFIX = "label_";
 
-	/** Cache for all adorned sips. */
-	private final Map<AdornedRule, ISip> adornedSipCache = new HashMap<AdornedRule, ISip>();
-
-	/** Holds all magic rules. */
-	private final Set<IRule> magicRules = new HashSet<IRule>();
-
-	/** Holds all rewritten rules. */
-	private final Set<AdornedRule> rewrittenRules = new HashSet<AdornedRule>();
-
-	/** The remaining not adorned rules. */
-	private final Set<IRule> remainingRules = new HashSet<IRule>();
-
-	/** The seed for this magic set. */
-	private final IAtom seed;
-
-	/** The query for which the adorned program was constructed. */
-	private final IQuery query;
-	
 	/** An empty list that getBounds() can return. */
 	private static final List<ITerm> EMPTY_TERM_LIST = new ArrayList<ITerm>();
 
-	/**
-	 * Construcs a MagicSet using the submitted programm.
-	 * 
-	 * @param program
-	 *            the adorned program to construct the magics
-	 * @throws NullPointerException
-	 *             if the program is null
-	 * @throws IllegalArgumentException
-	 *             if one of the rule got a head with length unequal 1
-	 */
-	public MagicSetImpl(final AdornedProgram program) {
-		if (program == null) {
-			throw new NullPointerException("The program must not be null");
+	public Result optimise(final Collection<IRule> rules, final IQuery query) {
+		if (rules == null) {
+			throw new IllegalArgumentException("The rules must not be null");
+		}
+		if (query == null) {
+			throw new IllegalArgumentException("The query must not be null");
 		}
 
-		// TODO: maybe a defensive copy should be made
+		final Result result = new Result();
+		final AdornedProgram adornedProg = new AdornedProgram(rules, query);
 
-		for (final AdornedRule r : program.getAdornedRules()) {
-			if (r.getHead().size() != 1) {
+		// setting the query
+		result.query = adornedProg.getQuery();
+
+		// setting the rules
+		result.rules = new ArrayList<IRule>();
+		for (final AdornedRule r : adornedProg.getAdornedRules()) {
+			if (r.getRule().getHead().size() != 1) {
 				throw new IllegalArgumentException("At the moment only heads "
 						+ "with length of 1 are allowed");
 			}
 
-			for (ILiteral l : r.getBody()) {
+			for (final ILiteral l : r.getRule().getBody()) {
 				if (l.getAtom().getPredicate() instanceof AdornedPredicate) {
 					// creating a magic rule for the literal
-					magicRules.addAll(generateRules(l, r));
+					result.rules.addAll(generateRules(l, r));
 				}
 			}
 			// adding the rewritten rule
-			rewrittenRules.add(getRewrittenRule(r));
+			result.rules.add(getRewrittenRule(r));
 		}
 
-		seed = createSeed(program.getQuery());
-		query = program.getQuery();
 		// adding the remaining rules
-		remainingRules.addAll(filterRemainingRules(program.getNormalRules(),
-				program.getAdornedRules()));
+		result.rules.addAll(filterRemainingRules(adornedProg.getNormalRules(),
+				adornedProg.getAdornedRules()));
 		// adding the rules for the conjunctive query
-		magicRules.addAll(createConjunctiveRules(program.getQuery()));
+		result.rules.addAll(createConjunctiveRules(adornedProg.getQuery()));
+		// adding the rule for the seed
+		final IAtom seed = createSeed(adornedProg.getQuery());
+		// construct the seed rule
+		if (seed != null) {
+			result.rules.add(BASIC.createRule(
+						Arrays.asList(BASIC.createLiteral(true, seed)), 
+						Collections.EMPTY_LIST));
+		}
+
+		return result;
 	}
 
 	/**
@@ -193,36 +176,31 @@ public final class MagicSetImpl {
 	 * @throws IllegalArgumentException
 	 *             if the length of the head is unequal to 1
 	 */
-	private AdornedRule getRewrittenRule(final AdornedRule r) {
+	private static IRule getRewrittenRule(final AdornedRule r) {
 		assert r != null: "The rule must not be null";
-		assert r.getHead().size() == 1: 
-			"The head must have a length of 1, but was " + r.getHead().size();
+		assert r.getRule().getHead().size() == 1: 
+			"The head must have a length of 1, but was " + r.getRule().getHead().size();
 
-		final ILiteral headL = r.getHead().get(0);
+		final ILiteral headL = r.getRule().getHead().get(0);
 
 		// computing the rewritten body
-		final List<ILiteral> rewrittenBody = new ArrayList<ILiteral>(r.getBody());
-		Collections.sort(rewrittenBody, 
-				getAdornedSip(r).getLiteralComparator());
+		final List<ILiteral> rewrittenBody = new ArrayList<ILiteral>(r.getRule().getBody());
+		Collections.sort(rewrittenBody, r.getSip().getLiteralComparator());
 
 		final ILiteral magicL = createMagicLiteral(headL);
 		if (magicL == headL) { // the head literal is not adorned 
 			// -> the query was not adorned -> nothing to exchange
-			return r;
+			return r.getRule();
 		}
 		if (magicL.getAtom().getTuple().isEmpty()) { // the literal wouldn't produce 
 			// any bindings, so it is better to leave it out (since
 			// with the new sip we wouldn't have the rules for this
 			// literal constructed anyway
-			return r;
+			return r.getRule();
 		}
 		rewrittenBody.add(0, magicL);
 
-		// creating the normal rule
-		final IRule tmpRule = BASIC.createRule(r.getHead(), rewrittenBody);
-
-		// creating the adorned rule
-		return new AdornedRule(tmpRule, new SIPImpl(tmpRule));
+		return BASIC.createRule(r.getRule().getHead(), rewrittenBody);
 	}
 
 	/**
@@ -255,15 +233,16 @@ public final class MagicSetImpl {
 	 * @param r the original rule containing the given literal
 	 * @return the set of generated rules
 	 */
-	private Set<IRule> generateRules(final ILiteral l, final AdornedRule r) {
+	private static Set<IRule> generateRules(final ILiteral l, final AdornedRule r) {
 		assert l != null: "The literal must not be null";
 		assert r != null: "The rule must not be null";
 		assert l.getAtom().getPredicate() instanceof AdornedPredicate: 
 			"The predicate of the literal must be adorned";
-		assert r.getHead().size() == 1: "The head must have a size of 1, but was " + r.getHead().size();
+		assert r.getRule().getHead().size() == 1: 
+			"The head must have a size of 1, but was " + r.getRule().getHead().size();
 
-		final Set<LabeledEdge<ILiteral, Set<IVariable>>> enteringEdges = getAdornedSip(
-				r).getEdgesEnteringLiteral(l);
+		final Set<LabeledEdge<ILiteral, Set<IVariable>>> enteringEdges = 
+			r.getSip().getEdgesEnteringLiteral(l);
 
 		if (enteringEdges.size() == 1) {
 			// only on arch is entering this literal
@@ -307,7 +286,7 @@ public final class MagicSetImpl {
 	 * @throws IllegalArgumentException
 	 *             if the length of the head of the rule is unequal 1
 	 */
-	private IRule createMagicRule(final ILiteral l, final AdornedRule rule) {
+	private static IRule createMagicRule(final ILiteral l, final AdornedRule rule) {
 		if ((l == null) || (rule == null)) {
 			throw new NullPointerException(
 					"The rule and the literal must not be null");
@@ -316,7 +295,7 @@ public final class MagicSetImpl {
 			throw new IllegalArgumentException(
 					"The predicate of the literal must be adorned");
 		}
-		if (rule.getHead().size() != 1) {
+		if (rule.getRule().getHead().size() != 1) {
 			throw new IllegalArgumentException(
 					"At the moment only heads with length 1 are allowed");
 		}
@@ -325,16 +304,14 @@ public final class MagicSetImpl {
 		final ILiteral hl = createMagicLiteral(true, l);
 
 		// create the body of the rule
-		ISip adornedSip = getAdornedSip(rule);
-		final List<ILiteral> body = new ArrayList<ILiteral>(adornedSip
-				.getDepends(l));
-		Collections.sort(body, adornedSip.getLiteralComparator());
+		final List<ILiteral> body = new ArrayList<ILiteral>(rule.getSip().getDepends(l));
+		Collections.sort(body, rule.getSip().getLiteralComparator());
 
 		// correct the literals -> make adorned literals -> magic literals
 		// if the head literal wasn't adorned (only happens if the query hasn't any constants
 		// skip the exchange of the literals, because there isn't anything to exchage, and 
 		// remove the first literal of the body (which is the headliteral)
-		final ILiteral headLiteral = rule.getHead().get(0);
+		final ILiteral headLiteral = rule.getRule().getHead().get(0);
 		if ((headLiteral.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			for (int i = 0, max = body.size(); i < max; i++) {
 				if (body.get(i).equals(headLiteral)) {
@@ -370,7 +347,7 @@ public final class MagicSetImpl {
 	 * @throws IllegalArgumentException
 	 *             if the headlength of the rule is unequal to 1
 	 */
-	private IRule createLabeledRule(
+	private static IRule createLabeledRule(
 			final LabeledEdge<ILiteral, Set<IVariable>> e, final AdornedRule r,
 			final int index) {
 		if ((e == null) || (r == null)) {
@@ -396,22 +373,21 @@ public final class MagicSetImpl {
 			throw new IllegalArgumentException("The index must not be negative");
 		}
 
-		if (r.getHead().size() != 1) {
+		if (r.getRule().getHead().size() != 1) {
 			throw new IllegalArgumentException(
 					"At the moment only heads with length 1 are allowed");
 		}
 
-		final ILiteral headLiteral = r.getHead().get(0);
+		final ILiteral headLiteral = r.getRule().getHead().get(0);
 
 		// create head of the rule
 		final ILiteral hl = createLabeledLiteral(true, targetLiteral, index);
 
 		// create body of the rule
-		final ISip adornedSip = getAdornedSip(r);
-		final List<ILiteral> body = new ArrayList<ILiteral>(adornedSip
-				.getDepends((ILiteral) sourceLiteral));
+		final List<ILiteral> body = 
+			new ArrayList<ILiteral>(r.getSip().getDepends((ILiteral) sourceLiteral));
 		body.add(sourceLiteral);
-		Collections.sort(body, adornedSip.getLiteralComparator());
+		Collections.sort(body, r.getSip().getLiteralComparator());
 
 		// correct the literals -> make adorned literals -> magic literals
 		for (int counter = 0, size = body.size(); counter < size; counter++) {
@@ -605,7 +581,7 @@ public final class MagicSetImpl {
 	 *             if the signature of the adorned predicate doesn't match the
 	 *             signature of the literal predicate
 	 */
-	private static List<ITerm> getBounds(final AdornedPredicate p,
+	 private static List<ITerm> getBounds(final AdornedPredicate p,
 			final IAtom a) {
 		if (p == null) {
 			throw new NullPointerException("The adorned predicate must not be null");
@@ -629,100 +605,6 @@ public final class MagicSetImpl {
 			}
 		}
 		return bounds;
-	}
-
-	/**
-	 * Returns a sip for a given adorned rule.
-	 * 
-	 * @param r
-	 *            for which to retrieve the sip
-	 * @return the sip
-	 */
-	private ISip getAdornedSip(final AdornedRule r) {
-		ISip sip = null;
-		if ((sip = adornedSipCache.get(r)) == null) {
-			sip = new SIPImpl(r);
-			adornedSipCache.put(r, sip);
-		}
-		return sip;
-	}
-
-	/**
-	 * Returns the set of generated magic rules.
-	 * 
-	 * @return the unmodifiable set of rules
-	 */
-	public Set<IRule> getMagicRules() {
-		return Collections.unmodifiableSet(magicRules);
-	}
-
-	/**
-	 * Returns the set of rewritten rules.
-	 * 
-	 * @return the unmodifiable set of rules
-	 */
-	public Set<AdornedRule> getRewrittenRules() {
-		return Collections.unmodifiableSet(rewrittenRules);
-	}
-
-	/**
-	 * Returns the seed of this magic set.
-	 * 
-	 * @return the seed
-	 */
-	public IAtom getSeed() {
-		return seed;
-	}
-
-	/**
-	 * Constructs a programm out of the rules and the given query.
-	 * 
-	 * @param p
-	 *            the original program. This is only needed if facts are inteded
-	 *            to be copied. If no facts are needed it might be {@code null}.
-	 * @return the constructed program
-	 */
-	public IProgram createProgram(final Map<IPredicate, IMixedDatatypeRelation> f) {
-		final Set<IRule> rules = new HashSet<IRule>(rewrittenRules);
-		rules.addAll(magicRules);
-		rules.addAll(remainingRules);
-		final IProgram prog = Factory.PROGRAM.createProgram(
-				f, rules, Collections.singleton(query));
-		if (seed != null) {
-			prog.addFact(seed);
-		}
-		return prog;
-	}
-
-	/**
-	 * <p>
-	 * Returns a short description of this object. The format of the returned
-	 * String is undocumented and subject to change.
-	 * </p>
-	 * <p>
-	 * An example return String could be &lt;seed&gt;&lt;blank line&gt;&lt;list
-	 * of all magic rules separated by new lines&gt;&lt;blank line&gt;&lt;list
-	 * of all rewritten rules separated by new lines&gt;.
-	 * </p>
-	 * 
-	 * @return the String representation of this object
-	 */
-	public String toString() {
-		final String NEWLINE = System.getProperty("line.separator");
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(seed).append(NEWLINE);
-		for (IRule r : magicRules) {
-			buffer.append(r).append(NEWLINE);
-		}
-		buffer.append(NEWLINE);
-		for (IRule r : rewrittenRules) {
-			buffer.append(r).append(NEWLINE);
-		}
-		buffer.append(NEWLINE);
-		for (IRule r : remainingRules) {
-			buffer.append(r).append(NEWLINE);
-		}
-		return buffer.toString();
 	}
 
 	/**
@@ -769,7 +651,7 @@ public final class MagicSetImpl {
 		for (final IRule n : nr) {
 			boolean add = true;
 			for (final AdornedRule a : ar) {
-				if (isSameRule(n, a)) {
+				if (isSameRule(n, a.getRule())) {
 					add = false;
 					break;
 				}
