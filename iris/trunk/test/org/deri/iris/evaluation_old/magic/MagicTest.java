@@ -26,6 +26,7 @@
 package org.deri.iris.evaluation_old.magic;
 
 import static org.deri.iris.MiscHelper.createLiteral;
+import static org.deri.iris.MiscHelper.createVarList;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
 
@@ -48,6 +49,7 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.IProgram;
+import org.deri.iris.api.IProgramOptimisation.Result;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.compiler.Parser;
@@ -148,110 +150,122 @@ public class MagicTest extends TestCase {
 	}
 
 	/**
-	 * Tests whether the seed was constructed as it should be.
+	 * Creates a seed rule for a given atom.
+	 * @param a the atom for which to create the seed rule
+	 * @return the created rule
 	 */
-	public void testSeed0() throws Exception {
-		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y)."
-					      + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y)."
-					      + "?- sg('john', ?Y).";
-		final IProgram p = Parser.parse(prog);
-		final IQuery q = p.getQueries().iterator().next();
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), q));
+	private static IRule seedRule(final IAtom a) {
+		assert a != null: "The atom must not be null";
 
-		final IPredicate pred = new AdornedProgram.AdornedPredicate("magic_sg", 1,
-				new Adornment[] { Adornment.BOUND, Adornment.FREE });
-		final IAtom ref = BASIC.createAtom(pred, BASIC.createTuple(TERM.createString("john")));
-		assertEquals("The seed wasn't constructed correctly", ref, ms.getSeed());
+		return seedRule(BASIC.createLiteral(true, a));
+	}
+
+	/**
+	 * Creates a seed rule for a given atom.
+	 * @param a the atom for which to create the seed rule
+	 * @return the created rule
+	 */
+	private static IRule seedRule(final ILiteral l) {
+		assert l != null: "The literal must not be null";
+
+		return BASIC.createRule(Arrays.asList(l), Collections.EMPTY_LIST);
 	}
 
 	/**
 	 * Tests whether the seed was constructed as it should be.
 	 */
-	public void testSeed1() throws Exception {
+	public void testMagic0() throws Exception {
+		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y)."
+					      + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y)."
+					      + "?- sg('john', ?Y).";
+		final IProgram p = Parser.parse(prog);
+		final IQuery q = p.getQueries().iterator().next();
+		final Result result = (new MagicSetImpl()).optimise(p.getRules(), q);
+
+		final Set<IRule> ref = new HashSet<IRule>();
+
+		final IPredicate SG_BF = new AdornedProgram.AdornedPredicate("sg", 2, 
+				new Adornment[] { Adornment.BOUND, Adornment.FREE });
+		final IPredicate MAGIC_SG_BF = new AdornedProgram.AdornedPredicate(MAGIC_PREFIX + "sg", 1, 
+				new Adornment[] { Adornment.BOUND, Adornment.FREE });
+
+		// constructing the rule for the seed
+
+		ref.add(seedRule(BASIC.createAtom(MAGIC_SG_BF, BASIC.createTuple(TERM.createString("john")))));
+
+		// constructing the magic rules
+
+		// magic_sg^bf(Z1) :- magic_sg^bf(X), up(X, Z1)
+		List<ILiteral> head = Arrays.asList(BASIC.createLiteral(true, MAGIC_SG_BF, BASIC.createTuple(createVarList("Z1"))));
+		List<ILiteral> body = Arrays.asList(BASIC.createLiteral(true, MAGIC_SG_BF, BASIC.createTuple(createVarList("X"))), 
+				createLiteral("up", "X", "Z1"));
+		ref.add(BASIC.createRule(head, body));
+		// magic_sg^bf(Z3) :- magic_sg^bf(X), up(X, Z1), sg^bf(Z1, Z2), flat(Z2, Z3)
+		head = Arrays.asList(BASIC.createLiteral(true, MAGIC_SG_BF, BASIC.createTuple(createVarList("Z3"))));
+		body = Arrays.asList(BASIC.createLiteral(true, MAGIC_SG_BF, BASIC.createTuple(createVarList("X"))), 
+				createLiteral("up", "X", "Z1"), 
+				BASIC.createLiteral(true, SG_BF, BASIC.createTuple(createVarList("Z1", "Z2"))), 
+				createLiteral("flat", "Z2", "Z3"));
+		ref.add(BASIC.createRule(head, body));
+
+		// constructing the rewritten rules out of the normal ones
+
+		// sg^bf(X,Y) :- magic_sg^bf(X), flat(X, Y)
+		head = Arrays.asList(BASIC.createLiteral(true, SG_BF, BASIC.createTuple(createVarList("X", "Y"))));
+		body = Arrays.asList(BASIC.createLiteral(true, MAGIC_SG_BF, BASIC.createTuple(createVarList("X"))), 
+				createLiteral("flat", "X", "Y"));
+		ref.add(BASIC.createRule(head, body));
+		// sg^bf(X,Y) :- magic_sg^bf(X), up(X, Z1), sg^bf(Z1, Z2), flat(Z2, Z3), sg^bf(Z3, Z4), down(Z4, Y)
+		head = Arrays.asList(BASIC.createLiteral(true, SG_BF, BASIC.createTuple(createVarList("X", "Y"))));
+		body = Arrays.asList(BASIC.createLiteral(true, MAGIC_SG_BF, BASIC.createTuple(createVarList("X"))), 
+				createLiteral("up", "X", "Z1"),
+				BASIC.createLiteral(true, SG_BF, BASIC.createTuple(createVarList("Z1", "Z2"))), 
+				createLiteral("flat", "Z2", "Z3"),
+				BASIC.createLiteral(true, SG_BF, BASIC.createTuple(createVarList("Z3", "Z4"))), 
+				createLiteral("down", "Z4", "Y"));
+		ref.add(BASIC.createRule(head, body));
+
+		assertEquals("The rules don't match", ref, result.rules);
+		// TODO: match the query
+	}
+
+	/**
+	 * Tests whether the seed was constructed as it should be.
+	 */
+	public void testMagic1() throws Exception {
 		final String prog = "a(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z)." 
 						   + "a(?X, ?Y, ?Z) :- b(?X, ?A), a(?X, ?A, ?B), c(?B, ?Y, ?Z)."
 						   + "?- a('john', 'mary', ?Y).";
 		final IProgram p = Parser.parse(prog);
 		final IQuery q = p.getQueries().iterator().next();
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), q));
+		final Result result = (new MagicSetImpl()).optimise(p.getRules(), q);
 
-		final IPredicate pred = new AdornedProgram.AdornedPredicate("magic_a", 2,
-				new Adornment[] { Adornment.BOUND, Adornment.BOUND,
-						Adornment.FREE });
-		final IAtom ref = BASIC.createAtom(pred, BASIC.createTuple(TERM.createString("john"), 
-					TERM.createString("mary")));
-		assertEquals("The seed wasn't constructed correctly", ref, ms.getSeed());
-	}
+		final Set<IRule> ref = new HashSet<IRule>();
 
-	/**
-	 * Tests for the magic rules.
-	 */
-	public void testMagicRules0() throws Exception {
-		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y)."
-					      + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y)."
-					      + "?- sg('john', ?Y).";
-		final IProgram p = Parser.parse(prog);
-		final IQuery q = p.getQueries().iterator().next();
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), q));
-
-		final List<IRule> rules = new ArrayList<IRule>(ms.getMagicRules());
-		final List<IRule> ref = new ArrayList<IRule>();
-
-		// constructing the magic rules
-		// magic_sg^bf(Z1) :- magic_sg^bf(X), up(X, Z1)
-		List<ILiteral> head = Arrays.asList(createMagicLiteral("sg", new Adornment[] {
-				Adornment.BOUND, Adornment.FREE }, new ITerm[] { TERM
-				.createVariable("Z1") }));
-		List<ILiteral> body = Arrays.asList(createMagicLiteral("sg", new Adornment[] {
-				Adornment.BOUND, Adornment.FREE }, new ITerm[] { TERM
-				.createVariable("X") }), createLiteral("up", "X", "Z1"));
-		ref.add(BASIC.createRule(head, body));
-		// magic_sg^bf(Z3) :- magic_sg^bf(X), up(X, Z1), sg^bf(Z1, Z2), flat(Z2, Z3)
-		head = Arrays.asList(createMagicLiteral("sg", new Adornment[] {
-				Adornment.BOUND, Adornment.FREE }, new ITerm[] { TERM
-				.createVariable("Z3") }));
-		body = Arrays.asList(createMagicLiteral("sg", new Adornment[] {
-						Adornment.BOUND, Adornment.FREE }, new ITerm[] { TERM
-						.createVariable("X") }),
-						createLiteral("up", "X", "Z1"), createAdornedLiteral(
-								"sg", new Adornment[] { Adornment.BOUND,
-										Adornment.FREE }, new ITerm[] {
-										TERM.createVariable("Z1"),
-										TERM.createVariable("Z2") }),
-						createLiteral("flat", "Z2", "Z3"));
-		ref.add(BASIC.createRule(head, body));
-
-		Collections.sort(rules, AdornmentsTest.RC);
-		assertEquals(ref, rules);
-	}
-
-	/**
-	 * Tests for the magic rules.
-	 */
-	public void testMagicRules1() throws Exception {
-		final String prog = "a(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" 
-						   + "a(?X, ?Y, ?Z) :- b(?X, ?A), a(?X, ?A, ?B), c(?B, ?Y, ?Z).\n"
-						   + "?- a('john', 'mary', ?Y).\n";
-		final IProgram p = Parser.parse(prog);
-		final IQuery q = p.getQueries().iterator().next();
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), q));
-
-		final List<IRule> rules = new ArrayList<IRule>(ms.getMagicRules());
-		final List<IRule> ref = new ArrayList<IRule>();
-
-		// constructing the magic rules
 		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
 		final IVariable A = TERM.createVariable("A");
+		final IVariable B = TERM.createVariable("B");
 		final IVariable X = TERM.createVariable("X");
 		final IVariable Y = TERM.createVariable("Y");
+		final IVariable Z = TERM.createVariable("Z");
 		final IVariable[] XA = new IVariable[]{X, A};
 		final IVariable[] XY = new IVariable[]{X, Y};
-		// label_a_1^bbf(X, A) :- magic_a^bbf(X, Y)
-		List<ILiteral> head = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_1", bbf, XA));
+
+		// constructing the rule for the seed
+
+		final IPredicate pred = new AdornedProgram.AdornedPredicate("magic_a", 2, bbf);
+		ref.add(seedRule(BASIC.createAtom(pred, BASIC.createTuple(
+							TERM.createString("john"), 
+							TERM.createString("mary")))));
+
+		// constructing the magic/labeled rules rules
+
+		// label_a_2^bbf(X, A) :- magic_a^bbf(X, Y)
+		List<ILiteral> head = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_2", bbf, XA));
 		List<ILiteral> body = Arrays.asList(createMagicLiteral("a", bbf, XY));
 		ref.add(BASIC.createRule(head, body));
-		// label_a_2^bbf(X, A) :- magic_a^bbf(X, Y), b(X, A)
-		head = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_2", bbf, XA));
+		// label_a_1^bbf(X, A) :- magic_a^bbf(X, Y), b(X, A)
+		head = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_1", bbf, XA));
 		body = Arrays.asList(createMagicLiteral("a", bbf, XY), createLiteral("b", "X", "A"));
 		ref.add(BASIC.createRule(head, body));
 		// magic_a^bbf(X, A) :- label_a_1^bbf(X, A), label_a_2^bbf(X, A)
@@ -260,114 +274,23 @@ public class MagicTest extends TestCase {
 			createAdornedLiteral(LABELED_PREFIX + "a_1", bbf, XA));
 		ref.add(BASIC.createRule(head, body));
 
-		Collections.sort(rules, AdornmentsTest.RC);
-		Collections.sort(ref, AdornmentsTest.RC);
+		// constructing the rewritten rules out of the normal ones
 
-		assertEquals(ref, rules);
-	}
+		// a^bbf(X, Y, Z) :- magic_a^bbf(X, Y), c(X, Y, Z)
+		head = Arrays.asList(createAdornedLiteral("a", bbf, new IVariable[]{X, Y, Z}));
+		body = Arrays.asList(createMagicLiteral("a", bbf, XY), 
+				createLiteral("c", "X", "Y", "Z"));
+		ref.add(BASIC.createRule(head, body));
+		// a^bbf(X, Y, Z) :- magic_a^bbf(X, Y), b(X, A), a^bbf(X, A, B), c(B, Y, Z)
+		head = Arrays.asList(createAdornedLiteral("a", bbf, new IVariable[]{X, Y, Z}));
+		body = Arrays.asList(createMagicLiteral("a", bbf, XY), 
+				createLiteral("b", "X", "A"), 
+				createAdornedLiteral("a", bbf, new IVariable[]{X, A, B}),
+				createLiteral("c", "B", "Y", "Z"));
+		ref.add(BASIC.createRule(head, body));
 
-	/**
-	 * Tests the rewritten rules.
-	 */
-	public void testRewrittenRules0() throws Exception {
-		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y)."
-					      + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y)."
-					      + "?- sg('john', ?Y).";
-		final IProgram p = Parser.parse(prog);
-		final IQuery q = p.getQueries().iterator().next();
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), q));
-
-		final List<IRule> ref = new ArrayList<IRule>();
-		final List<IRule> mrules = new ArrayList<IRule>(ms.getRewrittenRules());
-		// constructing the reference rules out of the normal ones
-		for (final IRule r : p.getRules()) {
-			final ILiteral head = createAdornedLiteral("sg", new Adornment[] {
-					Adornment.BOUND, Adornment.FREE }, new ITerm[] {
-					TERM.createVariable("X"), TERM.createVariable("Y") });
-			final List<ILiteral> body = new ArrayList<ILiteral>(r.getBody());
-			int i = 0;
-			// adorning the sg's with bf
-			for (final ILiteral l : body) {
-				if (l.getAtom().getPredicate().getPredicateSymbol().equals("sg")) {
-					body.set(i, adornLiteral(l, new Adornment[] {
-							Adornment.BOUND, Adornment.FREE }));
-				}
-				i++;
-			}
-			// adding the magic guard
-			body.add(0, createMagicLiteral("sg", new Adornment[] {
-					Adornment.BOUND, Adornment.FREE }, new ITerm[] { TERM
-					.createVariable("X") }));
-			// adding the rule to the list
-			ref.add(BASIC.createRule(Arrays.asList(head), body));
-		}
-		// sorting all rules
-		Collections.sort(ref, AdornmentsTest.RC);
-		Collections.sort(mrules, AdornmentsTest.RC);
-		// comparing the rules
-		for (Iterator<IRule> i0 = ref.iterator(), i1 = mrules.iterator(); i0
-				.hasNext();) {
-			final IRule r0 = i0.next();
-			final IRule r1 = i1.next();
-			assertEquals(
-					"The rules\n" + r0 + "\nand\n" + r1 + "\ndon't match.", 0,
-					AdornmentsTest.RC.compare(r0, r1));
-		}
-	}
-
-	/**
-	 * Tests the rewritten rules.
-	 */
-	public void testRewrittenRules1() throws Exception {
-		final String prog = "a(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z)." 
-						   + "a(?X, ?Y, ?Z) :- b(?X, ?A), a(?X, ?A, ?B), c(?B, ?Y, ?Z)."
-						   + "?- a('john', 'mary', ?Y).";
-		final IProgram p = Parser.parse(prog);
-		final IQuery q = p.getQueries().iterator().next();
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), q));
-
-		final List<IRule> ref = new ArrayList<IRule>();
-		final List<IRule> mrules = new ArrayList<IRule>(ms.getRewrittenRules());
-		// constructing the reference rules out of the normal ones
-		for (final IRule r : p.getRules()) {
-			final ILiteral head = createAdornedLiteral(
-					"a",
-					new Adornment[] { Adornment.BOUND, Adornment.BOUND,
-							Adornment.FREE },
-					new ITerm[] { TERM.createVariable("X"),
-							TERM.createVariable("Y"), TERM.createVariable("Z") });
-			final List<ILiteral> body = new ArrayList<ILiteral>(r.getBody());
-			int i = 0;
-			// adorning the sg's with bf
-			for (final ILiteral l : body) {
-				if (l.getAtom().getPredicate().getPredicateSymbol().equals("a")) {
-					body
-							.set(i, adornLiteral(l, new Adornment[] {
-									Adornment.BOUND, Adornment.BOUND,
-									Adornment.FREE }));
-				}
-				i++;
-			}
-			// adding the magic guard
-			body.add(0, createMagicLiteral("a", new Adornment[] {
-					Adornment.BOUND, Adornment.BOUND, Adornment.FREE },
-					new ITerm[] { TERM.createVariable("X"),
-							TERM.createVariable("Y") }));
-			// adding the rule to the list
-			ref.add(BASIC.createRule(Arrays.asList(head), body));
-		}
-		// sorting all rules
-		Collections.sort(ref, AdornmentsTest.RC);
-		Collections.sort(mrules, AdornmentsTest.RC);
-		// comparing the rules
-		for (Iterator<IRule> i0 = ref.iterator(), i1 = mrules.iterator(); i0
-				.hasNext();) {
-			final IRule r0 = i0.next();
-			final IRule r1 = i1.next();
-			assertEquals(
-					"The rules\n" + r0 + "\nand\n" + r1 + "\ndon't match.", 0,
-					AdornmentsTest.RC.compare(r0, r1));
-		}
+		assertEquals("The rules don't match", ref, result.rules);
+		// TODO: match the query
 	}
 
 	/**
@@ -380,8 +303,7 @@ public class MagicTest extends TestCase {
 		final IProgram p = Factory.PROGRAM.createProgram();
 		Parser.parse(program, p);
 
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(
-					p.getRules(), p.getQueries().iterator().next()));
+		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm a = TERM.createString("a");
 		final ITerm X = TERM.createVariable("X");
@@ -406,13 +328,10 @@ public class MagicTest extends TestCase {
 		// c^bbf(X, Y, Z) :- magic_c^bbf(X, Y), x(X, Y, Z)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("c", bbf, XYZ)), 
 					Arrays.asList(createMagicLiteral("c", bbf, new ITerm[]{X, Y}), x)));
+		// magic_a^bf('john') :- TRUE
+		ref.add(seedRule(createMagicLiteral("a", bf, new ITerm[]{TERM.createString("john")})));
 
-		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
-		rules.addAll(ms.getMagicRules());
-
-		assertTrue("The rules must be '" + MiscHelper.join("\n", ref) + "', but were '" + 
-				MiscHelper.join("\n", rules) + "'", 
-				MiscHelper.compare(rules, ref, AdornmentsTest.RC));
+		assertEquals("The rules don't match", ref, result.rules);
 	}
 
 	/**
@@ -427,10 +346,7 @@ public class MagicTest extends TestCase {
 		final IProgram p = Factory.PROGRAM.createProgram();
 		Parser.parse(program, p);
 
-		final AdornedProgram ap = new AdornedProgram(
-				p.getRules(), p.getQueries().iterator().next());
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(
-					p.getRules(), p.getQueries().iterator().next()));
+		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm[] X = new ITerm[]{TERM.createVariable("X")};
 		final Adornment[] b = new Adornment[]{Adornment.BOUND};
@@ -456,11 +372,10 @@ public class MagicTest extends TestCase {
 		ref.add(BASIC.createRule(Arrays.asList(ad_r), Arrays.asList(magic_r, t)));
 		// p^b(X) :- magic_p^b(X), r^b(X)
 		ref.add(BASIC.createRule(Arrays.asList(ad_p), Arrays.asList(magic_p, ad_r)));
+		// magic_p^f() :- TRUE
+		ref.add(seedRule(createMagicLiteral("q", f, new ITerm[]{})));
 		
-		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
-		rules.addAll(ms.getMagicRules());
-
-		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
+		assertEquals("The rules don't match", ref, result.rules);
 	}
 
 	/**
@@ -473,7 +388,8 @@ public class MagicTest extends TestCase {
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, 'a'), r('b', ?X, ?Y), s('e', ?Y).";
 		final IProgram p = Parser.parse(prog);
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), p.getQueries().iterator().next()));
+
+		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
@@ -508,14 +424,10 @@ public class MagicTest extends TestCase {
 		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bb, XY)), 
 					Arrays.asList(createMagicLiteral("s", bb, XY), c2)));
+		// p^fb('a') :- TRUE
+		ref.add(seedRule(createMagicLiteral("p", fb, new ITerm[]{TERM.createString("a")})));
 
-		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
-		rules.addAll(ms.getMagicRules());
-
-		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
-		assertEquals("The seed is not correct", 
-				createMagicLiteral("p", fb, new ITerm[]{TERM.createString("a")}).getAtom(), 
-				ms.getSeed());
+		assertEquals("The rules don't match", ref, result.rules);
 	}
 
 	/**
@@ -528,7 +440,8 @@ public class MagicTest extends TestCase {
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
 		final IProgram p = Parser.parse(prog);
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), p.getQueries().iterator().next()));
+
+		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
@@ -559,14 +472,10 @@ public class MagicTest extends TestCase {
 					Arrays.asList(createMagicLiteral("s", bb, XY), c2)));
 		// p^ff(X, Y) :- c(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", ff, XY)), Arrays.asList(c2)));
+		// p^ff() :- TRUE
+		ref.add(seedRule(createMagicLiteral("p", ff, new ITerm[]{})));
 
-		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
-		rules.addAll(ms.getMagicRules());
-
-		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
-		assertEquals("The seed is not correct", 
-				createMagicLiteral("p", ff, new ITerm[]{}).getAtom(), 
-				ms.getSeed());
+		assertEquals("The rules don't match", ref, result.rules);
 	}
 
 	/**
@@ -579,7 +488,8 @@ public class MagicTest extends TestCase {
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p('b', 'a'), r('b', ?X, ?Y), s('e', ?Y).";
 		final IProgram p = Parser.parse(prog);
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), p.getQueries().iterator().next()));
+
+		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
@@ -613,14 +523,10 @@ public class MagicTest extends TestCase {
 		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bb, XY)), 
 					Arrays.asList(createMagicLiteral("s", bb, XY), c2)));
+		// p^ff() :- TRUE
+		ref.add(seedRule(createMagicLiteral("p", bb, new ITerm[]{TERM.createString("b"), TERM.createString("a")})));
 
-		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
-		rules.addAll(ms.getMagicRules());
-
-		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
-		assertEquals("The seed is not correct", 
-				createMagicLiteral("p", bb, new ITerm[]{TERM.createString("b"), TERM.createString("a")}).getAtom(), 
-				ms.getSeed());
+		assertEquals("The rules don't match", ref, result.rules);
 	}
 
 	/**
@@ -633,7 +539,8 @@ public class MagicTest extends TestCase {
 			"s(?W, ?X, ?Y, ?Z) :- c(?W, ?X, ?Y, ?Z).\n" + 
 			"?- p(?W, ?X), r(?Y, ?Z), s(?W, ?X, ?Y, ?Z).";
 		final IProgram p = Parser.parse(prog);
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), p.getQueries().iterator().next()));
+
+		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm W = TERM.createVariable("W");
 		final ITerm X = TERM.createVariable("X");
@@ -662,14 +569,10 @@ public class MagicTest extends TestCase {
 		// p^ff(X, Y) :- c(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", ff, XY)), 
 					Arrays.asList(c2)));
+		// p^ff() :- TRUE
+		ref.add(seedRule(createMagicLiteral("p", ff, new ITerm[]{})));
 
-		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
-		rules.addAll(ms.getMagicRules());
-
-		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
-		assertEquals("The seed is not correct", 
-				createMagicLiteral("p", ff, new ITerm[]{}).getAtom(), 
-				ms.getSeed());
+		assertEquals("The rules don't match", ref, result.rules);
 	}
 
 	/**
@@ -682,7 +585,8 @@ public class MagicTest extends TestCase {
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
 		final IProgram p = Parser.parse(prog);
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), p.getQueries().iterator().next()));
+
+		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
@@ -722,14 +626,10 @@ public class MagicTest extends TestCase {
 		// s^bb(X, Y) :- magic_s^bb(X, Y), c(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bb, XY)), 
 					Arrays.asList(createMagicLiteral("s", bb, XY), c2)));
+		// p^ff() :- TRUE
+		ref.add(seedRule(createMagicLiteral("p", ff, new ITerm[]{})));
 
-		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
-		rules.addAll(ms.getMagicRules());
-
-		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
-		assertEquals("The seed is not correct", 
-				createMagicLiteral("p", ff, new ITerm[]{}).getAtom(), 
-				ms.getSeed());
+		assertEquals("The rules don't match", ref, result.rules);
 	}
 
 	/**
@@ -742,7 +642,8 @@ public class MagicTest extends TestCase {
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
 		final IProgram p = Parser.parse(prog);
-		final MagicSetImpl ms = new MagicSetImpl(new AdornedProgram(p.getRules(), p.getQueries().iterator().next()));
+
+		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
 		final ITerm T = TERM.createVariable("T");
 		final ITerm X = TERM.createVariable("X");
@@ -775,31 +676,10 @@ public class MagicTest extends TestCase {
 					Arrays.asList(createMagicLiteral("s", bb, XY), c2)));
 		// s^ff(X, Y) :- c(X, Y)
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", ff, XY)), Arrays.asList(c2)));
+		// p^ff() :- TRUE
+		ref.add(seedRule(createMagicLiteral("p", ff, new ITerm[]{})));
 
-		final Set<IRule> rules = new HashSet<IRule>(ms.getRewrittenRules());
-		rules.addAll(ms.getMagicRules());
-
-		assertTrue("The two rule collections must be equal", MiscHelper.compare(rules, ref, AdornmentsTest.RC));
-		assertEquals("The seed is not correct", 
-				createMagicLiteral("p", ff, new ITerm[]{}).getAtom(), 
-				ms.getSeed());
-	}
-
-	private static void printSortedRules(final Collection<? extends IRule> rules, final Collection<? extends IRule> ref) {
-		final List<IRule> lrules = new ArrayList<IRule>(rules);
-		final List<IRule> lref = new ArrayList<IRule>(ref);
-		Collections.sort(lrules, AdornmentsTest.RC);
-		Collections.sort(lref, AdornmentsTest.RC);
-		System.out.println("rules:");
-		for (final IRule r : lrules) {
-			System.out.println(r);
-		}
-		System.out.println();
-		System.out.println("ref:");
-		for (final IRule r : lref) {
-			System.out.println(r);
-		}
-		System.out.println();
+		assertEquals("The rules don't match", ref, result.rules);
 	}
 
 	/**
@@ -807,15 +687,25 @@ public class MagicTest extends TestCase {
 	 * way.
 	 * @param name the name to identify the test
 	 * @param prog the input program
-	 * @param res the resulting program
+	 * @param result the magic set result
 	 */
-	private static void printDebug(final String name, final String prog, final MagicSetImpl res) {
+	private static void printDebug(final String name, final String prog, final Result result) {
 		System.out.println("---");
 		System.out.println(name);
-		System.out.println("\tinput: ");
+		System.out.println("\tinput:");
 		System.out.println(prog);
-		System.out.println("\tresult: ");
-		System.out.println(res);
+
+		System.out.println("\tresult:");
+		// sorting the reslt rules
+		final List<IRule> resRules = new ArrayList<IRule>(result.rules);
+		Collections.sort(resRules, AdornmentsTest.RC);
+		// printing the result rules
+		for (final IRule r : resRules) {
+			System.out.println(r);
+		}
+		System.out.println();
+		System.out.println(result.query);
+		System.out.println();
 	}
 
 	public static Test suite() {

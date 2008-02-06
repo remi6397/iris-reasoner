@@ -41,7 +41,6 @@ import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.IVariable;
 
 /**
  * <p>
@@ -150,7 +149,7 @@ public final class MiscHelper {
 	}
 
 	/**
-	 * Creates a list of IVariables out of a list of strings.
+	 * Creates a list of variables out of a list of strings.
 	 * 
 	 * @param vars
 	 *            the variable names
@@ -158,12 +157,12 @@ public final class MiscHelper {
 	 * @throws NullPointerException
 	 *             if the vars is null, or contains null
 	 */
-	public static List<IVariable> createVarList(final String... vars) {
+	public static List<ITerm> createVarList(final String... vars) {
 		if ((vars == null) || Arrays.asList(vars).contains(null)) {
 			throw new NullPointerException(
 					"The vars must not be null and must not contain null");
 		}
-		final List<IVariable> v = new ArrayList<IVariable>(vars.length);
+		final List<ITerm> v = new ArrayList<ITerm>(vars.length);
 		for (final String var : vars) {
 			v.add(TERM.createVariable(var));
 		}

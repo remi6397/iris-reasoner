@@ -137,11 +137,11 @@ public class AdornedProgram {
 
 			// remove the temp rule again and create the query out
 			// of it
-			for (final IRule r : adornedRules) {
-				if ((r.getHead().size() == 1) && 
-						(r.getHead().get(0).getAtom().getPredicate().equals(AD_TEMP_QUERY_PREDICATE))) {
+			for (final AdornedRule r : adornedRules) {
+				if ((r.getRule().getHead().size() == 1) && 
+						(r.getRule().getHead().get(0).getAtom().getPredicate().equals(AD_TEMP_QUERY_PREDICATE))) {
 					adornedRules.remove(r);
-					newQuery = BASIC.createQuery(r.getBody());
+					newQuery = BASIC.createQuery(r.getRule().getBody());
 					break;
 				}
 			}
@@ -304,7 +304,7 @@ public class AdornedProgram {
 
 		AdornedPredicate ap = null;
 		if (deriveredPredicates.contains(l.getAtom().getPredicate())) {
-			ap = new AdornedPredicate(l, r.getSIP().getBoundVariables(l));
+			ap = new AdornedPredicate(l, r.getSip().getBoundVariables(l));
 		}
 		return ap;
 	}
@@ -636,7 +636,7 @@ public class AdornedProgram {
 	 * @author richi
 	 * @version $Revision: 1.35 $
 	 */
-	public static class AdornedRule implements IRule {
+	public static class AdornedRule { //implements IRule {
 		/** The inner rule represented by this object */
 		private final IRule rule;
 
@@ -663,18 +663,35 @@ public class AdornedProgram {
 			sip = s;
 		}
 		
-		public List<ILiteral> getBody() {
-			return rule.getBody();
-		}
-
-		public List<ILiteral> getHead() {
-			return rule.getHead();
-		}
-
-		public ISip getSIP() {
+		/**
+		 * Returns the sip associated with this rule.
+		 * @return the rule
+		 */
+		public ISip getSip() {
 			return sip;
 		}
 
+		/**
+		 * Returns the plain rule object.
+		 * @return the plain rule object
+		 */
+		public IRule getRule() {
+			return rule;
+		}
+
+		/**
+		 * Replaces the predicate of a given head literal with another
+		 * one. This method doesn't change the object itself, but
+		 * creates another one, applies the changes and returns the
+		 * modified rule object.
+		 * @param l the literal, which's predicate to exchange
+		 * @param p the new predicate which should be set
+		 * @return a new rule with the applied changes
+		 * @throws NullPointerException if the literal or the predicate
+		 * are <code>null</code>
+		 * @throws IllegalArgumentException if the arity of the
+		 * predicate of the literal and the new predicate doesn't match.
+		 */
 		public AdornedRule replaceHeadLiteral(final ILiteral l, final IPredicate p) {
 			if ((l == null) || (p == null)) {
 				throw new NullPointerException(
@@ -695,9 +712,25 @@ public class AdornedProgram {
 			}
 
 			head.set(index, BASIC .createLiteral(l.isPositive(), p, l.getAtom().getTuple()));
-			return new AdornedRule(BASIC.createRule(head, rule.getBody()), sip);
+
+			final IRule r = BASIC.createRule(head, rule.getBody());
+			final ISip s = new SIPImpl(r);
+			return new AdornedRule(r, s);
 		}
 
+		/**
+		 * Replaces the predicate of a given body literal with another
+		 * one. This method doesn't change the object itself, but
+		 * creates another one, applies the changes and returns the
+		 * modified rule object.
+		 * @param l the literal, which's predicate to exchange
+		 * @param p the new predicate which should be set
+		 * @return a new rule with the applied changes
+		 * @throws NullPointerException if the literal or the predicate
+		 * are <code>null</code>
+		 * @throws IllegalArgumentException if the arity of the
+		 * predicate of the literal and the new predicate doesn't match.
+		 */
 		public AdornedRule replaceBodyLiteral(final ILiteral l, final IPredicate p) {
 			if ((l == null) || (p == null)) {
 				throw new NullPointerException(
@@ -718,7 +751,10 @@ public class AdornedProgram {
 			}
 
 			body.set(index, BASIC .createLiteral(l.isPositive(), p, l.getAtom().getTuple()));
-			return new AdornedRule(BASIC.createRule(rule.getHead(), body), sip);
+
+			final IRule r = BASIC.createRule(rule.getHead(), body);
+			final ISip s = new SIPImpl(r);
+			return new AdornedRule(r, s);
 		}
 
 		public String toString() {
@@ -741,10 +777,6 @@ public class AdornedProgram {
 			res = res * 37 + rule.hashCode();
 			res = res * 37 + sip.hashCode();
 			return res;
-		}
-
-		public boolean isRectified() {
-			return rule.isRectified();
 		}
 	}
 }
