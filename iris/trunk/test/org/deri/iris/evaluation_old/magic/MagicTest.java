@@ -48,10 +48,10 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.IProgram;
 import org.deri.iris.api.IProgramOptimisation.Result;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.builtins.BuiltinRegister;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.evaluation_old.common.AdornedProgram;
 import org.deri.iris.evaluation_old.common.Adornment;
@@ -69,6 +69,9 @@ import org.deri.iris.MiscHelper;
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  */
 public class MagicTest extends TestCase {
+
+	/** The builtin register for the parser. */
+	private static final BuiltinRegister builtinReg = new BuiltinRegister();
 
 	/** The prefix for magic literals. */
 	private static final String MAGIC_PREFIX = "magic_";
@@ -178,7 +181,8 @@ public class MagicTest extends TestCase {
 		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y)."
 					      + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y)."
 					      + "?- sg('john', ?Y).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final IQuery q = p.getQueries().iterator().next();
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), q);
 
@@ -236,7 +240,8 @@ public class MagicTest extends TestCase {
 		final String prog = "a(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z)." 
 						   + "a(?X, ?Y, ?Z) :- b(?X, ?A), a(?X, ?A, ?B), c(?B, ?Y, ?Z)."
 						   + "?- a('john', 'mary', ?Y).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 		final IQuery q = p.getQueries().iterator().next();
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), q);
 
@@ -297,11 +302,11 @@ public class MagicTest extends TestCase {
 	 * Tests that constatns in bodyliterals are determined as bound.
 	 */
 	public void testBoundConstant() throws Exception {
-		final String program = "a(?X, ?Y) :- b(?X, ?Z), c('a', ?Z, ?Y). \n" + 
+		final String prog = "a(?X, ?Y) :- b(?X, ?Z), c('a', ?Z, ?Y). \n" + 
 			"c(?X, ?Y, ?Z) :- x(?X, ?Y, ?Z). \n" + 
 			"?-a('john', ?Y).";
-		final IProgram p = Factory.PROGRAM.createProgram();
-		Parser.parse(program, p);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
@@ -339,12 +344,12 @@ public class MagicTest extends TestCase {
 	 * or not.
 	 */
 	public void testStupidRules() throws Exception {
-		final String program = "q(?X) :- s(?X), not p(?X).\n" + 
+		final String prog = "q(?X) :- s(?X), not p(?X).\n" + 
 			"p(?X) :- r(?X).\n" + 
 			"r(?X) :- t(?X).\n" + 
 			"?- q(?X).";
-		final IProgram p = Factory.PROGRAM.createProgram();
-		Parser.parse(program, p);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
@@ -387,7 +392,8 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, 'a'), r('b', ?X, ?Y), s('e', ?Y).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
@@ -439,7 +445,8 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
@@ -487,7 +494,8 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p('b', 'a'), r('b', ?X, ?Y), s('e', ?Y).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
@@ -538,7 +546,8 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"s(?W, ?X, ?Y, ?Z) :- c(?W, ?X, ?Y, ?Z).\n" + 
 			"?- p(?W, ?X), r(?Y, ?Z), s(?W, ?X, ?Y, ?Z).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
@@ -584,7 +593,8 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
@@ -641,7 +651,8 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final IProgram p = Parser.parse(prog);
+		final Parser p = new Parser(builtinReg);
+		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
 
