@@ -86,9 +86,10 @@ public class FirstSubgoal extends RuleElement
 	}
 
 	@Override
-	public IRelation process( IRelation previous )
+	public IRelation process( IRelation leftRelation )
 	{
-		assert previous == null;
+		assert leftRelation != null;
+		assert leftRelation.size() == 1;	// i.e. there is no left relation, just a starting point.
 		
 		return mView.getView();
 	}

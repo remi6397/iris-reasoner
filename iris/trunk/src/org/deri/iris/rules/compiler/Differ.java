@@ -28,7 +28,6 @@ import java.util.List;
 import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IIndex;
 import org.deri.iris.storage.IRelation;
 
@@ -92,32 +91,35 @@ public class Differ extends RuleElement
 	}
 
 	@Override
-    public IRelation process( IRelation previous )
+    public IRelation process( IRelation leftRelation )
     {
-		IRelation result = mConfiguration.relationFactory.createRelation();
+		assert leftRelation != null;
 
-		if( previous == null  )
+		// TODO Create special performance test for this and measure how useful this short-cut might be,
+//		// Special case. First sub-goal with variables, so can do a short-cut
+//		if( previous.size() == 1 && previous.get( 0 ).size() == 0 )
+//		{
+//			// In this case (where the negated literal is first) the negated literal
+//			// must be grounded, so there is nothing to index,
+//			// the view either contains the expected tuple or not.
+//			if( mView.getView().size() == 0 )
+//			{
+//				// No it doesn't, so the negated sub-goal is true.
+//				return previous;
+//			}
+//			else
+//				return mConfiguration.relationFactory.createRelation();
+//		}
+
+		IRelation result = mConfiguration.relationFactory.createRelation();
+		for( int left = 0; left < leftRelation.size(); ++left )
 		{
-			// In this case (where the negated literal is first) the negated literal
-			// must be grounded, so there is nothing to index,
-			// the view either contains the expected tuple or not.
-			if( mView.getView().size() == 0 )
-			{
-				// No it doesn't, so the negated sub-goal is true.
-				result.add( Factory.BASIC.createTuple() );
-			}
-		}
-		else
-		{
-			for( int f = 0; f < previous.size(); ++f )
-			{
-				ITuple first = previous.get( f );
-				
-				List<ITuple> seconds = mIndex2.get( Utils.makeKey( first, mJoinIndices1 ) );
-	
-				if( seconds == null || seconds.size() == 0 )
-					result.add( first );
-			}
+			ITuple leftTuple = leftRelation.get( left );
+			
+			List<ITuple> matchingRightTuples = mIndex2.get( Utils.makeKey( leftTuple, mJoinIndices1 ) );
+
+			if( matchingRightTuples.size() == 0 )
+				result.add( leftTuple );
 		}
 		
 		return result;

@@ -179,26 +179,22 @@ class Joiner extends RuleElement
 	}
 
 	@Override
-    public IRelation process( IRelation previous )
+    public IRelation process( IRelation leftRelation )
     {
-		assert previous != null;
+		assert leftRelation != null;
 		
 		IRelation result = mRelationFactory.createRelation();
 		
-		for( int f = 0; f < previous.size(); ++f )
+		for( int f = 0; f < leftRelation.size(); ++f )
 		{
-			ITuple first = previous.get( f );
+			ITuple leftTuple = leftRelation.get( f );
 			
-//			List<ITuple> seconds = mIndexThisLiteral.get( first, mJoinIndicesInput );
-			List<ITuple> seconds = mIndexThisLiteral.get( Utils.makeKey( first, mJoinIndicesInput ) );
+			List<ITuple> matchingRightTuples = mIndexThisLiteral.get( Utils.makeKey( leftTuple, mJoinIndicesInput ) );
 
-			if( seconds != null )
+			for( ITuple matchingRightTuple : matchingRightTuples )
 			{
-				for( ITuple second : seconds )
-				{
-					// Must match because that's what the index does
-					result.add( concatenate( first, second ) );
-				}
+				// Must match because that's what the index does
+				result.add( concatenate( leftTuple, matchingRightTuple ) );
 			}
 		}
 		

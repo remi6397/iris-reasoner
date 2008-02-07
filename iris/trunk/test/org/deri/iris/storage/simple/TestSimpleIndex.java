@@ -91,6 +91,6 @@ public class TestSimpleIndex extends TestCase
 	
 		matchingTuples = mIndex.get( makeKey( 2, 1 ) );
 		
-		assertNull( matchingTuples );
+		assertEquals( 0, matchingTuples.size() );
 	}
 }

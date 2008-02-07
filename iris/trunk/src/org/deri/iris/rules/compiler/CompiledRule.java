@@ -28,8 +28,10 @@ import java.util.List;
 import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.factory.Factory;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.storage.IRelation;
+import org.deri.iris.storage.simple.SimpleRelationFactory;
 
 /**
  * A compiled rule.
@@ -60,9 +62,8 @@ public class CompiledRule implements ICompiledRule
 	 */
 	public IRelation evaluate()
 	{
-		// Only the first literals receives a null, because there is no
-		// previous literal.
-		IRelation output = null;
+		// The first literal receives the starting relation (which has one zero length tuple in it). */
+		IRelation output = mStartingRelation;
 		
 		for( RuleElement element : mElements )
 		{
@@ -127,7 +128,16 @@ public class CompiledRule implements ICompiledRule
 		else
 			return new ArrayList<IVariable>();
 	}
+	
+	/** The starting relation for evaluating each sub-goal. */
+	private static final IRelation mStartingRelation = new SimpleRelationFactory().createRelation();
 
+	static
+	{
+		// Start the evaluation with a single, zero-length tuple.
+		mStartingRelation.add( Factory.BASIC.createTuple() );
+	}
+	
 	/** The rule elements in order. */
 	private final List<RuleElement> mElements;
 	

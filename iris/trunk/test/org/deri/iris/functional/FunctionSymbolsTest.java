@@ -23,6 +23,7 @@
  */
 package org.deri.iris.functional;
 
+import org.deri.iris.EvaluationException;
 import junit.framework.TestCase;
 
 public class FunctionSymbolsTest extends TestCase
@@ -213,5 +214,63 @@ public class FunctionSymbolsTest extends TestCase
 			"dummy(4, 2).";
 
 		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testNonGroundedConstructedTerm_Equality() throws Exception
+	{
+		String program =
+			"p(?y) :- q(?x,?y), ?x = f(?y)." +
+			"q(f(2), 2)." +
+			"q(f(3), 4)." +
+			
+			"?- p(?x).";
+		
+		String expectedResults = 
+			"dummy( 2 ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testNonGroundedConstructedTerm_Inequality() throws Exception
+	{
+		String program =
+			"p(?y) :- q(?x,?y), ?x != f(?y)." +
+			"q(f(2), 2)." +
+			"q(f(3), 4)." +
+			
+			"?- p(?x).";
+		
+		String expectedResults = 
+			"dummy( 4 ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testNonGroundedConstructedTerm_LegalAssignment() throws Exception
+	{
+		String program =
+			"p(?x) :- q(?y), ?x = f(?y)." +
+			"q(2)." +
+			"q(4)." +
+			
+			"?- p(?x).";
+		
+		String expectedResults = 
+			"dummy( f(2) )." +
+			"dummy( f(4) ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testNonGroundedConstructedTerm_IllegalAssignment() throws Exception
+	{
+		String program =
+			"p(?x) :- q(?y), g(?x) = f(?y)." +
+			"q(2)." +
+			"q(4)." +
+			
+			"?- p(?x).";
+		
+		Helper.checkFailureWithAllStrategies( program, EvaluationException.class );
 	}	
 }

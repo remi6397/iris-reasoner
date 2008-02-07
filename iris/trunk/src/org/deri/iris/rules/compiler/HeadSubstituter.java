@@ -65,15 +65,17 @@ public class HeadSubstituter extends RuleElement
 	}
 	
 	@Override
-	public IRelation process( IRelation previous )
+	public IRelation process( IRelation inputRelation )
 	{
+		assert inputRelation != null;
+
 		IRelation result = mConfiguration.relationFactory.createRelation();
 		
-		for( int i = 0; i < previous.size(); ++i )
+		for( int i = 0; i < inputRelation.size(); ++i )
 		{
-			ITuple tuple = previous.get( i );
+			ITuple inputTuple = inputRelation.get( i );
 			
-			ITuple outputTuple = TermMatchingAndSubstitution.substituteVariablesInToTuple( mHeadTuple, tuple, mIndices );
+			ITuple outputTuple = TermMatchingAndSubstitution.substituteVariablesInToTuple( mHeadTuple, inputTuple, mIndices );
 			
 			result.add( outputTuple );
 		}

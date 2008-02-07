@@ -34,10 +34,6 @@ import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.builtins.EqualBuiltin;
-import org.deri.iris.builtins.ExactEqualBuiltin;
-import org.deri.iris.builtins.NotExactEqualBuiltin;
-import org.deri.iris.builtins.NotEqualBuiltin;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IRelation;
 
@@ -55,6 +51,7 @@ public class Builtin extends RuleElement
 	 */
 	public Builtin( List<IVariable> inputVariables, IBuiltinAtom builtinAtom, boolean positive, Configuration configuration ) throws EvaluationException
 	{
+		assert inputVariables != null;
 		assert builtinAtom != null;
 		assert configuration != null;
 		
@@ -82,12 +79,13 @@ public class Builtin extends RuleElement
 
 			ITerm term = builtinTuple.get( t );
 			
+//			assert ! (term instanceof IConstructedTerm);
+			
 			if( term instanceof IVariable )
 			{
 				IVariable builtinVariable = (IVariable) term;
 				
-				if( inputVariables != null )
-					indexFromInput = inputVariables.indexOf( builtinVariable );
+				indexFromInput = inputVariables.indexOf( builtinVariable );
 				
 				// Is this variable unbound?
 				if( indexFromInput == -1 )
@@ -95,27 +93,6 @@ public class Builtin extends RuleElement
 					unboundBuiltInVariables.add( builtinVariable );
 					indicesFromBuiltOutputTupleToCopyToOutputRelation.add( indexOfBuiltinOutputTuple++ );
 				}
-			}
-			else if( term instanceof IConstructedTerm )
-			{
-				// TODO - decide if function symbols are allowed as built-in terms.
-				// Maybe only assignment or equality/inequality????
-				
-				if( term.isGround() && 
-								(	mBuiltinAtom instanceof EqualBuiltin ||
-									mBuiltinAtom instanceof NotEqualBuiltin ||
-									mBuiltinAtom instanceof ExactEqualBuiltin ||
-									mBuiltinAtom instanceof NotExactEqualBuiltin )
-												)
-				{
-					// For now, allow constructed terms as arguments to equality and inequality,
-					// but only if they are ground.
-				}
-				else
-					throw new EvaluationException(
-									"Built-in predicates can not have constructed terms as arguments, " +
-									"except when the built-in is equality or inequality and " +
-									"the argument is a ground constructed term." );
 			}
 
 			mIndicesFromInputRelationToMakeInputTuple[ t ] = indexFromInput;
@@ -132,78 +109,52 @@ public class Builtin extends RuleElement
 		// Make the output variable list
 		if( unboundBuiltInVariables.size() == 0 )
 		{
-			if( inputVariables == null )
-				mOutputVariables = new ArrayList<IVariable>();
-			else
-				mOutputVariables = inputVariables;
+			mOutputVariables = inputVariables;
 		}
 		else
 		{
-			if( inputVariables == null )
-				mOutputVariables = unboundBuiltInVariables;
-			else
-			{
-				mOutputVariables = new ArrayList<IVariable>();
-				
-				for( IVariable variable : inputVariables )
-					mOutputVariables.add( variable );
-				
-				for( IVariable variable : unboundBuiltInVariables )
-					mOutputVariables.add( variable );
-			}
+			mOutputVariables = new ArrayList<IVariable>();
+			
+			for( IVariable variable : inputVariables )
+				mOutputVariables.add( variable );
+			
+			for( IVariable variable : unboundBuiltInVariables )
+				mOutputVariables.add( variable );
 		}
 	}
 
 	@Override
-	public IRelation process( IRelation previous )
+	public IRelation process( IRelation leftRelation )
 	{
+		assert leftRelation != null;
+		
 		IRelation result = mConfiguration.relationFactory.createRelation();
 		
-		// Check if this sub-goal is the first in the rule (no predecessor)
-		if( previous == null )
+		for( int i = 0; i < leftRelation.size(); ++i )
 		{
-			ITuple builtinInputTuple = mBuiltinAtom.getTuple();
+			ITuple input = leftRelation.get( i );
+	
+			// Make the tuple for input to the built-in predicate
+			ITerm[] terms = new ITerm[ mIndicesFromInputRelationToMakeInputTuple.length ];
+			
+			for( int t = 0; t < mIndicesFromInputRelationToMakeInputTuple.length; ++t )
+			{
+				int index = mIndicesFromInputRelationToMakeInputTuple[ t ];
+				terms[ t ] = index == -1 ? mBuiltinAtom.getTuple().get( t ) : input.get( index );
+			}
+			
+			ITuple builtinInputTuple = Factory.BASIC.createTuple( terms );
 			ITuple builtinOutputTuple = mBuiltinAtom.evaluate( builtinInputTuple );
 			
 			if( mPositive )
 			{
 				if( builtinOutputTuple != null )
-					result.add( makeResultTuple( null, builtinOutputTuple ) );
+					result.add( makeResultTuple( input, builtinOutputTuple ) );
 			}
 			else
 			{
 				if( builtinOutputTuple == null )
-					result.add( Factory.BASIC.createTuple() );
-			}
-		}
-		else
-		{
-			for( int i = 0; i < previous.size(); ++i )
-			{
-				ITuple input = previous.get( i );
-		
-				// Make the tuple for input to the built-in predicate
-				ITerm[] terms = new ITerm[ mIndicesFromInputRelationToMakeInputTuple.length ];
-				
-				for( int t = 0; t < mIndicesFromInputRelationToMakeInputTuple.length; ++t )
-				{
-					int index = mIndicesFromInputRelationToMakeInputTuple[ t ];
-					terms[ t ] = index == -1 ? mBuiltinAtom.getTuple().get( t ) : input.get( index );
-				}
-				
-				ITuple builtinInputTuple = Factory.BASIC.createTuple( terms );
-				ITuple builtinOutputTuple = mBuiltinAtom.evaluate( builtinInputTuple );
-				
-				if( mPositive )
-				{
-					if( builtinOutputTuple != null )
-						result.add( makeResultTuple( input, builtinOutputTuple ) );
-				}
-				else
-				{
-					if( builtinOutputTuple == null )
-						result.add( input );
-				}
+					result.add( input );
 			}
 		}
 		
@@ -249,5 +200,6 @@ public class Builtin extends RuleElement
 	/** Indices from the built-in atom to put in to the rule element's output tuple. */
 	private final int[] mIndicesFromBuiltInOutputTupleToCopyToOutputRelation;
 	
+	/** The knowledge-base-wide configuration object. */
 	private final Configuration mConfiguration;
 }
