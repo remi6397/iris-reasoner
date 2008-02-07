@@ -40,9 +40,8 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.basics.Tuple;
 import org.deri.iris.builtins.EqualBuiltin;
 import org.deri.iris.builtins.ExactEqualBuiltin;
-import org.deri.iris.builtins.NotExactEqualBuiltin;
-import org.deri.iris.builtins.TrueBuiltin;
 import org.deri.iris.builtins.NotEqualBuiltin;
+import org.deri.iris.builtins.NotExactEqualBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -290,9 +289,6 @@ public class RuleManipulator
 			if( add )
 				body.add( literal );
 		}
-		
-		if( body.size() == 0 )
-			body.add( Factory.BASIC.createLiteral( true, new TrueBuiltin() ) );
 		
 		return Factory.BASIC.createRule( rule.getHead(), body );
 	}
