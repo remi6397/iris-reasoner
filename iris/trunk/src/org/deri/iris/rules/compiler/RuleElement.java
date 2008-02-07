@@ -46,7 +46,7 @@ public abstract class RuleElement
 	 * This should be null if this element represents the first literal.
 	 * @return The output relation for this literal.
 	 */
-	public abstract IRelation process( IRelation previous );
+	public abstract IRelation process( IRelation input );
 	
 	/**
 	 * Create a substitute rule element that will use the corresponding delta if it exists.

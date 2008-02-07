@@ -25,6 +25,7 @@ package org.deri.iris.storage.simple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,12 @@ public class SimpleIndex implements IIndex
 		
 		update();
 		
-		return mBag.get( key );
+		List<ITuple> result = mBag.get( key );
+		
+		if( result == null )
+			result = mEmptyTupleList;
+		
+		return result;
 	}
 	
 	/**
@@ -119,4 +125,6 @@ public class SimpleIndex implements IIndex
 	
 	/** The relation being indexed. */
 	private final IRelation mRelation;
+	
+	private static final List<ITuple> mEmptyTupleList = Collections.unmodifiableList( new ArrayList<ITuple>() );
 }

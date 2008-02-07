@@ -35,7 +35,13 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltinAtom;
+import org.deri.iris.api.terms.IConstructedTerm;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.builtins.EqualBuiltin;
+import org.deri.iris.builtins.ExactEqualBuiltin;
+import org.deri.iris.builtins.NotEqualBuiltin;
+import org.deri.iris.builtins.NotExactEqualBuiltin;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.storage.IRelation;
 
@@ -65,11 +71,19 @@ public class RuleCompiler
 	{
 		List<RuleElement> elements = compileBody( rule.getBody() );
 		
-		RuleElement lastElement = elements.size() == 0 ? null : elements.get( elements.size() - 1 );
+		List<IVariable> variables;
+		
+		if( elements.size() == 0 )
+			variables = new ArrayList<IVariable>();
+		else
+		{
+			RuleElement lastElement = elements.get( elements.size() - 1 );
+			variables = lastElement.getOutputVariables();
+		}
 		
 		// Rule head
 		ITuple headTuple = rule.getHead().get( 0 ).getAtom().getTuple();
-		HeadSubstituter substituter = new HeadSubstituter( lastElement.getOutputVariables(), headTuple, mConfiguration );
+		HeadSubstituter substituter = new HeadSubstituter( variables, headTuple, mConfiguration );
 		elements.add( substituter );
 		
 		return new CompiledRule( elements, rule.getHead().get( 0 ).getAtom().getPredicate(), mConfiguration );
@@ -104,7 +118,7 @@ public class RuleCompiler
 		
 		List<RuleElement> elements = new ArrayList<RuleElement>();
 		
-		List<IVariable> previousVariables = null;
+		List<IVariable> previousVariables = new ArrayList<IVariable>();
 		
 		while( elements.size() < bodyLiterals.size() )
 		{
@@ -125,7 +139,33 @@ public class RuleCompiler
 					{
 						IBuiltinAtom builtinAtom = (IBuiltinAtom) atom;
 						
-						element = new Builtin( previousVariables, builtinAtom, positive, mConfiguration );
+						boolean constructedTerms = false;
+						for( ITerm term : atom.getTuple() )
+						{
+							if( term instanceof IConstructedTerm )
+							{
+								// This test is temporary.
+								// The BuiltinForConstructedTerms should handle this properly.
+								// However, BuiltinForConstructedTerms can only handle tuples with
+								// no unbound variables at the moment.
+								if( (	builtinAtom instanceof EqualBuiltin ||
+										builtinAtom instanceof NotEqualBuiltin ||
+										builtinAtom instanceof ExactEqualBuiltin ||
+										builtinAtom instanceof NotExactEqualBuiltin ) &&
+										term.isGround() )
+									; // Ignore and treat like normal
+								else
+								{
+									constructedTerms = true;
+									break;
+								}
+							}
+						}
+						
+						if( constructedTerms )
+							element = new BuiltinForConstructedTermArguments( previousVariables, builtinAtom, positive, mConfiguration );
+						else
+							element = new Builtin( previousVariables, builtinAtom, positive, mConfiguration );
 					}
 					else
 					{
@@ -135,7 +175,7 @@ public class RuleCompiler
 						
 						if( positive )
 						{
-							if( previousVariables == null )
+							if( previousVariables.size() == 0 )
 							{
 								// First sub-goal
 								element = new FirstSubgoal( predicate, relation, viewCriteria, mConfiguration );
@@ -150,9 +190,9 @@ public class RuleCompiler
 						else
 						{
 							// This is allowed to be the first literal for rules such as:
-							//     p('a') :- q('b')
+							//     p('a') :- not q('b')
 							// or even:
-							//     p('a') :- q(?X)
+							//     p('a') :- not q(?X)
 							element = new Differ( previousVariables, relation, viewCriteria, mConfiguration );
 						}
 					}

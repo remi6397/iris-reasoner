@@ -23,13 +23,17 @@
  */
 package org.deri.iris.rules.compiler;
 
+import java.util.ArrayList;
 import junit.framework.TestCase;
 import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.builtins.AddBuiltin;
+import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IRelation;
+import org.deri.iris.storage.simple.SimpleRelationFactory;
 
 public class TestBuiltin extends TestCase
 {
@@ -113,9 +117,9 @@ public class TestBuiltin extends TestCase
 		ITuple builtinTuple = Helper.createTuple( 3, 4, "X" );
 		IBuiltinAtom builtinPredicate = new AddBuiltin( builtinTuple.toArray( new ITerm[0]) );
 		
-		Builtin builtin = new Builtin( null, builtinPredicate, true, configuration );
+		Builtin builtin = new Builtin( new ArrayList<IVariable>(), builtinPredicate, true, configuration );
 		
-		IRelation output = builtin.process( null );
+		IRelation output = builtin.process( mRelationWithOneZeroLengthTuple );
 		
 		assertEquals( Helper.createTerm( "X" ), builtin.getOutputVariables().get( 0 ) );
 
@@ -123,4 +127,10 @@ public class TestBuiltin extends TestCase
 		assertEquals( Helper.createTerm( 7 ), output.get( 0 ).get( 0 ) );
 	}
 
+	private static final IRelation mRelationWithOneZeroLengthTuple = new SimpleRelationFactory().createRelation();
+	static
+	{
+		// Start the evaluation with a single, zero-length tuple.
+		mRelationWithOneZeroLengthTuple.add( Factory.BASIC.createTuple() );
+	}
 }
