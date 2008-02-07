@@ -113,8 +113,8 @@ public class Builtin extends RuleElement
 				}
 				else
 					throw new EvaluationException(
-									"Built-in predicates can not have constructed terms as arguments," +
-									"except when the built-in is equality or inequality and" +
+									"Built-in predicates can not have constructed terms as arguments, " +
+									"except when the built-in is equality or inequality and " +
 									"the argument is a ground constructed term." );
 			}
 
@@ -127,7 +127,7 @@ public class Builtin extends RuleElement
 			throw new EvaluationException( "Too many unbound variables for built-in '" + mBuiltinAtom + "' unbound variables: " + unboundBuiltInVariables );
 		
 		// The indexes of terms in the built-in output tuple to copy to the output relation
-		mIndicesFromBuiltOutputTupleToCopyToOutputRelation = Utils.integerListToArray( indicesFromBuiltOutputTupleToCopyToOutputRelation );
+		mIndicesFromBuiltInOutputTupleToCopyToOutputRelation = Utils.integerListToArray( indicesFromBuiltOutputTupleToCopyToOutputRelation );
 
 		// Make the output variable list
 		if( unboundBuiltInVariables.size() == 0 )
@@ -224,14 +224,14 @@ public class Builtin extends RuleElement
 		if( builtinOutputTuple.size() == 0 )
 			return inputTuple == null ? Factory.BASIC.createTuple() : inputTuple;
 		
-		ITerm[] terms = new ITerm[ ( inputTuple == null ? 0 : inputTuple.size() ) + mIndicesFromBuiltOutputTupleToCopyToOutputRelation.length ];
+		ITerm[] terms = new ITerm[ ( inputTuple == null ? 0 : inputTuple.size() ) + mIndicesFromBuiltInOutputTupleToCopyToOutputRelation.length ];
 		
 		int index = 0;
 		if( inputTuple != null )
 			for( ITerm term : inputTuple )
 				terms[ index++ ] = term;
 		
-		for( int i : mIndicesFromBuiltOutputTupleToCopyToOutputRelation )
+		for( int i : mIndicesFromBuiltInOutputTupleToCopyToOutputRelation )
 			terms[ index++ ] = builtinOutputTuple.get( i );
 
 		return Factory.BASIC.createTuple( terms );
@@ -247,7 +247,7 @@ public class Builtin extends RuleElement
 	private final int[] mIndicesFromInputRelationToMakeInputTuple;
 	
 	/** Indices from the built-in atom to put in to the rule element's output tuple. */
-	private final int[] mIndicesFromBuiltOutputTupleToCopyToOutputRelation;
+	private final int[] mIndicesFromBuiltInOutputTupleToCopyToOutputRelation;
 	
 	private final Configuration mConfiguration;
 }
