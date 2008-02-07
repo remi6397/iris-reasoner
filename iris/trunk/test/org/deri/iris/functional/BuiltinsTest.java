@@ -24,6 +24,7 @@
 package org.deri.iris.functional;
 
 import junit.framework.TestCase;
+import org.deri.iris.EvaluationException;
 import org.deri.iris.compiler.ParserException;
 
 /**
@@ -1417,5 +1418,14 @@ public class BuiltinsTest extends TestCase
 			"p(?x) :- p(?x), REGEX(?x, 2).";
 		
 		Helper.checkFailureWithAllStrategies( program, ParserException.class );
+	}
+
+	public void testUnsafeAdd_UnboundVariableAppearsTwice() throws Exception
+	{
+		String program = 
+		    "p(?X) :- ?X + ?X = 2." +
+		    "?- p(?X).";
+
+		Helper.checkFailureWithAllStrategies( program, EvaluationException.class );
 	}
 }
