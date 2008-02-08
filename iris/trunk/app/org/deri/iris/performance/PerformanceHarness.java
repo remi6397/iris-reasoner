@@ -257,5 +257,6 @@ public class PerformanceHarness
 		"app\\org\\deri\\iris\\performance\\local_stratification.txt",
 		"app\\org\\deri\\iris\\performance\\multiplicative_congruent.txt",
 		"app\\org\\deri\\iris\\performance\\transitive_closure.txt",
+		"app\\org\\deri\\iris\\performance\\cartesian_product_with_negation.txt",
 	};
 }
