@@ -31,7 +31,6 @@ import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltinAtom;
-import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
