@@ -42,6 +42,7 @@ import org.deri.iris.storage.IIndexFactory;
 import org.deri.iris.storage.IRelationFactory;
 import org.deri.iris.storage.simple.SimpleIndexFactory;
 import org.deri.iris.storage.simple.SimpleRelationFactory;
+import org.deri.iris.api.IProgramOptimisation;
 
 /**
  * This class holds all configuration data for a knowledge base.
@@ -120,7 +121,8 @@ public class Configuration
 	/** The collection of rule-reordering optimisers. */
 	public final List<IRuleReOrderingOptimiser> mReOrderingOptimisers = new ArrayList<IRuleReOrderingOptimiser>();
 	
-	// TODO Add program optimisers (e.g. magic sets).
+	/** Collection of program optimisations. */
+	public final List<IProgramOptimisation> programOptmimisers = new ArrayList<IProgramOptimisation>();
 	
 	// TODO Add rule safety processors (e.g. standard rule-safety check and augmented-unsafe-rule modifier).
 	
