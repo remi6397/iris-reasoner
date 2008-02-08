@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.deri.iris.api.IKnowledgeBase;
+import org.deri.iris.api.IProgramOptimisation;
+import org.deri.iris.api.IProgramOptimisation.Result;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
@@ -84,7 +86,32 @@ public class KnowledgeBase implements IKnowledgeBase
 	
 	public IRelation execute( IQuery query, List<IVariable> variableBindings ) throws EvaluationException
 	{
-		return mEvaluator.evaluateQuery( query, variableBindings );
+		IEvaluator evaluator = mEvaluator;
+
+		// apply the program optimisations
+		if (!mConfiguration.programOptmimisers.isEmpty() && progOptimisationsSucceeded) {
+			List<IRule> modRules = new ArrayList<IRule>(mRuleBase.getRules());
+			IQuery modQuery = query;
+
+			for (final IProgramOptimisation po : mConfiguration.programOptmimisers) {
+				final Result result = po.optimise(modRules, modQuery);
+
+				if (result != null) {
+					modRules = result.rules;
+					modQuery = result.query;
+				} else { // the optimisations failed -> don't do it again
+					progOptimisationsSucceeded = false;
+					break;
+				}
+			}
+			if (progOptimisationsSucceeded) { // create the new evaluator for this optimized program
+				evaluator = mConfiguration.evaluationTechnique.createEvaluator(mFacts, 
+						new RuleBase(mConfiguration, modRules), 
+						mConfiguration);
+			}
+		}
+
+		return evaluator.evaluateQuery(query, variableBindings);
 	}
 
 	public IRelation execute( IQuery query ) throws EvaluationException
@@ -96,6 +123,9 @@ public class KnowledgeBase implements IKnowledgeBase
     {
 	    return mRuleBase.getRules();
     }
+
+	/** Whether the program optimisations succeeded. */
+	private boolean progOptimisationsSucceeded = true;
 
 	/** The facts of the knowledge-base. */
 	private final IFacts mFacts;
