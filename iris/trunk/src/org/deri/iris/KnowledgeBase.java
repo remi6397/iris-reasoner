@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.deri.iris.api.IKnowledgeBase;
-import org.deri.iris.api.IProgramOptimisation;
-import org.deri.iris.api.IProgramOptimisation.Result;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
@@ -39,7 +37,6 @@ import org.deri.iris.evaluation.IEvaluator;
 import org.deri.iris.facts.Facts;
 import org.deri.iris.facts.FactsWithExternalData;
 import org.deri.iris.facts.IFacts;
-import org.deri.iris.facts.OriginalFactsPreservingFacts;
 import org.deri.iris.rules.RuleBase;
 import org.deri.iris.storage.IRelation;
 
@@ -85,60 +82,9 @@ public class KnowledgeBase implements IKnowledgeBase
 		mEvaluator = mConfiguration.evaluationTechnique.createEvaluator( mFacts, mRuleBase, mConfiguration );
 	}
 	
-//	public IRelation execute( IQuery query, List<IVariable> variableBindings ) throws EvaluationException
-//	{
-//		IEvaluator evaluator = mEvaluator;
-//
-//		// apply the program optimisations
-//		if (!mConfiguration.programOptmimisers.isEmpty() && progOptimisationsSucceeded) {
-//			List<IRule> modRules = new ArrayList<IRule>(mRuleBase.getRules());
-//			IQuery modQuery = query;
-//
-//			for (final IProgramOptimisation po : mConfiguration.programOptmimisers) {
-//				final Result result = po.optimise(modRules, modQuery);
-//
-//				if (result != null) {
-//					modRules = result.rules;
-//					modQuery = result.query;
-//				} else { // the optimisations failed -> don't do it again
-//					progOptimisationsSucceeded = false;
-//					break;
-//				}
-//			}
-//			if (progOptimisationsSucceeded) { // create the new evaluator for this optimized program
-//				evaluator = mConfiguration.evaluationTechnique.createEvaluator(mFacts, 
-//						new RuleBase(mConfiguration, modRules), 
-//						mConfiguration);
-//			}
-//		}
-//
-//		return evaluator.evaluateQuery(query, variableBindings);
-//	}
-
 	public IRelation execute( IQuery query, List<IVariable> variableBindings ) throws EvaluationException
 	{
-		IEvaluator evaluator = mEvaluator;
-
-		// apply the program optimisations
-		List<IRule> modRules = new ArrayList<IRule>(mRuleBase.getRules());
-		IQuery modQuery = query;
-
-		for (final IProgramOptimisation po : mConfiguration.programOptmimisers) {
-			final Result result = po.optimise(modRules, modQuery);
-
-			if (result != null)
-			{
-				modRules = result.rules;
-				modQuery = result.query;
-			}
-		}
-		if (progOptimisationsSucceeded) { // create the new evaluator for this optimized program
-			evaluator = mConfiguration.evaluationTechnique.createEvaluator( new OriginalFactsPreservingFacts( mFacts, mConfiguration.relationFactory ), 
-					new RuleBase(mConfiguration, modRules), 
-					mConfiguration);
-		}
-
-		return evaluator.evaluateQuery(query, variableBindings);
+		return mEvaluator.evaluateQuery( query, variableBindings );
 	}
 
 	public IRelation execute( IQuery query ) throws EvaluationException
@@ -150,9 +96,6 @@ public class KnowledgeBase implements IKnowledgeBase
     {
 	    return mRuleBase.getRules();
     }
-
-	/** Whether the program optimisations succeeded. */
-	private boolean progOptimisationsSucceeded = true;
 
 	/** The facts of the knowledge-base. */
 	private final IFacts mFacts;
