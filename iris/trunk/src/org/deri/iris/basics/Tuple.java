@@ -114,11 +114,16 @@ public class Tuple extends AbstractList<ITerm> implements ITuple {
 			return "()";
 		}
 		final StringBuilder buffer = new StringBuilder();
-		buffer.append("(");
+		buffer.append('(');
+		boolean first = true;
 		for (final ITerm t : terms) {
-			buffer.append(t).append(", ");
+			if( first )
+				first = false;
+			else
+				buffer.append(", ");
+			buffer.append(t);
 		}
-		buffer.delete(buffer.length() - 2, buffer.length()).append(")");
+		buffer.append(')');
 		return buffer.toString();
 	}
 

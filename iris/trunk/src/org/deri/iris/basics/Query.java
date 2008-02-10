@@ -84,10 +84,15 @@ public class Query implements IQuery {
 	
 	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
+		boolean first = true;
 		for (final ILiteral l : literals) {
-			buffer.append(l).append(", ");
+			if( first )
+				first = false;
+			else
+				buffer.append( ", " );
+			buffer.append(l);
 		}
-		buffer.delete(buffer.length() - 2, buffer.length()).append(".");
+		buffer.append('.');
 		return buffer.toString();
 	}
 }
