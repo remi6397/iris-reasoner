@@ -18,6 +18,7 @@
 package org.deri.iris.optimisations;
 
 import static org.deri.iris.factory.Factory.BASIC;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,20 +27,25 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.deri.iris.api.IProgramOptimisation;
+
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.IProgramOptimisation;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.factory.Factory;
+
 import org.deri.iris.graph.LabeledEdge;
+import org.deri.iris.optimisations.AdornedProgram;
 import org.deri.iris.optimisations.AdornedProgram.AdornedPredicate;
 import org.deri.iris.optimisations.AdornedProgram.AdornedRule;
+import org.deri.iris.optimisations.Adornment;
+import org.deri.iris.optimisations.ISip;
+import org.deri.iris.optimisations.SIPImpl;
 
 /**
  * <p>
@@ -106,74 +112,8 @@ public final class MagicSetImpl implements IProgramOptimisation {
 						Arrays.asList(BASIC.createLiteral(true, seed)), 
 						Collections.EMPTY_LIST));
 		}
-		
-		translateRules( result.rules );
-		result.query = translateQuery( result.query );
 
 		return result;
-	}
-	
-	void translateRules( List<IRule> rules )
-	{
-		for( int r = 0; r < rules.size(); ++r )
-		{
-			IRule translatedRule = translateRule( rules.get( r ) );
-			rules.set( r, translatedRule );
-		}
-	}
-	
-	IRule translateRule( IRule rule )
-	{
-		List<ILiteral> head = new ArrayList<ILiteral>();
-		List<ILiteral> body = new ArrayList<ILiteral>();
-		
-		for( ILiteral literal : rule.getHead() )
-			head.add( translateLiteral( literal ) );
-
-		for( ILiteral literal : rule.getBody() )
-			body.add( translateLiteral( literal ) );
-		
-		return Factory.BASIC.createRule( head, body );
-	}
-	
-	IQuery translateQuery( IQuery query )
-	{
-		List<ILiteral> literals = new ArrayList<ILiteral>();
-		
-		for( ILiteral literal : query.getLiterals() )
-			literals.add( translateLiteral( literal ) );
-
-		return Factory.BASIC.createQuery( literals );
-	}
-	
-	ILiteral translateLiteral( ILiteral literal )
-	{
-		IAtom atom = literal.getAtom();
-		
-		IPredicate predicate = atom.getPredicate();
-		
-		if( predicate instanceof AdornedPredicate )
-		{
-			AdornedPredicate adornedPredicate = (AdornedPredicate) predicate;
-			predicate = translatePredicate( adornedPredicate );
-		}
-		
-		return Factory.BASIC.createLiteral( literal.isPositive(), predicate, atom.getTuple() );
-	}
-	
-	IPredicate translatePredicate( AdornedPredicate adornedPredicate )
-	{
-		StringBuilder newSymbol = new StringBuilder();
-		newSymbol.append( "$" );
-		newSymbol.append( adornedPredicate.getPredicateSymbol() );
-		
-		for( Adornment adornment : adornedPredicate.getAdornment() )
-		{
-			newSymbol.append( '_' );
-			newSymbol.append( adornment.toString() );
-		}
-		
-		return Factory.BASIC.createPredicate( newSymbol.toString(), adornedPredicate.getArity() );
 	}
 
 	/**
