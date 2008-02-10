@@ -56,10 +56,6 @@ public class BasicFactory implements IBasicFactory {
 		// this is a singelton
 	}
 
-	public IAtom createAtom(IPredicate p) {
-		return new Atom(p);
-	}
-	
 	public IAtom createAtom(IPredicate p, ITuple tuple) {
 		return new Atom(p, tuple);
 	}
@@ -68,23 +64,11 @@ public class BasicFactory implements IBasicFactory {
 		return new Literal(isPositive, atom);
 	}
 
-	public ILiteral createLiteral(boolean isPositive, IPredicate predicate) {
-		return createLiteral(isPositive, createAtom(predicate));
-	}
-
 	public ILiteral createLiteral(boolean positive, IPredicate p,
 			ITuple tuple) {
 		return createLiteral(positive, createAtom(p, tuple));
 	}
 
-	public ITuple createMinimalTuple(ITerm... terms) {
-		return createMinimalTuple(Arrays.asList(terms));
-	}
-
-	public ITuple createMinimalTuple(List<ITerm> terms) {
-		return new MinimalTuple(terms);
-	}
-	
 	public IPredicate createPredicate(String symbol, int arity) {
 		return new Predicate(symbol, arity);
 	}

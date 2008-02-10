@@ -39,6 +39,7 @@ import org.deri.iris.evaluation.IEvaluator;
 import org.deri.iris.facts.Facts;
 import org.deri.iris.facts.FactsWithExternalData;
 import org.deri.iris.facts.IFacts;
+import org.deri.iris.facts.OriginalFactsPreservingFacts;
 import org.deri.iris.rules.RuleBase;
 import org.deri.iris.storage.IRelation;
 
@@ -84,31 +85,57 @@ public class KnowledgeBase implements IKnowledgeBase
 		mEvaluator = mConfiguration.evaluationTechnique.createEvaluator( mFacts, mRuleBase, mConfiguration );
 	}
 	
+//	public IRelation execute( IQuery query, List<IVariable> variableBindings ) throws EvaluationException
+//	{
+//		IEvaluator evaluator = mEvaluator;
+//
+//		// apply the program optimisations
+//		if (!mConfiguration.programOptmimisers.isEmpty() && progOptimisationsSucceeded) {
+//			List<IRule> modRules = new ArrayList<IRule>(mRuleBase.getRules());
+//			IQuery modQuery = query;
+//
+//			for (final IProgramOptimisation po : mConfiguration.programOptmimisers) {
+//				final Result result = po.optimise(modRules, modQuery);
+//
+//				if (result != null) {
+//					modRules = result.rules;
+//					modQuery = result.query;
+//				} else { // the optimisations failed -> don't do it again
+//					progOptimisationsSucceeded = false;
+//					break;
+//				}
+//			}
+//			if (progOptimisationsSucceeded) { // create the new evaluator for this optimized program
+//				evaluator = mConfiguration.evaluationTechnique.createEvaluator(mFacts, 
+//						new RuleBase(mConfiguration, modRules), 
+//						mConfiguration);
+//			}
+//		}
+//
+//		return evaluator.evaluateQuery(query, variableBindings);
+//	}
+
 	public IRelation execute( IQuery query, List<IVariable> variableBindings ) throws EvaluationException
 	{
 		IEvaluator evaluator = mEvaluator;
 
 		// apply the program optimisations
-		if (!mConfiguration.programOptmimisers.isEmpty() && progOptimisationsSucceeded) {
-			List<IRule> modRules = new ArrayList<IRule>(mRuleBase.getRules());
-			IQuery modQuery = query;
+		List<IRule> modRules = new ArrayList<IRule>(mRuleBase.getRules());
+		IQuery modQuery = query;
 
-			for (final IProgramOptimisation po : mConfiguration.programOptmimisers) {
-				final Result result = po.optimise(modRules, modQuery);
+		for (final IProgramOptimisation po : mConfiguration.programOptmimisers) {
+			final Result result = po.optimise(modRules, modQuery);
 
-				if (result != null) {
-					modRules = result.rules;
-					modQuery = result.query;
-				} else { // the optimisations failed -> don't do it again
-					progOptimisationsSucceeded = false;
-					break;
-				}
+			if (result != null)
+			{
+				modRules = result.rules;
+				modQuery = result.query;
 			}
-			if (progOptimisationsSucceeded) { // create the new evaluator for this optimized program
-				evaluator = mConfiguration.evaluationTechnique.createEvaluator(mFacts, 
-						new RuleBase(mConfiguration, modRules), 
-						mConfiguration);
-			}
+		}
+		if (progOptimisationsSucceeded) { // create the new evaluator for this optimized program
+			evaluator = mConfiguration.evaluationTechnique.createEvaluator( new OriginalFactsPreservingFacts( mFacts, mConfiguration.relationFactory ), 
+					new RuleBase(mConfiguration, modRules), 
+					mConfiguration);
 		}
 
 		return evaluator.evaluateQuery(query, variableBindings);
