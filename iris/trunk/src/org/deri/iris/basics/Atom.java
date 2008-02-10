@@ -50,14 +50,6 @@ public class Atom implements IAtom {
 	
 	private final ITuple tuple;
 
-	Atom(final IPredicate predicate) {
-		if (predicate == null) {
-			throw new IllegalArgumentException("The predicate must not be null");
-		}
-		this.predicate = predicate;
-		this.tuple = BASIC.createTuple(new ITerm[predicate.getArity()]);
-	}
-	
 	@SuppressWarnings("unchecked") 
 	Atom(final IPredicate predicate, final ITuple tuple) {
 		if (predicate == null || tuple == null) {
