@@ -43,7 +43,7 @@ public class Demo
 			int maxTime = Integer.parseInt( args[ 2 ] );
 			
 			if ( maxTime < 1 )
-				maxTime = 1000;
+				maxTime = 10000;
 			
 			execute( program, eval, maxTime );
 		}
@@ -121,7 +121,7 @@ public class Demo
 				
 				if( queries.size() > 1 )
 				{
-					System.out.println( "Only one query at a time" );
+					System.out.println( "You may only execute one query at a time!" );
 					return;
 				}
 				IQuery query = queries.size() == 1 ? queries.iterator().next() : null;
@@ -132,13 +132,13 @@ public class Demo
 				
 				switch( evaluationStrategy )
 				{
-				case 0:
+				case 1:
 					output.append( "Naive evaluation" ).append( NEW_LINE );
 					config.evaluationTechnique = new NaiveEvaluatorFactory();
 					break;
 				
 				default:
-				case 1:
+				case 2:
 					output.append( "Semi-naive evaluation" ).append( NEW_LINE );
 					config.evaluationTechnique = new SemiNaiveEvaluatorFactory();
 					break;
@@ -154,7 +154,7 @@ public class Demo
 				IRelation results = knowledgeBase.execute( query, variableBindings );
 				queryDuration += System.currentTimeMillis();
 
-				if( SHOW_VARIABLE_BINDINGS )
+				if( SHOW_VARIABLE_BINDINGS && results != null )
 				{
 					boolean first = true;
 					for( IVariable variable : variableBindings )
@@ -168,11 +168,12 @@ public class Demo
 					output.append( NEW_LINE );
 				}
 				
-				formatResults( output, results );
+				if( results != null )
+					formatResults( output, results );
 
 				if( SHOW_ROW_COUNT || SHOW_QUERY_TIME )
 					output.append( "-----------------" ).append( NEW_LINE );
-				if( SHOW_ROW_COUNT )
+				if( SHOW_ROW_COUNT && results != null )
 					output.append( "Rows: " ).append( results.size() ).append( NEW_LINE );
 				if( SHOW_QUERY_TIME )
 					output.append( "Time: " ).append( queryDuration ).append( "ms" ).append( NEW_LINE );
