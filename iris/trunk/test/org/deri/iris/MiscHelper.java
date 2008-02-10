@@ -259,9 +259,14 @@ public final class MiscHelper {
 		}
 
 		final StringBuilder b = new StringBuilder();
+		boolean first = true;
 		for (final Object o : c) {
-			b.append(o).append(d);
+			if( first )
+				first = false;
+			else
+				b.append( d );
+			b.append(o);
 		}
-		return b.delete(b.length() - d.length(), b.length()).toString();
+		return b.toString();
 	}
 }

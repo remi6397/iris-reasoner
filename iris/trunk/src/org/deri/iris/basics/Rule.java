@@ -100,15 +100,26 @@ public class Rule implements IRule {
 	
 	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
+		boolean first = true;
 		for (final ILiteral l : head) {
-			buffer.append(l).append(", ");
+			if( first )
+				first = false;
+			else
+				buffer.append( ", " );
+			buffer.append(l);
 		}
-		buffer.delete(buffer.length() - 2, buffer.length());
+
 		buffer.append(" :- ");
+
+		first = true;
 		for (final ILiteral l : body) {
-			buffer.append(l).append(", ");
+			if( first )
+				first = false;
+			else
+				buffer.append(", ");
+			buffer.append(l);
 		}
-		buffer.delete(buffer.length() - 2, buffer.length()).append(".");;
+		buffer.append('.');
 		return buffer.toString();
 	}
 }
