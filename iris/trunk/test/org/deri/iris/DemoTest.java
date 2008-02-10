@@ -4,11 +4,7 @@ import junit.framework.TestCase;
 
 public class DemoTest extends TestCase
 {
-	public static String TIMEOUT = "10000";	// Milliseconds
-	
-	public static String EVALUATION = "2";	// Semi-naive
-	
-	public void testSimpleProgram()
+	public void testSimpleProgram() throws Exception
 	{
     	String program = 
 		    "p(1)." +
@@ -17,29 +13,28 @@ public class DemoTest extends TestCase
 		    "q(?X) :- p(?X)." +
 		    "?- q(?x).";
     	
-    	String args[] = new String[] { program, EVALUATION, TIMEOUT };
-
-    	Demo.main( args );
+    	helperExecuteProgram( program );
 	}
 
-	public void testEmptyProgram()
+	public void testEmptyProgram() throws Exception
 	{
-    	String args[] = new String[] { "", EVALUATION, TIMEOUT };
-
-    	Demo.main( args );
+    	helperExecuteProgram( "" );
 	}
 	
-	public void testProgramWithoutQuery()
+	public void testProgramWithoutQuery() throws Exception
 	{
     	String program = 
 		    "p(1)." +
 		    "p(2)." +
 		    
 		    "q(?X) :- p(?X).";
-    	
-    	String args[] = new String[] { program, EVALUATION, TIMEOUT };
-
-    	Demo.main( args );
+    
+    	helperExecuteProgram( program );
 	}
 
+	private void helperExecuteProgram( String program ) throws Exception
+	{
+    	Demo.main( new String[]{ program, "2", "1000" } );
+    	Demo.executeProgram( program, 2 );
+	}
 }

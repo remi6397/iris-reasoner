@@ -113,72 +113,7 @@ public class Demo
 //				t += System.currentTimeMillis();
 //				System.out.println( "Time: " + t + "ms" );
 
-				Parser parser = new Parser();
-				parser.parse( program );
-				Map<IPredicate,IRelation> facts = parser.getFacts();
-				List<IRule> rules = parser.getRules();
-				List<IQuery> queries = parser.getQueries();
-				
-				if( queries.size() > 1 )
-				{
-					System.out.println( "You may only execute one query at a time!" );
-					return;
-				}
-				IQuery query = queries.size() == 1 ? queries.iterator().next() : null;
-				
-				StringBuilder output = new StringBuilder();
-				
-				Configuration config = KnowledgeBaseFactory.getDefaultConfiguration();
-				
-				switch( evaluationStrategy )
-				{
-				case 1:
-					output.append( "Naive evaluation" ).append( NEW_LINE );
-					config.evaluationTechnique = new NaiveEvaluatorFactory();
-					break;
-				
-				default:
-				case 2:
-					output.append( "Semi-naive evaluation" ).append( NEW_LINE );
-					config.evaluationTechnique = new SemiNaiveEvaluatorFactory();
-					break;
-				
-				}
-
-				IKnowledgeBase knowledgeBase = KnowledgeBaseFactory.createKnowledgeBase( facts, rules, config );
-				
-				List<IVariable> variableBindings = new ArrayList<IVariable>();
-
-				// Execute the query
-				long queryDuration = -System.currentTimeMillis();
-				IRelation results = knowledgeBase.execute( query, variableBindings );
-				queryDuration += System.currentTimeMillis();
-
-				if( SHOW_VARIABLE_BINDINGS && results != null )
-				{
-					boolean first = true;
-					for( IVariable variable : variableBindings )
-					{
-						if( first )
-							first = false;
-						else
-							output.append( ", " );
-						output.append( variable );
-					}
-					output.append( NEW_LINE );
-				}
-				
-				if( results != null )
-					formatResults( output, results );
-
-				if( SHOW_ROW_COUNT || SHOW_QUERY_TIME )
-					output.append( "-----------------" ).append( NEW_LINE );
-				if( SHOW_ROW_COUNT && results != null )
-					output.append( "Rows: " ).append( results.size() ).append( NEW_LINE );
-				if( SHOW_QUERY_TIME )
-					output.append( "Time: " ).append( queryDuration ).append( "ms" ).append( NEW_LINE );
-
-				System.out.println( output.toString() );
+				executeProgram( program, evaluationStrategy );
 			}
 			catch( Exception e )
 			{
@@ -190,6 +125,76 @@ public class Demo
 		private int evaluationStrategy;
 	}
 
+	public static void executeProgram( String program, int evaluationStrategy ) throws Exception
+	{
+		Parser parser = new Parser();
+		parser.parse( program );
+		Map<IPredicate,IRelation> facts = parser.getFacts();
+		List<IRule> rules = parser.getRules();
+		List<IQuery> queries = parser.getQueries();
+		
+		if( queries.size() > 1 )
+		{
+			System.out.println( "You may only execute one query at a time!" );
+			return;
+		}
+		IQuery query = queries.size() == 1 ? queries.iterator().next() : null;
+		
+		StringBuilder output = new StringBuilder();
+		
+		Configuration config = KnowledgeBaseFactory.getDefaultConfiguration();
+		
+		switch( evaluationStrategy )
+		{
+		case 1:
+			output.append( "Naive evaluation" ).append( NEW_LINE );
+			config.evaluationTechnique = new NaiveEvaluatorFactory();
+			break;
+		
+		default:
+		case 2:
+			output.append( "Semi-naive evaluation" ).append( NEW_LINE );
+			config.evaluationTechnique = new SemiNaiveEvaluatorFactory();
+			break;
+		
+		}
+
+		IKnowledgeBase knowledgeBase = KnowledgeBaseFactory.createKnowledgeBase( facts, rules, config );
+		
+		List<IVariable> variableBindings = new ArrayList<IVariable>();
+
+		// Execute the query
+		long queryDuration = -System.currentTimeMillis();
+		IRelation results = knowledgeBase.execute( query, variableBindings );
+		queryDuration += System.currentTimeMillis();
+
+		if( SHOW_VARIABLE_BINDINGS && results != null )
+		{
+			boolean first = true;
+			for( IVariable variable : variableBindings )
+			{
+				if( first )
+					first = false;
+				else
+					output.append( ", " );
+				output.append( variable );
+			}
+			output.append( NEW_LINE );
+		}
+		
+		if( results != null )
+			formatResults( output, results );
+
+		if( SHOW_ROW_COUNT || SHOW_QUERY_TIME )
+			output.append( "-----------------" ).append( NEW_LINE );
+		if( SHOW_ROW_COUNT && results != null )
+			output.append( "Rows: " ).append( results.size() ).append( NEW_LINE );
+		if( SHOW_QUERY_TIME )
+			output.append( "Time: " ).append( queryDuration ).append( "ms" ).append( NEW_LINE );
+
+		System.out.println( output.toString() );
+	}
+	
 	public static void formatResults( StringBuilder builder, IRelation m )
 	{
 		for(int t = 0; t < m.size(); ++t )
