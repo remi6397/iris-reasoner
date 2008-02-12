@@ -5,6 +5,7 @@
 	Currently IRIS supports the following features:
 	<ul>
 		<li>Safe datalog with (locally) stratified 'negation as failure'</li>
+		<li>Function symbols</li>
 		<li>Detection of un-safe rules <a href="/saferules">(algorithm description here)</a></li>
 		<li>Detection of non-stratified programs with negation <a href="/stratification">(algorithm descriptions here)</a></li>
 		<li>Extended and extensible set of built-in predicates</li>
