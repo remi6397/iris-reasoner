@@ -96,6 +96,12 @@ public class KnowledgeBase implements IKnowledgeBase
     {
 	    return mRuleBase.getRules();
     }
+	
+	@Override
+    public String toString()
+    {
+	    return mRuleBase.toString() + mFacts.toString();
+    }
 
 	/** The facts of the knowledge-base. */
 	private final IFacts mFacts;
