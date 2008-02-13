@@ -7,7 +7,32 @@
 
 <h2>Release History</h2>
 
-<p><b><a id="v5_5" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=573136">v0.55</a></b> 2008-02-01</p> 
+<p><b><a id="v0_5_6" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=576174">v0.56</a></b> 2008-02-13</p> 
+<p>Maintenance</p>
+<ul>
+	<li>1888840 Allow assignment with constructed terms containing variables.</li>
+	<li>1884197 Certain built-ins should accept constructed term arguments.</li>
+	<li>1775363 Create performance harness</li>
+	<li>1886962 Implement a Facts adaptor that preserves original facts.</li>
+	<li>1886804 Tidy up BuiltinRegister</li>
+	<li>1885886 Remove log4j jar</li>
+	<li>1886390 Implement toString() for storage, rules and facts classes.</li>
+	<li>1886305 Allow rules with only negated grounded literals.</li>
+</ul>
+
+<p>Bug fixes</p>
+<ul>
+	<li>1885125 Evaluation error with naive evaluator</li>
+	<li>1890509 Online demo fails when no query is given.</li>
+</ul>
+
+<p>Known problems</p>
+<ul>
+	<li>1884378 Reintroduce magic sets and predicate filtering optimisations</li>
+</ul>
+	
+
+<p><b><a id="v0_5_5" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=573136">v0.55</a></b> 2008-02-01</p> 
 <p>New features</p>
 <ul>
 	<li>1884201 Add support for reasoning with function symbols.</li>
@@ -46,7 +71,7 @@
 </ul>
 
 
-<p><b><a id="v5" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=552735">v0.5</a></b> 2007-11-08</p> 
+<p><b><a id="v0_5" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=552735">v0.5</a></b> 2007-11-08</p> 
 <p>New features</p>
 <ul>
 	<li>1798276 Magic Sets evaluation allows conjunctive queries</li>
@@ -92,7 +117,7 @@
 </ul>
 
 
-<p><b><a id="v4" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=540609">v0.4</a></b> 2007-09-19</p>
+<p><b><a id="v0_4" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=540609">v0.4</a></b> 2007-09-19</p>
 <p>New features</p>
 <ul>
 	<li>1773193 IRIS is now able to persist facts in a relational database</li>
@@ -114,12 +139,12 @@
     <li>1798276 Magic Sets evaluation does not allow conjunctive queries. (This will be fixed for the next release.)</li>
 </ul>
 
-<p><b><a id="v3" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=516287">v0.3</a></b> 2007-06-15</p>  
+<p><b><a id="v0_3" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=516287">v0.3</a></b> 2007-06-15</p>  
 <ul>
 	<li>enabled multiple programs per vm</li>
 </ul>
 
-<p><b><a id="v2" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=485199">v0.2</a></b> 2007-02-09</p> 
+<p><b><a id="v0_2" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=485199">v0.2</a></b> 2007-02-09</p> 
 <ul>
 	<li>support for all data types supported by WSML</li>
 	<li>a number of built-ins implemented</li>
@@ -131,7 +156,7 @@
 	<li>bugfixes</li>
 </ul>
 
-<p><b><a id="v1" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=484835">v0.1</a></b> 2007-02-08</p>
+<p><b><a id="v0_1" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=484835">v0.1</a></b> 2007-02-08</p>
 <ul><li>initial release</li></ul>
 
 <h2>Daily Snapshot</h2>

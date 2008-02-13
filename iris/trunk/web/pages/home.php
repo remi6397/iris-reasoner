@@ -54,12 +54,32 @@
 	<tr valign=top>
 		<td width=150>
 			<p align=left>
+				13 Feb 2008
+			</p>
+		</td>
+		<td>
+			<p align=left>
+				IRIS <a href="download#v0_5_6">version 0.56</a> released.<br />
+				This is an interim release to fix an important bug in the rule compiler
+				and also offer greater flexibility in rule format using:<br />
+				<ul>
+					<li>constructed terms with equality, inequality and assignment</li>
+					<li>positioning of negated ordinary predicates</li>
+				</ul>
+				The magic sets optimisation is still disabled for this release,
+				but will be included in version 0.6
+			</p>
+		</td>
+	</tr>
+	<tr valign=top>
+		<td width=150>
+			<p align=left>
 				01 Feb 2008
 			</p>
 		</td>
 		<td>
 			<p align=left>
-				IRIS <a href="download#v5_5">version 0.55</a> released.<br />
+				IRIS <a href="download#v0_5_5">version 0.55</a> released.<br />
 				This is an interim release for function symbols and an all new,
 				faster evaluation implementation.<br />
 				Also included is a GUI user environment (org.deri.iris.DemoW),
@@ -78,7 +98,7 @@
 		</td>
 		<td>
 			<p align=left>
-				IRIS <a href="download#v5">version 0.5</a> released.<br />
+				IRIS <a href="download#v0_5">version 0.5</a> released.<br />
 				More built-in predicates, local stratification and query containment.
 				Fixes for magic sets (conjunctive queries).
 				New behaviour for built-ins and inconsistent data types.
@@ -94,7 +114,7 @@
 		</td>
 		<td>
 			<p align=left>
-				IRIS <a href="download#v4">version 0.4</a> released.<br />
+				IRIS <a href="download#v0_4">version 0.4</a> released.<br />
 				Some database integration work started,
 				lots of modifications to the date/time data types and many bug fixes.
 			</p>
