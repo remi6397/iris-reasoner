@@ -1,6 +1,27 @@
 The IRIS ChangeLog:
 ===================
 
+Changes for release 0.56
+========================
+
+Maintenance
+1888840 Allow assignment with constructed terms containing variables.
+1884197 Certain built-ins should accept constructed term arguments.
+1775363 Create performance harness
+1886962 Implement a Facts adaptor that preserves original facts.
+1886804 Tidy up BuiltinRegister
+1885886 Remove log4j jar
+1886390 Implement toString() for storage, rules and facts classes.
+1886305 Allow rules with only negated grounded literals.
+
+Bug fixes
+1885125 Evaluation error with naive evaluator
+1890509 Online demo fails when no query is given.
+
+Known Problems
+1884378 Reintroduce magic sets and predicate filtering optimisations
+
+
 Changes for release 0.55
 ========================
 
