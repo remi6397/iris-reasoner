@@ -55,12 +55,7 @@ public class TermMatchingAndSubstitution
 			variables = new ArrayList<IVariable>();
 		
 		for( ITerm term : subGoalTuple )
-		{
-			if( term instanceof IVariable )
-				variables.add( (IVariable) term );
-			else if( term instanceof IConstructedTerm )
-				getVariables( (IConstructedTerm) term, variables );
-		}
+			getVariables( term, variables );
 		
 		return variables;
 	}
@@ -70,17 +65,42 @@ public class TermMatchingAndSubstitution
 	 * @param constructed The constructed term to find the variables for.
 	 * @param variables The map to put the variables as they are found.
 	 */
-	private static void getVariables( IConstructedTerm constructed, List<IVariable> variables )
+	private static void getVariables( ITerm term, List<IVariable> variables )
 	{
-		for( ITerm term : constructed.getParameters() )
+		if( term instanceof IVariable )
 		{
-			if( term instanceof IVariable )
-				variables.add( (IVariable) term );
-			else if( term instanceof IConstructedTerm )
-				getVariables( (IConstructedTerm) term, variables );
+			variables.add( (IVariable) term );
+		}
+		else if( term instanceof IConstructedTerm )
+		{
+			IConstructedTerm constructed = (IConstructedTerm) term;
+			
+			for( ITerm cterm : constructed.getParameters() )
+			{
+				getVariables( cterm, variables );
+			}
 		}
 	}
-	
+
+	/**
+	 * Extract variables from a term (could be constructed term).
+	 * @param term The term to extract the variables from.
+	 * @param unique If false, include each variable every time it appears.
+	 * @return The list of variables.
+	 */
+	public static List<IVariable> getVariables( ITerm term, boolean unique )
+	{
+		List<IVariable> variables;
+		if( unique )
+			variables = new UniqueList<IVariable>();
+		else
+			variables = new ArrayList<IVariable>();
+		
+		getVariables( term, variables );
+
+		return variables;
+	}
+
 	/**
 	 * Match a tuple to view criteria.
 	 * If a match occurs, return a tuple with values for each distinct variable in the vire criteria.
@@ -369,11 +389,19 @@ public class TermMatchingAndSubstitution
 		// Found a variable
 		if( term instanceof IVariable )
 		{
-			ITerm groundTerm = variableValues.get( indices[ bindingIndex.mValue++ ] );
+			int variableIndex = indices[ bindingIndex.mValue++ ];
 			
-			assert groundTerm != null;
-			
-			return groundTerm;
+			// Check if we have a binding for this variable
+			if( variableIndex >= 0 )
+			{
+				ITerm groundTerm = variableValues.get( variableIndex );
+				
+				assert groundTerm != null;
+				
+				return groundTerm;
+			}
+			else
+				return term;	// Return the unsubstituted variable
 		}
 		
 		// Else we have a constructed term with variables somewhere

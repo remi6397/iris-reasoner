@@ -38,10 +38,6 @@ import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.builtins.EqualBuiltin;
-import org.deri.iris.builtins.ExactEqualBuiltin;
-import org.deri.iris.builtins.NotEqualBuiltin;
-import org.deri.iris.builtins.NotExactEqualBuiltin;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.storage.IRelation;
 
@@ -144,21 +140,8 @@ public class RuleCompiler
 						{
 							if( term instanceof IConstructedTerm )
 							{
-								// This test is temporary.
-								// The BuiltinForConstructedTerms should handle this properly.
-								// However, BuiltinForConstructedTerms can only handle tuples with
-								// no unbound variables at the moment.
-								if( (	builtinAtom instanceof EqualBuiltin ||
-										builtinAtom instanceof NotEqualBuiltin ||
-										builtinAtom instanceof ExactEqualBuiltin ||
-										builtinAtom instanceof NotExactEqualBuiltin ) &&
-										term.isGround() )
-									; // Ignore and treat like normal
-								else
-								{
-									constructedTerms = true;
-									break;
-								}
+								constructedTerms = true;
+								break;
 							}
 						}
 						
@@ -189,7 +172,7 @@ public class RuleCompiler
 						}
 						else
 						{
-							// This is allowed to be the first literal for rules such as:
+							// This *is* allowed to be the first literal for rules such as:
 							//     p('a') :- not q('b')
 							// or even:
 							//     p('a') :- not q(?X)
@@ -206,12 +189,15 @@ public class RuleCompiler
 				}
 				catch( EvaluationException e )
 				{
-					// Oh dear
+					// Oh dear. Store the exception and try the next literal.
 					lastException = e;
 				}
 			}
 			if( ! added )
+			{
+				// No more literals, so the last error really was serious.
 				throw lastException;
+			}
 		}		
 		return elements;
 	}
@@ -219,5 +205,6 @@ public class RuleCompiler
 	/** The knowledge-base facts used to attach to the compiled rule elements. */
 	private final IFacts mFacts;
 	
+	/** The knowledge-base configuration. */
 	private final Configuration mConfiguration;
 }
