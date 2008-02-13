@@ -29,11 +29,13 @@ import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltinAtom;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.builtins.EqualBuiltin;
 import org.deri.iris.builtins.ExactEqualBuiltin;
 import org.deri.iris.builtins.NotEqualBuiltin;
 import org.deri.iris.builtins.NotExactEqualBuiltin;
+import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.utils.TermMatchingAndSubstitution;
 
@@ -70,10 +72,10 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 		{
 			throw new EvaluationException(
 							"Only equality, inequality and assignment built-in predicates can " +
-							"have constructed terms as arguments." );
+							"have constructed terms as arguments. Problem atom: " + builtinAtom );
 		}
 		
-		// So at this point, we know that we have a built-in that can use constructed terms as argument.
+		// So at this point, we know that we have a built-in that can use constructed terms as arguments.
 		// Next, we have to classify the arguments as either:
 		// 		a) grounded or groundable (so need indices from input relation for each variable)
 		//		b) a simple variable term
@@ -81,23 +83,70 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 		
 		ITuple builtinTuple = mBuiltinAtom.getTuple();
 		
-		// First go, ensure all terms are groundable
-		if( ! inputVariables.containsAll( builtinTuple.getVariables() ) )
-			throw new EvaluationException( "Non-groundable term in built-in" );
+		// One more check, all these built-ins are binary
+		assert builtinTuple.size() == 2;
+
+		ITerm t0 = builtinTuple.get( 0 );
+		ITerm t1 = builtinTuple.get( 1 );
 		
+		List<IVariable> tList0 = TermMatchingAndSubstitution.getVariables( t0, true );
+		List<IVariable> tList1 = TermMatchingAndSubstitution.getVariables( t1, true );
+		
+		boolean grounded0 = inputVariables.containsAll( tList0 );
+		boolean grounded1 = inputVariables.containsAll( tList1 );
+		
+		mOutputVariables = new ArrayList<IVariable>( inputVariables );
+
+		if( grounded0 && grounded1 )
+		{
+			// Fine.
+			mType = TYPE.NORMAL;
+			
+			assert inputVariables.containsAll( builtinTuple.getVariables() );
+		}
+		else if ( grounded0 || grounded1 )
+		{
+			// Can only be assignment and then only if one term is a pure variable
+			if( ! (mBuiltinAtom instanceof EqualBuiltin) &&
+				! (mBuiltinAtom instanceof ExactEqualBuiltin) )
+				throw new EvaluationException(
+								"Not enough grounded variables for in-equality with constructed terms. Problem atom: " + builtinAtom );
+			
+			if( ! (t0 instanceof IVariable) &&
+				! (t1 instanceof IVariable) )
+				throw new EvaluationException(
+						"Assignment with constructed terms can only be to a plain variable. Problem atom: " + builtinAtom );
+
+			// Assignment ok
+			if( t0 instanceof IVariable )
+			{
+				mType = TYPE.ASSIGNMENT_TO_T0;
+				mOutputVariables.add( (IVariable) t0 );
+			}
+			else
+			{
+				mOutputVariables.add( (IVariable) t1 );
+				mType = TYPE.ASSIGNMENT_TO_T1;
+			}
+		}
+		else
+		{
+			// Not allowed
+			throw new EvaluationException(
+				"Not enough grounded variables in built-in with constructed terms. Problem atom: " + builtinAtom );
+		}
+
 		List<IVariable> variablesInBuiltinTuple = TermMatchingAndSubstitution.getVariables( builtinTuple, true );
 		List<Integer> indicesOfBuiltinVariablesFromInputRelation = new ArrayList<Integer>();
 		
 		for( IVariable builtinVariable : variablesInBuiltinTuple )
 		{
 			int index = inputVariables.indexOf( builtinVariable );
-			assert index >= 0;
+
 			indicesOfBuiltinVariablesFromInputRelation.add( index );
 		}
 		
 		mIndicesOfBuiltinVariablesFromInputRelation = Utils.integerListToArray( indicesOfBuiltinVariablesFromInputRelation );
-
-		mOutputVariables = inputVariables;
 	}
 
 	@Override
@@ -120,17 +169,54 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 			if( mPositive )
 			{
 				if( builtinOutputTuple != null )
-					result.add( inputTuple );
+				{
+						
+					result.add( makeResultTuple( inputTuple, builtinOutputTuple ) );
+				}
 			}
 			else
 			{
 				if( builtinOutputTuple == null )
+				{
 					result.add( inputTuple );
+				}
 			}
 		}
 		
 		return result;
 	}
+	
+	/**
+	 * Create the results tuple for assignment.
+	 * @param inputTuple Input tuple from previous sub-goals
+	 * @param builtinOutputTuple Output of 'this' built-in.
+	 * @return The new output tuple.
+	 */
+	protected ITuple makeResultTuple( ITuple inputTuple, ITuple builtinOutputTuple )
+	{
+		switch( mType )
+		{
+		default:
+		case NORMAL:
+			return inputTuple;
+			
+		case ASSIGNMENT_TO_T0:
+		case ASSIGNMENT_TO_T1:
+			{
+				ITerm[] terms = new ITerm[ inputTuple.size() + 1 ];
+				for( int i = 0; i < inputTuple.size(); ++i )
+					terms[ i ] = inputTuple.get( i );
+				terms[ inputTuple.size() ] = builtinOutputTuple.get( 0 );	// <<== Get the t0 output term
+				return Factory.BASIC.createTuple( terms );
+			}
+		}
+	}
+	
+	/** A handy reminder of what this built-in is doing. */
+	private static enum TYPE { ASSIGNMENT_TO_T0, ASSIGNMENT_TO_T1, NORMAL };
+	
+	/** Indicates how to process the built-in. */
+	private final TYPE mType;
 
 	/** The built-in atom at this position in the rule. */
 	private final IBuiltinAtom mBuiltinAtom;
@@ -138,7 +224,9 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 	/** Indicator of this literal is positive or negated. */
 	private final boolean mPositive;
 	
+	/** The knowledge-base configuration object. */
 	private final Configuration mConfiguration;
 	
+	/** Indices from input relation used to populate the built-in's input tuple. */
 	private final int[] mIndicesOfBuiltinVariablesFromInputRelation;
 }

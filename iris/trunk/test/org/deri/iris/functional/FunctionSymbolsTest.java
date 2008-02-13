@@ -246,10 +246,26 @@ public class FunctionSymbolsTest extends TestCase
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}	
 
-	public void testNonGroundedConstructedTerm_LegalAssignment() throws Exception
+	public void testNonGroundedConstructedTerm_LegalAssignment_R_to_L() throws Exception
 	{
 		String program =
 			"p(?x) :- q(?y), ?x = f(?y)." +
+			"q(2)." +
+			"q(4)." +
+			
+			"?- p(?x).";
+		
+		String expectedResults = 
+			"dummy( f(2) )." +
+			"dummy( f(4) ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testNonGroundedConstructedTerm_LegalAssignment_L_to_R() throws Exception
+	{
+		String program =
+			"p(?x) :- q(?y), f(?y) = ?x." +
 			"q(2)." +
 			"q(4)." +
 			
