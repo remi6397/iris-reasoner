@@ -58,7 +58,7 @@ import org.deri.iris.storage.IRelation;
 public class DemoW
 {
 	public static final int FONT_SIZE = 12;
-	public static String NEW_LINE = "\r\n";
+	public static String NEW_LINE = System.getProperty( "line.separator" );
 	public static final boolean SHOW_VARIABLE_BINDINGS = true;
 	public static final boolean SHOW_QUERY_TIME = true;
 	public static final boolean SHOW_ROW_COUNT = true;
