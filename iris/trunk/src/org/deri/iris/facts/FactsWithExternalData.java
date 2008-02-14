@@ -58,7 +58,6 @@ public class FactsWithExternalData implements IFacts
 	    	ITuple from = Factory.BASIC.createTuple( new ITerm[ predicate.getArity() ] );
 	    	ITuple to   = Factory.BASIC.createTuple( new ITerm[ predicate.getArity() ] );
 	    	
-	    	// TODO Change IDataSource to use the correct IRelation type
 	    	for( IDataSource dataSource : mExternalDataSources )
 	    		dataSource.get( predicate, from, to, result );
 
@@ -73,6 +72,23 @@ public class FactsWithExternalData implements IFacts
 	    return mFacts.getPredicates();
     }
 
+    /**
+     * Prints all facts. The format of the resulting string is parseable.
+     * @return a parseable string containing all facts
+     */
+    public String toString() {
+		final StringBuilder buffer = new StringBuilder();
+
+		for(final IPredicate p : getPredicates()) {
+			final IRelation r = get(p);
+
+			for(int t = 0, max = r.size(); t < max; ++t) {
+				buffer.append(p.getPredicateSymbol()).append(r.get(t)).append('.');
+			}
+		}
+
+	    return buffer.toString();
+    }
 
 	private final IFacts mFacts;
 	
