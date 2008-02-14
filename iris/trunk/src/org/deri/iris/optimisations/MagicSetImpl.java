@@ -44,8 +44,6 @@ import org.deri.iris.optimisations.AdornedProgram;
 import org.deri.iris.optimisations.AdornedProgram.AdornedPredicate;
 import org.deri.iris.optimisations.AdornedProgram.AdornedRule;
 import org.deri.iris.optimisations.Adornment;
-import org.deri.iris.optimisations.ISip;
-import org.deri.iris.optimisations.SIPImpl;
 
 /**
  * <p>
