@@ -111,4 +111,57 @@ public class TestTermMatchingAndSubstitution extends TestCase
 		
 		assertEquals( substitutedHead.iterator().next(), g2 );
 	}
+	
+	public void testUnifyTwoGroundedTerms()
+	{
+		ITerm x = Factory.TERM.createString( "x" );
+		ITerm y = Factory.TERM.createString( "y" );
+		
+		Map<IVariable, ITerm> variableMap = new HashMap<IVariable, ITerm>();
+		
+		assertFalse( TermMatchingAndSubstitution.unify( x, y, variableMap ) );
+		assertTrue( TermMatchingAndSubstitution.unify( x, x, variableMap ) );
+		assertEquals( 0, variableMap.size() );
+	}
+
+	public void testUnifyGroundedTermAndVariable()
+	{
+		ITerm x = Factory.TERM.createString( "x" );
+		IVariable Y = Factory.TERM.createVariable( "Y" );
+		
+		Map<IVariable, ITerm> variableMap = new HashMap<IVariable, ITerm>();
+		
+		assertTrue( TermMatchingAndSubstitution.unify( x, Y, variableMap ) );
+		assertEquals( 1, variableMap.size() );
+		assertTrue( variableMap.get( Y ).equals( x ) );
+
+		// And the other way round
+		variableMap = new HashMap<IVariable, ITerm>();
+		
+		assertTrue( TermMatchingAndSubstitution.unify( Y, x, variableMap ) );
+		assertEquals( 1, variableMap.size() );
+		assertTrue( variableMap.get( Y ).equals( x ) );
+	}
+
+	public void testUnifyConstructedTerms()
+	{
+		// f( ?X, y ) = f( x, ?Y )
+		// => ?X = x, ?Y = y
+		
+		IVariable X = Factory.TERM.createVariable( "X" );
+		IVariable Y = Factory.TERM.createVariable( "Y" );
+
+		ITerm x = Factory.TERM.createString( "x" );
+		ITerm y = Factory.TERM.createString( "y" );
+		
+		ITerm c1 = Factory.TERM.createConstruct( "f", X, y );
+		ITerm c2 = Factory.TERM.createConstruct( "f", x, Y );
+
+		Map<IVariable, ITerm> variableMap = new HashMap<IVariable, ITerm>();
+		
+		assertTrue( TermMatchingAndSubstitution.unify( c1, c2, variableMap ) );
+		assertEquals( 2, variableMap.size() );
+		assertTrue( variableMap.get( X ).equals( x ) );
+		assertTrue( variableMap.get( Y ).equals( y ) );
+	}
 }

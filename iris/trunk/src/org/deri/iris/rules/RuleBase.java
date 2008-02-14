@@ -36,6 +36,7 @@ import org.deri.iris.RuleUnsafeException;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
@@ -230,6 +231,10 @@ public class RuleBase
 				boolean builtin = lit.getAtom().isBuiltin();
 				boolean positive = lit.isPositive();
 				
+				// Treat built-ins with constructed terms like ordinaries
+				if( containsConstructedTerms( lit.getAtom().getTuple() ) )
+					builtin = false;
+				
 				List<String> variables = extractVariableNames( lit );
 				
 				// Do the special handling for built-in predicates
@@ -256,6 +261,16 @@ public class RuleBase
 		validator.isSafe();
 		
 		return rule;
+	}
+	
+	private static boolean containsConstructedTerms( ITuple tuple )
+	{
+		for( ITerm term : tuple )
+		{
+			if( term instanceof IConstructedTerm )
+				return true;
+		}
+		return false;
 	}
 	
 	/**
