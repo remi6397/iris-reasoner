@@ -103,7 +103,7 @@ public class TermMatchingAndSubstitution
 
 	/**
 	 * Match a tuple to view criteria.
-	 * If a match occurs, return a tuple with values for each distinct variable in the vire criteria.
+	 * If a match occurs, return a tuple with values for each distinct variable in the view criteria.
 	 * @param viewCriteria The tuple from a sub-goal instance.
 	 * @param relation The tuple from an EDB relation.
 	 * @return The tuple of values for the view's variables or null if a match did not occur.
@@ -190,35 +190,6 @@ public class TermMatchingAndSubstitution
 			// The only other option is that bodyTerm is a concrete term (constant).
 			return viewTerm.equals( relationTerm );
 		}
-	}
-
-
-	
-	// #############################################################################################
-
-	/**
-	 * Attempts to match the rule-body predicate tuple (sub-goal expression) with a tuple
-	 * from the associated relation.
-	 * @param body The sub-goal tuple
-	 * @param relation The relation tuple
-	 * @return
-	 */
-	public static Map<IVariable, ITerm> match( ITuple body, ITuple relation )
-	{
-		assert body.size() == relation.size();
-		
-		Map<IVariable, ITerm> variableMap = new HashMap<IVariable, ITerm>();
-		
-		for( int i = 0; i < body.size(); ++i )
-		{
-			ITerm bodyTerm = body.get( i );
-			ITerm relationTerm = relation.get( i );
-			
-			if( ! match( bodyTerm, relationTerm, variableMap ) )
-				return null;
-		}
-		
-		return variableMap;
 	}
 
 	/**
