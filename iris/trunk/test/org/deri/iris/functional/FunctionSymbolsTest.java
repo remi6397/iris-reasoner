@@ -278,15 +278,204 @@ public class FunctionSymbolsTest extends TestCase
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}	
 
-	public void testNonGroundedConstructedTerm_IllegalAssignment() throws Exception
+	public void testInequalityMultipleOccurrencesOfTheSameVariable() throws Exception
 	{
 		String program =
-			"p(?x) :- q(?y), g(?x) = f(?y)." +
+			"p(?x) :- q(?y), ?x = f(?y, ?y, ?y)." +
 			"q(2)." +
 			"q(4)." +
 			
 			"?- p(?x).";
 		
+		String expectedResults = 
+			"dummy( f(2,2,2) )." +
+			"dummy( f(4,4,4) ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testUnifyBindVariable() throws Exception
+	{
+		String program =
+			"p(?Y) :- q(?X), ?X = f(?Y)." +
+			"q(2)." +
+			"q(3)." +
+			"q(f(4))." +
+			
+			"?- p(?x).";
+		
+		String expectedResults = 
+			"dummy( 4 ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+	
+	public void testUnifyBindVariable2() throws Exception
+	{
+		String program =
+			"p(?x) :- q(?y), f(?x) = f(?y)." +
+			"q(2)." +
+			"q(4)." +
+			
+			"?- p(?x).";
+		
+		String expectedResults = 
+			"dummy( 2 )." +
+			"dummy( 4 ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testUnifyAllBound() throws Exception
+	{
+		String program =
+			"p(?x) :- q(?x, ?y), f(?x) = f(?y)." +
+			"q(2, 2)." +
+			"q(3, 7)." +
+			"q(4, 4)." +
+			
+			"?- p(?x).";
+		
+		String expectedResults = 
+			"dummy( 2 )." +
+			"dummy( 4 ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testNotUnifyAllBound() throws Exception
+	{
+		String program =
+			"p(?x) :- q(?x, ?y), ! f(?x) = f(?y)." +
+			"q(2, 2)." +
+			"q(4, 4)." +
+			"q(3, 7)." +
+			
+			"?- p(?x).";
+		
+		String expectedResults = 
+			"dummy( 3 ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	public void testUnifyAllBoundComplex() throws Exception
+	{
+		String program =
+			"p(?x) :- q(?x, ?y), f(?x, ?z) = f(?y, ?z), ?z = ?x." +
+			"q(2, 2)." +
+			"q(4, 4)." +
+			"q(3, 7)." +
+			
+			"?- p(?x).";
+		
+		String expectedResults = 
+			"dummy( 2 )." +
+			"dummy( 4 ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testUnifyCrossOver() throws Exception
+	{
+		String program =
+			"p(?u, ?v) :- q(?x, ?y), f(?x, ?v) = f(?u, ?y)." +
+			"q(3, 4)." +
+			"q(5, 6)." +
+			
+			"?- p(?x, ?y).";
+		
+		String expectedResults = 
+			"dummy( 3, 4 )." +
+			"dummy( 5, 6 ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testUnifyCrossOverOneUnBound() throws Exception
+	{
+		String program =
+			"p(?u, ?v) :- q(?x, ?y, ?u), f(?x, ?v) = f(?u, ?y)." +
+			"q(3, 4, 3)." +
+			"q(5, 6, 5)." +
+			
+			"q(3, 4, 5)." +
+			
+			"?- p(?x, ?y).";
+		
+		String expectedResults = 
+			"dummy( 3, 4 )." +
+			"dummy( 5, 6 ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testUnifyCrossOverBound() throws Exception
+	{
+		String program =
+			"p(?u, ?v) :- q(?x, ?y, ?u, ?v), f(?x, ?v) = f(?u, ?y)." +
+			"q(3, 4, 3, 4)." +
+			"q(5, 6, 5, 6)." +
+			
+			"q(3, 4, 5, 4)." +
+			"q(3, 4, 3, 7)." +
+			
+			"?- p(?x, ?y).";
+		
+		String expectedResults = 
+			"dummy( 3, 4 )." +
+			"dummy( 5, 6 ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testNegatedUnifyCrossOverBound() throws Exception
+	{
+		String program =
+			"p(?u, ?v) :- q(?x, ?y, ?u, ?v), ! f(?x, ?v) = f(?u, ?y)." +
+			"q(3, 4, 3, 4)." +
+			"q(5, 6, 5, 6)." +
+			
+			"q(3, 4, 5, 4)." +
+			"q(3, 4, 3, 7)." +
+			
+			"?- p(?x, ?y).";
+		
+		String expectedResults = 
+			"dummy( 5, 4 )." +
+			"dummy( 3, 7 ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+
+	public void testNegatedUnifyCrossOverOneUnBound() throws Exception
+	{
+		String program =
+			"p(?u, ?v) :- q(?x, ?y, ?u), ! f(?x, ?v) = f(?u, ?y)." +
+			"q(3, 4, 3)." +
+			"q(5, 6, 5)." +
+			
+			"q(3, 4, 5)." +
+			"q(3, 4, 3)." +
+			
+			"?- p(?x, ?y).";
+		
 		Helper.checkFailureWithAllStrategies( program, EvaluationException.class );
 	}	
+
+	public void testUnifyCrossOverComplex() throws Exception
+	{
+		String program =
+			"p(?v, ?w) :- q( ?x, ?y ), f( ?x, ?w ) = f( g(?v), h(?y) )." +
+
+			"q( g(2), 3 )." +
+
+			"?- p( ?x, ?y ).";
+		
+		String expectedResults = 
+			"dummy( 2, h(3) ).";
+	
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
 }
+

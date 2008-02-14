@@ -259,6 +259,84 @@ public class TermMatchingAndSubstitution
 	}
 
 	/**
+	 * Given two terms, unify to give variable bindings for all variables.
+	 * Either, both or none of the input terms need be grounded.
+	 * @param t1 The first term.
+	 * @param t2 The second term.
+	 * @param variableMap The variable bindings.
+	 * @return true, if unifiable, false otherwise
+	 */
+	public static boolean unify( ITerm t1, ITerm t2, Map<IVariable, ITerm> variableMap )
+	{
+		if( t1.isGround() && t2.isGround() )
+			return t1.equals( t2 );
+		
+		if( t1 instanceof IVariable )
+		{
+			return unifyCheckBinding( (IVariable) t1, t2, variableMap );
+		}
+		
+		if( t2 instanceof IVariable )
+		{
+			return unifyCheckBinding( (IVariable) t2, t1, variableMap );
+		}
+		
+		// Here, we know that neither t1 nor t2 is a variable
+		// t1 and t2 are not both ground
+		// Therefore at least one is a constructed term
+		
+		if( t1 instanceof IConstructedTerm && t2 instanceof IConstructedTerm )
+		{
+			IConstructedTerm c1 = (IConstructedTerm) t1;
+			IConstructedTerm c2 = (IConstructedTerm) t2;
+			
+			if( ! c1.getFunctionSymbol().equals( c2.getFunctionSymbol() ) )
+				return false;
+			
+			List<ITerm> c1terms = c1.getValue();
+			List<ITerm> c2terms = c2.getValue();
+			
+			if( c1terms.size() != c2terms.size() )
+				return false;
+			
+			for( int i = 0; i < c1terms.size(); ++i )
+			{
+				ITerm c1term = c1terms.get( i );
+				ITerm c2term = c2terms.get( i );
+				
+				boolean termUnifiy = unify( c1term, c2term, variableMap );
+				if( ! termUnifiy )
+					return false;
+			}
+			return true;
+		}
+		else
+			return false;
+	}
+	
+	private static boolean unifyCheckBinding( IVariable variable, ITerm term, Map<IVariable, ITerm> variableMap )
+	{
+		// First version does not skip and retry
+		if( ! term.isGround() )
+			return false;
+		
+		ITerm existingMapping = variableMap.get( variable );
+		if( existingMapping == null )
+		{
+			// Add a new mapping for (variable) t1 => t2
+			variableMap.put( variable, term );
+		}
+		else
+		{
+			// check that the existing mapping is the same
+			if( ! existingMapping.equals( term ) )
+				return false;
+		}
+		
+		return true;
+	}
+
+	/**
 	 * Substitute the variable bindings in to a tuple to ground it.
 	 * @param tuple The tuple containing variables to ground.
 	 * @param variableMap The variable bindings to use.
@@ -325,8 +403,9 @@ public class TermMatchingAndSubstitution
 	 * using a list of terms with indices instead of a variable-term map.
 	 * @param tuple The tuple containing variables to ground.
 	 * @param variableValues The variable values to be substituted.
-	 * @param indices The indices in to variableValues for each occurence of a variable
-	 * in the tuple IN THE ORDER IN WHICH THEY ARE FOUND.
+	 * @param indices The indices in to variableValues for each occurrence of a variable
+	 * in the tuple IN THE ORDER IN WHICH THEY ARE FOUND. An index value that is less than zero
+	 * indicates that there is no binding for this variable.
 	 * @return The grounded tuple.
 	 */
 	public static ITuple substituteVariablesInToTuple( ITuple tuple, List<ITerm> variableValues, int[] indices )
@@ -385,5 +464,20 @@ public class TermMatchingAndSubstitution
 			substitutedChildTerms.add( substituteVariablesInToTupleTerm( childTerm, variableValues, indices, bindingIndex ) );
 		
 		return Factory.TERM.createConstruct( constructedTerm.getFunctionSymbol(), substitutedChildTerms );
+	}
+	
+	/**
+	 * Substitute variable values in to a term to ground it
+	 * using variable bindings as a list of terms with indices instead of a variable-term map.
+	 * @param term The term to ground.
+	 * @param variableValues A list of variable values
+	 * @param indices The indices in to variableValues for each occurrence of a variable
+	 * in the term IN THE ORDER IN WHICH THEY ARE FOUND. An index value that is less than zero
+	 * indicates that there is no binding for this variable.
+	 * @return The grounded term.
+	 */
+	public static ITerm substituteVariablesInToTerm( ITerm term, List<ITerm> variableValues, int[] indices )
+	{
+		return substituteVariablesInToTupleTerm( term, variableValues, indices, new MutableInteger() );
 	}
 }

@@ -24,7 +24,9 @@
 package org.deri.iris.rules.compiler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
@@ -62,19 +64,16 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 		mConfiguration = configuration;
 		
 		if( mBuiltinAtom instanceof EqualBuiltin ||
-			mBuiltinAtom instanceof NotEqualBuiltin ||
-			mBuiltinAtom instanceof ExactEqualBuiltin ||
-			mBuiltinAtom instanceof NotExactEqualBuiltin )
-		{
-			// These built-ins can use function symbols
-		}
+			mBuiltinAtom instanceof ExactEqualBuiltin )
+			mType = TYPE.UNIFICATION;
+		else if(	mBuiltinAtom instanceof NotEqualBuiltin ||
+					mBuiltinAtom instanceof NotExactEqualBuiltin )
+			mType = TYPE.INEQUALITY;
 		else
-		{
 			throw new EvaluationException(
 							"Only equality, inequality and assignment built-in predicates can " +
-							"have constructed terms as arguments. Problem atom: " + builtinAtom );
-		}
-		
+							"have constructed terms as arguments. The problem atom is: " + builtinAtom );
+
 		// So at this point, we know that we have a built-in that can use constructed terms as arguments.
 		// Next, we have to classify the arguments as either:
 		// 		a) grounded or groundable (so need indices from input relation for each variable)
@@ -86,67 +85,48 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 		// One more check, all these built-ins are binary
 		assert builtinTuple.size() == 2;
 
-		ITerm t0 = builtinTuple.get( 0 );
-		ITerm t1 = builtinTuple.get( 1 );
+		List<IVariable> variablesInBuiltinTuple = TermMatchingAndSubstitution.getVariables( builtinTuple, false );
+		List<IVariable> unboundVariables = new ArrayList<IVariable>( variablesInBuiltinTuple );
+		unboundVariables.removeAll( inputVariables );
 		
-		List<IVariable> tList0 = TermMatchingAndSubstitution.getVariables( t0, true );
-		List<IVariable> tList1 = TermMatchingAndSubstitution.getVariables( t1, true );
-		
-		boolean grounded0 = inputVariables.containsAll( tList0 );
-		boolean grounded1 = inputVariables.containsAll( tList1 );
-		
-		mOutputVariables = new ArrayList<IVariable>( inputVariables );
-
-		if( grounded0 && grounded1 )
+		if( mType == TYPE.INEQUALITY )
 		{
-			// Fine.
-			mType = TYPE.NORMAL;
-			
-			assert inputVariables.containsAll( builtinTuple.getVariables() );
-		}
-		else if ( grounded0 || grounded1 )
-		{
-			// Can only be assignment and then only if one term is a pure variable
-			if( ! (mBuiltinAtom instanceof EqualBuiltin) &&
-				! (mBuiltinAtom instanceof ExactEqualBuiltin) )
+			if( unboundVariables.size() > 0 )
 				throw new EvaluationException(
-								"Not enough grounded variables for in-equality with constructed terms. Problem atom: " + builtinAtom );
-			
-			if( ! (t0 instanceof IVariable) &&
-				! (t1 instanceof IVariable) )
-				throw new EvaluationException(
-						"Assignment with constructed terms can only be to a plain variable. Problem atom: " + builtinAtom );
-
-			// Assignment ok
-			if( t0 instanceof IVariable )
-			{
-				mType = TYPE.ASSIGNMENT_TO_T0;
-				mOutputVariables.add( (IVariable) t0 );
-			}
-			else
-			{
-				mOutputVariables.add( (IVariable) t1 );
-				mType = TYPE.ASSIGNMENT_TO_T1;
-			}
+								"Not enough grounded variables for in-equality with constructed terms. The problem atom is: " + builtinAtom );
 		}
-		else
-		{
-			// Not allowed
-			throw new EvaluationException(
-				"Not enough grounded variables in built-in with constructed terms. Problem atom: " + builtinAtom );
-		}
-
-		List<IVariable> variablesInBuiltinTuple = TermMatchingAndSubstitution.getVariables( builtinTuple, true );
+		
 		List<Integer> indicesOfBuiltinVariablesFromInputRelation = new ArrayList<Integer>();
 		
 		for( IVariable builtinVariable : variablesInBuiltinTuple )
 		{
 			int index = inputVariables.indexOf( builtinVariable );
-
 			indicesOfBuiltinVariablesFromInputRelation.add( index );
 		}
 		
+		// This is what we need to substitute for as many variable as possible.
 		mIndicesOfBuiltinVariablesFromInputRelation = Utils.integerListToArray( indicesOfBuiltinVariablesFromInputRelation );
+
+
+		// Now find out what variable bindings we will produce 
+		mOutputVariables = new ArrayList<IVariable>( inputVariables );
+		if( mType == TYPE.UNIFICATION )
+		{
+			List<IVariable> uniqueVariablesInBuiltinTuple = TermMatchingAndSubstitution.getVariables( builtinTuple, true );
+			mUniqueUnboundVariables = new ArrayList<IVariable>( uniqueVariablesInBuiltinTuple );
+			mUniqueUnboundVariables.removeAll( inputVariables );
+
+			mOutputVariables.addAll( mUniqueUnboundVariables );
+			
+			if( ! mPositive )
+			{
+				if( mUniqueUnboundVariables.size() > 0 )
+					throw new EvaluationException(
+									"Negated unify is not safe when some variables are unbound. The problem atom is: " + builtinAtom );
+			}
+		}
+		else
+			mUniqueUnboundVariables = new ArrayList<IVariable>();
 	}
 
 	@Override
@@ -156,29 +136,61 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 
 		IRelation result = mConfiguration.relationFactory.createRelation();
 		
+		// For each input tuple
 		for( int i = 0; i < leftRelation.size(); ++i )
 		{
 			ITuple inputTuple = leftRelation.get( i );
 			
+			// Substitute variable bindings from previous tuples
 			ITuple builtinInputTuple =
 				TermMatchingAndSubstitution.substituteVariablesInToTuple(
 								mBuiltinAtom.getTuple(), inputTuple, mIndicesOfBuiltinVariablesFromInputRelation );
 	
-			ITuple builtinOutputTuple = mBuiltinAtom.evaluate( builtinInputTuple );
-			
-			if( mPositive )
+			ITerm t1 = builtinInputTuple.get( 0 );
+			ITerm t2 = builtinInputTuple.get( 1 );
+
+			if( mType == TYPE.INEQUALITY )
 			{
-				if( builtinOutputTuple != null )
+				if( mPositive )
 				{
-						
-					result.add( makeResultTuple( inputTuple, builtinOutputTuple ) );
+					if( ! t1.equals( t2 ) )
+						result.add( inputTuple );
+				}
+				else
+				{
+					if( t1.equals( t2 ) )
+						result.add( inputTuple );
 				}
 			}
 			else
 			{
-				if( builtinOutputTuple == null )
+				Map<IVariable, ITerm> variableMap = new HashMap<IVariable, ITerm>();
+				
+				boolean unified = TermMatchingAndSubstitution.unify( t1, t2, variableMap );
+				
+				if( mPositive )
 				{
-					result.add( inputTuple );
+					if( unified )
+					{
+						ITerm[] terms = new ITerm[ inputTuple.size() + mUniqueUnboundVariables.size() ];
+	
+						int t = 0;
+						for( ; t < inputTuple.size(); ++t )
+							terms[ t ] = inputTuple.get( t );
+						
+						for( IVariable variable : mUniqueUnboundVariables )
+						{
+							terms[ t++ ] = variableMap.get( variable );
+						}
+						ITuple outputTuple = Factory.BASIC.createTuple( terms );
+	
+						result.add( outputTuple );
+					}
+				}
+				else
+				{
+					if( ! unified )
+						result.add( inputTuple );
 				}
 			}
 		}
@@ -186,38 +198,11 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 		return result;
 	}
 	
-	/**
-	 * Create the results tuple for assignment.
-	 * @param inputTuple Input tuple from previous sub-goals
-	 * @param builtinOutputTuple Output of 'this' built-in.
-	 * @return The new output tuple.
-	 */
-	protected ITuple makeResultTuple( ITuple inputTuple, ITuple builtinOutputTuple )
-	{
-		switch( mType )
-		{
-		default:
-		case NORMAL:
-			return inputTuple;
-			
-		case ASSIGNMENT_TO_T0:
-		case ASSIGNMENT_TO_T1:
-			{
-				ITerm[] terms = new ITerm[ inputTuple.size() + 1 ];
-				for( int i = 0; i < inputTuple.size(); ++i )
-					terms[ i ] = inputTuple.get( i );
-				terms[ inputTuple.size() ] = builtinOutputTuple.get( 0 );	// <<== Get the t0 output term
-				return Factory.BASIC.createTuple( terms );
-			}
-		}
-	}
+	private final List<IVariable> mUniqueUnboundVariables;
 	
-	/** A handy reminder of what this built-in is doing. */
-	private static enum TYPE { ASSIGNMENT_TO_T0, ASSIGNMENT_TO_T1, NORMAL };
-	
-	/** Indicates how to process the built-in. */
+	private static enum TYPE { UNIFICATION, INEQUALITY };
 	private final TYPE mType;
-
+	
 	/** The built-in atom at this position in the rule. */
 	private final IBuiltinAtom mBuiltinAtom;
 	
