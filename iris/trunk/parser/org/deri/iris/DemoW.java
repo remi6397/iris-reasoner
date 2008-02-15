@@ -382,7 +382,7 @@ public class DemoW
 		for(int t = 0; t < m.size(); ++t )
 		{
 			ITuple tuple = m.get( t );
-			builder.append( tuple.toString() ).append( "\r\n" );
+			builder.append( tuple.toString() ).append( NEW_LINE );
 		}
     }
 }

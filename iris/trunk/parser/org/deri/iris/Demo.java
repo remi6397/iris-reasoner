@@ -19,7 +19,7 @@ import org.deri.iris.storage.IRelation;
  */
 public class Demo
 {
-	public static String NEW_LINE = "\r\n";
+	public static String NEW_LINE = System.getProperty( "line.separator" );;
 	public static final boolean SHOW_VARIABLE_BINDINGS = true;
 	public static final boolean SHOW_QUERY_TIME = true;
 	public static final boolean SHOW_ROW_COUNT = true;
@@ -200,7 +200,7 @@ public class Demo
 		for(int t = 0; t < m.size(); ++t )
 		{
 			ITuple tuple = m.get( t );
-			builder.append( tuple.toString() ).append( "\r\n" );
+			builder.append( tuple.toString() ).append( NEW_LINE );
 		}
     }
 }
