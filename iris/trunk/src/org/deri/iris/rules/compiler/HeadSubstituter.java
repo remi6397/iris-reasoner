@@ -25,6 +25,8 @@ package org.deri.iris.rules.compiler;
 
 import java.util.List;
 import org.deri.iris.Configuration;
+import org.deri.iris.EvaluationException;
+import org.deri.iris.RuleUnsafeException;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.storage.IRelation;
@@ -39,8 +41,9 @@ public class HeadSubstituter extends RuleElement
 	 * Constructor.
 	 * @param variables The variables from the rule body.
 	 * @param headTuple The tuple from the rule head.
+	 * @throws EvaluationException 
 	 */
-	public HeadSubstituter( List<IVariable> variables, ITuple headTuple, Configuration configuration )
+	public HeadSubstituter( List<IVariable> variables, ITuple headTuple, Configuration configuration ) throws EvaluationException
 	{
 		assert variables != null;
 		assert headTuple != null;
@@ -58,10 +61,10 @@ public class HeadSubstituter extends RuleElement
 		for( IVariable variable : variablesToSubstitute )
 		{
 			int index = variables.indexOf( variable );
-			assert index >= 0;
+			if( index < 0 )
+				throw new RuleUnsafeException( "Unbound variable in rule head: " + variable );
 			mIndices[ i++ ] = index;
 		}
-		
 	}
 	
 	@Override
@@ -89,5 +92,6 @@ public class HeadSubstituter extends RuleElement
 	/** The indices of variables in substitution order. */
 	private final int[] mIndices;
 	
+	/** The knowledge-base's configuration object. */
 	private final Configuration mConfiguration;
 }
