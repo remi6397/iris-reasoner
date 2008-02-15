@@ -25,6 +25,7 @@ package org.deri.iris.facts;
 
 import java.util.Collection;
 import java.util.Set;
+import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
@@ -56,14 +57,20 @@ import org.deri.iris.storage.IRelation;
  */
 public class HerbrandUniverseShrinkingFacts implements IFacts
 {
-	public HerbrandUniverseShrinkingFacts( IFacts facts ) //, Collection<IRule> rules )
+	/**
+	 * Constructor.
+	 * Extract all ground terms from starting facts and rules.
+	 * @param facts The starting facts of the knowledge-base.
+	 * @param rules The rules of the knowledge-base.
+	 */
+	public HerbrandUniverseShrinkingFacts( IFacts facts, Collection<IRule> rules )
 	{
 		mFacts = facts;
 		
 		mUniverse = mFacts.get( UNIVERSE );
 		
-		// Copy all known facts in to the universe.
-		// Possibly delay this??
+		// Extract all possible ground values from starting facts and rules.
+		extractGroundTerms( rules );
 		
 		Set<IPredicate> startPredicates = mFacts.getPredicates();
 		
@@ -74,13 +81,71 @@ public class HerbrandUniverseShrinkingFacts implements IFacts
 		}
 	}
 	
-	private void extractFacts( Collection<IRule> rules )
+	/**
+	 * Extract ground terms from rules and create unique values for each variable found.
+	 * @param rules The rules of the knowledge-base.
+	 */
+	private void extractGroundTerms( Collection<IRule> rules )
 	{
-		
+		for( IRule rule : rules )
+		{
+			for( ILiteral literal : rule.getHead() )
+			{
+				for( ITerm term : literal.getAtom().getTuple() )
+				{
+					extractGroundTermsFromTerm( term );
+				}
+			}
+
+			for( ILiteral literal : rule.getHead() )
+			{
+				for( ITerm term : literal.getAtom().getTuple() )
+				{
+					extractGroundTermsFromTerm( term );
+				}
+			}
+		}
 	}
-	
+
+	/**
+	 * Extract ground terms from a term (the term could be a constructed term).
+	 * @param term
+	 */
+	private void extractGroundTermsFromTerm( ITerm term )
+	{
+		if( term instanceof IVariable )
+		{
+			// Need one unique value per variable.
+
+			IVariable variable = (IVariable) term;
+			
+			addToUniverse( Factory.TERM.createString( variable.getValue() + UNIQUE_VARIABLE_PREFIX ) );
+			return;
+		}
+		
+		if( term.isGround() )
+		{
+			addToUniverse( term );
+			return;
+		}
+
+		if( term instanceof IConstructedTerm )
+		{
+			IConstructedTerm constructed = (IConstructedTerm) term;
+			for( ITerm param : constructed.getValue() )
+				extractGroundTermsFromTerm( param );
+		}
+	}
+
+	/**
+	 * An adaptor that adds all ground terms to the UNIVERSE relation.
+	 */
 	private class UniverseAddingRelationAdaptor implements IRelation
 	{
+		/**
+		 * Constructor.
+		 * @param child The wrapped underlying facts object.
+		 */
 		public UniverseAddingRelationAdaptor( IRelation child )
 		{
 			assert child != null;
@@ -139,12 +204,20 @@ public class HerbrandUniverseShrinkingFacts implements IFacts
 			addToUniverse( relation.get( t ) );
 	}
 	
+	/**
+	 * Add all the terms of a tuple to the universe relation.
+	 * @param tuple The tuple whose terms are to be added.
+	 */
 	private void addToUniverse( ITuple tuple )
 	{
 		for( ITerm term : tuple )
 			addToUniverse( term );
 	}
 
+	/**
+	 * Add a term (recursively in the case of constructed terms) to the universe relation.
+	 * @param term The term to add.
+	 */
 	private void addToUniverse( ITerm term )
 	{
 		assert !( term instanceof IVariable );
@@ -161,9 +234,15 @@ public class HerbrandUniverseShrinkingFacts implements IFacts
 		mUniverse.add( Factory.BASIC.createTuple( term ) );
 	}
 
+	/** The underlying facts object. */
 	private final IFacts mFacts;
 	
+	/** The predicate name that identifies the universe relation. */
 	private final IRelation mUniverse;
 	
+	/** The suffix to append to variables in rules in order to give them a 'unique' value. */
+	private static final String UNIQUE_VARIABLE_PREFIX = "_$UNIQUE$";
+	
+	/** The universe predicate. */
 	public static final IPredicate UNIVERSE = Factory.BASIC.createPredicate( "$UNIVERSE$", 1 );
 }
