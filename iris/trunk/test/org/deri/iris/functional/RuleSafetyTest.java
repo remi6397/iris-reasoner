@@ -438,7 +438,7 @@ public class RuleSafetyTest extends TestCase
         	
 		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
     }
-
+    
     public void testUnsafe_AddToSelf() throws Exception
     {
     	String program = 
@@ -459,6 +459,22 @@ public class RuleSafetyTest extends TestCase
     {
     	String program = 
     		"d(?X, ?Y) :- not s(?X, ?Y).";
+        	
+		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    }
+
+    public void testSafe_SeveralUnboundVariablesInUnification() throws Exception
+    {
+    	String program =
+    		"p(?v, ?w) :- q( ?x, ?y ), f( ?x, ?w ) = f( g(?v), h(?y) ).";
+        	
+       	Helper.evaluateWithAllStrategies( program, "" );
+    }
+
+    public void testUnsafe_SeveralUnboundVariablesInNegatedUnification() throws Exception
+    {
+    	String program =
+    		"p(?v, ?w) :- q( ?x, ?y ), ! f( ?x, ?w ) = f( g(?v), h(?y) ).";
         	
 		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
     }
