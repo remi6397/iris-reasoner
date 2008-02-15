@@ -33,15 +33,7 @@ import java.util.Set;
 import org.deri.iris.Configuration;
 import org.deri.iris.ProgramNotStratifiedException;
 import org.deri.iris.RuleUnsafeException;
-import org.deri.iris.api.basics.IAtom;
-import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.IConstructedTerm;
-import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.builtins.ArithmeticBuiltin;
-import org.deri.iris.builtins.EqualBuiltin;
 
 /**
  * The set of rules and utility methods, i.e. the IDB for a logic program
@@ -78,7 +70,12 @@ public class RuleBase
 	{
 		// Stratify
 		List<IRule> rules = new ArrayList<IRule>( mOriginalRules );
-		List<List<IRule>> stratifiedRules = stratify( rules );
+
+		// Rule safety processing
+		List<IRule> safeRules = checkRuleSafety( rules );
+
+		// Stratify
+		List<List<IRule>> stratifiedRules = stratify( safeRules );
 		
 		mRuleStrata = new ArrayList<List<IRule>>();
 		
@@ -87,11 +84,8 @@ public class RuleBase
 			// Re-order stratum
 			List<IRule> reorderedRules = reOrderRules( stratum );
 			
-			// Rule safety processing
-			List<IRule> safeRules = checkRuleSafety( reorderedRules );
-			
 			// Rule optimisation
-			List<IRule> optimisedRules = optimiseRules( safeRules );
+			List<IRule> optimisedRules = optimiseRules( reorderedRules );
 		
 			mRuleStrata.add( optimisedRules );
 		}
@@ -214,111 +208,10 @@ public class RuleBase
 	 */
 	private IRule checkRuleIsSafe( IRule rule ) throws RuleUnsafeException
 	{
-		RuleValidator validator = new RuleValidator(
-						mConfiguration.ruleSafetyAllowUnlimitedVariablesInNegatedOrdinaryPredicates, 
-						mConfiguration.ruleSafetyTernaryTargetsImplyLimited );
-		
-		// Add all the head variables
-		for( ILiteral headLiteral : rule.getHead())
-			validator.addHeadVariables( extractVariableNames( headLiteral ) );
-
-		// Then for each literal in the rule
-		for( ILiteral lit : rule.getBody())
-		{
-			// If it has any variables at all
-			if ( ! lit.getAtom().isGround() )
-			{
-				boolean builtin = lit.getAtom().isBuiltin();
-				boolean positive = lit.isPositive();
-				
-				// Treat built-ins with constructed terms like ordinaries
-				if( containsConstructedTerms( lit.getAtom().getTuple() ) )
-					builtin = false;
-				
-				List<String> variables = extractVariableNames( lit );
-				
-				// Do the special handling for built-in predicates
-				if( builtin )
-				{
-					if( positive && isArithmetic( lit.getAtom() ) )
-					{
-						validator.addVariablesFromPositiveArithmeticPredicate( isEquality( lit.getAtom() ), variables );
-					}
-					else
-					{
-						validator.addVariablesFromBuiltinPredicate( variables );
-					}
-				}
-				else
-				{
-					// Ordinary predicate
-					validator.addVariablesFromOrdinaryPredicate( positive, variables );
-				}
-			}
-		}
-		
-		// Throws if not safe!
-		validator.isSafe();
+		for( IRuleSafetyProcessor processor : mConfiguration.ruleSafetyProcessors )
+			rule = processor.process( rule );
 		
 		return rule;
-	}
-	
-	private static boolean containsConstructedTerms( ITuple tuple )
-	{
-		for( ITerm term : tuple )
-		{
-			if( term instanceof IConstructedTerm )
-				return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * Get the variable names of variable terms in a literal.
-	 * @param literal The literal to be processed.
-	 * @return The names of variables.
-	 */
-	private static List<String> extractVariableNames( ILiteral literal )
-	{
-		List<String> variables = new ArrayList<String>();
-		
-		for( ITerm term : literal.getAtom().getTuple() )
-		{
-			if( term instanceof IConstructedTerm )
-			{
-				IConstructedTerm constructed = (IConstructedTerm) term;
-				
-				for( IVariable variable : constructed.getVariables() )
-					variables.add( variable.getValue() );
-			}
-			else if( term instanceof IVariable )
-			{
-				IVariable variable = (IVariable) term;
-				variables.add( variable.getValue() );
-			}
-		}
-		
-		return variables;
-	}
-	
-	/**
-	 * Utility to check if an atom is an equality built-in
-	 * @param atom The atom to check
-	 * @return true if it is
-	 */
-	private static boolean isEquality( IAtom atom )
-	{
-		return atom instanceof EqualBuiltin;
-	}
-
-	/**
-	 * Utility to check if an atom is one of the ternary arithmetic built-ins
-	 * @param atom The atom to check
-	 * @return true if it is
-	 */
-	private static boolean isArithmetic( IAtom atom )
-	{
-		return atom instanceof ArithmeticBuiltin;
 	}
 	
 	/** The original rules of this program. */
