@@ -76,112 +76,31 @@ public class StandardRuleSafetyProcessor implements IRuleSafetyProcessor
 
 	public IRule process( IRule rule ) throws RuleUnsafeException
 	{
-		RuleValidator validator = new RuleValidator(
+		RuleValidator validator = new RuleValidator( rule,
 						mAllowUnlimitedVariablesInNegatedOrdinaryPredicates, 
 						mTernaryTargetsImplyLimited );
 		
-		// Add all the head variables
-		for( ILiteral headLiteral : rule.getHead())
-			validator.addHeadVariables( extractVariableNames( headLiteral ) );
-
-		// Then for each literal in the rule
-		for( ILiteral lit : rule.getBody())
-		{
-			// If it has any variables at all
-			if ( ! lit.getAtom().isGround() )
-			{
-				boolean builtin = lit.getAtom().isBuiltin();
-				boolean positive = lit.isPositive();
-				
-				// Treat built-ins with constructed terms like ordinaries
-				if( containsConstructedTerms( lit.getAtom().getTuple() ) )
-					builtin = false;
-				
-				List<String> variables = extractVariableNames( lit );
-				
-				// Do the special handling for built-in predicates
-				if( builtin )
-				{
-					if( positive && isArithmetic( lit.getAtom() ) )
-					{
-						validator.addVariablesFromPositiveArithmeticPredicate( isEquality( lit.getAtom() ), variables );
-					}
-					else
-					{
-						validator.addVariablesFromBuiltinPredicate( variables );
-					}
-				}
-				else
-				{
-					// Ordinary predicate
-					validator.addVariablesFromOrdinaryPredicate( positive, variables );
-				}
-			}
-		}
+		List<IVariable> unsafeVariables = validator.getAllUnlimitedVariables();
 		
-		// Throws if not safe!
-		validator.isSafe();
+		if( unsafeVariables.size() > 0 )
+		{
+			StringBuilder buffer = new StringBuilder();
+			buffer.append( rule ).append( " contains unlimited variable(s): " );
+			
+			boolean first = true;
+			for( IVariable variable : unsafeVariables )
+			{
+				if( first )
+					first = false;
+				else
+					buffer.append( ", " );
+				buffer.append( variable );
+			}
+			
+			throw new RuleUnsafeException( buffer.toString() );
+		}
 		
 		return rule;
-	}
-
-	private boolean containsConstructedTerms( ITuple tuple )
-	{
-		for( ITerm term : tuple )
-		{
-			if( term instanceof IConstructedTerm )
-				return true;
-		}
-		return false;
-	}
-	
-
-	/**
-	 * Get the variable names of variable terms in a literal.
-	 * @param literal The literal to be processed.
-	 * @return The names of variables.
-	 */
-	private List<String> extractVariableNames( ILiteral literal )
-	{
-		List<String> variables = new ArrayList<String>();
-		
-		for( ITerm term : literal.getAtom().getTuple() )
-		{
-			if( term instanceof IConstructedTerm )
-			{
-				IConstructedTerm constructed = (IConstructedTerm) term;
-				
-				for( IVariable variable : constructed.getVariables() )
-					variables.add( variable.getValue() );
-			}
-			else if( term instanceof IVariable )
-			{
-				IVariable variable = (IVariable) term;
-				variables.add( variable.getValue() );
-			}
-		}
-		
-		return variables;
-	}
-	
-	/**
-	 * Utility to check if an atom is an equality built-in
-	 * @param atom The atom to check
-	 * @return true if it is
-	 */
-	private boolean isEquality( IAtom atom )
-	{
-		return atom instanceof EqualBuiltin;
-	}
-
-	/**
-	 * Utility to check if an atom is one of the ternary arithmetic built-ins
-	 * @param atom The atom to check
-	 * @return true if it is
-	 */
-	private boolean isArithmetic( IAtom atom )
-	{
-		return atom instanceof ArithmeticBuiltin;
 	}
 
 	private final boolean mAllowUnlimitedVariablesInNegatedOrdinaryPredicates;
