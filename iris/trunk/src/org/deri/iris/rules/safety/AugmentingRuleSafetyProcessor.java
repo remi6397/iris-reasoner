@@ -32,7 +32,7 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.facts.HerbrandUniverseShrinkingFacts;
+import org.deri.iris.facts.UniverseShrinkingFacts;
 import org.deri.iris.rules.IRuleSafetyProcessor;
 import org.deri.iris.rules.RuleValidator;
 
@@ -59,7 +59,7 @@ public class AugmentingRuleSafetyProcessor implements IRuleSafetyProcessor
 			
 			for( IVariable variable : unlimitedVaruiables )
 			{
-				ILiteral newLiteral = Factory.BASIC.createLiteral( true, HerbrandUniverseShrinkingFacts.UNIVERSE, Factory.BASIC.createTuple( variable ) );
+				ILiteral newLiteral = Factory.BASIC.createLiteral( true, UniverseShrinkingFacts.UNIVERSE, Factory.BASIC.createTuple( variable ) );
 				body.add( newLiteral );
 			}
 			
