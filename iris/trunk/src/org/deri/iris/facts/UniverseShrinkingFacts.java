@@ -55,7 +55,7 @@ import org.deri.iris.storage.IRelation;
  * For both:
  * 	6.	Add $UNIVERSE$(?variable) sub-goals for each free variable in each rule
  */
-public class HerbrandUniverseShrinkingFacts implements IFacts
+public class UniverseShrinkingFacts implements IFacts
 {
 	/**
 	 * Constructor.
@@ -63,7 +63,7 @@ public class HerbrandUniverseShrinkingFacts implements IFacts
 	 * @param facts The starting facts of the knowledge-base.
 	 * @param rules The rules of the knowledge-base.
 	 */
-	public HerbrandUniverseShrinkingFacts( IFacts facts, Collection<IRule> rules )
+	public UniverseShrinkingFacts( IFacts facts, Collection<IRule> rules )
 	{
 		mFacts = facts;
 		
