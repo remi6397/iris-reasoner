@@ -38,6 +38,7 @@ import org.deri.iris.compiler.Parser;
 import org.deri.iris.evaluation.IEvaluatorFactory;
 import org.deri.iris.evaluation.bottomup.compiledrules.naive.NaiveEvaluatorFactory;
 import org.deri.iris.evaluation.bottomup.compiledrules.seminaive.SemiNaiveEvaluatorFactory;
+import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 import org.deri.iris.storage.IRelation;
 
 public class Helper
@@ -73,11 +74,36 @@ public class Helper
 	 */
 	public static void evaluateWithAllStrategies( String program, String expectedResults ) throws Exception
 	{
-		executeAndCheckResults( program, expectedResults, new NaiveEvaluatorFactory(), "Naive" );
-		executeAndCheckResults( program, expectedResults, new SemiNaiveEvaluatorFactory(), "Semi-Naive" );
+//		{
+//			Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
+//			configuration.evaluationTechnique = new NaiveEvaluatorFactory();
+//			
+//			configuration.mReOrderingOptimiser = null;
+//			configuration.mRuleOptimisers.clear();
+//			configuration.programOptmimisers.clear();
+//			
+//			executeAndCheckResults( program, expectedResults, configuration, "Un-optimised" );
+//		}
+		{
+			Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
+			configuration.evaluationTechnique = new NaiveEvaluatorFactory();
+			executeAndCheckResults( program, expectedResults, configuration, "Naive" );
+		}
+		
+		{
+			Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
+			configuration.evaluationTechnique = new SemiNaiveEvaluatorFactory();
+			executeAndCheckResults( program, expectedResults, configuration, "Semi-Naive" );
+		}
+
+//		{
+//			Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
+//			configuration.ruleSafetyProcessor = new AugmentingRuleSafetyProcessor();
+//			executeAndCheckResults( program, expectedResults, configuration, "Allow un-safe rules" );
+//		}
 	}
 	
-	private static void executeAndCheckResults( String program, String expected, IEvaluatorFactory factory, String evaluatioName ) throws Exception
+	private static void executeAndCheckResults( String program, String expected, Configuration configuration, String evaluationName ) throws Exception
 	{
 		Parser parser = new Parser();
 		parser.parse( program );
@@ -91,15 +117,13 @@ public class Helper
 		
 		// Execute the program with naive
 
-		Configuration config = KnowledgeBaseFactory.getDefaultConfiguration();
-		config.evaluationTechnique = factory;
-		IKnowledgeBase kb = KnowledgeBaseFactory.createKnowledgeBase( parser.getFacts(), parser.getRules(), config );
+		IKnowledgeBase kb = KnowledgeBaseFactory.createKnowledgeBase( parser.getFacts(), parser.getRules(), configuration );
 
 		Timer timer = new Timer();
 		
 		IRelation actualResults = kb.execute( query );
 		
-		timer.show( evaluatioName + " evaluation" );
+		timer.show( evaluationName + " evaluation" );
 
 		checkResults( expected, actualResults );
 	}
@@ -153,8 +177,33 @@ public class Helper
 	 */
 	public static void checkFailureWithAllStrategies( String program, Class<?> expectedExceptionClass )
 	{
-		checkFailure( program, expectedExceptionClass, new NaiveEvaluatorFactory(), "Naive" );
-		checkFailure( program, expectedExceptionClass, new SemiNaiveEvaluatorFactory(), "Semi-naive" );
+//		{
+//		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
+//		configuration.evaluationTechnique = new NaiveEvaluatorFactory();
+//		
+//		configuration.mReOrderingOptimiser = null;
+//		configuration.mRuleOptimisers.clear();
+//		configuration.programOptmimisers.clear();
+//		
+//		checkFailure( program, expectedExceptionClass, configuration, "Un-optimised" );
+//	}
+		{
+			Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
+			configuration.evaluationTechnique = new NaiveEvaluatorFactory();
+			checkFailure( program, expectedExceptionClass, configuration, "Naive" );
+		}
+		
+		{
+			Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
+			configuration.evaluationTechnique = new SemiNaiveEvaluatorFactory();
+			checkFailure( program, expectedExceptionClass, configuration, "Semi-Naive" );
+		}
+	
+//		{
+//			Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
+//			configuration.ruleSafetyProcessor = new AugmentingRuleSafetyProcessor();
+//			checkFailure( program, expectedExceptionClass, configuration, "Allow un-safe rules" );
+//		}
 	}
 	
 	/**
@@ -164,7 +213,7 @@ public class Helper
 	 * @param expectedExceptionClass The exception class object expected or null for an
 	 * unknown exception type. 
 	 */
-	public static void checkFailure( String knowledgeBase, Class<?> expectedExceptionClass, IEvaluatorFactory factory, String evaluatio )
+	public static void checkFailure( String knowledgeBase, Class<?> expectedExceptionClass, Configuration configuration, String evaluation )
 	{
 		try
 		{
@@ -182,13 +231,11 @@ public class Helper
 			if( queries.size() == 1 )
 				query = queries.get( 0 );
 			
-			Configuration config = KnowledgeBaseFactory.getDefaultConfiguration();
-			config.evaluationTechnique = factory;
-			IKnowledgeBase kb = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
+			IKnowledgeBase kb = KnowledgeBaseFactory.createKnowledgeBase( facts, rules, configuration );
 
 			kb.execute( query, null );
 
-			junit.framework.Assert.fail( "Naive evaluation did not throw the correct exception." );
+			junit.framework.Assert.fail( evaluation + " evaluation did not throw the correct exception." );
 		}
 		catch( Exception e )
 		{
