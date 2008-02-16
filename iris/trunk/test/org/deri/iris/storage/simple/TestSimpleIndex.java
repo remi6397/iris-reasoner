@@ -44,7 +44,7 @@ public class TestSimpleIndex extends TestCase
 
 	protected void setUp() throws Exception
 	{
-		mRelation = new SimpleRelation( true );
+		mRelation = new SimpleRelation();
 		
 		mRelation.add( Helper.createTuple( 1, 1, 1 ) );
 		mRelation.add( Helper.createTuple( 1, 1, 2 ) );

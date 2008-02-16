@@ -62,4 +62,6 @@ public interface IRelation
 	 * @return The tuple at the given index position.
 	 */
 	ITuple get( int index );
+	
+	boolean contains( ITuple tuple );
 }

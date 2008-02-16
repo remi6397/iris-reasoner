@@ -185,6 +185,11 @@ public class UniverseShrinkingFacts implements IFacts
 	        return mChild.size();
         }
 		
+		public boolean contains( ITuple tuple )
+        {
+	        return mChild.contains( tuple );
+        }
+
 		private final IRelation mChild;
 	}
 	

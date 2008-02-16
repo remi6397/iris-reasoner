@@ -35,7 +35,7 @@ public class TestSimpleRelation extends TestCase
 	
 	protected void setUp() throws Exception
 	{
-		mRelation = new SimpleRelation( true );
+		mRelation = new SimpleRelation();
 	}
 	
 	public void testAll()
@@ -62,7 +62,7 @@ public class TestSimpleRelation extends TestCase
 		assertEquals( mRelation.get( 1 ), t2 );
 
 		// Create a new relation and check that addAll() works.
-		IRelation r2 = new SimpleRelation( true );
+		IRelation r2 = new SimpleRelation();
 		r2.addAll( mRelation );
 		assertEquals( r2.size(), 2 );
 		assertEquals( r2.get( 0 ), t1 );

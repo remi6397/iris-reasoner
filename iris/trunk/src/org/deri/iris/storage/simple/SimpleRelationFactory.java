@@ -33,6 +33,6 @@ public class SimpleRelationFactory implements IRelationFactory
 {
 	public IRelation createRelation()
 	{
-		return new SimpleRelation( true );
+		return new SimpleRelation();
 	}
 }

@@ -133,21 +133,28 @@ public class SemiNaiveEvaluator extends AbstractCompiledRulesEvaluator
 		
 		IRelation result = configuration.relationFactory.createRelation();
 		
-		TotalIndex index = mPredicateToProgramFactsIndex.get( predicate );
-		
-		if( index == null )
+		for( int t = 0; t < delta.size(); ++ t )
 		{
-			index = new TotalIndex( programFacts );
-			
-			mPredicateToProgramFactsIndex.put( predicate, index );
+			ITuple tuple = delta.get( t );
+			if( ! programFacts.contains( tuple ) )
+				result.add( tuple );
 		}
 		
-		for( int d = 0; d < delta.size(); ++d )
-		{
-			ITuple deltaTuple = delta.get( d );
-			if( ! index.contains( deltaTuple ) )
-				result.add( deltaTuple );
-		}
+//		TotalIndex index = mPredicateToProgramFactsIndex.get( predicate );
+//		
+//		if( index == null )
+//		{
+//			index = new TotalIndex( programFacts );
+//			
+//			mPredicateToProgramFactsIndex.put( predicate, index );
+//		}
+//		
+//		for( int d = 0; d < delta.size(); ++d )
+//		{
+//			ITuple deltaTuple = delta.get( d );
+//			if( ! index.contains( deltaTuple ) )
+//				result.add( deltaTuple );
+//		}
 		
 		return result;
 	}

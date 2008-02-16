@@ -150,6 +150,12 @@ public class UniqueList<E> extends ArrayList<E>
 		}
     }
 	
+	@Override
+    public boolean contains( Object element )
+    {
+	    return mSet.contains( element );
+    }
+
 	/**
 	 * An iterator that will not allow modification.
 	 */
