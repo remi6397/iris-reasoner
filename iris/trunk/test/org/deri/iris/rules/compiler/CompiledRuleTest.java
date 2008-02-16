@@ -36,7 +36,7 @@ import org.deri.iris.storage.IRelation;
 import org.deri.iris.storage.simple.SimpleRelationFactory;
 
 
-public class TestCompiledRule extends TestCase
+public class CompiledRuleTest extends TestCase
 {
 	public void testEvaluate() throws Exception
 	{

@@ -35,7 +35,7 @@ import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.storage.simple.SimpleRelationFactory;
 
-public class TestBuiltin extends TestCase
+public class BuiltinTest extends TestCase
 {
 
 	protected void setUp() throws Exception
