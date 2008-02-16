@@ -40,12 +40,9 @@ public class SimpleRelation implements IRelation
 	 * (or does not require it), uniqueness enforcement can be turned off.
 	 * @param forceUniqueness true, if this object should enforce uniqueness.
 	 */
-	SimpleRelation( boolean forceUniqueness )
+	SimpleRelation()
 	{
-		if( forceUniqueness )
-			mTuples = new UniqueList<ITuple>();
-		else
-			mTuples = new ArrayList<ITuple>();
+		mTuples = new UniqueList<ITuple>();
 	}
 
 	public boolean add( ITuple tuple )
@@ -74,6 +71,11 @@ public class SimpleRelation implements IRelation
 	public int size()
 	{
 		return mTuples.size();
+	}
+	
+	public boolean contains( ITuple tuple )
+	{
+		return mTuples.contains( tuple );
 	}
 
 	@Override

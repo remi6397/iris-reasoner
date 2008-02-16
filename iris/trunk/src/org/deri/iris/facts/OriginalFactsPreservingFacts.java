@@ -83,14 +83,22 @@ public class OriginalFactsPreservingFacts implements IFacts
 
 		public boolean add( ITuple tuple )
         {
-			// ***** MIGHT NOT BE UNIQUE *****
+			if( mOriginal.contains( tuple ) )
+				return false;
+			
 			return mAddedFacts.add( tuple );
         }
 
 		public boolean addAll( IRelation relation )
         {
-			// ***** MIGHT NOT BE UNIQUE *****
-	        return mAddedFacts.addAll( relation );
+			boolean changed = false;
+			for( int t = 0; t < relation.size(); ++t )
+			{
+				if( add( relation.get( t ) ) )
+					changed = true;
+			}
+			
+	        return changed;
         }
 
 		public ITuple get( int index )
@@ -106,6 +114,11 @@ public class OriginalFactsPreservingFacts implements IFacts
 	        return mOriginal.size() + mAddedFacts.size();
         }
 		
+		public boolean contains( ITuple tuple )
+        {
+	        return mOriginal.contains( tuple ) || mAddedFacts.contains( tuple );
+        }
+
 		private final IRelation mOriginal;
 		private final IRelation mAddedFacts;
 	}
