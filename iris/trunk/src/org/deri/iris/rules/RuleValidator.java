@@ -24,11 +24,18 @@
 package org.deri.iris.rules;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.deri.iris.RuleUnsafeException;
+import org.deri.iris.api.basics.IAtom;
+import org.deri.iris.api.basics.ILiteral;
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.IConstructedTerm;
+import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.builtins.ArithmeticBuiltin;
+import org.deri.iris.builtins.EqualBuiltin;
 
 /**
  * We use the definition of a safe rule as described by Ullman, page 105.
@@ -61,18 +68,60 @@ public class RuleValidator
 	 * @param limitedTernaryOperandsImplyLimitedResult false, if the strict Ullman definition
 	 * should be enforced for variables in that are in arithmetic predicates.
 	 */
-	public RuleValidator( 	boolean allowNotLimitedVariablesInNegatedSubGoals,
+	public RuleValidator( 	IRule rule,
+							boolean allowNotLimitedVariablesInNegatedSubGoals,
 							boolean allowArithmeticPredicatesToImplyLimited )
 	{
 		mAllowNotLimitedVariablesInNegatedSubGoals = allowNotLimitedVariablesInNegatedSubGoals;
 		mAllowArithmeticPredicatesToImplyLimited = allowArithmeticPredicatesToImplyLimited;
+
+		// Add all the head variables
+		for( ILiteral headLiteral : rule.getHead())
+			addHeadVariables( extractVariables( headLiteral ) );
+
+		// Then for each literal in the rule
+		for( ILiteral lit : rule.getBody())
+		{
+			// If it has any variables at all
+			if ( ! lit.getAtom().isGround() )
+			{
+				boolean builtin = lit.getAtom().isBuiltin();
+				boolean positive = lit.isPositive();
+				
+				// Treat built-ins with constructed terms like ordinaries
+				if( containsConstructedTerms( lit.getAtom().getTuple() ) )
+					builtin = false;
+				
+				List<IVariable> variables = extractVariables( lit );
+				
+				// Do the special handling for built-in predicates
+				if( builtin )
+				{
+					if( positive && isArithmetic( lit.getAtom() ) )
+					{
+						addVariablesFromPositiveArithmeticPredicate( isEquality( lit.getAtom() ), variables );
+					}
+					else
+					{
+						addVariablesFromBuiltinPredicate( variables );
+					}
+				}
+				else
+				{
+					// Ordinary predicate
+					addVariablesFromOrdinaryPredicate( positive, variables );
+				}
+			}
+		}
+		
+		processBuiltins();
 	}
 	
 	/**
 	 * Add variables that appears in the rule head.
 	 * @param variables The variable names.
 	 */
-	public void addHeadVariables( List<String> variables )
+	private void addHeadVariables( List<IVariable> variables )
 	{
 		mHeadVariables.addAll( variables );
 	}
@@ -82,7 +131,7 @@ public class RuleValidator
 	 * @param positive true if the predicate is positive, i.e. not negated.
 	 * @param variables The variable names.
 	 */
-	public void addVariablesFromOrdinaryPredicate( boolean positive, List<String> variables )
+	private void addVariablesFromOrdinaryPredicate( boolean positive, List<IVariable> variables )
 	{
 		if ( positive )
 			mLimitedVariables.addAll( variables );
@@ -96,7 +145,7 @@ public class RuleValidator
 	 * 
 	 * @param variables The variable names.
 	 */
-	public void addVariablesFromBuiltinPredicate( List<String> variables )
+	private void addVariablesFromBuiltinPredicate( List<IVariable> variables )
 	{
 		mBuiltin.addAll( variables );
 	}
@@ -107,47 +156,39 @@ public class RuleValidator
 	 * @param isEquality true if the predicate is equality.
 	 * @param variables The variable names.
 	 */
-	public void addVariablesFromPositiveArithmeticPredicate( boolean isEquality, List<String> variables )
+	private void addVariablesFromPositiveArithmeticPredicate( boolean isEquality, List<IVariable> variables )
 	{
 		mBuiltin.addAll( variables );
 
 		if( isEquality || mAllowArithmeticPredicatesToImplyLimited )
 			mArithmeticGroups.add( variables );
 	}
-
-	/**
-	 * Perform the safety check and throws an exception if not safe.
-	 * @throws RuleUnsafeException If the rule is not safe.
-	 */
-	public void isSafe() throws RuleUnsafeException
+	
+	public List<IVariable> getAllUnlimitedVariables()
 	{
-		processBuiltins();
+		List<IVariable> result = new ArrayList<IVariable>();
 		
-		if ( ! mLimitedVariables.containsAll( mHeadVariables ) )
-		{
-			mHeadVariables.removeAll( mLimitedVariables );
-			
-			throw new RuleUnsafeException( "Head variable(s) " + toString( mHeadVariables ) + " are not limited." );
-		}
+		List<IVariable> unlimitedHeadVariables = new ArrayList<IVariable>( mHeadVariables );
+		unlimitedHeadVariables.removeAll( mLimitedVariables );
+
+		result.addAll( unlimitedHeadVariables );
 		
-		if ( ! mLimitedVariables.containsAll( mBuiltin ) )
-		{
-			mBuiltin.removeAll( mLimitedVariables );
-			
-			throw new RuleUnsafeException( "Variable(s) " + toString( mBuiltin ) + " from built-in predicates are not limited." );
-		}
+		List<IVariable> unlimitedBuiltinVariables = new ArrayList<IVariable>( mBuiltin );
+		unlimitedBuiltinVariables.removeAll( mLimitedVariables );
 		
+		result.addAll( unlimitedBuiltinVariables );
+
 		if ( ! mAllowNotLimitedVariablesInNegatedSubGoals )
 		{
-			if ( ! mLimitedVariables.containsAll( mNegativeOrdinary ) )
-			{
-				mNegativeOrdinary.removeAll( mLimitedVariables );
-				
-				throw new RuleUnsafeException( "Variable(s) " + toString( mNegativeOrdinary ) + " from negated sub-goals are not limited." );
-			}
+			List<IVariable> unlimitedNegativeOrdinaryVariables = new ArrayList<IVariable>( mNegativeOrdinary );
+			unlimitedNegativeOrdinaryVariables.removeAll( mLimitedVariables );
+
+			result.addAll( unlimitedNegativeOrdinaryVariables );
 		}
+		
+		return result;
 	}
-	
+
 	/**
 	 * Do the special case handling of built-in predicates.
 	 */
@@ -158,7 +199,7 @@ public class RuleValidator
 		while( changed )
 		{
 			changed = false;
-			for ( List<String> group : mArithmeticGroups )
+			for ( List<IVariable> group : mArithmeticGroups )
 			{
 				if( group.removeAll( mLimitedVariables ) )
 				{
@@ -175,29 +216,44 @@ public class RuleValidator
 		}
 	}
 	
-	/**
-	 * Utility method to convert a collection of variable names to a human-readable string.
-	 * @param variables The variable names.
-	 * @return The names in a string.
-	 */
-	private String toString( Collection<String> variables )
+	private boolean containsConstructedTerms( ITuple tuple )
 	{
-		StringBuilder buffer = new StringBuilder();
-
-		boolean first = true;
-		for ( String v : variables )
+		for( ITerm term : tuple )
 		{
-			if ( first )
-				first = false;
-			else
-				buffer.append( ", " );
-			
-			buffer.append( '\'' );
-			buffer.append( v );
-			buffer.append( '\'' );
+			if( term instanceof IConstructedTerm )
+				return true;
 		}
-		
-		return buffer.toString();
+		return false;
+	}
+
+	/**
+	 * Get the variable terms in a literal.
+	 * @param literal The literal to be processed.
+	 * @return The names of variables.
+	 */
+	private List<IVariable> extractVariables( ILiteral literal )
+	{
+		return literal.getAtom().getTuple().getAllVariables();
+	}
+	
+	/**
+	 * Utility to check if an atom is an equality built-in
+	 * @param atom The atom to check
+	 * @return true if it is
+	 */
+	private boolean isEquality( IAtom atom )
+	{
+		return atom instanceof EqualBuiltin;
+	}
+
+	/**
+	 * Utility to check if an atom is one of the ternary arithmetic built-ins
+	 * @param atom The atom to check
+	 * @return true if it is
+	 */
+	private boolean isArithmetic( IAtom atom )
+	{
+		return atom instanceof ArithmeticBuiltin;
 	}
 
 	/** Flag to indicate if variables in negated sub goals must be limited or not. */
@@ -207,17 +263,17 @@ public class RuleValidator
 	private final boolean mAllowArithmeticPredicatesToImplyLimited;
 	
 	/** All head variables. */
-	private final Set<String> mHeadVariables = new HashSet<String>();
+	private final Set<IVariable> mHeadVariables = new HashSet<IVariable>();
 	
 	/** All variables from negated ordinary predicates. */
-	private final Set<String> mNegativeOrdinary = new HashSet<String>();
+	private final Set<IVariable> mNegativeOrdinary = new HashSet<IVariable>();
 	
 	/** All variables from built-in predicates, EXCEPT the targets of positive, ternary predicates. */
-	private final Set<String> mBuiltin = new HashSet<String>();
+	private final Set<IVariable> mBuiltin = new HashSet<IVariable>();
 	
 	/** All variables that appear in 'variable = variable' positive, equality predicates. */
-	private final List<List<String>> mArithmeticGroups = new ArrayList<List<String>>();
+	private final List<List<IVariable>> mArithmeticGroups = new ArrayList<List<IVariable>>();
 
 	/** All limited variables. */
-	private final Set<String> mLimitedVariables = new HashSet<String>();
+	private final Set<IVariable> mLimitedVariables = new HashSet<IVariable>();
 }

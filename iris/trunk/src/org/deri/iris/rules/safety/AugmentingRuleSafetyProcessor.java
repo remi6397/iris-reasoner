@@ -26,9 +26,7 @@
 package org.deri.iris.rules.safety;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.deri.iris.RuleUnsafeException;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
@@ -36,7 +34,7 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.facts.HerbrandUniverseShrinkingFacts;
 import org.deri.iris.rules.IRuleSafetyProcessor;
-import org.deri.iris.utils.TermMatchingAndSubstitution;
+import org.deri.iris.rules.RuleValidator;
 
 /**
  * Uses the trick of augmenting rules to artificially limit variables.
@@ -46,34 +44,20 @@ import org.deri.iris.utils.TermMatchingAndSubstitution;
  */
 public class AugmentingRuleSafetyProcessor implements IRuleSafetyProcessor
 {
-	public AugmentingRuleSafetyProcessor()
-	{
-	}
-
 	public IRule process( IRule rule ) throws RuleUnsafeException
 	{
-		Set<IVariable> headVariables = new HashSet<IVariable>( TermMatchingAndSubstitution.getVariables( rule.getHead().get( 0 ).getAtom().getTuple(), true ) );
+		RuleValidator validator = new RuleValidator( rule, true, true );
 		
-		for( ILiteral literal : rule.getBody() )
-		{
-			if( literal.isPositive() && ! literal.getAtom().isBuiltin() )
-			{
-				List<IVariable> bodyVariables = TermMatchingAndSubstitution.getVariables( literal.getAtom().getTuple(), true );
-
-				headVariables.removeAll( bodyVariables );
-			}
-		}
+		List<IVariable> unlimitedVaruiables = validator.getAllUnlimitedVariables();
 		
-		if( headVariables.size() == 0 )
-			return rule;
-		else
+		if( unlimitedVaruiables.size() > 0 )
 		{
 			List<ILiteral> body = new ArrayList<ILiteral>();
 			
 			for( ILiteral literal : rule.getBody() )
 				body.add( literal );
 			
-			for( IVariable variable : headVariables )
+			for( IVariable variable : unlimitedVaruiables )
 			{
 				ILiteral newLiteral = Factory.BASIC.createLiteral( true, HerbrandUniverseShrinkingFacts.UNIVERSE, Factory.BASIC.createTuple( variable ) );
 				body.add( newLiteral );
@@ -81,5 +65,7 @@ public class AugmentingRuleSafetyProcessor implements IRuleSafetyProcessor
 			
 			return Factory.BASIC.createRule( rule.getHead(), body );
 		}
+		else
+			return rule;
 	}
 }
