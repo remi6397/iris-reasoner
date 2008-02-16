@@ -36,8 +36,11 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.IEvaluator;
 import org.deri.iris.facts.Facts;
 import org.deri.iris.facts.FactsWithExternalData;
+import org.deri.iris.facts.OriginalFactsPreservingFacts;
+import org.deri.iris.facts.UniverseShrinkingFacts;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.rules.RuleBase;
+import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 import org.deri.iris.storage.IRelation;
 
 /**
@@ -70,12 +73,13 @@ public class KnowledgeBase implements IKnowledgeBase
 		// Set up the facts object(s)
 		IFacts facts = new Facts( inputFacts, mConfiguration.relationFactory );
 		
-		if( mConfiguration.mExternalDataSources.size() > 0 )
-			facts = new FactsWithExternalData( facts, mConfiguration.mExternalDataSources );
+		if( mConfiguration.externalDataSources.size() > 0 )
+			facts = new FactsWithExternalData( facts, mConfiguration.externalDataSources );
 		
 //		This will likely be added here when the time comes!
-//		if( true ) // Configuration asks for universe shrinking technique to make rules safe 
-//			facts = new HerbrandUniverseShrinkingFacts( facts );
+//		facts = new OriginalFactsPreservingFacts( facts, mConfiguration.relationFactory );
+		if( mConfiguration.ruleSafetyProcessor instanceof AugmentingRuleSafetyProcessor )
+			facts = new UniverseShrinkingFacts( facts, rules );
 		
 		mFacts = facts;
 		

@@ -98,44 +98,37 @@ public class Configuration
 	public int floatingPointFloatPrecision = 19;
 	
 	/** Add external data sources here. */
-	public final List<IDataSource> mExternalDataSources = new ArrayList<IDataSource>();
+	public final List<IDataSource> externalDataSources = new ArrayList<IDataSource>();
 	
 	/** The collection of rule set stratifiers. */
-	public final List<IRuleStratifier> mStratifiers = new ArrayList<IRuleStratifier>();
+	public final List<IRuleStratifier> stratifiers = new ArrayList<IRuleStratifier>();
 	
 	/** The collection of rule optimisers. */
-	public final List<IRuleOptimiser> mRuleOptimisers = new ArrayList<IRuleOptimiser>();
+	public final List<IRuleOptimiser> ruleOptimisers = new ArrayList<IRuleOptimiser>();
 	
 	/** The collection of rule-reordering optimisers. */
-	public final List<IRuleReOrderingOptimiser> mReOrderingOptimisers = new ArrayList<IRuleReOrderingOptimiser>();
+	public IRuleReOrderingOptimiser reOrderingOptimiser = new SimpleReOrdering();
 	
 	/** Collection of program optimisations. */
 	public final List<IProgramOptimisation> programOptmimisers = new ArrayList<IProgramOptimisation>();
 	
 	/** Rule safety processors (e.g. standard rule-safety check and augmented-unsafe-rule modifier). */
-	public final List<IRuleSafetyProcessor> ruleSafetyProcessors = new ArrayList<IRuleSafetyProcessor>();
+	public IRuleSafetyProcessor ruleSafetyProcessor = new StandardRuleSafetyProcessor();
+//	public IRuleSafetyProcessor ruleSafetyProcessor = new AugmentingRuleSafetyProcessor();
 	
 	/**
 	 * Constructor.
 	 */
 	public Configuration()
 	{
-		mStratifiers.add( new GlobalStratifier() );
-		mStratifiers.add( new LocalStratifier( true ) );
-		mStratifiers.add( new LocalStratifier( false ) );
+		stratifiers.add( new GlobalStratifier() );
+		stratifiers.add( new LocalStratifier( true ) );
+		stratifiers.add( new LocalStratifier( false ) );
 		
-		mReOrderingOptimisers.add( new SimpleReOrdering() ); 
-
-		mRuleOptimisers.add( new JoinConditionOptimiser() );
-		mRuleOptimisers.add( new ReplaceVariablesWithConstantsOptimiser() );
-		mRuleOptimisers.add( new ReOrderLiteralsOptimiser() );
-		mRuleOptimisers.add( new RemoveDuplicateLiteralOptimiser() );
-		
-		// standard rule-safety processor.
-		ruleSafetyProcessors.add( new StandardRuleSafetyProcessor() );
-
-		// Use this rule safety processor in combination with HerbrandShrinkingFacts adaptor (and probably well-found semantics too).
-		// ruleSafetyProcessors.add( new AugmentingRuleSafetyProcessor() );
+		ruleOptimisers.add( new JoinConditionOptimiser() );
+		ruleOptimisers.add( new ReplaceVariablesWithConstantsOptimiser() );
+		ruleOptimisers.add( new ReOrderLiteralsOptimiser() );
+		ruleOptimisers.add( new RemoveDuplicateLiteralOptimiser() );
 	}
 
 	/**

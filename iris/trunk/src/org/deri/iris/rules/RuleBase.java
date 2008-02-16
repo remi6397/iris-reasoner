@@ -101,7 +101,7 @@ public class RuleBase
 	 */
 	private List<List<IRule>> stratify( List<IRule> rules ) throws ProgramNotStratifiedException
 	{
-		for( IRuleStratifier stratifier : mConfiguration.mStratifiers )
+		for( IRuleStratifier stratifier : mConfiguration.stratifiers )
 		{
 			List<List<IRule>> ruleStrata = stratifier.stratify( rules );
 			if( ruleStrata != null )
@@ -118,10 +118,10 @@ public class RuleBase
 	 */
 	private List<IRule> reOrderRules( List<IRule> rules )
 	{
-		for( IRuleReOrderingOptimiser optimiser : mConfiguration.mReOrderingOptimisers )
-			rules = optimiser.reOrder( rules );
-		
-		return rules;
+		if( mConfiguration.reOrderingOptimiser == null )
+			return rules;
+		else
+			return mConfiguration.reOrderingOptimiser.reOrder( rules );
 	}
 	
 	/**
@@ -148,7 +148,7 @@ public class RuleBase
 	{
 		IRule outputRule = inputRule;
 		
-		for( IRuleOptimiser optimiser : mConfiguration.mRuleOptimisers )
+		for( IRuleOptimiser optimiser : mConfiguration.ruleOptimisers )
 			outputRule = optimiser.optimise( outputRule );
 		
 		return outputRule;
@@ -208,10 +208,10 @@ public class RuleBase
 	 */
 	private IRule checkRuleIsSafe( IRule rule ) throws RuleUnsafeException
 	{
-		for( IRuleSafetyProcessor processor : mConfiguration.ruleSafetyProcessors )
-			rule = processor.process( rule );
-		
-		return rule;
+		if( mConfiguration.ruleSafetyProcessor == null )
+			return rule;
+		else
+			return mConfiguration.ruleSafetyProcessor.process( rule );
 	}
 	
 	/** The original rules of this program. */
