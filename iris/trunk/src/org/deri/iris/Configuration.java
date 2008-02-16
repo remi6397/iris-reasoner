@@ -131,23 +131,8 @@ public class Configuration
 		mRuleOptimisers.add( new ReOrderLiteralsOptimiser() );
 		mRuleOptimisers.add( new RemoveDuplicateLiteralOptimiser() );
 		
-		/*
-		 * Indicates if ternary arithmetic built-ins can be used to deduce limited variables, e.g.
-		 * p(Z) :- q(X, Y), X + Y = Z
-		 * if true, then Z would be considered limited.
-		 */ 
-		boolean ruleSafetyTernaryTargetsImplyLimited = true;
-		
-		/*
-		 * Indicates if a rule can still be considered safe if one or more variables occur
-		 * in negative ordinary predicates and nowhere else, e.g.
-		 * p(X) :- q(X), not r(Y)
-		 * if true, the above rule would be safe
-		 */
-		boolean ruleSafetyAllowUnlimitedVariablesInNegatedOrdinaryPredicates = true;
-
 		// standard rule-safety processor.
-		ruleSafetyProcessors.add( new StandardRuleSafetyProcessor( ruleSafetyAllowUnlimitedVariablesInNegatedOrdinaryPredicates, ruleSafetyTernaryTargetsImplyLimited ) );
+		ruleSafetyProcessors.add( new StandardRuleSafetyProcessor() );
 
 		// Use this rule safety processor in combination with HerbrandShrinkingFacts adaptor (and probably well-found semantics too).
 		// ruleSafetyProcessors.add( new AugmentingRuleSafetyProcessor() );
