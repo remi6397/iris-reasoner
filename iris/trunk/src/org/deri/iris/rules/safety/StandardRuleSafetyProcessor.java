@@ -47,6 +47,14 @@ import org.deri.iris.rules.RuleValidator;
 public class StandardRuleSafetyProcessor implements IRuleSafetyProcessor
 {
 	/**
+	 * Default constructor. Initialises with most flexible rule-safety parameters.
+	 */
+	public StandardRuleSafetyProcessor()
+	{
+		this( true, true );
+	}
+	
+	/**
 	 * Constructor.
 	 * @param allowUnlimitedVariablesInNegatedOrdinaryPredicates Indicates if a rule can still be
 	 * considered safe if one or more variables occur
