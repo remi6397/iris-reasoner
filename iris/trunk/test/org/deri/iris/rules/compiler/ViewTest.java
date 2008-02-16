@@ -31,7 +31,7 @@ import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.storage.simple.SimpleRelationFactory;
 
-public class TestView extends TestCase
+public class ViewTest extends TestCase
 {
 	IRelation mRelation;
 	View mView;
