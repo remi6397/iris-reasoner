@@ -234,6 +234,12 @@ public class UniverseShrinkingFacts implements IFacts
 		mUniverse.add( Factory.BASIC.createTuple( term ) );
 	}
 
+	@Override
+    public String toString()
+    {
+	    return mFacts.toString();
+    }
+
 	/** The underlying facts object. */
 	private final IFacts mFacts;
 	

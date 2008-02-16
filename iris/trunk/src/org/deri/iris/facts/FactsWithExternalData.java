@@ -73,21 +73,12 @@ public class FactsWithExternalData implements IFacts
     }
 
     /**
-     * Prints all facts. The format of the resulting string is parseable.
-     * @return a parseable string containing all facts
+     * Return all facts. The format of the resulting string is parse-able.
+     * @return a parse-able string containing all facts
      */
-    public String toString() {
-		final StringBuilder buffer = new StringBuilder();
-
-		for(final IPredicate p : getPredicates()) {
-			final IRelation r = get(p);
-
-			for(int t = 0, max = r.size(); t < max; ++t) {
-				buffer.append(p.getPredicateSymbol()).append(r.get(t)).append('.');
-			}
-		}
-
-	    return buffer.toString();
+    public String toString()
+    {
+    	return mFacts.toString();
     }
 
 	private final IFacts mFacts;
