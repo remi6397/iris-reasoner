@@ -38,7 +38,6 @@ import org.deri.iris.rules.optimisation.ReOrderLiteralsOptimiser;
 import org.deri.iris.rules.optimisation.RemoveDuplicateLiteralOptimiser;
 import org.deri.iris.rules.optimisation.ReplaceVariablesWithConstantsOptimiser;
 import org.deri.iris.rules.ordering.SimpleReOrdering;
-import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 import org.deri.iris.rules.safety.StandardRuleSafetyProcessor;
 import org.deri.iris.rules.stratification.GlobalStratifier;
 import org.deri.iris.rules.stratification.LocalStratifier;
@@ -114,7 +113,6 @@ public class Configuration
 	
 	/** Rule safety processors (e.g. standard rule-safety check and augmented-unsafe-rule modifier). */
 	public IRuleSafetyProcessor ruleSafetyProcessor = new StandardRuleSafetyProcessor();
-//	public IRuleSafetyProcessor ruleSafetyProcessor = new AugmentingRuleSafetyProcessor();
 	
 	/**
 	 * Constructor.

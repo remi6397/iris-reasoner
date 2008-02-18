@@ -36,8 +36,7 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.IEvaluator;
 import org.deri.iris.facts.Facts;
 import org.deri.iris.facts.FactsWithExternalData;
-import org.deri.iris.facts.OriginalFactsPreservingFacts;
-import org.deri.iris.facts.UniverseShrinkingFacts;
+import org.deri.iris.facts.FiniteUniverseFacts;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.rules.RuleBase;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
@@ -76,10 +75,9 @@ public class KnowledgeBase implements IKnowledgeBase
 		if( mConfiguration.externalDataSources.size() > 0 )
 			facts = new FactsWithExternalData( facts, mConfiguration.externalDataSources );
 		
-//		This will likely be added here when the time comes!
-//		facts = new OriginalFactsPreservingFacts( facts, mConfiguration.relationFactory );
+//		If we allow unsafe rules then we need to use the finite universe facts adaptor.
 		if( mConfiguration.ruleSafetyProcessor instanceof AugmentingRuleSafetyProcessor )
-			facts = new UniverseShrinkingFacts( facts, rules );
+			facts = new FiniteUniverseFacts( facts, rules );
 		
 		mFacts = facts;
 		
