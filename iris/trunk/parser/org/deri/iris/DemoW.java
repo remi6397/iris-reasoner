@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -50,6 +51,7 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.evaluation.bottomup.compiledrules.naive.NaiveEvaluatorFactory;
 import org.deri.iris.evaluation.bottomup.compiledrules.seminaive.SemiNaiveEvaluatorFactory;
+import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 import org.deri.iris.storage.IRelation;
 
 /**
@@ -160,6 +162,21 @@ public class DemoW
 							"// Ths should be empty if the congruency rule is correct and the reasoner behaves correctly." + NEW_LINE +
 							"?-exceptions_to_rule( ?a1b1,?a2b2,?n )." + NEW_LINE
 											);
+			
+			mProgram.setText(
+				"p(?x, ?y) :- not q(?x)." + NEW_LINE +
+				"?- p(?x, ?y)."
+			);
+			
+			mProgram.setText(
+				"p( ?x ) :- a( ?x ), diff( ?x, ?y )." + NEW_LINE +
+				"diff( ?x, ?y ) :- not same( ?x, ?y )." + NEW_LINE +
+				"same( ?x, ?x ) :- ." + NEW_LINE +
+				"a(1)." + NEW_LINE +
+	
+				"?- p(?x)."
+			);
+			
 			mRun.addActionListener( this );
 
 			mAbort.addActionListener( this );
@@ -180,6 +197,7 @@ public class DemoW
 			
 			JPanel panel = new JPanel();
 			panel.add( mEvaluationStrategy );
+			panel.add( mUnsafeRules );
 			panel.add( mRun );
 			panel.add( mAbort );
 
@@ -204,10 +222,11 @@ public class DemoW
 		private final JTextArea mProgram = new JTextArea();
 		private final JTextArea mOutput = new JTextArea();
 		
+		private final JComboBox mEvaluationStrategy = new JComboBox( new String[] { "Naive", "Semi-naive" } );	//, "Magic Sets" } );
+		private final JCheckBox mUnsafeRules = new JCheckBox( "Unsafe-rules", false );
+		
 		private final JButton mRun = new JButton( "Evaluate" );
 		private final JButton mAbort = new JButton( "Abort" );
-		
-		private final JComboBox mEvaluationStrategy = new JComboBox( new String[] { "Naive", "Semi-naive" } );	//, "Magic Sets" } );
 		
 		Thread mExecutionThread;
 		
@@ -265,8 +284,25 @@ public class DemoW
 			
 			String program = mProgram.getText();
 			int strategy = mEvaluationStrategy.getSelectedIndex();
+			
+			Configuration config = KnowledgeBaseFactory.getDefaultConfiguration();
+			
+			if( mUnsafeRules.isSelected() )
+				config.ruleSafetyProcessor = new AugmentingRuleSafetyProcessor();
+			
+			switch( strategy )
+			{
+			case 0:
+				config.evaluationTechnique = new NaiveEvaluatorFactory();
+				break;
+			
+			default:
+			case 1:
+				config.evaluationTechnique = new SemiNaiveEvaluatorFactory();
+				break;
+			}
 
-			mExecutionThread = new Thread( new ExecutionTask( program, strategy ), "Evaluation task" );
+			mExecutionThread = new Thread( new ExecutionTask( program, config ), "Evaluation task" );
 
 			mExecutionThread.setPriority( Thread.MIN_PRIORITY );
 			mExecutionThread.start();
@@ -289,10 +325,10 @@ public class DemoW
 		 */
 		class ExecutionTask implements Runnable
 		{
-			ExecutionTask( String program, int evaluationStrategy )
+			ExecutionTask( String program, Configuration configuration )
 			{
 				this.program = program;
-				this.evaluationStrategy = evaluationStrategy;
+				this.configuration = configuration;
 			}
 			
 //			@Override
@@ -315,24 +351,7 @@ public class DemoW
 					
 					StringBuilder output = new StringBuilder();
 					
-					Configuration config = KnowledgeBaseFactory.getDefaultConfiguration();
-					
-					switch( evaluationStrategy )
-					{
-					case 0:
-						output.append( "Naive evaluation" ).append( NEW_LINE );
-						config.evaluationTechnique = new NaiveEvaluatorFactory();
-						break;
-					
-					default:
-					case 1:
-						output.append( "Semi-naive evaluation" ).append( NEW_LINE );
-						config.evaluationTechnique = new SemiNaiveEvaluatorFactory();
-						break;
-					
-					}
-
-					IKnowledgeBase knowledgeBase = KnowledgeBaseFactory.createKnowledgeBase( facts, rules, config );
+					IKnowledgeBase knowledgeBase = KnowledgeBaseFactory.createKnowledgeBase( facts, rules, configuration );
 					
 					List<IVariable> variableBindings = new ArrayList<IVariable>();
 
@@ -373,7 +392,7 @@ public class DemoW
 	        }
 			
 			private final String program;
-			private final int evaluationStrategy;
+			private final Configuration configuration;
 		}
 	}
 
