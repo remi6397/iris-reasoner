@@ -250,13 +250,13 @@ public class MagicTest extends TestCase {
 
 		// constructing the magic/labeled rules rules
 
-		// label_a_1^bbf(X, A) :- magic_a^bbf(X, Y)
+		// label_a_1^bbf(X, A) :- magic_a^bbf(X, Y), b(X, A)
 		List<ILiteral> head = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_1", bbf, XA));
-		List<ILiteral> body = Arrays.asList(createMagicLiteral("a", bbf, XY));
+		List<ILiteral> body = Arrays.asList(createMagicLiteral("a", bbf, XY), createLiteral("b", "X", "A"));
 		ref.add(BASIC.createRule(head, body));
-		// label_a_2^bbf(X, A) :- magic_a^bbf(X, Y), b(X, A)
+		// label_a_2^bbf(X, A) :- magic_a^bbf(X, Y)
 		head = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_2", bbf, XA));
-		body = Arrays.asList(createMagicLiteral("a", bbf, XY), createLiteral("b", "X", "A"));
+		body = Arrays.asList(createMagicLiteral("a", bbf, XY));
 		ref.add(BASIC.createRule(head, body));
 		// magic_a^bbf(X, A) :- label_a_1^bbf(X, A), label_a_2^bbf(X, A)
 		head = Arrays.asList(createMagicLiteral("a", bbf, XA));
