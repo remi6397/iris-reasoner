@@ -411,6 +411,15 @@ used by the parser is described in the grammar guide.
 
 % will be written after the api change
 
+
+\section{Plug in External Datasources}
+
+To plug in an external data source implement the
+\verb|org.deri.iris.api.storage.IDataSource| interface and add a instance of
+this class to the \verb|externalDataSources| list in the \verb|Configuration| of
+the \verb|KnowledgeBase| where you want to use it.
+
+
 \pagebreak
 \appendix
 
