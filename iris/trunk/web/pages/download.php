@@ -7,7 +7,7 @@
 
 <h2>Release History</h2>
 
-<p><b><a id="v0_5_6" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=576174">v0.56</a></b> 2008-02-13</p> 
+<p><b><a id="v0_5_6" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=576174">v0.5.6</a></b> 2008-02-13</p> 
 <p>Maintenance</p>
 <ul>
 	<li>1888840 Allow assignment with constructed terms containing variables.</li>
@@ -32,7 +32,7 @@
 </ul>
 	
 
-<p><b><a id="v0_5_5" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=573136">v0.55</a></b> 2008-02-01</p> 
+<p><b><a id="v0_5_5" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=573136">v0.5.5</a></b> 2008-02-01</p> 
 <p>New features</p>
 <ul>
 	<li>1884201 Add support for reasoning with function symbols.</li>

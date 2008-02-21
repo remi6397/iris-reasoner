@@ -59,15 +59,14 @@
 		</td>
 		<td>
 			<p align=left>
-				IRIS <a href="download#v0_5_6">version 0.56</a> released.<br />
+				IRIS <a href="download#v0_5_6">version 0.5.6</a> released.<br />
 				This is an interim release to fix an important bug in the rule compiler
 				and also offer greater flexibility in rule format using:<br />
 				<ul>
 					<li>constructed terms with equality, inequality and assignment</li>
 					<li>positioning of negated ordinary predicates</li>
 				</ul>
-				The magic sets optimisation is still disabled for this release,
-				but will be included in version 0.6
+				The magic sets optimisation is still disabled for this release.
 			</p>
 		</td>
 	</tr>
@@ -79,14 +78,13 @@
 		</td>
 		<td>
 			<p align=left>
-				IRIS <a href="download#v0_5_5">version 0.55</a> released.<br />
+				IRIS <a href="download#v0_5_5">version 0.5.5</a> released.<br />
 				This is an interim release for function symbols and an all new,
 				faster evaluation implementation.<br />
 				Also included is a GUI user environment (org.deri.iris.DemoW),
 				new built-in predicates (including a regular expression matcher)
 				and numerous bug fixes.<br />
-				However, the magic sets optimisation is disabled for this release,
-				but will be included in version 0.6
+				However, the magic sets optimisation is disabled for this release.
 			</p>
 		</td>
 	</tr>
