@@ -258,10 +258,10 @@ public class MagicTest extends TestCase {
 		head = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_2", bbf, XA));
 		body = Arrays.asList(createMagicLiteral("a", bbf, XY));
 		ref.add(BASIC.createRule(head, body));
-		// magic_a^bbf(X, A) :- label_a_1^bbf(X, A), label_a_2^bbf(X, A)
+		// magic_a^bbf(X, A) :- label_a_2^bbf(X, A), label_a_1^bbf(X, A)
 		head = Arrays.asList(createMagicLiteral("a", bbf, XA));
-		body = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_1", bbf, XA), 
-			createAdornedLiteral(LABELED_PREFIX + "a_2", bbf, XA));
+		body = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_2", bbf, XA), 
+			createAdornedLiteral(LABELED_PREFIX + "a_1", bbf, XA));
 		ref.add(BASIC.createRule(head, body));
 
 		// constructing the rewritten rules out of the normal ones
