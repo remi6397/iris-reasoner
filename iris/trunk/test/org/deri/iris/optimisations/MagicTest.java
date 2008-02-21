@@ -28,7 +28,9 @@ package org.deri.iris.optimisations;
 import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.MiscHelper.createVarList;
 import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -690,6 +692,35 @@ public class MagicTest extends TestCase {
 		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", ff, XY)), Arrays.asList(c2)));
 		// p^ff() :- TRUE
 		ref.add(seedRule(createMagicLiteral("p", ff, new ITerm[]{})));
+
+		Collections.sort(ref, AdornmentsTest.RC);
+		Collections.sort(result.rules, AdornmentsTest.RC);
+		assertEquals("The rules don't match", ref, result.rules);
+	}
+
+	/**
+	 * Test for repeated literals.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1829204&group_id=167309&atid=842434">bug #1829204: Repeated literal in query fails with magic sets</a>
+	 */
+	public void testRepeatedLiteralQuery() throws Exception {
+		final String prog = "p(1).\n" + 
+			"?-p(1),p(1).\n";
+		final Parser p = new Parser();
+		p.parse(prog);
+
+		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
+
+		final Adornment[] b = new Adornment[]{Adornment.BOUND};
+		final ILiteral magic_p = createMagicLiteral("p", b, new ITerm[]{CONCRETE.createInteger(1)});
+		final ILiteral p1 = BASIC.createLiteral(true, 
+				BASIC.createAtom(BASIC.createPredicate("p", 1), 
+				BASIC.createTuple(CONCRETE.createInteger(1))));
+
+		final List<IRule> ref = new ArrayList<IRule>();
+		// magic_p^b(1) :- .
+		ref.add(BASIC.createRule(Arrays.asList(magic_p), Collections.EMPTY_LIST));
+		// magic_p^b(1) :- p(1).
+		ref.add(BASIC.createRule(Arrays.asList(magic_p), Arrays.asList(p1)));
 
 		Collections.sort(ref, AdornmentsTest.RC);
 		Collections.sort(result.rules, AdornmentsTest.RC);
