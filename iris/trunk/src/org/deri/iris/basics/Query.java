@@ -84,6 +84,7 @@ public class Query implements IQuery {
 	
 	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
+		buffer.append("?- ");
 		boolean first = true;
 		for (final ILiteral l : literals) {
 			if( first )
