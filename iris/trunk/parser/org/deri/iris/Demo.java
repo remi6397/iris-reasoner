@@ -146,7 +146,7 @@ public class Demo
 		{
 		case 1:
 			output.append( "Naive evaluation" ).append( NEW_LINE );
-			config.evaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
+			config.ruleEvaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
 			break;
 		
 		default:

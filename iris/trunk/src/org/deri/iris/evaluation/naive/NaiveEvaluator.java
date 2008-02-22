@@ -26,7 +26,7 @@ package org.deri.iris.evaluation.naive;
 import java.util.List;
 import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.evaluation.IEvaluator2;
+import org.deri.iris.evaluation.IRuleEvaluator;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.rules.compiler.ICompiledRule;
 import org.deri.iris.storage.IRelation;
@@ -34,7 +34,7 @@ import org.deri.iris.storage.IRelation;
 /**
  * Naive evaluation. see Ullman, Vol. 1
  */
-public class NaiveEvaluator implements IEvaluator2
+public class NaiveEvaluator implements IRuleEvaluator
 {
 	public void evaluateRules( List<ICompiledRule> rules, IFacts facts, Configuration configuration )
 	{

@@ -26,10 +26,10 @@ package org.deri.iris.evaluation;
 /**
  * Interface of all evaluator factories.
  */
-public interface IEvaluatorFactory2
+public interface IRuleEvaluatorFactory
 {
 	/**
 	 * Create a new evaluator.
 	 */
-	IEvaluator2 createEvaluator();
+	IRuleEvaluator createEvaluator();
 }

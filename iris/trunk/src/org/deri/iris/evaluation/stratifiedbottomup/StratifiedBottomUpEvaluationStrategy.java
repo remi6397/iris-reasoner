@@ -32,7 +32,7 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.EvaluationUtilities;
 import org.deri.iris.evaluation.IEvaluationStrategy;
-import org.deri.iris.evaluation.IEvaluator2;
+import org.deri.iris.evaluation.IRuleEvaluator;
 import org.deri.iris.facts.FiniteUniverseFacts;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.rules.compiler.ICompiledRule;
@@ -77,7 +77,7 @@ public class StratifiedBottomUpEvaluationStrategy implements IEvaluationStrategy
 			for( IRule rule : optimisedRules )
 				compiledRules.add( rc.compile( rule ) );
 			
-			IEvaluator2 eval = mConfiguration.evaluatorFactory.createEvaluator();
+			IRuleEvaluator eval = mConfiguration.ruleEvaluatorFactory.createEvaluator();
 			eval.evaluateRules( compiledRules, facts, configuration );
 		}
 		

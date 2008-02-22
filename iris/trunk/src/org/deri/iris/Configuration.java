@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.deri.iris.api.IProgramOptimisation;
 import org.deri.iris.evaluation.IEvaluationStrategyFactory;
-import org.deri.iris.evaluation.IEvaluatorFactory2;
+import org.deri.iris.evaluation.IRuleEvaluatorFactory;
 import org.deri.iris.evaluation.seminaive.SemiNaiveEvaluatorFactory;
 import org.deri.iris.evaluation.stratifiedbottomup.StratifiedBottomUpEvaluationStrategyFactory;
 import org.deri.iris.facts.IDataSource;
@@ -57,7 +57,7 @@ public class Configuration
 	public IEvaluationStrategyFactory evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory();
 
 	/** The default rule evaluator. */
-	public IEvaluatorFactory2 evaluatorFactory = new SemiNaiveEvaluatorFactory();
+	public IRuleEvaluatorFactory ruleEvaluatorFactory = new SemiNaiveEvaluatorFactory();
 	
 	/** The evaluation timeout in milliseconds. Zero means no timeout. */
 	public int evaluationTimeoutMilliseconds = 0;
