@@ -26,7 +26,6 @@
 package org.deri.iris.rules.stratification;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +41,7 @@ import org.deri.iris.rules.IRuleStratifier;
  */
 public class GlobalStratifier implements IRuleStratifier
 {
-	public List<List<IRule>> stratify( Collection<IRule> rules )
+	public List<List<IRule>> stratify( List<IRule> rules )
 	{
 		final int ruleCount = rules.size();
 		int highest = 0;

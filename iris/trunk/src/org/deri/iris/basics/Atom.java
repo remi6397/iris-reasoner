@@ -25,12 +25,9 @@
  */
 package org.deri.iris.basics;
 
-import static org.deri.iris.factory.Factory.BASIC;
-
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.ITerm;
 
 /**
  * <p>

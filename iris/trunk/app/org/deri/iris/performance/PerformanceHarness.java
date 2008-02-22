@@ -88,8 +88,9 @@ public class PerformanceHarness
 		 * @param filename The file containing the logic program.
 		 * @throws IOException
 		 * @throws ParserException
+		 * @throws EvaluationException 
 		 */
-		Program( String filename ) throws IOException, ParserException
+		Program( String filename ) throws IOException, ParserException, EvaluationException
 		{
 			Parser parser = new Parser();
 			

@@ -34,6 +34,7 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IRelation;
+import org.deri.iris.storage.simple.SimpleRelationFactory;
 
 /**
  * Definition: Unsafe negation
@@ -67,7 +68,8 @@ public class FiniteUniverseFacts implements IFacts
 	{
 		mFacts = facts;
 		
-		mUniverse = mFacts.get( UNIVERSE );
+//		mUniverse = mFacts.get( UNIVERSE );
+		mUniverse = new SimpleRelationFactory().createRelation();
 		
 		// Extract all possible ground values from starting facts and rules.
 		extractGroundTerms( rules );
@@ -195,6 +197,9 @@ public class FiniteUniverseFacts implements IFacts
 	
 	public IRelation get( IPredicate predicate )
 	{
+		if( predicate.equals( UNIVERSE ) )
+			return mUniverse;
+		
 		return new UniverseAddingRelationAdaptor( mFacts.get( predicate ) );
 	}
 

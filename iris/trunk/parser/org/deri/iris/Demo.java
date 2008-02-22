@@ -10,8 +10,6 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.evaluation.bottomup.compiledrules.naive.NaiveEvaluatorFactory;
-import org.deri.iris.evaluation.bottomup.compiledrules.seminaive.SemiNaiveEvaluatorFactory;
 import org.deri.iris.storage.IRelation;
 
 /**
@@ -148,13 +146,12 @@ public class Demo
 		{
 		case 1:
 			output.append( "Naive evaluation" ).append( NEW_LINE );
-			config.evaluationTechnique = new NaiveEvaluatorFactory();
+			config.evaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
 			break;
 		
 		default:
 		case 2:
 			output.append( "Semi-naive evaluation" ).append( NEW_LINE );
-			config.evaluationTechnique = new SemiNaiveEvaluatorFactory();
 			break;
 		
 		}

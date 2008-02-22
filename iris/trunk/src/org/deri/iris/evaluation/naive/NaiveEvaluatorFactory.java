@@ -21,21 +21,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.evaluation.bottomup.compiledrules.naive;
+package org.deri.iris.evaluation.naive;
 
-import org.deri.iris.Configuration;
-import org.deri.iris.evaluation.IEvaluator;
-import org.deri.iris.evaluation.IEvaluatorFactory;
-import org.deri.iris.facts.IFacts;
-import org.deri.iris.rules.RuleBase;
+import org.deri.iris.evaluation.IEvaluator2;
+import org.deri.iris.evaluation.IEvaluatorFactory2;
 
 /**
- * A factory to create naive evaluators.
+ * Factory for naive rules evaluator.
  */
-public class NaiveEvaluatorFactory implements IEvaluatorFactory
+public class NaiveEvaluatorFactory implements IEvaluatorFactory2
 {
-	public IEvaluator createEvaluator( IFacts facts, RuleBase ruleBase, Configuration configuration )
+	public IEvaluator2 createEvaluator()
 	{
-		return new NaiveEvaluator( facts, ruleBase, configuration );
+		return new NaiveEvaluator();
 	}
 }

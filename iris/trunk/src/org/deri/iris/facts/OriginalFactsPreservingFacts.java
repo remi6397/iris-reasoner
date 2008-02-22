@@ -67,7 +67,21 @@ public class OriginalFactsPreservingFacts implements IFacts
 	@Override
     public String toString()
     {
-	    return mOriginalFacts.toString();
+		StringBuilder result = new StringBuilder();
+		
+		for( IPredicate predicate : getPredicates() )
+		{
+			IRelation relation = get( predicate );
+			for( int t = 0; t < relation.size(); ++t )
+			{
+				ITuple tuple = relation.get( t );
+				result.append( predicate.getPredicateSymbol() );
+				result.append( tuple );
+				result.append( '.' );
+			}
+		}
+
+	    return result.toString();
     }
 	
 	/**

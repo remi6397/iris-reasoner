@@ -21,33 +21,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.evaluation.bottomup.compiledrules.seminaive;
+package org.deri.iris.evaluation.seminaive;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.evaluation.bottomup.compiledrules.AbstractCompiledRulesEvaluator;
+import org.deri.iris.evaluation.IEvaluator2;
 import org.deri.iris.facts.Facts;
 import org.deri.iris.facts.IFacts;
-import org.deri.iris.rules.RuleBase;
 import org.deri.iris.rules.compiler.ICompiledRule;
 import org.deri.iris.storage.IRelation;
 
 /**
- * The classic Semi-Naive evaluation as described in:
- * Principles of database and knowledge-base systems, vol 1, Ullman.
+ * Semi-naive evaluation. see Ullman, Vol. 1
  */
-public class SemiNaiveEvaluator extends AbstractCompiledRulesEvaluator
+public class SemiNaiveEvaluator implements IEvaluator2
 {
-	SemiNaiveEvaluator( IFacts facts, RuleBase ruleBase, Configuration configuration )
-	{
-		super( facts, ruleBase, configuration );
-	}
-
-	protected void evaluateRules( Collection<ICompiledRule> rules, IFacts facts, Configuration configuration )
+	public void evaluateRules( List<ICompiledRule> rules, IFacts facts, Configuration configuration )
 	{
 		IFacts deltas = new Facts( configuration.relationFactory );
 		
@@ -113,9 +104,7 @@ public class SemiNaiveEvaluator extends AbstractCompiledRulesEvaluator
 	private static void addAll( IFacts target, IFacts deltas )
 	{
 		for( IPredicate predicate : deltas.getPredicates() )
-		{
 			target.get( predicate ).addAll( deltas.get( predicate ) );
-		}
 	}
 
 	/**
@@ -125,7 +114,7 @@ public class SemiNaiveEvaluator extends AbstractCompiledRulesEvaluator
 	 * @param programFacts The already known or computed facts.
 	 * @return
 	 */
-	private IRelation removeDeducedTuples( IPredicate predicate, IRelation delta, IRelation programFacts, Configuration configuration )
+	private static IRelation removeDeducedTuples( IPredicate predicate, IRelation delta, IRelation programFacts, Configuration configuration )
 	{
 		// If there is nothing to take away from, or just nothing to take-away...
 		if( delta.size() == 0 || programFacts.size() == 0 )
@@ -140,25 +129,6 @@ public class SemiNaiveEvaluator extends AbstractCompiledRulesEvaluator
 				result.add( tuple );
 		}
 		
-//		TotalIndex index = mPredicateToProgramFactsIndex.get( predicate );
-//		
-//		if( index == null )
-//		{
-//			index = new TotalIndex( programFacts );
-//			
-//			mPredicateToProgramFactsIndex.put( predicate, index );
-//		}
-//		
-//		for( int d = 0; d < delta.size(); ++d )
-//		{
-//			ITuple deltaTuple = delta.get( d );
-//			if( ! index.contains( deltaTuple ) )
-//				result.add( deltaTuple );
-//		}
-		
 		return result;
 	}
-
-	/** A map of known facts for use by removeDeducedTuples. */
-	private Map<IPredicate, TotalIndex> mPredicateToProgramFactsIndex = new HashMap<IPredicate, TotalIndex>();
 }

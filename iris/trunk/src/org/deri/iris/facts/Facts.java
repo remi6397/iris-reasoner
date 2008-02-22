@@ -101,7 +101,7 @@ public class Facts implements IFacts
     }
 
 	/** The map storing the predicate-relation relationship. */
-	private final Map<IPredicate, IRelation> mPredicateRelationMap = new HashMap<IPredicate, IRelation>();
+	protected final Map<IPredicate, IRelation> mPredicateRelationMap = new HashMap<IPredicate, IRelation>();
 	
-	private final IRelationFactory mRelationFactory;
+	protected final IRelationFactory mRelationFactory;
 }

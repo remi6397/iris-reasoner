@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
+import org.deri.iris.RuleUnsafeException;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.ITerm;
@@ -40,6 +41,7 @@ import org.deri.iris.builtins.NotExactEqualBuiltin;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.utils.TermMatchingAndSubstitution;
+
 
 /**
  * A compiled rule element representing a built-in predicate with constructed terms arguments.
@@ -121,7 +123,7 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 			if( ! mPositive )
 			{
 				if( mUniqueUnboundVariables.size() > 0 )
-					throw new EvaluationException(
+					throw new RuleUnsafeException(
 									"Negated unify is not safe when some variables are unbound. The problem atom is: " + builtinAtom );
 			}
 		}

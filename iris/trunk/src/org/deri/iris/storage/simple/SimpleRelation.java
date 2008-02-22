@@ -23,7 +23,6 @@
  */
 package org.deri.iris.storage.simple;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.storage.IRelation;

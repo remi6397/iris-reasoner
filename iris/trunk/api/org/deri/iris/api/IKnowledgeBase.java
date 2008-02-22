@@ -24,7 +24,6 @@
 package org.deri.iris.api;
 
 import java.util.List;
-import java.util.Set;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.ProgramNotStratifiedException;
 import org.deri.iris.RuleUnsafeException;
@@ -65,5 +64,5 @@ public interface IKnowledgeBase
 	 * Get the rules hidden within the knowledge-base.
 	 * @return The unmodifiable list of rules.
 	 */
-	Set<IRule> getRules();
+	List<IRule> getRules();
 }

@@ -49,8 +49,7 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.evaluation.bottomup.compiledrules.naive.NaiveEvaluatorFactory;
-import org.deri.iris.evaluation.bottomup.compiledrules.seminaive.SemiNaiveEvaluatorFactory;
+import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 import org.deri.iris.storage.IRelation;
 
@@ -177,6 +176,25 @@ public class DemoW
 				"?- p(?x)."
 			);
 			
+			mProgram.setText(
+				"p(?x) :- t(?x, ?y, ?z), not p(?y), not p(?z)." + NEW_LINE +
+				"p('b') :- not r('a')." + NEW_LINE +
+				"t( 'a', 'a', 'b')." + NEW_LINE +
+				"t( 'a', 'b', 'a')." + NEW_LINE +
+				"?- p(?x)."
+			);
+			
+
+			mProgram.setText(
+				"p(0,0)." + NEW_LINE +
+				"p( ?n1, succ( ?x ) ) :- p(?n, ?x), ?n + 1 = ?n1, ?n1 < 10." + NEW_LINE +
+				"//?- p(?n, ?x )." + NEW_LINE +
+	
+				"even( succ( ?x ) ) :- ! even( ?x )." + NEW_LINE +
+				"even( 0 )." + NEW_LINE +
+				"?- even( ?x )."
+			);
+			
 			mRun.addActionListener( this );
 
 			mAbort.addActionListener( this );
@@ -222,7 +240,7 @@ public class DemoW
 		private final JTextArea mProgram = new JTextArea();
 		private final JTextArea mOutput = new JTextArea();
 		
-		private final JComboBox mEvaluationStrategy = new JComboBox( new String[] { "Naive", "Semi-naive" } );	//, "Magic Sets" } );
+		private final JComboBox mEvaluationStrategy = new JComboBox( new String[] { "Naive", "Semi-naive", "Well-founded" } );	//, "Magic Sets" } );
 		private final JCheckBox mUnsafeRules = new JCheckBox( "Unsafe-rules", false );
 		
 		private final JButton mRun = new JButton( "Evaluate" );
@@ -293,13 +311,18 @@ public class DemoW
 			switch( strategy )
 			{
 			case 0:
-				config.evaluationTechnique = new NaiveEvaluatorFactory();
+				config.evaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
 				break;
 			
 			default:
 			case 1:
-				config.evaluationTechnique = new SemiNaiveEvaluatorFactory();
+				// Actually the default
+				//config.evaluationTechnique = new SemiNaiveEvaluatorFactory();
 				break;
+				
+			case 2:
+				config.evaluationStrategyFactory = new WellFoundedEvaluationStrategyFactory();
+				config.stratifiers.clear();
 			}
 
 			mExecutionThread = new Thread( new ExecutionTask( program, config ), "Evaluation task" );

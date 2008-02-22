@@ -2,7 +2,7 @@
  * Integrated Rule Inference System (IRIS):
  * An extensible rule inference system for datalog with extensions.
  * 
- * Copyright (C) 2007 Digital Enterprise Research Institute (DERI), 
+ * Copyright (C) 2008 Digital Enterprise Research Institute (DERI), 
  * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
  * A-6020 Innsbruck. Austria.
  * 
@@ -21,22 +21,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.evaluation;
+package org.deri.iris.evaluation.wellfounded;
 
+import java.util.List;
 import org.deri.iris.Configuration;
+import org.deri.iris.EvaluationException;
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.evaluation.IEvaluationStrategy;
+import org.deri.iris.evaluation.IEvaluationStrategyFactory;
 import org.deri.iris.facts.IFacts;
-import org.deri.iris.rules.RuleBase;
 
 /**
- * Interface of all evaluator factories.
+ * Factory for well-founded evaluation strategy.
  */
-public interface IEvaluatorFactory
+public class WellFoundedEvaluationStrategyFactory implements IEvaluationStrategyFactory
 {
-	/**
-	 * Create a new evaluator.
-	 * @param facts The facts to be used for evaluation.
-	 * @param ruleBase The rule-base to be used for evaluation.
-	 * @return The new evaluator instance.
-	 */
-	IEvaluator createEvaluator( IFacts facts, RuleBase ruleBase, Configuration configuration );
+	public IEvaluationStrategy createEvaluator( IFacts facts, List<IRule> rules, Configuration configuration ) throws EvaluationException
+	{
+		return new WellFoundedEvaluationStrategy( facts, rules, configuration );
+	}
 }

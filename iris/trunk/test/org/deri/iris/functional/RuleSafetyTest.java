@@ -92,7 +92,7 @@ public class RuleSafetyTest extends TestCase
     {
     	String program = "w(?X,?Y) :- s(?X), not p(2,?Y).";
 
-    	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    	Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
 
 	/**
@@ -103,7 +103,7 @@ public class RuleSafetyTest extends TestCase
     {
     	String program = "p( ?X, ?Y ) :- q( ?X ).";
     	
-    	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    	Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
 
 	/**
@@ -143,7 +143,7 @@ public class RuleSafetyTest extends TestCase
 		// Same as: p(?X, ?Y) :- q(?X), not LESS( ?X, ?Y ).
     	String program = "p(?X, ?Y) :- q(?X), not ?X < ?Y.";
     
-    	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    	Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
 
 	/**
@@ -158,7 +158,7 @@ public class RuleSafetyTest extends TestCase
     {
     	String program = "p(?X, ?Y) :- q(?X), ?X < ?Y.";
     
-    	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    	Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
 
 	/**
@@ -186,7 +186,7 @@ public class RuleSafetyTest extends TestCase
     {
     	String program = "w(?X,?Y) :- s(?X), IS_STRING(?Y).";    
 
-    	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    	Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
     
 	/**
@@ -197,7 +197,7 @@ public class RuleSafetyTest extends TestCase
     {
     	String program = "w(?X,?Y) :- s(?X), not IS_STRING(?Y).";    
 
-    	Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+    	Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
     
 	/**
@@ -211,7 +211,7 @@ public class RuleSafetyTest extends TestCase
 			"isMale(?x) :- man(?x), IS_STRING(?z)." +
 			"?-isMale(?x).";
 	
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
 	}
 
 	/**
@@ -292,7 +292,7 @@ public class RuleSafetyTest extends TestCase
 		String program =
     		"w(?X,?Y) :- s(?X), r(?Y), not ?X + ?Y = ?Z.";
 	
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
 	}
 
 	/**
@@ -304,7 +304,7 @@ public class RuleSafetyTest extends TestCase
 		String program =
     		"w(?X,?Y) :- s(?X), r(?Z), not ?X + ?Y = ?Z.";
 	
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
 	}
 
 	/**
@@ -316,7 +316,7 @@ public class RuleSafetyTest extends TestCase
 		String program =
     		"w(?X,?Y) :- s(?Y), r(?Z), not ?X + ?Y = ?Z.";
 	
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
 	}
 
 	/**
@@ -364,7 +364,7 @@ public class RuleSafetyTest extends TestCase
     	String program = 
     		"w(?X) :- s(?Z), ?X + ?X = ?Z.";
         	
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
 
 	/**
@@ -376,7 +376,7 @@ public class RuleSafetyTest extends TestCase
     	String program = 
     		"w(?X) :- s(?Y), ?X + ?Y = ?X.";
         	
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
 
 	/**
@@ -388,7 +388,7 @@ public class RuleSafetyTest extends TestCase
     	String program = 
     		"w(?X) :- s(?Y), ?Y + ?X = ?X.";
         	
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
 
 	/**
@@ -412,7 +412,7 @@ public class RuleSafetyTest extends TestCase
     	String program = 
     		"w(?X) :- ?X + ?X = ?X.";
         	
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
 
     public void testSafe_EquateToConstant() throws Exception
@@ -436,7 +436,7 @@ public class RuleSafetyTest extends TestCase
     	String program = 
     		"p(?X) :- ?X = ?X.";
         	
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
     
     public void testUnsafe_AddToSelf() throws Exception
@@ -444,7 +444,7 @@ public class RuleSafetyTest extends TestCase
     	String program = 
     		"p(?X) :- ?X + ?X = 2.";
         	
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
 
     public void testUnsafe_VariableInNegatedSubGoalAndHead() throws Exception
@@ -452,7 +452,7 @@ public class RuleSafetyTest extends TestCase
     	String program = 
     		"p(?X) :- not q(?X).";
         	
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
 
     public void testUnsafe_VariablesInNegatedSubGoalAndHead() throws Exception
@@ -460,7 +460,7 @@ public class RuleSafetyTest extends TestCase
     	String program = 
     		"d(?X, ?Y) :- not s(?X, ?Y).";
         	
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
 
     public void testSafe_SeveralUnboundVariablesInUnification() throws Exception
@@ -476,6 +476,6 @@ public class RuleSafetyTest extends TestCase
     	String program =
     		"p(?v, ?w) :- q( ?x, ?y ), ! f( ?x, ?w ) = f( g(?v), h(?y) ).";
         	
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
     }
 }

@@ -32,20 +32,10 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.storage.IRelation;
 
 /**
- * Interface for all evaluators that accept queries and return a result set as a relation.
+ * Interface for all evaluation strategy implementations.
  */
-public interface IEvaluator
+public interface IEvaluationStrategy
 {
-	/**
-	 * Evaluate a query.
-	 * @param query The query to evaluate.
-	 * @return The relation of results.
-	 * @throws ProgramNotStratifiedException If the program (knowledge-base)can not be stratified
-	 * @throws RuleUnsafeException If the program (knowledge-base) contains an unsafe rule.
-	 * @throws EvaluationException If the avaluation fails for any other reason.
-	 */
-	IRelation evaluateQuery( IQuery query ) throws ProgramNotStratifiedException, RuleUnsafeException, EvaluationException;
-
 	/**
 	 * Evaluate a query and optionally return the variable bindings.
 	 * @param query The query to evaluate.
@@ -55,7 +45,7 @@ public interface IEvaluator
 	 * @return The relation of results.
 	 * @throws ProgramNotStratifiedException If the program (knowledge-base)can not be stratified
 	 * @throws RuleUnsafeException If the program (knowledge-base) contains an unsafe rule.
-	 * @throws EvaluationException If the avaluation fails for any other reason.
+	 * @throws EvaluationException If the evaluation fails for any other reason.
 	 */
 	IRelation evaluateQuery( IQuery query, List<IVariable> outputVariables ) throws ProgramNotStratifiedException, RuleUnsafeException, EvaluationException;
 }
