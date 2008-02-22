@@ -31,7 +31,7 @@ import org.deri.iris.rules.compiler.ICompiledRule;
 /**
  * Interface for compiled rule evaluators.
  */
-public interface IEvaluator2
+public interface IRuleEvaluator
 {
 	/**
 	 * Evaluate rules.

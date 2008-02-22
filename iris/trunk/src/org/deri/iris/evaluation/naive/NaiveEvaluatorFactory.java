@@ -23,15 +23,15 @@
  */
 package org.deri.iris.evaluation.naive;
 
-import org.deri.iris.evaluation.IEvaluator2;
-import org.deri.iris.evaluation.IEvaluatorFactory2;
+import org.deri.iris.evaluation.IRuleEvaluator;
+import org.deri.iris.evaluation.IRuleEvaluatorFactory;
 
 /**
  * Factory for naive rules evaluator.
  */
-public class NaiveEvaluatorFactory implements IEvaluatorFactory2
+public class NaiveEvaluatorFactory implements IRuleEvaluatorFactory
 {
-	public IEvaluator2 createEvaluator()
+	public IRuleEvaluator createEvaluator()
 	{
 		return new NaiveEvaluator();
 	}

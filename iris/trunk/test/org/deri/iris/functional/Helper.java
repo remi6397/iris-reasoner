@@ -83,7 +83,7 @@ public class Helper
 	{
 		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
 		
-		configuration.evaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
+		configuration.ruleEvaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
 		configuration.reOrderingOptimiser = null;
 		configuration.ruleOptimisers.clear();
 		configuration.programOptmimisers.clear();
@@ -95,7 +95,7 @@ public class Helper
 	{
 		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
 		
-		configuration.evaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
+		configuration.ruleEvaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
 		
 		executeAndCheckResults( program, expectedResults, configuration, "Naive" );
 	}
@@ -217,7 +217,7 @@ public class Helper
 	{
 		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
 
-		configuration.evaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
+		configuration.ruleEvaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
 		
 		checkFailure( program, expectedExceptionClass, configuration, "Naive" );
 	}

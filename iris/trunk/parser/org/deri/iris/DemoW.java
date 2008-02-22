@@ -50,6 +50,7 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
+import org.deri.iris.optimisations.MagicSetImpl;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 import org.deri.iris.storage.IRelation;
 
@@ -194,6 +195,37 @@ public class DemoW
 				"even( 0 )." + NEW_LINE +
 				"?- even( ?x )."
 			);
+
+			mProgram.setText(
+							"p(?x) :- t(?x, ?y, ?z), not p(?y), not p(?z)." + NEW_LINE +
+							"p('b') :- not r('a')." + NEW_LINE +
+							"t( 'a', 'a', 'b')." + NEW_LINE +
+							"t( 'a', 'b', 'a')." + NEW_LINE +
+							"?- p(?x)."
+						);
+			
+			mProgram.setText(
+				"p(?x) :- q(?x), ! r(?x)." + NEW_LINE +
+				"q(?x) :- ! p(?x)." + NEW_LINE +
+				"r('a')." + NEW_LINE +
+				"?- r(?x)."
+			);
+			
+			mProgram.setText(
+							"p(?X,?Y) :- b(?X,?Y)." + NEW_LINE +
+							"p(?X,?Y) :- b(?X,?U), p(?U,?Y)." + NEW_LINE +
+
+							"e(?X,?Y) :- g(?X,?Y)." + NEW_LINE +
+							"e(?X,?Y) :- g(?X,?U), e(?U,?Y)." + NEW_LINE +
+
+							"a(?X,?Y) :- e(?X,?Y), not p(?X,?Y)." + NEW_LINE +
+
+							"b(1,2)." + NEW_LINE +
+							"b(2,1)." + NEW_LINE +
+							"g(2,3)." + NEW_LINE +
+							"g(3,2)." + NEW_LINE +
+							"?- a(2,?Y)."
+			);
 			
 			mRun.addActionListener( this );
 
@@ -211,11 +243,13 @@ public class DemoW
 
 			getContentPane().add( mainSplitter, BorderLayout.CENTER );
 			
-			mEvaluationStrategy.setSelectedIndex( 1 );
+			mEvaluator.setSelectedIndex( 1 );
 			
 			JPanel panel = new JPanel();
-			panel.add( mEvaluationStrategy );
+			panel.add( mEvaluator );
+			panel.add( mStrategy );
 			panel.add( mUnsafeRules );
+			panel.add( mOptimise );
 			panel.add( mRun );
 			panel.add( mAbort );
 
@@ -240,8 +274,10 @@ public class DemoW
 		private final JTextArea mProgram = new JTextArea();
 		private final JTextArea mOutput = new JTextArea();
 		
-		private final JComboBox mEvaluationStrategy = new JComboBox( new String[] { "Naive", "Semi-naive", "Well-founded" } );	//, "Magic Sets" } );
+		private final JComboBox mEvaluator = new JComboBox( new String[] { "Naive", "Semi-naive" } );
+		private final JComboBox mStrategy = new JComboBox( new String[] { "Stratified", "Well-founded" } );
 		private final JCheckBox mUnsafeRules = new JCheckBox( "Unsafe-rules", false );
+		private final JComboBox mOptimise = new JComboBox( new String[] { "none", "Magic Sets" } );
 		
 		private final JButton mRun = new JButton( "Evaluate" );
 		private final JButton mAbort = new JButton( "Abort" );
@@ -301,28 +337,44 @@ public class DemoW
 			mAbort.setEnabled( true );
 			
 			String program = mProgram.getText();
-			int strategy = mEvaluationStrategy.getSelectedIndex();
 			
 			Configuration config = KnowledgeBaseFactory.getDefaultConfiguration();
 			
 			if( mUnsafeRules.isSelected() )
 				config.ruleSafetyProcessor = new AugmentingRuleSafetyProcessor();
 			
-			switch( strategy )
+			switch( mEvaluator.getSelectedIndex() )
 			{
 			case 0:
-				config.evaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
+				config.ruleEvaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
 				break;
 			
 			default:
 			case 1:
 				// Actually the default
-				//config.evaluationTechnique = new SemiNaiveEvaluatorFactory();
+				break;
+			}
+			
+			switch( mStrategy.getSelectedIndex() )
+			{
+			default:
+			case 0:
 				break;
 				
-			case 2:
+			case 1:
 				config.evaluationStrategyFactory = new WellFoundedEvaluationStrategyFactory();
 				config.stratifiers.clear();
+				break;
+			}
+			
+			switch( mOptimise.getSelectedIndex() )
+			{
+			case 0:
+				break;
+				
+			case 1:
+				config.programOptmimisers.add( new MagicSetImpl() );
+				break;
 			}
 
 			mExecutionThread = new Thread( new ExecutionTask( program, config ), "Evaluation task" );
@@ -410,7 +462,7 @@ public class DemoW
 				}
 				catch( Exception e )
 				{
-					SwingUtilities.invokeLater( new NotifyOutput( e.getMessage() ) );
+					SwingUtilities.invokeLater( new NotifyOutput( e.toString() ) );
 				}
 	        }
 			

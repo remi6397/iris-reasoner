@@ -33,8 +33,7 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.EvaluationUtilities;
 import org.deri.iris.evaluation.IEvaluationStrategy;
-import org.deri.iris.evaluation.IEvaluator2;
-import org.deri.iris.evaluation.seminaive.SemiNaiveEvaluator;
+import org.deri.iris.evaluation.IRuleEvaluator;
 import org.deri.iris.facts.FiniteUniverseFacts;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.rules.compiler.ICompiledRule;
@@ -114,7 +113,7 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 		IFacts finiteFacts = new FiniteUniverseFacts( simpleFacts, startingRules );
 
 		List<ICompiledRule> startingCompiledRules = compile( startingRules, finiteFacts );
-		IEvaluator2 semiNaive = new SemiNaiveEvaluator();
+		IRuleEvaluator semiNaive = mConfiguration.ruleEvaluatorFactory.createEvaluator();
 		semiNaive.evaluateRules( startingCompiledRules, finiteFacts, mConfiguration );
 
 		int currentDefinitelyTrueSize = size( simpleFacts );
