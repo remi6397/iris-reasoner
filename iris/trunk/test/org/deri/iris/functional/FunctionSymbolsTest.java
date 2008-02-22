@@ -23,8 +23,8 @@
  */
 package org.deri.iris.functional;
 
-import org.deri.iris.EvaluationException;
 import junit.framework.TestCase;
+import org.deri.iris.RuleUnsafeException;
 
 public class FunctionSymbolsTest extends TestCase
 {
@@ -460,7 +460,7 @@ public class FunctionSymbolsTest extends TestCase
 			
 			"?- p(?x, ?y).";
 		
-		Helper.checkFailureWithAllStrategies( program, EvaluationException.class );
+		Helper.checkFailureWithAllSafeRulesOnly( program, RuleUnsafeException.class );
 	}	
 
 	public void testUnifyCrossOverComplex() throws Exception

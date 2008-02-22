@@ -21,21 +21,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.evaluation.bottomup.compiledrules.seminaive;
-
-import org.deri.iris.Configuration;
-import org.deri.iris.evaluation.IEvaluator;
-import org.deri.iris.evaluation.IEvaluatorFactory;
-import org.deri.iris.facts.IFacts;
-import org.deri.iris.rules.RuleBase;
+package org.deri.iris.evaluation;
 
 /**
- * The factory for semi-naive evaluators.
+ * Interface of all evaluator factories.
  */
-public class SemiNaiveEvaluatorFactory implements IEvaluatorFactory
+public interface IEvaluatorFactory2
 {
-	public IEvaluator createEvaluator( IFacts facts, RuleBase ruleBase, Configuration configuration )
-	{
-		return new SemiNaiveEvaluator( facts, ruleBase, configuration );
-	}
+	/**
+	 * Create a new evaluator.
+	 */
+	IEvaluator2 createEvaluator();
 }

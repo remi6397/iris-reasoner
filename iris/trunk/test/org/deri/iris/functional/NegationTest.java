@@ -228,7 +228,8 @@ public class NegationTest extends TestCase
 			"p( ?X ) :- r( ?X ),not q(?X)." +
 			"r( ?X ) :- s( ?X ),not p(?X).";
 		
-		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithNaive( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithSemiNaive( program, ProgramNotStratifiedException.class );
 	}
 
 	/**
@@ -240,7 +241,8 @@ public class NegationTest extends TestCase
 			"p( ?X ) :- r( ?X ), not q(?X)." +
 			"q( ?X ) :- r( ?X ), p(?X).";
 		
-		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithNaive( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithSemiNaive( program, ProgramNotStratifiedException.class );
 	}
 
 	/**
@@ -261,7 +263,8 @@ public class NegationTest extends TestCase
 			"p7( ?X ) :- t(?X), not p6(?X)." +
 			"p6( ?X ) :- t(?X), p7(?X).";
 			
-		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithNaive( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithSemiNaive( program, ProgramNotStratifiedException.class );
 	}
 
 	/**
@@ -283,7 +286,8 @@ public class NegationTest extends TestCase
 			"u( ?X ) :- x(?X)." +
 			"u( ?X ) :- v(?X).";
 			
-		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithNaive( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithSemiNaive( program, ProgramNotStratifiedException.class );
 	}
 
 	/**
@@ -301,7 +305,8 @@ public class NegationTest extends TestCase
 			"p7( ?X ) :- r( ?X ),not p6(?X)." +
 			"p8( ?X ) :- r( ?X ),not p7(?X).";
 			
-		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithNaive( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithSemiNaive( program, ProgramNotStratifiedException.class );
 	}
 
 	/**
@@ -520,7 +525,8 @@ public class NegationTest extends TestCase
 		    "p('b',?X) :- r(?X), not q('b',?X)." +
 		    "q(?X,?Y) :- p(?X,?Y).";
 			
-		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithNaive( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithSemiNaive( program, ProgramNotStratifiedException.class );
 	}
 
 	public void testNotLocallyStratified_RuleDependsOnSelfWithVariable()
@@ -528,7 +534,8 @@ public class NegationTest extends TestCase
 		String program = 
 			"p('b', ?X) :- q(?X,?Y), ! p(?X,?Y).";
 			
-		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithNaive( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithSemiNaive( program, ProgramNotStratifiedException.class );
 	}
 	
 	/**
@@ -543,7 +550,8 @@ public class NegationTest extends TestCase
 		    "q(?X, ?Y) :- r(?X), q(?X, ?Y)." +
 		    "q('c',?X) :- r(?X), not p('b',?X).";
 			
-		Helper.checkFailureWithAllStrategies( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithNaive( program, ProgramNotStratifiedException.class );
+		Helper.checkFailureWithSemiNaive( program, ProgramNotStratifiedException.class );
 	}
 
 	/**
@@ -662,6 +670,7 @@ public class NegationTest extends TestCase
 			"p(?Y) :- not r(?X)." +
 			"?- p(?x).";		
 
-		Helper.checkFailureWithAllStrategies( program, RuleUnsafeException.class );
+		Helper.checkFailureWithNaive( program, RuleUnsafeException.class );
+		Helper.checkFailureWithSemiNaive( program, RuleUnsafeException.class );
 	}
 }

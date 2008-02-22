@@ -21,34 +21,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.evaluation.bottomup.compiledrules.naive;
+package org.deri.iris.evaluation.naive;
 
-import java.util.Collection;
+import java.util.List;
 import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.evaluation.bottomup.compiledrules.AbstractCompiledRulesEvaluator;
+import org.deri.iris.evaluation.IEvaluator2;
 import org.deri.iris.facts.IFacts;
-import org.deri.iris.rules.RuleBase;
 import org.deri.iris.rules.compiler.ICompiledRule;
 import org.deri.iris.storage.IRelation;
 
 /**
- * The classic Naive evaluation as described in:
- * Principles of database and knowledge-base systems, vol 1, Ullman.
+ * Naive evaluation. see Ullman, Vol. 1
  */
-public class NaiveEvaluator extends AbstractCompiledRulesEvaluator
+public class NaiveEvaluator implements IEvaluator2
 {
-	/**
-	 * Constructor.
-	 * @param facts The starting facts of the knowledge-base
-	 * @param ruleBase The rules of the knowledge-base.
-	 */
-	public NaiveEvaluator( IFacts facts, RuleBase ruleBase, Configuration configuration )
-	{
-		super( facts, ruleBase, configuration );
-	}
-	
-	protected void evaluateRules( Collection<ICompiledRule> rules, IFacts facts, Configuration configuration )
+	public void evaluateRules( List<ICompiledRule> rules, IFacts facts, Configuration configuration )
 	{
 		boolean cont = true;
 		while( cont )

@@ -46,8 +46,8 @@ import org.deri.iris.builtins.GreaterBuiltin;
 import org.deri.iris.builtins.GreaterEqualBuiltin;
 import org.deri.iris.builtins.LessBuiltin;
 import org.deri.iris.builtins.LessEqualBuiltin;
-import org.deri.iris.builtins.NotExactEqualBuiltin;
 import org.deri.iris.builtins.NotEqualBuiltin;
+import org.deri.iris.builtins.NotExactEqualBuiltin;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.rules.IRuleStratifier;
 import org.deri.iris.rules.RuleManipulator;
@@ -82,7 +82,7 @@ public class LocalStratifier implements IRuleStratifier
 		return mStrict;
 	}
 	
-	public List<List<IRule>> stratify( Collection<IRule> rules )
+	public List<List<IRule>> stratify( List<IRule> rules )
 	{
 		mRules.clear();
 		

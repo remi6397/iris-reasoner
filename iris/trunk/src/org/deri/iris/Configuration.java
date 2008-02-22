@@ -26,8 +26,10 @@ package org.deri.iris;
 import java.util.ArrayList;
 import java.util.List;
 import org.deri.iris.api.IProgramOptimisation;
-import org.deri.iris.evaluation.IEvaluatorFactory;
-import org.deri.iris.evaluation.bottomup.compiledrules.seminaive.SemiNaiveEvaluatorFactory;
+import org.deri.iris.evaluation.IEvaluationStrategyFactory;
+import org.deri.iris.evaluation.IEvaluatorFactory2;
+import org.deri.iris.evaluation.seminaive.SemiNaiveEvaluatorFactory;
+import org.deri.iris.evaluation.stratifiedbottomup.StratifiedBottomUpEvaluationStrategyFactory;
 import org.deri.iris.facts.IDataSource;
 import org.deri.iris.rules.IRuleOptimiser;
 import org.deri.iris.rules.IRuleReOrderingOptimiser;
@@ -52,7 +54,10 @@ import org.deri.iris.storage.simple.SimpleRelationFactory;
 public class Configuration
 {
 	/** The evaluation strategy to use. */
-	public IEvaluatorFactory evaluationTechnique = new SemiNaiveEvaluatorFactory();
+	public IEvaluationStrategyFactory evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory();
+
+	/** The default rule evaluator. */
+	public IEvaluatorFactory2 evaluatorFactory = new SemiNaiveEvaluatorFactory();
 	
 	/** The evaluation timeout in milliseconds. Zero means no timeout. */
 	public int evaluationTimeoutMilliseconds = 0;
@@ -127,14 +132,5 @@ public class Configuration
 		ruleOptimisers.add( new ReplaceVariablesWithConstantsOptimiser() );
 		ruleOptimisers.add( new ReOrderLiteralsOptimiser() );
 		ruleOptimisers.add( new RemoveDuplicateLiteralOptimiser() );
-	}
-
-	/**
-	 * Copy constructor.
-	 * @param rhs The object to copy from.
-	 */
-	public Configuration( Configuration rhs )
-	{
-		
 	}
 }

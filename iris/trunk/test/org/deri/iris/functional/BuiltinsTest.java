@@ -24,7 +24,7 @@
 package org.deri.iris.functional;
 
 import junit.framework.TestCase;
-import org.deri.iris.EvaluationException;
+import org.deri.iris.RuleUnsafeException;
 import org.deri.iris.compiler.ParserException;
 
 /**
@@ -1426,6 +1426,7 @@ public class BuiltinsTest extends TestCase
 		    "p(?X) :- ?X + ?X = 2." +
 		    "?- p(?X).";
 
-		Helper.checkFailureWithAllStrategies( program, EvaluationException.class );
+		Helper.checkFailureWithNaive( program, RuleUnsafeException.class );
+		Helper.checkFailureWithSemiNaive( program, RuleUnsafeException.class );
 	}
 }

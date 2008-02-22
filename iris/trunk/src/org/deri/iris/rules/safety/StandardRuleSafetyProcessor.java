@@ -25,18 +25,10 @@
  */
 package org.deri.iris.rules.safety;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.deri.iris.RuleUnsafeException;
-import org.deri.iris.api.basics.IAtom;
-import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.IConstructedTerm;
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.builtins.ArithmeticBuiltin;
-import org.deri.iris.builtins.EqualBuiltin;
 import org.deri.iris.rules.IRuleSafetyProcessor;
 import org.deri.iris.rules.RuleValidator;
 
