@@ -128,7 +128,7 @@ class Joiner extends RuleElement
 			mOutputVariables.add( mViewVariables.get( i ) );
 		
 		// Create the index for the second relation
-		mIndexThisLiteral = mIndexFactory.createIndex( mView.getView(), mJoinIndicesThisLiteral );
+		mIndexThisLiteral = mIndexFactory.createIndex( mView, mJoinIndicesThisLiteral );
 	}
 
 	/**
@@ -173,7 +173,7 @@ class Joiner extends RuleElement
 		mRemainderIndicesInput = remainderIndicesInput;
 		mRemainderIndicesThisLiteral = remainderIndicesThisLiteral;
 		
-		mIndexThisLiteral = mIndexFactory.createIndex( mView.getView(), mJoinIndicesThisLiteral );
+		mIndexThisLiteral = mIndexFactory.createIndex( mView, mJoinIndicesThisLiteral );
 		
 		mOutputVariables = outputVariables;
 	}
@@ -189,7 +189,8 @@ class Joiner extends RuleElement
 		{
 			ITuple leftTuple = leftRelation.get( f );
 			
-			List<ITuple> matchingRightTuples = mIndexThisLiteral.get( Utils.makeKey( leftTuple, mJoinIndicesInput ) );
+			List<ITerm> key = Utils.makeKey( leftTuple, mJoinIndicesInput );
+			List<ITuple> matchingRightTuples = mIndexThisLiteral.get( key );
 
 			for( ITuple matchingRightTuple : matchingRightTuples )
 			{

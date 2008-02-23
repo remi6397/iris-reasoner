@@ -91,7 +91,7 @@ public class FirstSubgoal extends RuleElement
 		assert leftRelation != null;
 		assert leftRelation.size() == 1;	// i.e. there is no left relation, just a starting point.
 		
-		return mView.getView();
+		return mView;
 	}
 	
 	@Override

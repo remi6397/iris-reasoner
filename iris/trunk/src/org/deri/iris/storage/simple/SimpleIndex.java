@@ -90,7 +90,7 @@ public class SimpleIndex implements IIndex
 	
 	/**
 	 * Make a key from the given tuples and the known term index positions.
-	 * @param tuple The tupes
+	 * @param tuple The tuples
 	 * @return
 	 */
 	private List<ITerm> makeKey( ITuple tuple )
