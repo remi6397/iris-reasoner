@@ -59,7 +59,7 @@ public class BuiltinTest extends TestCase
 		
 		Builtin builtin = new Builtin( view.variables(), builtinPredicate, true, configuration );
 		
-		IRelation result = builtin.process( view.getView() );
+		IRelation result = builtin.process( view );
 		
 		assertEquals( 2, result.size() );
 	}
@@ -103,7 +103,7 @@ public class BuiltinTest extends TestCase
 		
 		Builtin builtin = new Builtin( view.variables(), builtinPredicate, true, configuration );
 		
-		IRelation output = builtin.process( view.getView() );
+		IRelation output = builtin.process( view );
 		
 		assertEquals( 3, output.size() );
 		assertEquals( Helper.createTerm( "X" ), builtin.getOutputVariables().get( 0 ) );

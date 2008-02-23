@@ -57,7 +57,7 @@ public class TestSimpleIndex extends TestCase
 		
 		mView = new View( mRelation, viewCriteria, new SimpleRelationFactory() );
 		
-		mIndex = new SimpleIndex( mView.getView(), 0, 1 );
+		mIndex = new SimpleIndex( mView, 0, 1 );
 	}
 	
 	private static List<ITerm> makeKey( Object ... objects )

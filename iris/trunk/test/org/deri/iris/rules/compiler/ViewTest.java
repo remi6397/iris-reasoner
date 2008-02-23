@@ -66,7 +66,7 @@ public class ViewTest extends TestCase
 	
 	public void testView()
 	{
-		IRelation v = mView.getView();
+		IRelation v = mView;
 		
 		assertEquals( 1, v.size());
 		

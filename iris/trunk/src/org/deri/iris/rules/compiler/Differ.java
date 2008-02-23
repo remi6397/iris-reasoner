@@ -85,7 +85,7 @@ public class Differ extends RuleElement
 		mJoinIndices2 = Utils.integerListToArray( join2 );
 
 		// Create the index for the second relation
-		mIndex2 = mConfiguration.indexFactory.createIndex( mView.getView(), mJoinIndices2 );
+		mIndex2 = mConfiguration.indexFactory.createIndex( mView, mJoinIndices2 );
 		
 		mOutputVariables = inputVariables == null ? new ArrayList<IVariable>() : inputVariables;
 	}

@@ -995,4 +995,67 @@ public class EvaluationTest extends TestCase
     	
     	Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
+
+	/**
+	 * This test came about as a result of bug 1899920.
+	 * There was a problem where an index on a view was accessing the view's output
+	 * relation without the view updating itself first.
+	 */
+	public void testIndexOnView() throws Exception
+	{
+    	String program =
+    		"hv('me', 'christianName', 'Adrian')." +
+    		"hv('me', 'surname', 'Mocan')." +
+    		"me('me', 'Person')." +
+
+    		"hv(m(?X13,'Citizen'), 'hasName', m(?X13,'Name')) :-" +
+    		"	me(?X13, 'Person')," +
+    		"	me(m(?X13,'Name'), 'Name')," +
+    		"	hv(m(?X13,'Name'), ?A14, ?V15)." +
+
+    		"me(m(?X13,'Citizen'), 'Citizen') :-" +
+    		"	me(?X13, 'Person')," +
+    		"	me(m(?X13,'Name'), 'Name')," +
+    		"	hv(m(?X13,'Name'), ?A14, ?V15)." +
+
+    		"me(m(?X5,'Name'), 'Name') :- " +
+    		"	me(?X5, 'Person')," +
+    		"	hv(?X5, 'surname', ?Y6)," +
+    		"	me(?X5, ?SC7)," +
+    		"	mappedConcepts(?SC7, 'Name', ?X5)." +
+
+    		"me(m(?X3,'Name'), 'Name') :- me(?X3, 'Person')." +
+
+    		"me(m(?X1,'Citizen'), 'Citizen') :- me(?X1, 'Person')." +
+
+    		"me(m(?X9,'Name'), 'Name') :-" +
+    		"	hv(?X9, 'christianName', ?Y10)," +
+    		"	me(?X9, 'Person')," +
+    		"	me(?X9, ?SC11)," +
+    		"	mappedConcepts(?SC11, 'Name', ?X9)." +
+
+    		"mappedConcepts('Person', 'Citizen', ?X1) :- me(?X1, 'Person')." +
+
+    		"mappedConcepts('Person', 'Name', ?X3) :- me(?X3, 'Person')." +
+
+    		"hv(m(?X9,'Name'), 'hasFirstName', ?Y10) :-" +
+    		"	hv(?X9, 'christianName', ?Y10)," +
+    		"	me(?X9, 'Person')," +
+    		"	me(?X9, ?SC11)," +
+    		"	mappedConcepts(?SC11, 'Name', ?X9)." +
+
+    		"hv(m(?X5,'Name'), 'surname', ?Y6) :-" +
+    		"	me(?X5, 'Person')," +
+    		"	hv(?X5, 'surname', ?Y6)," +
+    		"	me(?X5, ?SC7), " +
+    		"	mappedConcepts(?SC7, 'Name', ?X5)." +
+    	
+    		"?- hv(m(?X13,'Citizen'), 'hasName', m(?X13,'Name')).";
+
+    	String expectedResults =
+    		"dummy( 'me' ).";
+    	
+    	Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+
 }

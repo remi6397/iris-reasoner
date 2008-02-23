@@ -80,7 +80,7 @@ import org.deri.iris.utils.TermMatchingAndSubstitution;
  * </p>
  * <p>
  */
-public class View
+public class View implements IRelation
 {
 	/**
 	 * Constructor.
@@ -168,18 +168,46 @@ public class View
 	{
 		return mVariables;
 	}
-	
+
 	/**
-	 * Get a filtered view of the relation.
-	 * @return The relation representing the filtered view.
+	 * Adding to a View does not make sense.
+	 * @throws RuntimeException if this method is called.
 	 */
-	public IRelation getView()
-	{
+	public boolean add( ITuple tuple )
+    {
+		throw new RuntimeException( "add() has been called on a View object." );
+    }
+
+	/**
+	 * Adding to a View does not make sense.
+	 * @throws RuntimeException if this method is called.
+	 */
+	public boolean addAll( IRelation relation )
+    {
+		throw new RuntimeException( "addAll() has been called on a View object." );
+    }
+
+	public boolean contains( ITuple tuple )
+    {
 		if( ! mSimple )
 			update();
-		return mViewTuples;
-	}
-	
+	    return mViewTuples.contains( tuple );
+    }
+
+	public ITuple get( int index )
+    {
+		if( ! mSimple )
+			update();
+		return mViewTuples.get( index );
+    }
+
+	public int size()
+    {
+		if( ! mSimple )
+			update();
+		return mViewTuples.size();
+    }
+
 	/**
 	 * Update the view with previously unseen tuples from the underlying relation.
 	 */
@@ -198,8 +226,6 @@ public class View
 	@Override
     public String toString()
     {
-		update();
-		
 		StringBuilder result = new StringBuilder();
 
 		result.append( "View [" ).append( mViewCriteria ).append( "] => " ).append( mViewTuples );
