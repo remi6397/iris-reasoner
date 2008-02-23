@@ -60,7 +60,8 @@ import org.deri.iris.storage.IRelation;
 public class DemoW
 {
 	public static final int FONT_SIZE = 12;
-	public static String NEW_LINE = System.getProperty( "line.separator" );
+	public static final String NEW_LINE = System.getProperty( "line.separator" );
+	public static final String BAR = "----------------------------------";
 	public static final boolean SHOW_VARIABLE_BINDINGS = true;
 	public static final boolean SHOW_QUERY_TIME = true;
 	public static final boolean SHOW_ROW_COUNT = true;
@@ -415,49 +416,52 @@ public class DemoW
 					parser.parse( program );
 					Map<IPredicate,IRelation> facts = parser.getFacts();
 					List<IRule> rules = parser.getRules();
-					List<IQuery> queries = parser.getQueries();
-					
-					if( queries.size() > 1 )
-					{
-						SwingUtilities.invokeLater( new NotifyOutput( "Only one query at a time" ) );
-						return;
-					}
-					IQuery query = queries.size() == 1 ? queries.iterator().next() : null;
 					
 					StringBuilder output = new StringBuilder();
 					
+					long initTime = -System.currentTimeMillis();
 					IKnowledgeBase knowledgeBase = KnowledgeBaseFactory.createKnowledgeBase( facts, rules, configuration );
+					initTime += System.currentTimeMillis();
+					
+					if( SHOW_QUERY_TIME )
+					{
+						output.append( "Init time: " ).append( initTime ).append( "ms" ).append( NEW_LINE );
+					}
 					
 					List<IVariable> variableBindings = new ArrayList<IVariable>();
 
-					// Execute the query
-					long queryDuration = -System.currentTimeMillis();
-					IRelation results = knowledgeBase.execute( query, variableBindings );
-					queryDuration += System.currentTimeMillis();
-
-					if( SHOW_VARIABLE_BINDINGS )
+					for( IQuery query : parser.getQueries() )
 					{
-						boolean first = true;
-						for( IVariable variable : variableBindings )
+						// Execute the query
+						long queryDuration = -System.currentTimeMillis();
+						IRelation results = knowledgeBase.execute( query, variableBindings );
+						queryDuration += System.currentTimeMillis();
+	
+						output.append( BAR ).append( NEW_LINE );
+						output.append( "Query:      " ).append( query ).append( NEW_LINE );
+						if( SHOW_QUERY_TIME )
+							output.append( "Query time: " ).append( queryDuration ).append( "ms" ).append( NEW_LINE );
+						
+						if( SHOW_VARIABLE_BINDINGS )
 						{
-							if( first )
-								first = false;
-							else
-								output.append( ", " );
-							output.append( variable );
+							output.append( "Variables:  " );
+							boolean first = true;
+							for( IVariable variable : variableBindings )
+							{
+								if( first )
+									first = false;
+								else
+									output.append( ", " );
+								output.append( variable );
+							}
+							output.append( NEW_LINE );
 						}
-						output.append( NEW_LINE );
+					
+						formatResults( output, results );
+						if( SHOW_ROW_COUNT )
+							output.append( "Rows:       " ).append( results.size() ).append( NEW_LINE );
 					}
 					
-					formatResults( output, results );
-
-					if( SHOW_ROW_COUNT || SHOW_QUERY_TIME )
-						output.append( "-----------------" ).append( NEW_LINE );
-					if( SHOW_ROW_COUNT )
-						output.append( "Rows: " ).append( results.size() ).append( NEW_LINE );
-					if( SHOW_QUERY_TIME )
-						output.append( "Time: " ).append( queryDuration ).append( "ms" ).append( NEW_LINE );
-			
 					SwingUtilities.invokeLater( new NotifyOutput( output.toString() ) );
 				}
 				catch( Exception e )
