@@ -73,6 +73,20 @@ public final class MagicSetImpl implements IProgramOptimisation {
 			throw new IllegalArgumentException("The query must not be null");
 		}
 
+		// check, whether the query contains constants
+		int constants = 0;
+		for (final ILiteral l : query.getLiterals()) {
+			for (final ITerm t : l.getAtom().getTuple()) {
+				if (t.isGround()) {
+					constants++;
+				}
+			}
+		}
+		// if there aren't any constants -> return null
+		if (constants == 0) {
+			return null;
+		}
+
 		final Result result = new Result();
 		final AdornedProgram adornedProg = new AdornedProgram(rules, query);
 

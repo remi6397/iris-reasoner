@@ -343,37 +343,7 @@ public class MagicTest extends TestCase {
 		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
-
-		final ITerm[] X = new ITerm[]{TERM.createVariable("X")};
-		final Adornment[] b = new Adornment[]{Adornment.BOUND};
-		final Adornment[] f = new Adornment[]{Adornment.FREE};
-		final ILiteral s = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("s", 1), BASIC.createTuple(X)));
-		final ILiteral t = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("t", 1), BASIC.createTuple(X)));
-		final ILiteral q = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("q", 1), BASIC.createTuple(X)));
-		final ILiteral neg_ad_p = createAdornedLiteral(false, "p", b, X);
-		final ILiteral ad_q = createAdornedLiteral("q", f, X);
-		final ILiteral ad_p = createAdornedLiteral("p", b, X);
-		final ILiteral ad_r = createAdornedLiteral("r", b, X);
-		final ILiteral magic_p = createMagicLiteral("p", b, X);
-		final ILiteral magic_r = createMagicLiteral("r", b, X);
-
-		final List<IRule> ref = new ArrayList<IRule>();
-		// magic_r^b(X) :- magic_p^b(X)
-		ref.add(BASIC.createRule(Arrays.asList(magic_r), Arrays.asList(magic_p)));
-		// magic_p^b(X) :- s(X)
-		ref.add(BASIC.createRule(Arrays.asList(magic_p), Arrays.asList(s)));
-		// q^f(X) :- s(X), -p^b(X)
-		ref.add(BASIC.createRule(Arrays.asList(ad_q), Arrays.asList(s, neg_ad_p)));
-		// r^b(X) :- magic_r^b(X), t(X)
-		ref.add(BASIC.createRule(Arrays.asList(ad_r), Arrays.asList(magic_r, t)));
-		// p^b(X) :- magic_p^b(X), r^b(X)
-		ref.add(BASIC.createRule(Arrays.asList(ad_p), Arrays.asList(magic_p, ad_r)));
-		// magic_p^f() :- TRUE
-		ref.add(seedRule(createMagicLiteral("q", f, new ITerm[]{})));
-		
-		Collections.sort(ref, AdornmentsTest.RC);
-		Collections.sort(result.rules, AdornmentsTest.RC);
-		assertEquals("The rules don't match", ref, result.rules);
+		assertNull("The trainsformation should fail.", result);
 	}
 
 	/**
@@ -549,40 +519,7 @@ public class MagicTest extends TestCase {
 		p.parse(prog);
 
 		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
-
-		final ITerm W = TERM.createVariable("W");
-		final ITerm X = TERM.createVariable("X");
-		final ITerm Y = TERM.createVariable("Y");
-		final ITerm Z = TERM.createVariable("Z");
-		final ITerm[] WX = new ITerm[]{W, X};
-		final ITerm[] XY = new ITerm[]{X, Y};
-		final ITerm[] YZ = new ITerm[]{Y, Z};
-		final ITerm[] WXYZ = new ITerm[]{W, X, Y, Z};
-		final Adornment[] ff = new Adornment[]{Adornment.FREE, Adornment.FREE};
-		final Adornment[] bbbb = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.BOUND, Adornment.BOUND};
-		final ILiteral c2 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 2), BASIC.createTuple(XY)));
-		final ILiteral c4 = BASIC.createLiteral(true, BASIC.createAtom(BASIC.createPredicate("c", 4), BASIC.createTuple(WXYZ)));
-
-		final List<IRule> ref = new ArrayList<IRule>();
-		// magic_s^bbbb(W, X, Y, Z) :- p^ff(W, X), r^ff(Y, Z)
-		ref.add(BASIC.createRule(Arrays.asList(createMagicLiteral("s", bbbb, WXYZ)), 
-					Arrays.asList(createAdornedLiteral("p", ff, WX), 
-						createAdornedLiteral("r", ff, YZ))));
-		// s^bbbb(W, X, Y, Z) :- magic_s^bbbb(W, X, Y, Z), c(W, X, Y, Z)
-		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("s", bbbb, WXYZ)), 
-					Arrays.asList(createMagicLiteral("s", bbbb, WXYZ), c4)));
-		// r^ff(X, Y) :- c(X, Y)
-		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("r", ff, XY)), 
-					Arrays.asList(c2)));
-		// p^ff(X, Y) :- c(X, Y)
-		ref.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", ff, XY)), 
-					Arrays.asList(c2)));
-		// p^ff() :- TRUE
-		ref.add(seedRule(createMagicLiteral("p", ff, new ITerm[]{})));
-
-		Collections.sort(ref, AdornmentsTest.RC);
-		Collections.sort(result.rules, AdornmentsTest.RC);
-		assertEquals("The rules don't match", ref, result.rules);
+		assertNull("The trainsformation should fail.", result);
 	}
 
 	/**
