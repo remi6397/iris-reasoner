@@ -91,9 +91,19 @@ public class ProgramExecutor
 				duration += System.currentTimeMillis();
 
 				output.append( BAR ).append( NEW_LINE );
-				output.append( "Query:      " ).append( query ).append( NEW_LINE );
+				output.append( "Query:      " ).append( query );
+				if( SHOW_ROW_COUNT )
+				{
+					output.append( " ==>> " ).append( results.size() );
+					if( results.size() == 1 )
+						output.append( " row" );
+					else
+						output.append( " rows" );
+				}
 				if( SHOW_QUERY_TIME )
-					output.append( "Query time: " ).append( duration ).append( "ms" ).append( NEW_LINE );
+					output.append( " in " ).append( duration ).append( "ms" );
+				
+				output.append( NEW_LINE );
 				
 				if( SHOW_VARIABLE_BINDINGS )
 				{
@@ -111,8 +121,6 @@ public class ProgramExecutor
 				}
 			
 				formatResults( output, results );
-				if( SHOW_ROW_COUNT )
-					output.append( "Rows:       " ).append( results.size() ).append( NEW_LINE );
 			}
 			
 			mOutput = output.toString();
