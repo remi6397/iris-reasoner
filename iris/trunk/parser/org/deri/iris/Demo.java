@@ -1,62 +1,105 @@
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions.
+ * 
+ * Copyright (C) 2008 Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
 package org.deri.iris;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import org.deri.iris.api.IKnowledgeBase;
-import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.basics.IQuery;
-import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.compiler.Parser;
-import org.deri.iris.storage.IRelation;
+import org.deri.iris.evaluation.naive.NaiveEvaluatorFactory;
+import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
+import org.deri.iris.optimisations.MagicSetImpl;
 
 /**
  * A command line demonstrator for IRIS.
  */
 public class Demo
 {
-	public static String NEW_LINE = System.getProperty( "line.separator" );;
-	public static final boolean SHOW_VARIABLE_BINDINGS = true;
-	public static final boolean SHOW_QUERY_TIME = true;
-	public static final boolean SHOW_ROW_COUNT = true;
-
 	/**
 	 * Entry point.
 	 * @param args program evaluation_method
 	 */
 	public static void main( String[] args )
 	{
-		if ( args.length < 3 )
+		if ( args.length < 1 )
 		{
-			System.out.println( "Usage: java org.deri.iris.Demo <datalog_program> [1|2|3] max_evaluation_time(ms)" );
-			System.out.println( "where 1=naive, 2=semi-naive, 3=magic-sets" ); 
+			System.out.println( "Usage: java org.deri.iris.Demo <datalog_program> [1|2] max_evaluation_time(ms) [s|w] [m]" );
+			System.out.println( "where 1=naive, 2=semi-naive*" ); 
+			System.out.println( "      s=stratified*, w=well-founded semantics" ); 
+			System.out.println( "      m=magic sets" ); 
+			System.out.println( "*=default" ); 
 		}
 		else
 		{
+			// Arg 0 - program
 			String program = args[ 0 ];
 			
-			int eval = Integer.parseInt( args[ 1 ] );
-			int maxTime = Integer.parseInt( args[ 2 ] );
+			Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
 			
-			if ( maxTime < 1 )
-				maxTime = 10000;
+			// Arg 1 - rule evaluator
+			if( args.length >= 2 )
+			{
+				int eval = Integer.parseInt( args[ 1 ] );
+				if( eval == 1 )
+					configuration.ruleEvaluatorFactory = new NaiveEvaluatorFactory();
+			}
+
+			// Arg 2 - time out
+			int maxTime = 30000;
+			if( args.length >= 3 )
+			{
+				maxTime = Integer.parseInt( args[ 2 ] );
 			
-			execute( program, eval, maxTime );
+				if ( maxTime < 1 )
+					maxTime = 10000;
+			}
+			configuration.evaluationTimeoutMilliseconds = maxTime;
+			
+			// Arg 3 - strategy
+			if( args.length >= 4 )
+			{
+				if( args[ 3 ].compareToIgnoreCase( "w" ) == 0 )
+					configuration.evaluationStrategyFactory = new WellFoundedEvaluationStrategyFactory();
+			}
+			
+			// Arg 4 - strategy
+			if( args.length >= 5 )
+			{
+				if( args[ 4 ].compareToIgnoreCase( "m" ) == 0 )
+					configuration.programOptmimisers.add( new MagicSetImpl() );
+			}
+
+			execute( program, configuration );
 		}
 	}
 	
-	private static void execute( String program, int evaluationStrategy, int maxTime )
+	public static void execute( String program, Configuration configuration )
 	{
-		Thread t = new Thread( new ExecutionTask( program, evaluationStrategy ), "Evaluation task" );
+		Thread t = new Thread( new ExecutionTask( program, configuration ), "Evaluation task" );
 
 		t.setPriority( Thread.MIN_PRIORITY );
 		t.start();
 		
 		try
 		{
-			t.join( maxTime );
+			t.join( configuration.evaluationTimeoutMilliseconds );
 		}
 		catch( InterruptedException e )
 		{
@@ -65,139 +108,26 @@ public class Demo
 		if ( t.isAlive() )
 		{
 			t.stop();
-			System.out.println( "Timeout exceeded: " + maxTime + "ms" );
+			System.out.println( "Timeout exceeded: " + configuration.evaluationTimeoutMilliseconds + "ms" );
 		}
 	}
 	
 	static class ExecutionTask implements Runnable
 	{
-		ExecutionTask( String program, int evaluationStrategy )
+		ExecutionTask( String program, Configuration configuration )
 		{
 			this.program = program;
-			this.evaluationStrategy = evaluationStrategy;
+			this.configuration = configuration;
 		}
 		
 //		@Override
         public void run()
         {
-			try
-			{
-//				Map<IPredicate, IMixedDatatypeRelation> results;
-//				
-//				long t = -System.currentTimeMillis();
-//				
-//				IProgram p;
-//				
-//				switch( evaluationStrategy )
-//				{
-//				case 1:
-//					System.out.println( "Naive evaluation" );
-//					p = ExecutionHelper.parseProgram( program );
-//					results = ExecutionHelper.evaluateNaive( p );
-//					break;
-//				case 2:
-//				default:
-//					System.out.println( "Semi-naive evaluation" );
-//					p = ExecutionHelper.parseProgram( program );
-//					results = ExecutionHelper.evaluateSeminaive( p );
-//					break;
-//				case 3:
-//					System.out.println( "Semi-naive evaluation with magic sets" );
-//					p = ExecutionHelper.parseProgram( program );
-//					results = ExecutionHelper.evaluateSeminaiveWithMagicSets( p );
-//					break;
-//				}
-//
-//				t += System.currentTimeMillis();
-//				System.out.println( "Time: " + t + "ms" );
-
-				executeProgram( program, evaluationStrategy );
-			}
-			catch( Exception e )
-			{
-				System.out.println( "Evaluation failed with exception: " + e.toString() );
-			}
+        	ProgramExecutor executor = new ProgramExecutor( program, configuration );
+			System.out.println( executor.getOutput() );
         }
 		
 		private String program;
-		private int evaluationStrategy;
+		private Configuration configuration;
 	}
-
-	public static void executeProgram( String program, int evaluationStrategy ) throws Exception
-	{
-		Parser parser = new Parser();
-		parser.parse( program );
-		Map<IPredicate,IRelation> facts = parser.getFacts();
-		List<IRule> rules = parser.getRules();
-		List<IQuery> queries = parser.getQueries();
-		
-		if( queries.size() > 1 )
-		{
-			System.out.println( "You may only execute one query at a time!" );
-			return;
-		}
-		IQuery query = queries.size() == 1 ? queries.iterator().next() : null;
-		
-		StringBuilder output = new StringBuilder();
-		
-		Configuration config = KnowledgeBaseFactory.getDefaultConfiguration();
-		
-		switch( evaluationStrategy )
-		{
-		case 1:
-			output.append( "Naive evaluation" ).append( NEW_LINE );
-			config.ruleEvaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
-			break;
-		
-		default:
-		case 2:
-			output.append( "Semi-naive evaluation" ).append( NEW_LINE );
-			break;
-		
-		}
-
-		IKnowledgeBase knowledgeBase = KnowledgeBaseFactory.createKnowledgeBase( facts, rules, config );
-		
-		List<IVariable> variableBindings = new ArrayList<IVariable>();
-
-		// Execute the query
-		long queryDuration = -System.currentTimeMillis();
-		IRelation results = knowledgeBase.execute( query, variableBindings );
-		queryDuration += System.currentTimeMillis();
-
-		if( SHOW_VARIABLE_BINDINGS && results != null )
-		{
-			boolean first = true;
-			for( IVariable variable : variableBindings )
-			{
-				if( first )
-					first = false;
-				else
-					output.append( ", " );
-				output.append( variable );
-			}
-			output.append( NEW_LINE );
-		}
-		
-		if( results != null )
-			formatResults( output, results );
-
-		if( SHOW_ROW_COUNT || SHOW_QUERY_TIME )
-			output.append( "-----------------" ).append( NEW_LINE );
-		if( SHOW_ROW_COUNT && results != null )
-			output.append( "Rows: " ).append( results.size() ).append( NEW_LINE );
-		if( SHOW_QUERY_TIME )
-			output.append( "Time: " ).append( queryDuration ).append( "ms" ).append( NEW_LINE );
-
-		System.out.println( output.toString() );
-	}
-	
-	public static void formatResults( StringBuilder builder, IRelation m )
-	{
-		for(int t = 0; t < m.size(); ++t )
-		{
-			ITuple tuple = m.get( t );
-			builder.append( tuple.toString() ).append( NEW_LINE );
-		}
-    }
 }
