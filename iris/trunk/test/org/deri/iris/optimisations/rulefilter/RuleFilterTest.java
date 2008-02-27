@@ -1,11 +1,36 @@
-package org.deri.iris.optimisations;
+/*
+ * Integrated Rule Inference System (IRIS):
+ * An extensible rule inference system for datalog with extensions by 
+ * built-in predicates, default negation (under well-founded semantics), 
+ * function symbols and contexts. 
+ * 
+ * Copyright (C) 2006  Digital Enterprise Research Institute (DERI), 
+ * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
+ * A-6020 Innsbruck. Austria.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
+package org.deri.iris.optimisations.rulefilter;
 
 import java.util.HashSet;
 
 import org.deri.iris.api.basics.IRule;
 
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.optimisations.RuleFilter;
+//import org.deri.iris.optimisations.RuleFilter;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -56,7 +81,7 @@ public class RuleFilterTest extends TestCase {
 				RuleFilter.shrinkRules(rulesParser.getRules(), 
 					resultParser.getQueries().get(0)));
 	}
-	
+
 	public void testShrinkRulesR0() throws Exception {
 		final String query_and_result = "?- r0('john', ?Y).\n"
 				+ "r0(?X, ?Y) :- r11(?X, ?Y).\n"
@@ -78,12 +103,12 @@ public class RuleFilterTest extends TestCase {
 				+ "s31(?X, ?Y, ?R) :-  s0(?Z,?Z), s21(?X), s31(?Z, ?Z, ?X).\n";
 		assertResult(query_and_result);
 	}
-	
+
 	public void testShrinkRulesR0_empty() throws Exception {
 		final String query_and_result = "?- r0(?X, ?Y, ?Z, ?D).\n";
 		assertResult(query_and_result);
 	}
-	
+
 	public void testShrinkRulesS21_R23_S12() throws Exception {
 		final String query_and_result = "?- s21(?X), r23(?P, ?Q), s12(?Q).\n"
 				+ "r11(?X, ?Y) :- r21(?X), r22(?Y), r23(?X,?Y).\n"
@@ -93,8 +118,8 @@ public class RuleFilterTest extends TestCase {
 				+ "s21(?X) :- s21(?X).\n";
 		assertResult(query_and_result);
 	}
-	
-	public void testExtractRelevantRulesForEvaluationQ5() throws Exception {
+
+	public void testShrinkRulesT0() throws Exception {
 		final String query_and_result = "?- t0(?X)\n."
 				+ "t0(?X) :-  t11(?Z,?Z).\n"
 				+ "t11(?X,?Z) :-  t21a(?X), t22a(?X), t23a(?X), t24a(?Z).\n"
