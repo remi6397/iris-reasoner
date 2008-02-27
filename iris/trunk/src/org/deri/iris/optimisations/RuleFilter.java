@@ -24,12 +24,14 @@
  * MA  02110-1301, USA.
  */
 
-package org.deri.iris.evaluation_old.common;
+package org.deri.iris.optimisations;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.deri.iris.api.IProgramOptimisation;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -38,18 +40,19 @@ import org.deri.iris.api.graph.IPredicateGraph;
 
 /**
  * <p>
- * A class for collecting some functionality that might be helpful for various
- * evaluation methods.
- * </p>
- * <p>
- * $Id: EvaluationUtilities.java,v 1.6 2007-10-30 10:35:49 poettler_ric Exp $
+ * Methods to shrink rules to the absolute minimum of needed rules.
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @author uwekel
- * @version $Revision: 1.6 $
  */
-public class EvaluationUtilities {
+public class RuleFilter implements IProgramOptimisation {
+
+	public Result optimise(final Collection<IRule> rules, final IQuery query) {
+		final Result result = new Result();
+		result.query = query;
+		result.rules = new ArrayList<IRule>(shrinkRules(rules, query));
+		return result;
+	}
 
 	/**
 	 * Shrinks a set of rules to the absolute minimum of needed rules to
