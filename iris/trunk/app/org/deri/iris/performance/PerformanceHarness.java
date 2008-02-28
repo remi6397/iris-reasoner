@@ -92,7 +92,7 @@ public class PerformanceHarness
 		 */
 		Program( String filename ) throws IOException, ParserException, EvaluationException
 		{
-			Parser parser = new Parser();
+			mParser = new Parser();
 			
 			FileReader r = new FileReader( filename );
 			
@@ -105,16 +105,7 @@ public class PerformanceHarness
 			}
 			mProgram = builder.toString();
 			
-			parser.parse( mProgram );
-			
-			mKB = KnowledgeBaseFactory.createKnowledgeBase( parser.getFacts(), parser.getRules() );
-			
-			List<IQuery> queries = parser.getQueries();
-			
-			if( queries.size() != 1 )
-				throw new RuntimeException( "The input program must contain exactly one query." );
-			
-			mQuery = queries.get( 0 );
+			mParser.parse( mProgram );
 		}
 		
 		/**
@@ -125,8 +116,15 @@ public class PerformanceHarness
 		 */
 		long execute() throws EvaluationException
 		{
+			List<IQuery> queries = mParser.getQueries();
+			
+			if( queries.size() != 1 )
+				throw new RuntimeException( "The input program must contain exactly one query." );
+			
+			IQuery query = queries.get( 0 );
 			long elapsedTime = -System.currentTimeMillis();
-			mKB.execute( mQuery );
+			final IKnowledgeBase mKB = KnowledgeBaseFactory.createKnowledgeBase( mParser.getFacts(), mParser.getRules() );
+			mKB.execute( query );
 			elapsedTime += System.currentTimeMillis();
 
 			return elapsedTime;
@@ -144,11 +142,13 @@ public class PerformanceHarness
 		/** The program in human-readable form. */
 		private final String mProgram;
 		
+		private final Parser mParser;
+		
 		/** The knowledge base. */
-		private final IKnowledgeBase mKB;
+//		private final IKnowledgeBase mKB;
 		
 		/** The query to run against the knowledge base. */
-		private final IQuery mQuery;
+//		private final IQuery mQuery;
 	}
 	
 	/**
