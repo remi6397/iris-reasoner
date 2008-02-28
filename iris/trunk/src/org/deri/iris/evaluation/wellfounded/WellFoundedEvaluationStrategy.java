@@ -176,23 +176,21 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 
 	public IRelation evaluateQuery( IQuery query, List<IVariable> outputVariables ) throws EvaluationException
 	{
-		IRelation result = null;
-		
-		if( query != null )
-		{
-			RuleCompiler compiler = new RuleCompiler( mFacts, mConfiguration );
-	
-			ICompiledRule compiledQuery = compiler.compile( query );
-	
-			result = compiledQuery.evaluate();
-	
-			if( outputVariables != null )
-			{
-				outputVariables.clear();
-				outputVariables.addAll( compiledQuery.getVariablesBindings() );
-			}
-		}
-		
+		if( query == null )
+			throw new IllegalArgumentException( "StratifiedBottomUpEvaluationStrategy.evaluateQuery() - query must not be null." ); 
+
+		if( outputVariables == null )
+			throw new IllegalArgumentException( "StratifiedBottomUpEvaluationStrategy.evaluateQuery() - outputVariables must not be null." ); 
+
+		RuleCompiler compiler = new RuleCompiler( mFacts, mConfiguration );
+
+		ICompiledRule compiledQuery = compiler.compile( query );
+
+		IRelation result = compiledQuery.evaluate();
+
+		outputVariables.clear();
+		outputVariables.addAll( compiledQuery.getVariablesBindings() );
+
 		return result;
 	}
 

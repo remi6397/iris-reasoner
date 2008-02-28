@@ -33,6 +33,7 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.IEvaluationStrategy;
+import org.deri.iris.evaluation.OptimisedProgramStrategyAdaptor;
 import org.deri.iris.facts.Facts;
 import org.deri.iris.facts.FactsWithExternalData;
 import org.deri.iris.facts.IFacts;
@@ -75,12 +76,50 @@ public class KnowledgeBase implements IKnowledgeBase
 		
 		mFacts = facts;
 		
-		mEvaluationStrategy = mConfiguration.evaluationStrategyFactory.createEvaluator( facts, rules, configuration );
+		if( mConfiguration.programOptmimisers.size() > 0 )
+			mEvaluationStrategy = new OptimisedProgramStrategyAdaptor( facts, rules, mConfiguration );
+		else
+			mEvaluationStrategy = mConfiguration.evaluationStrategyFactory.createEvaluator( facts, rules, configuration );
+		
+		// Check if the debug environment variable is set.
+		DEBUG = System.getenv( IRIS_DEBUG_FLAG ) != null;
+		
+		if( DEBUG )
+		{
+			System.out.println( "IRIS knowledge-base init" );
+			System.out.println( "========================" );
+			for( IRule rule : rules )
+				System.out.println( rule );
+			System.out.println( "------------------------" );
+			System.out.println( mFacts );
+		}
 	}
 	
 	public IRelation execute( IQuery query, List<IVariable> variableBindings ) throws EvaluationException
 	{
-		return mEvaluationStrategy.evaluateQuery( query, variableBindings );
+		if( query == null )
+			throw new IllegalArgumentException( "KnowledgeBase.execute() - the query is null." );
+		
+		// This prevents every strategy having to check for this.
+		if( variableBindings == null )
+			variableBindings = new ArrayList<IVariable>();
+		
+		if( DEBUG )
+		{
+			System.out.println( "IRIS query" );
+			System.out.println( "==========" );
+			System.out.println( query );
+		}
+		
+		IRelation result = mEvaluationStrategy.evaluateQuery( query, variableBindings );
+		
+		if( DEBUG )
+		{
+			System.out.println( "------------" );
+			System.out.println( result );
+		}
+		
+		return result;
 	}
 
 	public IRelation execute( IQuery query ) throws EvaluationException
@@ -96,8 +135,21 @@ public class KnowledgeBase implements IKnowledgeBase
 	@Override
     public String toString()
     {
-	    return mRules.toString() + mFacts.toString();
+		StringBuilder result = new StringBuilder();
+		
+		for( IRule rule : mRules )
+			result.append( rule.toString() );
+		
+		result.append( mFacts.toString() );
+		
+	    return result.toString();
     }
+	
+	/** Debug flag. */
+	private final boolean DEBUG;
+	
+	/** The debug environment variable. */
+	private static final String IRIS_DEBUG_FLAG = "IRIS_DEBUG";
 
 	/** The facts of the knowledge-base. */
 	private final IFacts mFacts;
