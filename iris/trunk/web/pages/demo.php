@@ -30,8 +30,8 @@ isMale(?y) :- hasSon(?x,?y).
 ?-isMale(?x).</textarea><br/>
         <p style="margin-top:0px;margin-bottom:5px;">evaluation method: 
 	<select name="method">
-		<option value="2">semi-naive</option>
-	 	<option value="1">naive</option>
+	 	<option value="1">standard</option>
+		<option value="2">well-founded</option>
 	</select>
 	<input type="submit" value="Submit Query"></p>
 </form>
