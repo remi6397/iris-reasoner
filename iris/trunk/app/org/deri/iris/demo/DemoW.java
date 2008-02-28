@@ -41,7 +41,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.deri.iris.Configuration;
 import org.deri.iris.KnowledgeBaseFactory;
-import org.deri.iris.ProgramExecutor;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
 import org.deri.iris.optimisations.rulefilter.RuleFilter;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;

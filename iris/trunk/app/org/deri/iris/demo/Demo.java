@@ -27,7 +27,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import org.deri.iris.Configuration;
 import org.deri.iris.KnowledgeBaseFactory;
-import org.deri.iris.ProgramExecutor;
 import org.deri.iris.evaluation.naive.NaiveEvaluatorFactory;
 import org.deri.iris.evaluation.seminaive.SemiNaiveEvaluatorFactory;
 import org.deri.iris.evaluation.stratifiedbottomup.StratifiedBottomUpEvaluationStrategyFactory;
