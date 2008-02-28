@@ -41,6 +41,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
 import org.deri.iris.optimisations.MagicSetImpl;
+import org.deri.iris.optimisations.rulefilter.RuleFilter;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 
 /**
@@ -358,7 +359,8 @@ public class DemoW
 				break;
 				
 			case 1:
-				config.programOptmimisers.add( new MagicSetImpl() );
+				config.programOptmimisers.add( new RuleFilter() );
+//				config.programOptmimisers.add( new MagicSetImpl() );
 				break;
 			}
 

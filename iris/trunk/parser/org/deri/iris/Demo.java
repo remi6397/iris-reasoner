@@ -23,71 +23,153 @@
  */
 package org.deri.iris;
 
+import java.io.FileReader;
+import java.io.IOException;
 import org.deri.iris.evaluation.naive.NaiveEvaluatorFactory;
+import org.deri.iris.evaluation.seminaive.SemiNaiveEvaluatorFactory;
+import org.deri.iris.evaluation.stratifiedbottomup.StratifiedBottomUpEvaluationStrategyFactory;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
 import org.deri.iris.optimisations.MagicSetImpl;
+import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
+import org.deri.iris.rules.safety.StandardRuleSafetyProcessor;
 
 /**
  * A command line demonstrator for IRIS.
  */
 public class Demo
 {
+	public static final String STRATIFIED = "stratified";
+	public static final String WELL_FOUNDED = "well-founded";
+
+	public static final String NAIVE = "naive";
+	public static final String SEMI_NAIVE = "semi-naive";
+
+	public static final String SAFE_RULES = "safe-rules";
+	public static final String UNSAFE_RULES = "unsafe-rules";
+
+	public static final String MAGIC_SETS = "magic-sets";
+
+	public static final String TIMEOUT = "timeout";
+
+	public static final String PROGRAM = "program";
+	public static final String PROGRAM_FILE = "program-file";
+	
+	private static void usage()
+	{
+		String space = "    ";
+		
+		System.out.println(); 
+		System.out.println( "Usage: java org.deri.iris.Demo <ARGUMENTS>" );
+		System.out.println(); 
+		System.out.println( "where <ARGUMENTS> is made up of:" ); 
+		System.out.println( space + PROGRAM + "=<datalog program>" ); 
+		System.out.println( space + PROGRAM_FILE+ "=<filename containing datalog program>" ); 
+		System.out.println( space + TIMEOUT + "=<timeout in miliseconds> (default is to run forever)" ); 
+		System.out.println( space + STRATIFIED + "* (to use the stratified evaluation strategy)" ); 
+		System.out.println( space + WELL_FOUNDED + " (to use the well-founded evaluation strategy)" ); 
+		System.out.println( space + NAIVE + " (to use naive rule evaluation)" ); 
+		System.out.println( space + SEMI_NAIVE + "* (to use semi-naive rule evaluation)" ); 
+		System.out.println( space + SAFE_RULES + "* (to allow only safe rules)" ); 
+		System.out.println( space + UNSAFE_RULES + " (to process unsafe rules)" ); 
+		System.out.println( space + MAGIC_SETS + " (to use magic sets and rule-filtering optimisations)" ); 
+		System.out.println( "(*=default)" );
+		
+		System.exit( 1 );
+	}
+	
+	private static boolean startsWith( String argument, String token )
+	{
+		if( argument.length() < token.length() )
+			return false;
+		
+		String start = argument.substring( 0, token.length() );
+		
+		return start.equalsIgnoreCase( token );
+	}
+	
+	private static String getParameter( String argument )
+	{
+		int equals = argument.indexOf( '=' );
+		
+		if( equals >= 0 )
+		{
+			return argument.substring( equals + 1 );
+		}
+		
+		return null;
+	}
+	
+	private static final String loadFile( String filename ) throws IOException
+	{
+		FileReader r = new FileReader( filename );
+		
+		StringBuilder builder = new StringBuilder();
+		
+		int ch = -1;
+		while( ( ch = r.read() ) >= 0 )
+		{
+			builder.append( (char) ch );
+		}
+		return builder.toString();
+	}
+
 	/**
 	 * Entry point.
 	 * @param args program evaluation_method
+	 * @throws Exception 
 	 */
 	public static void main( String[] args )
 	{
-		if ( args.length < 1 )
+		String program = null;
+		
+		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
+		
+		for( String argument : args )
 		{
-			System.out.println( "Usage: java org.deri.iris.Demo <datalog_program> [1|2] max_evaluation_time(ms) [s|w] [m]" );
-			System.out.println( "where 1=naive, 2=semi-naive*" ); 
-			System.out.println( "      s=stratified*, w=well-founded semantics" ); 
-			System.out.println( "      m=magic sets" ); 
-			System.out.println( "*=default" ); 
+			if( startsWith( argument, PROGRAM_FILE ) )
+			{
+				String filename = getParameter( argument );
+				try
+				{
+					program = loadFile( filename );
+				}
+				catch( Exception e )
+				{
+					System.out.println( "Unable to load input file '" + filename + "': " + e.getMessage() );
+					System.exit( 2 );
+				}
+			}
+			else if( startsWith( argument, PROGRAM ) )
+				program = getParameter( argument );
+			else if( startsWith( argument, TIMEOUT ) )
+				configuration.evaluationTimeoutMilliseconds = Integer.parseInt( getParameter( argument ) );
+			else if( startsWith( argument, STRATIFIED ) )
+				configuration.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory();
+			else if( startsWith( argument, WELL_FOUNDED ) )
+				configuration.evaluationStrategyFactory = new WellFoundedEvaluationStrategyFactory();
+			else if( startsWith( argument, NAIVE ) )
+				configuration.ruleEvaluatorFactory = new NaiveEvaluatorFactory();
+			else if( startsWith( argument, SEMI_NAIVE ) )
+				configuration.ruleEvaluatorFactory = new SemiNaiveEvaluatorFactory();
+			else if( startsWith( argument, SAFE_RULES ) )
+				configuration.ruleSafetyProcessor = new StandardRuleSafetyProcessor();
+			else if( startsWith( argument, UNSAFE_RULES ) )
+				configuration.ruleSafetyProcessor = new AugmentingRuleSafetyProcessor();
+			else if( startsWith( argument, MAGIC_SETS ) )
+			{
+//				configuration.programOptmimisers.add( new RuleFilteringOptimiser() );
+				configuration.programOptmimisers.add( new MagicSetImpl() );
+			}
+			else
+				usage();
 		}
-		else
-		{
-			// Arg 0 - program
-			String program = args[ 0 ];
-			
-			Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
-			
-			// Arg 1 - rule evaluator
-			if( args.length >= 2 )
-			{
-				int eval = Integer.parseInt( args[ 1 ] );
-				if( eval == 1 )
-					configuration.ruleEvaluatorFactory = new NaiveEvaluatorFactory();
-			}
+		
+		if( program == null )
+			usage();
+		
+		System.out.println(); 
 
-			// Arg 2 - time out
-			int maxTime = 30000;
-			if( args.length >= 3 )
-			{
-				maxTime = Integer.parseInt( args[ 2 ] );
-			
-				if ( maxTime < 1 )
-					maxTime = 10000;
-			}
-			configuration.evaluationTimeoutMilliseconds = maxTime;
-			
-			// Arg 3 - strategy
-			if( args.length >= 4 )
-			{
-				if( args[ 3 ].compareToIgnoreCase( "w" ) == 0 )
-					configuration.evaluationStrategyFactory = new WellFoundedEvaluationStrategyFactory();
-			}
-			
-			// Arg 4 - strategy
-			if( args.length >= 5 )
-			{
-				if( args[ 4 ].compareToIgnoreCase( "m" ) == 0 )
-					configuration.programOptmimisers.add( new MagicSetImpl() );
-			}
-
-			execute( program, configuration );
-		}
+		execute( program, configuration );
 	}
 	
 	public static void execute( String program, Configuration configuration )
