@@ -4,21 +4,31 @@
 	reasoning engine for expressive rule-based languages. 
 	Currently IRIS supports the following features:
 	<ul>
-		<li>Safe datalog with (locally) stratified 'negation as failure'</li>
-		<li>Function symbols</li>
-		<li>Detection of un-safe rules <a href="/saferules">(algorithm description here)</a></li>
-		<li>Detection of non-stratified programs with negation <a href="/stratification">(algorithm descriptions here)</a></li>
-		<li>Extended and extensible set of built-in predicates</li>
-		<li>Support for all the XML schema data types</li>
+		<li>Safe datalog <a href="/saferules">(un-safe rule algorithm here)</a></li>
+		<li>or unsafe rules using Gelder style rule augmentation</li>
+		<li>with (locally) stratified 'negation as failure' <a href="/stratification">(stratification algorithms here)</a></li>
+		<li>or un-stratified negation using well-founded semantics</li>
+		<li>function symbols</li>
+		<li>extended and extensible set of built-in predicates</li>
+		<li>support for all the primitive XML schema data types</li>
 	</ul>
 </p>
 
 <p>
-	The following evaluation strategies are currently supported: 
+	The following bottom-up rule evaluation algorithms are currently supported: 
 	<ul>
 		<li>Naive</li>
 		<li>Semi-naive</li>
-		<li>Semi-naive with magic sets and sideways information passing strategy (SIPS)</li>
+	</ul>
+	The following program evaluation strategies are currently supported: 
+	<ul>
+		<li>Stratified bottom-up</li>
+		<li>Well-founded semantics using alternating fixed point</li>
+	</ul>
+	The following program optimisations are currently supported: 
+	<ul>
+		<li>Rule filtering (removing rules that do not contribute to answering a query)</li>
+		<li>Magic sets and sideways information passing strategy (SIPS)</li>
 	</ul>
 </p>
 
@@ -63,7 +73,7 @@
 				This is an interim release to fix an important bug in the rule compiler
 				and also offer greater flexibility in rule format using:<br />
 				<ul>
-					<li>constructed terms with equality, inequality and assignment</li>
+					<li>constructed terms with equality and inequality (unification)</li>
 					<li>positioning of negated ordinary predicates</li>
 				</ul>
 				The magic sets optimisation is still disabled for this release.
