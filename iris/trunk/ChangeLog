@@ -1,6 +1,27 @@
 The IRIS ChangeLog:
 ===================
 
+Changes for release 0.57
+========================
+
+New features
+1903521 Implement a well-founded semantics evaluation strategy.
+
+Bug fixes
+1899920 Evaluation bug - Index out of sync with View
+1829204 Repeated literal in query fails with magic sets
+
+Maintenance
+1887879 Move Demo and DemoW into the app source directory.
+1886938 Add "boolean contains( ITuple t )" to IRelation.
+1867705 Create an interface for rule transformation algorithms
+1894670 Move rule safety processing from RuleBase to separate class.
+1893555 Treat '=' as unification
+
+Known Problems
+1884378 Reintroduce magic sets and predicate filtering optimisations
+
+
 Changes for release 0.56
 ========================
 
