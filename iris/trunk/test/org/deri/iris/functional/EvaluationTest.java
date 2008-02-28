@@ -788,6 +788,25 @@ public class EvaluationTest extends TestCase
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}	
 	
+	/**
+	 * This reproduces bug: 1829204 Repeated literal in query fails with magic sets
+	 * @throws Exception
+	 */
+	public void testMagic3() throws Exception
+	{
+		String program = 
+			"a(?X, ?Y) :- a(?Y, ?X)." +
+			"?- a(1, ?X)." +
+			"a(1, 2)." +
+			"a(3, 1).";
+		
+		String expectedResults =
+			"dummy(2).dummy(3).";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+	
+	
 	public void testIncompatibaleAssignments() throws Exception
 	{
 		String program = 
