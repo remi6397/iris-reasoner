@@ -55,9 +55,22 @@ public class DemoTest extends TestCase
     	helperExecuteProgram( program );
 	}
 
+	public void testProgramwithTwoQueries() throws Exception
+	{
+    	String program = 
+		    "p(1)." +
+		    "p(2)." +
+		    
+		    "q(?X) :- p(?X)." +
+		    "?- p(?x)." +
+    		"?- q(?x).";
+    	
+    	helperExecuteProgram( program );
+	}
+
 	private void helperExecuteProgram( String program ) throws Exception
 	{
-    	Demo.main( new String[]{ program, "2", "1000" } );
+    	Demo.main( new String[]{ Demo.PROGRAM + "=" + program, Demo.UNSAFE_RULES, Demo.WELL_FOUNDED } );
     	Demo.execute( program, KnowledgeBaseFactory.getDefaultConfiguration() );
 	}
 }
