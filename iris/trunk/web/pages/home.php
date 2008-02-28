@@ -64,6 +64,22 @@
 	<tr valign=top>
 		<td width=150>
 			<p align=left>
+				28 Feb 2008
+			</p>
+		</td>
+		<td>
+			<p align=left>
+				IRIS <a href="download#v0_5_7">version 0.5.7</a> released.<br />
+				This release introduces the first version of an alternating fixed point method
+				to compute the well-founded model.<br />
+				Also included is a fix for an important bug in rule evaluation.<br />
+				The magic sets optimisation is still disabled for this release.<br />
+			</p>
+		</td>
+	</tr>
+	<tr valign=top>
+		<td width=150>
+			<p align=left>
 				13 Feb 2008
 			</p>
 		</td>

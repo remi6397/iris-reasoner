@@ -7,6 +7,35 @@
 
 <h2>Release History</h2>
 
+<p><b><a id="v0_5_7" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=580282">v0.5.7</a></b> 2008-02-28</p>
+
+<p>New features</p>
+<ul>
+	<li>1903521 Implement a well-founded semantics evaluation strategy.</li>
+</ul>
+
+<p>Bug fixes</p>
+<ul>
+	<li>1899920 Evaluation bug - Index out of sync with View</li>
+	<li>1829204 Repeated literal in query fails with magic sets</li>
+</ul>
+
+<p>Maintenance updates</p>
+<ul>
+	<li>1887879 Move Demo and DemoW into the app source directory.</li>
+	<li>1886938 Add "boolean contains( ITuple t )" to IRelation.</li>
+	<li>1867705 Create an interface for rule transformation algorithms</li>
+	<li>1894670 Move rule safety processing from RuleBase to separate class.</li>
+	<li>1893555 Treat '=' as unification</li>
+</ul>
+
+<p>Known problems</p>
+<ul>
+	<li>1884378 Reintroduce magic sets and predicate filtering optimisations</li>
+</ul>
+
+
+
 <p><b><a id="v0_5_6" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=576174">v0.5.6</a></b> 2008-02-13</p> 
 <p>Maintenance</p>
 <ul>
