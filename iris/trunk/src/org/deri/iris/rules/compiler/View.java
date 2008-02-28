@@ -226,11 +226,7 @@ public class View implements IRelation
 	@Override
     public String toString()
     {
-		StringBuilder result = new StringBuilder();
-
-		result.append( "View [" ).append( mViewCriteria ).append( "] => " ).append( mViewTuples );
-
-	    return result.toString();
+		return mViewTuples.toString();
     }
 
 	/** The filtered view of the relation. */
