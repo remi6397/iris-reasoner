@@ -36,6 +36,8 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
+import org.deri.iris.optimisations.MagicSetImpl;
+import org.deri.iris.optimisations.rulefilter.RuleFilter;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 import org.deri.iris.storage.IRelation;
 
@@ -77,6 +79,7 @@ public class Helper
 		evaluateSemiNaive( program, expectedResults );
 		evaluateUnsafeRules( program, expectedResults );
 		evaluateWellFounded( program, expectedResults );
+		evaluateSemiNaiveAndOptimisations( program, expectedResults );
 	}
 	
 	public static void evaluateNotOptimised( String program, String expectedResults ) throws Exception
@@ -113,7 +116,7 @@ public class Helper
 		
 		configuration.ruleSafetyProcessor = new AugmentingRuleSafetyProcessor();
 		
-		executeAndCheckResults( program, expectedResults, configuration, "Semi-Naive" );
+		executeAndCheckResults( program, expectedResults, configuration, "Semi-Naive with unsafe-rules" );
 	}
 	
 	public static void evaluateWellFounded( String program, String expectedResults ) throws Exception
@@ -125,6 +128,16 @@ public class Helper
 		configuration.stratifiers.clear();
 		
 		executeAndCheckResults( program, expectedResults, configuration, "Well-founded semantics and unsafe rules" );
+	}
+	
+	public static void evaluateSemiNaiveAndOptimisations( String program, String expectedResults ) throws Exception
+	{
+		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
+		
+		configuration.programOptmimisers.add( new RuleFilter() );
+//		configuration.programOptmimisers.add( new MagicSetImpl() );
+
+		executeAndCheckResults( program, expectedResults, configuration, "Semi-Naive and Magic Sets" );
 	}
 	
 	private static void executeAndCheckResults( String program, String expected, Configuration configuration, String evaluationName ) throws Exception
@@ -139,13 +152,16 @@ public class Helper
 		if( queries.size() == 1 )
 			query = queries.get( 0 );
 		
-		// Execute the program with naive
-
-		IKnowledgeBase kb = KnowledgeBaseFactory.createKnowledgeBase( parser.getFacts(), parser.getRules(), configuration );
-
 		Timer timer = new Timer();
+
+		// Instantiate the knowledge-base
+		IKnowledgeBase kb = KnowledgeBaseFactory.createKnowledgeBase( parser.getFacts(), parser.getRules(), configuration );
 		
-		IRelation actualResults = kb.execute( query );
+		// Execute the query
+		IRelation actualResults = null;
+		
+		if( query != null )
+			actualResults = kb.execute( query );
 		
 		timer.show( evaluationName + " evaluation" );
 
