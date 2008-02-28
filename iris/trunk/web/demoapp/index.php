@@ -65,7 +65,10 @@ if ($program==""){
 	} else {
 		$cp = "$libcp:".getCP($PATH);
 	}
-	$exec_string = "java -cp ".escapeshellarg($cp). " org.deri.iris.Demo ". escapeshellarg ($program) ." ".escapeshellarg ($method) ."  30000";
+	if($method==1)
+		$exec_string = "java -cp ".escapeshellarg($cp). " org.deri.iris.demo.Demo program=". escapeshellarg ($program) ."  timeout=30000";
+	else
+		$exec_string = "java -cp ".escapeshellarg($cp). " org.deri.iris.demo.Demo program=". escapeshellarg ($program) ."  timeout=30000 unsafe-rules well-founded";
 	#echo $exec_string;
 	$result = exec($exec_string,$output);
 	echo "<pre style=\"background-color:#eee;\">";
