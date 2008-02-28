@@ -4,8 +4,6 @@
 
 \title{IRIS - Integrated Rule Inference System - API and User Guide}
 
-\author{Richard P\"ottler}
-
 \begin{document}
 
 \maketitle
@@ -403,21 +401,50 @@ javadoc\footnote{http://www.iris-reasoner.org/snapshot/javadoc/}.
 \subsection{Creating objects using the parser}
 \label{parser}
 
-Instead of creating the java objects by hand, you could also use the \\
-\verb|org.deri.iris.compiler.Paser| to parse a datalog program. The grammar
-used by the parser is described in the grammar guide.
+Instead of creating the java objects by hand, the
+\verb|org.deri.iris.compiler.Parser| can be used to parse a datalog program.
+The grammar used by the parser is described in the grammar guide.
 
 \subsection{Evaluating a program}
 
-% will be written after the api change
+After a the components of a logic program have been created, either step by step using the API factories or using the parser,
+a knowledge base can be created and queries evaluated by following these steps:
+\begin{description}
+  \item[Choose a configuration] A default configuration object can be obtained from the KnowledgeBaseFactory class.
+  Modify this object to change the KnowledgeBase behaviour.
+  \item[Instantiate a KnowledgeBase] Pass the configuration object, starting facts and rules to the KnowledgeBaseFactory.createKnowledgeBase() method.
+  \item[Execute queries] After initialisation queries can be executed against the KnowledgeBase by calling execute(). Two variations of this method are available. The first one just accepts a query and the second accepts a query and an array for variable bindings. This second method can be useful if the query is complex and the order of variables is not obvious.
+\end{description}
+
+\subsubsection{Configuration}
+IRIS can be configured at the point where a knowledge-base is created.
+All configuration parameters are collected together in a single configuration class that is passed to the knowledge-base factory,
+thus allowing a highly flexible combination of standard and user-provided components.
+
+The configuration class contains these categories of parameters:
+
+\begin{description}
+  \item [factories] for evaluation strategies, rule compilers, rule evaluators, relations and indexes.
+  \item [termination parameters] for termination conditions (time out, maximum tuples, maximum complexity)
+  \item [numerical behaviour] significant bits of floating point precision for comparison, divide by zero behaviour
+  \item [external data sources] collection of external data source objects
+  \item [optimisers] collections of program optimisers, rule optimisers and a rule re-ordering optimiser
+  \item [stratifiers] collection of rule stratifiers
+  \item [rule-safety processor] for detecting unsafe rules or making unsafe rules safe
+\end{description}
 
 
 \section{Plug in External Datasources}
+IRIS allows the user to reason with data stored outside of the reasoner,
+i.e. not passed in at the point where the KnowledgeBase is instantiated.
+To use an external data source, simply create a class that implements the
+\verb|org.deri.iris.api.storage.IDataSource| interface and add an instance of
+this class to the \verb|externalDataSources| list in the \verb|Configuration| object
+prior to instantiating the \verb|KnowledgeBase|.
 
-To plug in an external data source implement the
-\verb|org.deri.iris.api.storage.IDataSource| interface and add a instance of
-this class to the \verb|externalDataSources| list in the \verb|Configuration| of
-the \verb|KnowledgeBase| where you want to use it.
+This approach allows the data to be stored in any format.
+The user-defined external data source is simply required to answer requests from the reasoner
+to provide tuples for predicates as and when they are needed during query evaluation.
 
 
 \pagebreak
