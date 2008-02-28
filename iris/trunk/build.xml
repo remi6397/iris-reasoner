@@ -35,6 +35,17 @@
 		</javac>
 	</target>
 
+	<target name="compile_app" description="compiles all the application class files" depends="init,prepareappclasses">
+		<javac srcdir="${dir.src.app}" destdir="${dir.app.classes}" deprecation="on">
+			<classpath>
+				<pathelement path="${file.jar.main}" />
+				<pathelement path="${file.jar.parser}" />
+				<path refid="defaultcp" />
+			</classpath>
+			<include name="**/*.java" />
+		</javac>
+	</target>
+
 	<target name="parser" description="creates the parser jar" depends="init,jar,preparesablecc">
 		<!-- generate the parser classes -->
 		<sablecc src="${dir.sablecc.grammar}" outputdirectory="${dir.sablecc.src}">
@@ -164,7 +175,11 @@
 		<jar basedir="${dir.classes}" destfile="${file.jar.main}" index="true" />
 	</target>
 
-	<target name="release" description="packs the release archives" depends="preparerelease,jar,parser,doc">
+	<target name="appjar" description="creates the application jar file" depends="jar,parser,compile_app,init,preparejar">
+		<jar basedir="${dir.app.classes}" destfile="${file.jar.app}" index="true" />
+	</target>
+
+	<target name="release" description="packs the release archives" depends="preparerelease,jar,parser,appjar,doc">
 		<zip destfile="${file.src.zip}">
 			<zipfileset dir="${dir.src}">
 				<include name="**/*.java" />
@@ -239,6 +254,10 @@
 
 	<target name="prepareclasses" depends="init">
 		<mkdir dir="${dir.classes}" />
+	</target>
+
+	<target name="prepareappclasses" depends="init">
+		<mkdir dir="${dir.app.classes}" />
 	</target>
 
 	<target name="preparedoc" depends="init">
