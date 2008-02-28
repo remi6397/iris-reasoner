@@ -12,6 +12,7 @@
 <p>New features</p>
 <ul>
 	<li>1903521 Implement a well-founded semantics evaluation strategy.</li>
+	<li>1904010 Allow unsafe-rules by implementing a rule augmentation step.</li>
 </ul>
 
 <p>Bug fixes</p>

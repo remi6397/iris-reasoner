@@ -6,6 +6,7 @@ Changes for release 0.57
 
 New features
 1903521 Implement a well-founded semantics evaluation strategy.
+1904010 Allow unsafe-rules by implementing a rule augmentation step.
 
 Bug fixes
 1899920 Evaluation bug - Index out of sync with View
