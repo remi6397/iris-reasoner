@@ -48,6 +48,7 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.optimisations.AdornedProgram.AdornedPredicate;
+import org.deri.iris.compiler.ParserException;
 
 /**
  * <p>
@@ -160,16 +161,28 @@ public class MagicTest extends TestCase {
 	}
 
 	/**
+	 * Parses a program and returns the result of the magic sets
+	 * transformation.
+	 * @param s the program to parse
+	 * @return the transformation result
+	 */
+	private static Result getResult(final String s) throws ParserException {
+		assert s != null: "The string to parse must not be null";
+
+		final Parser p = new Parser();
+		p.parse(s);
+		final IQuery q = p.getQueries().iterator().next();
+		return (new MagicSetImpl()).optimise(p.getRules(), q);
+	}
+
+	/**
 	 * Tests whether the seed was constructed as it should be.
 	 */
 	public void testMagic0() throws Exception {
 		final String prog = "sg(?X, ?Y) :- flat(?X, ?Y)."
 					      + "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y)."
 					      + "?- sg('john', ?Y).";
-		final Parser p = new Parser();
-		p.parse(prog);
-		final IQuery q = p.getQueries().iterator().next();
-		final Result result = (new MagicSetImpl()).optimise(p.getRules(), q);
+		final Result result = getResult(prog);
 
 		final List<IRule> ref = new ArrayList<IRule>();
 
@@ -227,10 +240,7 @@ public class MagicTest extends TestCase {
 		final String prog = "a(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z)." 
 						   + "a(?X, ?Y, ?Z) :- b(?X, ?A), a(?X, ?A, ?B), c(?B, ?Y, ?Z)."
 						   + "?- a('john', 'mary', ?Y).";
-		final Parser p = new Parser();
-		p.parse(prog);
-		final IQuery q = p.getQueries().iterator().next();
-		final Result result = (new MagicSetImpl()).optimise(p.getRules(), q);
+		final Result result = getResult(prog);
 
 		final List<IRule> ref = new ArrayList<IRule>();
 
@@ -294,10 +304,8 @@ public class MagicTest extends TestCase {
 		final String prog = "a(?X, ?Y) :- b(?X, ?Z), c('a', ?Z, ?Y). \n" + 
 			"c(?X, ?Y, ?Z) :- x(?X, ?Y, ?Z). \n" + 
 			"?-a('john', ?Y).";
-		final Parser p = new Parser();
-		p.parse(prog);
 
-		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
+		final Result result = getResult(prog);
 
 		final ITerm a = TERM.createString("a");
 		final ITerm X = TERM.createVariable("X");
@@ -339,11 +347,8 @@ public class MagicTest extends TestCase {
 			"p(?X) :- r(?X).\n" + 
 			"r(?X) :- t(?X).\n" + 
 			"?- q(?X).";
-		final Parser p = new Parser();
-		p.parse(prog);
 
-		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
-		assertNull("The trainsformation should fail.", result);
+		assertNull("The trainsformation should fail.", getResult(prog));
 	}
 
 	/**
@@ -355,10 +360,8 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, 'a'), r('b', ?X, ?Y), s('e', ?Y).";
-		final Parser p = new Parser();
-		p.parse(prog);
 
-		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
+		final Result result = getResult(prog);
 
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
@@ -410,10 +413,8 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final Parser p = new Parser();
-		p.parse(prog);
 
-		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
+		final Result result = getResult(prog);
 
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
@@ -461,10 +462,8 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p('b', 'a'), r('b', ?X, ?Y), s('e', ?Y).";
-		final Parser p = new Parser();
-		p.parse(prog);
 
-		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
+		final Result result = getResult(prog);
 
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
@@ -515,11 +514,8 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"s(?W, ?X, ?Y, ?Z) :- c(?W, ?X, ?Y, ?Z).\n" + 
 			"?- p(?W, ?X), r(?Y, ?Z), s(?W, ?X, ?Y, ?Z).";
-		final Parser p = new Parser();
-		p.parse(prog);
 
-		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
-		assertNull("The trainsformation should fail.", result);
+		assertNull("The trainsformation should fail.", getResult(prog));
 	}
 
 	/**
@@ -531,10 +527,8 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final Parser p = new Parser();
-		p.parse(prog);
 
-		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
+		final Result result = getResult(prog);
 
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
@@ -591,10 +585,8 @@ public class MagicTest extends TestCase {
 			"r(?X, ?Y, ?Z) :- c(?X, ?Y, ?Z).\n" + 
 			"s(?X, ?Y) :- c(?X, ?Y).\n" + 
 			"?- p(?X, ?Y), r('b', ?X, ?Z), s('e', ?Z).";
-		final Parser p = new Parser();
-		p.parse(prog);
 
-		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
+		final Result result = getResult(prog);
 
 		final ITerm T = TERM.createVariable("T");
 		final ITerm X = TERM.createVariable("X");
@@ -642,10 +634,8 @@ public class MagicTest extends TestCase {
 	public void testRepeatedLiteralQuery() throws Exception {
 		final String prog = "p(1).\n" + 
 			"?-p(1),p(1).\n";
-		final Parser p = new Parser();
-		p.parse(prog);
 
-		final Result result = (new MagicSetImpl()).optimise(p.getRules(), p.getQueries().iterator().next());
+		final Result result = getResult(prog);
 
 		final Adornment[] b = new Adornment[]{Adornment.BOUND};
 		final ILiteral magic_p = createMagicLiteral("p", b, new ITerm[]{CONCRETE.createInteger(1)});
@@ -662,6 +652,18 @@ public class MagicTest extends TestCase {
 		Collections.sort(ref, AdornmentsTest.RC);
 		Collections.sort(result.rules, AdornmentsTest.RC);
 		assertEquals("The rules don't match", ref, result.rules);
+	}
+
+	/**
+	 * Test some transformations, which should fail.
+	 */
+	public void testFailingTransformation() throws Exception {
+		assertNull("A query with only variables should fail",
+				getResult("?- a(?A, ?B), b(?C, ?D), c(?E, ?F)."));
+		assertNull("A query with only constants in builtins should fail",
+				getResult("?- a(?A, ?B), LESS('a', ?D), c(?E, ?F)."));
+		assertNotNull("A query with constants in literals should succeed",
+				getResult("?- a(?A, ?B), b('a', ?D), c(?E, ?F)."));
 	}
 
 	/**
