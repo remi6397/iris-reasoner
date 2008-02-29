@@ -140,15 +140,6 @@ public class DemoW
 			);
 			
 			mProgram.setText(
-				"p( ?x ) :- a( ?x ), diff( ?x, ?y )." + NEW_LINE +
-				"diff( ?x, ?y ) :- not same( ?x, ?y )." + NEW_LINE +
-				"same( ?x, ?x ) :- ." + NEW_LINE +
-				"a(1)." + NEW_LINE +
-	
-				"?- p(?x)."
-			);
-			
-			mProgram.setText(
 				"p(?x) :- t(?x, ?y, ?z), not p(?y), not p(?z)." + NEW_LINE +
 				"p('b') :- not r('a')." + NEW_LINE +
 				"t( 'a', 'a', 'b')." + NEW_LINE +
@@ -214,6 +205,33 @@ public class DemoW
 							"// Ths should be empty if the congruency rule is correct and the reasoner behaves correctly." + NEW_LINE +
 							"?-exceptions_to_rule( ?a1b1,?a2b2,?n )." + NEW_LINE
 											);
+			
+			// Unsafe rule example
+			mProgram.setText(
+							"p( ?x ) :- a( ?x ), diff( ?x, ?y )." + NEW_LINE +
+							"diff( ?x, ?y ) :- not same( ?x, ?y )." + NEW_LINE +
+							"same( ?x, ?x ) :- ." + NEW_LINE +
+							"a(1)." + NEW_LINE +
+				
+							"?- p(?x)."
+						);
+			
+			// Unstratified example.
+			mProgram.setText(
+				"republican(?x) :- like_guns(?x), not hippy(?x)." + NEW_LINE +
+				"democrat(?x) :- like_hippies(?x), not republican(?x)." + NEW_LINE +
+				"hippy(?x) :- like_flowers(?x), not republican(?x), not democrat(?x)." + NEW_LINE +
+				NEW_LINE +
+				"like_flowers('a')." + NEW_LINE +
+				"like_hippies('b')." + NEW_LINE +
+				"like_guns('c')." + NEW_LINE +
+				NEW_LINE +
+				"?- republican(?x)." + NEW_LINE +
+				"?- democrat(?x)." + NEW_LINE +
+				"?- hippy(?x)."
+			);
+
+						
 			mRun.addActionListener( this );
 
 			mAbort.addActionListener( this );
