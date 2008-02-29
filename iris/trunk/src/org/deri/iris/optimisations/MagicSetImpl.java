@@ -76,9 +76,12 @@ public final class MagicSetImpl implements IProgramOptimisation {
 		// check, whether the query contains constants
 		int constants = 0;
 		for (final ILiteral l : query.getLiterals()) {
-			for (final ITerm t : l.getAtom().getTuple()) {
-				if (t.isGround()) {
-					constants++;
+			final IAtom a = l.getAtom();
+			if (!a.isBuiltin()) { // we count only constants in ordinary literals
+				for (final ITerm t : a.getTuple()) {
+					if (t.isGround()) {
+						constants++;
+					}
 				}
 			}
 		}
