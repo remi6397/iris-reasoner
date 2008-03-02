@@ -26,6 +26,7 @@ package org.deri.iris.rules.compiler;
 import java.util.ArrayList;
 import java.util.List;
 import org.deri.iris.Configuration;
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
@@ -59,8 +60,9 @@ public class CompiledRule implements ICompiledRule
 	 * Evaluate the rule.
 	 * Each element is called in turn to produce tuples to pass on to the next rule element.
 	 * If any rule element outputs an empty relation, then stop.
+	 * @throws EvaluationException 
 	 */
-	public IRelation evaluate()
+	public IRelation evaluate() throws EvaluationException
 	{
 		// The first literal receives the starting relation (which has one zero length tuple in it). */
 		IRelation output = mStartingRelation;
@@ -81,7 +83,7 @@ public class CompiledRule implements ICompiledRule
 		return output;
 	}
 	
-	public IRelation evaluateIteratively( IFacts deltas )
+	public IRelation evaluateIteratively( IFacts deltas ) throws EvaluationException
 	{
 		IRelation union = mConfiguration.relationFactory.createRelation();
 	

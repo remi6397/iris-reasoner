@@ -26,16 +26,16 @@
 package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.CONCRETE;
-
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
-
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
-
+import org.deri.iris.Configuration;
+import org.deri.iris.ConfigurationThreadLocalStorage;
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
@@ -516,9 +516,10 @@ public class BuiltinHelper {
 	 * @param t0 the dividend
 	 * @param t1 the divisor
 	 * @return the quotient
+	 * @throws EvaluationException 
 	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 */
-	public static ITerm divide(final ITerm t0, final ITerm t1) {
+	public static ITerm divide(final ITerm t0, final ITerm t1) throws EvaluationException {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
@@ -555,11 +556,12 @@ public class BuiltinHelper {
 	
 	/**
 	 * Method to call whenever a divide by zero occurs.
+	 * @throws EvaluationException 
 	 */
-	private static void handleDivideByZero()
+	private static void handleDivideByZero() throws EvaluationException
 	{
-		if( false )
-			;//throw new EvaluationException( "Divide by zero error" );
+		if( ConfigurationThreadLocalStorage.getConfiguration().evaluationDivideByZeroBehaviour == Configuration.DivideByZeroBehaviour.STOP )
+			throw new EvaluationException( "Divide by zero error" );
 	}
 	
 	static ITerm increment( ITerm argument )
@@ -586,10 +588,11 @@ public class BuiltinHelper {
 	 * @param t0 the first argument
 	 * @param t1 the second argument
 	 * @return the product = t0 % t1
+	 * @throws EvaluationException 
 	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 * @throws IllegalArgumentException if one of the terms is not a INumericTerm
 	 */
-	public static ITerm modulus(final ITerm t0, final ITerm t1) {
+	public static ITerm modulus(final ITerm t0, final ITerm t1) throws EvaluationException {
 		if((t0 == null) || (t1 == null)) {
 			throw new NullPointerException("The terms must not be null");
 		}
@@ -823,33 +826,5 @@ public class BuiltinHelper {
 			res.add(idx0[i], t0[i]);
 		}
 		return res.toArray(new ITerm[res.size()]);
-	}
-
-	/**
-	 * Merges the terms of two tuples. The constants of the first tuple
-	 * will have a highter priority than the constants of the second one.
-	 * @param t0 the first tuple (with the higher priority)
-	 * @param t1 the second tuple
-	 * @return the merged terms
-	 * @throws NullPointerException if one of the tuples is <code>null</code>
-	 * @throws IllegalArgumentException the arities of the tuples doesn't
-	 * match.
-	 * @since 0.4
-	 */
-	public static ITerm[] merge(final ITuple t0, final ITuple t1) {
-		if ((t0 == null) || (t1 == null)) {
-			throw new NullPointerException("The none of the tuples must not be null");
-		}
-		if (t0.size() != t1.size()) {
-			throw new IllegalArgumentException("The arity of the tuples must match " + 
-					t0.size() + " <-> " + t1.size());
-		}
-		// calculating the needed term indexes from the submitted tuple
-		int[] outstanding = determineUnground(t0);
-		// retrieving the constants of this builin
-		final ITerm[] bCons = getIndexes(t0, 
-				complement(outstanding, t0.size()));
-		// putting the term from this builtin and the submitted tuple together
-		return concat(outstanding, getIndexes(t1, outstanding), bCons);
 	}
 }

@@ -25,6 +25,7 @@ package org.deri.iris.evaluation.seminaive;
 
 import java.util.List;
 import org.deri.iris.Configuration;
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.evaluation.IRuleEvaluator;
@@ -38,7 +39,7 @@ import org.deri.iris.storage.IRelation;
  */
 public class SemiNaiveEvaluator implements IRuleEvaluator
 {
-	public void evaluateRules( List<ICompiledRule> rules, IFacts facts, Configuration configuration )
+	public void evaluateRules( List<ICompiledRule> rules, IFacts facts, Configuration configuration ) throws EvaluationException
 	{
 		IFacts deltas = new Facts( configuration.relationFactory );
 		

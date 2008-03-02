@@ -28,6 +28,7 @@ package org.deri.iris.builtins;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
+import org.deri.iris.EvaluationException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -51,7 +52,7 @@ public class GreaterEqualBuiltinTest extends TestCase {
 				GreaterEqualBuiltinTest.class.getSimpleName());
 	}
 
-	public void testEvaluation() {
+	public void testEvaluation() throws Exception {
 		final GreaterEqualBuiltin xy = new GreaterEqualBuiltin(TERM.createVariable("X"), TERM.createVariable("Y"));
 
 		assertNotNull("5 should be greater-equal to 5", xy.evaluate(

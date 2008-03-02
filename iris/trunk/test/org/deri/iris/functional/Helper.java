@@ -140,7 +140,7 @@ public class Helper
 		executeAndCheckResults( program, expectedResults, configuration, "Semi-Naive and Magic Sets" );
 	}
 	
-	private static void executeAndCheckResults( String program, String expected, Configuration configuration, String evaluationName ) throws Exception
+	public static void executeAndCheckResults( String program, String expected, Configuration configuration, String evaluationName ) throws Exception
 	{
 		Parser parser = new Parser();
 		parser.parse( program );

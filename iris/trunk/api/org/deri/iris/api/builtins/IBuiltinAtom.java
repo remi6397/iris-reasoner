@@ -25,6 +25,7 @@
  */
 package org.deri.iris.api.builtins;
 
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ITuple;
 
@@ -71,10 +72,11 @@ public abstract interface IBuiltinAtom extends IAtom {
 	 * @param t the substitutes for the variables of the builtin
 	 * @return the calculated constans or <code>null</code> if the builtin
 	 * isn't evaluable
+	 * @throws EvaluationException 
 	 * @throws IllegalArgumentException if the builtin couldn't be evaluated
 	 * @throws NullPointerException if the collection was <code>null</code>
 	 */
-	public ITuple evaluate(final ITuple t);
+	public ITuple evaluate(final ITuple t) throws EvaluationException;
 
 	/**
 	 * The maximum number of unknown variables allowed such that the

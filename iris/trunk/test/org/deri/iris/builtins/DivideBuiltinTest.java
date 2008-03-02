@@ -31,6 +31,7 @@ import static org.deri.iris.factory.Factory.TERM;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.ITerm;
 
 /**
@@ -51,7 +52,7 @@ public class DivideBuiltinTest extends TestCase {
 				.getSimpleName());
 	}
 
-	public void testEvaluate() {
+	public void testEvaluate() throws Exception {
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
 		final ITerm Z = TERM.createVariable("Z");

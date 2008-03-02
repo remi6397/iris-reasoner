@@ -24,6 +24,7 @@
 package org.deri.iris.rules.compiler;
 
 import java.util.List;
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.storage.IRelation;
@@ -45,8 +46,9 @@ public abstract class RuleElement
 	 * @param previous The relation of tuples from the previous rule element.
 	 * This should be null if this element represents the first literal.
 	 * @return The output relation for this literal.
+	 * @throws EvaluationException 
 	 */
-	public abstract IRelation process( IRelation input );
+	public abstract IRelation process( IRelation input ) throws EvaluationException;
 	
 	/**
 	 * Create a substitute rule element that will use the corresponding delta if it exists.

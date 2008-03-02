@@ -25,6 +25,7 @@ package org.deri.iris.evaluation;
 
 import java.util.List;
 import org.deri.iris.Configuration;
+import org.deri.iris.EvaluationException;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.rules.compiler.ICompiledRule;
 
@@ -38,6 +39,7 @@ public interface IRuleEvaluator
 	 * @param rules The collection of compiled rules.
 	 * @param facts Where to store the newly deduced tuples.
 	 * @param configuration The knowledge-base configuration object.
+	 * @throws EvaluationException 
 	 */
-	void evaluateRules( List<ICompiledRule> rules, IFacts facts, Configuration configuration );
+	void evaluateRules( List<ICompiledRule> rules, IFacts facts, Configuration configuration ) throws EvaluationException;
 }

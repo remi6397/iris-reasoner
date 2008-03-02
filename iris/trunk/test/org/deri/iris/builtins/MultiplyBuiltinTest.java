@@ -51,7 +51,7 @@ public class MultiplyBuiltinTest extends TestCase {
 				.getSimpleName());
 	}
 
-	public void testEvaluate() {
+	public void testEvaluate() throws Exception {
 		final ITerm X = TERM.createVariable("X");
 		final ITerm Y = TERM.createVariable("Y");
 		final ITerm Z = TERM.createVariable("Z");

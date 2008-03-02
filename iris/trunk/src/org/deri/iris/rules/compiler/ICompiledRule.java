@@ -24,6 +24,7 @@
 package org.deri.iris.rules.compiler;
 
 import java.util.List;
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.facts.IFacts;
@@ -37,16 +38,18 @@ public interface ICompiledRule
 	/**
 	 * Evaluate rule with all known facts.
 	 * @return The result relation for this rule.
+	 * @throws EvaluationException 
 	 */
-	IRelation evaluate();
+	IRelation evaluate() throws EvaluationException;
 
 	/**
 	 * Evaluate the rule using deltas (see semi-naive evaluation) to more intelligently seek out
 	 * tuples that have not already been computed.
 	 * @param deltas The collection of recently discovered facts.
 	 * @return The result relation for this rule.
+	 * @throws EvaluationException 
 	 */
-	IRelation evaluateIteratively( IFacts deltas );
+	IRelation evaluateIteratively( IFacts deltas ) throws EvaluationException;
 	
 	/**
 	 * If this compiled rule represents a rule, then return the head predicate.

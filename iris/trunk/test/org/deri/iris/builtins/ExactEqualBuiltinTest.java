@@ -43,7 +43,7 @@ public class ExactEqualBuiltinTest extends TestCase {
 		return new TestSuite(ExactEqualBuiltinTest.class, ExactEqualBuiltinTest.class.getSimpleName());
 	}
 
-	public void testEvaluation() {
+	public void testEvaluation() throws Exception{
 		final IBuiltinAtom xy = BuiltinsFactory.getInstance().createExactEqual( TERM.createVariable("X"), TERM.createVariable("Y"));
 
 		assertNotNull("5 should be exactly equal to 5", xy.evaluate(

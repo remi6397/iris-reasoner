@@ -28,6 +28,7 @@ package org.deri.iris.builtins;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
+import org.deri.iris.EvaluationException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -51,7 +52,7 @@ public class GreaterBuiltinTest extends TestCase {
 				.getSimpleName());
 	}
 
-	public void testEvaluation() {
+	public void testEvaluation() throws Exception {
 		final GreaterBuiltin xy = new GreaterBuiltin(TERM.createVariable("X"), TERM.createVariable("Y"));
 
 		assertNull("5 shouldn't be greater than 5", xy.evaluate(

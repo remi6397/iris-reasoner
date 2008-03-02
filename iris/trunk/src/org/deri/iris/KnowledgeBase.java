@@ -64,6 +64,9 @@ public class KnowledgeBase implements IKnowledgeBase
 			configuration = new Configuration();
 		
 		mConfiguration = configuration;
+		
+		// Store the configuration object against the current thread.
+		ConfigurationThreadLocalStorage.setConfiguration( mConfiguration );
 
 		// Set up the rule-base
 		mRules = rules;
@@ -104,6 +107,9 @@ public class KnowledgeBase implements IKnowledgeBase
 		if( variableBindings == null )
 			variableBindings = new ArrayList<IVariable>();
 		
+		// Store the configuration object against the current thread.
+		ConfigurationThreadLocalStorage.setConfiguration( mConfiguration );
+
 		if( DEBUG )
 		{
 			System.out.println( "IRIS query" );
