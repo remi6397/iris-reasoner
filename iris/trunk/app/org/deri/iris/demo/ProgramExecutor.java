@@ -2,9 +2,8 @@
  * Integrated Rule Inference System (IRIS):
  * An extensible rule inference system for datalog with extensions.
  * 
- * Copyright (C) 2008 Digital Enterprise Research Institute (DERI), 
- * Leopold-Franzens-Universitaet Innsbruck, Technikerstrasse 21a, 
- * A-6020 Innsbruck. Austria.
+ * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
+ * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
