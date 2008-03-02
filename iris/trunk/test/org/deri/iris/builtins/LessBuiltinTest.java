@@ -46,11 +46,11 @@ import junit.framework.TestSuite;
  */
 public class LessBuiltinTest extends TestCase {
 
-	public static Test suite() {
+	public static Test suite(){
 		return new TestSuite(LessBuiltinTest.class, LessBuiltinTest.class.getSimpleName());
 	}
 
-	public void testEvaluation() {
+	public void testEvaluation() throws Exception {
 		final LessBuiltin xy = new LessBuiltin(TERM.createVariable("X"), TERM.createVariable("Y"));
 
 		assertNull("5 shouldn't be less than 5", xy.evaluate(

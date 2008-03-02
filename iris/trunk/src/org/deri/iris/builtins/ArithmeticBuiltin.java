@@ -25,6 +25,7 @@
  */
 package org.deri.iris.builtins;
 
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
 
@@ -48,7 +49,7 @@ public abstract class ArithmeticBuiltin extends AbstractBuiltin
 		super( predicate, terms );
 	}
 
-	protected ITerm evaluateTerms( ITerm[] terms, int[] variableIndexes )
+	protected ITerm evaluateTerms( ITerm[] terms, int[] variableIndexes ) throws EvaluationException
 	{
 		assert variableIndexes.length == 0 || variableIndexes.length == 1;
 		
@@ -85,8 +86,9 @@ public abstract class ArithmeticBuiltin extends AbstractBuiltin
 	 * Compute the missing term when the other two are known.
 	 * @param terms The collection of all terms.
 	 * @return The computed value.
+	 * @throws EvaluationException 
 	 */
-	protected abstract ITerm computeMissingTerm( int missingTermIndex, ITerm[] terms );
+	protected abstract ITerm computeMissingTerm( int missingTermIndex, ITerm[] terms ) throws EvaluationException;
 
 	public int maxUnknownVariables()
 	{

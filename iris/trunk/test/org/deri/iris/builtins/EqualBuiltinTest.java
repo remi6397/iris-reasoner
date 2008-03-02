@@ -50,7 +50,7 @@ public class EqualBuiltinTest extends TestCase {
 		return new TestSuite(EqualBuiltinTest.class, EqualBuiltinTest.class.getSimpleName());
 	}
 
-	public void testEvaluation() {
+	public void testEvaluation() throws Exception{
 		final EqualBuiltin xy = new EqualBuiltin(TERM.createVariable("X"), TERM.createVariable("Y"));
 
 		assertNotNull("5 should be equal to 5", xy.evaluate(

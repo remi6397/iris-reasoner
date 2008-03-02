@@ -51,7 +51,7 @@ public class LessEqualBuiltinTest extends TestCase {
 				LessEqualBuiltinTest.class.getSimpleName());
 	}
 
-	public void testEvaluation() {
+	public void testEvaluation() throws Exception{
 		final LessEqualBuiltin xy = new LessEqualBuiltin(TERM.createVariable("X"), TERM.createVariable("Y"));
 
 		assertNotNull("5 should be less-equal to 5", xy.evaluate(

@@ -60,39 +60,39 @@ public class ModulusBuiltinTest extends TestCase {
 
 	final ModulusBuiltin b = new ModulusBuiltin(X, Y, Z);
 	
-	public void testVariableFirst()
+	public void testVariableFirst() throws Exception
 	{
 		final ModulusBuiltin b = new ModulusBuiltin(X, T_5, T_2);
 		assertEquals(BASIC.createTuple(T_2), b.evaluate(BASIC.createTuple(X, X, X)));
 	}
 
-	public void testVariableSecond()
+	public void testVariableSecond() throws Exception
 	{
 		final ModulusBuiltin b = new ModulusBuiltin(T_17, X, T_2);
 		assertEquals(BASIC.createTuple(T_15), b.evaluate(BASIC.createTuple(X, X, X)));
 	}
 	
-	public void testVariableThird()
+	public void testVariableThird() throws Exception
 	{
 		final ModulusBuiltin b = new ModulusBuiltin(T_17, T_5, X);
 		assertEquals(BASIC.createTuple(T_2), b.evaluate(BASIC.createTuple(X, X, X)));
 	}
 	
-	public void testCorrect()
+	public void testCorrect() throws Exception
 	{
 		assertNotNull( b.evaluate(BASIC.createTuple(T_18, T_5, T_3)));
 		assertNotNull( b.evaluate(BASIC.createTuple(T_17, T_5, T_2)));
 		assertNotNull( b.evaluate(BASIC.createTuple(T_2, T_5, T_2)));
 	}
 	
-	public void testFalse()
+	public void testFalse() throws Exception
 	{
 		assertNull( b.evaluate(BASIC.createTuple(T_18, T_5, T_2)));
 		assertNull( b.evaluate(BASIC.createTuple(T_17, T_2, T_2)));
 		assertNull( b.evaluate(BASIC.createTuple(T_5, T_5, T_2)));
 	}
 
-	public void testWrongDataType()
+	public void testWrongDataType() throws Exception
 	{
 		assertNull( b.evaluate(BASIC.createTuple(S, T_5, T_2)));
 		assertNull( b.evaluate(BASIC.createTuple(T_5, S, T_2)));

@@ -31,6 +31,7 @@ import java.util.Arrays;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IDateTerm;
@@ -337,8 +338,9 @@ public class BuiltinHelperTest extends TestCase {
 
 	/**
 	 * Tests the <code>divide</code> method.
+	 * @throws Exception 
 	 */
-	public void testDivide() {
+	public void testDivide() throws Exception {
 		final INumericTerm F_25 = CONCRETE.createFloat(2.5f);
 		final INumericTerm D_25 = CONCRETE.createDouble(2.5d);
 

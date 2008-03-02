@@ -123,7 +123,7 @@ public class Builtin extends RuleElement
 	}
 
 	@Override
-	public IRelation process( IRelation leftRelation )
+	public IRelation process( IRelation leftRelation ) throws EvaluationException
 	{
 		assert leftRelation != null;
 		

@@ -27,6 +27,7 @@ package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.BASIC;
 
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
 
@@ -46,18 +47,7 @@ public class ModulusBuiltin extends ArithmeticBuiltin
 		super(PREDICATE, terms );
 	}
 
-	protected ITerm forward( ITerm parameter1, ITerm parameter2 )
-	{
-		return BuiltinHelper.modulus( parameter1, parameter2 );
-	}
-
-	protected ITerm inverse( ITerm parameter1, ITerm parameter2 )
-	{
-		assert false;
-		return null;
-	}
-
-	protected ITerm computeMissingTerm( int missingTermIndex, ITerm[] terms )
+	protected ITerm computeMissingTerm( int missingTermIndex, ITerm[] terms ) throws EvaluationException
 	{
 		switch( missingTermIndex )
 		{

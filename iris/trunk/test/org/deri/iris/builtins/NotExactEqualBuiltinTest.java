@@ -43,7 +43,7 @@ public class NotExactEqualBuiltinTest extends TestCase {
 		return new TestSuite(NotExactEqualBuiltinTest.class, NotExactEqualBuiltinTest.class.getSimpleName());
 	}
 
-	public void testEvaluation() {
+	public void testEvaluation() throws Exception {
 		final IBuiltinAtom xy = BuiltinsFactory.getInstance().createNotExactEqual( TERM.createVariable("X"), TERM.createVariable("Y"));
 
 		assertNull("5 should not be not exactly equal to 5", xy.evaluate(

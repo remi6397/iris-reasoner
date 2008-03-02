@@ -27,6 +27,7 @@ package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.BASIC;
 import java.util.Arrays;
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
@@ -132,7 +133,7 @@ public abstract class AbstractBuiltin implements IBuiltinAtom {
 		return true;
 	}
 	
-	public ITuple evaluate(final ITuple t)
+	public ITuple evaluate(final ITuple t) throws EvaluationException
 	{
 		if(t == null)
 			throw new NullPointerException("The collection must not be null");
@@ -173,8 +174,9 @@ public abstract class AbstractBuiltin implements IBuiltinAtom {
 	 * @param variableIndexes the indexes of the terms which should be
 	 * computed (starting at 0)
 	 * @return The result of the evaluation.
+	 * @throws EvaluationException 
 	 */
-	protected ITerm evaluateTerms( ITerm[] terms, int[] variableIndexes )
+	protected ITerm evaluateTerms( ITerm[] terms, int[] variableIndexes ) throws EvaluationException
 	{
 		return null;
 	}

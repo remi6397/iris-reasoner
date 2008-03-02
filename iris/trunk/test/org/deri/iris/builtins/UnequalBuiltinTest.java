@@ -52,7 +52,7 @@ public class UnequalBuiltinTest extends TestCase {
 		return new TestSuite(UnequalBuiltinTest.class, UnequalBuiltinTest.class.getSimpleName());
 	}
 
-	public void testEvaluation() {
+	public void testEvaluation() throws Exception {
 		final ITuple x2 = BASIC.createTuple(TERM.createVariable("X"), TERM.createVariable("X"));
 		assertNull("5 shouldn't be unequal to 5", (new NotEqualBuiltin(CONCRETE
 				.createInteger(5), CONCRETE.createInteger(5))).evaluate(x2));
