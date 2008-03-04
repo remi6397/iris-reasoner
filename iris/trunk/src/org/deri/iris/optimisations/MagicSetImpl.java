@@ -149,8 +149,7 @@ public final class MagicSetImpl implements IProgramOptimisation {
 		for (int i = 1, max = query.size(); i < max; i++) {
 			final IAtom magicAtom = createMagicAtom(query.get(i).getAtom());
 			if (!magicAtom.getTuple().isEmpty()) {
-				res.add(BASIC.createRule(Arrays.asList(
-								BASIC.createLiteral(query.get(i).isPositive(), magicAtom)), 
+				res.add(BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, magicAtom)),
 							slice(query, 0, i)));
 			}
 		}
@@ -175,7 +174,7 @@ public final class MagicSetImpl implements IProgramOptimisation {
 		assert (nto > nfrom): "nfrom (" + nfrom + ") must be smaller than nto(" + nto + ")";
 
 		// copy the range
-		final List<Type> res = new java.util.ArrayList<Type>(nto - nfrom);
+		final List<Type> res = new ArrayList<Type>(nto - nfrom);
 		for (int i = nfrom; i < nto; i++) {
 			res.add(orig.get(i));
 		}
