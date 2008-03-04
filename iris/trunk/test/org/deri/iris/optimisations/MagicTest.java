@@ -664,6 +664,53 @@ public class MagicTest extends TestCase {
 	}
 
 	/**
+	 * Test to ensure the correct handling of conjunctive queries with
+	 * negative literals.
+	 * @see <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=1904505&group_id=167309&atid=842434">bug #1904505: magic sets: negative rules with negative query literals</a>
+	 */
+	public void testNegativeConjunctiveQuery() throws Exception {
+		final String prog = "?-p(?X, ?Y), not q(?X, 3).\n"
+			+ "p(?X, ?Y) :- a(?X, ?Y).\n"
+			+ "q(?X, ?Y) :- b(?X, ?Y).\n";
+
+		final Result result = getResult(prog);
+
+		final Adornment[] BB = new Adornment[]{Adornment.BOUND, Adornment.BOUND};
+		final Adornment[] FF = new Adornment[]{Adornment.FREE, Adornment.FREE};
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm[] X3 = new ITerm[]{X, CONCRETE.createInteger(3)};
+
+		// assert the rules
+		final List<IRule> rules = new ArrayList<IRule>();
+
+		// magic_p^ff() :- .
+		rules.add(BASIC.createRule(Arrays.asList(createMagicLiteral("p", FF, new ITerm[]{})),
+					Collections.EMPTY_LIST));
+		// magic_q^bb(?X, 3) :- p^ff(?X, ?Y).
+		rules.add(BASIC.createRule(Arrays.asList(createMagicLiteral("q", BB, X3)),
+					Arrays.asList(createAdornedLiteral("p", FF, XY))));
+		// p^ff(?X, ?Y) :- a(?X, ?Y).
+		rules.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("p", FF, XY)),
+					Arrays.asList(createLiteral("a", "X", "Y"))));
+		// q^bb(?X, ?Y) :- magic_q^bb(?X, ?Y), b(?X, ?Y).
+		rules.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("q", BB, XY)),
+					Arrays.asList(createMagicLiteral("q", BB, XY), createLiteral("b", "X", "Y"))));
+
+		Collections.sort(rules, AdornmentsTest.RC);
+		Collections.sort(result.rules, AdornmentsTest.RC);
+		assertEquals("The rules don't match", rules, result.rules);
+
+		// assert the query
+		// ?- p^ff(?X, ?Y), !q^bb(?X, 3).
+		final IQuery query = BASIC.createQuery(Arrays.asList(createAdornedLiteral("p", FF, XY),
+					createAdornedLiteral(false, "q", BB, X3)));
+
+		assertEquals("The query doesn't match", query, result.query);
+	}
+
+	/**
 	 * Prints a program and the resulting magic program in a formated
 	 * way.
 	 * @param name the name to identify the test
