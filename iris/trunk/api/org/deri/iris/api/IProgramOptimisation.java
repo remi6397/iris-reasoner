@@ -57,6 +57,22 @@ public interface IProgramOptimisation {
 	 */
 	public static class Result {
 
+		/**
+		 * Empty constructor that doesn't do anything.
+		 */
+		public Result() {
+		}
+
+		/**
+		 * Constructor to create and initialize a result in one line.
+		 * @param r the rules to set
+		 * @param q the query to set
+		 */
+		public Result(final List<IRule> r, final IQuery q) {
+			rules = r;
+			query = q;
+		}
+
 		/** The transformed rules. */
 		public List<IRule> rules;
 
