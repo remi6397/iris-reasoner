@@ -72,7 +72,20 @@ public class MagicTest extends TestCase {
 	 */
 	private static ILiteral createMagicLiteral(final String symbol,
 			final Adornment[] ad, final ITerm[] t) {
-		return createAdornedLiteral("magic_" + symbol, ad, t);
+		return createAdornedLiteral(MAGIC_PREFIX + symbol, ad, t);
+	}
+
+	/**
+	 * Creates a labeled literal.
+	 *
+	 * @param symbol the predicate symbot to use for the literal
+	 * @param ad the adornments
+	 * @param t the terms for the literal
+	 * @return the constructed magic literal
+	 */
+	private static ILiteral createLabeledLiteral(final String symbol,
+			final Adornment[] ad, final ITerm[] t) {
+		return createAdornedLiteral(LABELED_PREFIX + symbol, ad, t);
 	}
 
 	/**
@@ -173,6 +186,23 @@ public class MagicTest extends TestCase {
 	}
 
 	/**
+	 * Asserts the result of the transformation.
+	 * @param expected the expected transformation result
+	 * @param result the real transformation result
+	 */
+	private void assertResults(final Result expected, final Result result) {
+		if (expected == null) { // test the failed transformation
+			assertNull("The transformation should fail", result);
+		} else {
+			Collections.sort(expected.rules, AdornmentsTest.RC);
+			Collections.sort(result.rules, AdornmentsTest.RC);
+
+			assertEquals("The rules are computed as expected", expected.rules, result.rules);
+			assertEquals("The query is not correct", expected.query, result.query);
+		}
+	}
+
+	/**
 	 * Tests whether the seed was constructed as it should be.
 	 */
 	public void testMagic0() throws Exception {
@@ -242,6 +272,7 @@ public class MagicTest extends TestCase {
 		final List<IRule> ref = new ArrayList<IRule>();
 
 		final Adornment[] bbf = new Adornment[]{Adornment.BOUND, Adornment.BOUND, Adornment.FREE};
+		final Adornment[] bff = new Adornment[]{Adornment.BOUND, Adornment.FREE, Adornment.FREE};
 		final IVariable A = TERM.createVariable("A");
 		final IVariable B = TERM.createVariable("B");
 		final IVariable X = TERM.createVariable("X");
@@ -260,17 +291,17 @@ public class MagicTest extends TestCase {
 		// constructing the magic/labeled rules rules
 
 		// label_a_1^bbf(X, A) :- magic_a^bbf(X, Y), b(X, A)
-		List<ILiteral> head = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_1", bbf, XA));
+		List<ILiteral> head = Arrays.asList(createLabeledLiteral("a_1", bbf, XA));
 		List<ILiteral> body = Arrays.asList(createMagicLiteral("a", bbf, XY), createLiteral("b", "X", "A"));
 		ref.add(BASIC.createRule(head, body));
-		// label_a_2^bbf(X, A) :- magic_a^bbf(X, Y)
-		head = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_2", bbf, XA));
+		// label_a_2^bff(X) :- magic_a^bbf(X, Y)
+		head = Arrays.asList(createLabeledLiteral("a_2", bff, new ITerm[]{X}));
 		body = Arrays.asList(createMagicLiteral("a", bbf, XY));
 		ref.add(BASIC.createRule(head, body));
-		// magic_a^bbf(X, A) :- label_a_2^bbf(X, A), label_a_1^bbf(X, A)
+		// magic_a^bbf(X, A) :- label_a_2^bff(X), label_a_1^bbf(X, A)
 		head = Arrays.asList(createMagicLiteral("a", bbf, XA));
-		body = Arrays.asList(createAdornedLiteral(LABELED_PREFIX + "a_2", bbf, XA), 
-			createAdornedLiteral(LABELED_PREFIX + "a_1", bbf, XA));
+		body = Arrays.asList(createLabeledLiteral("a_2", bff, new ITerm[]{X}),
+			createLabeledLiteral("a_1", bbf, XA));
 		ref.add(BASIC.createRule(head, body));
 
 		// constructing the rewritten rules out of the normal ones
@@ -711,6 +742,75 @@ public class MagicTest extends TestCase {
 	}
 
 	/**
+	 * <p>
+	 * Test to ensure correct creation of labaled rules.
+	 * </p>
+	 * <p>
+	 * This test checks for 2 problems:
+	 * <ul>
+	 * <li>rule heads can not be negative (even if they are labeled)</li>
+	 * <li>labeled rules must be save</li>
+	 * </ul>
+	 * </p>
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1907086&group_id=167309&atid=842434">bug #1907086: magic sets: labeled rules are not consturced correctly</a>
+	 */
+	public void testUnsaveLabeledRuleCreation() throws Exception {
+		final String prog = "c(?X, ?Y) :- e(?X, ?Y).\n"
+			+ "b(?X, ?Y) :- d(?X, ?Y).\n"
+			+ "a(?X, ?Y) :- b(?X, ?Y), not c(?X, ?Y).\n"
+			+ "?- a(2, ?Y).\n";
+		final Result result = getResult(prog);
+
+		final Adornment[] BB = new Adornment[]{Adornment.BOUND, Adornment.BOUND};
+		final Adornment[] BF = new Adornment[]{Adornment.BOUND, Adornment.FREE};
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm[] XY = new ITerm[]{X, Y};
+
+		// construct the rules
+		final List<IRule> rules = new ArrayList<IRule>();
+
+		// a^bf(?X, ?Y) :- magic_a^bf(?X), b^bf(?X, ?Y), !c^bb(?X, ?Y).
+		rules.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("a", BF, XY)),
+					Arrays.asList(createMagicLiteral("a", BF, new ITerm[]{X}),
+						createAdornedLiteral("b", BF, XY),
+						createAdornedLiteral(false, "c", BB, XY))));
+		// b^bf(?X, ?Y) :- magic_b^bf(?X), d(?X, ?Y).
+		rules.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("b", BF, XY)),
+				Arrays.asList(createMagicLiteral("b", BF, new ITerm[]{X}),
+					createLiteral("d", "X", "Y"))));
+		// c^bb(?X, ?Y) :- magic_c^bb(?X, ?Y), e(?X, ?Y).
+		rules.add(BASIC.createRule(Arrays.asList(createAdornedLiteral("c", BB, XY)),
+				Arrays.asList(createMagicLiteral("c", BB, XY),
+					createLiteral("e", "X", "Y"))));
+		// magic_a^bf(2) :- .
+		rules.add(seedRule(createMagicLiteral("a", BF, new ITerm[]{CONCRETE.createInteger(2)})));
+		// magic_b^bf(?X) :- magic_a^bf(?X).
+		rules.add(BASIC.createRule(Arrays.asList(createMagicLiteral("b", BF, new ITerm[]{X})),
+				Arrays.asList(createMagicLiteral("a", BF, new ITerm[]{X}))));
+		// label_c_1^bf(?X) :- magic_a^bf(?X).
+		rules.add(BASIC.createRule(Arrays.asList(createLabeledLiteral("c_1", BF, new ITerm[]{X})),
+				Arrays.asList(createMagicLiteral("a", BF, new ITerm[]{X}))));
+		// label_c_2^bb(?X, ?Y) :- magic_a^bf(?X), b^bf(?X, ?Y).
+		rules.add(BASIC.createRule(Arrays.asList(createLabeledLiteral("c_2", BB, XY)),
+				Arrays.asList(createMagicLiteral("a", BF, new ITerm[]{X}),
+					createAdornedLiteral("b", BF, XY))));
+		// magic_c^bb(?X, ?Y) :- label_c_1^bf(?X), label_c_2^bb(?X, ?Y).
+		rules.add(BASIC.createRule(Arrays.asList(createMagicLiteral("c", BB, XY)),
+				Arrays.asList(createLabeledLiteral("c_1", BF, new ITerm[]{X}),
+					createLabeledLiteral("c_2", BB, XY))));
+
+		// construct the query
+		// ?- a^bf(2, ?Y).
+		final IQuery query = BASIC.createQuery(Arrays.asList(
+					createAdornedLiteral("a", BF, new ITerm[]{CONCRETE.createInteger(2), Y})));
+
+		printDebug("usave", prog, new Result(rules, query), result);
+
+		assertResults(new Result(rules, query), result);
+	}
+
+	/**
 	 * Prints a program and the resulting magic program in a formated
 	 * way.
 	 * @param name the name to identify the test
@@ -718,22 +818,54 @@ public class MagicTest extends TestCase {
 	 * @param result the magic set result
 	 */
 	private static void printDebug(final String name, final String prog, final Result result) {
+		printDebug(name, prog, null, result);
+	}
+
+	/**
+	 * Prints out a program, resulting magic program and the expected
+	 * result.
+	 * @param name the name to identify the printing
+	 * @param prog the string representation of the input program
+	 * @param expected the expected transformation result
+	 * @param result the real outcome of the transformation
+	 */
+	private static void printDebug(final String name, final String prog,
+			final Result expected, final Result result) {
 		System.out.println("---");
 		System.out.println(name);
 		System.out.println("\tinput:");
 		System.out.println(prog);
 
-		System.out.println("\tresult:");
-		// sorting the reslt rules
-		final List<IRule> resRules = new ArrayList<IRule>(result.rules);
-		Collections.sort(resRules, AdornmentsTest.RC);
-		// printing the result rules
-		for (final IRule r : resRules) {
-			System.out.println(r);
+		if (expected != null) {
+			System.out.println("\texpected:");
+			System.out.println(resultString(expected));
 		}
-		System.out.println();
-		System.out.println(result.query);
-		System.out.println();
+
+		System.out.println("\tresult:");
+		System.out.println(resultString(result));
+	}
+
+	/**
+	 * Transforms the result to a string.
+	 * @param r the result
+	 * @return the string representation
+	 */
+	private static String resultString(final Result r) {
+		assert r != null: "The result must not be null";
+
+		final StringBuilder buffer = new StringBuilder();
+
+		// sorting the reslt rules
+		final List<IRule> sortRules = new ArrayList<IRule>(r.rules);
+		Collections.sort(sortRules, AdornmentsTest.RC);
+
+		// printing the result rules
+		for (final IRule rule : sortRules) {
+			buffer.append(rule).append(System.getProperty("line.separator"));
+		}
+		buffer.append(System.getProperty("line.separator"));
+		buffer.append(r.query).append(System.getProperty("line.separator"));
+		return buffer.toString();
 	}
 
 	public static Test suite() {

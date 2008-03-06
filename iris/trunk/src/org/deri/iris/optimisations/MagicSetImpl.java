@@ -401,7 +401,7 @@ public final class MagicSetImpl implements IProgramOptimisation {
 		final ILiteral headLiteral = r.getRule().getHead().get(0);
 
 		// create head of the rule
-		final ILiteral hl = createLabeledLiteral(true, targetLiteral, index);
+		final ILiteral hl = createLabeledLiteral(true, targetLiteral, e.getLabel(), index);
 
 		// create body of the rule
 		final List<ILiteral> body = 
@@ -500,64 +500,26 @@ public final class MagicSetImpl implements IProgramOptimisation {
 	 * literal must be adorned. The terms of the literal will only consist of
 	 * the bound terms.
 	 * 
-	 * @param l
-	 *            for which to create the labeled literal
-	 * @param index
-	 *            to append to the literal
-	 * @return the labeled literal
-	 * @throws NullPointerException
-	 *             if the literal is null
-	 * @throws IllegalArgumentException
-	 *             if the predicate of the literal isn't adorned
-	 * @throws IllegalArgumentException
-	 *             if the index is smaller than 0
-	 */
-	private static ILiteral createLabeledLiteral(final ILiteral l,
-			final int index) {
-		return createLabeledLiteral(l.isPositive(), l, index);
-	}
-
-	/**
-	 * Creates a labeled literal out of an adorned one. The predicate of the
-	 * literal must be adorned. The terms of the literal will only consist of
-	 * the bound terms.
-	 * 
 	 * @param positive <code>true</code> the resulting literal should be 
 	 * positive, otherwise <code>false</code>
-	 * @param l
-	 *            for which to create the labeled literal
-	 * @param index
-	 *            to append to the literal
+	 * @param l for which to create the labeled literal
+	 * @param passings the variables passed by this edge
+	 * @param index to append to the literal
 	 * @return the labeled literal
-	 * @throws NullPointerException
-	 *             if the literal is null
-	 * @throws IllegalArgumentException
-	 *             if the predicate of the literal isn't adorned
-	 * @throws IllegalArgumentException
-	 *             if the index is smaller than 0
 	 */
 	private static ILiteral createLabeledLiteral(final boolean positive, 
-			final ILiteral l, final int index) {
-		if (l == null) {
-			throw new NullPointerException("The literal must not be null");
-		}
-		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
-			throw new IllegalArgumentException(
-					"The predicate of the literal must be adorned");
-		}
-		if (index < 0) {
-			throw new IllegalArgumentException(
-					"The index must not be smaller than 0");
-		}
+			final ILiteral l, final Set<IVariable> passings, final int index) {
+		assert l != null: "The literal must not be null";
+		assert passings != null: "The passings must not be null";
+		assert index >= 0 : "The index must not be negative";
 
-		final AdornedPredicate p = (AdornedPredicate) l.getAtom().getPredicate();
+		final AdornedPredicate p = new AdornedPredicate(l, passings);
 		final ITuple boundTuple = BASIC.createTuple(getBounds(p, l.getAtom()));
-		final AdornedPredicate labeledPredicatre = new AdornedPredicate(
+		final AdornedPredicate labeledPredicate = new AdornedPredicate(
 				MAGIC_LABEL_PREFIX + p.getPredicateSymbol() + "_" + index,
-				Collections.frequency(Arrays.asList(p.getAdornment()),
-						Adornment.BOUND), p.getAdornment());
-		return BASIC.createLiteral(l.isPositive(), labeledPredicatre,
-				boundTuple);
+				Collections.frequency(Arrays.asList(p.getAdornment()), Adornment.BOUND),
+				p.getAdornment());
+		return BASIC.createLiteral(positive, labeledPredicate, boundTuple);
 	}
 
 	/**
