@@ -324,26 +324,22 @@ public final class MagicSetImpl implements IProgramOptimisation {
 		final ILiteral hl = createMagicLiteral(true, l);
 
 		// create the body of the rule
-		final List<ILiteral> body = new ArrayList<ILiteral>(rule.getSip().getDepends(l));
+
+		final Set<ILiteral> passers = rule.getSip().getDepends(l);
+		final ILiteral head = rule.getRule().getHead().get(0);
+
+		// add all passings from the body of the rule
+		final List<ILiteral> body = new ArrayList<ILiteral>(passers);
+		body.remove(head);
 		Collections.sort(body, rule.getSip().getLiteralComparator());
 
-		// correct the literals -> make adorned literals -> magic literals
-		// if the head literal wasn't adorned (only happens if the query hasn't any constants
-		// skip the exchange of the literals, because there isn't anything to exchage, and 
-		// remove the first literal of the body (which is the headliteral)
-		final ILiteral headLiteral = rule.getRule().getHead().get(0);
-		if ((headLiteral.getAtom().getPredicate() instanceof AdornedPredicate)) {
-			for (int i = 0, max = body.size(); i < max; i++) {
-				if (body.get(i).equals(headLiteral)) {
-					body.set(i, createMagicLiteral(body .get(i)));
-					break;
-				}
-			}
-		} else {
-			body.remove(0);
+		// if there is a variable passing from the head of the rule, get
+		// them from it's magic relation
+		if (passers.contains(head)) {
+			body.add(0, createMagicLiteral(head));
 		}
 
-		return BASIC.createRule(Arrays.asList(new ILiteral[]{hl}), body);
+		return BASIC.createRule(Arrays.asList(hl), body);
 	}
 
 	/**
