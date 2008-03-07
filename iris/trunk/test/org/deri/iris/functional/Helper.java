@@ -40,6 +40,8 @@ import org.deri.iris.optimisations.rulefilter.RuleFilter;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 import org.deri.iris.storage.IRelation;
 
+import junit.framework.Assert;
+
 public class Helper
 {
 	public static final boolean PRINT_RESULTS = false;
@@ -175,11 +177,12 @@ public class Helper
 
 		if( expected == null || expected.trim().length() == 0 )
 		{
-			junit.framework.Assert.assertEquals( 0, actualResults == null ? 0 : actualResults.size() );
+			Assert.assertEquals("There are no results expected.",
+					0, actualResults == null ? 0 : actualResults.size());
 		}
 		else
 		{
-			junit.framework.Assert.assertNotNull( actualResults );
+			Assert.assertNotNull("The result was null.", actualResults);
 
 			Parser parser = new Parser();
 			parser.parse( expected );
@@ -189,24 +192,26 @@ public class Helper
 			
 			assert predicates.size() == 1;
 			IRelation expectedResults = expectedFacts.get( predicates.iterator().next() );
-			junit.framework.Assert.assertTrue( same( actualResults, expectedResults ) );
+			Assert.assertEquals("The resulting relation is not correct.",
+					getTupleSet(expectedResults), getTupleSet(actualResults));
 		}
 	}
 
-	private static boolean same( IRelation actualResults, IRelation expectedResults )
-	{
-		Set<ITuple> actual = new HashSet<ITuple>();
-		Set<ITuple> expected = new HashSet<ITuple>();
-		
-		for( int t = 0; t < actualResults.size(); ++t )
-			actual.add( actualResults.get( t ) );
-		
-		for( int t = 0; t < expectedResults.size(); ++t )
-			expected.add( expectedResults.get( t ) );
-		
-		return actual.equals( expected );
+	/**
+	 * Transforms a relation to a tuple set.
+	 * @param r the relation to transform
+	 * @return the tuple set
+	 */
+	private static Set<ITuple> getTupleSet(final IRelation r) {
+		assert r != null: "The relation must not be null";
+
+		final Set<ITuple> result = new HashSet<ITuple>(r.size());
+		for (int i = 0, max = r.size(); i < max; i++) {
+			result.add(r.get(i));
+		}
+		return result;
 	}
-	
+
 	/**
 	 * Evaluate the given logic program with all evaluation strategies and ensure that
 	 * each fails with the expected exception. 
@@ -292,13 +297,13 @@ public class Helper
 
 			kb.execute( query, null );
 
-			junit.framework.Assert.fail( evaluation + " evaluation did not throw the correct exception." );
+			Assert.fail( evaluation + " evaluation did not throw the correct exception." );
 		}
 		catch( Exception e )
 		{
 			if ( expectedExceptionClass != null )
 			{
-				junit.framework.Assert.assertTrue( expectedExceptionClass.isInstance( e ) );
+				Assert.assertTrue( expectedExceptionClass.isInstance( e ) );
 			}
 		}
 	}
