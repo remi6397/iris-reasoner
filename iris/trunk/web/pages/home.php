@@ -1,16 +1,18 @@
 <h1>IRIS Reasoner</h1>
 <p>
 	IRIS - Integrated Rule Inference System is an extensible 
-	reasoning engine for expressive rule-based languages. 
+	reasoning engine for expressive rule-based languages.<br />
+	Contact: iris-reasoner-support AT lists dot sourceforge dot net
+</p>
+
+<p>
 	Currently IRIS supports the following features:
 	<ul>
-		<li>Safe datalog <a href="/saferules">(un-safe rule algorithm here)</a></li>
-		<li>or unsafe rules using Gelder style rule augmentation</li>
-		<li>with (locally) stratified 'negation as failure' <a href="/stratification">(stratification algorithms here)</a></li>
-		<li>or un-stratified negation using well-founded semantics</li>
+		<li>Safe or <a href="/saferules">un-safe Datalog</a></li>
+		<li>with <a href="/stratification">(locally) stratified</a> or well-founded 'negation as failure' </li>
 		<li>function symbols</li>
-		<li>extended and extensible set of built-in predicates</li>
-		<li>support for all the primitive XML schema data types</li>
+		<li>comprehensive and extensible set of built-in predicates</li>
+		<li>support for all the primitive <a href="http://www.w3.org/TR/xmlschema-2/#built-in-datatypes">XML schema data types</a></li>
 	</ul>
 </p>
 
