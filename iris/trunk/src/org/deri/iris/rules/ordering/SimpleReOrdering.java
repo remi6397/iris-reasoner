@@ -93,8 +93,7 @@ public class SimpleReOrdering implements IRuleReOrderingOptimiser
 			result.set( hi, temp );
 		}
 		
-		assert result.size() == inputRuleCount;
-		
+		assert result.size() == inputRuleCount: "Some rules lost while reordering";
 	    return result;
     }
 	
