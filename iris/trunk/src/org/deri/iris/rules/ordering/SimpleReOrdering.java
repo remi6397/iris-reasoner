@@ -48,6 +48,7 @@ public class SimpleReOrdering implements IRuleReOrderingOptimiser
 	public List<IRule> reOrder( final Collection<IRule> rules )
     {
 		tempRules = new HashSet<IRule>( rules );
+		int inputRuleCount = tempRules.size();
 		
 		/*
 		IPredicateGraph graph = GraphFactory.getInstance().createPredicateGraph( rules );
@@ -92,7 +93,7 @@ public class SimpleReOrdering implements IRuleReOrderingOptimiser
 			result.set( hi, temp );
 		}
 		
-		assert result.size() == rules.size();
+		assert result.size() == inputRuleCount;
 		
 	    return result;
     }
