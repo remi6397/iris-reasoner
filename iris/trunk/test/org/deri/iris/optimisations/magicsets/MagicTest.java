@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.optimisations;
+package org.deri.iris.optimisations.magicsets;
 
 import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.MiscHelper.createVarList;
@@ -44,7 +44,7 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.optimisations.AdornedProgram.AdornedPredicate;
+import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedPredicate;
 import org.deri.iris.compiler.ParserException;
 
 /**

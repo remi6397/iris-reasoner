@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.optimisations;
+package org.deri.iris.optimisations.magicsets;
 
 /**
  * <p>Represents a state of an adornment.</p>
