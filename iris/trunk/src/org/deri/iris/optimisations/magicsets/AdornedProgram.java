@@ -494,35 +494,11 @@ public class AdornedProgram {
 		 * Constructs an adorned predicate out of a atom. All ground terms
 		 * will be marked as bound.
 		 * 
-		 * @param a
-		 *            atom for which to construct the adorned predicate
-		 * @throws NullPointerException
-		 *             if the literal of the predicate of the literal is null
+		 * @param a the atom
+		 * @throws IllegalArgumentException if the atom is <code>null</code>
 		 */
 		public AdornedPredicate(final IAtom a) {
-			if (a == null) {
-				throw new NullPointerException("The atom must not be null");
-			}
-
-			this.p = a.getPredicate();
-
-			// checking the submitted values
-			if (p == null) {
-				throw new NullPointerException(
-						"The predicate of the literal must not be null");
-			}
-
-			int iCounter = 0;
-			// computing the adornment
-			adornment = new Adornment[p.getArity()];
-			for (ITerm t : (List<ITerm>) a.getTuple()) {
-				if (t.isGround()) {
-					adornment[iCounter] = Adornment.BOUND;
-				} else {
-					adornment[iCounter] = Adornment.FREE;
-				}
-				iCounter++;
-			}
+			this(a, null);
 		}
 
 		/**
