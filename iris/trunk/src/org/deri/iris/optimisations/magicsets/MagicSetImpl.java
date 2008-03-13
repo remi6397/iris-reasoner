@@ -62,10 +62,10 @@ import org.deri.iris.optimisations.magicsets.Adornment;
 public final class MagicSetImpl implements IProgramOptimisation {
 
 	/** The prefix for the magic predicates. */
-	static final String MAGIC_PREDICATE_PREFIX = "magic_";
+	static final String MAGIC_PREDICATE_PREFIX = "magic";
 
 	/** The prefix for the labeled predicates. */
-	static final String MAGIC_LABEL_PREFIX = "label_";
+	static final String MAGIC_LABEL_PREFIX = "label";
 
 	/** An empty list that getBounds() can return. */
 	private static final List<ITerm> EMPTY_TERM_LIST = new ArrayList<ITerm>();
@@ -99,7 +99,7 @@ public final class MagicSetImpl implements IProgramOptimisation {
 		final AdornedProgram adornedProg = new AdornedProgram(rules, query);
 
 		// setting the query
-		result.query = adornedProg.getQuery();
+		result.query = unadornQuery(adornedProg.getQuery());
 
 		// setting the rules
 		result.rules = new ArrayList<IRule>();
@@ -121,17 +121,19 @@ public final class MagicSetImpl implements IProgramOptimisation {
 
 		// adding the remaining rules
 		result.rules.addAll(filterRemainingRules(adornedProg.getNormalRules(),
-				adornedProg.getAdornedRules()));
+						adornedProg.getAdornedRules()));
 		// adding the rules for the conjunctive query
 		result.rules.addAll(createConjunctiveRules(adornedProg.getQuery()));
 		// adding the rule for the seed
-		final IAtom seed = createSeed(adornedProg.getQuery());
+		final IAtom seed = createSeed(result.query);
 		// construct the seed rule
 		if (seed != null) {
-			result.rules.add(BASIC.createRule(
-						Arrays.asList(BASIC.createLiteral(true, seed)), 
+			result.rules.add(BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, seed)),
 						Collections.EMPTY_LIST));
 		}
+
+		// unadorn the rules
+		result.rules = unadornRules(result.rules);
 
 		return result;
 	}
@@ -147,7 +149,7 @@ public final class MagicSetImpl implements IProgramOptimisation {
 		final Set<IRule> res = new HashSet<IRule>();
 		final List<ILiteral> query = q.getLiterals();
 		for (int i = 1, max = query.size(); i < max; i++) {
-			final IAtom magicAtom = createMagicAtom(query.get(i).getAtom());
+			final IAtom magicAtom = createBoundAtom(query.get(i).getAtom(), null, MAGIC_PREDICATE_PREFIX, null);
 			if (!magicAtom.getTuple().isEmpty()) {
 				res.add(BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, magicAtom)),
 							slice(query, 0, i)));
@@ -240,8 +242,9 @@ public final class MagicSetImpl implements IProgramOptimisation {
 	private static IAtom createSeed(final IQuery q) {
 		assert q != null: "The query must not be null";
 
-		return (q.getLiterals().isEmpty()) ? 
-			null : createMagicAtom(q.getLiterals().get(0).getAtom());
+		return (q.getLiterals().isEmpty())
+			? null
+			: createBoundAtom(q.getLiterals().get(0).getAtom(), null, MAGIC_PREDICATE_PREFIX, null);
 	}
 
 	/**
@@ -417,25 +420,52 @@ public final class MagicSetImpl implements IProgramOptimisation {
 	}
 
 	/**
-	 * Creates a magic atom. The magic atom will be prefixed with
-	 * &quot;magic_&quot; and only contain the bound terms according to it's
-	 * adornments. If the predicate of the input atom is not adorned, it
-	 * will be adorned according to it's ground terms.
-	 * @param a the atom for which to create the magic atom
-	 * @return the magic atom
+	 * Constructs a new atom containing only it's bound terms. If bound
+	 * variables are given or the predicate of the atom is not adorned the
+	 * bound terms of the atom will be determined according to it's ground
+	 * terms and given bound variables. Otherwise the adornments of the
+	 * predicate are taken.
+	 * @param a the atom from which to create the adorned version
+	 * @param bound the bound variables (might be <code>null</code>)
+	 * @param prefix the prefix for the predicate symbol
+	 * @param suffix the suffix for the predicate symbol
+	 * @return the newly created atom
 	 */
-	private static IAtom createMagicAtom(final IAtom a) {
+	private static IAtom createBoundAtom(final IAtom a, final Collection<IVariable> bound,
+			final String prefix, final String suffix) {
 		assert a != null: "The atom must not be null";
 
-		final AdornedPredicate p = (a.getPredicate() instanceof AdornedPredicate) ? 
-			(AdornedPredicate) a.getPredicate() :
-			new AdornedPredicate(a);
-		final ITuple boundTuple = BASIC.createTuple(getBounds(p, a));
-		final AdornedPredicate magicPredicate = new AdornedPredicate(
-				MAGIC_PREDICATE_PREFIX + p.getPredicateSymbol(), Collections
-						.frequency(Arrays.asList(p.getAdornment()),
-								Adornment.BOUND), p.getAdornment());
-		return BASIC.createAtom(magicPredicate, boundTuple);
+		// getting the adorned predicate
+		final AdornedPredicate ap = ((bound != null) || !(a.getPredicate() instanceof AdornedPredicate))
+			? new AdornedPredicate(a, bound)
+			: (AdornedPredicate) a.getPredicate();
+
+		// constructing the tuple
+
+		final ITuple boundTuple = BASIC.createTuple(getBounds(ap, a));
+
+		// constructing the new predicate symbol
+		final StringBuilder newPredicateSymbol = new StringBuilder();
+
+		if ((prefix != null) && prefix.length() > 0) {
+			newPredicateSymbol.append(prefix).append("_");
+		}
+
+		newPredicateSymbol.append(ap.getPredicateSymbol()).append("_");
+
+		if ((suffix != null) && (suffix.length() > 0)) {
+			newPredicateSymbol.append(suffix).append("_");
+		}
+
+		for (final Adornment ad : ap.getAdornment()) {
+			newPredicateSymbol.append(ad);
+		}
+
+		// constructing the new predicate
+		final IPredicate newPredicate = BASIC.createPredicate(newPredicateSymbol.toString(),
+				Collections.frequency(Arrays.asList(ap.getAdornment()), Adornment.BOUND));
+
+		return BASIC.createAtom(newPredicate, boundTuple);
 	}
 
 	/**
@@ -457,7 +487,7 @@ public final class MagicSetImpl implements IProgramOptimisation {
 	 *             if the literal is <code>null</code>
 	 */
 	private static ILiteral createMagicLiteral(final ILiteral l) {
-		return (createMagicLiteral(l.isPositive(), l));
+		return createMagicLiteral(l.isPositive(), l);
 	}
 
 	/**
@@ -488,7 +518,8 @@ public final class MagicSetImpl implements IProgramOptimisation {
 		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			return l;
 		}
-		return BASIC.createLiteral(positive, createMagicAtom(l.getAtom()));
+		return BASIC.createLiteral(positive,
+				createBoundAtom(l.getAtom(), null, MAGIC_PREDICATE_PREFIX, null));
 	}
 
 	/**
@@ -509,18 +540,13 @@ public final class MagicSetImpl implements IProgramOptimisation {
 		assert passings != null: "The passings must not be null";
 		assert index >= 0 : "The index must not be negative";
 
-		final AdornedPredicate p = new AdornedPredicate(l, passings);
-		final ITuple boundTuple = BASIC.createTuple(getBounds(p, l.getAtom()));
-		final AdornedPredicate labeledPredicate = new AdornedPredicate(
-				MAGIC_LABEL_PREFIX + p.getPredicateSymbol() + "_" + index,
-				Collections.frequency(Arrays.asList(p.getAdornment()), Adornment.BOUND),
-				p.getAdornment());
-		return BASIC.createLiteral(positive, labeledPredicate, boundTuple);
+		return BASIC.createLiteral(positive,
+				createBoundAtom(l.getAtom(), passings, MAGIC_LABEL_PREFIX, Integer.toString(index)));
 	}
 
 	/**
 	 * Returns the list of bound terms of the literal according to the bounds of
-	 * the adorned predicate of the literak. The order of the terms won't be
+	 * the adorned predicate of the literal. The order of the terms won't be
 	 * changed.
 	 * 
 	 * @param l
@@ -549,12 +575,12 @@ public final class MagicSetImpl implements IProgramOptimisation {
 	 * the adornment of the predicate. The order of the terms won't be changed.
 	 * 
 	 * @param p
-	 *            wher to take the adornments from
+	 *            where to take the adornments from
 	 * @param l
 	 *            containing all the terms
 	 * @return the list of bound terms
 	 * @throws NullPointerException
-	 *             if the adroned predicate or the literal are null
+	 *             if the adorned predicate or the literal are null
 	 * @throws IllegalArgumentException
 	 *             if the signature of the adorned predicate doesn't match the
 	 *             signature of the literal predicate
@@ -589,7 +615,7 @@ public final class MagicSetImpl implements IProgramOptimisation {
 	 * Extracts all variables out of a collection of terms.
 	 * 
 	 * @param c
-	 *            the collecion from where to extract the variables
+	 *            the collection from where to extract the variables
 	 * @return the extracted variables
 	 * @throws NullPointerException
 	 *             if the collection is {@code null}
@@ -612,8 +638,8 @@ public final class MagicSetImpl implements IProgramOptimisation {
 	}
 
 	/**
-	 * Filters the given normal (unadorned ones) and removes every occurency
-	 * where an adorned one (with or without a guardian literal) exiest.
+	 * Filters the given normal (unadorned ones) and removes every occurrence
+	 * where an adorned one (with or without a guardian literal) exist.
 	 * 
 	 * @param nr
 	 *            the normal rules to filter
@@ -643,7 +669,7 @@ public final class MagicSetImpl implements IProgramOptimisation {
 
 	/**
 	 * Checks two rules whether they might be the same. If one rule is the
-	 * adorned (with or withoud a guardian literal) version of the other the
+	 * adorned (with or without a guardian literal) version of the other the
 	 * method will return {@code true}.
 	 * 
 	 * @param r0
@@ -733,5 +759,69 @@ public final class MagicSetImpl implements IProgramOptimisation {
 			throw new NullPointerException("The predicates must not be null");
 		}
 		return p0.getPredicateSymbol().equals(p1.getPredicateSymbol()) && (p0.getArity() == p1.getArity());
+	}
+
+	/**
+	 * Converts a list of rules containing adorned predicates to rules
+	 * consisting only of basic iris objects.
+	 * @param rules the rules to unadorn
+	 * @return the unadorned rules
+	 * @see #unadornPredicate(IPredicate)
+	 */
+	private static List<IRule>unadornRules(final Collection<IRule> rules) {
+		assert rules != null: "The rules must not be null";
+
+		final List<IRule> result = new ArrayList<IRule>(rules.size());
+		for (final IRule r : rules) {
+			result.add(BASIC.createRule(unadornLiterals(r.getHead()),
+						unadornLiterals(r.getBody())));
+		}
+		return result;
+	}
+
+	/**
+	 * Converts a query containing adorned predicates to a query
+	 * consisting only of basic iris objects.
+	 * @param q the query to unadorn
+	 * @return the unadorned query
+	 * @see #unadornPredicate(IPredicate)
+	 */
+	private static IQuery unadornQuery(final IQuery q) {
+		assert q != null: "The rule must not be null";
+
+		return BASIC.createQuery(unadornLiterals(q.getLiterals()));
+	}
+
+	/**
+	 * Converts a list of literals containing adorned predicates to a
+	 * list of literals consisting only of basic iris objects.
+	 * @param lits the literals to unadorn
+	 * @return the unadorned literals
+	 * @see #unadornPredicate(IPredicate)
+	 */
+	private static List<ILiteral> unadornLiterals(final Collection<ILiteral> lits) {
+		assert lits != null: "The literals must not be null";
+
+		final List<ILiteral> result = new ArrayList<ILiteral>(lits.size());
+		for (final ILiteral l : lits) {
+			result.add(BASIC.createLiteral(l.isPositive(),
+					unadornPredicate(l.getAtom().getPredicate()),
+					l.getAtom().getTuple()));
+		}
+		return result;
+	}
+
+	/**
+	 * Converts a adorned predicate to a basic one.
+	 * @param p the predicate to unadorn
+	 * @return the unadorned predicate
+	 */
+	private static IPredicate unadornPredicate(final IPredicate p) {
+		assert p != null: "The predicate must not be null";
+
+		if (p instanceof AdornedPredicate) {
+			return BASIC.createPredicate(p.getPredicateSymbol(), p.getArity());
+		}
+		return p;
 	}
 }
