@@ -35,7 +35,7 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
-import org.deri.iris.optimisations.magicsets.MagicSetImpl;
+import org.deri.iris.optimisations.magicsets.MagicSets;
 import org.deri.iris.optimisations.rulefilter.RuleFilter;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 import org.deri.iris.storage.IRelation;
@@ -136,7 +136,7 @@ public class Helper
 		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
 		
 		configuration.programOptmimisers.add( new RuleFilter() );
-//		configuration.programOptmimisers.add( new MagicSetImpl() );
+		//configuration.programOptmimisers.add( new MagicSets() );
 
 		executeAndCheckResults( program, expectedResults, configuration, "Semi-Naive and Magic Sets" );
 	}

@@ -58,7 +58,7 @@ import org.deri.iris.optimisations.magicsets.Adornment;
  * 
  * @author Richard Pöttler (richard dot poettler at deri sti2 at)
  */
-public final class MagicSetImpl implements IProgramOptimisation {
+public final class MagicSets implements IProgramOptimisation {
 
 	/** The prefix for the magic predicates. */
 	static final String MAGIC_PREDICATE_PREFIX = "magic";

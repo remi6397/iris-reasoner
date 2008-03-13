@@ -53,7 +53,7 @@ import org.deri.iris.compiler.ParserException;
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  */
-public class MagicTest extends TestCase {
+public class MagicSetsTest extends TestCase {
 
 	/** The prefix for magic literals. */
 	private static final String MAGIC_PREFIX = "magic_";
@@ -168,7 +168,7 @@ public class MagicTest extends TestCase {
 		final Parser p = new Parser();
 		p.parse(s);
 		final IQuery q = p.getQueries().iterator().next();
-		return (new MagicSetImpl()).optimise(p.getRules(), q);
+		return (new MagicSets()).optimise(p.getRules(), q);
 	}
 
 	/**
@@ -848,6 +848,6 @@ public class MagicTest extends TestCase {
 	}
 
 	public static Test suite() {
-		return new TestSuite(MagicTest.class, MagicTest.class.getSimpleName());
+		return new TestSuite(MagicSetsTest.class, MagicSetsTest.class.getSimpleName());
 	}
 }
