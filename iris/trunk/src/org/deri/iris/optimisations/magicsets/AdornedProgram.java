@@ -303,8 +303,9 @@ public class AdornedProgram {
 		assert r != null: "The rule must not be null";
 
 		AdornedPredicate ap = null;
-		if (deriveredPredicates.contains(l.getAtom().getPredicate())) {
-			ap = new AdornedPredicate(l, r.getSip().getBoundVariables(l));
+		final IAtom a = l.getAtom();
+		if (deriveredPredicates.contains(a.getPredicate())) {
+			ap = new AdornedPredicate(a, r.getSip().getBoundVariables(l));
 		}
 		return ap;
 	}
@@ -444,41 +445,35 @@ public class AdornedProgram {
 		}
 
 		/**
-		 * Constructs an adorned predicate out of a literal and its bound
-		 * variables. All occurences in the literal of the bound variables will
+		 * Constructs an adorned predicate out of a atom and its bound
+		 * variables. All occurrences in the atom of the bound variables will
 		 * be marked as bound in the adornment.
 		 * 
-		 * @param l
-		 *            the literal where to take the predicate and the variables
-		 *            from
-		 * @param bounds
-		 *            set of all bound variables of the literal
-		 * @throws nullpointer exception if the literal, the predicate of the
-		 *        literal or the bounds is null.
+		 * @param a the atom
+		 * @param bounds collection of all bound variables of the atom
+		 * @throws IllegalArgumentException if the atom is <code>null</code>
 		 */
-		public AdornedPredicate(final ILiteral l,
-				final Collection<IVariable> bounds) {
-			if (l == null) {
-				throw new NullPointerException("The literal must not be null");
-			}
-			p = l.getAtom().getPredicate();
-
-			if ((p == null) || (bounds == null)) {
-				throw new NullPointerException(
-						"The predicate or set of bound variables must not be null");
+		public AdornedPredicate(final IAtom a, final Collection<IVariable> bounds) {
+			if (a == null) {
+				throw new IllegalArgumentException("The Atom must not be null");
 			}
 
-			int iCoutner = 0;
-			adornment = new Adornment[p.getArity()];
+			p = a.getPredicate();
+
+			final Collection<IVariable> boundVars = (bounds == null)
+				? Collections.EMPTY_SET
+				: bounds;
 
 			// computing the adornment
-			for (final ITerm t : l.getAtom().getTuple()) {
-				if (isBound(t, bounds)) {
-					adornment[iCoutner] = Adornment.BOUND;
+			adornment = new Adornment[p.getArity()];
+			int i = 0;
+			for (final ITerm t : a.getTuple()) {
+				if (isBound(t, boundVars)) {
+					adornment[i] = Adornment.BOUND;
 				} else {
-					adornment[iCoutner] = Adornment.FREE;
+					adornment[i] = Adornment.FREE;
 				}
-				iCoutner++;
+				i++;
 			}
 		}
 
