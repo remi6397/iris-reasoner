@@ -136,7 +136,7 @@ public class Helper
 		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
 		
 		configuration.programOptmimisers.add( new RuleFilter() );
-		//configuration.programOptmimisers.add( new MagicSets() );
+		configuration.programOptmimisers.add( new MagicSets() );
 
 		executeAndCheckResults( program, expectedResults, configuration, "Semi-Naive and Magic Sets" );
 	}
