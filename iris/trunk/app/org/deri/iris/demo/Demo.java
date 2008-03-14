@@ -30,6 +30,7 @@ import org.deri.iris.evaluation.naive.NaiveEvaluatorFactory;
 import org.deri.iris.evaluation.seminaive.SemiNaiveEvaluatorFactory;
 import org.deri.iris.evaluation.stratifiedbottomup.StratifiedBottomUpEvaluationStrategyFactory;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
+import org.deri.iris.optimisations.rulefilter.RuleFilter;
 import org.deri.iris.optimisations.magicsets.MagicSets;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 import org.deri.iris.rules.safety.StandardRuleSafetyProcessor;
@@ -158,7 +159,7 @@ public class Demo
 				configuration.ruleSafetyProcessor = new AugmentingRuleSafetyProcessor();
 			else if( startsWith( argument, MAGIC_SETS ) )
 			{
-//				configuration.programOptmimisers.add( new RuleFilteringOptimiser() );
+				configuration.programOptmimisers.add( new RuleFilter() );
 				configuration.programOptmimisers.add( new MagicSets() );
 			}
 			else

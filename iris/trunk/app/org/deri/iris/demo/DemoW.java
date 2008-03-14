@@ -41,6 +41,7 @@ import javax.swing.UIManager;
 import org.deri.iris.Configuration;
 import org.deri.iris.KnowledgeBaseFactory;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
+import org.deri.iris.optimisations.magicsets.MagicSets;
 import org.deri.iris.optimisations.rulefilter.RuleFilter;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 
@@ -205,6 +206,17 @@ public class DemoW
 							"?-exceptions_to_rule( ?a1b1,?a2b2,?n )." + NEW_LINE
 											);
 			
+			// Unsafe rule example
+			mProgram.setText(
+							"p( ?x ) :- a( ?x ), diff( ?x, ?y )." + NEW_LINE +
+							"diff( ?x, ?y ) :- not same( ?x, ?y )." + NEW_LINE +
+							"same( ?x, ?x ) :- ." + NEW_LINE +
+							"a(1)." + NEW_LINE +
+				
+							"?- p(?x)."
+						);
+			
+						
 			// Unstratified example.
 			mProgram.setText(
 				"republican(?x) :- like_guns(?x), not hippy(?x)." + NEW_LINE +
@@ -220,17 +232,6 @@ public class DemoW
 				"?- hippy(?x)."
 			);
 
-			// Unsafe rule example
-			mProgram.setText(
-							"p( ?x ) :- a( ?x ), diff( ?x, ?y )." + NEW_LINE +
-							"diff( ?x, ?y ) :- not same( ?x, ?y )." + NEW_LINE +
-							"same( ?x, ?x ) :- ." + NEW_LINE +
-							"a(1)." + NEW_LINE +
-				
-							"?- p(?x)."
-						);
-			
-						
 			mRun.addActionListener( this );
 
 			mAbort.addActionListener( this );
@@ -378,7 +379,7 @@ public class DemoW
 				
 			case 1:
 				config.programOptmimisers.add( new RuleFilter() );
-//				config.programOptmimisers.add( new MagicSetImpl() );
+				config.programOptmimisers.add( new MagicSets() );
 				break;
 			}
 
