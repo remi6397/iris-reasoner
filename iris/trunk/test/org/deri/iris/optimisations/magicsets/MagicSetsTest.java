@@ -281,10 +281,10 @@ public class MagicSetsTest extends TestCase {
 		head = Arrays.asList(createLabeledLiteral("a_2", bff, new ITerm[]{X}));
 		body = Arrays.asList(createMagicLiteral("a", bbf, XY));
 		ref.add(BASIC.createRule(head, body));
-		// magic_a_bbf(X, A) :- label_a_2_bff(X, A), label_a_1_bbf(X, A)
+		// magic_a_bbf(X, A) :- label_a_1_bbf(X, A), label_a_2_bff(X, A)
 		head = Arrays.asList(createMagicLiteral("a", bbf, XA));
-		body = Arrays.asList(createLabeledLiteral("a_2", bff, new ITerm[]{X}),
-			createLabeledLiteral("a_1", bbf, XA));
+		body = Arrays.asList(createLabeledLiteral("a_1", bbf, XA),
+				createLabeledLiteral("a_2", bff, new ITerm[]{X}));
 		ref.add(BASIC.createRule(head, body));
 
 		// constructing the rewritten rules out of the normal ones
