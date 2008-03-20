@@ -672,24 +672,15 @@ public final class MagicSets implements IProgramOptimisation {
 
 		final List<ILiteral> result = new ArrayList<ILiteral>(lits.size());
 		for (final ILiteral l : lits) {
-			result.add(BASIC.createLiteral(l.isPositive(),
-					unadornPredicate(l.getAtom().getPredicate()),
-					l.getAtom().getTuple()));
+			final IPredicate p = l.getAtom().getPredicate();
+			if (p instanceof AdornedPredicate) {
+				result.add(BASIC.createLiteral(l.isPositive(),
+							BASIC.createPredicate(p.getPredicateSymbol(), p.getArity()),
+							l.getAtom().getTuple()));
+			} else {
+				result.add(l);
+			}
 		}
 		return result;
-	}
-
-	/**
-	 * Converts a adorned predicate to a basic one.
-	 * @param p the predicate to unadorn
-	 * @return the unadorned predicate
-	 */
-	private static IPredicate unadornPredicate(final IPredicate p) {
-		assert p != null: "The predicate must not be null";
-
-		if (p instanceof AdornedPredicate) {
-			return BASIC.createPredicate(p.getPredicateSymbol(), p.getArity());
-		}
-		return p;
 	}
 }
