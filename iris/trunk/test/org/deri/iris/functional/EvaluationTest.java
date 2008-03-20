@@ -1076,4 +1076,20 @@ public class EvaluationTest extends TestCase
     	Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
 
+	/**
+	 * Tests the correct evaluation of a program containing built-ins and
+	 * transformed with the magic sets.
+	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1919554&group_id=167309&atid=842434">bug #1919554: magic sets with builtins don't evaluate correctly</a>
+	 */
+	public void testMagicBuiltinsTransformation() throws Exception {
+		final String prog = "parent(1,2).\n"
+			+ "parent(?n1,?n2) :- parent( ?n, ?n1 ), ?n+1=?n1, ?n+2=?n2, ?n1 < 10.\n"
+			+ "parent(10,1).\n"
+			+ "tc(?x,?y):- tc(?x,?z),parent(?z,?y).\n"
+			+ "tc(?x,?y):- parent(?x,?y).\n"
+			+ "?-tc(10,9).\n";
+		final String expected = "dummy.";
+
+		Helper.evaluateWithAllStrategies(prog, expected);
+	}
 }

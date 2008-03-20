@@ -25,6 +25,7 @@ package org.deri.iris.optimisations.magicsets;
 import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.MiscHelper.createVarList;
 import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
@@ -785,6 +786,42 @@ public class MagicSetsTest extends TestCase {
 						true,
 						BASIC.createPredicate("a", 2),
 						BASIC.createTuple(CONCRETE.createInteger(2), Y))));
+
+		assertResults(new Result(rules, query), result);
+	}
+
+	/**
+	 * Checks, whether builtins are keept correctly after the magic sets
+	 * transformation.
+	 * @see <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=1919554&group_id=167309&atid=842434">bug #1919554: magic sets with builtins don't evaluate correctly</a>
+	 */
+	public void testKeepBuiltins() throws Exception {
+		final String prog = "a(?X, ?Y) :- b(?X, ?Z), ?Z+1=?Y.\n"
+			+ "?- a('john', ?X).\n";
+		final Result result = getResult(prog);
+
+		final Adornment[] BF = new Adornment[]{Adornment.BOUND, Adornment.FREE};
+		final ITerm X = TERM.createVariable("X");
+		final ITerm Y = TERM.createVariable("Y");
+		final ITerm Z = TERM.createVariable("Z");
+		final ITerm[] XY = new ITerm[]{X, Y};
+		final ITerm john = TERM.createString("john");
+
+		final List<IRule> rules = new ArrayList<IRule>();
+
+		// a(?X, ?Y) :- magic_a_bf(?X), b(?X, ?Z), ADD(?Z, 1, ?Y).
+		rules.add(BASIC.createRule(Arrays.asList(createLiteral("a", "X", "Y")),
+					Arrays.asList(createMagicLiteral("a", BF, new ITerm[]{X}),
+						createLiteral("b", "X", "Z"),
+						BASIC.createLiteral(true,
+							BUILTIN.createAddBuiltin(Z, CONCRETE.createInteger(1), Y)))));
+		// magic_a_bf('john') :- .
+		rules.add(seedRule(createMagicLiteral("a", BF, new ITerm[]{john})));
+
+		// ?- a('john', ?X).
+		final IQuery query = BASIC.createQuery(Arrays.asList(BASIC.createLiteral(true,
+						BASIC.createPredicate("a", 2),
+						BASIC.createTuple(john, X))));
 
 		assertResults(new Result(rules, query), result);
 	}
