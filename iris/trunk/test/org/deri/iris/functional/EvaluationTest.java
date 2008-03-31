@@ -805,6 +805,24 @@ public class EvaluationTest extends TestCase
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}	
 	
+	/**
+	 * This reproduces bug: 1919554 magic sets with builtins don't evaluate correctly
+	 */
+	public void testMagic4() throws Exception
+	{
+		String program = 
+			"parent(1,2)." +
+			"parent(?n1,?n2) :- parent( ?n, ?n1 ), ?n+1=?n1, ?n+2=?n2, ?n1 < 10." +
+			"parent(10,1)." +
+			"tc(?x,?y):- tc(?x,?z),parent(?z,?y)." +
+			"tc(?x,?y):- parent(?x,?y)." +
+			"?-tc(10,9).";
+		
+		String expectedResults =
+			"dummy.";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
 	
 	public void testIncompatibaleAssignments() throws Exception
 	{
