@@ -163,18 +163,20 @@ public class StandardFloatingPointComparatorTest extends TestCase
 	 */
 	public void testComparisons()
 	{
+		final double small = Math.pow( 2.0, -42 );
+		
 		// Input: a, b
 		double[][] input = new double[][]
 		              {
 						new double[] { 1, 1 },
 						new double[] { 1, 2 },
-		                new double[] { 1, 1 - StandardFloatingPointComparator.getDouble().MAX_DIFFERENCE_FROM_ONE / 10 },
-		                new double[] { 1, 1 + StandardFloatingPointComparator.getDouble().MAX_DIFFERENCE_FROM_ONE / 10 },
+		                new double[] { 1, 1 - small / 10 },
+		                new double[] { 1, 1 + small / 10 },
 
 		                new double[] { 0, 1 },
 		                new double[] { 0, 0 },
 		                new double[] { 0, -1 },
-		                new double[] { 0, StandardFloatingPointComparator.getDouble().MAX_DIFFERENCE_FROM_ONE / 100 },
+		                new double[] { 0, small / 100 },
 		                new double[] { 2100000001.0001, 2100000001.0003 },
 		              };
 
