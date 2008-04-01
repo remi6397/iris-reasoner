@@ -44,6 +44,7 @@ import org.deri.iris.api.terms.concrete.IDuration;
 import org.deri.iris.api.terms.concrete.IFloatTerm;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.concrete.ITime;
+import org.deri.iris.utils.FloatingPoint;
 
 /**
  * <p>

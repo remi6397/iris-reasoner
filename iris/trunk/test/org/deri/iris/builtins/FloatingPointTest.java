@@ -22,6 +22,7 @@
  */
 package org.deri.iris.builtins;
 
+import org.deri.iris.utils.FloatingPoint;
 import junit.framework.TestCase;
 
 public class FloatingPointTest extends TestCase
