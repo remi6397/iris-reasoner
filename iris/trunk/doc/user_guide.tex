@@ -31,7 +31,7 @@ as well as logicians/researchers who wish to understand the capabilities of the 
 The creation of logic programs and their evaluation is described.
 The logic program can be created in one of two ways: Using the API
 to construct a program fragment by fragment, or using the parser to
-process a logic program written in human-readable format (datalog).
+process a logic program written in human-readable format (Datalog).
 
 However, this document does not attempt to explain the theory of
 logic programming and only provides a brief description of the
@@ -41,30 +41,38 @@ evaluation strategies employed.
 
 \subsection{What it does}
 
-IRIS is a datalog reasoner that can evaluate safe-datalog with
-stratified negation as failure.
+IRIS is a Datalog reasoner that can evaluate safe or unsafe datalog
+extended with function symbols, XML schema data types, built-in predicates
+and negation as failure
+(stratified, locally stratified or un-stratified using the well-founded semantics).
 
-It is delivered in two java `jar' files. One of which contains
-the reasoner and the other contains the parser.
+It is delivered in three java `jar' files.
+One contains the reasoning engine, another contains the parser and the last
+contains some utility programs including two demo programs.
+The demo programs are useful for experimenting with Datalog and various
+evaluation options.
 
 \subsection{What is input}
 
 IRIS evaluates queries over a knowledge base.
-The knowledge base consists of facts (instances of predicates) and rules.
+The knowledge-base consists of facts (ground atomic formula) and rules.
 The combination of facts, rules and queries is known as a logic program
 and forms the input to a reasoning (query-answering) task.
 
-The creation of the logic program is achieved in one of two ways:
-Create the java objects representing the components of the program using the API
+The creation of the knowledge-base is achieved in one of two ways:
+\begin{itemize}
+  \item Create the java objects representing the components of the knowledge-base using the API
 (described in section \ref{api} on page \pageref{api})
-or parse an entire datalog program written in human-readable form using the parser.
+  \item Parse an entire Datalog program written in human-readable form using the parser.
 The grammar supported by IRIS is described in the datalog grammar guide in section
 \ref{parser} on page \pageref{parser}).
+\end{itemize}
+
 
 \subsection{What is output}
 
-For each query in the datalog program, IRIS will return the variable bindings,
-i.e. the set of all tuples that can be found or inferred from the knowledge base that satisfy the query.
+For each query submitted to the knowledge-base, IRIS will return the variable bindings,
+i.e. the set of all tuples that can be found or inferred from the knowledge-base that satisfy the query.
 
 \section{Evaluation Process}
 
