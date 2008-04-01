@@ -44,7 +44,7 @@ import org.deri.iris.api.terms.concrete.IDuration;
 import org.deri.iris.api.terms.concrete.IFloatTerm;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.concrete.ITime;
-import org.deri.iris.utils.FloatingPoint;
+import org.deri.iris.utils.StandardFloatingPointComparator;
 
 /**
  * <p>
@@ -139,13 +139,13 @@ public class BuiltinHelper {
 	        Float f0 = ( (IFloatTerm) n0 ).getValue();
 	        Float f1 = ( (IFloatTerm) n1 ).getValue();
 	     
-			return FloatingPoint.getFloat().compare( f0, f1 );
+			return StandardFloatingPointComparator.getFloat().compare( f0, f1 );
         }
 		
 		double f0 = getDouble(n0);
 		double f1 = getDouble(n1);
 		
-		return FloatingPoint.getDouble().compare( f0, f1 );
+		return StandardFloatingPointComparator.getDouble().compare( f0, f1 );
 	}
 
 	/**
@@ -259,11 +259,11 @@ public class BuiltinHelper {
 			
 			if( ot0 instanceof Float && ot1 instanceof Float )
 			{
-				return FloatingPoint.getFloat().equals( ( (Float)ot0).floatValue(), ( (Float) ot1).floatValue() );
+				return StandardFloatingPointComparator.getFloat().equals( ( (Float)ot0).floatValue(), ( (Float) ot1).floatValue() );
 			}
 			else if( ot0 instanceof Double && ot1 instanceof Double )
 			{
-				return FloatingPoint.getDouble().equals( ( (Double) ot0).doubleValue(), ( (Double) ot1).doubleValue() );
+				return StandardFloatingPointComparator.getDouble().equals( ( (Double) ot0).doubleValue(), ( (Double) ot1).doubleValue() );
 			}
 		}
 	    return t0.equals( t1 );

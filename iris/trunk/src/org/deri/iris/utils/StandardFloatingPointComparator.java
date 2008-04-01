@@ -25,13 +25,13 @@ package org.deri.iris.utils;
 /**
  * Utility class for floating point manipulation.
  */
-public class FloatingPoint
+public class StandardFloatingPointComparator
 {
 	/**
 	 * Singleton-like method to get the standard setup for dealing with double type.
 	 * @return The standard double-configured FloatingPoint object.
 	 */
-	public static FloatingPoint getDouble()
+	public static StandardFloatingPointComparator getDouble()
 	{
 		return mStandardDoubleInstance;
 	}
@@ -40,7 +40,7 @@ public class FloatingPoint
 	 * Singleton-like method to get the standard setup for dealing with float type.
 	 * @return The standard float-configured FloatingPoint object.
 	 */
-	public static FloatingPoint getFloat()
+	public static StandardFloatingPointComparator getFloat()
 	{
 		return mStandardFloatInstance;
 	}
@@ -51,7 +51,7 @@ public class FloatingPoint
 	 * comparing values. If a non-standard setup is used then it is up to the user to set this
 	 * value correctly.
 	 */
-	public FloatingPoint( int numberOfSignificantBits )
+	public StandardFloatingPointComparator( int numberOfSignificantBits )
 	{
 		MAX_DIFFERENCE_FROM_ONE = Math.pow( 2.0, -numberOfSignificantBits );
 	}
@@ -199,10 +199,10 @@ public class FloatingPoint
 	public static final int LEAST_SIGNIFICANT_BINARY_DIGITS_TO_IGNORE_FLOAT = 4;
 
 	/** The standard comparator for double type. */
-	public static FloatingPoint mStandardDoubleInstance =
-		new FloatingPoint( BINARY_DIGITS_OF_PRECISION_DOUBLE - LEAST_SIGNIFICANT_BINARY_DIGITS_TO_IGNORE_DOUBLE );
+	public static StandardFloatingPointComparator mStandardDoubleInstance =
+		new StandardFloatingPointComparator( BINARY_DIGITS_OF_PRECISION_DOUBLE - LEAST_SIGNIFICANT_BINARY_DIGITS_TO_IGNORE_DOUBLE );
 
 	/** The standard comparator for float types. */
-	public static FloatingPoint mStandardFloatInstance =
-		new FloatingPoint( BINARY_DIGITS_OF_PRECISION_FLOAT - LEAST_SIGNIFICANT_BINARY_DIGITS_TO_IGNORE_FLOAT );
+	public static StandardFloatingPointComparator mStandardFloatInstance =
+		new StandardFloatingPointComparator( BINARY_DIGITS_OF_PRECISION_FLOAT - LEAST_SIGNIFICANT_BINARY_DIGITS_TO_IGNORE_FLOAT );
 }

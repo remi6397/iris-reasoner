@@ -22,10 +22,10 @@
  */
 package org.deri.iris.utils;
 
-import org.deri.iris.utils.FloatingPoint;
+import org.deri.iris.utils.StandardFloatingPointComparator;
 import junit.framework.TestCase;
 
-public class FloatingPointTest extends TestCase
+public class StandardFloatingPointComparatorTest extends TestCase
 {
 	public static final double lower = 1.5;
 
@@ -43,11 +43,11 @@ public class FloatingPointTest extends TestCase
 			double scaledSame1 = same1 * power;
 			double scaledSame2 = same2 * power;
 			
-			assertEquals( FloatingPoint.getDouble().compare( scaledLower, scaledSame1 ), -1 );
-			assertEquals( FloatingPoint.getDouble().compare( scaledSame1, scaledLower ), +1 );
+			assertEquals( StandardFloatingPointComparator.getDouble().compare( scaledLower, scaledSame1 ), -1 );
+			assertEquals( StandardFloatingPointComparator.getDouble().compare( scaledSame1, scaledLower ), +1 );
 	
-			assertEquals( FloatingPoint.getDouble().compare( scaledSame1, scaledSame2 ), 0 );
-			assertEquals( FloatingPoint.getDouble().compare( scaledSame2, scaledSame1 ), 0 );
+			assertEquals( StandardFloatingPointComparator.getDouble().compare( scaledSame1, scaledSame2 ), 0 );
+			assertEquals( StandardFloatingPointComparator.getDouble().compare( scaledSame2, scaledSame1 ), 0 );
 		}
 	}
 
@@ -61,9 +61,9 @@ public class FloatingPointTest extends TestCase
 			double scaledSame1 = same1 * power;
 			double scaledSame2 = same2 * power;
 			
-			assertTrue( FloatingPoint.getDouble().less( scaledLower, scaledSame1 ) );
-			assertFalse( FloatingPoint.getDouble().less( scaledSame1, scaledSame2 ) );
-			assertFalse( FloatingPoint.getDouble().less( scaledSame2, scaledSame1 ) );
+			assertTrue( StandardFloatingPointComparator.getDouble().less( scaledLower, scaledSame1 ) );
+			assertFalse( StandardFloatingPointComparator.getDouble().less( scaledSame1, scaledSame2 ) );
+			assertFalse( StandardFloatingPointComparator.getDouble().less( scaledSame2, scaledSame1 ) );
 		}
 	}
 
@@ -77,9 +77,9 @@ public class FloatingPointTest extends TestCase
 			double scaledSame1 = same1 * power;
 			double scaledSame2 = same2 * power;
 			
-			assertTrue( FloatingPoint.getDouble().greater( scaledSame1, scaledLower ) );
-			assertFalse( FloatingPoint.getDouble().greater( scaledSame1, scaledSame2 ) );
-			assertFalse( FloatingPoint.getDouble().greater( scaledSame2, scaledSame1 ) );
+			assertTrue( StandardFloatingPointComparator.getDouble().greater( scaledSame1, scaledLower ) );
+			assertFalse( StandardFloatingPointComparator.getDouble().greater( scaledSame1, scaledSame2 ) );
+			assertFalse( StandardFloatingPointComparator.getDouble().greater( scaledSame2, scaledSame1 ) );
 		}
 	}
 
@@ -93,9 +93,9 @@ public class FloatingPointTest extends TestCase
 			double scaledSame1 = same1 * power;
 			double scaledSame2 = same2 * power;
 			
-			assertTrue( FloatingPoint.getDouble().greaterOrEquals( scaledSame1, scaledLower ) );
-			assertTrue( FloatingPoint.getDouble().greaterOrEquals( scaledSame1, scaledSame2 ) );
-			assertTrue( FloatingPoint.getDouble().greaterOrEquals( scaledSame2, scaledSame1 ) );
+			assertTrue( StandardFloatingPointComparator.getDouble().greaterOrEquals( scaledSame1, scaledLower ) );
+			assertTrue( StandardFloatingPointComparator.getDouble().greaterOrEquals( scaledSame1, scaledSame2 ) );
+			assertTrue( StandardFloatingPointComparator.getDouble().greaterOrEquals( scaledSame2, scaledSame1 ) );
 		}
 	}
 
@@ -109,9 +109,9 @@ public class FloatingPointTest extends TestCase
 			double scaledSame1 = same1 * power;
 			double scaledSame2 = same2 * power;
 			
-			assertTrue( FloatingPoint.getDouble().lessOrEquals( scaledLower, scaledSame1 ) );
-			assertTrue( FloatingPoint.getDouble().lessOrEquals( scaledSame1, scaledSame2 ) );
-			assertTrue( FloatingPoint.getDouble().lessOrEquals( scaledSame2, scaledSame1 ) );
+			assertTrue( StandardFloatingPointComparator.getDouble().lessOrEquals( scaledLower, scaledSame1 ) );
+			assertTrue( StandardFloatingPointComparator.getDouble().lessOrEquals( scaledSame1, scaledSame2 ) );
+			assertTrue( StandardFloatingPointComparator.getDouble().lessOrEquals( scaledSame2, scaledSame1 ) );
 		}
 	}
 
@@ -125,9 +125,9 @@ public class FloatingPointTest extends TestCase
 			double scaledSame1 = same1 * power;
 			double scaledSame2 = same2 * power;
 			
-			assertTrue( FloatingPoint.getDouble().equals( scaledSame1, scaledSame2 ) );
-			assertTrue( FloatingPoint.getDouble().equals( scaledSame2, scaledSame1 ) );
-			assertFalse( FloatingPoint.getDouble().equals( scaledSame1, scaledLower ) );
+			assertTrue( StandardFloatingPointComparator.getDouble().equals( scaledSame1, scaledSame2 ) );
+			assertTrue( StandardFloatingPointComparator.getDouble().equals( scaledSame2, scaledSame1 ) );
+			assertFalse( StandardFloatingPointComparator.getDouble().equals( scaledSame1, scaledLower ) );
 		}
 	}
 
@@ -141,21 +141,21 @@ public class FloatingPointTest extends TestCase
 			double scaledSame1 = same1 * power;
 			double scaledSame2 = same2 * power;
 			
-			assertFalse( FloatingPoint.getDouble().notEquals( scaledSame1, scaledSame2 ) );
-			assertFalse( FloatingPoint.getDouble().notEquals( scaledSame2, scaledSame1 ) );
-			assertTrue( FloatingPoint.getDouble().notEquals( scaledSame1, scaledLower ) );
+			assertFalse( StandardFloatingPointComparator.getDouble().notEquals( scaledSame1, scaledSame2 ) );
+			assertFalse( StandardFloatingPointComparator.getDouble().notEquals( scaledSame2, scaledSame1 ) );
+			assertTrue( StandardFloatingPointComparator.getDouble().notEquals( scaledSame1, scaledLower ) );
 		}
 	}
 
 	public void testIsIntValue()
 	{
-		assertTrue( FloatingPoint.getDouble().isIntValue( 5.00000000000001 ) );
-		assertFalse( FloatingPoint.getDouble().isIntValue( 5.0000000001 ) );
+		assertTrue( StandardFloatingPointComparator.getDouble().isIntValue( 5.00000000000001 ) );
+		assertFalse( StandardFloatingPointComparator.getDouble().isIntValue( 5.0000000001 ) );
 
-		assertFalse( FloatingPoint.getDouble().isIntValue( 0.50000000000001 ) );
+		assertFalse( StandardFloatingPointComparator.getDouble().isIntValue( 0.50000000000001 ) );
 
-		assertTrue( FloatingPoint.getDouble().isIntValue( 5000000.00000001 ) );
-		assertFalse( FloatingPoint.getDouble().isIntValue( 5000000.0001 ) );
+		assertTrue( StandardFloatingPointComparator.getDouble().isIntValue( 5000000.00000001 ) );
+		assertFalse( StandardFloatingPointComparator.getDouble().isIntValue( 5000000.0001 ) );
 	}
 
 	/**
@@ -168,13 +168,13 @@ public class FloatingPointTest extends TestCase
 		              {
 						new double[] { 1, 1 },
 						new double[] { 1, 2 },
-		                new double[] { 1, 1 - FloatingPoint.getDouble().MAX_DIFFERENCE_FROM_ONE / 10 },
-		                new double[] { 1, 1 + FloatingPoint.getDouble().MAX_DIFFERENCE_FROM_ONE / 10 },
+		                new double[] { 1, 1 - StandardFloatingPointComparator.getDouble().MAX_DIFFERENCE_FROM_ONE / 10 },
+		                new double[] { 1, 1 + StandardFloatingPointComparator.getDouble().MAX_DIFFERENCE_FROM_ONE / 10 },
 
 		                new double[] { 0, 1 },
 		                new double[] { 0, 0 },
 		                new double[] { 0, -1 },
-		                new double[] { 0, FloatingPoint.getDouble().MAX_DIFFERENCE_FROM_ONE / 100 },
+		                new double[] { 0, StandardFloatingPointComparator.getDouble().MAX_DIFFERENCE_FROM_ONE / 100 },
 		                new double[] { 2100000001.0001, 2100000001.0003 },
 		              };
 
@@ -195,13 +195,13 @@ public class FloatingPointTest extends TestCase
 
 		for( int i = 0; i < input.length; ++i )
 		{
-			boolean l = FloatingPoint.getDouble().less( input[ i ][ 0 ], input[ i ][ 1 ] );
-			boolean e = FloatingPoint.getDouble().equals( input[ i ][ 0 ], input[ i ][ 1 ] );
+			boolean l = StandardFloatingPointComparator.getDouble().less( input[ i ][ 0 ], input[ i ][ 1 ] );
+			boolean e = StandardFloatingPointComparator.getDouble().equals( input[ i ][ 0 ], input[ i ][ 1 ] );
 
-			boolean ne = FloatingPoint.getDouble().notEquals( input[ i ][ 0 ], input[ i ][ 1 ] );
-			boolean le = FloatingPoint.getDouble().lessOrEquals( input[ i ][ 0 ], input[ i ][ 1 ] );
-			boolean g = FloatingPoint.getDouble().greater( input[ i ][ 0 ], input[ i ][ 1 ] );
-			boolean ge = FloatingPoint.getDouble().greaterOrEquals( input[ i ][ 0 ], input[ i ][ 1 ] );
+			boolean ne = StandardFloatingPointComparator.getDouble().notEquals( input[ i ][ 0 ], input[ i ][ 1 ] );
+			boolean le = StandardFloatingPointComparator.getDouble().lessOrEquals( input[ i ][ 0 ], input[ i ][ 1 ] );
+			boolean g = StandardFloatingPointComparator.getDouble().greater( input[ i ][ 0 ], input[ i ][ 1 ] );
+			boolean ge = StandardFloatingPointComparator.getDouble().greaterOrEquals( input[ i ][ 0 ], input[ i ][ 1 ] );
 
 			boolean less = output[ i ][ 0 ];
 			boolean equals = output[ i ][ 1 ];
