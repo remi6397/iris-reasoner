@@ -38,7 +38,6 @@ import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.basics.Tuple;
 import org.deri.iris.builtins.EqualBuiltin;
 import org.deri.iris.builtins.ExactEqualBuiltin;
-import org.deri.iris.builtins.FloatingPoint;
 import org.deri.iris.builtins.GreaterBuiltin;
 import org.deri.iris.builtins.GreaterEqualBuiltin;
 import org.deri.iris.builtins.LessBuiltin;
@@ -50,6 +49,7 @@ import org.deri.iris.rules.IRuleStratifier;
 import org.deri.iris.rules.RuleManipulator;
 import org.deri.iris.rules.stratification.LocalStratificationDecorator.Adornment;
 import org.deri.iris.rules.stratification.LocalStratificationDecorator.MatchType;
+import org.deri.iris.utils.FloatingPoint;
 
 /**
  * A local stratification algorithm.
