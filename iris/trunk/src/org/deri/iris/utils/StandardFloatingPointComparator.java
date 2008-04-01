@@ -23,15 +23,17 @@
 package org.deri.iris.utils;
 
 /**
- * Utility class for floating point manipulation.
+ * Utility class for floating point comparison.
+ * This class allows for round-off errors by using only the specified most significant bits
+ * of the operands, after allowing for scale.
  */
-public class StandardFloatingPointComparator
+public class StandardFloatingPointComparator implements IFloatingPointComparator
 {
 	/**
 	 * Singleton-like method to get the standard setup for dealing with double type.
 	 * @return The standard double-configured FloatingPoint object.
 	 */
-	public static StandardFloatingPointComparator getDouble()
+	public static IFloatingPointComparator getDouble()
 	{
 		return mStandardDoubleInstance;
 	}
@@ -40,7 +42,7 @@ public class StandardFloatingPointComparator
 	 * Singleton-like method to get the standard setup for dealing with float type.
 	 * @return The standard float-configured FloatingPoint object.
 	 */
-	public static StandardFloatingPointComparator getFloat()
+	public static IFloatingPointComparator getFloat()
 	{
 		return mStandardFloatInstance;
 	}
@@ -56,13 +58,6 @@ public class StandardFloatingPointComparator
 		MAX_DIFFERENCE_FROM_ONE = Math.pow( 2.0, -numberOfSignificantBits );
 	}
 	
-	/**
-	 * An error-safe comparison in the java style..
-	 * 
-	 * @param a A double value
-	 * @param b A double value
-	 * @return -1 if a is significantly less than b, +1 if a is significantly greater than b, 0 if a and b are close enough.
-	 */
 	public int compare( double a, double b )
 	{
 		if( equals( a, b ) )
@@ -71,49 +66,21 @@ public class StandardFloatingPointComparator
 		return a < b ? -1 : +1;
 	}
 	
-	/**
-	 * Floating-point error safe comparison.
-	 * 
-	 * @param a A double value
-	 * @param b A double value
-	 * @return true If a is less than b.
-	 */
 	public boolean less( double a, double b )
 	{
 		return(a < b && notEquals( a, b ));
 	}
 
-	/**
-	 * Floating-point error safe comparison.
-	 * 
-	 * @param a A double value
-	 * @param b A double value
-	 * @return true If a is greater than b.
-	 */
 	public boolean greater( double a, double b )
 	{
 		return less( b, a );
 	}
 
-	/**
-	 * Floating-point error safe comparison.
-	 * 
-	 * @param a A double value
-	 * @param b A double value
-	 * @return true If a is greater than or close enough to be equal to b.
-	 */
 	public boolean greaterOrEquals( double a, double b )
 	{
 		return !less( a, b );
 	}
 
-	/**
-	 * Floating-point error safe comparison.
-	 * 
-	 * @param a A double value
-	 * @param b A double value
-	 * @return true If a is less than or close enough to be equal to b.
-	 */
 	public boolean lessOrEquals( double a, double b )
 	{
 		return !greater( a, b );
@@ -152,24 +119,11 @@ public class StandardFloatingPointComparator
 		return diff <= maxAllowableDifference;
 	}
 
-	/**
-	 * Floating-point error safe comparison.
-	 * 
-	 * @param a
-	 * @param b
-	 * @return true If a and b are significantly different.
-	 */
 	public boolean notEquals( double a, double b )
 	{
 		return !equals( a, b );
 	}
 
-	/**
-	 * Indicates whether a double value contains an integer or a number very,
-	 * very close to an integer.
-	 * @param value The value to test
-	 * @return true If value holds an integer.
-	 */
 	public boolean isIntValue( double value )
 	{
 		return equals( Math.rint( value ), value );
@@ -199,10 +153,10 @@ public class StandardFloatingPointComparator
 	public static final int LEAST_SIGNIFICANT_BINARY_DIGITS_TO_IGNORE_FLOAT = 4;
 
 	/** The standard comparator for double type. */
-	public static StandardFloatingPointComparator mStandardDoubleInstance =
+	public static final IFloatingPointComparator mStandardDoubleInstance =
 		new StandardFloatingPointComparator( BINARY_DIGITS_OF_PRECISION_DOUBLE - LEAST_SIGNIFICANT_BINARY_DIGITS_TO_IGNORE_DOUBLE );
 
 	/** The standard comparator for float types. */
-	public static StandardFloatingPointComparator mStandardFloatInstance =
+	public static final IFloatingPointComparator mStandardFloatInstance =
 		new StandardFloatingPointComparator( BINARY_DIGITS_OF_PRECISION_FLOAT - LEAST_SIGNIFICANT_BINARY_DIGITS_TO_IGNORE_FLOAT );
 }
