@@ -24,7 +24,7 @@ package org.deri.iris.terms.concrete;
 
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.utils.FloatingPoint;
+import org.deri.iris.utils.StandardFloatingPointComparator;
 
 /**
  * <p>
@@ -62,7 +62,7 @@ public class DecimalTerm implements IDecimalTerm {
 		}
 		
 		DecimalTerm dt = (DecimalTerm) o;
-		return FloatingPoint.getDouble().compare( d, dt.d );
+		return StandardFloatingPointComparator.getDouble().compare( d, dt.d );
 	}
 
 	public boolean equals(final Object o) {
@@ -72,7 +72,7 @@ public class DecimalTerm implements IDecimalTerm {
 		DecimalTerm dt = (DecimalTerm) o;
 		
 		// Use the floating point comparer to allow for round-off errors.
-		return FloatingPoint.getDouble().equals( d, dt.d );
+		return StandardFloatingPointComparator.getDouble().equals( d, dt.d );
 	}
 
 	public int hashCode() {

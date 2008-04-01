@@ -49,7 +49,7 @@ import org.deri.iris.rules.IRuleStratifier;
 import org.deri.iris.rules.RuleManipulator;
 import org.deri.iris.rules.stratification.LocalStratificationDecorator.Adornment;
 import org.deri.iris.rules.stratification.LocalStratificationDecorator.MatchType;
-import org.deri.iris.utils.FloatingPoint;
+import org.deri.iris.utils.StandardFloatingPointComparator;
 
 /**
  * A local stratification algorithm.
@@ -509,7 +509,7 @@ public class LocalStratifier implements IRuleStratifier
 			else
 			{
 				double v = value.doubleValue();
-				if( FloatingPoint.getDouble().isIntValue( v ) )
+				if( StandardFloatingPointComparator.getDouble().isIntValue( v ) )
 					adornment = adornment.addNegatedConstant( Factory.CONCRETE.createInteger( value.intValue() ) );
 			}
 			
