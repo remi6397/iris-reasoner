@@ -57,6 +57,9 @@ public class QueryContainment implements IQueryContainment {
 	/** The substitution resulting from the query evaluation */
 	private IRelation result;
 	
+	/** The query variable bindings */
+	private List<IVariable> mVariableBindings;
+	
 	/** Namespace containing the constants that are used to replace variables */
 //	private final String namespace = "http://queryContainment/constants#";
 	
@@ -112,7 +115,8 @@ public class QueryContainment implements IQueryContainment {
 		IKnowledgeBase knowledgebase = KnowledgeBaseFactory.createKnowledgeBase( facts, mRules );
 
 		// run query 2 against the knowledge base to be evaluated
-		result = knowledgebase.execute( query2 );
+		mVariableBindings = new ArrayList<IVariable>();
+		result = knowledgebase.execute( query2, mVariableBindings );
 		
 		return result.size() > 0;
 	}
@@ -120,6 +124,12 @@ public class QueryContainment implements IQueryContainment {
 	public IRelation getContainmentMappings() {
 		return result;
 	}
+	
+	public List<IVariable> getVariableBindings()
+	{
+		return mVariableBindings;
+	}
+
 	
 //	/*
 //	 * Method to substitute the variables in query1 by constants
