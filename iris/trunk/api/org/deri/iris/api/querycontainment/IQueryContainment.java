@@ -22,7 +22,10 @@
  */
 package org.deri.iris.api.querycontainment;
 
+import java.util.List;
+
 import org.deri.iris.api.basics.IQuery;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.storage.IRelation;
 
 /**
@@ -81,5 +84,10 @@ public interface IQueryContainment {
 	 */
 	public IRelation getContainmentMappings();
 	
+	/**
+	 * Return the variables from the query in 'execution' order. 
+	 * @return The variables in order.
+	 */
+	public List<IVariable> getVariableBindings();
 }
 
