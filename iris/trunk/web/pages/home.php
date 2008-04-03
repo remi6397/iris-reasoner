@@ -1,8 +1,7 @@
 <h1>IRIS Reasoner</h1>
 <p>
 	IRIS - Integrated Rule Inference System is an extensible 
-	reasoning engine for expressive rule-based languages.<br />
-	Contact: iris-reasoner-support AT lists dot sourceforge dot net
+	reasoning engine for expressive rule-based languages.
 </p>
 
 <p>
