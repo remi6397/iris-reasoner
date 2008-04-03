@@ -17,6 +17,10 @@ echo Update from source control
 svn up
 
 echo --------------------------------------------------------------------
+echo Copy the latest user guide so that it can be downloaded from the website
+cp doc/user_guide/user_guide.pdf ../../pages
+
+echo --------------------------------------------------------------------
 echo Build using ant
 ant clean
 ant release
@@ -67,3 +71,4 @@ mv build/report/html/ ../../snapshot/junit_report
 echo --------------------------------------------------------------------
 echo And try to make sbsolutely sure that everything is group writable
 chmod -R g+w ../../snapshot
+
