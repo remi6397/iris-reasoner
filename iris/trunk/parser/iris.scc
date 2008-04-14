@@ -32,7 +32,7 @@ Helpers
 	tab = 9;
 	cr = 13;
 	lf = 10;
-	eol = cr lf | cr | lf;
+	eol = [cr + lf];
     
 	// defining additional character classes
 	alpha = ['a' .. 'z'] | ['A' .. 'Z'];
@@ -44,7 +44,7 @@ Helpers
 	comma = ',';
 	predtrailing = alpha | num | '_';
 
-	comment = '//' [all - [cr + lf]]* eol;
+	comment = '//' [all - eol]* eol*;
 
     blank = (' ' | tab | eol )+;
     
