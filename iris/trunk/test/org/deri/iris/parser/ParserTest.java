@@ -26,34 +26,37 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
-import java.util.ArrayList;
+import static org.deri.iris.MiscHelper.createLiteral;
+
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.deri.iris.MiscHelper;
+
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.compiler.Parser;
+import org.deri.iris.compiler.ParserException;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IRelation;
+import org.deri.iris.storage.Relations;
+import org.deri.iris.storage.simple.SimpleRelationFactory;
 
 /**
- * 
  * <p>
  * Tests for the datalog parser.
  * </p>
- * <p>
- * $Id: ParserTest.java,v 1.15 2007-11-06 21:04:14 bazbishop237 Exp $
- * </p>
  * @author Joachim Adi Schuetz, DERI Innsbruck
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.15 $
+ * @author Richard Pöttler (richard dot poettler at sti2 dot at)
  */
 public class ParserTest extends TestCase {
 
@@ -62,284 +65,240 @@ public class ParserTest extends TestCase {
 	}
 
 	/**
+	 * Parses a given string and asserts the parsed results
+	 * @param prog the string to parse
+	 * @param rules the expected rules
+	 * @param facts the expected facts
+	 * @param queries the expected queries
+	 */
+	private void assertResult(final String prog,
+			final Collection<IRule> rules,
+			final Map<IPredicate, IRelation> facts,
+			final Collection<IQuery> queries) throws ParserException {
+		Parser parser = new Parser();
+		parser.parse(prog);
+
+		// assert the rules
+		final Set<IRule> parsedRules = new HashSet<IRule>(parser.getRules());
+		final Set<IRule> expectedRules = (rules == null)
+			? Collections.<IRule>emptySet()
+			: new HashSet<IRule>(rules);
+		assertEquals("The rules were not parsed correctly", expectedRules, parsedRules);
+
+		// assert the facts
+		final Map<IPredicate, IRelation> parsedFacts = parser.getFacts();
+		final Map<IPredicate, IRelation> expectedFacts = (facts == null)
+			? Collections.<IPredicate, IRelation>emptyMap()
+			: facts;
+		assertEquals("The facts were not parsed correctly",
+				Relations.toPredicateSetMapping(expectedFacts),
+				Relations.toPredicateSetMapping(parsedFacts));
+
+		// assert the queries
+		final Set<IQuery> parsedQueries = new HashSet<IQuery>(parser.getQueries());
+		final Set<IQuery> expectedQueries = (queries == null)
+			? Collections.<IQuery>emptySet()
+			: new HashSet<IQuery>(queries);
+		assertEquals("The queries were not parsed correctly", expectedQueries, parsedQueries);
+	}
+
+	/**
+	 * Creates a predicate to relation map with only one fact.
+	 * @param predicate the predicate of the fact
+	 * @param fact which to put into the relation
+	 */
+	private static Map<IPredicate, IRelation> singletonFact(final IPredicate predicate, final ITuple fact) {
+		assert predicate != null: "The predicate must not be null";
+		assert fact != null: "The fact must not be null";
+
+		final IRelation relation = (new SimpleRelationFactory()).createRelation();
+		relation.add(fact);
+
+		return Collections.singletonMap(predicate, relation);
+	}
+
+	/**
 	 * s(X, Y) :- p(Y, Z), r(Y, Z)
-	 *
 	 */
 	public void testParser() throws Exception {
+		final String expr = "s(?X, ?Y) :- p(?X, ?Z), r(?Y, ?Z).";
 		
-		// input
-		String expr = "s(?X, ?Y) :- p(?X, ?Z), r(?Y, ?Z).";
-		
-		// result
-		final List<ILiteral> head = new ArrayList<ILiteral>();
-		head.add(MiscHelper.createLiteral("s", "X", "Y"));
+		final IRule rule = Factory.BASIC.createRule(Arrays.asList(createLiteral("s", "X", "Y")),
+				Arrays.asList(createLiteral("p", "X", "Z"), createLiteral("r", "Y", "Z")));
 
-		final List<ILiteral> body = new ArrayList<ILiteral>();
-		body.add(MiscHelper.createLiteral("p", "X", "Z"));
-		body.add(MiscHelper.createLiteral("r", "Y", "Z"));
-
-		IRule rule = Factory.BASIC.createRule(head, body);
-
-		Parser parser = new Parser();
-		parser.parse( expr );
-		assertEquals("Couldn't parse all rules", rule, parser.getRules().iterator().next());
+		assertResult(expr, Collections.singleton(rule), null, null);
 	}
+
 	/**
 	 * p(?X,?Y) :- r(?Z, ?Y) and ?X='a'
-	 *
 	 */
 	public void testParser_1a() throws Exception {
-
-		// input
-		String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X='a'.";
+		final String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X='a'.";
 		
-		// result
-		final List<ILiteral> head = new ArrayList<ILiteral>();
-		head.add(MiscHelper.createLiteral("p", "X", "Y"));
+		final IRule rule = Factory.BASIC.createRule(Arrays.asList(createLiteral("p", "X", "Y")),
+				Arrays.asList(createLiteral("r", "Z", "Y"),
+					BASIC.createLiteral(true,
+						BUILTIN.createEqual(TERM.createVariable("X"), TERM.createString("a")))));
 
-		final List<ILiteral> body = new ArrayList<ILiteral>();
-		body.add(MiscHelper.createLiteral("r", "Z", "Y"));
-		body.add(Factory.BASIC.createLiteral(true, 
-						Factory.BUILTIN.createEqual(Factory.TERM.createVariable("X"), 
-										Factory.TERM.createString("a"))));
-		
-		IRule rule = Factory.BASIC.createRule(head, body);
-				
-		Parser parser = new Parser();
-		parser.parse( expr );
-
-		assertEquals("Couldn't parse all rules", rule, parser.getRules().iterator().next());
+		assertResult(expr, Collections.singleton(rule), null, null);
 	}
+
 	/**
 	 * p(?X,?Y) :- r(?X, ?Y) and ?X!='a'
-	 *
 	 */
 	public void testParser_1b() throws Exception {
+		final String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X!='a'.";
 
-		// input
-		String expr = "p(?X, ?Y) :- r(?Z, ?Y), ?X!='a'.";
+		final IRule rule = Factory.BASIC.createRule(Arrays.asList(createLiteral("p", "X", "Y")),
+				Arrays.asList(createLiteral("r", "Z", "Y"),
+					BASIC.createLiteral(true,
+						BUILTIN.createUnequal(TERM.createVariable("X"), TERM.createString("a")))));
 
-		// result
-		final List<ILiteral> head = new ArrayList<ILiteral>();
-		head.add(MiscHelper.createLiteral("p", "X", "Y"));
-
-		final List<ILiteral> body = new ArrayList<ILiteral>();
-		body.add(MiscHelper.createLiteral("r", "Z", "Y"));
-		body.add(Factory.BASIC.createLiteral(true, 
-						Factory.BUILTIN.createUnequal(Factory.TERM.createVariable("X"), 
-										Factory.TERM.createString("a"))));
-
-		IRule rule = Factory.BASIC.createRule(head, body);
-
-		Parser parser = new Parser();
-		parser.parse( expr );
-		
-		assertEquals("Couldn't parse all rules", rule, parser.getRules().iterator().next());
+		assertResult(expr, Collections.singleton(rule), null, null);
 	}
 
 	/**
 	 * Tests whether all terms are created correctly.
 	 */
 	public void testTerms() throws Exception {
-		final String expr = "ints(1). intl(_integer(2)). \n" + 
-			"strs('hallos'). strl(_string('hallol')). \n" + 
-			"decs(1.5). decl(_decimal(3.7)). \n" + 
-			"sqs(sq#short). sql(_sqname(sq#long)). \n" + 
-			"iris(_'http://deri.org/s#short'). iril(_iri('http://deri.org/l#long')). \n" + 
-			"bool(_boolean('false')). \n" + 
-			"double(_double(4.67)). \n" + 
-			"float(_float(4.67)). \n" + 
-			"date(_date(2007, 2, 6)). \n" + 
-			"datetz(_date(2007, 2, 6, 2, 30)). \n" + 
-			"duration(_duration(2007, 2, 6, 12, 45, 11)). \n" + 
-			"durationms(_duration(2007, 2, 6, 12, 45, 11, 500)). \n" + 
-			"datetimes(_datetime(2007, 2, 6, 12, 45, 11)). \n" + 
-			"datetimel(_datetime(2007, 2, 6, 12, 45, 11, 1, 30)). \n" + 
-			"datetimelms(_datetime(2007, 2, 6, 12, 45, 11, 500, 1, 30)). \n" + 
-			"times(_time(12, 45, 11)). \n" + 
-			"timel(_time(12, 45, 11, 1, 30)). \n" + 
-			"timelms(_time(12, 45, 11, 500, 1, 30)). \n" + 
-			"gday(_gday(6)).\n" + 
-			"gmonth(_gmonth(2)).\n" + 
-			"gyear(_gyear(2007)).\n" + 
-			"gmonthday(_gmonthday(2, 6)).\n" + 
-			"gyearmonth(_gyearmonth(2007, 2)).\n" + 
-			"base(_base64binary('45df')).\n" + 
-			"hex(_hexbinary('a1df')).\n";
-
-		Parser parser = new Parser();
-		parser.parse( expr );
-		
 		// TODO: test the function term
+		final IPredicate PRED = BASIC.createPredicate("fact", 1);
+		
 		// asserting the short int
-		IPredicate pred = BASIC.createPredicate("ints", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createInteger(1)));
-
+		assertResult("fact(1).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createInteger(1))), null);
 		// asserting the long int
-		pred = BASIC.createPredicate("intl", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createInteger(2)));
-		
+		assertResult("fact(_integer(1)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createInteger(1))), null);
 		// asserting the short string
-		pred = BASIC.createPredicate("strs", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(TERM.createString("hallos")));
-		
+		assertResult("fact('string').", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("string"))), null);
 		// asserting the long string
-		pred = BASIC.createPredicate("strl", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(TERM.createString("hallol")));
-		
+		assertResult("fact(_string('string')).", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("string"))), null);
 		// asserting the short decimal
-		pred = BASIC.createPredicate("decs", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createDecimal(1.5)));
-		
+		assertResult("fact(1.5).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createDecimal(1.5))), null);
 		// asserting the long decimal
-		pred = BASIC.createPredicate("decl", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createDecimal(3.7)));
-		
+		assertResult("fact(_decimal(1.5)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createDecimal(1.5))), null);
 		// asserting the short sqname
-		pred = BASIC.createPredicate("sqs", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createSqName("sq#short")));
-		
+		assertResult("fact(sq#name).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createSqName("sq#name"))), null);
 		// asserting the long sqname
-		pred = BASIC.createPredicate("sql", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createSqName("sq#long")));
-		
+		assertResult("fact(_sqname(sq#name)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createSqName("sq#name"))), null);
 		// asserting the short iri
-		pred = BASIC.createPredicate("iris", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createIri("http://deri.org/s#short")));
-		
+		assertResult("fact(_'http://some/#iri').", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createIri("http://some/#iri"))), null);
 		// asserting the long iri
-		pred = BASIC.createPredicate("iril", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createIri("http://deri.org/l#long")));
-		
+		assertResult("fact(_iri('http://some/#iri')).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createIri("http://some/#iri"))), null);
+
 		// asserting the bool
-		pred = BASIC.createPredicate("bool", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createBoolean(false)));
-		
+		assertResult("fact(_boolean('false')).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createBoolean(false))), null);
 		// asserting the double
-		pred = BASIC.createPredicate("double", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createDouble(4.67)));
-		
+		assertResult("fact(_double(1.5)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createDouble(1.5))), null);
 		// asserting the float
-		pred = BASIC.createPredicate("float", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createFloat(4.67f)));
-		
+		assertResult("fact(_float(1.5)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createFloat(1.5f))), null);
 		// asserting the date
-		pred = BASIC.createPredicate("date", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createDate(2007, 2, 6)));
-		
+		assertResult("fact(_date(2007, 2, 6)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createDate(2007, 2, 6))), null);
 		// asserting the date with timezone
-		pred = BASIC.createPredicate("datetz", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createDate(2007, 2, 6, 2, 30)));
-		
+		assertResult("fact(_date(2007, 2, 6, 2, 30)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createDate(2007, 2, 6, 2, 30))), null);
 		// asserting the duration
-		pred = BASIC.createPredicate("duration", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createDuration(2007, 2, 6, 12, 45, 11)));
-		
+		assertResult("fact(_duration(2007, 2, 6, 12, 45, 11)).",
+				null,
+				singletonFact(PRED, BASIC.createTuple(CONCRETE.createDuration(2007, 2, 6, 12, 45, 11))),
+				null);
 		// asserting the duration with milliseconds
-		pred = BASIC.createPredicate("durationms", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createDuration(2007, 2, 6, 12, 45, 11, 500)));
-		
-		// asserting the short datetime
-		pred = BASIC.createPredicate("datetimes", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createDateTime(2007, 2, 6, 12, 45, 11)));
-		
-		// asserting the long datetime
-		pred = BASIC.createPredicate("datetimel", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createDateTime(2007, 2, 6, 12, 45, 11, 1, 30)));
-		
-		// asserting the long datetime with milliseconds
-		pred = BASIC.createPredicate("datetimelms", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createDateTime(2007, 2, 6, 12, 45, 11, 500, 1, 30)));
-		
-		// asserting the short time
-		pred = BASIC.createPredicate("times", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createTime(12, 45, 11)));
-		
-		// asserting the long time
-		pred = BASIC.createPredicate("timel", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createTime(12, 45, 11, 1, 30)));
-		
-		// asserting the long time with milliseconds
-		pred = BASIC.createPredicate("timelms", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createTime(12, 45, 11, 500, 1, 30)));
-		
+		assertResult("fact(_duration(2007, 2, 6, 12, 45, 11, 500)).",
+				null,
+				singletonFact(PRED, BASIC.createTuple(CONCRETE.createDuration(2007, 2, 6, 12, 45, 11, 500))),
+				null);
+		// asserting the datetime
+		assertResult("fact(_datetime(2007, 2, 6, 12, 45, 11)).",
+				null,
+				singletonFact(PRED, BASIC.createTuple(CONCRETE.createDateTime(2007, 2, 6, 12, 45, 11))),
+				null);
+		// asserting the datetime with timezone
+		assertResult("fact(_datetime(2007, 2, 6, 12, 45, 11, 1, 30)).",
+				null,
+				singletonFact(PRED, BASIC.createTuple(CONCRETE.createDateTime(2007, 2, 6, 12, 45, 11, 1, 30))),
+				null);
+		// asserting the datetime with timezone and milliseconds
+		assertResult("fact(_datetime(2007, 2, 6, 12, 45, 11, 500, 1, 30)).",
+				null,
+				singletonFact(PRED, BASIC.createTuple(CONCRETE.createDateTime(2007, 2, 6, 12, 45, 11, 500, 1, 30))),
+				null);
+		// asserting the time
+		assertResult("fact(_time(12, 45, 11)).",
+				null,
+				singletonFact(PRED, BASIC.createTuple(CONCRETE.createTime(12, 45, 11))),
+				null);
+		// asserting the time with timezone
+		assertResult("fact(_time(12, 45, 11, 1, 30)).",
+				null,
+				singletonFact(PRED, BASIC.createTuple(CONCRETE.createTime(12, 45, 11, 1, 30))),
+				null);
+		// asserting the time with timezone and milliseconds
+		assertResult("fact(_time(12, 45, 11, 500, 1, 30)).",
+				null,
+				singletonFact(PRED, BASIC.createTuple(CONCRETE.createTime(12, 45, 11, 500, 1, 30))),
+				null);
 		// asserting the gday
-		pred = BASIC.createPredicate("gday", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createGDay(6)));
-		
+		assertResult("fact(_gday(4)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createGDay(4))), null);
 		// asserting the gmonth
-		pred = BASIC.createPredicate("gmonth", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createGMonth(2)));
-		
+		assertResult("fact(_gmonth(4)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createGMonth(4))), null);
 		// asserting the gyear
-		pred = BASIC.createPredicate("gyear", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createGYear(2007)));
-		
+		assertResult("fact(_gyear(4)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createGYear(4))), null);
 		// asserting the gmonthday
-		pred = BASIC.createPredicate("gmonthday", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createGMonthDay(2, 6)));
-		
+		assertResult("fact(_gmonthday(2, 6)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createGMonthDay(2, 6))), null);
 		// asserting the gyearmonth
-		pred = BASIC.createPredicate("gyearmonth", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createGYearMonth(2007, 2)));
-		
+		assertResult("fact(_gyearmonth(2007, 2)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createGYearMonth(2007, 2))), null);
 		// asserting the base64 binary
-		pred = BASIC.createPredicate("base", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createBase64Binary("45df")));
-		
-		// asserting the hex bin
-		pred = BASIC.createPredicate("hex", 1);
-		assertEquals("Could not find " + pred, parser.getFacts().get(pred).get( 0 ), BASIC.createTuple(CONCRETE.createHexBinary("a1df")));
+		assertResult("fact(_base64binary('45df')).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createBase64Binary("45df"))), null);
+		// asserting the hex binary
+		assertResult("fact(_hexbinary('a1df')).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createHexBinary("a1df"))), null);
 	}
 
 	public void testParseBinaryBuiltins() throws Exception {
-		final String toParse = "x(?X) :- \n" +
-			"1 < 2, \n" + 
-			"3 <= 4, \n" + 
-			"5 > 6, \n" + 
-			"7 >= 8, \n" + 
-			"9 = 10, \n" + 
-			"11 != 12.";
-		Parser parser = new Parser();
-		parser.parse( toParse );
-		final Collection<ILiteral> body = parser.getRules().iterator().next().getBody();
-		assertTrue("Can't find '1 < 2' in " + body, body.contains(
-					BASIC.createLiteral(true, BUILTIN.createLess(CONCRETE.createInteger(1), CONCRETE.createInteger(2)))));
-		assertTrue("Can't find '3 <= 4' in " + body, body.contains(
-					BASIC.createLiteral(true, BUILTIN.createLessEqual(CONCRETE.createInteger(3), CONCRETE.createInteger(4)))));
-		assertTrue("Can't find '5 > 6' in " + body, body.contains(
-					BASIC.createLiteral(true, BUILTIN.createGreater(CONCRETE.createInteger(5), CONCRETE.createInteger(6)))));
-		assertTrue("Can't find '7 >= 8' in " + body, body.contains(
-					BASIC.createLiteral(true, BUILTIN.createGreaterEqual(CONCRETE.createInteger(7), CONCRETE.createInteger(8)))));
-		assertTrue("Can't find '9 = 10' in " + body, body.contains(
-					BASIC.createLiteral(true, BUILTIN.createEqual(CONCRETE.createInteger(9), CONCRETE.createInteger(10)))));
-		assertTrue("Can't find '11 != 12' in " + body, body.contains(
+		final String prog = "x(?X) :- 1 < 2, 3 <= 4, 5 > 6, 7 >= 8, 9 = 10, 11 != 12.";
+		final IRule rule = BASIC.createRule(Arrays.asList(createLiteral("x", "X")),
+				Arrays.asList(BASIC.createLiteral(true, BUILTIN.createLess(CONCRETE.createInteger(1), CONCRETE.createInteger(2))),
+					BASIC.createLiteral(true, BUILTIN.createLessEqual(CONCRETE.createInteger(3), CONCRETE.createInteger(4))),
+					BASIC.createLiteral(true, BUILTIN.createGreater(CONCRETE.createInteger(5), CONCRETE.createInteger(6))),
+					BASIC.createLiteral(true, BUILTIN.createGreaterEqual(CONCRETE.createInteger(7), CONCRETE.createInteger(8))),
+					BASIC.createLiteral(true, BUILTIN.createEqual(CONCRETE.createInteger(9), CONCRETE.createInteger(10))),
 					BASIC.createLiteral(true, BUILTIN.createUnequal(CONCRETE.createInteger(11), CONCRETE.createInteger(12)))));
+		assertResult(prog, Collections.singleton(rule), null, null);
 	}
 
 	public void testParseTenaryBuiltins() throws Exception {
-		final String toParse = "x(?X) :- \n" +
-			"1 + 2 = 3, \n" + 
-			"4 - 5 = 6, \n" + 
-			"7 * 8 = 9, \n" + 
-			"10 / 11 = 12.";
-		Parser parser = new Parser();
-		parser.parse( toParse );
-		final Collection<ILiteral> body = parser.getRules().iterator().next().getBody();
-		assertTrue("Can't find '1 + 2 = 3' in " + body, body.contains(
-					BASIC.createLiteral(true, BUILTIN.createAddBuiltin(
-							CONCRETE.createInteger(1), CONCRETE.createInteger(2), CONCRETE.createInteger(3)))));
-		assertTrue("Can't find '4 - 5 = 6' in " + body, body.contains(
-					BASIC.createLiteral(true, BUILTIN.createSubtractBuiltin(
-							CONCRETE.createInteger(4), CONCRETE.createInteger(5), CONCRETE.createInteger(6)))));
-		assertTrue("Can't find '7 * 8 = 9' in " + body, body.contains(
-					BASIC.createLiteral(true, BUILTIN.createMultiplyBuiltin(
-							CONCRETE.createInteger(7), CONCRETE.createInteger(8), CONCRETE.createInteger(9)))));
-		assertTrue("Can't find '10 / 11 = 12' in " + body, body.contains(
-					BASIC.createLiteral(true, BUILTIN.createDivideBuiltin(
-							CONCRETE.createInteger(10), CONCRETE.createInteger(11), CONCRETE.createInteger(12)))));
+		final String prog = "x(?X) :- 1 + 2 = 3, 4 - 5 = 6, 7 * 8 = 9, 10 / 11 = 12.";
+
+		final IRule rule = BASIC.createRule(Arrays.asList(createLiteral("x", "X")),
+				Arrays.asList(
+					BASIC.createLiteral(true, BUILTIN.createAddBuiltin(CONCRETE.createInteger(1),
+							CONCRETE.createInteger(2),
+							CONCRETE.createInteger(3))),
+					BASIC.createLiteral(true, BUILTIN.createSubtractBuiltin(CONCRETE.createInteger(4),
+							CONCRETE.createInteger(5),
+							CONCRETE.createInteger(6))),
+					BASIC.createLiteral(true, BUILTIN.createMultiplyBuiltin(CONCRETE.createInteger(7),
+							CONCRETE.createInteger(8),
+							CONCRETE.createInteger(9))),
+					BASIC.createLiteral(true, BUILTIN.createDivideBuiltin(CONCRETE.createInteger(10),
+							CONCRETE.createInteger(11),
+							CONCRETE.createInteger(12)))));
+
+		assertResult(prog, Collections.singleton(rule), null, null);
 	}
-	
+
+	/**
+	 * Tests a single line comments.
+	 */
+	public void testComment() throws Exception {
+		final IRule rulex = BASIC.createRule(Arrays.asList(createLiteral("x", "X")),
+				Arrays.asList(createLiteral("x", "X")));
+		final IRule ruley = BASIC.createRule(Arrays.asList(createLiteral("y", "X")),
+				Arrays.asList(createLiteral("y", "X")));
+
+		assertResult("//", null, null, null);
+		assertResult("x(?X) :- x(?X). // asdf", Arrays.asList(rulex), null, null);
+		assertResult("//\nx(?X) :- x(?X).", Arrays.asList(rulex), null, null);
+		assertResult("x(?X) :- x(?X). // asdf\ny(?X) :- y(?X).", Arrays.asList(rulex, ruley), null, null);
+	}
+
 	/**
 	 * Test that the parsing of negated built-ins works as expected.
 	 * @throws Exception
@@ -358,19 +317,5 @@ public class ParserTest extends TestCase {
 		IRule rule2 = parser2.getRules().iterator().next();
 		
 		assertEquals( rule1, rule2 );
-	}
-
-	public static boolean same( IRelation actualResults, IRelation expectedResults )
-	{
-		Set<ITuple> actual = new HashSet<ITuple>();
-		Set<ITuple> expected = new HashSet<ITuple>();
-		
-		for( int t = 0; t < actualResults.size(); ++t )
-			actual.add( actualResults.get( t ) );
-		
-		for( int t = 0; t < expectedResults.size(); ++t )
-			expected.add( expectedResults.get( t ) );
-		
-		return actual.equals( expected );
 	}
 }
