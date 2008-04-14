@@ -293,8 +293,11 @@ public final class SIPImpl implements ISip {
 
 			final List<ILiteral> vertices = Graphs.predecessorListOf(sipGraph,
 					actual);
-			dependencies.addAll(vertices);
-			todoDependencies.addAll(vertices);
+			for (final ILiteral lit : vertices) {
+				if (dependencies.add(lit)) {
+					todoDependencies.add(lit);
+				}
+			}
 		}
 
 		return dependencies;
