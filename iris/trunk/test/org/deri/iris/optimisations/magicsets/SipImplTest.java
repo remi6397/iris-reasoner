@@ -38,6 +38,7 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.compiler.Parser;
+import org.deri.iris.compiler.ParserException;
 import org.deri.iris.graph.LabeledEdge;
 
 /**
@@ -55,16 +56,30 @@ public class SipImplTest extends TestCase {
 	}
 
 	/**
+	 * Parses a rule and a query and constructs the sip out of them.
+	 * @param prog the program to parse
+	 * @return the constructed sip
+	 */
+	private static SIPImpl parseProgram(final String prog) throws ParserException {
+		assert prog != null: "The program must not be null";
+
+		final Parser p = new Parser();
+		p.parse(prog);
+
+		assert !p.getRules().isEmpty(): "There are no rules parsed!";
+		assert !p.getQueries().isEmpty(): "There are no queries parsed!";
+
+		return new SIPImpl(p.getRules().iterator().next(),
+				p.getQueries().iterator().next());
+	}
+
+	/**
 	 * Tests whether the sip contains all expected edges.
 	 */
 	public void testForEdges0() throws Exception {
 		final String prog = "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y).\n"
 						 + "?- sg('john', ?X).";
-		final Parser p = new Parser();
-		p.parse(prog);
-		final IRule r = p.getRules().iterator().next();
-		final IQuery q = p.getQueries().iterator().next();
-		final SIPImpl sip = new SIPImpl(r, q);
+		final SIPImpl sip = parseProgram(prog);
 
 		final IVariable X = TERM.createVariable("X");
 		final IVariable Z1 = TERM.createVariable("Z1");
@@ -88,11 +103,7 @@ public class SipImplTest extends TestCase {
 	public void testForEdges1() throws Exception {
 		final String prog = "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), down(?Y1, ?Y).\n"
 						  + "?- rsg('a', ?X).";
-		final Parser p = new Parser();
-		p.parse(prog);
-		final IRule r = p.getRules().iterator().next();
-		final IQuery q = p.getQueries().iterator().next();
-		final SIPImpl sip = new SIPImpl(r, q);
+		final SIPImpl sip = parseProgram(prog);
 
 		final IVariable X = TERM.createVariable("X");
 		final IVariable X1 = TERM.createVariable("X1");
@@ -112,11 +123,7 @@ public class SipImplTest extends TestCase {
 	public void testEqualBuiltinSip() throws Exception {
 		final String prog = "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), ?Y1 = ?Y.\n"
 						  + "?- rsg('a', ?X).";
-		final Parser p = new Parser();
-		p.parse(prog);
-		final IRule r = p.getRules().iterator().next();
-		final IQuery q = p.getQueries().iterator().next();
-		final SIPImpl sip = new SIPImpl(r, q);
+		final SIPImpl sip = parseProgram(prog);
 
 		final IVariable X = TERM.createVariable("X");
 		final IVariable X1 = TERM.createVariable("X1");
@@ -165,19 +172,15 @@ public class SipImplTest extends TestCase {
 	 * Tests the behaviour for rules containing equal literals.
 	 * </p>
 	 * <p>
-	 * <b>Note: Rules containing one literal multible times will only
-	 * contain one edge represeinting it, no matter, how often such a
+	 * <b>Note: Rules containing one literal multiple times will only
+	 * contain one edge representing it, no matter, how often such a
 	 * literal occurs in the rule.</b>
 	 * </p>
 	 */
 	public void testEqualLiterals() throws Exception {
 		final String prog = "tmp(?X) :- p(?X), p(?X), p(?X).\n"
 					      + "?- tmp(?X).";
-		final Parser p = new Parser();
-		p.parse(prog);
-		final IRule r = p.getRules().iterator().next();
-		final IQuery q = p.getQueries().iterator().next();
-		final SIPImpl sip = new SIPImpl(r, q);
+		final SIPImpl sip = parseProgram(prog);
 
 		final IVariable X = TERM.createVariable("X");
 		final ILiteral lit = createLiteral("p", "X");
@@ -189,19 +192,27 @@ public class SipImplTest extends TestCase {
 	}
 
 	/**
+	 * Checks whether the dependency retrieval of a literal depending on
+	 * itself succeeds.
+	 */
+	public void testEqualLiteralsDependency() throws Exception {
+		final String prog = "a(?X) :- a(?X).\n"
+			+ "?- a(1).";
+		final SIPImpl sip = parseProgram(prog);
+
+		final ILiteral ax = createLiteral("a", "X");
+		assertEquals(ax + " depends on itself.", Collections.singleton(ax), sip.getDepends(ax));
+	}
+
+	/**
 	 * Tests whether the bound variables are correct.
 	 */
 	public void testBounds0() throws Exception {
 		final String prog = "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), down(?X, ?Z1, ?Z2, ?Z3), again(?X, ?Z1, ?Z3, ?Y).\n"
 						 + "?- sg('john', ?X).";
-		final Parser p = new Parser();
-		p.parse(prog);
-		final IRule r = p.getRules().iterator().next();
-		final IQuery q = p.getQueries().iterator().next();
-		final SIPImpl sip = new SIPImpl(r, q);
+		final SIPImpl sip = parseProgram(prog);
 
 		final IVariable X = TERM.createVariable("X");
-		final IVariable Y = TERM.createVariable("Y");
 		final IVariable Z1 = TERM.createVariable("Z1");
 		final IVariable Z2 = TERM.createVariable("Z2");
 		final IVariable Z3 = TERM.createVariable("Z3");
@@ -211,10 +222,15 @@ public class SipImplTest extends TestCase {
 		final Set<IVariable> bound_down = new HashSet<IVariable>(Arrays.asList(new IVariable[]{X, Z1, Z2}));
 		final Set<IVariable> bound_again = new HashSet<IVariable>(Arrays.asList(new IVariable[]{X, Z1, Z3}));
 
-		assertEquals("Bounds of up wrong", bound_up, sip.getBoundVariables(r.getBody().get(0)));
-		assertEquals("Bounds of sg wrong", bound_sg, sip.getBoundVariables(r.getBody().get(1)));
-		assertEquals("Bounds of down wrong", bound_down, sip.getBoundVariables(r.getBody().get(2)));
-		assertEquals("Bounds of again wrong", bound_again, sip.getBoundVariables(r.getBody().get(3)));
+		final ILiteral up = createLiteral("up", "X", "Z1");
+		final ILiteral sg = createLiteral("sg", "Z1", "Z2");
+		final ILiteral down = createLiteral("down", "X", "Z1", "Z2", "Z3");
+		final ILiteral again = createLiteral("again", "X", "Z1", "Z3", "Y");
+
+		assertEquals("Bounds of up wrong", bound_up, sip.getBoundVariables(up));
+		assertEquals("Bounds of sg wrong", bound_sg, sip.getBoundVariables(sg));
+		assertEquals("Bounds of down wrong", bound_down, sip.getBoundVariables(down));
+		assertEquals("Bounds of again wrong", bound_again, sip.getBoundVariables(again));
 	}
 
 	/**
@@ -223,24 +239,23 @@ public class SipImplTest extends TestCase {
 	public void testBounds1() throws Exception {
 		final String prog = "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), down(?Y1, ?Y).\n"
 						  + "?- rsg('a', ?X).";
-		final Parser p = new Parser();
-		p.parse(prog);
-		final IRule r = p.getRules().iterator().next();
-		final IQuery q = p.getQueries().iterator().next();
-		final SIPImpl sip = new SIPImpl(r, q);
+		final SIPImpl sip = parseProgram(prog);
 
 		final IVariable X = TERM.createVariable("X");
 		final IVariable X1 = TERM.createVariable("X1");
-		final IVariable Y = TERM.createVariable("Y");
 		final IVariable Y1 = TERM.createVariable("Y1");
 
 		final Set<IVariable> bound_up = new HashSet<IVariable>(Arrays.asList(new IVariable[]{X}));
 		final Set<IVariable> bound_rsg0 = new HashSet<IVariable>(Arrays.asList(new IVariable[]{X1}));
 		final Set<IVariable> bound_down = new HashSet<IVariable>(Arrays.asList(new IVariable[]{Y1}));
 
-		assertEquals("Bounds of up wrong", bound_up, sip.getBoundVariables(r.getBody().get(0)));
-		assertEquals("Bounds of rsg0 wrong", bound_rsg0, sip.getBoundVariables(r.getBody().get(1)));
-		assertEquals("Bounds of down wrong", bound_down, sip.getBoundVariables(r.getBody().get(2)));
+		final ILiteral up = createLiteral("up", "X", "X1");
+		final ILiteral rsg0 = createLiteral("rsg", "Y1", "X1");
+		final ILiteral down = createLiteral("down", "Y1", "Y");
+
+		assertEquals("Bounds of up wrong", bound_up, sip.getBoundVariables(up));
+		assertEquals("Bounds of rsg0 wrong", bound_rsg0, sip.getBoundVariables(rsg0));
+		assertEquals("Bounds of down wrong", bound_down, sip.getBoundVariables(down));
 	}
 
 	/**
