@@ -43,7 +43,7 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
 import org.deri.iris.optimisations.magicsets.ISip;
-import org.deri.iris.optimisations.magicsets.SIPImpl;
+import org.deri.iris.optimisations.magicsets.LeftToRightSip;
 
 /**
  * <p>
@@ -203,7 +203,7 @@ public class AdornedProgram {
 				// same signature
 				if (ap.hasSameSignature(ph)) {
 					// creating a sip for the actual rule and the ap
-					final ISip sip = new SIPImpl(r, createQueryForAP(ap, lh));
+					final ISip sip = new LeftToRightSip(r, createQueryForAP(ap, lh));
 					AdornedRule ra = (new AdornedRule(r, sip)).replaceHeadLiteral(lh, ap);
 
 					// iterating through all body literals of the rule
@@ -674,7 +674,7 @@ public class AdornedProgram {
 			head.set(index, BASIC .createLiteral(l.isPositive(), p, l.getAtom().getTuple()));
 
 			final IRule r = BASIC.createRule(head, rule.getBody());
-			final ISip s = new SIPImpl(r);
+			final ISip s = new LeftToRightSip(r);
 			return new AdornedRule(r, s);
 		}
 
@@ -715,7 +715,7 @@ public class AdornedProgram {
 			body.set(index, BASIC .createLiteral(l.isPositive(), p, l.getAtom().getTuple()));
 
 			final IRule r = BASIC.createRule(rule.getHead(), body);
-			final ISip s = new SIPImpl(r);
+			final ISip s = new LeftToRightSip(r);
 			return new AdornedRule(r, s);
 		}
 

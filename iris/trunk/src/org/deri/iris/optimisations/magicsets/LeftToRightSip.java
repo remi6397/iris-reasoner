@@ -57,7 +57,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 
 /**
  * <p>
- * A SIP Implementation according to the &quot;The Power of Magic&quot; paper.
+ * Sip, which examines the body literals from left to right.
  * </p>
  * <p>
  * This class is final, because the constructor is calling public non-final
@@ -66,7 +66,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
  *
  * @author Richard Pöttler (richard dot poettler at sti dot at)
  */
-public final class SIPImpl implements ISip {
+public final class LeftToRightSip implements ISip {
 	/**
 	 * Comparator to compare literals according to their position in the sips.
 	 */
@@ -89,7 +89,7 @@ public final class SIPImpl implements ISip {
 	 *             if the symbol and the arity of the head of the rule and the
 	 *             query doesn't match
 	 */
-	public SIPImpl(final IRule r, final IQuery q) {
+	public LeftToRightSip(final IRule r, final IQuery q) {
 		if (r == null) {
 			throw new IllegalArgumentException("The rule must not be null");
 		}
@@ -145,7 +145,7 @@ public final class SIPImpl implements ISip {
 	 * @param r the rule for which to create the sip
 	 * @throws IllegalArgumentException if the rule is <code>null</code>
 	 */
-	public SIPImpl(final IRule r) {
+	public LeftToRightSip(final IRule r) {
 		if (r == null) {
 			throw new IllegalArgumentException("The rule must not be null");
 		}
@@ -389,10 +389,10 @@ public final class SIPImpl implements ISip {
 		if (o == this) {
 			return true;
 		}
-		if (!(o instanceof SIPImpl)) {
+		if (!(o instanceof LeftToRightSip)) {
 			return false;
 		}
-		final SIPImpl s = (SIPImpl) o;
+		final LeftToRightSip s = (LeftToRightSip) o;
 		return sipGraph.edgeSet().equals(s.sipGraph.edgeSet());
 	}
 
