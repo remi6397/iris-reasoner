@@ -94,14 +94,14 @@ public final class MagicSets implements IProgramOptimisation {
 			return null;
 		}
 
-		final Result result = new Result();
 		final AdornedProgram adornedProg = new AdornedProgram(rules, query);
 
-		// setting the query
-		result.query = unadornQuery(adornedProg.getQuery());
+		// creating the magic query
+		final IQuery unadornedQuery = unadornQuery(adornedProg.getQuery());
 
 		// setting the rules
-		result.rules = new ArrayList<IRule>();
+		final List<IRule> magicRules = new ArrayList<IRule>();
+
 		for (final AdornedRule r : adornedProg.getAdornedRules()) {
 			if (r.getRule().getHead().size() != 1) {
 				throw new IllegalArgumentException("At the moment only heads "
@@ -111,30 +111,30 @@ public final class MagicSets implements IProgramOptimisation {
 			for (final ILiteral l : r.getRule().getBody()) {
 				if (l.getAtom().getPredicate() instanceof AdornedPredicate) {
 					// creating a magic rule for the literal
-					result.rules.addAll(createMagicRules(l, r));
+					magicRules.addAll(createMagicRules(l, r));
 				}
 			}
 			// adding the rewritten rule
-			result.rules.add(createRewrittenRule(r));
+			magicRules.add(createRewrittenRule(r));
 		}
 
 		// adding the remaining rules
-		result.rules.addAll(filterRemainingRules(adornedProg.getNormalRules(),
+		magicRules.addAll(filterRemainingRules(adornedProg.getNormalRules(),
 						adornedProg.getAdornedRules()));
 		// adding the rules for the conjunctive query
-		result.rules.addAll(createConjunctiveRules(adornedProg.getQuery()));
+		magicRules.addAll(createConjunctiveRules(adornedProg.getQuery()));
 		// adding the rule for the seed
-		final IAtom seed = createSeed(result.query);
+		final IAtom seed = createSeed(unadornedQuery);
 		// construct the seed rule
 		if (seed != null) {
-			result.rules.add(BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, seed)),
+			magicRules.add(BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, seed)),
 						Collections.<ILiteral>emptyList()));
 		}
 
 		// unadorn the rules
-		result.rules = unadornRules(result.rules);
+		final List<IRule> unadornedRules = unadornRules(magicRules);
 
-		return result;
+		return new Result(unadornedRules, unadornedQuery);
 	}
 
 	/**

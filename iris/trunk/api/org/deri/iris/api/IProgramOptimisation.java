@@ -52,16 +52,10 @@ public interface IProgramOptimisation {
 	 * Represents the result of a rule optimisation. <b>The
 	 * <code>rules</code> and <code>query</code> of this class 
 	 * are non-final mutable fields.</b>
-	 * @author Richard Pöttler (richard dot poettler at deri dot at)
+	 * @author Richard Pöttler (richard dot poettler at sti2 dot at)
 	 * @since 0.6
 	 */
 	public static class Result {
-
-		/**
-		 * Empty constructor that doesn't do anything.
-		 */
-		public Result() {
-		}
 
 		/**
 		 * Constructor to create and initialize a result in one line.
