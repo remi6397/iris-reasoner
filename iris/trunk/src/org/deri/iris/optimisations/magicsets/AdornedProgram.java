@@ -91,12 +91,10 @@ public class AdornedProgram {
 	 * Creates a new adorned program depending on the submitted rules and the
 	 * query.
 	 * 
-	 * @param rules
-	 *            for which to create the program
-	 * @param query
-	 *            for the program
-	 * @throws NullPointerException
-	 *             if the rule, or the query are null
+	 * @param rules for which to create the program
+	 * @param query for the program
+	 * @throws IllegalArgumentException if the rules are <code>null</code>
+	 * @throws IllegalArgumentException if the queries are <code>null</code>
 	 * @throws IllegalArgumentException
 	 *             if the size of the head literals, or of the query literals is
 	 *             bigger than 1
@@ -105,9 +103,11 @@ public class AdornedProgram {
 	 */
 	public AdornedProgram(final Collection<IRule> rules, final IQuery query) {
 		// check the parameters
-		if ((rules == null) || (query == null)) {
-			throw new NullPointerException(
-					"The rules and the query must not be null");
+		if (rules == null) {
+			throw new IllegalArgumentException("The rules must not be null");
+		}
+		if (query == null) {
+			throw new IllegalArgumentException("The query must not be null");
 		}
 		if (rules.contains(null)) {
 			throw new IllegalArgumentException(
@@ -337,30 +337,18 @@ public class AdornedProgram {
 	 * the positions of the bound arguments and for the free arguments the
 	 * terms of the literal at the corresponding position.
 	 * 
-	 * @param ap
-	 *            the adorned predicate from where to take the bound's and free's
-	 * @param hl
-	 *            the literal for which to create the query
+	 * @param ap the adorned predicate from where to take the bound's and
+	 * free's
+	 * @param hl the literal for which to create the query
 	 * @return the query
-	 * @throws NullPointerException
-	 *             if the literal or the adorned predicate are null
-	 * @throws IllegalArgumentException
-	 *             if the arity of the predicate of the literal and the adorned
-	 *             predicate isn't equal
-	 * @throws IllegalArgumentException
-	 *             if the adornment of the predicate contains something else
-	 *             than BOUND or FREE.
 	 */
 	private static IQuery createQueryForAP(final AdornedPredicate ap,
 			final ILiteral hl) {
-		if ((hl == null) || (ap == null)) {
-			throw new NullPointerException(
-					"The predicate and literal must not be null");
-		}
-		if (hl.getAtom().getPredicate().getArity() != ap.getArity()) {
-			throw new IllegalArgumentException("The arity of the predicate of "
-					+ "the literal and the adorned predicate be equal");
-		}
+		assert hl != null: "The head literal must not be null";
+		assert ap != null: "The adorned predicate must not be null";
+		assert hl.getAtom().getPredicate().getArity() == ap.getArity():
+			"The arity of the predicate of the literal and the adorned predicate be equal";
+
 		ITerm[] terms = new ITerm[ap.getArity()];
 		int iCounter = 0;
 		for (Adornment a : ap.getAdornment()) {
@@ -372,8 +360,7 @@ public class AdornedProgram {
 				terms[iCounter] = hl.getAtom().getTuple().get(iCounter);
 				break;
 			default:
-				throw new IllegalArgumentException(
-						"Only BOUND and FREE are allowed as adornments");
+				assert false: "Only BOUND and FREE are allowed as adornments";
 			}
 			iCounter++;
 		}
@@ -400,14 +387,14 @@ public class AdornedProgram {
 		/**
 		 * Constructs an adorned predicate.
 		 * 
-		 * @param symbol
-		 *            symbol for the predicate
-		 * @param adornment
-		 *            the array of bound and frees
-		 * @throws NullPointerException
-		 *             if the adornment of the symbol is null
-		 * @throws IllegalArgumentException
-		 *             if the adornment contains null
+		 * @param symbol symbol for the predicate
+		 * @param adornment the array of bound and frees
+		 * @throws IllegalArgumentException if the adornment is
+		 * <code>null</code>
+		 * @throws IllegalArgumentException if the predicate symbol is
+		 * <code>null</code>
+		 * @throws IllegalArgumentException if the adornment contains
+		 * <code>null</code>
 		 */
 		public AdornedPredicate(final String symbol, final Adornment[] adornment) {
 			this(symbol, adornment.length, adornment);
@@ -416,24 +403,25 @@ public class AdornedProgram {
 		/**
 		 * Constructs an adorned predicate.
 		 * 
-		 * @param symbol
-		 *            symbol for the predicate
-		 * @param arity
-		 *            the arity of the predicate.
-		 * @param adornment
-		 *            the array of bound and frees
-		 * @throws NullPointerException
-		 *             if the adornment of the symbol is null
-		 * @throws IllegalArgumentException
-		 *             if the adornment contains null
-		 * @throws IllegalArgumentException
-		 *             if the arity of the predicate is bigger than the length of the adornment
+		 * @param symbol symbol for the predicate
+		 * @param arity the arity of the predicate.
+		 * @param adornment the array of bound and frees
+		 * @throws IllegalArgumentException if the adornment is
+		 * <code>null</code>
+		 * @throws IllegalArgumentException if the predicate symbol is
+		 * <code>null</code>
+		 * @throws IllegalArgumentException if the adornment contains
+		 * <code>null</code>
+		 * @throws IllegalArgumentException if the arity of the
+		 * predicate is bigger than the length of the adornment
 		 */
 		public AdornedPredicate(final String symbol, final int arity,
 				final Adornment[] adornment) {
-			if ((adornment == null) || (symbol == null)) {
-				throw new NullPointerException(
-						"The symbol and the adornment must not be null");
+			if (adornment == null) {
+				throw new IllegalArgumentException("The adornment must not be null");
+			}
+			if (symbol == null) {
+				throw new IllegalArgumentException("The predicate symbol must not be null");
 			}
 			if (Arrays.asList(adornment).contains(null)) {
 				throw new IllegalArgumentException(
@@ -486,10 +474,8 @@ public class AdornedProgram {
 		 * Constructs an adorned predicate out of a literal. All ground terms
 		 * will be marked as bound.
 		 * 
-		 * @param l
-		 *            for which to construct the adorned predicate
-		 * @throws NullPointerException
-		 *             if the literal of the predicate of the literal is null
+		 * @param l for which to construct the adorned predicate
+		 * @throws IllegalArgumentException if literal's the atom is <code>null</code>
 		 */
 		public AdornedPredicate(final ILiteral l) {
 			this(l.getAtom());
@@ -520,13 +506,8 @@ public class AdornedProgram {
 		 */
 		private static boolean isBound(final ITerm t,
 				final Collection<IVariable> b) {
-			if (t == null) {
-				throw new NullPointerException("The term must not be null");
-			}
-			if (b == null) {
-				throw new NullPointerException(
-						"The bound collection must not be null");
-			}
+			assert t != null: "The term must not be null";
+			assert b != null: "The collection of bound variables must not be null";
 
 			if (t.isGround()) {
 				return true;
@@ -539,7 +520,7 @@ public class AdornedProgram {
 
 		public boolean hasSameSignature(final IPredicate pred) {
 			if (pred == null) {
-				throw new NullPointerException("The predicate must not be null");
+				throw new IllegalArgumentException("The predicate must not be null");
 			}
 			return (pred.getArity() == p.getArity())
 					&& (pred.getPredicateSymbol()
@@ -602,7 +583,7 @@ public class AdornedProgram {
 	 * ordinary rule is, that it has a sip attached, and that you can exchange
 	 * literals.
 	 * </p>
-	 * <b>ATTENTION: the replaceHeadLiterla and replaceBodyLiteral are slow,
+	 * <b>ATTENTION: the replaceHeadLiteral and replaceBodyLiteral are slow,
 	 * because they copy the head and body for each invocation.</b>
 	 * </p>
 	 * 
@@ -618,18 +599,19 @@ public class AdornedProgram {
 		/**
 		 * Constructs a new adorned rule.
 		 * 
-		 * @param r
-		 *            the rule
-		 * @param s
-		 *            the sip for this rule
-		 * @throws NullPointerException
-		 *             if the rule or the sip is null
+		 * @param r the rule
+		 * @param s the sip for this rule
+		 * @throws IllegalArgumentException if the rule is
+		 * <code>null</code>
+		 * @throws IllegalArgumentException if the sip is
+		 * <code>null</code>
 		 */
 		public AdornedRule(final IRule r, final ISip s) {
-			// checking arguments
-			if ((r == null) || (s == null)) {
-				throw new NullPointerException(
-						"The rule and the sip must not be null");
+			if (r == null) {
+				throw new IllegalArgumentException("The rule must not be null");
+			}
+			if (s == null) {
+				throw new IllegalArgumentException("The sip must not be null");
 			}
 			rule = r;
 			sip = s;
@@ -658,16 +640,19 @@ public class AdornedProgram {
 		 * modified rule object.
 		 * @param l the literal, for which to exchange the predicate
 		 * @param p the new predicate which should be set
-		 * @return a new rule with the applied changes
-		 * @throws NullPointerException if the literal or the predicate
-		 * are <code>null</code>
+		 * @return a new rule with the applied changes, or the same rule
+		 * again, if the literal couldn't be found
+		 * @throws IllegalArgumentException if the literal is <code>null</code>
+		 * @throws IllegalArgumentException if the predicate is <code>null</code>
 		 * @throws IllegalArgumentException if the arity of the
 		 * predicate of the literal and the new predicate doesn't match.
 		 */
 		public AdornedRule replaceHeadLiteral(final ILiteral l, final IPredicate p) {
-			if ((l == null) || (p == null)) {
-				throw new NullPointerException(
-						"The literal and the predcate must not be null");
+			if (l == null) {
+				throw new IllegalArgumentException("The literal must not be null");
+			}
+			if (p == null) {
+				throw new IllegalArgumentException("The predicate must not be null");
 			}
 			if (l.getAtom().getPredicate().getArity() != p.getArity()) {
 				throw new IllegalArgumentException(
@@ -679,8 +664,7 @@ public class AdornedProgram {
 
 			final int index = head.indexOf(l);
 			if (index == -1) {
-				throw new IllegalArgumentException("The literal (" + l
-						+ ") couldn't be found in head (" + head + ")");
+				return this;
 			}
 
 			head.set(index, BASIC .createLiteral(l.isPositive(), p, l.getAtom().getTuple()));
@@ -697,16 +681,19 @@ public class AdornedProgram {
 		 * modified rule object.
 		 * @param l the literal, for which to exchange the predicate
 		 * @param p the new predicate which should be set
-		 * @return a new rule with the applied changes
-		 * @throws NullPointerException if the literal or the predicate
-		 * are <code>null</code>
+		 * @return a new rule with the applied changes, or the same rule
+		 * again, if the literal couldn't be found
+		 * @throws IllegalArgumentException if the literal is <code>null</code>
+		 * @throws IllegalArgumentException if the predicate is <code>null</code>
 		 * @throws IllegalArgumentException if the arity of the
 		 * predicate of the literal and the new predicate doesn't match.
 		 */
 		public AdornedRule replaceBodyLiteral(final ILiteral l, final IPredicate p) {
-			if ((l == null) || (p == null)) {
-				throw new NullPointerException(
-						"The literal and the predcate must not be null");
+			if (l == null) {
+				throw new IllegalArgumentException("The literal must not be null");
+			}
+			if (p == null) {
+				throw new IllegalArgumentException("The predicate must not be null");
 			}
 			if (l.getAtom().getPredicate().getArity() != p.getArity()) {
 				throw new IllegalArgumentException(
@@ -718,8 +705,7 @@ public class AdornedProgram {
 
 			final int index = body.indexOf(l);
 			if (index == -1) {
-				throw new IllegalArgumentException("The literal (" + l
-						+ ") couldn't be found in body (" + body + ")");
+				return this;
 			}
 
 			body.set(index, BASIC .createLiteral(l.isPositive(), p, l.getAtom().getTuple()));
