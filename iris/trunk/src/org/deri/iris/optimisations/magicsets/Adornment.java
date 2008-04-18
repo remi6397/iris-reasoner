@@ -23,10 +23,10 @@
 package org.deri.iris.optimisations.magicsets;
 
 /**
- * <p>Represents a state of an adornment.</p>
- * <p>$Id: Adornment.java,v 1.3 2006-09-18 07:52:12 richardpoettler Exp $</p>
- * @author richi
- * @version $Revision: 1.3 $
+ * <p>
+ * Represents a state of an adornment.
+ * </p>
+ * @author Richard Pöttler (richard dot poettler at sti2 dot at)
  */
 public enum Adornment {
 	BOUND("b"), FREE("f");
