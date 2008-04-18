@@ -37,6 +37,7 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
@@ -53,22 +54,17 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 // FIXME: most Set<IVariable> should be Set<ITerm> and contain !isGround() terms
-// FIXME: what if the vertices aren't connected?
 
 /**
  * <p>
  * A SIP Implementation according to the &quot;The Power of Magic&quot; paper.
  * </p>
  * <p>
- * This class is final, because the conscructor is calling public nonfinal
+ * This class is final, because the constructor is calling public non-final
  * methods.
  * </p>
- * <p>
- * $Id: SIPImpl.java,v 1.28 2007-10-30 10:35:49 poettler_ric Exp $
- * </p>
- * 
- * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.28 $
+ *
+ * @author Richard Pöttler (richard dot poettler at sti dot at)
  */
 public final class SIPImpl implements ISip {
 	/**
@@ -76,7 +72,7 @@ public final class SIPImpl implements ISip {
 	 */
 	private final Comparator<ILiteral> LITERAL_COMP = new LiteralComparator();
 
-	/** The graph on which the variables are padded along. */
+	/** The graph on which the variables are passed along. */
 	private DirectedGraph<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> sipGraph = 
 		new DefaultDirectedGraph<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>>(new SipEdgeFactory());
 
@@ -85,19 +81,20 @@ public final class SIPImpl implements ISip {
 	 * NOTE: at the moment only the first literal of the head and the query are
 	 * recognized.</b>
 	 * 
-	 * @param r
-	 *            the rule for which to construct the graph
-	 * @param q
-	 *            the query for this rule
-	 * @throws NullPointerException
-	 *             if the rule or the query is null
+	 * @param r the rule for which to construct the graph
+	 * @param q the query for this rule
+	 * @throws IllegalArgumentException if the rule is <code>null</code>
+	 * @throws IllegalArgumentException if the query is <code>null</code>
 	 * @throws IllegalArgumentException
 	 *             if the symbol and the arity of the head of the rule and the
 	 *             query doesn't match
 	 */
 	public SIPImpl(final IRule r, final IQuery q) {
-		if ((r == null) || (q == null)) {
-			throw new NullPointerException();
+		if (r == null) {
+			throw new IllegalArgumentException("The rule must not be null");
+		}
+		if (q == null) {
+			throw new IllegalArgumentException("The query must not be null");
 		}
 		if (r.getHead().size() != 1) {
 			throw new IllegalArgumentException(
@@ -115,10 +112,11 @@ public final class SIPImpl implements ISip {
 
 		// this check is only neccessary for the first implementation
 		// allow only one head
-		// head predicate must be equals with the query predicate
+		// head predicate must be equal to with the query predicate
 
-		// I'm not using equals, because the query could be adorned, and then
-		// they won't be equal
+		// I'm not using IPredicate.equals(...), because the query could
+		// be adorned, and then they won't be equal, so I compare them
+		// on the predicate symbol and arity.
 		if (!headPredicate.getPredicateSymbol().equals(
 				queryPredicate.getPredicateSymbol())
 				|| (headPredicate.getArity() != queryPredicate.getArity())) {
@@ -129,18 +127,15 @@ public final class SIPImpl implements ISip {
 
 		// determining the known variables of the head
 		final Set<IVariable> assumedKnown = new HashSet<IVariable>();
-		for (final Iterator<ITerm> headTerms = headLiteral.getAtom().getTuple()
-				.iterator(), queryTerms = queryLiteral.getAtom().getTuple()
-				.iterator(); (headTerms.hasNext() && queryTerms
-				.hasNext());) {
-			final ITerm headT = headTerms.next();
-			final ITerm queryT = queryTerms.next();
-			if (queryT.isGround() && !headT.isGround()) {
-				assumedKnown.addAll(getVariables(headT));
+		final ITuple headTuple = headLiteral.getAtom().getTuple();
+		final ITuple queryTuple = queryLiteral.getAtom().getTuple();
+		for (int i = 0, arity = headTuple.size(); i < arity; i++) {
+			if (queryTuple.get(i).isGround() && !headTuple.get(i).isGround()) {
+				assumedKnown.addAll(getVariables(headTuple.get(i)));
 			}
 		}
-		
-		// ensure that a save rule will result in a save sip and
+
+		// ensure that a safe rule will result in a safe sip and
 		// construct the sip
 		constructSip(orderLiterals(r, assumedKnown), assumedKnown);
 	}
@@ -176,12 +171,12 @@ public final class SIPImpl implements ISip {
 	 * ground a empty set will be returned, if it is a constructed term all
 	 * of its variables are returned, otherwise (in this case it must be a 
 	 * variable) the term itself in a set will be returned.
-	 * @param t the term for which to return teh varaibles
+	 * @param t the term for which to return the variables
 	 * @return the set of variables in the term
 	 */
 	private static Set<IVariable> getVariables(final ITerm t) {
 		if ((t == null) || t.isGround()) {
-			return Collections.EMPTY_SET;
+			return Collections.<IVariable>emptySet();
 		} else if (t instanceof IConstructedTerm) {
 			return ((IConstructedTerm) t).getVariables();
 		}
@@ -231,12 +226,9 @@ public final class SIPImpl implements ISip {
 	}
 
 	/**
-	 * Updates the sip. Adds a edge with the given source, target and given
-	 * label to the sip. If a edge with the given source and target already
+	 * Updates the sip. Adds an edge with the given source, target and label
+	 * to the sip. If an edge with the given source and target already
 	 * exists, the label will be updated.
-	 * 
-	 * @throws NullPointerException
-	 *             if the source, target or passedTo is {@code null}
 	 */
 	private void addEdge(final ILiteral source, final ILiteral target,
 			final Set<IVariable> passedTo) {
@@ -268,8 +260,8 @@ public final class SIPImpl implements ISip {
 
 		final Set<IVariable> variables = new HashSet<IVariable>();
 
-		for (final ILiteral predec : Graphs.predecessorListOf(sipGraph, l)) {
-			variables.addAll(sipGraph.getEdge(predec, l).getLabel());
+		for (final ILiteral predicate : Graphs.predecessorListOf(sipGraph, l)) {
+			variables.addAll(sipGraph.getEdge(predicate, l).getLabel());
 		}
 		return variables;
 	}
@@ -278,7 +270,7 @@ public final class SIPImpl implements ISip {
 		final Set<ILiteral> dependencies = new HashSet<ILiteral>();
 		final Set<ILiteral> todoDependencies = new HashSet<ILiteral>();
 		if (l == null) {
-			throw new NullPointerException();
+			throw new IllegalArgumentException("The literal must not be null");
 		}
 
 		todoDependencies.add(l);
@@ -301,7 +293,7 @@ public final class SIPImpl implements ISip {
 	public Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesEnteringLiteral(
 			final ILiteral l) {
 		if (l == null) {
-			throw new NullPointerException("The literal must not be null");
+			throw new IllegalArgumentException("The literal must not be null");
 		}
 		final List<ILiteral> predecessors = Graphs.predecessorListOf(sipGraph, l);
 		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = 
@@ -315,7 +307,7 @@ public final class SIPImpl implements ISip {
 	public Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesLeavingLiteral(
 			final ILiteral l) {
 		if (l == null) {
-			throw new NullPointerException("The literal must not be null");
+			throw new IllegalArgumentException("The literal must not be null");
 		}
 		final List<ILiteral> successors = Graphs.successorListOf(sipGraph, l);
 		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = 
@@ -329,7 +321,7 @@ public final class SIPImpl implements ISip {
 	public Set<IVariable> variablesPassedByLiteral(final ILiteral source,
 			final ILiteral target) {
 		if ((source == null) || (target == null)) {
-			throw new NullPointerException(
+			throw new IllegalArgumentException(
 					"The source and the target must not be null");
 		}
 		Set<IVariable> vars = new HashSet<IVariable>(getBoundVariables(source));
@@ -355,7 +347,7 @@ public final class SIPImpl implements ISip {
 
 	public boolean containsVertex(final ILiteral l) {
 		if (l == null) {
-			throw new NullPointerException("The literal must not be null");
+			throw new IllegalArgumentException("The literal must not be null");
 		}
 		return sipGraph.containsVertex(l);
 	}
@@ -371,13 +363,13 @@ public final class SIPImpl implements ISip {
 	}
 
 	public Set<ILiteral> getLeafVertices() {
-		final Set<ILiteral> leafes = new HashSet<ILiteral>();
+		final Set<ILiteral> leaves = new HashSet<ILiteral>();
 		for (final ILiteral o : sipGraph.vertexSet()) {
 			if (Graphs.successorListOf(sipGraph, o).isEmpty()) {
-				leafes.add(o);
+				leaves.add(o);
 			}
 		}
-		return leafes;
+		return leaves;
 	}
 
 	public Comparator<ILiteral> getLiteralComparator() {
@@ -385,7 +377,7 @@ public final class SIPImpl implements ISip {
 	}
 
 	/**
-	 * Returns a unmodifiable set of all edges of the sip.
+	 * Returns an unmodifiable set of all edges of the sip.
 	 * 
 	 * @return the set of edges.
 	 */
@@ -411,27 +403,24 @@ public final class SIPImpl implements ISip {
 	}
 
 	/**
-	 * Orders the literals of the rule so that a save rule won't produce an
-	 * unsave sip. <b>At the moment only negative literals are handeled, but not
-	 * builtis.</b>
+	 * Orders the literals of the rule so that a safe rule won't produce an
+	 * unsafe sip. <b>At the moment only negative literals are handled, but not
+	 * built-is.</b>
 	 * 
-	 * @param r
-	 *            the rule for which to sort the literals
-	 * @param known
-	 *            the variables which are known in the head
-	 * @throws NullPointerException
-	 *             if the rule is {@code null}
-	 * @throws NullPointerException
-	 *             if the known collection is or contains {@code null}
+	 * @param r the rule for which to sort the literals
+	 * @param known the variables which are known in the head
+	 * @throws IllegalArgumentException if the rule is {@code null}
+	 * @throws IllegalArgumentException if the known collection is or contains
+	 * {@code null}
 	 */
 	static IRule orderLiterals(final IRule r,
 			final Collection<IVariable> known) {
 		// TODO: handle builtins!
 		if (r == null) {
-			throw new NullPointerException("The rule must not be null");
+			throw new IllegalArgumentException("The rule must not be null");
 		}
 		if ((known == null) || known.contains(null)) {
-			throw new NullPointerException(
+			throw new IllegalArgumentException(
 					"The known set must not be, or contain null");
 		}
 
@@ -449,7 +438,7 @@ public final class SIPImpl implements ISip {
 				break;
 			}
 			// if the literal is negative check whether every var
-			// appears in a former literal -> if not, push the
+			// appears in a preceding literal -> if not, push the
 			// literal at the end of the rule
 			if (!l.isPositive() && !bound.containsAll(literalVars)) {
 				body.add(body.size() - 1, body.remove(i));
@@ -470,7 +459,7 @@ public final class SIPImpl implements ISip {
 
 	/**
 	 * <p>
-	 * Comparator to compare two literals to each other depending on their
+	 * Comparator to compare two literals with each other depending on their
 	 * position in the sip.
 	 * </p>
 	 * <p>
@@ -480,7 +469,7 @@ public final class SIPImpl implements ISip {
 	 * <li>If none of the literals is in the graph they are equal</li>
 	 * <li>If only one literal appears in the graph it is smaller than one
 	 * not in the graph</li>
-	 * <li>The literal preceeding the other is smaller</li>
+	 * <li>The literal preceding the other is smaller</li>
 	 * </ol>
 	 * </p>
 	 * 
@@ -489,8 +478,11 @@ public final class SIPImpl implements ISip {
 	private class LiteralComparator implements Comparator<ILiteral> {
 
 		public int compare(final ILiteral o1, final ILiteral o2) {
-			if ((o1 == null) || (o2 == null)) {
-				throw new NullPointerException();
+			if (o1 == null) {
+				throw new IllegalArgumentException("The first literal must not be null");
+			}
+			if (o2 == null) {
+				throw new IllegalArgumentException("The second literal must not be null");
 			}
 
 			if (!sipGraph.containsVertex(o1) && !sipGraph.containsVertex(o2)) { // none of the literals is in the graph
@@ -521,18 +513,18 @@ public final class SIPImpl implements ISip {
 	 * The simple factory to create default edges for the Sip.
 	 * The label of the edge will be <code>new HashSet<IVariable>()</code>.
 	 * </p>
-	 * <p>
-	 * $Id: SIPImpl.java,v 1.28 2007-10-30 10:35:49 poettler_ric Exp $
-	 * </p>
-	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision: 1.28 $
+	 *
+	 * @author Richard Pöttler (richard dot poettler at sti dot at)
 	 * @since 0.3
 	 */
 	private static class SipEdgeFactory implements EdgeFactory<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> {
 
 		public LabeledEdge<ILiteral, Set<IVariable>> createEdge(final ILiteral s, final ILiteral t) {
-			if ((s == null) || (t == null)) {
-				throw new NullPointerException("The vertices must not be null");
+			if (s == null) {
+				throw new IllegalArgumentException("The source must not be null");
+			}
+			if (t == null) {
+				throw new IllegalArgumentException("The target must not be null");
 			}
 			return new LabeledEdge<ILiteral, Set<IVariable>>(s, t, new HashSet<IVariable>());
 		}
