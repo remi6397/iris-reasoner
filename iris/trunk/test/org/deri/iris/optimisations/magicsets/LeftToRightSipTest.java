@@ -48,16 +48,16 @@ import org.deri.iris.graph.LabeledEdge;
 
 /**
  * <p>
- * Runns various test on the sip.
+ * Runs various test on the LeftToRightSip.
  * </p>
  * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  */
-public class SipImplTest extends TestCase {
+public class LeftToRightSipTest extends TestCase {
 
 	public static Test suite() {
-		return new TestSuite(SipImplTest.class, SipImplTest.class
-				.getSimpleName());
+		return new TestSuite(LeftToRightSipTest.class,
+				LeftToRightSipTest.class.getSimpleName());
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class SipImplTest extends TestCase {
 	 * @param prog the program to parse
 	 * @return the constructed sip
 	 */
-	private static SIPImpl parseProgram(final String prog) throws ParserException {
+	private static LeftToRightSip parseProgram(final String prog) throws ParserException {
 		assert prog != null: "The program must not be null";
 
 		final Parser p = new Parser();
@@ -74,7 +74,7 @@ public class SipImplTest extends TestCase {
 		assert !p.getRules().isEmpty(): "There are no rules parsed!";
 		assert !p.getQueries().isEmpty(): "There are no queries parsed!";
 
-		return new SIPImpl(p.getRules().get(0), p.getQueries().get(0));
+		return new LeftToRightSip(p.getRules().get(0), p.getQueries().get(0));
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class SipImplTest extends TestCase {
 	public void testForEdges0() throws Exception {
 		final String prog = "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), flat(?Z2, ?Z3), sg(?Z3, ?Z4), down(?Z4, ?Y).\n"
 						 + "?- sg('john', ?X).";
-		final SIPImpl sip = parseProgram(prog);
+		final LeftToRightSip sip = parseProgram(prog);
 
 		final IVariable X = TERM.createVariable("X");
 		final IVariable Z1 = TERM.createVariable("Z1");
@@ -123,7 +123,7 @@ public class SipImplTest extends TestCase {
 	public void testForEdges1() throws Exception {
 		final String prog = "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), down(?Y1, ?Y).\n"
 						  + "?- rsg('a', ?X).";
-		final SIPImpl sip = parseProgram(prog);
+		final LeftToRightSip sip = parseProgram(prog);
 
 		final IVariable X = TERM.createVariable("X");
 		final IVariable X1 = TERM.createVariable("X1");
@@ -143,7 +143,7 @@ public class SipImplTest extends TestCase {
 	public void testEqualBuiltinSip() throws Exception {
 		final String prog = "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), ?Y1 = ?Y.\n"
 						  + "?- rsg('a', ?X).";
-		final SIPImpl sip = parseProgram(prog);
+		final LeftToRightSip sip = parseProgram(prog);
 
 		final IVariable X = TERM.createVariable("X");
 		final IVariable X1 = TERM.createVariable("X1");
@@ -170,7 +170,7 @@ public class SipImplTest extends TestCase {
 		final IRule r_ref = BASIC.createRule(
 				Arrays.asList(createLiteral( "a", "X", "Y")), 
 				Arrays.asList(createLiteral("c", "Y1", "X1"), createLiteral("d", "X1", "Y"), not_b));
-		assertEquals("The sorting order isn't correct", r_ref, SIPImpl.orderLiterals(r, Collections
+		assertEquals("The sorting order isn't correct", r_ref, LeftToRightSip.orderLiterals(r, Collections
 				.singleton(TERM.createVariable("X"))));
 	}
 
@@ -184,7 +184,7 @@ public class SipImplTest extends TestCase {
 		final IRule r_ref = BASIC.createRule(
 				Arrays.asList(createLiteral("a", "X", "Y")), 
 				Arrays.asList(createLiteral("b", "X", "Y1"), gt, createLiteral("d", "X1", "Y")));
-		assertEquals("The sorting order isn't correct", r_ref, SIPImpl.orderLiterals(r, Collections.singleton(TERM.createVariable("X"))));
+		assertEquals("The sorting order isn't correct", r_ref, LeftToRightSip.orderLiterals(r, Collections.singleton(TERM.createVariable("X"))));
 	}
 
 	/**
@@ -200,7 +200,7 @@ public class SipImplTest extends TestCase {
 	public void testEqualLiterals() throws Exception {
 		final String prog = "tmp(?X) :- p(?X), p(?X), p(?X).\n"
 					      + "?- tmp(?X).";
-		final SIPImpl sip = parseProgram(prog);
+		final LeftToRightSip sip = parseProgram(prog);
 
 		final IVariable X = TERM.createVariable("X");
 		final ILiteral lit = createLiteral("p", "X");
@@ -218,7 +218,7 @@ public class SipImplTest extends TestCase {
 	public void testEqualLiteralsDependency() throws Exception {
 		final String prog = "a(?X) :- a(?X).\n"
 			+ "?- a(1).";
-		final SIPImpl sip = parseProgram(prog);
+		final LeftToRightSip sip = parseProgram(prog);
 
 		final ILiteral ax = createLiteral("a", "X");
 		assertEquals(ax + " depends on itself.", Collections.singleton(ax), sip.getDepends(ax));
@@ -230,7 +230,7 @@ public class SipImplTest extends TestCase {
 	public void testBounds0() throws Exception {
 		final String prog = "sg(?X, ?Y) :- up(?X, ?Z1), sg(?Z1, ?Z2), down(?X, ?Z1, ?Z2, ?Z3), again(?X, ?Z1, ?Z3, ?Y).\n"
 						 + "?- sg('john', ?X).";
-		final SIPImpl sip = parseProgram(prog);
+		final LeftToRightSip sip = parseProgram(prog);
 
 		final IVariable X = TERM.createVariable("X");
 		final IVariable Z1 = TERM.createVariable("Z1");
@@ -259,7 +259,7 @@ public class SipImplTest extends TestCase {
 	public void testBounds1() throws Exception {
 		final String prog = "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), down(?Y1, ?Y).\n"
 						  + "?- rsg('a', ?X).";
-		final SIPImpl sip = parseProgram(prog);
+		final LeftToRightSip sip = parseProgram(prog);
 
 		final IVariable X = TERM.createVariable("X");
 		final IVariable X1 = TERM.createVariable("X1");
@@ -279,7 +279,7 @@ public class SipImplTest extends TestCase {
 	}
 
 	/**
-	 * Tests whether the {@link SIPImpl#orderLiterals(IRule) orderLiterals}
+	 * Tests whether the {@link LeftToRightSip#orderLiterals(IRule) orderLiterals}
 	 * method could run into a infinite loop.
 	 */
 	public void testOrderLiterals() throws Exception {
@@ -288,22 +288,22 @@ public class SipImplTest extends TestCase {
 		final String prog0 = "x(?X) :- a(?X), !b(?B).";
 		final String exp0 = "x(?X) :- a(?X), !b(?B).";
 		assertEquals("Rule not ordered correctly", parseSingleRule(exp0),
-				SIPImpl.orderLiterals(parseSingleRule(prog0), X));
+				LeftToRightSip.orderLiterals(parseSingleRule(prog0), X));
 
 		final String prog1 = "x(?X) :- !b(?B), a(?X), !c(?C).";
 		final String exp1 = "x(?X) :- a(?X), !c(?C), !b(?B).";
 		assertEquals("Rule not ordered correctly", parseSingleRule(exp1),
-				SIPImpl.orderLiterals(parseSingleRule(prog1), X));
+				LeftToRightSip.orderLiterals(parseSingleRule(prog1), X));
 
 		final String prog2 = "x(?X) :- !b(?B), a(?X, ?B), !c(?C).";
 		final String exp2 = "x(?X) :- a(?X, ?B), !b(?B), !c(?C).";
 		assertEquals("Rule not ordered correctly", parseSingleRule(exp2),
-				SIPImpl.orderLiterals(parseSingleRule(prog2), X));
+				LeftToRightSip.orderLiterals(parseSingleRule(prog2), X));
 
 		final String prog3 = "x(?X) :- !b(?Y), !b(?Y), a(?X).";
 		final String exp3 = "x(?X) :- a(?X), !b(?Y), !b(?Y).";
 		assertEquals("Rule not ordered correctly", parseSingleRule(exp3),
-				SIPImpl.orderLiterals(parseSingleRule(prog3), X));
+				LeftToRightSip.orderLiterals(parseSingleRule(prog3), X));
 	}
 
 	/**
@@ -313,7 +313,7 @@ public class SipImplTest extends TestCase {
 	public void testRecursiveLiteralComparator() throws Exception {
 		final String prog = "a(?X) :- b(?X), c(?X), b(?X).\n"
 			+ "?- a('john').";
-		final SIPImpl sip = parseProgram(prog);
+		final LeftToRightSip sip = parseProgram(prog);
 
 		// the literal edges are:
 		// a -> b -> c
@@ -345,7 +345,7 @@ public class SipImplTest extends TestCase {
 	public void testUnconnectedLiteralComparator() throws Exception {
 		final String prog = "a(?X) :- b(?X), c(?Y), d(?Z).\n"
 			+ "?- a('john').";
-		final SIPImpl sip = parseProgram(prog);
+		final LeftToRightSip sip = parseProgram(prog);
 
 		// the literal edges are:
 		// a -> b
