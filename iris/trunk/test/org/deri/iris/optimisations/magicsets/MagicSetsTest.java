@@ -154,7 +154,7 @@ public class MagicSetsTest extends TestCase {
 	private static IRule seedRule(final ILiteral l) {
 		assert l != null: "The literal must not be null";
 
-		return BASIC.createRule(Arrays.asList(l), Collections.EMPTY_LIST);
+		return BASIC.createRule(Arrays.asList(l), Collections.<ILiteral>emptyList());
 	}
 
 	/**
@@ -653,7 +653,7 @@ public class MagicSetsTest extends TestCase {
 
 		final List<IRule> ref = new ArrayList<IRule>();
 		// magic_p^b(1) :- .
-		ref.add(BASIC.createRule(Arrays.asList(magic_p), Collections.EMPTY_LIST));
+		ref.add(BASIC.createRule(Arrays.asList(magic_p), Collections.<ILiteral>emptyList()));
 		// magic_p^b(1) :- p(1).
 		ref.add(BASIC.createRule(Arrays.asList(magic_p), Arrays.asList(p1)));
 
@@ -698,7 +698,7 @@ public class MagicSetsTest extends TestCase {
 
 		// magic_p_ff() :- .
 		rules.add(BASIC.createRule(Arrays.asList(createMagicLiteral("p", FF, new ITerm[]{})),
-					Collections.EMPTY_LIST));
+					Collections.<ILiteral>emptyList()));
 		// magic_q_bb(?X, 3) :- p(?X, ?Y).
 		rules.add(BASIC.createRule(Arrays.asList(createMagicLiteral("q", BB, X3)),
 					Arrays.asList(createLiteral("p", "X", "Y"))));
