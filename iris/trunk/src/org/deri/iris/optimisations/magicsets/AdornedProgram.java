@@ -76,11 +76,16 @@ public class AdornedProgram {
 	/** Query for this program. */
 	private final IQuery query;
 
+	/**
+	 * Predicate symbol for the temporary literal for conjunctive queries.
+	 */
+	private static final String TEMP_QUERY_LITERAL_SYMBOL = "TEMP_QUERY_LITERAL";
+
 	/** Temporary query literal for conjunctive queries. */
 	private static final ILiteral TEMP_QUERY_LITERAL = BASIC.createLiteral(
 			true, 
 			BASIC.createAtom(
-				BASIC.createPredicate("TEMP_QUERY_LITERAL", 0), 
+				BASIC.createPredicate(TEMP_QUERY_LITERAL_SYMBOL, 0),
 				BASIC.createTuple(new ArrayList<ITerm>())));
 
 	/** Adorned predicate for the temporary query literal. */
@@ -233,16 +238,15 @@ public class AdornedProgram {
 	 * @return the string representation
 	 */
 	public String toString() {
-		final String NEWLINE = System.getProperty("line.separator");
 		StringBuilder buffer = new StringBuilder();
 		for (AdornedRule r : adornedRules) {
-			buffer.append(r).append(NEWLINE);
+			buffer.append(r).append(System.getProperty("line.separator"));
 		}
-		buffer.append(NEWLINE);
+		buffer.append(System.getProperty("line.separator"));
 		for (IRule r : rules) {
-			buffer.append(r).append(NEWLINE);
+			buffer.append(r).append(System.getProperty("line.separator"));
 		}
-		buffer.append(NEWLINE);
+		buffer.append(System.getProperty("line.separator"));
 		buffer.append(query);
 		return buffer.toString();
 	}
@@ -379,7 +383,7 @@ public class AdornedProgram {
 	 */
 	public static class AdornedPredicate implements IPredicate {
 		/** The base predicate which is represented as adorned one. */
-		private final IPredicate p;
+		private final IPredicate predicate;
 
 		/** The adornment of the predicate */
 		private final Adornment[] adornment;
@@ -432,7 +436,7 @@ public class AdornedProgram {
 						"The length of the adornment "
 								+ "and the arity of the predicate doesn't match.");
 			}
-			this.p = BASIC.createPredicate(symbol, arity);
+			this.predicate = BASIC.createPredicate(symbol, arity);
 			this.adornment = new Adornment[adornment.length];
 			System.arraycopy(adornment, 0, this.adornment, 0, adornment.length);
 		}
@@ -451,14 +455,14 @@ public class AdornedProgram {
 				throw new IllegalArgumentException("The Atom must not be null");
 			}
 
-			p = a.getPredicate();
+			predicate = a.getPredicate();
 
 			final Collection<IVariable> boundVars = (bounds == null)
-				? Collections.EMPTY_SET
+				? Collections.<IVariable>emptySet()
 				: bounds;
 
 			// computing the adornment
-			adornment = new Adornment[p.getArity()];
+			adornment = new Adornment[predicate.getArity()];
 			int i = 0;
 			for (final ITerm t : a.getTuple()) {
 				if (isBound(t, boundVars)) {
@@ -522,13 +526,13 @@ public class AdornedProgram {
 			if (pred == null) {
 				throw new IllegalArgumentException("The predicate must not be null");
 			}
-			return (pred.getArity() == p.getArity())
+			return (pred.getArity() == predicate.getArity())
 					&& (pred.getPredicateSymbol()
-							.equals(p.getPredicateSymbol()));
+							.equals(predicate.getPredicateSymbol()));
 		}
 
 		public IPredicate getUnadornedPredicate() {
-			return p;
+			return predicate;
 		}
 
 		public Adornment[] getAdornment() {
@@ -538,27 +542,27 @@ public class AdornedProgram {
 		}
 
 		public int getArity() {
-			return p.getArity();
+			return predicate.getArity();
 		}
 
 		public String getPredicateSymbol() {
-			return p.getPredicateSymbol();
+			return predicate.getPredicateSymbol();
 		}
 
 		public int compareTo(IPredicate o) {
-			return p.compareTo(o);
+			return predicate.compareTo(o);
 		}
 
 		public int hashCode() {
 			int result = 17;
-			result = result * 37 + p.hashCode();
+			result = result * 37 + predicate.hashCode();
 			result = result * 37 + Arrays.hashCode(adornment);
 			return result;
 		}
 
 		public String toString() {
-			StringBuilder buffer = new StringBuilder();
-			buffer.append(p).append("^");
+			final StringBuilder buffer = new StringBuilder();
+			buffer.append(predicate).append("^");
 			for (Adornment a : adornment) {
 				buffer.append(a);
 			}
@@ -573,7 +577,7 @@ public class AdornedProgram {
 				return false;
 			}
 			AdornedPredicate p = (AdornedPredicate) o;
-			return this.p.equals(p.p) && Arrays.equals(adornment, p.adornment);
+			return predicate.equals(p.predicate) && Arrays.equals(adornment, p.adornment);
 		}
 	}
 
