@@ -30,6 +30,7 @@ import static org.deri.iris.MiscHelper.createVarList;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -303,6 +304,38 @@ public class SipImplTest extends TestCase {
 		final String exp3 = "x(?X) :- a(?X), !b(?Y), !b(?Y).";
 		assertEquals("Rule not ordered correctly", parseSingleRule(exp3),
 				SIPImpl.orderLiterals(parseSingleRule(prog3), X));
+	}
+
+	/**
+	 * Tests the behaviour of the literal comparator with recursive literal
+	 * dependencies in rules.
+	 */
+	public void testRecursiveLiteralComparator() throws Exception {
+		final String prog = "a(?X) :- b(?X), c(?X), b(?X).\n"
+			+ "?- a('john').";
+		final SIPImpl sip = parseProgram(prog);
+
+		// the literal edges are:
+		// a -> b -> c
+		// b -> b
+		// c -> b
+
+		final Comparator<ILiteral> lc = sip.getLiteralComparator();
+		final ILiteral a = createLiteral("a", "X");
+		final ILiteral b = createLiteral("b", "X");
+		final ILiteral c = createLiteral("c", "X");
+
+		assertEquals(a + " must be equals to " + a, 0, lc.compare(a, a));
+		assertEquals(b + " must be equals to " + b, 0, lc.compare(b, b));
+		assertEquals(c + " must be equals to " + c, 0, lc.compare(c, c));
+		assertEquals(b + " must be equals to " + c, 0, lc.compare(b, c));
+		assertEquals(c + " must be equals to " + b, 0, lc.compare(c, b));
+
+		assertTrue(a + " must be smaller than " + b, lc.compare(a, b) < 0);
+		assertTrue(a + " must be smaller than " + c, lc.compare(a, c) < 0);
+
+		assertTrue(b + " must be bigger than " + a, lc.compare(b, a) > 0);
+		assertTrue(c + " must be bigger than " + a, lc.compare(c, a) > 0);
 	}
 
 	/**
