@@ -22,17 +22,21 @@
  */
 package org.deri.iris.optimisations.magicsets;
 
-import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.TERM;
+import static org.deri.iris.MiscHelper.createLiteral;
+import static org.deri.iris.MiscHelper.createVarList;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
@@ -69,8 +73,23 @@ public class SipImplTest extends TestCase {
 		assert !p.getRules().isEmpty(): "There are no rules parsed!";
 		assert !p.getQueries().isEmpty(): "There are no queries parsed!";
 
-		return new SIPImpl(p.getRules().iterator().next(),
-				p.getQueries().iterator().next());
+		return new SIPImpl(p.getRules().get(0), p.getQueries().get(0));
+	}
+
+	/**
+	 * Parses a single rule out of a string.
+	 * @param prog the program to parse containing the rule
+	 * @return the parsed rule
+	 */
+	private static IRule parseSingleRule(final String prog) throws ParserException {
+		assert prog != null: "The program must not be null";
+
+		final Parser p = new Parser();
+		p.parse(prog);
+
+		assert !p.getRules().isEmpty(): "There are no rules parsed!";
+
+		return p.getRules().get(0);
 	}
 
 	/**
@@ -259,26 +278,47 @@ public class SipImplTest extends TestCase {
 	}
 
 	/**
+	 * Tests whether the {@link SIPImpl#orderLiterals(IRule) orderLiterals}
+	 * method could run into a infinite loop.
+	 */
+	public void testOrderLiterals() throws Exception {
+		final Set<IVariable> X = Collections.singleton(TERM.createVariable("X"));
+
+		final String prog0 = "x(?X) :- a(?X), !b(?B).";
+		final String exp0 = "x(?X) :- a(?X), !b(?B).";
+		assertEquals("Rule not ordered correctly", parseSingleRule(exp0),
+				SIPImpl.orderLiterals(parseSingleRule(prog0), X));
+
+		final String prog1 = "x(?X) :- !b(?B), a(?X), !c(?C).";
+		final String exp1 = "x(?X) :- a(?X), !c(?C), !b(?B).";
+		assertEquals("Rule not ordered correctly", parseSingleRule(exp1),
+				SIPImpl.orderLiterals(parseSingleRule(prog1), X));
+
+		final String prog2 = "x(?X) :- !b(?B), a(?X, ?B), !c(?C).";
+		final String exp2 = "x(?X) :- a(?X, ?B), !b(?B), !c(?C).";
+		assertEquals("Rule not ordered correctly", parseSingleRule(exp2),
+				SIPImpl.orderLiterals(parseSingleRule(prog2), X));
+
+		final String prog3 = "x(?X) :- !b(?Y), !b(?Y), a(?X).";
+		final String exp3 = "x(?X) :- a(?X), !b(?Y), !b(?Y).";
+		assertEquals("Rule not ordered correctly", parseSingleRule(exp3),
+				SIPImpl.orderLiterals(parseSingleRule(prog3), X));
+	}
+
+	/**
 	 * Creates a edge.
 	 * 
-	 * @param s
-	 *            the source literal
-	 * @param t
-	 *            the target literal
-	 * @param v
-	 *            the passed variables (label)
+	 * @param s the source literal
+	 * @param t the target literal
+	 * @param v the passed variables (label)
 	 * @return the edge
-	 * @throws NullPointerException
-	 *             if the source, target or label is {@code null}
-	 * @throws NullPointerException
-	 *             if the label contains {@code null}
 	 */
 	private static LabeledEdge<ILiteral, Set<IVariable>> createEdge(
 			final ILiteral s, final ILiteral t, final IVariable... v) {
-		if ((s == null) || (t == null) || (v == null)) {
-			throw new NullPointerException(
-					"The source, target and variables must not be null");
-		}
+		assert s != null: "The source literal must not be null";
+		assert t != null: "The target literal must not be null";
+		assert v != null: "The variables must not be null";
+
 		return new LabeledEdge<ILiteral, Set<IVariable>>(s, t,
 				new HashSet<IVariable>(Arrays.asList(v)));
 	}
