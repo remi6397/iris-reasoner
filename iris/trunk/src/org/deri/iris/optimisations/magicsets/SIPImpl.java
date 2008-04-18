@@ -514,10 +514,19 @@ public final class SIPImpl implements ISip {
 			} else if (!sipGraph.containsVertex(o2)) {
 				return -1;
 			}
-			if (getDepends(o2).contains(o1)) {
+
+			final boolean o1DependsOnO2 = getDepends(o1).contains(o2);
+			final boolean o2DependsOnO1 = getDepends(o2).contains(o1);
+
+			if (o1DependsOnO2 && o2DependsOnO1) { // they depend on each other
+				return 0;
+			} else if (o1DependsOnO2) { // o1 depends on o2
+				return 1;
+			} else if (o2DependsOnO1) { // o2 depends on o1
 				return -1;
 			}
-			return 1;
+			// they don't depend on each other
+			return 0;
 		}
 	}
 
