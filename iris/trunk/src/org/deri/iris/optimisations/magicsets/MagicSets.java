@@ -111,11 +111,11 @@ public final class MagicSets implements IProgramOptimisation {
 			for (final ILiteral l : r.getRule().getBody()) {
 				if (l.getAtom().getPredicate() instanceof AdornedPredicate) {
 					// creating a magic rule for the literal
-					result.rules.addAll(generateRules(l, r));
+					result.rules.addAll(createMagicRules(l, r));
 				}
 			}
 			// adding the rewritten rule
-			result.rules.add(getRewrittenRule(r));
+			result.rules.add(createRewrittenRule(r));
 		}
 
 		// adding the remaining rules
@@ -128,7 +128,7 @@ public final class MagicSets implements IProgramOptimisation {
 		// construct the seed rule
 		if (seed != null) {
 			result.rules.add(BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, seed)),
-						Collections.EMPTY_LIST));
+						Collections.<ILiteral>emptyList()));
 		}
 
 		// unadorn the rules
@@ -201,7 +201,7 @@ public final class MagicSets implements IProgramOptimisation {
 	 * @param r the rule which to rewrite
 	 * @return the rewritten rule
 	 */
-	private static IRule getRewrittenRule(final AdornedRule r) {
+	private static IRule createRewrittenRule(final AdornedRule r) {
 		assert r != null: "The rule must not be null";
 		assert r.getRule().getHead().size() == 1: 
 			"The head must have a length of 1, but was " + r.getRule().getHead().size();
@@ -259,7 +259,7 @@ public final class MagicSets implements IProgramOptimisation {
 	 * @param r the original rule containing the given literal
 	 * @return the set of generated rules
 	 */
-	private static Set<IRule> generateRules(final ILiteral l, final AdornedRule r) {
+	private static Set<IRule> createMagicRules(final ILiteral l, final AdornedRule r) {
 		assert l != null: "The literal must not be null";
 		assert r != null: "The rule must not be null";
 		assert l.getAtom().getPredicate() instanceof AdornedPredicate: 
@@ -292,7 +292,7 @@ public final class MagicSets implements IProgramOptimisation {
 			return rules;
 		}
 		// there are no edges entering this literal -> all would be free
-		return Collections.EMPTY_SET;
+		return Collections.<IRule>emptySet();
 	}
 
 	/**
@@ -378,10 +378,14 @@ public final class MagicSets implements IProgramOptimisation {
 			final String prefix, final String suffix) {
 		assert a != null: "The atom must not be null";
 
-		// getting the adorned predicate
-		final AdornedPredicate ap = ((bound != null) || !(a.getPredicate() instanceof AdornedPredicate))
-			? new AdornedPredicate(a, bound)
-			: (AdornedPredicate) a.getPredicate();
+		final AdornedPredicate ap;
+		// if we got bound variables, or the predicate isn't already
+		// adorned, create a new adorned predicate
+		if ((bound != null) || !(a.getPredicate() instanceof AdornedPredicate)) {
+			ap = new AdornedPredicate(a, bound);
+		} else { // the predicate was already adorned
+			ap = (AdornedPredicate) a.getPredicate();
+		}
 
 		// constructing the tuple
 
