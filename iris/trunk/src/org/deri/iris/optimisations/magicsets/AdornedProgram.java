@@ -50,19 +50,18 @@ import org.deri.iris.optimisations.magicsets.SIPImpl;
  * This is a simple implementation of an adorned program. <b>NOTE: At the moment
  * this class only works with rules with one literal in the head.</b>
  * </p>
- * <p>
- * $Id: AdornedProgram.java,v 1.35 2007-10-31 15:15:50 poettler_ric Exp $
- * </p>
  * 
- * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.35 $
+ * @author Richard Pöttler (richard dot poettler at sti2 dot at)
  */
 public class AdornedProgram {
 
 	// TODO: make a smaller empty-constant-term
 	private static final ITerm EMPTY_CONSTANT_TERM = TERM.createString("");
 
-	/** Set of all derived predicates. */
+	/**
+	 * Set of all derived predicates. Derived predicates are predicates for
+	 * which rules exist defining them.
+	 */
 	private final Set<IPredicate> deriveredPredicates = new HashSet<IPredicate>();
 
 	/** Set of all adorned predicates. */
@@ -124,13 +123,14 @@ public class AdornedProgram {
 		IQuery newQuery = null; // if we can adorn the query save it here
 
 		if (query.getLiterals().size() > 1) { // if we got a conjunctive query
-			// construct the temp query and rule
+			// construct the temp query and rule so that we have a
+			// query with only one literal in it
 			final IRule tmpRule = BASIC.createRule(
 					Arrays.asList(new ILiteral[]{TEMP_QUERY_LITERAL}), 
 					query.getLiterals());
 			final IQuery tmpQuery = BASIC.createQuery(TEMP_QUERY_LITERAL);
 
-			// adorn it
+			// adorn the new program
 			final Set<IRule> modRules = new HashSet<IRule>(rules);
 			modRules.add(tmpRule);
 			createAdornedRules(modRules, tmpQuery);
@@ -146,8 +146,10 @@ public class AdornedProgram {
 				}
 			}
 		} else { // handle non-conjunctive query
+			// adorn the original program
 			createAdornedRules(rules, query);
 
+			// construct the new query with the adorned predicate
 			final ILiteral ql = query.getLiterals().get(0);
 			final AdornedPredicate ap = new AdornedPredicate(ql);
 			newQuery = BASIC.createQuery(BASIC.createLiteral(
@@ -165,7 +167,7 @@ public class AdornedProgram {
 	 * Iterates over all the rules an checks what can be adorned. <b>The
 	 * query must only contain one literal!</b>
 	 * @param rules the rules to adorn
-	 * @param query the the query from where to take the bounds from
+	 * @param query the query from where to take the bounds from
 	 */
 	private void createAdornedRules(final Collection<IRule> rules, final IQuery query) {
 		assert rules != null: "The rules must not be null";
@@ -175,7 +177,7 @@ public class AdornedProgram {
 
 		deriveredPredicates.addAll(updateDerivedPredicates(rules)); // TODO: i think this should go
 
-		// creating an adored predicate out of the query, and add it to the
+		// creating an adorned predicate out of the query, and add it to the
 		// predicate sets
 		final AdornedPredicate qa = new AdornedPredicate(query.getLiterals().get(0));
 
@@ -199,7 +201,7 @@ public class AdornedProgram {
 					final ISip sip = new SIPImpl(r, createQueryForAP(ap, lh));
 					AdornedRule ra = (new AdornedRule(r, sip)).replaceHeadLiteral(lh, ap);
 
-					// iterating through all bodyliterals of the
+					// iterating through all body literals of the rule
 					for (final ILiteral l : r.getBody()) {
 						final AdornedPredicate newAP = checkDerivedLiteral(l, ra);
 						if (newAP != null) {
@@ -311,8 +313,8 @@ public class AdornedProgram {
 	}
 
 	/**
-	 * Determines all derived predicates of the program and adds them to the
-	 * derivedPredicates set.
+	 * Determines all derived predicates of the program. Derived predicates
+	 * are predicates for which rules exist defining them.
 	 * @param rules rules from where to check which predicates are derived
 	 * @return the derived predicates
 	 */
@@ -330,20 +332,20 @@ public class AdornedProgram {
 	}
 
 	/**
-	 * Creates a query out of an adored predicate and a literal. Therefore it
-	 * creates a literal with the specified arity, and puts constant terms for
-	 * the position of the bound's and the variables of the literals for the
-	 * free's in the terms.
+	 * Creates a query out of an adorned predicate and a literal. Therefore it
+	 * creates a literal with the specified arity, puts constant terms at
+	 * the positions of the bound arguments and for the free arguments the
+	 * terms of the literal at the corresponding position.
 	 * 
 	 * @param ap
-	 *            the adored predivate from where to take the bound's and free's
+	 *            the adorned predicate from where to take the bound's and free's
 	 * @param hl
 	 *            the literal for which to create the query
 	 * @return the query
 	 * @throws NullPointerException
-	 *             if the literal or the adored predicate are null
+	 *             if the literal or the adorned predicate are null
 	 * @throws IllegalArgumentException
-	 *             if the arity of the predicate of the literal and the adored
+	 *             if the arity of the predicate of the literal and the adorned
 	 *             predicate isn't equal
 	 * @throws IllegalArgumentException
 	 *             if the adornment of the predicate contains something else
@@ -380,12 +382,16 @@ public class AdornedProgram {
 	}
 
 	/**
-	 * Represents an adorned predicate.
+	 * <p>
+	 * Represents an adorned predicate. A adorned predicate is a predicate
+	 * with an array of adornments attached to it denoting the bound and
+	 * free arguments of it's tuple's terms
+	 * </p>
 	 * 
-	 * @author richi
+	 * @author Richard Pöttler (richard dot poettler at sti2 dot at)
 	 */
 	public static class AdornedPredicate implements IPredicate {
-		/** The predicate which should be adorned */
+		/** The base predicate which is represented as adorned one. */
 		private final IPredicate p;
 
 		/** The adornment of the predicate */
@@ -408,8 +414,7 @@ public class AdornedProgram {
 		}
 
 		/**
-		 * Constructs an adorned predicate. The length of the adornment must be
-		 * at least as long as the arity.
+		 * Constructs an adorned predicate.
 		 * 
 		 * @param symbol
 		 *            symbol for the predicate
@@ -422,7 +427,7 @@ public class AdornedProgram {
 		 * @throws IllegalArgumentException
 		 *             if the adornment contains null
 		 * @throws IllegalArgumentException
-		 *             if the arity is bigger than the length of the adornment
+		 *             if the arity of the predicate is bigger than the length of the adornment
 		 */
 		public AdornedPredicate(final String symbol, final int arity,
 				final Adornment[] adornment) {
@@ -445,7 +450,7 @@ public class AdornedProgram {
 		}
 
 		/**
-		 * Constructs an adorned predicate out of a atom and its bound
+		 * Constructs an adorned predicate out of an atom and its bound
 		 * variables. All occurrences in the atom of the bound variables will
 		 * be marked as bound in the adornment.
 		 * 
@@ -491,7 +496,7 @@ public class AdornedProgram {
 		}
 
 		/**
-		 * Constructs an adorned predicate out of a atom. All ground terms
+		 * Constructs an adorned predicate out of an atom. All ground terms
 		 * will be marked as bound.
 		 * 
 		 * @param a the atom
@@ -509,7 +514,7 @@ public class AdornedProgram {
 		 * @param t
 		 *            the term to check
 		 * @param b
-		 *            the collection of bound variables to check agains
+		 *            the collection of bound variables to check against
 		 * @return {@code true} if the term is bound using the bound collection,
 		 *         otherwise {@code false}
 		 */
@@ -594,18 +599,14 @@ public class AdornedProgram {
 	/**
 	 * <p>
 	 * Simple representation of an adorned rule. The only difference to an
-	 * odinary rule is, that it has a sip attached, and that you can exchange
+	 * ordinary rule is, that it has a sip attached, and that you can exchange
 	 * literals.
 	 * </p>
 	 * <b>ATTENTION: the replaceHeadLiterla and replaceBodyLiteral are slow,
 	 * because they copy the head and body for each invocation.</b>
 	 * </p>
-	 * <p>
-	 * Id
-	 * </p>
 	 * 
-	 * @author richi
-	 * @version $Revision: 1.35 $
+	 * @author Richard Pöttler (richard dot poettler at sti2 dot at)
 	 */
 	public static class AdornedRule { //implements IRule {
 		/** The inner rule represented by this object */
@@ -655,7 +656,7 @@ public class AdornedProgram {
 		 * one. This method doesn't change the object itself, but
 		 * creates another one, applies the changes and returns the
 		 * modified rule object.
-		 * @param l the literal, which's predicate to exchange
+		 * @param l the literal, for which to exchange the predicate
 		 * @param p the new predicate which should be set
 		 * @return a new rule with the applied changes
 		 * @throws NullPointerException if the literal or the predicate
@@ -694,7 +695,7 @@ public class AdornedProgram {
 		 * one. This method doesn't change the object itself, but
 		 * creates another one, applies the changes and returns the
 		 * modified rule object.
-		 * @param l the literal, which's predicate to exchange
+		 * @param l the literal, for which to exchange the predicate
 		 * @param p the new predicate which should be set
 		 * @return a new rule with the applied changes
 		 * @throws NullPointerException if the literal or the predicate
