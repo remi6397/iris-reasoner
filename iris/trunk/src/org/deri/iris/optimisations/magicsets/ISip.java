@@ -34,86 +34,64 @@ import org.deri.iris.graph.LabeledEdge;
  * A SIP (Sideway Information Passing) to determine which variable of which
  * literal was passed/bound by which literal.
  * </p>
- * <p>
- * $Id: ISip.java,v 1.4 2007-10-25 07:18:49 poettler_ric Exp $
- * </p>
- * 
- * @author Richard Pöttler (richard dot poettler at deri dot org)
- * @version $Revision: 1.4 $
+ * @author Richard Pöttler (richard dot poettler at sti2 dot at)
  */
 public interface ISip {
 
 	/**
-	 * Determines all variables, wich are passed to this literal.
-	 * 
-	 * @param l
-	 *            the literal for which to determine the variables
+	 * Determines all variables, which are passed to this literal.
+	 *
+	 * @param literal the literal for which to determine the variables
 	 * @return the set of variables
-	 * @throws NullPointerException
-	 *             if the literal is null
+	 * @throws IllegalArgumentException if the literal is <code>null</code>
 	 */
-	public abstract Set<IVariable> getBoundVariables(final ILiteral l);
+	Set<IVariable> getBoundVariables(ILiteral literal);
 
 	/**
 	 * Searches for literals on which the submitted literal depends.
-	 * 
-	 * @param l
-	 *            the literal for which to search for dependencies
+	 *
+	 * @param literal the literal for which to search for dependencies
 	 * @return the set of literal on which the submitted literal depends
-	 * @throws NullPointerException
-	 *             if the literal is null
+	 * @throws IllegalArgumentException if the literal is <code>null</code>
 	 */
-	public abstract Set<ILiteral> getDepends(final ILiteral l);
+	Set<ILiteral> getDepends(ILiteral literal);
 
 	/**
 	 * Searches for edges entering this literal.
-	 * 
-	 * @param l
-	 *            the literal for which to search for entering edges
+	 *
+	 * @param literal the literal for which to search for entering edges
 	 * @return set of edges entering this literal
-	 * @throws NullPointerException
-	 *             if the literal is null
+	 * @throws IllegalArgumentException if the literal is null
 	 */
-	public abstract Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesEnteringLiteral(
-			final ILiteral l);
+	Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesEnteringLiteral(ILiteral literal);
 
 	/**
 	 * Searches for edges leaving this literal.
 	 * 
-	 * @param l
-	 *            the literal for which to search for entering edges
+	 * @param literal the literal for which to search for entering edges
 	 * @return set of edges entering this literal
-	 * @throws NullPointerException
-	 *             if the literal is null
+	 * @throws IllegalArgumentException if the literal is <code>null</code>
 	 */
-	public abstract Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesLeavingLiteral(
-			final ILiteral l);
+	Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesLeavingLiteral(ILiteral literal);
 
 	/**
 	 * Determines the set of variables passed to one literal by one specific
 	 * edge.
-	 * 
-	 * @param source
-	 *            the source of the edge
-	 * @param target
-	 *            the target of the edge
+	 * @param source the source of the edge
+	 * @param target the target of the edge
 	 * @return the set of variables
-	 * @throws NullPointerException
-	 *             if one of the literal is null
+	 * @throws IllegalArgumentException if one of the literal is <code>null</code>
 	 */
-	public abstract Set<IVariable> variablesPassedByLiteral(
-			final ILiteral source, final ILiteral target);
+	Set<IVariable> variablesPassedByLiteral(ILiteral source, ILiteral target);
 
 	/**
 	 * Determines whether the sip constains a specific literal.
 	 * 
-	 * @param l
-	 *            the literal for which to search for
+	 * @param literal the literal for which to search for
 	 * @return whether or not the literal is in the sip
-	 * @throws NullPointerException
-	 *             if the literal is null
+	 * @throws IllegalArgumentException if the literal is <code>null</code>
 	 */
-	public abstract boolean containsVertex(final ILiteral l);
+	boolean containsVertex(ILiteral literal);
 
 	/**
 	 * Determines the roots of this graph. A root is a Literal (vertex) with no
@@ -121,7 +99,7 @@ public interface ISip {
 	 * 
 	 * @return the set of literals with no entering arcs
 	 */
-	public abstract Set<ILiteral> getRootVertices();
+	Set<ILiteral> getRootVertices();
 
 	/**
 	 * Determines the leafes of this graph. A leafe is a Literal (vertex) with
@@ -129,7 +107,7 @@ public interface ISip {
 	 * 
 	 * @return the set of literals with no outfgoing arcs
 	 */
-	public abstract Set<ILiteral> getLeafVertices();
+	Set<ILiteral> getLeafVertices();
 
 	/**
 	 * Returns the Comparator to compare literals according to their position in
@@ -140,5 +118,5 @@ public interface ISip {
 	 * @return the comparator to compare literals
 	 * @see SipHelper#getAdornedSip(org.deri.iris.evaluation.common.AdornedProgram.IAdornedRule)
 	 */
-	public abstract Comparator<ILiteral> getLiteralComparator();
+	Comparator<ILiteral> getLiteralComparator();
 }
