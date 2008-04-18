@@ -442,19 +442,32 @@ public final class SIPImpl implements ISip {
 
 		final List<ILiteral> body = new ArrayList<ILiteral>(r.getBody());
 		final Set<IVariable> bound = new HashSet<IVariable>(known);
+		ILiteral firstPushedBack = null;
+		int pushBackCount = 0;
 		for (int i = 0, max = body.size(); i < max; i++) {
 			final ILiteral l = body.get(i);
-			if (!l.isPositive()) {
-				// check whether every var appears in a former literal
-				if (!bound.containsAll(l.getAtom().getTuple().getVariables())) {
-					// if a variable can't be found -> put literal at the end
-					body.add(body.size() - 1, body.remove(i));
-					i--;
-				} else { // consider the vars as already bound
-					bound.addAll(l.getAtom().getTuple().getVariables());
+			final Set<IVariable> literalVars = l.getAtom().getTuple().getVariables();
+			// if we meet the first pushed back literal again, we
+			// were in a loop of only pushing back literals, without
+			// any gains of bound variables -> stop now
+			if (l.equals(firstPushedBack) && ((i + pushBackCount) >= (max - 1))) {
+				break;
+			}
+			// if the literal is negative check whether every var
+			// appears in a former literal -> if not, push the
+			// literal at the end of the rule
+			if (!l.isPositive() && !bound.containsAll(literalVars)) {
+				body.add(body.size() - 1, body.remove(i));
+				i--;
+
+				pushBackCount++;
+				if (firstPushedBack == null) {
+					firstPushedBack = l;
 				}
 			} else { // consider the vars as already bound
-				bound.addAll(l.getAtom().getTuple().getVariables());
+				bound.addAll(literalVars);
+				pushBackCount = 0;
+				firstPushedBack = null;
 			}
 		}
 		return Factory.BASIC.createRule(r.getHead(), body);
