@@ -199,14 +199,6 @@ public final class SIPImpl implements ISip {
 		assert r.getHead().size() == 1: "At the moment we only can " + 
 			"construct a sip for a rule with length of 1";
 
-		// add all literals to the sip
-		for (final ILiteral l : r.getHead()) {
-			sipGraph.addVertex(l);
-		}
-		for (final ILiteral l : r.getBody()) {
-			sipGraph.addVertex(l);
-		}
-
 		// map containing the variable->passedFromLiterals mappings
 		final Map<IVariable, Set<ILiteral>> passings = new HashMap<IVariable, Set<ILiteral>>();
 		// add the passings from head
@@ -255,9 +247,12 @@ public final class SIPImpl implements ISip {
 		final LabeledEdge<ILiteral, Set<IVariable>> edge = sipGraph.getEdge(source, target);
 		if (edge != null) { // updating the edge
 			edge.getLabel().addAll(passedTo);
-		} else { // adding a new edge
-			// we assume, that all literals are already added to the
-			// sip
+		} else { // adding a new edge with the passings
+			// adding the the literals as vertices
+			sipGraph.addVertex(source);
+			sipGraph.addVertex(target);
+
+			// add the edge
 			sipGraph.addEdge(source, 
 					target, 
 					new LabeledEdge<ILiteral, Set<IVariable>>(source, 
@@ -474,44 +469,35 @@ public final class SIPImpl implements ISip {
 	}
 
 	/**
+	 * <p>
 	 * Comparator to compare two literals to each other depending on their
-	 * position in the sip.</br>If one literal is smaller than the other this
-	 * means that it precedes the other one. </br>Following rules will be
-	 * followed:</br>
-	 * <ul>
-	 * <li>if none of the literals is in the graph they are equal</li>
-	 * <li>if a literal appears in the graph it is smaller than one which is
+	 * position in the sip.
+	 * </p>
+	 * <p>
+	 * If one literal is smaller than the other this means that it precedes
+	 * the other. Following rules will be applied:
+	 * <ol>
+	 * <li>If none of the literals is in the graph they are equal</li>
+	 * <li>If only one literal appears in the graph it is smaller than one
 	 * not in the graph</li>
-	 * <li>the literal which precedes another literal is smaller than the other</li>
-	 * <uol>
+	 * <li>The literal preceeding the other is smaller</li>
+	 * </ol>
+	 * </p>
 	 * 
-	 * @author richi
-	 * 
+	 * @author Richard Pöttler (richard dot poettler at sti2 dot at)
 	 */
 	private class LiteralComparator implements Comparator<ILiteral> {
 
-		/**
-		 * Compares two literal to each other depending on their position in the
-		 * sip.
-		 * 
-		 * @param o1
-		 *            the first literal to compare
-		 * @param 02
-		 *            the second literal to compare
-		 * @return -1, 0, 1 if o1 is smaller, equal or bitter than o2
-		 * @throws NullPointerException
-		 *             if o1 or o2 is null
-		 */
 		public int compare(final ILiteral o1, final ILiteral o2) {
 			if ((o1 == null) || (o2 == null)) {
 				throw new NullPointerException();
 			}
 
-			if (!sipGraph.containsVertex(o1) && !sipGraph.containsVertex(o2)) {
+			if (!sipGraph.containsVertex(o1) && !sipGraph.containsVertex(o2)) { // none of the literals is in the graph
 				return 0;
-			} else if (!sipGraph.containsVertex(o1)) {
+			} else if (!sipGraph.containsVertex(o1)) { // only o2 is in the graph
 				return 1;
-			} else if (!sipGraph.containsVertex(o2)) {
+			} else if (!sipGraph.containsVertex(o2)) { // only o1 is in the graph
 				return -1;
 			}
 
