@@ -147,9 +147,19 @@ public final class MagicSets implements IProgramOptimisation {
 
 		final Set<IRule> res = new HashSet<IRule>();
 		final List<ILiteral> query = q.getLiterals();
+		// every binding of one literal of the query depends on the
+		// bindings of it's preceding literal -> create the magic rules
+		// for the literals
+		// the loop starts at 1, because the first literals doesn't have
+		// preceding literals
 		for (int i = 1, max = query.size(); i < max; i++) {
 			final IAtom magicAtom = createBoundAtom(query.get(i).getAtom(), null, MAGIC_PREDICATE_PREFIX, null);
 			if (!magicAtom.getTuple().isEmpty()) {
+				// the rule head got to be positive, no matter
+				// whether the literal was positive, or not,
+				// because the relation resulting out of this
+				// rule will be inverted anyway, if used in a
+				// rule's body
 				res.add(BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, magicAtom)),
 							slice(query, 0, i)));
 			}
@@ -158,8 +168,7 @@ public final class MagicSets implements IProgramOptimisation {
 	}
 
 	/**
-	 * Returns a sublist of a list. Using a slice like perl would be too
-	 * simple...
+	 * Returns a sublist of a list.
 	 * @param orig the original list
 	 * @param from from where to copy the elements (inclusive)
 	 * @param to to which element to copy (exclusive)
@@ -221,16 +230,17 @@ public final class MagicSets implements IProgramOptimisation {
 
 	/**
 	 * <p>
-	 * Creates a seed for the given query. 
+	 * Creates a seed out of the first literal of a query.
 	 * </p>
 	 * <p>
 	 * The predicate of the literal will be adorned according to it's bound and 
 	 * free terms and the terms of the literal of the query will be limited to 
-	 * it's bound terms.
+	 * it's bound arguments.
 	 * </p>
 	 * 
 	 * @param q for which to create the seed
-	 * @return the seed or <code>null</code> if the query didn't contain any constants
+	 * @return the seed or <code>null</code> if the query didn't any
+	 * literals
 	 */
 	private static IAtom createSeed(final IQuery q) {
 		assert q != null: "The query must not be null";
@@ -261,7 +271,7 @@ public final class MagicSets implements IProgramOptimisation {
 			r.getSip().getEdgesEnteringLiteral(l);
 
 		if (enteringEdges.size() == 1) {
-			// only on arch is entering this literal
+			// only on arc is entering this literal
 			return Collections.singleton(createMagicRule(enteringEdges.iterator().next(), r));
 		} else if (enteringEdges.size() > 1) {
 			// multible arcs entering this literal
@@ -288,8 +298,8 @@ public final class MagicSets implements IProgramOptimisation {
 	/**
 	 * Creates a magic rule for the given literal.
 	 * 
-	 * @param l for which to create the rule
-	 * @param rule the original rule
+	 * @param e the edge to the literal
+	 * @param r the adorned rule which contain the literal
 	 * @return the magic rule
 	 */
 	private static IRule createMagicRule(final LabeledEdge<ILiteral, Set<IVariable>> e,
@@ -403,18 +413,18 @@ public final class MagicSets implements IProgramOptimisation {
 
 	/**
 	 * <p>
-	 * Creates a magic literal out of an adorned one. The predicate of the
-	 * literal must be adorned. The terms of the literal will only consist of
-	 * the bound terms.
+	 * Creates a magic literal out of an adorned one. The terms of the
+	 * literal will only consist of the bound terms.
 	 * </p>
 	 * <p>
 	 * Note that not adorned literals are taken as if they would have only
 	 * bounds.
 	 * </p>
 	 * 
-	 * @param l for which to create the adorned one
+	 * @param l the literal for which to create the adorned one
 	 * @return the magic literal or the same literal again, if the predicate
-	 * of the literal wasn't adorned
+	 * of the literal wasn't adorned (and so no bound variables could be
+	 * determined)
 	 */
 	private static ILiteral createMagicLiteral(final ILiteral l) {
 		return createMagicLiteral(l.isPositive(), l);
@@ -422,9 +432,8 @@ public final class MagicSets implements IProgramOptimisation {
 
 	/**
 	 * <p>
-	 * Creates a magic literal out of an adorned one. The predicate of the
-	 * literal must be adorned. The terms of the literal will only consist of
-	 * the bound terms.
+	 * Creates a magic literal out of an adorned one. The terms of the
+	 * literal will only consist of the bound terms.
 	 * </p>
 	 * <p>
 	 * Note that not adorned literals are taken as if they would have only
@@ -433,14 +442,16 @@ public final class MagicSets implements IProgramOptimisation {
 	 * 
 	 * @param positive whether the resulting literal should be positive, or
 	 * not
-	 * @param l for which to create the adorned one
+	 * @param l the literal for which to create the adorned one
 	 * @return the magic literal or the same literal again, if the predicate
-	 * of the literal wasn't adorned
+	 * of the literal wasn't adorned (and so no bound variables could be
+	 * determined)
 	 */
 	private static ILiteral createMagicLiteral(final boolean positive, final ILiteral l) {
 		assert l != null: "The literal must not be null";
 
-		// if the literal isn't adorned then there isn't anything to do.
+		// if the literal isn't adorned then there isn't anything to do,
+		// because we can't determine any bound variables
 		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
 			return l;
 		}
@@ -492,7 +503,7 @@ public final class MagicSets implements IProgramOptimisation {
 	 * the adornment of the predicate. The order of the terms won't be changed.
 	 * 
 	 * @param p where to take the adornments from
-	 * @param l containing all the terms
+	 * @param a the atom from where to take the terms
 	 * @return the list of bound terms
 	 */
 	private static List<ITerm> getBounds(final AdornedPredicate p,
@@ -514,13 +525,11 @@ public final class MagicSets implements IProgramOptimisation {
 	}
 
 	/**
-	 * Filters the given normal (unadorned ones) and removes every occurrence
+	 * Filters the given normal rules (unadorned ones) and removes every occurrence
 	 * where an adorned one (with or without a guardian literal) exist.
 	 * 
-	 * @param nr
-	 *            the normal rules to filter
-	 * @param ar
-	 *            the adorned rules
+	 * @param nr the normal rules to filter
+	 * @param ar the adorned rules
 	 * @return a set of filtered rules
 	 */
 	private static Set<IRule> filterRemainingRules(final Collection<IRule> nr,
