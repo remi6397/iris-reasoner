@@ -325,17 +325,58 @@ public class SipImplTest extends TestCase {
 		final ILiteral b = createLiteral("b", "X");
 		final ILiteral c = createLiteral("c", "X");
 
-		assertEquals(a + " must be equals to " + a, 0, lc.compare(a, a));
-		assertEquals(b + " must be equals to " + b, 0, lc.compare(b, b));
-		assertEquals(c + " must be equals to " + c, 0, lc.compare(c, c));
-		assertEquals(b + " must be equals to " + c, 0, lc.compare(b, c));
-		assertEquals(c + " must be equals to " + b, 0, lc.compare(c, b));
+		assertTrue(a + " must be equals to " + a, lc.compare(a, a) == 0);
+		assertTrue(b + " must be equals to " + b, lc.compare(b, b) == 0);
+		assertTrue(c + " must be equals to " + c, lc.compare(c, c) == 0);
+		assertTrue(b + " must be equals to " + c, lc.compare(b, c) == 0);
+		assertTrue(c + " must be equals to " + b, lc.compare(c, b) == 0);
 
 		assertTrue(a + " must be smaller than " + b, lc.compare(a, b) < 0);
 		assertTrue(a + " must be smaller than " + c, lc.compare(a, c) < 0);
 
 		assertTrue(b + " must be bigger than " + a, lc.compare(b, a) > 0);
 		assertTrue(c + " must be bigger than " + a, lc.compare(c, a) > 0);
+	}
+
+	/**
+	 * Tests the behaviour of the literal comparator with literals which
+	 * gain and give no passings.
+	 */
+	public void testUnconnectedLiteralComparator() throws Exception {
+		final String prog = "a(?X) :- b(?X), c(?Y), d(?Z).\n"
+			+ "?- a('john').";
+		final SIPImpl sip = parseProgram(prog);
+
+		// the literal edges are:
+		// a -> b
+		// c and d are not connected
+
+		final Comparator<ILiteral> lc = sip.getLiteralComparator();
+		final ILiteral a = createLiteral("a", "X");
+		final ILiteral b = createLiteral("b", "X");
+		final ILiteral c = createLiteral("c", "Y");
+		final ILiteral d = createLiteral("d", "Z");
+
+		assertTrue(a + " must be equals to " + a, lc.compare(a, a) == 0);
+		assertTrue(b + " must be equals to " + b, lc.compare(b, b) == 0);
+		assertTrue(c + " must be equals to " + c, lc.compare(c, c) == 0);
+		assertTrue(d + " must be equals to " + d, lc.compare(d, d) == 0);
+
+		assertTrue(a + " must be smaller than " + b, lc.compare(a, b) < 0);
+		assertTrue(a + " must be smaller than " + c, lc.compare(a, c) < 0);
+		assertTrue(a + " must be smaller than " + d, lc.compare(a, d) < 0);
+
+		assertTrue(b + " must be bigger than " + a, lc.compare(b, a) > 0);
+		assertTrue(c + " must be bigger than " + a, lc.compare(c, a) > 0);
+		assertTrue(d + " must be bigger than " + a, lc.compare(d, a) > 0);
+
+		assertTrue(b + " must be smaller than " + c, lc.compare(b, c) < 0);
+		assertTrue(b + " must be smaller than " + d, lc.compare(b, d) < 0);
+
+		assertTrue(c + " must be bigger than " + b, lc.compare(c, b) > 0);
+		assertTrue(d + " must be bigger than " + b, lc.compare(d, b) > 0);
+
+		assertTrue(c + " must be equal to " + d, lc.compare(c, d) == 0);
 	}
 
 	/**
