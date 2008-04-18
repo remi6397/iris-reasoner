@@ -44,10 +44,7 @@ import org.deri.iris.api.graph.IPredicateGraph;
 public class RuleFilter implements IProgramOptimisation {
 
 	public Result optimise(final Collection<IRule> rules, final IQuery query) {
-		final Result result = new Result();
-		result.query = query;
-		result.rules = new ArrayList<IRule>(shrinkRules(rules, query));
-		return result;
+		return new Result(new ArrayList<IRule>(shrinkRules(rules, query)), query);
 	}
 
 	/**
