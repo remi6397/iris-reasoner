@@ -258,6 +258,10 @@ public final class LeftToRightSip implements ISip {
 			throw new IllegalArgumentException("The literal must not be null");
 		}
 
+		if (!sipGraph.containsVertex(l)) {
+			return Collections.<IVariable>emptySet();
+		}
+
 		final Set<IVariable> variables = new HashSet<IVariable>();
 
 		for (final ILiteral predicate : Graphs.predecessorListOf(sipGraph, l)) {
@@ -271,6 +275,10 @@ public final class LeftToRightSip implements ISip {
 		final Set<ILiteral> todoDependencies = new HashSet<ILiteral>();
 		if (l == null) {
 			throw new IllegalArgumentException("The literal must not be null");
+		}
+
+		if (!sipGraph.containsVertex(l)) {
+			return Collections.<ILiteral>emptySet();
 		}
 
 		todoDependencies.add(l);
@@ -295,6 +303,11 @@ public final class LeftToRightSip implements ISip {
 		if (l == null) {
 			throw new IllegalArgumentException("The literal must not be null");
 		}
+
+		if (!sipGraph.containsVertex(l)) {
+			return Collections.<LabeledEdge<ILiteral, Set<IVariable>>>emptySet();
+		}
+
 		final List<ILiteral> predecessors = Graphs.predecessorListOf(sipGraph, l);
 		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = 
 			new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>(predecessors.size());
@@ -309,6 +322,11 @@ public final class LeftToRightSip implements ISip {
 		if (l == null) {
 			throw new IllegalArgumentException("The literal must not be null");
 		}
+
+		if (!sipGraph.containsVertex(l)) {
+			return Collections.<LabeledEdge<ILiteral, Set<IVariable>>>emptySet();
+		}
+
 		final List<ILiteral> successors = Graphs.successorListOf(sipGraph, l);
 		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = 
 			new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>(successors.size());
@@ -324,6 +342,11 @@ public final class LeftToRightSip implements ISip {
 			throw new IllegalArgumentException(
 					"The source and the target must not be null");
 		}
+
+		if (!sipGraph.containsVertex(source) || !sipGraph.containsVertex(target)) {
+			return Collections.<IVariable>emptySet();
+		}
+
 		Set<IVariable> vars = new HashSet<IVariable>(getBoundVariables(source));
 		vars.addAll((sipGraph.getEdge(source, target)).getLabel());
 		return vars;

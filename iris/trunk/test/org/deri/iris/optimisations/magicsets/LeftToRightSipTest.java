@@ -380,6 +380,39 @@ public class LeftToRightSipTest extends TestCase {
 	}
 
 	/**
+	 * Tests whether unconnected literals are handeled correctly.
+	 */
+	public void testUnconnectedLiteral() throws Exception {
+		final String prog = "i0(?H0) :- e1(?H0), i0(?X0)."
+			+ "?- i0(11).";
+		final LeftToRightSip sip = parseProgram(prog);
+
+		final ILiteral i0h0 = createLiteral("i0", "H0");
+		final ILiteral i0x0 = createLiteral("i0", "X0");
+
+		assertEquals("getBoundVariables(...) must return an empty set for unconnected literals.",
+				Collections.<IVariable>emptySet(),
+				sip.getBoundVariables(i0x0));
+		assertEquals("getDepends(...) must return an empty set for unconnected literals.",
+				Collections.<ILiteral>emptySet(),
+				sip.getDepends(i0x0));
+		assertEquals("getEdgesEnteringLiteral(...) must return an empty set for unconnected literals.",
+				Collections.<LabeledEdge<ILiteral, Set<IVariable>>>emptySet(),
+				sip.getEdgesEnteringLiteral(i0x0));
+		assertEquals("getEdgesLeavingLiteral(...) must return an empty set for unconnected literals.",
+				Collections.<LabeledEdge<ILiteral, Set<IVariable>>>emptySet(),
+				sip.getEdgesLeavingLiteral(i0x0));
+		assertFalse("containsVertex(...) must return false for unconnected literals.",
+				sip.containsVertex(i0x0));
+		assertEquals("variablesPassedByLiteral(...) must return an empty set for unconnected literals #1.",
+				Collections.<ILiteral>emptySet(),
+				sip.variablesPassedByLiteral(i0h0, i0x0));
+		assertEquals("variablesPassedByLiteral(...) must return an empty set for unconnected literals #2.",
+				Collections.<ILiteral>emptySet(),
+				sip.variablesPassedByLiteral(i0x0, i0h0));
+	}
+
+	/**
 	 * Creates a edge.
 	 * 
 	 * @param s the source literal
