@@ -55,8 +55,11 @@ import org.deri.iris.optimisations.magicsets.LeftToRightSip;
  */
 public class AdornedProgram {
 
-	// TODO: make a smaller empty-constant-term
-	private static final ITerm EMPTY_CONSTANT_TERM = TERM.createString("");
+	/**
+	 * Dummy constant for temporary queries generated out of a adorned
+	 * predicate.
+	 */
+	private static final ITerm EMPTY_CONSTANT_TERM = TERM.createString("<CONSTANT>");
 
 	/**
 	 * Set of all derived predicates. Derived predicates are predicates for
