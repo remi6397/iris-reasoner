@@ -54,8 +54,6 @@ import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
-// FIXME: most Set<IVariable> should be Set<ITerm> and contain !isGround() terms
-
 /**
  * <p>
  * Sip, which examines the body literals from left to right.
