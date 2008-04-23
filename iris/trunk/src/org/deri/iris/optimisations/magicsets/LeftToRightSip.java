@@ -63,7 +63,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
  * methods.
  * </p>
  *
- * @author Richard Pöttler (richard dot poettler at sti dot at)
+ * @author Richard Pöttler (richard dot poettler at sti2 dot at)
  */
 public final class LeftToRightSip implements ISip {
 	/**
@@ -552,7 +552,7 @@ public final class LeftToRightSip implements ISip {
 	 * The label of the edge will be <code>new HashSet<IVariable>()</code>.
 	 * </p>
 	 *
-	 * @author Richard Pöttler (richard dot poettler at sti dot at)
+	 * @author Richard Pöttler (richard dot poettler at sti2 dot at)
 	 * @since 0.3
 	 */
 	private static class SipEdgeFactory implements EdgeFactory<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> {
