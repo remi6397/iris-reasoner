@@ -166,7 +166,6 @@ public class AdornedProgram {
 
 		}
 
-		// TODO: maybe defensive copy should be made.
 		this.rules = new HashSet<IRule>(rules);
 		this.query = newQuery;
 	}
@@ -183,7 +182,7 @@ public class AdornedProgram {
 		assert query != null: "The query must not be null";
 		assert query.getLiterals().size() == 1: "The query must only contain one literal";
 
-		deriveredPredicates.addAll(updateDerivedPredicates(rules)); // TODO: i think this should go
+		deriveredPredicates.addAll(updateDerivedPredicates(rules));
 
 		// creating an adorned predicate out of the query, and add it to the
 		// predicate sets
