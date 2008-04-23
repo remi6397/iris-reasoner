@@ -38,6 +38,7 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
@@ -438,7 +439,6 @@ public final class LeftToRightSip implements ISip {
 	 */
 	static IRule orderLiterals(final IRule r,
 			final Collection<IVariable> known) {
-		// TODO: handle builtins!
 		if (r == null) {
 			throw new IllegalArgumentException("The rule must not be null");
 		}
@@ -460,11 +460,13 @@ public final class LeftToRightSip implements ISip {
 			if (l.equals(firstPushedBack) && ((i + pushBackCount) >= (max - 1))) {
 				break;
 			}
-			// if the literal is negative check whether every var
-			// appears in a preceding literal -> if not, push the
-			// literal at the end of the rule
-			if (!l.isPositive() && !bound.containsAll(literalVars)) {
-				body.add(body.size() - 1, body.remove(i));
+
+			// if the literal is a built-in and not evaluable or the
+			// literal is negative and has some unbound variables
+			// push the literal at the end of the body.
+			if ((l.getAtom().isBuiltin() && !checkEvaluableBuiltin((IBuiltinAtom) l.getAtom(), bound))
+					|| (!l.isPositive() && !bound.containsAll(literalVars))) {
+				body.add(body.remove(i));
 				i--;
 
 				pushBackCount++;
@@ -478,6 +480,21 @@ public final class LeftToRightSip implements ISip {
 			}
 		}
 		return Factory.BASIC.createRule(r.getHead(), body);
+	}
+
+	/**
+	 * Checks whether a built-in is evaluable.
+	 * @param builtin the built-in atom
+	 * @return <code>true</code> if the built-in is evaluable, otherwise
+	 * <code>false</code>
+	 */
+	private static boolean checkEvaluableBuiltin(final IBuiltinAtom builtin, final Collection<IVariable> bound) {
+		assert builtin != null: "The builtin atom must not be null";
+		assert bound != null: "The bound variables must not be null";
+
+		final Set<IVariable> unboundVariables = builtin.getTuple().getVariables();
+		unboundVariables.removeAll(bound);
+		return unboundVariables.size() <= builtin.maxUnknownVariables();
 	}
 
 	/**
