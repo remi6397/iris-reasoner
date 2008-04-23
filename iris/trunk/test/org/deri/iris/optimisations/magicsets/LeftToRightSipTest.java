@@ -160,33 +160,6 @@ public class LeftToRightSipTest extends TestCase {
 		assertEquals("The edge set does not match.", edges, sip.getEdges());
 	}
 
-	public void testLiteralOrder0() {
-		// a(X, Y) :- not b(X, Y1), c(Y1, X1), d(X1, Y)
-		// a(john, Y)
-		final ILiteral not_b = createLiteral(false, "b", "X", "Y1");
-		final IRule r = BASIC.createRule(
-				Arrays.asList(createLiteral("a", "X", "Y")), 
-				Arrays.asList(not_b, createLiteral("c", "Y1", "X1"), createLiteral("d", "X1", "Y")));
-		final IRule r_ref = BASIC.createRule(
-				Arrays.asList(createLiteral( "a", "X", "Y")), 
-				Arrays.asList(createLiteral("c", "Y1", "X1"), createLiteral("d", "X1", "Y"), not_b));
-		assertEquals("The sorting order isn't correct", r_ref, LeftToRightSip.orderLiterals(r, Collections
-				.singleton(TERM.createVariable("X"))));
-	}
-
-	public void testLiteralOrder1() {
-		// a(X, Y) :- b(X, Y1), Y1 > X1, d(X1, Y)
-		// a(john, Y)
-		final ILiteral gt = BASIC.createLiteral(true, BUILTIN.createGreater( TERM.createVariable("X1"), TERM.createVariable("Y1")));
-		final IRule r = BASIC.createRule(
-				Arrays.asList(createLiteral("a", "X", "Y")), 
-				Arrays.asList(createLiteral("b", "X", "Y1"), gt, createLiteral("d", "X1", "Y")));
-		final IRule r_ref = BASIC.createRule(
-				Arrays.asList(createLiteral("a", "X", "Y")), 
-				Arrays.asList(createLiteral("b", "X", "Y1"), gt, createLiteral("d", "X1", "Y")));
-		assertEquals("The sorting order isn't correct", r_ref, LeftToRightSip.orderLiterals(r, Collections.singleton(TERM.createVariable("X"))));
-	}
-
 	/**
 	 * <p>
 	 * Tests the behaviour for rules containing equal literals.
@@ -285,25 +258,33 @@ public class LeftToRightSipTest extends TestCase {
 	public void testOrderLiterals() throws Exception {
 		final Set<IVariable> X = Collections.singleton(TERM.createVariable("X"));
 
-		final String prog0 = "x(?X) :- a(?X), !b(?B).";
-		final String exp0 = "x(?X) :- a(?X), !b(?B).";
-		assertEquals("Rule not ordered correctly", parseSingleRule(exp0),
-				LeftToRightSip.orderLiterals(parseSingleRule(prog0), X));
+		checkOrderLiterals("x(?X) :- a(?X), !b(?Y).", "x(?X) :- !b(?Y), a(?X).", X);
+		checkOrderLiterals("x(?X) :- !b(?X), a(?X).", "x(?X) :- !b(?X), a(?X).", X);
+		checkOrderLiterals("x(?X) :- a(?X), !c(?C), !b(?B).", "x(?X) :- !b(?B), a(?X), !c(?C).", X);
+		checkOrderLiterals("x(?X) :- a(?B), !b(?B), !c(?C).", "x(?X) :- !b(?B), a(?B), !c(?C).", X);
+		checkOrderLiterals("x(?X) :- a(?X), !b(?Y), !b(?Y).", "x(?X) :- !b(?Y), !b(?Y), a(?X).", X);
 
-		final String prog1 = "x(?X) :- !b(?B), a(?X), !c(?C).";
-		final String exp1 = "x(?X) :- a(?X), !c(?C), !b(?B).";
-		assertEquals("Rule not ordered correctly", parseSingleRule(exp1),
-				LeftToRightSip.orderLiterals(parseSingleRule(prog1), X));
+		// test builtins
+		checkOrderLiterals("x(?X) :- ?X - 2 = ?Z, !c(?Z), !b(?B).", "x(?X) :- !b(?B), !c(?Z), ?X - 2 = ?Z.", X);
+		checkOrderLiterals("x(?X) :- b(?Y1), d(?X1), ?Y1 > ?X1, !a(?A).", "x(?X) :- ?Y1 > ?X1, !a(?A), b(?Y1), d(?X1).", X);
+	}
 
-		final String prog2 = "x(?X) :- !b(?B), a(?X, ?B), !c(?C).";
-		final String exp2 = "x(?X) :- a(?X, ?B), !b(?B), !c(?C).";
-		assertEquals("Rule not ordered correctly", parseSingleRule(exp2),
-				LeftToRightSip.orderLiterals(parseSingleRule(prog2), X));
+	/**
+	 * Shortcut method to assert the result of the orderLiterals(...)
+	 * method.
+	 * @param expected the expected resulting rule
+	 * @param rule the input rule
+	 * @param bound the bound variables of the rule's head
+	 */
+	private void checkOrderLiterals(final String expected, final String rule, final Set<IVariable> bound)
+		throws ParserException {
+		assert rule != null: "The rule must not be null";
+		assert expected != null: "The expected rule must not be null";
+		assert bound != null: "The bound variables must not be null";
 
-		final String prog3 = "x(?X) :- !b(?Y), !b(?Y), a(?X).";
-		final String exp3 = "x(?X) :- a(?X), !b(?Y), !b(?Y).";
-		assertEquals("Rule not ordered correctly", parseSingleRule(exp3),
-				LeftToRightSip.orderLiterals(parseSingleRule(prog3), X));
+		assertEquals("Rule not ordered correctly.",
+				parseSingleRule(expected),
+				LeftToRightSip.orderLiterals(parseSingleRule(rule), bound));
 	}
 
 	/**
