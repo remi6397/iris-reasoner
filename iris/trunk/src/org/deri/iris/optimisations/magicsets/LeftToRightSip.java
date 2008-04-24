@@ -84,59 +84,19 @@ public final class LeftToRightSip implements ISip {
 	 * @param q the query for this rule
 	 * @throws IllegalArgumentException if the rule is <code>null</code>
 	 * @throws IllegalArgumentException if the query is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the symbol and the arity of the head of the rule and the
-	 *             query doesn't match
 	 */
-	public LeftToRightSip(final IRule r, final IQuery q) {
-		if (r == null) {
+	public LeftToRightSip(final IRule rule, final IQuery query) {
+		if (rule == null) {
 			throw new IllegalArgumentException("The rule must not be null");
 		}
-		if (q == null) {
+		if (query == null) {
 			throw new IllegalArgumentException("The query must not be null");
 		}
-		if (r.getHead().size() != 1) {
-			throw new IllegalArgumentException(
-					"At the moment only rule heads with length 1 are allowed");
-		}
-		if (q.getLiterals().size() != 1) {
-			throw new IllegalArgumentException(
-					"At the moment only queries with length 1 are allowed");
-		}
 
-		final ILiteral headLiteral = r.getHead().get(0);
-		final ILiteral queryLiteral = q.getLiterals().get(0);
-		final IPredicate headPredicate = headLiteral.getAtom().getPredicate();
-		final IPredicate queryPredicate = queryLiteral.getAtom().getPredicate();
-
-		// this check is only neccessary for the first implementation
-		// allow only one head
-		// head predicate must be equal to with the query predicate
-
-		// I'm not using IPredicate.equals(...), because the query could
-		// be adorned, and then they won't be equal, so I compare them
-		// on the predicate symbol and arity.
-		if (!headPredicate.getPredicateSymbol().equals(
-				queryPredicate.getPredicateSymbol())
-				|| (headPredicate.getArity() != queryPredicate.getArity())) {
-			throw new IllegalArgumentException(
-					"The symbol and arity of the predicates of "
-							+ "the rule head and the query must match");
-		}
-
-		// determining the known variables of the head
-		final Set<IVariable> assumedKnown = new HashSet<IVariable>();
-		final ITuple headTuple = headLiteral.getAtom().getTuple();
-		final ITuple queryTuple = queryLiteral.getAtom().getTuple();
-		for (int i = 0, arity = headTuple.size(); i < arity; i++) {
-			if (queryTuple.get(i).isGround() && !headTuple.get(i).isGround()) {
-				assumedKnown.addAll(getVariables(headTuple.get(i)));
-			}
-		}
-
+		final Set<IVariable> boundVariables = getBoundsFromRuleHead(rule, query);
 		// ensure that a safe rule will result in a safe sip and
 		// construct the sip
-		constructSip(orderLiterals(r, assumedKnown), assumedKnown);
+		constructSip(orderLiterals(rule, boundVariables), boundVariables);
 	}
 
 	/**
@@ -166,6 +126,41 @@ public final class LeftToRightSip implements ISip {
 	}
 
 	/**
+	 * Determines the bound variables of a rule head.
+	 * @param rule the rule for which to determine the bound head variables
+	 * @param query the query for the rule
+	 * @return the variables of the head bound by the query
+	 */
+	private static Set<IVariable> getBoundsFromRuleHead(final IRule rule, final IQuery query) {
+		assert rule != null: "The rule must not be null";
+		assert query != null: "The query must not be null";
+
+		final Set<IVariable> bounds = new HashSet<IVariable>();
+
+		// step through the query literals
+		for (final ILiteral queryLiteral : query.getLiterals()) {
+			final IPredicate queryPredicate = queryLiteral.getAtom().getPredicate();
+			// step through the head literals
+			for (final ILiteral headLiteral : rule.getHead()) {
+				// extract all variables of the head, where the
+				// query got ground terms if the predicates of
+				// the head and query literals match
+				if (headLiteral.getAtom().getPredicate().equals(queryPredicate)) {
+					final ITuple headTuple = headLiteral.getAtom().getTuple();
+					final ITuple queryTuple = queryLiteral.getAtom().getTuple();
+					for (int i = 0, arity = headTuple.size(); i < arity; i++) {
+						if (queryTuple.get(i).isGround()) {
+							bounds.addAll(getVariables(headTuple.get(i)));
+						}
+					}
+				}
+			}
+		}
+
+		return bounds;
+	}
+
+	/**
 	 * Returns the variables of a term. If the term is <code>null</code> or
 	 * ground a empty set will be returned, if it is a constructed term all
 	 * of its variables are returned, otherwise (in this case it must be a 
@@ -190,17 +185,22 @@ public final class LeftToRightSip implements ISip {
 	private void constructSip(final IRule r, final Set<IVariable> assumedKnown) {
 		assert r != null: "The rule must not be null";
 		assert assumedKnown != null: "The known collection must not be null";
-		assert r.getHead().size() == 1: "At the moment we only can " + 
-			"construct a sip for a rule with length of 1";
 
 		// map containing the variable->passedFromLiterals mappings
 		final Map<IVariable, Set<ILiteral>> passings = new HashMap<IVariable, Set<ILiteral>>();
+
 		// add the passings from head
-		final ILiteral head = r.getHead().get(0);
-		for (final IVariable v : assumedKnown) {
-			final Set<ILiteral> passedFrom = new HashSet<ILiteral>();
-			passedFrom.add(head);
-			passings.put(v, passedFrom);
+		for (final ILiteral headLiteral : r.getHead()) {
+			final Set<IVariable> knownHeadVariables = headLiteral.getAtom().getTuple().getVariables();
+			knownHeadVariables.retainAll(assumedKnown);
+			for (final IVariable headVariable : knownHeadVariables) {
+				Set<ILiteral> passingLiterals = passings.get(headVariable);
+				if (passingLiterals == null) {
+					passingLiterals = new HashSet<ILiteral>();
+					passings.put(headVariable, passingLiterals);
+				}
+				passingLiterals.add(headLiteral);
+			}
 		}
 
 		// iterating over the body literals and check the passings for

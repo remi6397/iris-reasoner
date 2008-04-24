@@ -394,6 +394,37 @@ public class LeftToRightSipTest extends TestCase {
 	}
 
 	/**
+	 * Tests the correct behaviour with rules with multiple head literals
+	 * and queries with multiple literals.
+	 */
+	public void testMultiHeadsMultiQueries() throws Exception {
+		final String prog = "a(?A, ?B), b(?B, ?D), c(?E, ?F) :- d(?A, ?B), e(?E, ?B).\n"
+			+ "?- a('john', ?X), c('john', ?Y).";
+		final LeftToRightSip sip = parseProgram(prog);
+
+		// list of edges:
+		// a -> {A} -> d
+		// c -> {E} -> e
+		// d -> {B} -> e
+
+		final IVariable A = TERM.createVariable("A");
+		final IVariable B = TERM.createVariable("B");
+		final IVariable E = TERM.createVariable("E");
+		final ILiteral a = createLiteral("a", "A", "B");
+		final ILiteral c = createLiteral("c", "E", "F");
+		final ILiteral d = createLiteral("d", "A", "B");
+		final ILiteral e = createLiteral("e", "E", "B");
+
+		final Set<LabeledEdge<ILiteral, Set<IVariable>>> referenceEdges
+			= new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
+		referenceEdges.add(createEdge(a, d, A));
+		referenceEdges.add(createEdge(c, e, E));
+		referenceEdges.add(createEdge(d, e, B));
+
+		assertEquals("The edge set does not match.", referenceEdges, sip.getEdges());
+	}
+
+	/**
 	 * Creates a edge.
 	 * 
 	 * @param s the source literal
