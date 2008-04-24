@@ -126,7 +126,8 @@ public final class LeftToRightSip implements ISip {
 	}
 
 	/**
-	 * Determines the bound variables of a rule head.
+	 * Determines the bound variables of a rule head according to the ground
+	 * terms of a query.
 	 * @param rule the rule for which to determine the bound head variables
 	 * @param query the query for the rule
 	 * @return the variables of the head bound by the query
@@ -144,7 +145,7 @@ public final class LeftToRightSip implements ISip {
 			for (final ILiteral headLiteral : rule.getHead()) {
 				// extract all variables of the head, where the
 				// query got ground terms if the predicates of
-				// the head and query literals match
+				// the head and query literal match
 				if (headLiteral.getAtom().getPredicate().equals(queryPredicate)) {
 					final ITuple headTuple = headLiteral.getAtom().getTuple();
 					final ITuple queryTuple = queryLiteral.getAtom().getTuple();
