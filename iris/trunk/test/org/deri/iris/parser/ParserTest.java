@@ -299,6 +299,17 @@ public class ParserTest extends TestCase {
 		assertResult("x(?X) :- x(?X). // asdf\ny(?X) :- y(?X).", Arrays.asList(rulex, ruley), null, null);
 	}
 
+
+	/**
+	 * Tests whether string terms can be delimited with single and double
+	 * quotes.
+	 */
+	public void testQuotedString() throws Exception {
+		final IPredicate PRED = BASIC.createPredicate("fact", 1);
+		assertResult("fact('string').", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("string"))), null);
+		assertResult("fact(\"string\").", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("string"))), null);
+	}
+
 	/**
 	 * Test that the parsing of negated built-ins works as expected.
 	 * @throws Exception
