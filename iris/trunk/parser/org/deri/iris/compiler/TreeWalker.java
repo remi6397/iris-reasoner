@@ -507,19 +507,23 @@ public class TreeWalker extends DepthFirstAdapter
 	}
 
 	/**
-	 * Removes the leading and tailing <code>&amp;'&amp;</code> from a
-	 * string.
+	 * Removes the leading and tailing <code>'</code> or <code>&quot;</code>
+	 * from a string.
 	 * @param s the string to peele
-	 * @return the peeled stirng if the string started and ended with 
-	 * 	a <code>&amp;'&amp;</code>, otherwise the input string will be returned.
+	 * @return the peeled stirng if the string started and ended with a
+	 * <code>'</code> or <code>&quot;</code>, otherwise the input string
+	 * will be returned.
 	 * @throws NullPointerException if the string is <code>null</code>
 	 */
 	private static String peeleStr(final String s) {
 		if(s == null) {
 			throw new NullPointerException("The string must not be null");
 		}
-		return ((s.charAt(0) == '\'') && (s.charAt(s.length() - 1) == '\'')) ? 
-			s.substring(1, s.length() - 1) : s;
+		if (((s.charAt(0) == '\'') && (s.charAt(s.length() - 1) == '\''))
+				|| ((s.charAt(0) == '\"') && (s.charAt(s.length() - 1) == '\"'))) {
+			return s.substring(1, s.length() - 1);
+		}
+		return s;
 	}
 	
 	private void pushTerms()

@@ -48,7 +48,8 @@ Helpers
 
     blank = (' ' | tab | eol )+;
     
-    delim = ''';
+    single_quote = ''';
+    double_quote = '"';
     
     // builtin symbols
     eq = '=';
@@ -80,7 +81,6 @@ Tokens
     t_variable = '?' alphanum+;
     t_query = '?-';
     t_id = alpha predtrailing*;
-    t_delim = delim;
     t_unders = '_';
     
     // builtin symbols
@@ -91,7 +91,8 @@ Tokens
 	// tokens defining the different primitives
 	t_int 		= min? num+;
 	t_dec 		= min? num+ (dot num+)?;
-	t_str 		= delim anychar+ delim;
+	t_str 		= single_quote anychar+ single_quote
+				| double_quote anychar+ double_quote;
 	t_sq 		= alphanum+ '#' alphanum+;
 	
 	// defining the datatype prefixes
