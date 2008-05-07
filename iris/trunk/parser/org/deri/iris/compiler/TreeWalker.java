@@ -26,6 +26,7 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,6 +34,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
@@ -91,6 +94,25 @@ import org.deri.iris.storage.simple.SimpleRelationFactory;
  */
 public class TreeWalker extends DepthFirstAdapter
 {
+
+	private static final List<PatternReplace> escapes = new ArrayList<PatternReplace>();
+
+	static {
+		// construction of the pattern:
+		// in the java string construction '\\' boils down to a single '\'
+		// in the regexp pattern creation '\\' are needed to match a
+		// single '\'
+		// this results in '\\\\' for a single '\' to match. this also
+		// applies, if you want to replace something with only a '\'.
+		escapes.add(new PatternReplace("\\\\\\\\", "\\\\"));
+		escapes.add(new PatternReplace("\\\\t", "\t"));
+		escapes.add(new PatternReplace("\\\\n", "\n"));
+		escapes.add(new PatternReplace("\\\\r", "\r"));
+		escapes.add(new PatternReplace("\\\\f", "\f"));
+		escapes.add(new PatternReplace("\\\\'", "'"));
+		escapes.add(new PatternReplace("\\\\\"", "\""));
+	}
+
     public TreeWalker( BuiltinRegister builtinRegister )
     {
     	mBuiltinRegister = builtinRegister;
@@ -360,7 +382,11 @@ public class TreeWalker extends DepthFirstAdapter
 	}
 
 	public void outAStringTerm(final AStringTerm st) {
-		addTerm(TERM.createString(peeleStr(st.getTStr().toString().trim())));
+		String string = peeleStr(st.getTStr().toString().trim());
+		for (final PatternReplace replace : escapes) {
+			string = replace.replaceAll(string);
+		}
+		addTerm(TERM.createString(string));
 	}
 
 	public void outAStringlTerm(final AStringlTerm st) {
@@ -525,7 +551,7 @@ public class TreeWalker extends DepthFirstAdapter
 		}
 		return s;
 	}
-	
+
 	private void pushTerms()
 	{
 		mTermStack.add( new ArrayList<ITerm>() );
@@ -546,12 +572,65 @@ public class TreeWalker extends DepthFirstAdapter
 		return result;
 	}
 
+	/**
+	 * Helperclass to do a faster String.replaceAll(...).
+	 */
+	private static class PatternReplace {
+
+		/** Pattern holding the string to replace. */
+		private final Pattern pattern;
+
+		/** String to replace the pattern. */
+		private final String replacement;
+
+		/**
+		 * Constructor taking a pattern and replacement. The pattern
+		 * will be compiled to a <code>java.util.regex.Pattern</code> so
+		 * the documentation, how to write a pattern can be found there.
+		 * The replacement will be used with the
+		 * <code>java.util.regex.Matcher.replaceAll(...)</code> method,
+		 * so the construction of such a string is written there, too.
+		 * @param pattern regular expression for which to search
+		 * @param replacement string with which to replace the found
+		 * patterns
+		 * @throws IllegalArgumentException if the pattern is
+		 * <code>null</code>
+		 * @throws IllegalArgumentException if the replacement is
+		 * <code>null</code>
+		 */
+		public PatternReplace(final String pattern, final String replacement) {
+			if (pattern == null) {
+				throw new IllegalArgumentException("The pattern must not be null");
+			}
+			if (replacement == null) {
+				throw new IllegalArgumentException("The replacement must not be null");
+			}
+			this.pattern = Pattern.compile(pattern);
+			this.replacement = replacement;
+		}
+
+		/**
+		 * Does the replacement.
+		 * @param string string in which to replace all occurrences of
+		 * <code>pattern</code> with the <code>replacement</code>.
+		 * @param return a new string will all occurrences replaced
+		 */
+		public String replaceAll(final String string) {
+			if (string == null) {
+				throw new IllegalArgumentException("The string must not be null");
+			}
+
+			return pattern.matcher(string).replaceAll(replacement);
+		}
+	}
+
 	private List<List<ITerm>> mTermStack = new ArrayList<List<ITerm>>();
 
 	private List<ILiteral> literals;
 	
     private Map<IPredicate,IRelation> mFacts = new HashMap<IPredicate,IRelation>();
     private List<IRule> mRules = new ArrayList<IRule>();
+
     private List<IQuery> mQueries = new ArrayList<IQuery>();
     
     private final BuiltinRegister mBuiltinRegister;
