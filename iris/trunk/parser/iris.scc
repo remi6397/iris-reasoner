@@ -43,7 +43,11 @@ Helpers
 	comma = ',';
 	predtrailing = alpha | num | '_';
 
-	comment = '//' [all - eol]* eol*;
+	not_star = [all - '*'];
+	not_slash = [all - '/'];
+	long_comment = '/*' not_star* (('*' not_slash)+ not_star*)* '*/';
+
+	short_comment = '//' [all - eol]* eol*;
 
     blank = (' ' | tab | eol )+;
     
@@ -72,7 +76,7 @@ Helpers
  ************************************************************/  
 Tokens
     t_blank = blank;
-    t_comment = comment;
+    t_comment = short_comment | long_comment;
     t_dot = dot;
     t_impliedby = ':-';
     t_and = 'and';
