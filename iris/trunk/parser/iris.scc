@@ -38,7 +38,6 @@ Helpers
 	alpha = ['a' .. 'z'] | ['A' .. 'Z'];
 	num = ['0' .. '9'];
 	alphanum = alpha | num;
-	anychar = alphanum | ' ' | tab | '/' | '#' | ':' | '.' | ',' | ';' | '[' | ']' | '*' | '^' | '-' | '&' | '+' | '?' | '{' | '}' | '|';
 	min = '-';
 	dot = '.';
 	comma = ',';
@@ -48,8 +47,9 @@ Helpers
 
     blank = (' ' | tab | eol )+;
     
-    single_quote = ''';
-    double_quote = '"';
+	single_quote = ''';
+	double_quote = '"';
+	stringchar = [all - [single_quote + double_quote]];
     
     // builtin symbols
     eq = '=';
@@ -91,8 +91,8 @@ Tokens
 	// tokens defining the different primitives
 	t_int 		= min? num+;
 	t_dec 		= min? num+ (dot num+)?;
-	t_str 		= single_quote anychar+ single_quote
-				| double_quote anychar+ double_quote;
+	t_str 		= single_quote stringchar+ single_quote
+				| double_quote stringchar+ double_quote;
 	t_sq 		= alphanum+ '#' alphanum+;
 	
 	// defining the datatype prefixes
