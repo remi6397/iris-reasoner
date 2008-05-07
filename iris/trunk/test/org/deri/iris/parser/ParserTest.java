@@ -323,6 +323,27 @@ public class ParserTest extends TestCase {
 	}
 
 	/**
+	 * Tests the correct parsing of quoted strings.
+	 */
+	public void testEscapedChars() throws Exception {
+		final IPredicate PRED = BASIC.createPredicate("fact", 1);
+		// tests \\
+		assertResult("fact('str\\\\ing').", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("str\\ing"))), null);
+		// tests \t
+		assertResult("fact('str\\ting').", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("str\ting"))), null);
+		// tests \n
+		assertResult("fact('str\\ning').", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("str\ning"))), null);
+		// tests \r
+		assertResult("fact('str\\ring').", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("str\ring"))), null);
+		// tests \f
+		assertResult("fact('str\\fing').", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("str\fing"))), null);
+		// tests \'
+		assertResult("fact('str\\'ing').", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("str'ing"))), null);
+		// tests \"
+		assertResult("fact('str\\\"ing').", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("str\"ing"))), null);
+	}
+
+	/**
 	 * Test that the parsing of negated built-ins works as expected.
 	 * @throws Exception
 	 */

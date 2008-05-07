@@ -49,7 +49,9 @@ Helpers
     
 	single_quote = ''';
 	double_quote = '"';
-	stringchar = [all - [single_quote + double_quote]];
+	quote = [single_quote + double_quote];
+	not_quote = [all - quote];
+	stringchar = not_quote* (('\' quote)+ not_quote*)*;
     
     // builtin symbols
     eq = '=';
