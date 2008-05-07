@@ -299,6 +299,28 @@ public class ParserTest extends TestCase {
 		assertResult("x(?X) :- x(?X). // asdf\ny(?X) :- y(?X).", Arrays.asList(rulex, ruley), null, null);
 	}
 
+	/**
+	 * Tests long comments.
+	 */
+	public void testLongComments() throws Exception {
+		final IRule rulex = BASIC.createRule(Arrays.asList(createLiteral("x", "X")),
+				Arrays.asList(createLiteral("x", "X")));
+		final IRule ruley = BASIC.createRule(Arrays.asList(createLiteral("y", "X")),
+				Arrays.asList(createLiteral("y", "X")));
+
+		assertResult("/**/", null, null, null);
+		assertResult("/* comment */", null, null, null);
+		assertResult("/* com * ment */", null, null, null);
+		assertResult("/* com * / ment */", null, null, null);
+		assertResult("/* comment \n comment */", null, null, null);
+		assertResult("/* comment */ x(?X) :- x(?X).", Arrays.asList(rulex), null, null);
+		assertResult("/* comment \n comment */ x(?X) :- x(?X).", Arrays.asList(rulex), null, null);
+		assertResult("x(?X) :- x(?X). /* comment */", Arrays.asList(rulex), null, null);
+		assertResult("x(?X) :- x(?X). /* comment \n comment */", Arrays.asList(rulex), null, null);
+		assertResult("x(?X) :- x(?X). /* comment */ y(?X) :- y(?X).", Arrays.asList(rulex, ruley), null, null);
+		assertResult("x(?X) :- x(?X). /* comment \n comment */ y(?X) :- y(?X).", Arrays.asList(rulex, ruley), null, null);
+	}
+
 
 	/**
 	 * Tests whether string terms can be delimited with single and double
