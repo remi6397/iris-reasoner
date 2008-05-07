@@ -311,6 +311,18 @@ public class ParserTest extends TestCase {
 	}
 
 	/**
+	 * Tests whether various characters can be parsed as string term
+	 * characters.
+	 */
+	public void testAnyCharStrings() throws Exception {
+		final IPredicate PRED = BASIC.createPredicate("fact", 1);
+		assertResult("fact('ß!§$%&/()=?*#äöüÄÖÜ;:_,.-€<>|').",
+				null,
+				singletonFact(PRED, BASIC.createTuple(TERM.createString("ß!§$%&/()=?*#äöüÄÖÜ;:_,.-€<>|"))),
+				null);
+	}
+
+	/**
 	 * Test that the parsing of negated built-ins works as expected.
 	 * @throws Exception
 	 */
