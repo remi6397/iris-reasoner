@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.deri.iris.api.basics.IAtom;
@@ -95,7 +96,11 @@ import org.deri.iris.storage.simple.SimpleRelationFactory;
 public class TreeWalker extends DepthFirstAdapter
 {
 
+	/** Patterns to replace the escape sequences. */
 	private static final List<PatternReplace> escapes = new ArrayList<PatternReplace>();
+
+	/** Pattern to match Unicode escapes. */
+	private static final Pattern unicodePattern = Pattern.compile("\\\\u([0-9a-fA-F]{4})");
 
 	static {
 		// construction of the pattern:
@@ -386,6 +391,7 @@ public class TreeWalker extends DepthFirstAdapter
 		for (final PatternReplace replace : escapes) {
 			string = replace.replaceAll(string);
 		}
+		string = replaceUnicodeEscapes(string);
 		addTerm(TERM.createString(string));
 	}
 
@@ -570,6 +576,27 @@ public class TreeWalker extends DepthFirstAdapter
 		mTermStack.remove( last );
 		
 		return result;
+	}
+
+	/**
+	 * Replaces all escaped Unicode appearances in a string with the real
+	 * Unicode characters.
+	 * @param string the string in which to replace the occurrences
+	 * @return the string with all escapes replaced
+	 */
+	private static String replaceUnicodeEscapes(final String string) {
+		assert string != null: "The string must not be null";
+
+		String workString = string;
+		Matcher matcher = unicodePattern.matcher(workString);
+		while (matcher.find()) {
+			final String hexString = matcher.group(1);
+			final String unicodeString = String.valueOf(
+					Character.toChars(Integer.parseInt(hexString, 16)));
+			workString = matcher.replaceFirst(unicodeString);
+			matcher = unicodePattern.matcher(workString);
+		}
+		return workString;
 	}
 
 	/**

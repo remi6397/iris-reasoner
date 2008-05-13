@@ -363,6 +363,8 @@ public class ParserTest extends TestCase {
 		assertResult("fact('str\\'ing').", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("str'ing"))), null);
 		// tests \"
 		assertResult("fact('str\\\"ing').", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("str\"ing"))), null);
+		// tests unicode escapes
+		assertResult("fact('str\\uDEADing').", null, singletonFact(PRED, BASIC.createTuple(TERM.createString("str\uDEADing"))), null);
 	}
 
 	/**
