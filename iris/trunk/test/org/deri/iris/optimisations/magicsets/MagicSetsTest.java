@@ -56,12 +56,6 @@ import org.deri.iris.compiler.ParserException;
  */
 public class MagicSetsTest extends TestCase {
 
-	/** The prefix for magic literals. */
-	private static final String MAGIC_PREFIX = "magic_";
-
-	/** The prefix for labeled literals. */
-	private static final String LABELED_PREFIX = "label_";
-
 	/**
 	 * Creates a magic literal.
 	 * 
@@ -72,7 +66,7 @@ public class MagicSetsTest extends TestCase {
 	 */
 	private static ILiteral createMagicLiteral(final String symbol,
 			final Adornment[] ad, final ITerm[] t) {
-		return createAdornedLiteral(MAGIC_PREFIX + symbol, ad, t);
+		return createAdornedLiteral(MagicSets.MAGIC_PREFIX + "_"  + symbol, ad, t);
 	}
 
 	/**
@@ -85,7 +79,7 @@ public class MagicSetsTest extends TestCase {
 	 */
 	private static ILiteral createLabeledLiteral(final String symbol,
 			final Adornment[] ad, final ITerm[] t) {
-		return createAdornedLiteral(LABELED_PREFIX + symbol, ad, t);
+		return createAdornedLiteral(MagicSets.LABEL_PREFIX + "_" + symbol, ad, t);
 	}
 
 	/**

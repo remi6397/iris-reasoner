@@ -60,11 +60,17 @@ import org.deri.iris.optimisations.magicsets.Adornment;
  */
 public final class MagicSets implements IProgramOptimisation {
 
-	/** The prefix for the magic predicates. */
-	static final String MAGIC_PREDICATE_PREFIX = "magic";
+	/**
+	 * The prefix for the magic predicates. Should prevent parser users to
+	 * collide with our internal naming.
+	 */
+	static final String MAGIC_PREFIX = "magic_xXx_prefix_xXx";
 
-	/** The prefix for the labeled predicates. */
-	static final String MAGIC_LABEL_PREFIX = "label";
+	/**
+	 * The prefix for the labeled predicates. Should prevent parser users to
+	 * collide with our internal naming.
+	 */
+	static final String LABEL_PREFIX = "label_xXx_prefix_xXx";
 
 	/** An empty list that getBounds() can return. */
 	private static final List<ITerm> EMPTY_TERM_LIST = new ArrayList<ITerm>();
@@ -153,7 +159,7 @@ public final class MagicSets implements IProgramOptimisation {
 		// the loop starts at 1, because the first literals doesn't have
 		// preceding literals
 		for (int i = 1, max = query.size(); i < max; i++) {
-			final IAtom magicAtom = createBoundAtom(query.get(i).getAtom(), null, MAGIC_PREDICATE_PREFIX, null);
+			final IAtom magicAtom = createBoundAtom(query.get(i).getAtom(), null, MAGIC_PREFIX, null);
 			if (!magicAtom.getTuple().isEmpty()) {
 				// the rule head got to be positive, no matter
 				// whether the literal was positive, or not,
@@ -247,7 +253,7 @@ public final class MagicSets implements IProgramOptimisation {
 
 		return (q.getLiterals().isEmpty())
 			? null
-			: createBoundAtom(q.getLiterals().get(0).getAtom(), null, MAGIC_PREDICATE_PREFIX, null);
+			: createBoundAtom(q.getLiterals().get(0).getAtom(), null, MAGIC_PREFIX, null);
 	}
 
 	/**
@@ -460,7 +466,7 @@ public final class MagicSets implements IProgramOptimisation {
 			return l;
 		}
 		return BASIC.createLiteral(positive,
-				createBoundAtom(l.getAtom(), null, MAGIC_PREDICATE_PREFIX, null));
+				createBoundAtom(l.getAtom(), null, MAGIC_PREFIX, null));
 	}
 
 	/**
@@ -482,7 +488,7 @@ public final class MagicSets implements IProgramOptimisation {
 		assert index >= 0 : "The index must not be negative";
 
 		return BASIC.createLiteral(positive,
-				createBoundAtom(l.getAtom(), passings, MAGIC_LABEL_PREFIX, Integer.toString(index)));
+				createBoundAtom(l.getAtom(), passings, LABEL_PREFIX, Integer.toString(index)));
 	}
 
 	/**
@@ -588,13 +594,13 @@ public final class MagicSets implements IProgramOptimisation {
 		while (b0.hasNext() && b1.hasNext()) {
 			ILiteral l0 = b0.next();
 			while (l0.getAtom().getPredicate().getPredicateSymbol().startsWith(
-					MAGIC_PREDICATE_PREFIX)
+					MAGIC_PREFIX)
 					&& b0.hasNext()) {
 				l0 = b0.next();
 			}
 			ILiteral l1 = b1.next();
 			while (l1.getAtom().getPredicate().getPredicateSymbol().startsWith(
-					MAGIC_PREDICATE_PREFIX)
+					MAGIC_PREFIX)
 					&& b1.hasNext()) {
 				l1 = b1.next();
 			}
