@@ -33,22 +33,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.deri.iris.api.IProgramOptimisation;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.IProgramOptimisation;
-import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-
 import org.deri.iris.graph.LabeledEdge;
-import org.deri.iris.optimisations.magicsets.AdornedProgram;
 import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedPredicate;
 import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedRule;
-import org.deri.iris.optimisations.magicsets.Adornment;
 
 /**
  * <p>
@@ -85,11 +81,11 @@ public final class MagicSets implements IProgramOptimisation {
 
 		// check, whether the query contains constants
 		int constants = 0;
-		for (final ILiteral l : query.getLiterals()) {
-			final IAtom a = l.getAtom();
-			if (!a.isBuiltin()) { // we count only constants in ordinary literals
-				for (final ITerm t : a.getTuple()) {
-					if (t.isGround()) {
+		for (final ILiteral literal : query.getLiterals()) {
+			final IAtom atom = literal.getAtom();
+			if (!atom.isBuiltin()) { // we count only constants in ordinary literals
+				for (final ITerm term : atom.getTuple()) {
+					if (term.isGround()) {
 						constants++;
 					}
 				}
@@ -108,20 +104,20 @@ public final class MagicSets implements IProgramOptimisation {
 		// setting the rules
 		final List<IRule> magicRules = new ArrayList<IRule>();
 
-		for (final AdornedRule r : adornedProg.getAdornedRules()) {
-			if (r.getRule().getHead().size() != 1) {
+		for (final AdornedRule rule : adornedProg.getAdornedRules()) {
+			if (rule.getRule().getHead().size() != 1) {
 				throw new IllegalArgumentException("At the moment only heads "
 						+ "with length of 1 are allowed");
 			}
 
-			for (final ILiteral l : r.getRule().getBody()) {
-				if (l.getAtom().getPredicate() instanceof AdornedPredicate) {
+			for (final ILiteral literal : rule.getRule().getBody()) {
+				if (literal.getAtom().getPredicate() instanceof AdornedPredicate) {
 					// creating a magic rule for the literal
-					magicRules.addAll(createMagicRules(l, r));
+					magicRules.addAll(createMagicRules(literal, rule));
 				}
 			}
 			// adding the rewritten rule
-			magicRules.add(createRewrittenRule(r));
+			magicRules.add(createRewrittenRule(rule));
 		}
 
 		// adding the remaining rules
@@ -145,32 +141,32 @@ public final class MagicSets implements IProgramOptimisation {
 
 	/**
 	 * Computes the magic rules needed to evaluate conjunctive queries.
-	 * @param q the query
+	 * @param query the query
 	 * @return the computed rules
 	 */
-	private static Set<IRule> createConjunctiveRules(final IQuery q) {
-		assert q != null: "The query must not be null";
+	private static Set<IRule> createConjunctiveRules(final IQuery query) {
+		assert query != null: "The query must not be null";
 
-		final Set<IRule> res = new HashSet<IRule>();
-		final List<ILiteral> query = q.getLiterals();
+		final Set<IRule> result = new HashSet<IRule>();
+		final List<ILiteral> queryLiterals = query.getLiterals();
 		// every binding of one literal of the query depends on the
 		// bindings of it's preceding literal -> create the magic rules
 		// for the literals
 		// the loop starts at 1, because the first literals doesn't have
 		// preceding literals
-		for (int i = 1, max = query.size(); i < max; i++) {
-			final IAtom magicAtom = createBoundAtom(query.get(i).getAtom(), null, MAGIC_PREFIX, null);
+		for (int i = 1, max = queryLiterals.size(); i < max; i++) {
+			final IAtom magicAtom = createBoundAtom(queryLiterals.get(i).getAtom(), null, MAGIC_PREFIX, null);
 			if (!magicAtom.getTuple().isEmpty()) {
 				// the rule head got to be positive, no matter
 				// whether the literal was positive, or not,
 				// because the relation resulting out of this
 				// rule will be inverted anyway, if used in a
 				// rule's body
-				res.add(BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, magicAtom)),
-							slice(query, 0, i)));
+				result.add(BASIC.createRule(Arrays.asList(BASIC.createLiteral(true, magicAtom)),
+							slice(queryLiterals, 0, i)));
 			}
 		}
-		return res;
+		return result;
 	}
 
 	/**
@@ -204,34 +200,34 @@ public final class MagicSets implements IProgramOptimisation {
 	 * the rule.
 	 * </p>
 	 * 
-	 * @param r the rule which to rewrite
+	 * @param rule the rule which to rewrite
 	 * @return the rewritten rule
 	 */
-	private static IRule createRewrittenRule(final AdornedRule r) {
-		assert r != null: "The rule must not be null";
-		assert r.getRule().getHead().size() == 1: 
-			"The head must have a length of 1, but was " + r.getRule().getHead().size();
+	private static IRule createRewrittenRule(final AdornedRule rule) {
+		assert rule != null: "The rule must not be null";
+		assert rule.getRule().getHead().size() == 1: 
+			"The head must have a length of 1, but was " + rule.getRule().getHead().size();
 
-		final ILiteral headL = r.getRule().getHead().get(0);
+		final ILiteral headL = rule.getRule().getHead().get(0);
 
 		// computing the rewritten body
-		final List<ILiteral> rewrittenBody = new ArrayList<ILiteral>(r.getRule().getBody());
-		Collections.sort(rewrittenBody, r.getSip().getLiteralComparator());
+		final List<ILiteral> rewrittenBody = new ArrayList<ILiteral>(rule.getRule().getBody());
+		Collections.sort(rewrittenBody, rule.getSip().getLiteralComparator());
 
-		final ILiteral magicL = createMagicLiteral(headL);
-		if (magicL == headL) { // the head literal is not adorned 
+		final ILiteral magicLiteral = createMagicLiteral(headL);
+		if (magicLiteral == headL) { // the head literal is not adorned 
 			// -> the query was not adorned -> nothing to exchange
-			return r.getRule();
+			return rule.getRule();
 		}
-		if (magicL.getAtom().getTuple().isEmpty()) { // the literal wouldn't produce 
+		if (magicLiteral.getAtom().getTuple().isEmpty()) { // the literal wouldn't produce 
 			// any bindings, so it is better to leave it out (since
 			// with the new sip we wouldn't have the rules for this
 			// literal constructed anyway
-			return r.getRule();
+			return rule.getRule();
 		}
-		rewrittenBody.add(0, magicL);
+		rewrittenBody.add(0, magicLiteral);
 
-		return BASIC.createRule(r.getRule().getHead(), rewrittenBody);
+		return BASIC.createRule(rule.getRule().getHead(), rewrittenBody);
 	}
 
 	/**
@@ -244,16 +240,16 @@ public final class MagicSets implements IProgramOptimisation {
 	 * it's bound arguments.
 	 * </p>
 	 * 
-	 * @param q for which to create the seed
+	 * @param query for which to create the seed
 	 * @return the seed or <code>null</code> if the query didn't any
 	 * literals
 	 */
-	private static IAtom createSeed(final IQuery q) {
-		assert q != null: "The query must not be null";
+	private static IAtom createSeed(final IQuery query) {
+		assert query != null: "The query must not be null";
 
-		return (q.getLiterals().isEmpty())
+		return (query.getLiterals().isEmpty())
 			? null
-			: createBoundAtom(q.getLiterals().get(0).getAtom(), null, MAGIC_PREFIX, null);
+			: createBoundAtom(query.getLiterals().get(0).getAtom(), null, MAGIC_PREFIX, null);
 	}
 
 	/**
@@ -261,39 +257,39 @@ public final class MagicSets implements IProgramOptimisation {
 	 * many arcs are entering the specific literal and constructs the
 	 * corresponding rules.
 	 * 
-	 * @param l literal for which to create the rule
-	 * @param r the original rule containing the given literal
+	 * @param literal literal for which to create the rule
+	 * @param adornedRule the original rule containing the given literal
 	 * @return the set of generated rules
 	 */
-	private static Set<IRule> createMagicRules(final ILiteral l, final AdornedRule r) {
-		assert l != null: "The literal must not be null";
-		assert r != null: "The rule must not be null";
-		assert l.getAtom().getPredicate() instanceof AdornedPredicate: 
+	private static Set<IRule> createMagicRules(final ILiteral literal, final AdornedRule adornedRule) {
+		assert literal != null: "The literal must not be null";
+		assert adornedRule != null: "The rule must not be null";
+		assert literal.getAtom().getPredicate() instanceof AdornedPredicate: 
 			"The predicate of the literal must be adorned";
-		assert r.getRule().getHead().size() == 1: 
-			"The head must have a size of 1, but was " + r.getRule().getHead().size();
+		assert adornedRule.getRule().getHead().size() == 1: 
+			"The head must have a size of 1, but was " + adornedRule.getRule().getHead().size();
 
 		final Set<LabeledEdge<ILiteral, Set<IVariable>>> enteringEdges = 
-			r.getSip().getEdgesEnteringLiteral(l);
+			adornedRule.getSip().getEdgesEnteringLiteral(literal);
 
 		if (enteringEdges.size() == 1) {
 			// only on arc is entering this literal
-			return Collections.singleton(createMagicRule(enteringEdges.iterator().next(), r));
+			return Collections.singleton(createMagicRule(enteringEdges.iterator().next(), adornedRule));
 		} else if (enteringEdges.size() > 1) {
 			// multible arcs entering this literal
 			final Set<IRule> rules = new HashSet<IRule>(enteringEdges.size() + 1);
 			// creating the labeled rules
 			int counter = 1;
 			for (final LabeledEdge<ILiteral, Set<IVariable>> e : enteringEdges) {
-				rules.add(createLabeledRule(e, r, counter++));
+				rules.add(createLabeledRule(e, adornedRule, counter++));
 			}
 			// computing the body for the magic rule
 			final Set<ILiteral> bodyLiterals = new HashSet<ILiteral>(rules.size());
 			for (final IRule rule : rules) {
 				bodyLiterals.add(rule.getHead().get(0));
 			}
-			final ILiteral hl = createMagicLiteral(true, l);
-			rules.add(BASIC.createRule(Arrays.asList(hl),
+			final ILiteral headLiteral = createMagicLiteral(true, literal);
+			rules.add(BASIC.createRule(Arrays.asList(headLiteral),
 						new ArrayList<ILiteral>(bodyLiterals)));
 			return rules;
 		}
@@ -304,39 +300,39 @@ public final class MagicSets implements IProgramOptimisation {
 	/**
 	 * Creates a magic rule for the given literal.
 	 * 
-	 * @param e the edge to the literal
-	 * @param r the adorned rule which contain the literal
+	 * @param edge the edge to the literal
+	 * @param rule the adorned rule which contain the literal
 	 * @return the magic rule
 	 */
-	private static IRule createMagicRule(final LabeledEdge<ILiteral, Set<IVariable>> e,
-			final AdornedRule r) {
-		assert e != null: "The edge must not be null";
-		assert r != null: "The rule must not be null";
+	private static IRule createMagicRule(final LabeledEdge<ILiteral, Set<IVariable>> edge,
+			final AdornedRule rule) {
+		assert edge != null: "The edge must not be null";
+		assert rule != null: "The rule must not be null";
 
-		return BASIC.createRule(Arrays.asList(createMagicLiteral(true, e.getTarget())),
-				createRestrictedBody(e.getSource(), r));
+		return BASIC.createRule(Arrays.asList(createMagicLiteral(true, edge.getTarget())),
+				createRestrictedBody(edge.getSource(), rule));
 	}
 
 	/**
 	 * Creates a labeled rule for the given literal.
 	 * 
-	 * @param e the edge to the literal
-	 * @param r the adorned rule which contain the literal
+	 * @param edge the edge to the literal
+	 * @param rule the adorned rule which contain the literal
 	 * @param index the index of this labeled rule
 	 * @return the labeled rule
 	 */
-	private static IRule createLabeledRule(final LabeledEdge<ILiteral, Set<IVariable>> e,
-			final AdornedRule r,
+	private static IRule createLabeledRule(final LabeledEdge<ILiteral, Set<IVariable>> edge,
+			final AdornedRule rule,
 			final int index) {
-		assert e != null: "The edge must not be null";
-		assert r != null: "The rule must not be null";
+		assert edge != null: "The edge must not be null";
+		assert rule != null: "The rule must not be null";
 		assert index > 0: "The index must be greater than 0";
 
 		return BASIC.createRule(Arrays.asList(createLabeledLiteral(true,
-						e.getTarget(),
-						e.getLabel(),
+						edge.getTarget(),
+						edge.getLabel(),
 						index)),
-				createRestrictedBody(e.getSource(), r));
+				createRestrictedBody(edge.getSource(), rule));
 	}
 
 	/**
@@ -374,28 +370,28 @@ public final class MagicSets implements IProgramOptimisation {
 	 * bound terms of the atom will be determined according to it's ground
 	 * terms and given bound variables. Otherwise the adornments of the
 	 * predicate are taken.
-	 * @param a the atom from which to create the adorned version
+	 * @param atom the atom from which to create the adorned version
 	 * @param bound the bound variables (might be <code>null</code>)
 	 * @param prefix the prefix for the predicate symbol
 	 * @param suffix the suffix for the predicate symbol
 	 * @return the newly created atom
 	 */
-	private static IAtom createBoundAtom(final IAtom a, final Collection<IVariable> bound,
+	private static IAtom createBoundAtom(final IAtom atom, final Collection<IVariable> bound,
 			final String prefix, final String suffix) {
-		assert a != null: "The atom must not be null";
+		assert atom != null: "The atom must not be null";
 
 		final AdornedPredicate ap;
 		// if we got bound variables, or the predicate isn't already
 		// adorned, create a new adorned predicate
-		if ((bound != null) || !(a.getPredicate() instanceof AdornedPredicate)) {
-			ap = new AdornedPredicate(a, bound);
+		if ((bound != null) || !(atom.getPredicate() instanceof AdornedPredicate)) {
+			ap = new AdornedPredicate(atom, bound);
 		} else { // the predicate was already adorned
-			ap = (AdornedPredicate) a.getPredicate();
+			ap = (AdornedPredicate) atom.getPredicate();
 		}
 
 		// constructing the tuple
 
-		final ITuple boundTuple = BASIC.createTuple(getBounds(ap, a));
+		final ITuple boundTuple = BASIC.createTuple(getBounds(ap, atom));
 
 		// constructing the new predicate symbol
 		final StringBuilder newPredicateSymbol = new StringBuilder();
@@ -410,8 +406,8 @@ public final class MagicSets implements IProgramOptimisation {
 			newPredicateSymbol.append(suffix).append("_");
 		}
 
-		for (final Adornment ad : ap.getAdornment()) {
-			newPredicateSymbol.append(ad);
+		for (final Adornment adornment : ap.getAdornment()) {
+			newPredicateSymbol.append(adornment);
 		}
 
 		// constructing the new predicate
@@ -431,13 +427,13 @@ public final class MagicSets implements IProgramOptimisation {
 	 * bounds.
 	 * </p>
 	 * 
-	 * @param l the literal for which to create the adorned one
+	 * @param literal the literal for which to create the adorned one
 	 * @return the magic literal or the same literal again, if the predicate
 	 * of the literal wasn't adorned (and so no bound variables could be
 	 * determined)
 	 */
-	private static ILiteral createMagicLiteral(final ILiteral l) {
-		return createMagicLiteral(l.isPositive(), l);
+	private static ILiteral createMagicLiteral(final ILiteral literal) {
+		return createMagicLiteral(literal.isPositive(), literal);
 	}
 
 	/**
@@ -452,21 +448,21 @@ public final class MagicSets implements IProgramOptimisation {
 	 * 
 	 * @param positive whether the resulting literal should be positive, or
 	 * not
-	 * @param l the literal for which to create the adorned one
+	 * @param literal the literal for which to create the adorned one
 	 * @return the magic literal or the same literal again, if the predicate
 	 * of the literal wasn't adorned (and so no bound variables could be
 	 * determined)
 	 */
-	private static ILiteral createMagicLiteral(final boolean positive, final ILiteral l) {
-		assert l != null: "The literal must not be null";
+	private static ILiteral createMagicLiteral(final boolean positive, final ILiteral literal) {
+		assert literal != null: "The literal must not be null";
 
 		// if the literal isn't adorned then there isn't anything to do,
 		// because we can't determine any bound variables
-		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
-			return l;
+		if (!(literal.getAtom().getPredicate() instanceof AdornedPredicate)) {
+			return literal;
 		}
 		return BASIC.createLiteral(positive,
-				createBoundAtom(l.getAtom(), null, MAGIC_PREFIX, null));
+				createBoundAtom(literal.getAtom(), null, MAGIC_PREFIX, null));
 	}
 
 	/**
@@ -476,59 +472,42 @@ public final class MagicSets implements IProgramOptimisation {
 	 * 
 	 * @param positive <code>true</code> the resulting literal should be 
 	 * positive, otherwise <code>false</code>
-	 * @param l for which to create the labeled literal
+	 * @param literal for which to create the labeled literal
 	 * @param passings the variables passed by this edge
 	 * @param index to append to the literal
 	 * @return the labeled literal
 	 */
 	private static ILiteral createLabeledLiteral(final boolean positive, 
-			final ILiteral l, final Set<IVariable> passings, final int index) {
-		assert l != null: "The literal must not be null";
+			final ILiteral literal, final Set<IVariable> passings, final int index) {
+		assert literal != null: "The literal must not be null";
 		assert passings != null: "The passings must not be null";
 		assert index >= 0 : "The index must not be negative";
 
 		return BASIC.createLiteral(positive,
-				createBoundAtom(l.getAtom(), passings, LABEL_PREFIX, Integer.toString(index)));
-	}
-
-	/**
-	 * Returns the list of bound terms of the literal according to the bounds of
-	 * the adorned predicate of the literal. The order of the terms won't be
-	 * changed.
-	 * 
-	 * @param l containing all the terms
-	 * @return the list of bound terms
-	 */
-	private static List<ITerm> getBounds(final ILiteral l) {
-		assert l != null: "The literal must not be null";
-
-		if (!(l.getAtom().getPredicate() instanceof AdornedPredicate)) {
-			return EMPTY_TERM_LIST;
-		}
-		return getBounds((AdornedPredicate) l.getAtom().getPredicate(), l.getAtom());
+				createBoundAtom(literal.getAtom(), passings, LABEL_PREFIX, Integer.toString(index)));
 	}
 
 	/**
 	 * Returns the list of bound terms of the literal according to the bounds of
 	 * the adornment of the predicate. The order of the terms won't be changed.
 	 * 
-	 * @param p where to take the adornments from
-	 * @param a the atom from where to take the terms
+	 * @param perdicate3 where to take the adornments from
+	 * @param atom the atom from where to take the terms
 	 * @return the list of bound terms
 	 */
-	private static List<ITerm> getBounds(final AdornedPredicate p,
-			final IAtom a) {
-		assert p != null: "The predicate must not be null";
-		assert a != null: "The atom must not be null";
-		assert p.hasSameSignature(a.getPredicate()):
+	private static List<ITerm> getBounds(final AdornedPredicate predicate,
+			final IAtom atom) {
+		assert predicate != null: "The predicate must not be null";
+		assert atom != null: "The atom must not be null";
+		assert predicate.hasSameSignature(atom.getPredicate()):
 			"The signature of the predicate and the predicate of the atom must match";
 
-		final List<ITerm> bounds = new ArrayList<ITerm>(p.getAdornment().length);
-		final Iterator<ITerm> terms = a.getTuple().iterator();
-		for (Adornment ad : p.getAdornment()) {
-			final ITerm t = terms.next();
-			if (ad == Adornment.BOUND) {
-				bounds.add(t);
+		final List<ITerm> bounds = new ArrayList<ITerm>(predicate.getAdornment().length);
+		final Iterator<ITerm> terms = atom.getTuple().iterator();
+		for (Adornment adornment : predicate.getAdornment()) {
+			final ITerm term = terms.next();
+			if (adornment == Adornment.BOUND) {
+				bounds.add(term);
 			}
 		}
 		return bounds;
@@ -538,29 +517,29 @@ public final class MagicSets implements IProgramOptimisation {
 	 * Filters the given normal rules (unadorned ones) and removes every occurrence
 	 * where an adorned one (with or without a guardian literal) exist.
 	 * 
-	 * @param nr the normal rules to filter
-	 * @param ar the adorned rules
+	 * @param normalRules the normal rules to filter
+	 * @param adornedRules the adorned rules
 	 * @return a set of filtered rules
 	 */
-	private static Set<IRule> filterRemainingRules(final Collection<IRule> nr,
-			final Collection<AdornedRule> ar) {
-		assert nr != null: "The normal rules must not be null";
-		assert ar != null: "The adorned rules must not be null";
+	private static Set<IRule> filterRemainingRules(final Collection<IRule> normalRules,
+			final Collection<AdornedRule> adornedRules) {
+		assert normalRules != null: "The normal rules must not be null";
+		assert adornedRules != null: "The adorned rules must not be null";
 
-		final Set<IRule> rem = new HashSet<IRule>();
-		for (final IRule n : nr) {
-			boolean add = true;
-			for (final AdornedRule a : ar) {
-				if (isSameRule(n, a.getRule())) {
-					add = false;
+		final Set<IRule> remaining = new HashSet<IRule>();
+		for (final IRule normalRule : normalRules) {
+			boolean toAdd = true;
+			for (final AdornedRule adornedRule : adornedRules) {
+				if (isSameRule(normalRule, adornedRule.getRule())) {
+					toAdd = false;
 					break;
 				}
 			}
-			if (add) {
-				rem.add(n);
+			if (toAdd) {
+				remaining.add(normalRule);
 			}
 		}
-		return rem;
+		return remaining;
 	}
 
 	/**
@@ -669,35 +648,35 @@ public final class MagicSets implements IProgramOptimisation {
 	/**
 	 * Converts a query containing adorned predicates to a query
 	 * consisting only of basic iris objects.
-	 * @param q the query to unadorn
+	 * @param query the query to unadorn
 	 * @return the unadorned query
 	 * @see #unadornPredicate(IPredicate)
 	 */
-	private static IQuery unadornQuery(final IQuery q) {
-		assert q != null: "The rule must not be null";
+	private static IQuery unadornQuery(final IQuery query) {
+		assert query != null: "The rule must not be null";
 
-		return BASIC.createQuery(unadornLiterals(q.getLiterals()));
+		return BASIC.createQuery(unadornLiterals(query.getLiterals()));
 	}
 
 	/**
 	 * Converts a list of literals containing adorned predicates to a
 	 * list of literals consisting only of basic iris objects.
-	 * @param lits the literals to unadorn
+	 * @param literals the literals to unadorn
 	 * @return the unadorned literals
 	 * @see #unadornPredicate(IPredicate)
 	 */
-	private static List<ILiteral> unadornLiterals(final Collection<ILiteral> lits) {
-		assert lits != null: "The literals must not be null";
+	private static List<ILiteral> unadornLiterals(final Collection<ILiteral> literals) {
+		assert literals != null: "The literals must not be null";
 
-		final List<ILiteral> result = new ArrayList<ILiteral>(lits.size());
-		for (final ILiteral l : lits) {
-			final IPredicate p = l.getAtom().getPredicate();
-			if (p instanceof AdornedPredicate) {
-				result.add(BASIC.createLiteral(l.isPositive(),
-							BASIC.createPredicate(p.getPredicateSymbol(), p.getArity()),
-							l.getAtom().getTuple()));
+		final List<ILiteral> result = new ArrayList<ILiteral>(literals.size());
+		for (final ILiteral literal : literals) {
+			final IPredicate predicate = literal.getAtom().getPredicate();
+			if (predicate instanceof AdornedPredicate) {
+				result.add(BASIC.createLiteral(literal.isPositive(),
+							BASIC.createPredicate(predicate.getPredicateSymbol(), predicate.getArity()),
+							literal.getAtom().getTuple()));
 			} else {
-				result.add(l);
+				result.add(literal);
 			}
 		}
 		return result;

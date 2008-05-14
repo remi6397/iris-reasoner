@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,13 +41,9 @@ import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-
 import org.deri.iris.factory.Factory;
 import org.deri.iris.graph.LabeledEdge;
 import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedPredicate;
-import org.deri.iris.optimisations.magicsets.Adornment;
-import org.deri.iris.optimisations.magicsets.ISip;
-
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graphs;
@@ -69,7 +64,7 @@ public class LeftToRightSip implements ISip {
 	/**
 	 * Comparator to compare literals according to their position in the sips.
 	 */
-	private final Comparator<ILiteral> LITERAL_COMP = new LiteralComparator();
+	private final Comparator<ILiteral> LITERAL_COMPARATOR = new LiteralComparator();
 
 	/** The graph on which the variables are passed along. */
 	private DirectedGraph<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> sipGraph = 
@@ -101,28 +96,28 @@ public class LeftToRightSip implements ISip {
 
 	/**
 	 * Constructs a sip out of a rule.
-	 * @param r the rule for which to create the sip
+	 * @param rule the rule for which to create the sip
 	 * @throws IllegalArgumentException if the rule is <code>null</code>
 	 */
-	public LeftToRightSip(final IRule r) {
-		if (r == null) {
+	public LeftToRightSip(final IRule rule) {
+		if (rule == null) {
 			throw new IllegalArgumentException("The rule must not be null");
 		}
 
 		final Set<IVariable> known = new HashSet<IVariable>();
-		for (final ILiteral l : r.getHead()) {
-			if (l.getAtom().getPredicate() instanceof AdornedPredicate) {
-				final Adornment[] ad = ((AdornedPredicate) l.getAtom().getPredicate()).getAdornment();
+		for (final ILiteral literal : rule.getHead()) {
+			if (literal.getAtom().getPredicate() instanceof AdornedPredicate) {
+				final Adornment[] adornments = ((AdornedPredicate) literal.getAtom().getPredicate()).getAdornment();
 				int i = 0;
-				for (final ITerm t : l.getAtom().getTuple()) {
-					if (ad[i++] == Adornment.BOUND) {
-						known.addAll(getVariables(t));
+				for (final ITerm term : literal.getAtom().getTuple()) {
+					if (adornments[i++] == Adornment.BOUND) {
+						known.addAll(getVariables(term));
 					}
 				}
 			}
 		}
 
-		constructSip(r, known);
+		constructSip(rule, known);
 	}
 
 	/**
@@ -166,32 +161,32 @@ public class LeftToRightSip implements ISip {
 	 * ground a empty set will be returned, if it is a constructed term all
 	 * of its variables are returned, otherwise (in this case it must be a 
 	 * variable) the term itself in a set will be returned.
-	 * @param t the term for which to return the variables
+	 * @param term the term for which to return the variables
 	 * @return the set of variables in the term
 	 */
-	private static Set<IVariable> getVariables(final ITerm t) {
-		if ((t == null) || t.isGround()) {
+	private static Set<IVariable> getVariables(final ITerm term) {
+		if ((term == null) || term.isGround()) {
 			return Collections.<IVariable>emptySet();
-		} else if (t instanceof IConstructedTerm) {
-			return ((IConstructedTerm) t).getVariables();
+		} else if (term instanceof IConstructedTerm) {
+			return ((IConstructedTerm) term).getVariables();
 		}
-		return Collections.singleton((IVariable) t);
+		return Collections.singleton((IVariable) term);
 	}
 
 	/**
 	 * Constructs the sip for a given rule and a known set of variables.
-	 * @param r the rule
+	 * @param rule the rule
 	 * @param assumedKnown the known variables
 	 */
-	private void constructSip(final IRule r, final Set<IVariable> assumedKnown) {
-		assert r != null: "The rule must not be null";
+	private void constructSip(final IRule rule, final Set<IVariable> assumedKnown) {
+		assert rule != null: "The rule must not be null";
 		assert assumedKnown != null: "The known collection must not be null";
 
 		// map containing the variable->passedFromLiterals mappings
 		final Map<IVariable, Set<ILiteral>> passings = new HashMap<IVariable, Set<ILiteral>>();
 
 		// add the passings from head
-		for (final ILiteral headLiteral : r.getHead()) {
+		for (final ILiteral headLiteral : rule.getHead()) {
 			final Set<IVariable> knownHeadVariables = headLiteral.getAtom().getTuple().getVariables();
 			knownHeadVariables.retainAll(assumedKnown);
 			for (final IVariable headVariable : knownHeadVariables) {
@@ -206,21 +201,21 @@ public class LeftToRightSip implements ISip {
 
 		// iterating over the body literals and check the passings for
 		// the variables of the literals
-		for (final ILiteral l : r.getBody()) {
-			for (final IVariable v : l.getAtom().getTuple().getVariables()) {
-				Set<ILiteral> passedFrom = passings.get(v);
+		for (final ILiteral literal : rule.getBody()) {
+			for (final IVariable variable : literal.getAtom().getTuple().getVariables()) {
+				Set<ILiteral> passedFrom = passings.get(variable);
 				if ((passedFrom != null) && !passedFrom.isEmpty()) { // there are some passings
 					for (final ILiteral passingLiteral : passedFrom) {
-						addEdge(passingLiteral, l, Collections.singleton(v));
+						addEdge(passingLiteral, literal, Collections.singleton(variable));
 					}
 				}
 				// add this literal to the list of passing
 				// literals for this variable
 				if (passedFrom == null) {
 					passedFrom = new HashSet<ILiteral>();
-					passings.put(v, passedFrom);
+					passings.put(variable, passedFrom);
 				}
-				passedFrom.add(l);
+				passedFrom.add(literal);
 			}
 		}
 	}
@@ -253,44 +248,42 @@ public class LeftToRightSip implements ISip {
 		}
 	}
 
-	public Set<IVariable> getBoundVariables(final ILiteral l) {
-		if (l == null) {
+	public Set<IVariable> getBoundVariables(final ILiteral literal) {
+		if (literal == null) {
 			throw new IllegalArgumentException("The literal must not be null");
 		}
 
-		if (!sipGraph.containsVertex(l)) {
+		if (!sipGraph.containsVertex(literal)) {
 			return Collections.<IVariable>emptySet();
 		}
 
 		final Set<IVariable> variables = new HashSet<IVariable>();
 
-		for (final ILiteral predicate : Graphs.predecessorListOf(sipGraph, l)) {
-			variables.addAll(sipGraph.getEdge(predicate, l).getLabel());
+		for (final ILiteral predicate : Graphs.predecessorListOf(sipGraph, literal)) {
+			variables.addAll(sipGraph.getEdge(predicate, literal).getLabel());
 		}
 		return variables;
 	}
 
-	public Set<ILiteral> getDepends(final ILiteral l) {
+	public Set<ILiteral> getDepends(final ILiteral literal) {
 		final Set<ILiteral> dependencies = new HashSet<ILiteral>();
 		final Set<ILiteral> todoDependencies = new HashSet<ILiteral>();
-		if (l == null) {
+		if (literal == null) {
 			throw new IllegalArgumentException("The literal must not be null");
 		}
 
-		if (!sipGraph.containsVertex(l)) {
+		if (!sipGraph.containsVertex(literal)) {
 			return Collections.<ILiteral>emptySet();
 		}
 
-		todoDependencies.add(l);
+		todoDependencies.add(literal);
 		while (!todoDependencies.isEmpty()) {
 			final ILiteral actual = todoDependencies.iterator().next();
 			todoDependencies.remove(actual);
 
-			final List<ILiteral> vertices = Graphs.predecessorListOf(sipGraph,
-					actual);
-			for (final ILiteral lit : vertices) {
-				if (dependencies.add(lit)) {
-					todoDependencies.add(lit);
+			for (final ILiteral vertex : Graphs.predecessorListOf(sipGraph, actual)) {
+				if (dependencies.add(vertex)) {
+					todoDependencies.add(vertex);
 				}
 			}
 		}
@@ -299,39 +292,39 @@ public class LeftToRightSip implements ISip {
 	}
 
 	public Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesEnteringLiteral(
-			final ILiteral l) {
-		if (l == null) {
+			final ILiteral literal) {
+		if (literal == null) {
 			throw new IllegalArgumentException("The literal must not be null");
 		}
 
-		if (!sipGraph.containsVertex(l)) {
+		if (!sipGraph.containsVertex(literal)) {
 			return Collections.<LabeledEdge<ILiteral, Set<IVariable>>>emptySet();
 		}
 
-		final List<ILiteral> predecessors = Graphs.predecessorListOf(sipGraph, l);
+		final List<ILiteral> predecessors = Graphs.predecessorListOf(sipGraph, literal);
 		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = 
 			new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>(predecessors.size());
-		for (final ILiteral o : predecessors) {
-			edges.add(sipGraph.getEdge(o, l));
+		for (final ILiteral predecessor : predecessors) {
+			edges.add(sipGraph.getEdge(predecessor, literal));
 		}
 		return edges;
 	}
 
 	public Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesLeavingLiteral(
-			final ILiteral l) {
-		if (l == null) {
+			final ILiteral literal) {
+		if (literal == null) {
 			throw new IllegalArgumentException("The literal must not be null");
 		}
 
-		if (!sipGraph.containsVertex(l)) {
+		if (!sipGraph.containsVertex(literal)) {
 			return Collections.<LabeledEdge<ILiteral, Set<IVariable>>>emptySet();
 		}
 
-		final List<ILiteral> successors = Graphs.successorListOf(sipGraph, l);
+		final List<ILiteral> successors = Graphs.successorListOf(sipGraph, literal);
 		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = 
 			new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>(successors.size());
-		for (final ILiteral o : successors) {
-			edges.add(sipGraph.getEdge(l, o));
+		for (final ILiteral successor : successors) {
+			edges.add(sipGraph.getEdge(literal, successor));
 		}
 		return edges;
 	}
@@ -347,9 +340,9 @@ public class LeftToRightSip implements ISip {
 			return Collections.<IVariable>emptySet();
 		}
 
-		Set<IVariable> vars = new HashSet<IVariable>(getBoundVariables(source));
-		vars.addAll((sipGraph.getEdge(source, target)).getLabel());
-		return vars;
+		final Set<IVariable> variables = new HashSet<IVariable>(getBoundVariables(source));
+		variables.addAll((sipGraph.getEdge(source, target)).getLabel());
+		return variables;
 	}
 
 	/**
@@ -362,24 +355,24 @@ public class LeftToRightSip implements ISip {
 	public String toString() {
 		final String NEWLINE = System.getProperty("line.separator");
 		StringBuilder buffer = new StringBuilder();
-		for (LabeledEdge<ILiteral, Set<IVariable>> o : sipGraph.edgeSet()) {
-			buffer.append(o).append(NEWLINE);
+		for (LabeledEdge<ILiteral, Set<IVariable>> edge : sipGraph.edgeSet()) {
+			buffer.append(edge).append(NEWLINE);
 		}
 		return buffer.toString();
 	}
 
-	public boolean containsVertex(final ILiteral l) {
-		if (l == null) {
+	public boolean containsVertex(final ILiteral literal) {
+		if (literal == null) {
 			throw new IllegalArgumentException("The literal must not be null");
 		}
-		return sipGraph.containsVertex(l);
+		return sipGraph.containsVertex(literal);
 	}
 
 	public Set<ILiteral> getRootVertices() {
 		final Set<ILiteral> roots = new HashSet<ILiteral>();
-		for (final ILiteral o : sipGraph.vertexSet()) {
-			if (Graphs.predecessorListOf(sipGraph, o).isEmpty()) {
-				roots.add(o);
+		for (final ILiteral vertex : sipGraph.vertexSet()) {
+			if (Graphs.predecessorListOf(sipGraph, vertex).isEmpty()) {
+				roots.add(vertex);
 			}
 		}
 		return roots;
@@ -387,16 +380,16 @@ public class LeftToRightSip implements ISip {
 
 	public Set<ILiteral> getLeafVertices() {
 		final Set<ILiteral> leaves = new HashSet<ILiteral>();
-		for (final ILiteral o : sipGraph.vertexSet()) {
-			if (Graphs.successorListOf(sipGraph, o).isEmpty()) {
-				leaves.add(o);
+		for (final ILiteral vertex : sipGraph.vertexSet()) {
+			if (Graphs.successorListOf(sipGraph, vertex).isEmpty()) {
+				leaves.add(vertex);
 			}
 		}
 		return leaves;
 	}
 
 	public Comparator<ILiteral> getLiteralComparator() {
-		return LITERAL_COMP;
+		return LITERAL_COMPARATOR;
 	}
 
 	/**
@@ -408,15 +401,15 @@ public class LeftToRightSip implements ISip {
 		return Collections.unmodifiableSet(sipGraph.edgeSet());
 	}
 
-	public boolean equals(final Object o) {
-		if (o == this) {
+	public boolean equals(final Object object) {
+		if (object == this) {
 			return true;
 		}
-		if (!(o instanceof LeftToRightSip)) {
+		if (!(object instanceof LeftToRightSip)) {
 			return false;
 		}
-		final LeftToRightSip s = (LeftToRightSip) o;
-		return sipGraph.edgeSet().equals(s.sipGraph.edgeSet());
+		final LeftToRightSip sip = (LeftToRightSip) object;
+		return sipGraph.edgeSet().equals(sip.sipGraph.edgeSet());
 	}
 
 	public int hashCode() {
@@ -430,15 +423,15 @@ public class LeftToRightSip implements ISip {
 	 * unsafe sip. <b>At the moment only negative literals are handled, but not
 	 * built-is.</b>
 	 * 
-	 * @param r the rule for which to sort the literals
+	 * @param rule the rule for which to sort the literals
 	 * @param known the variables which are known in the head
 	 * @throws IllegalArgumentException if the rule is {@code null}
 	 * @throws IllegalArgumentException if the known collection is or contains
 	 * {@code null}
 	 */
-	static IRule orderLiterals(final IRule r,
+	static IRule orderLiterals(final IRule rule,
 			final Collection<IVariable> known) {
-		if (r == null) {
+		if (rule == null) {
 			throw new IllegalArgumentException("The rule must not be null");
 		}
 		if ((known == null) || known.contains(null)) {
@@ -446,31 +439,31 @@ public class LeftToRightSip implements ISip {
 					"The known set must not be, or contain null");
 		}
 
-		final List<ILiteral> body = new ArrayList<ILiteral>(r.getBody());
+		final List<ILiteral> body = new ArrayList<ILiteral>(rule.getBody());
 		final Set<IVariable> bound = new HashSet<IVariable>(known);
 		ILiteral firstPushedBack = null;
 		int pushBackCount = 0;
 		for (int i = 0, max = body.size(); i < max; i++) {
-			final ILiteral l = body.get(i);
-			final Set<IVariable> literalVars = l.getAtom().getTuple().getVariables();
+			final ILiteral literal = body.get(i);
+			final Set<IVariable> literalVars = literal.getAtom().getTuple().getVariables();
 			// if we meet the first pushed back literal again, we
 			// were in a loop of only pushing back literals, without
 			// any gains of bound variables -> stop now
-			if (l.equals(firstPushedBack) && ((i + pushBackCount) >= (max - 1))) {
+			if (literal.equals(firstPushedBack) && ((i + pushBackCount) >= (max - 1))) {
 				break;
 			}
 
 			// if the literal is a built-in and not evaluable or the
 			// literal is negative and has some unbound variables
 			// push the literal at the end of the body.
-			if ((l.getAtom().isBuiltin() && !checkEvaluableBuiltin((IBuiltinAtom) l.getAtom(), bound))
-					|| (!l.isPositive() && !bound.containsAll(literalVars))) {
+			if ((literal.getAtom().isBuiltin() && !checkEvaluableBuiltin((IBuiltinAtom) literal.getAtom(), bound))
+					|| (!literal.isPositive() && !bound.containsAll(literalVars))) {
 				body.add(body.remove(i));
 				i--;
 
 				pushBackCount++;
 				if (firstPushedBack == null) {
-					firstPushedBack = l;
+					firstPushedBack = literal;
 				}
 			} else { // consider the vars as already bound
 				bound.addAll(literalVars);
@@ -478,7 +471,7 @@ public class LeftToRightSip implements ISip {
 				firstPushedBack = null;
 			}
 		}
-		return Factory.BASIC.createRule(r.getHead(), body);
+		return Factory.BASIC.createRule(rule.getHead(), body);
 	}
 
 	/**
@@ -558,14 +551,14 @@ public class LeftToRightSip implements ISip {
 	 */
 	private static class SipEdgeFactory implements EdgeFactory<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> {
 
-		public LabeledEdge<ILiteral, Set<IVariable>> createEdge(final ILiteral s, final ILiteral t) {
-			if (s == null) {
+		public LabeledEdge<ILiteral, Set<IVariable>> createEdge(final ILiteral source, final ILiteral target) {
+			if (source == null) {
 				throw new IllegalArgumentException("The source must not be null");
 			}
-			if (t == null) {
+			if (target == null) {
 				throw new IllegalArgumentException("The target must not be null");
 			}
-			return new LabeledEdge<ILiteral, Set<IVariable>>(s, t, new HashSet<IVariable>());
+			return new LabeledEdge<ILiteral, Set<IVariable>>(source, target, new HashSet<IVariable>());
 		}
 	}
 }
