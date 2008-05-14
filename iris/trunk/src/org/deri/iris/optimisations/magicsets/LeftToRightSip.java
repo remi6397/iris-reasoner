@@ -65,7 +65,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
  *
  * @author Richard Pöttler (richard dot poettler at sti2 dot at)
  */
-public final class LeftToRightSip implements ISip {
+public class LeftToRightSip implements ISip {
 	/**
 	 * Comparator to compare literals according to their position in the sips.
 	 */
