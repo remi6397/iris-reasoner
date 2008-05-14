@@ -87,6 +87,20 @@ public class EvaluationTest extends TestCase
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}
 		
+	public void testConjunctiveQueryWithNegatedLiterals() throws Exception
+	{
+		String natural = "n(0).n(1).n(2).n(3).n(4).n(5).n(6).n(7).n(8).n(9).";
+		String even = "e(0).e(2).e(4).e(6).e(8).";
+		String odd = "o(1).o(3).o(5).o(7).o(9).";
+		
+		String program = natural + even + odd;
+
+		Helper.evaluateWithAllStrategies( program + "?-n(?x).", natural );
+		Helper.evaluateWithAllStrategies( program + "?-n(?x), !e(?x).", odd );
+		Helper.evaluateWithAllStrategies( program + "?-n(?x), !o(?x).", even );
+		Helper.evaluateWithAllStrategies( program + "?-n(?x), !e(?x), !o(?x).", "" );
+	}
+		
 	/**
 	 * Test that logic programs containing only propositional terms
 	 * are correctly evaluated.
