@@ -100,6 +100,20 @@ public class EvaluationTest extends TestCase
 		Helper.evaluateWithAllStrategies( program + "?-n(?x), !o(?x).", even );
 		Helper.evaluateWithAllStrategies( program + "?-n(?x), !e(?x), !o(?x).", "" );
 	}
+
+	/**
+	 * Tests, whether programs with equal literals in the query would
+	 * result in programs with unsave magic rules.
+	 */
+	public void testConjunctiveQueryWithEqualLiterals() throws Exception {
+		final String rule = "i(?X) :- e(?X).";
+		final String facts = "e(0). e(1). e(2). e(3). e(4). e(5). e(6). e(7). e(8). e(9).";
+		final String prog = rule + facts;
+
+		Helper.evaluateWithAllStrategies(prog + " ?- i(1), i(?X), i(?X).", facts);
+		Helper.evaluateWithAllStrategies(prog + " ?- i(?X), i(1), i(?X).", facts);
+		Helper.evaluateWithAllStrategies(prog + " ?- i(?X), i(?X), i(1).", facts);
+	}
 		
 	/**
 	 * Test that logic programs containing only propositional terms

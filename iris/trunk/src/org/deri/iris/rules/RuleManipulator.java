@@ -24,10 +24,13 @@ package org.deri.iris.rules;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltinAtom;
@@ -90,6 +93,38 @@ public class RuleManipulator
 		
 		return Factory.BASIC.createRule( rule.getHead(), body );
 	}
+
+	/**
+	 * Creates a new list with all duplicates removed.
+	 * @param list the list from where to take the elements
+	 * @return the newly created list with all duplicates removed
+	 */
+	private static <Type> List<Type> removeDuplicates(final List<Type> list) {
+		assert list != null: "The list must not be null";
+
+		final List<Type> result = new ArrayList<Type>(list.size());
+		final Set<Type> uniqueSet = new HashSet<Type>(list.size());
+
+		for (final Type item : list) {
+			if (uniqueSet.add(item)) {
+				result.add(item);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Creates a new query with all duplicates removed.
+	 * @param query the query from where to take the literals
+	 * @return the newly created query with all duplicates removed
+	 */
+	public static IQuery removeDuplicateLiterals(final IQuery query) {
+		if (query == null) {
+			throw new IllegalArgumentException("The query must not be null");
+		}
+
+		return Factory.BASIC.createQuery(removeDuplicates(query.getLiterals()));
+	}
 	
 	/**
 	 * Traverse the body literals and remove any duplicates.
@@ -98,26 +133,7 @@ public class RuleManipulator
 	 */
 	public IRule removeDuplicateLiterals( IRule rule )
 	{
-		List<ILiteral> uniqueLiterals = new ArrayList<ILiteral>();
-		
-		for( ILiteral original : rule.getBody() )
-		{
-			boolean unique = true;
-			
-			for( ILiteral test : uniqueLiterals )
-			{
-				if( original.equals( test ) )
-				{
-					unique = false;
-					break;
-				}
-			}
-		
-			if( unique )
-				uniqueLiterals.add( original );
-		}
-		
-		return Factory.BASIC.createRule( rule.getHead(), uniqueLiterals );
+		return Factory.BASIC.createRule(rule.getHead(), removeDuplicates(rule.getBody()));
 	}
 	
 	/**
