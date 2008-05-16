@@ -36,6 +36,7 @@ import org.deri.iris.evaluation.OptimisedProgramStrategyAdaptor;
 import org.deri.iris.facts.Facts;
 import org.deri.iris.facts.FactsWithExternalData;
 import org.deri.iris.facts.IFacts;
+import org.deri.iris.rules.RuleManipulator;
 import org.deri.iris.storage.IRelation;
 
 /**
@@ -116,7 +117,9 @@ public class KnowledgeBase implements IKnowledgeBase
 			System.out.println( query );
 		}
 		
-		IRelation result = mEvaluationStrategy.evaluateQuery( query, variableBindings );
+		IRelation result = mEvaluationStrategy.evaluateQuery(
+				RuleManipulator.removeDuplicateLiterals(query),
+				variableBindings);
 		
 		if( DEBUG )
 		{
