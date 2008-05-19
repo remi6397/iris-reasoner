@@ -45,16 +45,16 @@ public class AugmentingRuleSafetyProcessor implements IRuleSafetyProcessor
 	{
 		RuleValidator validator = new RuleValidator( rule, true, true );
 		
-		List<IVariable> unlimitedVaruiables = validator.getAllUnlimitedVariables();
+		List<IVariable> unlimitedVariables = validator.getAllUnlimitedVariables();
 		
-		if( unlimitedVaruiables.size() > 0 )
+		if( unlimitedVariables.size() > 0 )
 		{
 			List<ILiteral> body = new ArrayList<ILiteral>();
 			
 			for( ILiteral literal : rule.getBody() )
 				body.add( literal );
 			
-			for( IVariable variable : unlimitedVaruiables )
+			for( IVariable variable : unlimitedVariables )
 			{
 				ILiteral newLiteral = Factory.BASIC.createLiteral( true, FiniteUniverseFacts.UNIVERSE, Factory.BASIC.createTuple( variable ) );
 				body.add( newLiteral );

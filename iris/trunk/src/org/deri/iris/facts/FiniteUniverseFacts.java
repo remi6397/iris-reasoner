@@ -65,6 +65,12 @@ public class FiniteUniverseFacts implements IFacts
 	 */
 	public FiniteUniverseFacts( IFacts facts, Collection<IRule> rules )
 	{
+		if( facts == null )
+			throw new IllegalArgumentException( "Argument 'facts' must not be null.");
+		
+		if( rules == null )
+			throw new IllegalArgumentException( "Argument 'rules' must not be null.");
+		
 		mFacts = facts;
 		
 //		mUniverse = mFacts.get( UNIVERSE );
@@ -88,6 +94,8 @@ public class FiniteUniverseFacts implements IFacts
 	 */
 	private void extractGroundTerms( Collection<IRule> rules )
 	{
+		assert rules != null;
+		
 		for( IRule rule : rules )
 		{
 			for( ILiteral literal : rule.getHead() )
@@ -114,13 +122,15 @@ public class FiniteUniverseFacts implements IFacts
 	 */
 	private void extractGroundTermsFromTerm( ITerm term )
 	{
+		assert term != null;
+		
 		if( term instanceof IVariable )
 		{
 			// Need one unique value per variable.
 
 			IVariable variable = (IVariable) term;
 			
-			addToUniverse( Factory.TERM.createString( variable.getValue() + UNIQUE_VARIABLE_PREFIX ) );
+			addToUniverse( Factory.TERM.createString( variable.getValue() + UNIQUE_VARIABLE_SUFFIX ) );
 			return;
 		}
 		
@@ -155,15 +165,21 @@ public class FiniteUniverseFacts implements IFacts
 		
 		public boolean add( ITuple tuple )
         {
+			assert tuple != null;
+			
 			boolean result = mChild.add( tuple );
 
-			addToUniverse( tuple );
+			// If this is a tuple not seen before then it might have new terms in it.
+			if( ! result )
+				addToUniverse( tuple );
 
 			return result;
         }
 
 		public boolean addAll( IRelation relation )
         {
+			assert relation != null;
+
 			boolean added = false;
 			
 			for( int t = 0; t < relation.size(); ++t )
@@ -178,16 +194,23 @@ public class FiniteUniverseFacts implements IFacts
 
 		public ITuple get( int index )
         {
-	        return mChild.get( index );
+			assert mChild != null;
+
+			return mChild.get( index );
         }
 
 		public int size()
         {
+			assert mChild != null;
+			
 	        return mChild.size();
         }
 		
 		public boolean contains( ITuple tuple )
         {
+			assert tuple != null;
+			assert mChild != null;
+			
 	        return mChild.contains( tuple );
         }
 
@@ -196,6 +219,12 @@ public class FiniteUniverseFacts implements IFacts
 	
 	public IRelation get( IPredicate predicate )
 	{
+		if( predicate == null )
+			throw new IllegalArgumentException( "Argument 'predicate' must not be null." );
+		
+		assert mUniverse != null;
+		assert mFacts != null;
+			
 		if( predicate.equals( UNIVERSE ) )
 			return mUniverse;
 		
@@ -204,11 +233,15 @@ public class FiniteUniverseFacts implements IFacts
 
 	public Set<IPredicate> getPredicates()
 	{
+		assert mFacts != null;
+		
 		return mFacts.getPredicates();
 	}
 	
 	private void addToUniverse( IRelation relation )
 	{
+		assert relation != null;
+
 		for( int t = 0; t < relation.size(); ++t )
 			addToUniverse( relation.get( t ) );
 	}
@@ -219,6 +252,8 @@ public class FiniteUniverseFacts implements IFacts
 	 */
 	private void addToUniverse( ITuple tuple )
 	{
+		assert tuple != null;
+
 		for( ITerm term : tuple )
 			addToUniverse( term );
 	}
@@ -230,6 +265,7 @@ public class FiniteUniverseFacts implements IFacts
 	private void addToUniverse( ITerm term )
 	{
 		assert !( term instanceof IVariable );
+		assert mUniverse != null;
 		
 		if( term instanceof IConstructedTerm )
 		{
@@ -246,6 +282,7 @@ public class FiniteUniverseFacts implements IFacts
 	@Override
     public String toString()
     {
+		assert mFacts != null;
 	    return mFacts.toString();
     }
 
@@ -256,7 +293,7 @@ public class FiniteUniverseFacts implements IFacts
 	private final IRelation mUniverse;
 	
 	/** The suffix to append to variables in rules in order to give them a 'unique' value. */
-	private static final String UNIQUE_VARIABLE_PREFIX = "_$UNIQUE$";
+	private static final String UNIQUE_VARIABLE_SUFFIX = "_$UNIQUE$";
 	
 	/** The universe predicate. */
 	public static final IPredicate UNIVERSE = Factory.BASIC.createPredicate( "$UNIVERSE$", 1 );

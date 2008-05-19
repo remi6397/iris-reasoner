@@ -56,7 +56,7 @@ public class StratifiedBottomUpEvaluationStrategy implements IEvaluationStrategy
 		EvaluationUtilities utils = new EvaluationUtilities( mConfiguration );
 		
 		// Rule safety processing
-		List<IRule> safeRules = utils.checkRuleSafety( rules );
+		List<IRule> safeRules = utils.applyRuleSafetyProcessor( rules );
 
 		// Stratify
 		List<List<IRule>> stratifiedRules = utils.stratify( safeRules );
@@ -69,7 +69,7 @@ public class StratifiedBottomUpEvaluationStrategy implements IEvaluationStrategy
 			List<IRule> reorderedRules = utils.reOrderRules( stratum );
 			
 			// Rule optimisation
-			List<IRule> optimisedRules = utils.optimiseRules( reorderedRules );
+			List<IRule> optimisedRules = utils.applyRuleOptimisers( reorderedRules );
 			
 			List<ICompiledRule> compiledRules = new ArrayList<ICompiledRule>();
 			

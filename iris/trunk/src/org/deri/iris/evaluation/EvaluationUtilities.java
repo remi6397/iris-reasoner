@@ -83,7 +83,7 @@ public class EvaluationUtilities
 	 * @param rules A collection of rules to optimise.
 	 * @return A list of optimised rules.
 	 */
-	public List<IRule> optimiseRules( final List<IRule> rules )
+	public List<IRule> applyRuleOptimisers( final List<IRule> rules )
 	{
 		List<IRule> optimisedRules = new ArrayList<IRule>();
 		
@@ -107,7 +107,7 @@ public class EvaluationUtilities
 	 * @return The collection of safe rules.
 	 * @throws RuleUnsafeException
 	 */
-	public List<IRule> checkRuleSafety( List<IRule> rules ) throws RuleUnsafeException
+	public List<IRule> applyRuleSafetyProcessor( List<IRule> rules ) throws RuleUnsafeException
 	{
 		if( mConfiguration.ruleSafetyProcessor == null )
 			return rules;
