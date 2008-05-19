@@ -56,6 +56,15 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 	WellFoundedEvaluationStrategy( IFacts facts, List<IRule> rules, Configuration configuration )
 	                throws EvaluationException
 	{
+		if( facts == null )
+			throw new IllegalArgumentException( "'facts' argument must not be null.");
+		
+		if( rules == null )
+			throw new IllegalArgumentException( "'rules' argument must not be null.");
+		
+		if( configuration == null )
+			throw new IllegalArgumentException( "'configuration' argument must not be null.");
+		
 		mConfiguration = configuration;
 //		mFacts = facts;
 
@@ -67,12 +76,23 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 		// Rule optimisation
 //		List<IRule> optimisedRules = utils.optimiseRules( reorderedRules );
 
-		mFacts = calculateMinimalModel( reorderedRules, facts );
+		mFacts = calculateWellFoundedModel( reorderedRules, facts );
 
 	}
 	
-	List<ICompiledRule> compile( List<IRule> rules, IFacts facts ) throws EvaluationException
+	/**
+	 * Compile rules.
+	 * @param rules Input rules.
+	 * @param facts Input facts.
+	 * @return The compiled rules.
+	 * @throws EvaluationException If a rule can not be compiled (e.g. if a rule is unsafe).
+	 */
+	private List<ICompiledRule> compile( List<IRule> rules, IFacts facts ) throws EvaluationException
 	{
+		assert rules != null;
+		assert facts != null;
+		assert mConfiguration != null;
+		
 		List<ICompiledRule> compiledRules = new ArrayList<ICompiledRule>();
 		
 		RuleCompiler rc = new RuleCompiler( facts, mConfiguration );
@@ -83,27 +103,39 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 		return compiledRules;
 	}
 
-	protected IFacts calculateMinimalModel( List<IRule> rules, IFacts startingFacts )
+	/**
+	 * Run the alternating fixed point algorithm until the model for the positive
+	 * program does not grow.
+	 * @param rules The rules from the original program.
+	 * @param startingFacts The facts from the original program.
+	 * @return The well-founded model for the original program.
+	 * @throws EvaluationException If a rule can not be compiled (e.g. if a rule is unsafe)
+	 */
+	private final IFacts calculateWellFoundedModel( List<IRule> rules, IFacts startingFacts )
 	                throws EvaluationException
 	{
+		assert rules != null;
+		assert startingFacts != null;
+		assert mConfiguration != null;
+
 		EvaluationUtilities utils = new EvaluationUtilities( mConfiguration );
 		ProgramDoubler doubler = new ProgramDoubler( rules, startingFacts, mConfiguration );
 
 		// Compile all the rules
 		List<IRule> startingRules = doubler.getStartingRuleBase();
-		startingRules = utils.checkRuleSafety( startingRules );
-		startingRules = utils.optimiseRules( startingRules );
+		startingRules = utils.applyRuleSafetyProcessor( startingRules );
+		startingRules = utils.applyRuleOptimisers( startingRules );
 
 //		List<ICompiledRule> startingCompiledRules = compile( startingRules );
 
 		List<IRule> negativeRules = doubler.getNegativeRuleBase();
-		negativeRules = utils.checkRuleSafety( negativeRules );
-		negativeRules = utils.optimiseRules( negativeRules );
+		negativeRules = utils.applyRuleSafetyProcessor( negativeRules );
+		negativeRules = utils.applyRuleOptimisers( negativeRules );
 //		List<ICompiledRule> negativeCompiledRules = compile( negativeRules );
 
 		List<IRule> positiveRules = doubler.getPositiveRuleBase();
-		positiveRules = utils.checkRuleSafety( positiveRules );
-		positiveRules = utils.optimiseRules( positiveRules );
+		positiveRules = utils.applyRuleSafetyProcessor( positiveRules );
+		positiveRules = utils.applyRuleOptimisers( positiveRules );
 //		List<ICompiledRule> positiveCompiledRules = compile( positiveRules );
 		
 
@@ -154,16 +186,31 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 		}
 	}
 
-	void merge( IFacts target, IFacts source )
+	/**
+	 * Add one collection of facts to another.
+	 * @param target The facts to append to.
+	 * @param source The facts to append.
+	 */
+	private final void merge( IFacts target, IFacts source )
 	{
+		assert target != null;
+		assert source != null;
+
 		for( IPredicate predicate : source.getPredicates() )
 		{
 			target.get( predicate ).addAll( source.get( predicate ) );
 		}
 	}
 
-	int size( IFacts facts )
+	/**
+	 * Compute the number of facts in a collection of facts.
+	 * @param facts The facts collection to 'count'.
+	 * @return The number of individual facts.
+	 */
+	private final int size( IFacts facts )
 	{
+		assert facts != null;
+
 		int numTuples = 0;
 		for( IPredicate predicate : facts.getPredicates() )
 		{
@@ -193,7 +240,9 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 		return result;
 	}
 
-	protected final Configuration mConfiguration;
+	/** The knowledge base configuration object. */
+	private final Configuration mConfiguration;
 
-	protected final IFacts mFacts;
+	/** The collection of facts that holds the well-founded model. */
+	private final IFacts mFacts;
 }

@@ -30,6 +30,10 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.storage.IRelationFactory;
 
+/**
+ * A facts adaptor that allows modification (i.e. adding more facts) without modifying
+ * the original facts.
+ */
 public class OriginalFactsPreservingFacts implements IFacts
 {
 	/**
