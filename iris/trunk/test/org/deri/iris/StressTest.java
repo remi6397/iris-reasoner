@@ -139,7 +139,7 @@ public class StressTest extends TestCase {
 		purgeDumpDir();
 	}
 
-	public void testStress() throws EvaluationException, FileNotFoundException {
+	public void temp_disable_testStress() throws EvaluationException, FileNotFoundException {
 		for (int rules = 1; rules < NUMBER_OF_RULES; rules++) {
 			for (int literalsPerRule = 1; literalsPerRule < NUMBER_OF_LITERALS_PER_RULE; literalsPerRule++) {
 				for (int negPredicates = 0;
