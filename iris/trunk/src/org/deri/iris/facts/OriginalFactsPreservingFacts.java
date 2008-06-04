@@ -136,6 +136,12 @@ public class OriginalFactsPreservingFacts implements IFacts
 	        return mOriginal.contains( tuple ) || mAddedFacts.contains( tuple );
         }
 
+		@Override
+        public String toString()
+        {
+	        return mOriginal.toString() + mAddedFacts.toString();
+        }
+
 		private final IRelation mOriginal;
 		private final IRelation mAddedFacts;
 	}
