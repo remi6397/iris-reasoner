@@ -150,8 +150,8 @@ public abstract class AbstractBuiltin implements IBuiltinAtom {
 		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
 		
 		if( vars.length > maxUnknownVariables() )
-			throw new IllegalArgumentException( "Can not evaluate a " + getPredicate().toString() +
-							" with more than " + maxUnknownVariables() + " variables (had " + vars.length + ")." );
+			throw new IllegalArgumentException( "Can not evaluate " + getPredicate().toString() +
+							" with more than " + maxUnknownVariables() + " unbound variables (had " + vars.length + ")." );
 			
 		ITerm result = evaluateTerms( complete, vars );
 
