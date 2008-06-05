@@ -42,6 +42,8 @@ import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 
+import org.deri.iris.rules.RuleAnalyser;
+
 /**
  * <p>
  * This is a simple implementation of an adorned program. <b>NOTE: At the moment
@@ -179,7 +181,14 @@ public class AdornedProgram {
 		assert query != null: "The query must not be null";
 		assert query.getLiterals().size() == 1: "The query must only contain one literal";
 
-		deriveredPredicates.addAll(updateDerivedPredicates(rules));
+		final List<IRule> productiveRules = new ArrayList<IRule>(rules.size());
+		for (final IRule rule : rules) {
+			if (RuleAnalyser.isProductive(rule)) {
+				productiveRules.add(rule);
+			}
+		}
+
+		deriveredPredicates.addAll(updateDerivedPredicates(productiveRules));
 
 		// creating an adorned predicate out of the query, and add it to the
 		// predicate sets
@@ -194,7 +203,7 @@ public class AdornedProgram {
 			final AdornedPredicate adornedPredicate = predicatesToProcess.iterator().next();
 			predicatesToProcess.remove(adornedPredicate);
 
-			for (final IRule rule : rules) {
+			for (final IRule rule : productiveRules) {
 				final ILiteral headlLiteral = rule.getHead().get(0);
 				final IPredicate headPredicate = headlLiteral.getAtom().getPredicate();
 

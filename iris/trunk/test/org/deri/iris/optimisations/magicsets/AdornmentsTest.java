@@ -28,6 +28,7 @@ import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.MiscHelper.createVarList;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,14 +38,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;
+
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserException;
 import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedPredicate;
@@ -80,6 +84,7 @@ public class AdornmentsTest extends TestCase {
 
 		final Parser p = new Parser();
 		p.parse(prog);
+
 		return new AdornedProgram(p.getRules(), p.getQueries().iterator().next());
 	}
 
@@ -378,24 +383,10 @@ public class AdornmentsTest extends TestCase {
 		assertEquals("The query is not correct", refQuery, ap.getQuery());
 	}
 
-	public void testConstructedAdornment() {
-		// w(const(X, A, B)
-		final ILiteral constr = BASIC.createLiteral(true, BASIC
-				.createPredicate("w", 3), BASIC.createTuple(TERM
-				.createConstruct("const", TERM.createVariable("X"), TERM
-						.createVariable("A"), TERM.createVariable("B")), TERM
-				.createVariable("C"), TERM.createVariable("Y")));
-		// w(X, Y, Z) :- k(A, B, Y), w(const(X, A, B), C, Y)
-		final IRule r = BASIC.createRule(Arrays.asList(createLiteral("w",
-				"X", "Y", "Z")), Arrays.asList(createLiteral("k", "A", "B",
-				"Y"), constr));
-		// w(asdf, jklö, Z)
-		final IQuery q = BASIC.createQuery(BASIC.createLiteral(true, BASIC
-				.createPredicate("w", 3), BASIC.createTuple(TERM
-				.createString("asdf"), TERM.createString("jklö"), TERM
-				.createVariable("Z"))));
-
-		final AdornedProgram ap = new AdornedProgram(Collections.singleton(r), q);
+	public void testConstructedAdornment() throws ParserException {
+		final String prog = "w(?X, ?Y, ?Z) :- k(?A, ?B, ?Y), w(const(?X, ?A, ?B), ?C, ?Y).\n"
+						   + "?- w('john', 'mary', ?Z).";
+		final AdornedProgram ap = getAdornedProgram(prog);
 
 		// constructing the adorned rules
 		// constructing the adorned predicates
@@ -760,6 +751,40 @@ public class AdornmentsTest extends TestCase {
 				createAdornedLiteral("s", bb, new ITerm[]{TERM.createString("e"), Z}));
 
 		assertEquals("The query is not correct", refQuery, ap.getQuery());
+	}
+
+	/**
+	 * Tests the correct transformation of rules where literals equal to
+	 * the head literal pass variables to other literals. Those rules
+	 * shouldn't be considered for the adornments.
+	 */
+	public void testUnproductiveLiteralPassings() throws Exception {
+		final String prog = "i0(?X) :- i0(?X), i1(?X, ?Y).\n"
+			+ "i1(?X, ?Y) :- i2(?X, ?Y).\n"
+			+ "?- i0('john'), i0(?X).";
+		final AdornedProgram ap = getAdornedProgram(prog);
+
+		final Adornment[] B = new Adornment[]{Adornment.BOUND};
+		final ITerm john = TERM.createString("john");
+
+		final List<IRule> rules = new ArrayList<IRule>();
+
+		// i0(?X) :- i0(?X), i1(?X, ?Y).
+		rules.add(BASIC.createRule(Arrays.asList(createLiteral("i0", "X")),
+					Arrays.asList(createLiteral("i0", "X"), createLiteral("i1", "X", "Y"))));
+		// i1(?X, ?Y) :- i2(?X, ?Y).
+		rules.add(BASIC.createRule(Arrays.asList(createLiteral("i1", "X", "Y")),
+					Arrays.asList(createLiteral("i2", "X", "Y"))));
+
+		assertEquals("The rules are not constructed correctly", Collections.<AdornedRule>emptySet(), ap.getAdornedRules());
+
+		// ?- i0('john'), i0(?X).
+		final IQuery query = BASIC.createQuery(Arrays.asList(BASIC.createLiteral(true,
+						BASIC.createPredicate("i0", 1),
+						BASIC.createTuple(john)),
+					createLiteral("i0", "X")));
+
+		assertEquals("The query is not correct", query, ap.getQuery());
 	}
 
 	/**
