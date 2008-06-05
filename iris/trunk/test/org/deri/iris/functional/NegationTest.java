@@ -672,4 +672,27 @@ public class NegationTest extends TestCase
 		Helper.checkFailureWithNaive( program, RuleUnsafeException.class );
 		Helper.checkFailureWithSemiNaive( program, RuleUnsafeException.class );
 	}
+
+	public void testNegatedLiteralWithUnboundVariable() throws Exception
+	{
+		String program =
+			"person(1)." +
+			"person(2)." +
+			"person(3)." +
+			"person(4)." +
+			"person(5)." +
+			"person(6)." +
+
+			"married(1,2)." +
+			"married(3,4)." +
+
+			"married(?X,?Y) :- married(?Y,?X)." +
+
+			"single(?X) :- person(?X), not married(?X, ?Y).";
+		
+		String expectedResults = "dummy(5).dummy(6).";
+
+		Helper.evaluateWithAllStrategies( program + "?- single(?X).", expectedResults );
+		Helper.evaluateWithAllStrategies( program + "?- person(?X), not married(?X, ?Y).", expectedResults );
+	}
 }
