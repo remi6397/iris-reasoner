@@ -185,6 +185,29 @@ public class LeftToRightSipTest extends TestCase {
 	}
 
 	/**
+	 * Ensures, that negative literals don't produce variable passings, but
+	 * can receive one.
+	 */
+	public void testNegativeLiteralPassingHandling() throws Exception {
+		final String prog = "p(?Z) :- b(?Y), !a(?Y), c(?Y, ?Z).\n"
+			+ "?- p(?Z).";
+		final LeftToRightSip sip = parseProgram(prog);
+
+		final IVariable Y = TERM.createVariable("Y");
+		final ILiteral b = createLiteral("b", "Y");
+		final ILiteral not_a = createLiteral(false, "a", "Y");
+		final ILiteral c = createLiteral("c", "Y", "Z");
+
+		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
+		// b(?Y) ->( [?Y] )-> !a(?Y)
+		edges.add(createEdge(b, not_a, Y));
+		// b(?Y) ->( [?Y] )-> c(?Y, ?Z)
+		edges.add(createEdge(b, c, Y));
+
+		assertEquals("The edge set does not match.", edges, sip.getEdges());
+	}
+
+	/**
 	 * Checks whether the dependency retrieval of a literal depending on
 	 * itself succeeds.
 	 */
