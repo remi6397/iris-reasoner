@@ -209,13 +209,17 @@ public class LeftToRightSip implements ISip {
 						addEdge(passingLiteral, literal, Collections.singleton(variable));
 					}
 				}
-				// add this literal to the list of passing
-				// literals for this variable
-				if (passedFrom == null) {
-					passedFrom = new HashSet<ILiteral>();
-					passings.put(variable, passedFrom);
+				// negative literals can only receive passings
+				// but not produce them
+				if (literal.isPositive()) {
+					// add this literal to the list of passing
+					// literals for this variable
+					if (passedFrom == null) {
+						passedFrom = new HashSet<ILiteral>();
+						passings.put(variable, passedFrom);
+					}
+					passedFrom.add(literal);
 				}
-				passedFrom.add(literal);
 			}
 		}
 	}
