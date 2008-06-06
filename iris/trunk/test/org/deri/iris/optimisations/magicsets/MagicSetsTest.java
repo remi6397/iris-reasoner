@@ -687,7 +687,6 @@ public class MagicSetsTest extends TestCase {
 		final ITerm[] XY = new ITerm[]{X, Y};
 		final ITerm[] X3 = new ITerm[]{X, CONCRETE.createInteger(3)};
 
-		// assert the rules
 		final List<IRule> rules = new ArrayList<IRule>();
 
 		// magic_p_ff() :- .
@@ -703,16 +702,13 @@ public class MagicSetsTest extends TestCase {
 		rules.add(BASIC.createRule(Arrays.asList(createLiteral("q", "X", "Y")),
 					Arrays.asList(createMagicLiteral("q", BB, XY), createLiteral("b", "X", "Y"))));
 
-		Collections.sort(rules, AdornmentsTest.RC);
-		Collections.sort(result.rules, AdornmentsTest.RC);
-		assertEquals("The rules don't match", rules, result.rules);
-
-		// assert the query
 		// ?- p(?X, ?Y), !q(?X, 3).
 		final IQuery query = BASIC.createQuery(Arrays.asList(createLiteral("p", "X", "Y"),
 					BASIC.createLiteral(false, BASIC.createPredicate("q", 2), BASIC.createTuple(X3))));
 
-		assertEquals("The query doesn't match", query, result.query);
+		final Result expected = new Result(rules, query);
+
+		assertResults(new Result(rules, query), result);
 	}
 
 	/**
@@ -816,6 +812,32 @@ public class MagicSetsTest extends TestCase {
 		final IQuery query = BASIC.createQuery(Arrays.asList(BASIC.createLiteral(true,
 						BASIC.createPredicate("a", 2),
 						BASIC.createTuple(john, X))));
+
+		assertResults(new Result(rules, query), result);
+	}
+
+	/**
+	 * Ensures, that no magic rules are created for builtins in conjunctive
+	 * queries.
+	 */
+	public void testConjunctiveBuiltinAdorning() throws Exception {
+		final String prog = "?- a('john'), ?X='john'.\n";
+		final Result result = getResult(prog);
+
+		final Adornment[] B = new Adornment[]{Adornment.BOUND};
+		final ITerm X = TERM.createVariable("X");
+		final ITerm john = TERM.createString("john");
+
+		final List<IRule> rules = new ArrayList<IRule>();
+
+		// magic_a_b('john') :- .
+		rules.add(seedRule(createMagicLiteral("a", B, new ITerm[]{john})));
+
+		// ?- a('john'), EQUAL(?X, 'john').
+		final IQuery query = BASIC.createQuery(Arrays.asList(BASIC.createLiteral(true,
+						BASIC.createPredicate("a", 1),
+						BASIC.createTuple(john)),
+					BASIC.createLiteral(true, BUILTIN.createEqual(X, john))));
 
 		assertResults(new Result(rules, query), result);
 	}

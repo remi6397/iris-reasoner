@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.deri.iris.api.IProgramOptimisation;
+import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
@@ -42,6 +43,7 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+
 import org.deri.iris.graph.LabeledEdge;
 import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedPredicate;
 import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedRule;
@@ -155,7 +157,12 @@ public final class MagicSets implements IProgramOptimisation {
 		// the loop starts at 1, because the first literals doesn't have
 		// preceding literals
 		for (int i = 1, max = queryLiterals.size(); i < max; i++) {
-			final IAtom magicAtom = createBoundAtom(queryLiterals.get(i).getAtom(), null, MAGIC_PREFIX, null);
+			final IAtom atom = queryLiterals.get(i).getAtom();
+			// there should no magic rules be created for builtins
+			if (atom instanceof IBuiltinAtom) {
+				continue;
+			}
+			final IAtom magicAtom = createBoundAtom(atom, null, MAGIC_PREFIX, null);
 			if (!magicAtom.getTuple().isEmpty()) {
 				// the rule head got to be positive, no matter
 				// whether the literal was positive, or not,
