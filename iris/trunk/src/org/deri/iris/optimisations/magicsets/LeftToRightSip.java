@@ -76,8 +76,8 @@ public class LeftToRightSip implements ISip {
 	 * NOTE: at the moment only the first literal of the head and the query are
 	 * recognized.</b>
 	 * 
-	 * @param r the rule for which to construct the graph
-	 * @param q the query for this rule
+	 * @param rule the rule for which to construct the graph
+	 * @param query the query for this rule
 	 * @throws IllegalArgumentException if the rule is <code>null</code>
 	 * @throws IllegalArgumentException if the query is <code>null</code>
 	 */
@@ -463,62 +463,6 @@ public class LeftToRightSip implements ISip {
 		int res = 17;
 		res = res * 37 + sipGraph.edgeSet().hashCode();
 		return res;
-	}
-
-	/**
-	 * Orders the literals of the rule so that a safe rule won't produce an
-	 * unsafe sip. <b>At the moment only negative literals are handled, but not
-	 * built-is.</b>
-	 * 
-	 * @param rule the rule for which to sort the literals
-	 * @param known the variables which are known in the head
-	 * @throws IllegalArgumentException if the rule is {@code null}
-	 * @throws IllegalArgumentException if the known collection is or contains
-	 * {@code null}
-	 */
-	static IRule orderLiterals(final IRule rule,
-			final Collection<IVariable> known) {
-		if (rule == null) {
-			throw new IllegalArgumentException("The rule must not be null");
-		}
-		if ((known == null) || known.contains(null)) {
-			throw new IllegalArgumentException(
-					"The known set must not be, or contain null");
-		}
-
-		final List<ILiteral> body = new ArrayList<ILiteral>(rule.getBody());
-		final Set<IVariable> bound = new HashSet<IVariable>(known);
-		ILiteral firstPushedBack = null;
-		int pushBackCount = 0;
-		for (int i = 0, max = body.size(); i < max; i++) {
-			final ILiteral literal = body.get(i);
-			final Set<IVariable> literalVars = literal.getAtom().getTuple().getVariables();
-			// if we meet the first pushed back literal again, we
-			// were in a loop of only pushing back literals, without
-			// any gains of bound variables -> stop now
-			if (literal.equals(firstPushedBack) && ((i + pushBackCount) >= (max - 1))) {
-				break;
-			}
-
-			// if the literal is a built-in and not evaluable or the
-			// literal is negative and has some unbound variables
-			// push the literal at the end of the body.
-			if ((literal.getAtom().isBuiltin() && !checkEvaluableBuiltin((IBuiltinAtom) literal.getAtom(), bound))
-					|| (!literal.isPositive() && !bound.containsAll(literalVars))) {
-				body.add(body.remove(i));
-				i--;
-
-				pushBackCount++;
-				if (firstPushedBack == null) {
-					firstPushedBack = literal;
-				}
-			} else { // consider the vars as already bound
-				bound.addAll(literalVars);
-				pushBackCount = 0;
-				firstPushedBack = null;
-			}
-		}
-		return Factory.BASIC.createRule(rule.getHead(), body);
 	}
 
 	/**

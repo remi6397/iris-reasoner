@@ -142,14 +142,13 @@ public class LeftToRightSipTest extends TestCase {
 	 */
 	public void testEqualBuiltinSip() throws Exception {
 		final String prog = "rsg(?X, ?Y) :- up(?X, ?X1), rsg(?Y1, ?X1), ?Y1 = ?Y.\n"
-						  + "?- rsg('a', ?X).";
+			+ "?- rsg('a', ?X).";
 		final LeftToRightSip sip = parseProgram(prog);
 
 		final IVariable X = TERM.createVariable("X");
 		final IVariable X1 = TERM.createVariable("X1");
 		final IVariable Y1 = TERM.createVariable("Y1");
 
-		// builtins are at the moment not handeled correctly
 		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
 		edges.add(createEdge(createLiteral("rsg", "X", "Y"), createLiteral("up", "X", "X1"), X));
 		edges.add(createEdge(createLiteral("up", "X", "X1"), createLiteral("rsg", "Y1", "X1"), X1));
@@ -272,42 +271,6 @@ public class LeftToRightSipTest extends TestCase {
 		assertEquals("Bounds of up wrong", bound_up, sip.getBoundVariables(up));
 		assertEquals("Bounds of rsg0 wrong", bound_rsg0, sip.getBoundVariables(rsg0));
 		assertEquals("Bounds of down wrong", bound_down, sip.getBoundVariables(down));
-	}
-
-	/**
-	 * Tests whether the {@link LeftToRightSip#orderLiterals(IRule) orderLiterals}
-	 * method could run into a infinite loop.
-	 */
-	public void testOrderLiterals() throws Exception {
-		final Set<IVariable> X = Collections.singleton(TERM.createVariable("X"));
-
-		checkOrderLiterals("x(?X) :- a(?X), !b(?Y).", "x(?X) :- !b(?Y), a(?X).", X);
-		checkOrderLiterals("x(?X) :- !b(?X), a(?X).", "x(?X) :- !b(?X), a(?X).", X);
-		checkOrderLiterals("x(?X) :- a(?X), !c(?C), !b(?B).", "x(?X) :- !b(?B), a(?X), !c(?C).", X);
-		checkOrderLiterals("x(?X) :- a(?B), !b(?B), !c(?C).", "x(?X) :- !b(?B), a(?B), !c(?C).", X);
-		checkOrderLiterals("x(?X) :- a(?X), !b(?Y), !b(?Y).", "x(?X) :- !b(?Y), !b(?Y), a(?X).", X);
-
-		// test builtins
-		checkOrderLiterals("x(?X) :- ?X - 2 = ?Z, !c(?Z), !b(?B).", "x(?X) :- !b(?B), !c(?Z), ?X - 2 = ?Z.", X);
-		checkOrderLiterals("x(?X) :- b(?Y1), d(?X1), ?Y1 > ?X1, !a(?A).", "x(?X) :- ?Y1 > ?X1, !a(?A), b(?Y1), d(?X1).", X);
-	}
-
-	/**
-	 * Shortcut method to assert the result of the orderLiterals(...)
-	 * method.
-	 * @param expected the expected resulting rule
-	 * @param rule the input rule
-	 * @param bound the bound variables of the rule's head
-	 */
-	private void checkOrderLiterals(final String expected, final String rule, final Set<IVariable> bound)
-		throws ParserException {
-		assert rule != null: "The rule must not be null";
-		assert expected != null: "The expected rule must not be null";
-		assert bound != null: "The bound variables must not be null";
-
-		assertEquals("Rule not ordered correctly.",
-				parseSingleRule(expected),
-				LeftToRightSip.orderLiterals(parseSingleRule(rule), bound));
 	}
 
 	/**
