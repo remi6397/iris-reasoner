@@ -448,6 +448,48 @@ public class LeftToRightSipTest extends TestCase {
 	}
 
 	/**
+	 * Checks, whether not evaluable built-ins don't produce any passings.
+	 */
+	public void testNotEvaluableBuiltinPassing() throws Exception {
+		final String prog = "i(?X) :- ?X < ?Y, e(?Y)."
+			+ "?- i(?X).";
+		final LeftToRightSip sip = parseProgram(prog);
+		assertEquals("There must be not edges created",
+				Collections.<LabeledEdge<ILiteral, Set<IVariable>>>emptySet(),
+				sip.getEdges());
+	}
+
+	/**
+	 * Checks, whether evaluable built-ins produce passings.
+	 */
+	public void testEvaluableBuiltinPassing() throws Exception {
+		final String prog = "i(?X) :- e0(?X), e1(?Y), ?X < ?Y, e2(?Y)."
+			+ "?- i(?X).";
+		final LeftToRightSip sip = parseProgram(prog);
+
+		final IVariable X = TERM.createVariable("X");
+		final IVariable Y = TERM.createVariable("Y");
+		final ILiteral e0 = createLiteral("e0", "X");
+		final ILiteral e1 = createLiteral("e1", "Y");
+		final ILiteral e2 = createLiteral("e2", "Y");
+		final ILiteral less = BASIC.createLiteral(true, BUILTIN.createLess(X, Y));
+
+		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges
+			= new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
+
+		// e1(?Y) ->( [?Y] )-> LESS(?X, ?Y)
+		edges.add(createEdge(e1, less, Y));
+		// e0(?X) ->( [?X] )-> LESS(?X, ?Y)
+		edges.add(createEdge(e0, less, X));
+		// e1(?Y) ->( [?Y] )-> e2(?Y)
+		edges.add(createEdge(e1, e2, Y));
+		// LESS(?X, ?Y) ->( [?Y] )-> e2(?Y)
+		edges.add(createEdge(less, e2, Y));
+
+		assertEquals("The edge set does not match.", edges, sip.getEdges());
+	}
+
+	/**
 	 * Creates a edge.
 	 * 
 	 * @param s the source literal

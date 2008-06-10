@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -88,10 +89,7 @@ public class LeftToRightSip implements ISip {
 			throw new IllegalArgumentException("The query must not be null");
 		}
 
-		final Set<IVariable> boundVariables = getBoundsFromRuleHead(rule, query);
-		// ensure that a safe rule will result in a safe sip and
-		// construct the sip
-		constructSip(orderLiterals(rule, boundVariables), boundVariables);
+		constructSip(rule, getBoundsFromRuleHead(rule, query));
 	}
 
 	/**
@@ -202,26 +200,71 @@ public class LeftToRightSip implements ISip {
 		// iterating over the body literals and check the passings for
 		// the variables of the literals
 		for (final ILiteral literal : rule.getBody()) {
-			for (final IVariable variable : literal.getAtom().getTuple().getVariables()) {
-				Set<ILiteral> passedFrom = passings.get(variable);
+			// process the received bindings
+			for (final IVariable variable : reveivedBindigs(literal, passings.keySet())) {
+				final Set<ILiteral> passedFrom = passings.get(variable);
 				if ((passedFrom != null) && !passedFrom.isEmpty()) { // there are some passings
 					for (final ILiteral passingLiteral : passedFrom) {
 						addEdge(passingLiteral, literal, Collections.singleton(variable));
 					}
 				}
-				// negative literals can only receive passings
-				// but not produce them
-				if (literal.isPositive()) {
-					// add this literal to the list of passing
-					// literals for this variable
-					if (passedFrom == null) {
-						passedFrom = new HashSet<ILiteral>();
-						passings.put(variable, passedFrom);
-					}
-					passedFrom.add(literal);
+			}
+			// process the produced bindings
+			for (final IVariable variable : producedBindings(literal, passings.keySet())) {
+				Set<ILiteral> passedFrom = passings.get(variable);
+				if (passedFrom == null) {
+					passedFrom = new HashSet<ILiteral>();
+					passings.put(variable, passedFrom);
 				}
+				passedFrom.add(literal);
 			}
 		}
+	}
+
+	/**
+	 * Determines all variables, for which gained some bindings from previous literals.
+	 * @param literal the literal receiving the passings.
+	 * @param bound the bound variables until now
+	 * @return the set of variables for which we got some passings
+	 */
+	private Set<IVariable> reveivedBindigs(final ILiteral literal, final Collection<IVariable> bound) {
+		assert literal != null: "The literal must not be null";
+
+		final Set<IVariable> passedVariables = new HashSet<IVariable>(literal.getAtom().getTuple().getVariables());
+		passedVariables.retainAll(bound);
+
+		return passedVariables;
+	}
+
+	/**
+	 * Determines the set of variables for which the literal produces
+	 * bindings.
+	 * @param literal the literals which produces the passings
+	 * @param bound the bound variables until now
+	 * @return the variables for which passings are generated
+	 */
+	private Set<IVariable> producedBindings(final ILiteral literal, final Collection<IVariable> bound) {
+		assert literal != null: "The literal must not be null";
+		assert bound != null: "The bound variables must not be null";
+
+		// negative literals don't produce any passings
+		if (!literal.isPositive()) {
+			return Collections.<IVariable>emptySet();
+		}
+
+		final IAtom atom = literal.getAtom();
+		final Set<IVariable> variables = atom.getTuple().getVariables();
+
+		// builtins, which can't calculate the missing variables don't
+		// produce passings
+		if (atom instanceof IBuiltinAtom) {
+			final IBuiltinAtom builtin = (IBuiltinAtom) atom;
+			if (!checkEvaluableBuiltin(builtin, bound)) {
+				return Collections.<IVariable>emptySet();
+			}
+		}
+
+		return variables;
 	}
 
 	/**
