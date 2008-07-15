@@ -48,10 +48,6 @@ public class IntegerTerm implements IIntegerTerm {
 		return i;
 	}
 
-	public TypeOfNumericTerm getTypeOfNumericTerm() {
-		return TypeOfNumericTerm.IIntegerTerm;
-	}
-
 	public boolean isGround() {
 		return true;
 	}

@@ -55,10 +55,6 @@ public class FloatTerm implements IFloatTerm {
 		return f;
 	}
 
-	public TypeOfNumericTerm getTypeOfNumericTerm() {
-		return TypeOfNumericTerm.IFloatTerm;
-	}
-
 	public boolean isGround() {
 		return true;
 	}

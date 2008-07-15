@@ -37,29 +37,4 @@ public interface INumericTerm extends ITerm
 	 * Return the wrapped type.
 	 */
 	public Number getValue();
-	
-	/**
-	 * <p>
-	 * Defines a type of the NumericTerm. The following types of the 
-	 * NumericTerm are supported:
-	 * <ul>
-	 * 	<li> Decimal</li>
-	 * 	<li> Integer</li>
-	 * 	<li> Float</li>
-	 * 	<li> Double</li>
-	 * </ul>
-	 * <p>
-	 */
-	public enum TypeOfNumericTerm {
-		IDecimalTerm,
-		IIntegerTerm,
-		IFloatTerm,
-		IDoubleTerm
-		// More types of numeric terms may be added here.
-    };
-    
-	/**
-	 * @return	Type of NumericTerm.
-	 */
-	public INumericTerm.TypeOfNumericTerm getTypeOfNumericTerm();
 }
