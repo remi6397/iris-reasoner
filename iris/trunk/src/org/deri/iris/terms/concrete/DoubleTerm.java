@@ -48,10 +48,6 @@ public class DoubleTerm implements IDoubleTerm {
 		return d;
 	}
 
-	public TypeOfNumericTerm getTypeOfNumericTerm() {
-		return TypeOfNumericTerm.IDoubleTerm;
-	}
-
 	public boolean isGround() {
 		return true;
 	}
