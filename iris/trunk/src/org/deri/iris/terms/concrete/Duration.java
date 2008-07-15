@@ -29,6 +29,7 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 
 import org.deri.iris.api.terms.concrete.IDuration;
@@ -63,15 +64,12 @@ public class Duration implements IDuration {
 		ZERO = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 		ZERO.clear();
 
-		// creating the factory
-		DatatypeFactory tmp = null;
 		try {
-			tmp = DatatypeFactory.newInstance();
+			FACTORY = DatatypeFactory.newInstance();
 		} catch (DatatypeConfigurationException e) {
 			throw new IllegalArgumentException(
 					"Couldn't create the factory for the duration", e);
 		}
-		FACTORY = tmp;
 	}
 
 	/**
@@ -179,13 +177,6 @@ public class Duration implements IDuration {
 		duration = FACTORY.newDuration(millis);
 	}
 
-	public boolean equals(final Object obj) {
-		if (!(obj instanceof IDuration)) {
-			return false;
-		}
-		return duration.equals(((IDuration) obj).getValue());
-	}
-
 	public int getYear() {
 		return duration.getYears();
 	}
@@ -232,12 +223,35 @@ public class Duration implements IDuration {
 		return duration.toString();
 	}
 
+	public boolean equals(final Object obj) {
+		if (!(obj instanceof IDuration)) {
+			return false;
+		}
+		
+		javax.xml.datatype.Duration thatDuration = ( (IDuration) obj).getValue();
+		
+		if( duration.equals( thatDuration ) )
+			return true;
+
+		// Else normalise in case we are running with java 1.5 runtime
+		javax.xml.datatype.Duration thisDuration = normalise( duration );
+		thatDuration = normalise( thatDuration );
+		
+		return thisDuration.equals( thatDuration );
+	}
+	
 	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		Duration dt = (Duration) o;
-		return duration.compare(dt.getValue());
+		
+		javax.xml.datatype.Duration thatDuration = ( (IDuration) o).getValue();
+
+		// Do these tests in case we are running with java 1.5 runtime
+		javax.xml.datatype.Duration thisDuration = normalise( duration );
+		thatDuration = normalise( thatDuration );
+
+		return thisDuration.compare( thatDuration );
 	}
 
 	public boolean isGround() {
@@ -246,5 +260,32 @@ public class Duration implements IDuration {
 
 	public javax.xml.datatype.Duration getValue() {
 		return duration;
+	}
+
+	/**
+	 * Java runtime 1.5 is inconsistent with its handling of days in Duration objects.
+	 * @param duration
+	 * @return
+	 */
+	private javax.xml.datatype.Duration normalise( javax.xml.datatype.Duration duration )
+	{
+		final long DAYS_PER_MONTH = 30;
+		final long DAYS_PER_YEAR = 365;
+
+		BigInteger days   = (BigInteger) duration.getField( DatatypeConstants.DAYS );
+		BigInteger months = (BigInteger) duration.getField( DatatypeConstants.MONTHS );
+		BigInteger years  = (BigInteger) duration.getField( DatatypeConstants.YEARS );
+		
+		BigInteger normalisedDays = years.multiply( BigInteger.valueOf( DAYS_PER_YEAR ) );
+		normalisedDays = normalisedDays.add( months.multiply( BigInteger.valueOf( DAYS_PER_MONTH ) ) );
+		normalisedDays = normalisedDays.add( days );
+		
+		BigInteger hours   = (BigInteger) duration.getField( DatatypeConstants.HOURS );
+		BigInteger minutes = (BigInteger) duration.getField( DatatypeConstants.MINUTES );
+		BigDecimal seconds = (BigDecimal) duration.getField( DatatypeConstants.SECONDS );
+		
+		boolean positive = duration.getSign() >= 0;
+		
+		return FACTORY.newDuration( positive, null, null, normalisedDays, hours, minutes, seconds );
 	}
 }

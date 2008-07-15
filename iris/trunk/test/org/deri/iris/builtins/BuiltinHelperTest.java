@@ -28,7 +28,6 @@ import java.util.Arrays;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IDateTerm;
@@ -574,6 +573,8 @@ public class BuiltinHelperTest extends TestCase {
 	public void testWeirdDurationOperations() {
 		final IDuration y1 = CONCRETE.createDuration(1, 0, 0, 0, 0, 0);
 		final IDuration y1m3 = CONCRETE.createDuration(1, 3, 0, 0, 0, 0);
+		final IDuration d365 = CONCRETE.createDuration(0, 0, 365, 0, 0, 0);
+		final IDuration d366 = CONCRETE.createDuration(0, 0, 366, 0, 0, 0);
 
 		final IDateTerm y2004m2d28 = CONCRETE.createDate(2004, 2, 28);
 		final IDateTerm y2004m2d29 = CONCRETE.createDate(2004, 2, 29);
@@ -583,6 +584,7 @@ public class BuiltinHelperTest extends TestCase {
 		// add one year to 2004-02-29 -> 2005-02-28
 		assertEquals("2004-02-29 + 1 year is wrong", y2005m2d28, 
 				BuiltinHelper.add(y2004m2d29, y1));
+		
 		// subtract one year from 2005-02-28 -> 2004-02-28
 		assertEquals("2005-02-28 - 1 year is wrong", y2004m2d28, 
 				BuiltinHelper.subtract(y2005m2d28, y1));
@@ -591,6 +593,7 @@ public class BuiltinHelperTest extends TestCase {
 		assertEquals("2004-02-29 + 1 year, 3 months is wrong", 
 				CONCRETE.createDate(2005, 5, 29), 
 				BuiltinHelper.add(y2004m2d29, y1m3));
+		
 		// subtract 1year, 3months from 2005-05-31 -> 2004-02-29
 		assertEquals("2005-05-31 - 1 year, 3 months is wrong", y2004m2d29, 
 				BuiltinHelper.subtract(y2005m5d31, y1m3));
@@ -604,9 +607,18 @@ public class BuiltinHelperTest extends TestCase {
 		final IDuration diff = 
 			(IDuration) BuiltinHelper.subtract(y2005m2d28, y2004m2d29);
 		assertEquals("2005-02-28 - 2004-02-29 is wrong", 
-				CONCRETE.createDuration(0, 0, 365, 0, 0, 0), diff);
-		// subtract the gained duration from 2005-02-28 -> 2004-02-29
-		assertEquals("subtracting the gained duration from 2005-02-28 again is wrong", 
-				y2004m2d29, BuiltinHelper.subtract(y2005m2d28, diff));
+				d365, diff);
+		
+		// 2005-02-28 - 2004-02-28 -> 366 days
+		final IDuration diff2 = 
+			(IDuration) BuiltinHelper.subtract(y2005m2d28, y2004m2d28);
+		assertEquals("2005-02-28 - 2004-02-29 is wrong", 
+						d366, diff2);
+		
+		assertEquals("subtracting 1 year from 2005-02-28 is wrong", 
+				y2004m2d28, BuiltinHelper.subtract(y2005m2d28, y1));
+
+		assertEquals("subtracting 365 days from 2005-02-28 is wrong", 
+						y2004m2d29, BuiltinHelper.subtract(y2005m2d28, d365));
 	}
 }
