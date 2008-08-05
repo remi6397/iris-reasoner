@@ -338,7 +338,8 @@ public class RuleManipulator
 		return Factory.BASIC.createLiteral( positive, atom );
 	}
 	
-	private IAtom replace( IAtom atom, ITerm remove, ITerm replaceWith )
+	// default visibility needed for SLDNF resolution
+	IAtom replace( IAtom atom, ITerm remove, ITerm replaceWith )
 	{
 		if( atom instanceof IBuiltinAtom )
 			return replace( (IBuiltinAtom) atom, remove, replaceWith );
@@ -362,10 +363,10 @@ public class RuleManipulator
 		for( int t = 0; t < tuple.size(); ++t )
 		{
 			ITerm oldTerm = tuple.get( t );
-			if( oldTerm instanceof IConstructedTerm )
-				newTerms[ t ] = replace( (IConstructedTerm) oldTerm, remove, replaceWith );
-			else if( oldTerm.equals( remove ) )
+			if( oldTerm.equals( remove ) )
 				newTerms[ t ] = replaceWith;
+			else if( oldTerm instanceof IConstructedTerm )
+				newTerms[ t ] = replace( (IConstructedTerm) oldTerm, remove, replaceWith );
 			else
 				newTerms[ t ] = oldTerm;
 		}
@@ -374,17 +375,17 @@ public class RuleManipulator
 	}
 	
 	private IConstructedTerm replace( IConstructedTerm constructed, ITerm remove, ITerm replaceWith )
-	{
+	{		
 		String functionSymbol = constructed.getFunctionSymbol();
 		
 		List<ITerm> newTerms = new ArrayList<ITerm>();
 		
 		for( ITerm oldTerm : constructed.getParameters() )
 		{
-			if( oldTerm instanceof IConstructedTerm )
-				newTerms.add( replace( (IConstructedTerm) oldTerm, remove, replaceWith ) );
-			else if( oldTerm.equals( remove ) )
+			if( oldTerm.equals( remove ) )
 				newTerms.add( replaceWith );
+			else if( oldTerm instanceof IConstructedTerm )
+				newTerms.add( replace( (IConstructedTerm) oldTerm, remove, replaceWith ) );
 			else
 				newTerms.add( oldTerm );
 		}

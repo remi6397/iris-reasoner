@@ -28,8 +28,11 @@ import static org.deri.iris.factory.Factory.CONCRETE;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.TestCase;
+
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.EqualBuiltin;
 import org.deri.iris.rules.RuleManipulator;
@@ -60,6 +63,86 @@ public class RuleManipulatorTest extends TestCase
 							);
 	}
 
+	final ITerm X = TERM.createVariable("X");
+	final ITerm X1 = TERM.createVariable("X1");
+	
+	public void testReplaceTermInAtom() {
+		RuleManipulator rm = new RuleManipulator();
+		
+		// f(?X)
+		IAtom atom = BASIC.createAtom(BASIC.createPredicate("f", 1), BASIC.createTuple(X));
+		
+		// Replace the ?X in f(?X)...
+		IAtom newAtom = rm.replace(atom, X, X1);
+		
+		// to get f(?X1)		
+		assertEquals("f(?X1)", newAtom.toString());
+	}
+	
+	public void testReplaceTermInAtomWithConstructedTerm() {
+		RuleManipulator rm = new RuleManipulator();
+		
+		// q( f(?X), ?X )
+		IConstructedTerm constructedTerm = TERM.createConstruct("f", X);
+		IAtom atom = BASIC.createAtom(BASIC.createPredicate("q", 2), BASIC.createTuple(constructedTerm, X));
+		
+		// Replace the f(?X) in q( f(?X), ?X ) ...
+		IConstructedTerm fX = TERM.createConstruct("f", X);
+		IConstructedTerm fX1 = TERM.createConstruct("f", X1);
+		IAtom newAtom = rm.replace(atom, fX, fX1);
+		
+		// to get q( f(?X1), ?X )
+		assertEquals("q(f(?X1), ?X)", newAtom.toString());
+	}
+	
+	public void testReplaceTermInAtomWithDoubleConstructedTerm() {
+		RuleManipulator rm = new RuleManipulator();
+		
+		// q( f(g(?X)) )
+		IConstructedTerm constructedTerm = TERM.createConstruct("f", TERM.createConstruct("g", X));
+		IAtom atom = BASIC.createAtom(BASIC.createPredicate("q", 1), BASIC.createTuple(constructedTerm));
+		
+		// Replace the f(g(?X)) in q( f(g(?X)) ) ...
+		IConstructedTerm fgX = TERM.createConstruct("f", TERM.createConstruct("g", X));
+		IConstructedTerm fgX1 = TERM.createConstruct("f", TERM.createConstruct("g", X1));
+		IAtom newAtom = rm.replace(atom, fgX, fgX1);
+		
+		// to get q( f(g(?X1)) )
+		assertEquals("q(f(g(?X1)))", newAtom.toString());
+	}
+	
+	public void testReplaceTermInAtomWithDoubleConstructedTermNestedReplace() {
+		RuleManipulator rm = new RuleManipulator();
+		
+		// q( f(g(?X)), g(?X) )
+		IConstructedTerm constructedTerm = TERM.createConstruct("f", TERM.createConstruct("g", X));
+		IAtom atom = BASIC.createAtom(BASIC.createPredicate("q", 2), BASIC.createTuple(constructedTerm, TERM.createConstruct("g", X)) );
+		
+		// Replace the g(?X) in q( f(g(?X)), g(?X) ) ...
+		IConstructedTerm gX = TERM.createConstruct("g", X);
+		IConstructedTerm gX1 = TERM.createConstruct("g", X1);
+		IAtom newAtom = rm.replace(atom, gX, gX1);
+		
+		// to get q( f(g(?X1)), g(?X1) )
+		assertEquals("q(f(g(?X1)), g(?X1))", newAtom.toString());
+	}
+	
+	public void testReplaceTermInAtomWithConstructedTermNoReplace() {
+		RuleManipulator rm = new RuleManipulator();
+		
+		// q( f(?X), ?X )
+		IConstructedTerm constructedTerm = TERM.createConstruct("f", X);
+		IAtom atom = BASIC.createAtom(BASIC.createPredicate("q", 2), BASIC.createTuple(constructedTerm, X));
+		
+		// Try to replace g(?X) in q( f(?X), ?X ) ...
+		IConstructedTerm gX = TERM.createConstruct("g", X);
+		IConstructedTerm gX1 = TERM.createConstruct("g", X1);
+		IAtom newAtom = rm.replace(atom, gX, gX1);
+		
+		// the result should not be different from the original
+		assertEquals(atom.toString(), newAtom.toString());
+	}
+	
 	public void testAll()
 	{
 		List<ILiteral> head = new ArrayList<ILiteral>();
