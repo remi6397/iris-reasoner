@@ -27,23 +27,16 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
-
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
-
-import org.deri.iris.api.terms.concrete.IDuration;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.concrete.IDuration;
 
 /**
  * <p>
- * Simple implementation of the IDuration.
+ * Simple implementation of IDuration.
  * </p>
- * <p>
- * $Id$
- * </p>
- * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision$
  */
 public class Duration implements IDuration {
 
@@ -54,10 +47,7 @@ public class Duration implements IDuration {
 	private static final DatatypeFactory FACTORY;
 
 	/** The inner duration object. */
-	private final javax.xml.datatype.Duration duration;
-
-	/** Milliseconds per second. */
-	private static final BigDecimal MILLIS_PER_SECOND = new BigDecimal(1000);
+	private final javax.xml.datatype.Duration mDuration;
 
 	static {
 		// creating the calendar
@@ -67,52 +57,11 @@ public class Duration implements IDuration {
 		try {
 			FACTORY = DatatypeFactory.newInstance();
 		} catch (DatatypeConfigurationException e) {
-			throw new IllegalArgumentException(
+			throw new RuntimeException(
 					"Couldn't create the factory for the duration", e);
 		}
 	}
 
-	/**
-	 * Constructs a new duration.
-	 * @param year the yearspan
-	 * @param month the monthspan
-	 * @param day the dayspan
-	 * @param hour the hourspan
-	 * @param minute the minutespan
-	 * @param second the secondspan
-	 * @throws IllegalArgumentException if the year is negative
-	 * @throws IllegalArgumentException if the month is negative
-	 * @throws IllegalArgumentException if the day is negative
-	 * @throws IllegalArgumentException if the hour is negative
-	 * @throws IllegalArgumentException if the minute is negative
-	 * @throws IllegalArgumentException if the second is negative
-	 */
-	Duration(final int year, final int month, final int day, 
-			final int hour, final int minute, final int second) {
-		this(year, month, day, hour, minute, second, 0);
-	}
-
-	/**
-	 * Constructs a new duration.
-	 * @param year the yearspan
-	 * @param month the monthspan
-	 * @param day the dayspan
-	 * @param hour the hourspan
-	 * @param minute the minutespan
-	 * @param second the secondspan
-	 * @param millisecond the millisecondspan
-	 * @throws IllegalArgumentException if the year is negative
-	 * @throws IllegalArgumentException if the month is negative
-	 * @throws IllegalArgumentException if the day is negative
-	 * @throws IllegalArgumentException if the hour is negative
-	 * @throws IllegalArgumentException if the minute is negative
-	 * @throws IllegalArgumentException if the second is negative
-	 * @throws IllegalArgumentException if the millisecond is negative
-	 */
-	Duration(final int year, final int month, final int day, final int hour, 
-			final int minute, final int second, final int millisecond) {
-		this(true, year, month, day, hour, minute, second, millisecond);
-	}
 	/**
 	 * Constructs a new duration.
 	 * @param positive <code>true</code>if the duration is positive,
@@ -124,16 +73,23 @@ public class Duration implements IDuration {
 	 * @param minute the minutespan
 	 * @param second the secondspan
 	 * @param millisecond the millisecondspan
-	 * @throws IllegalArgumentException if the year is negative
-	 * @throws IllegalArgumentException if the month is negative
-	 * @throws IllegalArgumentException if the day is negative
-	 * @throws IllegalArgumentException if the hour is negative
-	 * @throws IllegalArgumentException if the minute is negative
-	 * @throws IllegalArgumentException if the second is negative
-	 * @throws IllegalArgumentException if the millisecond is negative
 	 */
-	Duration(final boolean positive, final int year, final int month, final int day, final int hour, 
-			final int minute, final int second, final int millisecond) {
+	Duration(boolean positive, int year, int month, int day, int hour, int minute, int second, int millisecond) {
+		this( positive, year, month, day, hour, minute, second + (millisecond / 1000.0) ); 
+	}
+
+	/**
+	 * Constructs a new duration.
+	 * @param positive <code>true</code>if the duration is positive,
+	 * otherwise <code>false</code>
+	 * @param year the year
+	 * @param month the month
+	 * @param day the day
+	 * @param hour the hour
+	 * @param minute the minute
+	 * @param second the second
+	 */
+	Duration(boolean positive, int year, int month, int day, int hour, int minute, double second) {
 		if (year < 0) {
 			throw new IllegalArgumentException("The year must not be negative");
 		}
@@ -152,20 +108,15 @@ public class Duration implements IDuration {
 		if (second < 0) {
 			throw new IllegalArgumentException("The second must not be negative");
 		}
-		if (millisecond < 0) {
-			throw new IllegalArgumentException("The millisecond must not be negative");
-		}
 
-		// prepare the seconds
-		BigDecimal seconds = (new BigDecimal(millisecond)).divide(MILLIS_PER_SECOND).add(new BigDecimal(second));
-
-		duration = FACTORY.newDuration(positive, 
-				BigInteger.valueOf((long) year), 
-				BigInteger.valueOf((long) month), 
-				BigInteger.valueOf((long) day), 
-				BigInteger.valueOf((long) hour), 
-				BigInteger.valueOf((long) minute), 
-				seconds);
+		mDuration = FACTORY.newDuration(positive, 
+				BigInteger.valueOf( year ), 
+				BigInteger.valueOf( month ), 
+				BigInteger.valueOf( day ), 
+				BigInteger.valueOf( hour ), 
+				BigInteger.valueOf( minute ), 
+				BigDecimal.valueOf( second )
+				);
 	}
 
 	/**
@@ -174,39 +125,45 @@ public class Duration implements IDuration {
 	 * @param millis the millisecondspan
 	 */
 	Duration(final long millis) {
-		duration = FACTORY.newDuration(millis);
+		mDuration = FACTORY.newDuration(millis);
 	}
 
 	public int getYear() {
-		return duration.getYears();
+		return mDuration.getYears();
 	}
 
 	public int getMonth() {
-		return duration.getMonths();
+		return mDuration.getMonths();
 	}
 
 	public int getDay() {
-		return duration.getDays();
+		return mDuration.getDays();
 	}
 
 	public int getHour() {
-		return duration.getHours();
+		return mDuration.getHours();
 	}
 
 	public int getMinute() {
-		return duration.getMinutes();
+		return mDuration.getMinutes();
 	}
 
 	public int getSecond() {
-		return duration.getSeconds();
+		return mDuration.getSeconds();
 	}
 
 	public int getMillisecond() {
-		return Long.valueOf(duration.getTimeInMillis(ZERO) % 1000).intValue();
+		return Long.valueOf(mDuration.getTimeInMillis(ZERO) % 1000).intValue();
+	}
+
+	public double getDecimalSecond()
+	{
+		BigDecimal seconds = (BigDecimal) mDuration.getField( DatatypeConstants.SECONDS );
+		return seconds.doubleValue();
 	}
 
 	public int hashCode() {
-		return duration.hashCode();
+		return XmlDurationWorkAroundHelper.computeHashCode( mDuration );
 	}
 
 	/**
@@ -220,7 +177,7 @@ public class Duration implements IDuration {
 	 * @return the string representation
 	 */
 	public String toString() {
-		return duration.toString();
+		return mDuration.toString();
 	}
 
 	public boolean equals(final Object obj) {
@@ -230,28 +187,16 @@ public class Duration implements IDuration {
 		
 		javax.xml.datatype.Duration thatDuration = ( (IDuration) obj).getValue();
 		
-		if( duration.equals( thatDuration ) )
-			return true;
-
-		// Else normalise in case we are running with java 1.5 runtime
-		javax.xml.datatype.Duration thisDuration = normalise( duration );
-		thatDuration = normalise( thatDuration );
-		
-		return thisDuration.equals( thatDuration );
+		return XmlDurationWorkAroundHelper.equals( mDuration, thatDuration );
 	}
 	
 	public int compareTo(ITerm o) {
-		if (o == null) {
+		if (o == null)
 			return 1;
-		}
 		
 		javax.xml.datatype.Duration thatDuration = ( (IDuration) o).getValue();
 
-		// Do these tests in case we are running with java 1.5 runtime
-		javax.xml.datatype.Duration thisDuration = normalise( duration );
-		thatDuration = normalise( thatDuration );
-
-		return thisDuration.compare( thatDuration );
+		return XmlDurationWorkAroundHelper.compare( mDuration, thatDuration );
 	}
 
 	public boolean isGround() {
@@ -259,33 +204,6 @@ public class Duration implements IDuration {
 	}
 
 	public javax.xml.datatype.Duration getValue() {
-		return duration;
-	}
-
-	/**
-	 * Java runtime 1.5 is inconsistent with its handling of days in Duration objects.
-	 * @param duration
-	 * @return
-	 */
-	private javax.xml.datatype.Duration normalise( javax.xml.datatype.Duration duration )
-	{
-		final long DAYS_PER_MONTH = 30;
-		final long DAYS_PER_YEAR = 365;
-
-		BigInteger days   = (BigInteger) duration.getField( DatatypeConstants.DAYS );
-		BigInteger months = (BigInteger) duration.getField( DatatypeConstants.MONTHS );
-		BigInteger years  = (BigInteger) duration.getField( DatatypeConstants.YEARS );
-		
-		BigInteger normalisedDays = years.multiply( BigInteger.valueOf( DAYS_PER_YEAR ) );
-		normalisedDays = normalisedDays.add( months.multiply( BigInteger.valueOf( DAYS_PER_MONTH ) ) );
-		normalisedDays = normalisedDays.add( days );
-		
-		BigInteger hours   = (BigInteger) duration.getField( DatatypeConstants.HOURS );
-		BigInteger minutes = (BigInteger) duration.getField( DatatypeConstants.MINUTES );
-		BigDecimal seconds = (BigDecimal) duration.getField( DatatypeConstants.SECONDS );
-		
-		boolean positive = duration.getSign() >= 0;
-		
-		return FACTORY.newDuration( positive, null, null, normalisedDays, hours, minutes, seconds );
+		return mDuration;
 	}
 }

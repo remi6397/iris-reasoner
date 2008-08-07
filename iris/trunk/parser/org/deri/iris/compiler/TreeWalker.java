@@ -467,10 +467,10 @@ public class TreeWalker extends DepthFirstAdapter
 	public void outADurationTerm(final ADurationTerm d) {
 		Integer[] params = transfromIntList(d.getIntlist());
 		if (params.length == 6) {
-			addTerm(CONCRETE.createDuration(params[0], params[1], params[2], 
+			addTerm(CONCRETE.createDuration(true,params[0], params[1], params[2], 
 						params[3], params[4], params[5]));
 		} else if (params.length == 7) {
-			addTerm(CONCRETE.createDuration(params[0], params[1], params[2], 
+			addTerm(CONCRETE.createDuration(true,params[0], params[1], params[2], 
 						params[3], params[4], params[5], params[6]));
 		} else {
 			throw new IllegalArgumentException("The number of integers in a duration must be 6 or 7, but was " + 

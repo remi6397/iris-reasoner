@@ -23,11 +23,13 @@
 package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.CONCRETE;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.deri.iris.Configuration;
@@ -44,18 +46,13 @@ import org.deri.iris.api.terms.concrete.IDuration;
 import org.deri.iris.api.terms.concrete.IFloatTerm;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.concrete.ITime;
+import org.deri.iris.terms.concrete.XmlDurationWorkAroundHelper;
 import org.deri.iris.utils.StandardFloatingPointComparator;
 
 /**
  * <p>
  * Some helper methods common to some Builtins.
  * </p>
- * <p>
- * $Id: BuiltinHelper.java,v 1.20 2007-10-19 07:37:17 poettler_ric Exp $
- * </p>
- * 
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.20 $
  */
 public class BuiltinHelper {
 
@@ -361,8 +358,7 @@ public class BuiltinHelper {
 				d.getDays(), 
 				d.getHours(), 
 				d.getMinutes(), 
-				d.getSeconds(),
-				(int) d.getTimeInMillis(ZERO) % 1000);
+				((BigDecimal) d.getField( DatatypeConstants.SECONDS )).doubleValue());
 	}
 
 	/**
@@ -412,7 +408,7 @@ public class BuiltinHelper {
 		} else if ((t0 instanceof IDuration) && (t1 instanceof IDuration)) { // duration + duration = duration
 			final Duration d0 = ((IDuration) t0).getValue();
 			final Duration d1 = ((IDuration) t1).getValue();
-			return createDuration(d0.add(d1));
+			return createDuration(XmlDurationWorkAroundHelper.add(d0, d1));
 		}
 		return null;
 	}
@@ -464,12 +460,12 @@ public class BuiltinHelper {
 		} else if ((t0 instanceof IDuration) && (t1 instanceof IDuration)) { // duration - duration
 			final Duration d0 = ((IDuration) t0).getValue();
 			final Duration d1 = ((IDuration) t1).getValue();
-			return createDuration(d0.add(d1.negate()));
+			return createDuration( XmlDurationWorkAroundHelper.subtract( d0, d1 ) );
 		}
 		
 		return null;
 	}
-
+	
 	/**
 	 * <p>
 	 * Produces the product of two terms. The resulting term will be of the most accurate

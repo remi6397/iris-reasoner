@@ -37,11 +37,6 @@ import org.deri.iris.api.terms.concrete.IDateTime;
  * <p>
  * Simple implementation of the IDateTime.
  * </p>
- * <p>
- * $Id$
- * </p>
- * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision$
  */
 public class DateTime implements IDateTime {
 
@@ -97,15 +92,13 @@ public class DateTime implements IDateTime {
 	}
 
 	static {
-		// creating the factory
-		DatatypeFactory tmp = null;
+		// create the data type factory
 		try {
-			tmp = DatatypeFactory.newInstance();
+			FACTORY = DatatypeFactory.newInstance();
 		} catch (DatatypeConfigurationException e) {
-			throw new IllegalArgumentException(
-					"Couldn't create the factory for the datetime", e);
+			throw new RuntimeException(
+					"Couldn't create the factory for the DateTime type", e);
 		}
-		FACTORY = tmp;
 	}
 
 	/**
@@ -122,9 +115,9 @@ public class DateTime implements IDateTime {
 	 * @throws IllegalArgumentException if the tzHour and tzMinute
 	 * wheren't both positive, or negative
 	 */
-	DateTime(final int year, final int month, final int day, 
-			final int hour, final int minute, final int second,
-			final int tzHour, final int tzMinute) {
+	DateTime(int year, int month, int day, 
+			int hour, int minute, int second,
+			int tzHour, int tzMinute) {
 		this(year, month, day, hour, minute, second, 0, tzHour, tzMinute);
 	}
 
@@ -138,9 +131,9 @@ public class DateTime implements IDateTime {
 	 * @param minute the minutes
 	 * @param second the seconds
 	 */
-	DateTime(final int year, final int month, final int day, 
-			final int hour, final int minute, final int second) {
-		this(year, month, day, hour, minute, second, 0, 0, 0);
+	DateTime(int year, int month, int day, 
+			int hour, int minute, int second) {
+		this(year, month, day, hour, minute, second, 0, 0);
 	}
 
 	/**
@@ -157,11 +150,33 @@ public class DateTime implements IDateTime {
 	 * @throws IllegalArgumentException if the tzHour and tzMinute
 	 * wheren't both positive, or negative
 	 */
-	DateTime(final int year, final int month, final int day, 
-			final int hour, final int minute, final int second, final int millisecond, 
-			final int tzHour, final int tzMinute) {
+	DateTime(int year, int month, int day, 
+			int hour, int minute, int second, int millisecond, 
+			int tzHour, int tzMinute) {
+		this( year, month, day, hour, minute, second + (millisecond/ 1000.0), tzHour, tzMinute );
+	}
+
+	/**
+	 * Constructs a new datetime object with a given timezone.
+	 * @param year the year
+	 * @param month the month (starting at <code>0</code>)
+	 * @param day day of the month
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the seconds
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	DateTime(int year, int month, int day, 
+			int hour, int minute, double second, 
+			int tzHour, int tzMinute) {
 
 		checkTimeZone( tzHour, tzMinute );
+
+		int intSeconds = (int) second;
+		BigDecimal fractionalSeconds = new BigDecimal( second - intSeconds );
 
 		datetime = FACTORY.newXMLGregorianCalendar(
 				BigInteger.valueOf((long) year), 
@@ -169,8 +184,8 @@ public class DateTime implements IDateTime {
 				day, 
 				hour, 
 				minute, 
-				second, 
-				new BigDecimal(millisecond / 1000l), 
+				intSeconds, 
+				fractionalSeconds, 
 				tzHour * 60 + tzMinute);
 	}
 
@@ -211,16 +226,22 @@ public class DateTime implements IDateTime {
 		return datetime.getSecond();
 	}
 
+	public int getMillisecond() {
+		return datetime.getMillisecond();
+	}
+
+	public double getDecimalSecond()
+	{
+		BigDecimal seconds = datetime.getFractionalSecond();
+		return seconds.doubleValue();
+	}
+
 	public TimeZone getTimeZone() {
 		return datetime.getTimeZone(0);
 	}
 
 	public int getYear() {
 		return datetime.getYear();
-	}
-
-	public int getMillisecond() {
-		return datetime.getMillisecond();
 	}
 
 	public int hashCode() {

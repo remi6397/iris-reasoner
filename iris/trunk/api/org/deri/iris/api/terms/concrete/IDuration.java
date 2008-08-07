@@ -35,63 +35,64 @@ import org.deri.iris.api.terms.ITerm;
  * Remark: IRIS supports datatypes according to the standard 
  * specification for primitive XML Schema datatypes.
  * </p>
- * <p>
- * $Id: IDuration.java,v 1.7 2007-10-09 20:21:22 bazbishop237 Exp $
- * </p>
- * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.7 $
  */
 public interface IDuration extends ITerm{
 	/**
 	 * Return the wrapped type.
 	 */
-	public Duration getValue();
+	Duration getValue();
 
 	/**
 	 * Returns the years.
 	 * 
 	 * @return the years
 	 */
-	public abstract int getYear();
+	int getYear();
 
 	/**
 	 * Returns the months
 	 * 
 	 * @return the months
 	 */
-	public abstract int getMonth();
+	int getMonth();
 
 	/**
 	 * Returns the days
 	 * 
 	 * @return the days
 	 */
-	public abstract int getDay();
+	int getDay();
 
 	/**
 	 * Returns the hours
 	 * 
 	 * @return the hours
 	 */
-	public abstract int getHour();
+	int getHour();
 
 	/**
 	 * returns the minutes
 	 * 
 	 * @return the minutes
 	 */
-	public abstract int getMinute();
+	int getMinute();
 
 	/**
 	 * Returns the seconds
 	 * 
 	 * @return the seconds
 	 */
-	public abstract int getSecond();
+	int getSecond();
 
 	/**
 	 * Returns the milliseconds.
 	 * @return the milliseconds
 	 */
-	public abstract int getMillisecond();
+	int getMillisecond();
+
+	/**
+	 * Return the complete floating point representation of the seconds components.
+	 * @return Decimal seconds
+	 */
+	double getDecimalSecond();
 }

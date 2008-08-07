@@ -39,12 +39,6 @@ import org.deri.iris.api.terms.ITerm;
  * <p>
  * <code>ATTENTION: set the correct timezone</code>
  * </p>
- * <p>
- * $Id: ITime.java,v 1.3 2007-10-09 20:21:22 bazbishop237 Exp $
- * </p>
- * 
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision: 1.3 $
  */
 public interface ITime extends ITerm
 {
@@ -58,32 +52,38 @@ public interface ITime extends ITerm
 	 * 
 	 * @return the hours (zero-based)
 	 */
-	public abstract int getHour();
+	public int getHour();
 
 	/**
 	 * Returns the minute of the hour.
 	 * 
 	 * @return the minutes
 	 */
-	public abstract int getMinute();
+	public int getMinute();
 
 	/**
 	 * Returns the seconds of the minute.
 	 * 
 	 * @return the seconds
 	 */
-	public abstract int getSecond();
+	public int getSecond();
+
+	/**
+	 * Returns the milliseconds of the second.
+	 * @return the milliseconds
+	 */
+	public int getMillisecond();
+
+	/**
+	 * Return the complete floating point representation of the seconds components.
+	 * @return Decimal seconds
+	 */
+	public double getDecimalSecond();
 
 	/**
 	 * Returns the Timezone.
 	 * 
 	 * @return the timezone
 	 */
-	public abstract TimeZone getTimeZone();
-
-	/**
-	 * Returns the milliseconds of the second.
-	 * @return the milliseconds
-	 */
-	public abstract int getMillisecond();
+	public TimeZone getTimeZone();
 }

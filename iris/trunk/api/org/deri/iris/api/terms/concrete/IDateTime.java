@@ -39,77 +39,72 @@ import org.deri.iris.api.terms.ITerm;
  * used, so setting month and hour is zero-based.</code>
  * <br />
  * <code>ATTENTION: set the correct timezone</code>
- * 
- * <pre>
- *       Created on 06.04.2006
- *       Committed by $Author: bazbishop237 $
- *       $Source: /tmp/iris-cvsbackup/iris/api/org/deri/iris/api/terms/concrete/IDateTime.java,v $,
- * </pre>
- * 
- * @author Richard Pöttler
- * 
- * @version $Revision: 1.7 $ $Date: 2007-10-09 20:21:21 $
  */
 public interface IDateTime extends ITerm
 {
 	/**
 	 * Return the wrapped type.
 	 */
-	public XMLGregorianCalendar getValue();
+	XMLGregorianCalendar getValue();
 
 	/**
 	 * Returns the year.
 	 * 
 	 * @return the year
 	 */
-	public abstract int getYear();
+	int getYear();
 
 	/**
 	 * Returns the month of the year.
 	 * 
 	 * @return the month (zero-based)
 	 */
-	public abstract int getMonth();
+	int getMonth();
 
 	/**
 	 * Returns the day of the month.
 	 * 
 	 * @return the day
 	 */
-	public abstract int getDay();
+	int getDay();
 
 	/**
 	 * Returns the hour of the day.
 	 * 
 	 * @return the hours (zero-based)
 	 */
-	public abstract int getHour();
+	int getHour();
 
 	/**
 	 * Returns the minute of the hour
 	 * 
 	 * @return the minutes
 	 */
-	public abstract int getMinute();
+	int getMinute();
 
 	/**
 	 * Returns the seconds of the minute.
 	 * 
 	 * @return the seconds
 	 */
-	public abstract int getSecond();
+	int getSecond();
 
 	/**
 	 * Returns the milliseconds of the second.
 	 * @return the milliseconds
 	 */
-	public abstract int getMillisecond();
+	int getMillisecond();
+	
+	/**
+	 * Return the complete floating point representation of the seconds components.
+	 * @return Decimal seconds
+	 */
+	double getDecimalSecond();
 
 	/**
 	 * Returns the Timezone
 	 * 
 	 * @return the timezone
 	 */
-	public abstract TimeZone getTimeZone();
-
+	TimeZone getTimeZone();
 }
