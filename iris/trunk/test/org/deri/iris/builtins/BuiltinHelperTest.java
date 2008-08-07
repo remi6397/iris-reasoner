@@ -34,6 +34,7 @@ import org.deri.iris.api.terms.concrete.IDateTerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
 import org.deri.iris.api.terms.concrete.IDuration;
 import org.deri.iris.api.terms.concrete.ITime;
+import org.deri.iris.terms.concrete.Duration;
 
 /**
  * <p>
@@ -620,5 +621,107 @@ public class BuiltinHelperTest extends TestCase {
 
 		assertEquals("subtracting 365 days from 2005-02-28 is wrong", 
 						y2004m2d29, BuiltinHelper.subtract(y2005m2d28, d365));
+	}
+
+	public void testAddDurations()
+	{
+		IDuration d1 = CONCRETE.createDuration(true, 1000, 1, 1, 1, 1, 1.11);
+		IDuration d2 = CONCRETE.createDuration(true, 2000, 2, 2, 2, 2, 2.22);
+		IDuration d3 = CONCRETE.createDuration(true, 3000, 3, 3, 3, 3, 3.33);
+		
+		IDuration m1 = CONCRETE.createDuration(false, 1000, 1, 1, 1, 1, 1.11);
+		IDuration m2 = CONCRETE.createDuration(false, 2000, 2, 2, 2, 2, 2.22);
+		IDuration m3 = CONCRETE.createDuration(false, 3000, 3, 3, 3, 3, 3.33);
+
+		assertEquals( d3, BuiltinHelper.add( d1, d2 ) );
+		assertEquals( d3, BuiltinHelper.add( d2, d1 ) );
+
+		assertEquals( d1, BuiltinHelper.add( d3, m2 ) );
+		assertEquals( d1, BuiltinHelper.add( m2, d3 ) );
+		
+		assertEquals( m1, BuiltinHelper.add( m3, d2 ) );
+		assertEquals( m1, BuiltinHelper.add( d2, m3 ) );
+
+		assertEquals( m3, BuiltinHelper.add( m1, m2 ) );
+		assertEquals( m3, BuiltinHelper.add( m2, m1 ) );
+	}
+
+	public void testSubtractDurations()
+	{
+		IDuration d1 = CONCRETE.createDuration(true, 1000, 1, 1, 1, 1, 1.11);
+		IDuration d2 = CONCRETE.createDuration(true, 2000, 2, 2, 2, 2, 2.22);
+		IDuration d3 = CONCRETE.createDuration(true, 3000, 3, 3, 3, 3, 3.33);
+		
+		IDuration m1 = CONCRETE.createDuration(false, 1000, 1, 1, 1, 1, 1.11);
+		IDuration m2 = CONCRETE.createDuration(false, 2000, 2, 2, 2, 2, 2.22);
+		IDuration m3 = CONCRETE.createDuration(false, 3000, 3, 3, 3, 3, 3.33);
+
+		assertEquals( d1, BuiltinHelper.subtract( d3, d2 ) );
+		assertEquals( m1, BuiltinHelper.subtract( d2, d3 ) );
+		
+		assertEquals( d3, BuiltinHelper.subtract( d2, m1 ) );
+		assertEquals( m3, BuiltinHelper.subtract( m1, d2 ) );
+		
+		assertEquals( d3, BuiltinHelper.subtract( d1, m2 ) );
+		assertEquals( m3, BuiltinHelper.subtract( m2, d1 ) );
+		
+		assertEquals( d1, BuiltinHelper.subtract( m1, m2 ) );
+		assertEquals( m1, BuiltinHelper.subtract( m2, m1 ) );
+	}
+
+	public void testAddDurationWithDecimalSeconds()
+	{
+		IDuration s0_1 = CONCRETE.createDuration(true, 0, 0, 0, 0, 0, 0.1);
+		IDuration s0_5 = CONCRETE.createDuration(true, 0, 0, 0, 0, 0, 0.5);
+		IDuration s0_6 = CONCRETE.createDuration(true, 0, 0, 0, 0, 0, 0.6);
+		IDuration s1_0 = CONCRETE.createDuration(true, 0, 0, 0, 0, 0, 1.0);
+		IDuration s1_1 = CONCRETE.createDuration(true, 0, 0, 0, 0, 0, 1.1);
+
+		IDuration m0_1 = CONCRETE.createDuration(false, 0, 0, 0, 0, 0, 0.1);
+		IDuration m0_5 = CONCRETE.createDuration(false, 0, 0, 0, 0, 0, 0.5);
+		IDuration m0_6 = CONCRETE.createDuration(false, 0, 0, 0, 0, 0, 0.6);
+
+		assertEquals( s0_6, BuiltinHelper.add( s0_1, s0_5 ) );
+		assertEquals( s0_6, BuiltinHelper.add( s0_5, s0_1 ) );
+		assertEquals( s1_0, BuiltinHelper.add( s0_5, s0_5 ) );
+		assertEquals( s1_1, BuiltinHelper.add( s0_5, s0_6 ) );
+		assertEquals( s1_1, BuiltinHelper.add( s0_6, s0_5 ) );
+		
+		assertEquals( s0_1, BuiltinHelper.add( s0_6, m0_5 ) );
+		assertEquals( s0_1, BuiltinHelper.add( m0_5, s0_6 ) );
+		
+		assertEquals( m0_1, BuiltinHelper.add( s0_5, m0_6 ) );
+		assertEquals( m0_1, BuiltinHelper.add( m0_6, s0_5 ) );
+	}
+
+	public void testSubtractDurationWithDecimalSeconds()
+	{
+		IDuration s0_0 = CONCRETE.createDuration(true, 0, 0, 0, 0, 0, 0);
+		IDuration s0_1 = CONCRETE.createDuration(true, 0, 0, 0, 0, 0, 0.1);
+		IDuration s0_5 = CONCRETE.createDuration(true, 0, 0, 0, 0, 0, 0.5);
+		IDuration s0_6 = CONCRETE.createDuration(true, 0, 0, 0, 0, 0, 0.6);
+		IDuration s1_0 = CONCRETE.createDuration(true, 0, 0, 0, 0, 0, 1.0);
+		IDuration s1_1 = CONCRETE.createDuration(true, 0, 0, 0, 0, 0, 1.1);
+
+		IDuration m0_1 = CONCRETE.createDuration(false, 0, 0, 0, 0, 0, 0.1);
+		IDuration m0_5 = CONCRETE.createDuration(false, 0, 0, 0, 0, 0, 0.5);
+		IDuration m0_6 = CONCRETE.createDuration(false, 0, 0, 0, 0, 0, 0.6);
+		IDuration m1_1 = CONCRETE.createDuration(false, 0, 0, 0, 0, 0, 1.1);
+
+		assertEquals( s0_0, BuiltinHelper.subtract( s0_5, s0_5 ) );
+
+		assertEquals( s0_1, BuiltinHelper.subtract( s0_6, s0_5 ) );
+		assertEquals( m0_1, BuiltinHelper.subtract( s0_5, s0_6 ) );
+		
+		assertEquals( s0_5, BuiltinHelper.subtract( s1_0, s0_5 ) );
+		assertEquals( m0_5, BuiltinHelper.subtract( s0_5, s1_0 ) );
+		
+		assertEquals( s1_1, BuiltinHelper.subtract( s0_5, m0_6 ) );
+		assertEquals( m1_1, BuiltinHelper.subtract( m0_6, s0_5 ) );
+		
+		assertEquals( s0_1, BuiltinHelper.subtract( m0_5, m0_6 ) );
+		assertEquals( m0_1, BuiltinHelper.subtract( m0_6, m0_5 ) );
+		
+		assertEquals( s0_0, BuiltinHelper.subtract( m0_5, m0_5 ) );
 	}
 }

@@ -44,8 +44,13 @@ public class DurationTest extends TestCase {
 
 	private static final int MILLISECOND = 7;
 
+	public static Test suite() {
+		return new TestSuite(DurationTest.class, DurationTest.class
+				.getSimpleName());
+	}
+	
 	public void testBasic() {
-		final Duration d = new Duration(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLISECOND);
+		final Duration d = new Duration( true, YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLISECOND);
 
 		assertEquals("Something wrong with getYear", YEAR, d.getYear());
 		assertEquals("Something wrong with getMonth", MONTH, d.getMonth());
@@ -56,33 +61,32 @@ public class DurationTest extends TestCase {
 		assertEquals("Something wrong with getMillisecond", MILLISECOND, d.getMillisecond());
 	}
 
+	public void testDecimalSeconds() {
+		double seconds = 1.23;
+		final Duration d = new Duration(true, YEAR, MONTH, DAY, HOUR, MINUTE, seconds);
+		assertEquals( seconds, d.getDecimalSecond() );
+	}
+	
 	public void testEquals() {
-		ObjectTests.runTestEquals(new Duration(2000, 1, 1, 12, 01, 00),
-				new Duration(2000, 1, 1, 12, 01, 00), new Duration(2000, 1, 1,
+		ObjectTests.runTestEquals(new Duration(true, 2000, 1, 1, 12, 01, 00),
+				new Duration(true, 2000, 1, 1, 12, 01, 00), new Duration(true, 2000, 1, 1,
 						12, 02, 00));
 	}
 
 	public void testCompareTo() {
-		ObjectTests.runTestCompareTo(new Duration(2000, 1, 1, 11, 01, 00),
-				new Duration(2000, 1, 1, 11, 01, 00), new Duration(2000, 1, 1,
-						11, 02, 00), new Duration(2000, 1, 1, 11, 03, 00));
-	}
-
-	public void testClone() {
-		// this the underlying duration object is not cloneable
+		ObjectTests.runTestCompareTo(
+						new Duration(true, 2000, 1, 1, 11, 01, 00),
+						new Duration(true, 2000, 1, 1, 11, 01, 00),
+						new Duration(true, 2000, 1, 1, 11, 01, 01),
+						new Duration(true, 2000, 1, 1, 11, 02, 00));
 	}
 
 	public void testHashCode() {
-		ObjectTests.runTestHashCode(new Duration(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLISECOND), 
-				new Duration(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLISECOND));
-	}
-
-	public static Test suite() {
-		return new TestSuite(DurationTest.class, DurationTest.class
-				.getSimpleName());
+		ObjectTests.runTestHashCode(new Duration(true, YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLISECOND), 
+				new Duration(true, YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLISECOND));
 	}
 
 	public void testGetMinValue() {
-		TermTests.runTestGetMinValue(new Duration(0, 0, 0, 0, 0, 1));
+		TermTests.runTestGetMinValue(new Duration(true, 0, 0, 0, 0, 0, 1));
 	}
 }

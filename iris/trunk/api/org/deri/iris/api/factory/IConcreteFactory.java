@@ -46,22 +46,16 @@ import org.deri.iris.api.terms.concrete.ITime;
  * An interface that can be used to create set of data types 
  * supported by this engine.
  * </p>
- * <p>
- * $Id$
- * </p>
- * 
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision$
  */
 public interface IConcreteFactory {
-	public IBase64Binary createBase64Binary(final String s);
+	public IBase64Binary createBase64Binary(String s);
 
 	/**
 	 * Create a boolean term from a boolean value.
 	 * @param b The value of the term
 	 * @return The boolean term.
 	 */
-	public IBooleanTerm createBoolean(final boolean b);
+	public IBooleanTerm createBoolean(boolean b);
 
 	/**
 	 * Create a boolean term with a string value.
@@ -69,7 +63,7 @@ public interface IConcreteFactory {
 	 * 'false' or '0' for false. 
 	 * @return The boolean term.
 	 */
-	public IBooleanTerm createBoolean(final String value);
+	public IBooleanTerm createBoolean(String value);
 
 	/**
 	 * Creates a datetime object with a given timezone.
@@ -84,9 +78,26 @@ public interface IConcreteFactory {
 	 * @throws IllegalArgumentException if, the tzHour and tzMinute
 	 * wheren't both positive, or negative
 	 */
-	public IDateTime createDateTime(final int year, final int month, final int day, 
-			final int hour, final int minute, final int second,
-			final int tzHour, final int tzMinute);
+	public IDateTime createDateTime(int year, int month, int day, 
+			int hour, int minute, int second,
+			int tzHour, int tzMinute);
+
+	/**
+	 * Creates a datetime object with a given timezone.
+	 * @param year the years
+	 * @param month the months (1-12)
+	 * @param day day of the month
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the decimal seconds
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if, the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	public IDateTime createDateTime(int year, int month, int day, 
+			int hour, int minute, double second,
+			int tzHour, int tzMinute);
 
 	/**
 	 * Creates a datetime object with a given timezone.
@@ -102,9 +113,9 @@ public interface IConcreteFactory {
 	 * @throws IllegalArgumentException if, the tzHour and tzMinute
 	 * wheren't both positive, or negative
 	 */
-	public IDateTime createDateTime(final int year, final int month, final int day, 
-			final int hour, final int minute, final int second, final int millisecond, 
-			final int tzHour, final int tzMinute);
+	public IDateTime createDateTime(int year, int month, int day, 
+			int hour, int minute, int second, int millisecond, 
+			int tzHour, int tzMinute);
 
 	/**
 	 * Creates a datetime object. The timezone will be set to GMT.
@@ -115,8 +126,8 @@ public interface IConcreteFactory {
 	 * @param minute the minutes
 	 * @param second the seconds
 	 */
-	public IDateTime createDateTime(final int year, final int month,
-			final int day, final int hour, final int minute, final int second);
+	public IDateTime createDateTime(int year, int month,
+			int day, int hour, int minute, int second);
 
 	/**
 	 * Creates a time object with a given timezone.
@@ -128,8 +139,21 @@ public interface IConcreteFactory {
 	 * @throws IllegalArgumentException if, the tzHour and tzMinute
 	 * wheren't both positive, or negative
 	 */
-	public ITime createTime(final int hour, final int minute, final int second, 
-			final int tzHour, final int tzMinute);
+	public ITime createTime(int hour, int minute, int second, 
+			int tzHour, int tzMinute);
+
+	/**
+	 * Creates a time object with a given timezone.
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the decimal seconds
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if, the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	public ITime createTime(int hour, int minute, double second, 
+			int tzHour, int tzMinute);
 
 	/**
 	 * Creates a time object with a given timezone.
@@ -142,8 +166,8 @@ public interface IConcreteFactory {
 	 * @throws IllegalArgumentException if, the tzHour and tzMinute
 	 * wheren't both positive, or negative
 	 */
-	public ITime createTime(final int hour, final int minute, final int second, final int millisecond, 
-			final int tzHour, final int tzMinute);
+	public ITime createTime(int hour, int minute, int second, int millisecond, 
+			int tzHour, int tzMinute);
 
 	/**
 	 * Creates a time object. The timezone will be set to GMT.
@@ -151,7 +175,7 @@ public interface IConcreteFactory {
 	 * @param minute the minutes
 	 * @param second the seconds
 	 */
-	public ITime createTime(final int hour, final int minute, final int second);
+	public ITime createTime(int hour, int minute, int second);
 
 	/**
 	 * Creates a new date object. The timezone will be set to GMT.
@@ -159,7 +183,7 @@ public interface IConcreteFactory {
 	 * @param month the mont (1-12)
 	 * @param day the day
 	 */
-	public IDateTerm createDate(final int year, final int month, final int day);
+	public IDateTerm createDate(int year, int month, int day);
 
 	/**
 	 * Creates a new date object within the given timezone.
@@ -171,51 +195,22 @@ public interface IConcreteFactory {
 	 * @throws IllegalArgumentException if, the tzHour and tzMinute
 	 * wheren't both positive, or negative
 	 */
-	public IDateTerm createDate(final int year, final int month, final int day, 
-			final int tzHour, final int tzMinute);
-
-	public IDecimalTerm createDecimal(final double d);
-
-	public IDoubleTerm createDouble(final double d);
+	public IDateTerm createDate(int year, int month, int day, 
+			int tzHour, int tzMinute);
 
 	/**
-	 * Constructs a new duration.
-	 * @param year the yearspan
-	 * @param month the monthspa (1-12)
-	 * @param day the dayspan
-	 * @param hour the hourspan
-	 * @param minute the minutespan
-	 * @param second the secondspan
-	 * @throws IllegalArgumentException if the year is negative
-	 * @throws IllegalArgumentException if the month is negative
-	 * @throws IllegalArgumentException if the day is negative
-	 * @throws IllegalArgumentException if the hour is negative
-	 * @throws IllegalArgumentException if the minute is negative
-	 * @throws IllegalArgumentException if the second is negative
-	 * @throws IllegalArgumentException if the millisecond is negative
+	 * Create a new decimal term.
+	 * @param d The decimal value
+	 * @return The new decimal term
 	 */
-	public IDuration createDuration(final int year, final int month, final int day, 
-			final int hour, final int minute, final int second);
+	public IDecimalTerm createDecimal(double d);
 
 	/**
-	 * Constructs a new duration.
-	 * @param year the yearspan
-	 * @param month the monthspa (1-12)
-	 * @param day the dayspan
-	 * @param hour the hourspan
-	 * @param minute the minutespan
-	 * @param second the secondspan
-	 * @param millisecond the millisecondspan
-	 * @throws IllegalArgumentException if the year is negative
-	 * @throws IllegalArgumentException if the month is negative
-	 * @throws IllegalArgumentException if the day is negative
-	 * @throws IllegalArgumentException if the hour is negative
-	 * @throws IllegalArgumentException if the minute is negative
-	 * @throws IllegalArgumentException if the second is negative
-	 * @throws IllegalArgumentException if the millisecond is negative
+	 * Create a double term.
+	 * @param d The double values
+	 * @return The new term
 	 */
-	public IDuration createDuration(final int year, final int month, final int day, 
-			final int hour, final int minute, final int second, final int millisecond);
+	public IDoubleTerm createDouble(double d);
 
 	/**
 	 * Constructs a new duration.
@@ -228,43 +223,128 @@ public interface IConcreteFactory {
 	 * @param minute the minutespan
 	 * @param second the secondspan
 	 * @param millisecond the millisecondspan
-	 * @throws IllegalArgumentException if the year is negative
-	 * @throws IllegalArgumentException if the month is negative
-	 * @throws IllegalArgumentException if the day is negative
-	 * @throws IllegalArgumentException if the hour is negative
-	 * @throws IllegalArgumentException if the minute is negative
-	 * @throws IllegalArgumentException if the second is negative
-	 * @throws IllegalArgumentException if the millisecond is negative
 	 */
-	public IDuration createDuration(final boolean positive, final int year, final int month, final int day, 
-			final int hour, final int minute, final int second, final int millisecond);
+	public IDuration createDuration(boolean positive, int year, int month, int day, int hour, int minute, int second, int millisecond);
 
+	/** @deprecated */
+	public IDuration createDuration(int year, int month, int day, int hour, int minute, int second, int millisecond);
+
+	/**
+	 * Constructs a new duration.
+	 * @param positive <code>true</code>if the duration is positive,
+	 * otherwise <code>false</code>
+	 * @param year the yearspan
+	 * @param month the monthspa (1-12)
+	 * @param day the dayspan
+	 * @param hour the hourspan
+	 * @param minute the minutespan
+	 * @param second the secondspan
+	 */
+	public IDuration createDuration(boolean positive, int year, int month, int day, int hour, int minute, int second);
+
+	/** @deprecated */
+	public IDuration createDuration(int year, int month, int day, int hour, int minute, int second);
+
+	/**
+	 * 
+	 * @param positive true is a positive duration
+	 * @param year
+	 * @param month
+	 * @param day
+	 * @param hour
+	 * @param minute
+	 * @param second
+	 * @return
+	 */
+	public IDuration createDuration(boolean positive, int year, int month, int day, int hour, int minute, double second);
+
+	/** @deprecated */
+	public IDuration createDuration(int year, int month, int day, int hour, int minute, double second);
+	
 	/**
 	 * Contructs a new duration out of a given amount of milliseconds. The
 	 * milliseconds will be round down to the next second.
 	 * @param millis the millisecondspan
 	 */
-	public IDuration createDuration(final long millis);
+	public IDuration createDuration(long millis);
 
-	public IFloatTerm createFloat(final float f);
+	/**
+	 * Create a new float term
+	 * @param f The float value
+	 * @return The new float term
+	 */
+	public IFloatTerm createFloat(float f);
 
-	public IGDay createGDay(final int day);
+	/**
+	 * Create a new day term
+	 * @param day The day value
+	 * @return The new term
+	 */
+	public IGDay createGDay(int day);
 
-	public IGMonthDay createGMonthDay(final int month, final int day);
+	/**
+	 * Create a new month/day term
+	 * @param month The month value
+	 * @param day The day value
+	 * @return The new term
+	 */
+	public IGMonthDay createGMonthDay(int month, int day);
 
-	public IGMonth createGMonth(final int month);
+	/**
+	 * Create a new month term
+	 * @param month The month value
+	 * @return The new term
+	 */
+	public IGMonth createGMonth(int month);
 
-	public IGYearMonth createGYearMonth(final int year, final int month);
+	/**
+	 * Create a new year/month term
+	 * @param year The year value
+	 * @param month The month value
+	 * @return The new term
+	 */
+	public IGYearMonth createGYearMonth(int year, int month);
 
-	public IIntegerTerm createInteger(final int i);
+	/**
+	 * Create a new integer term
+	 * @param i The integer value
+	 * @return The new term
+	 */
+	public IIntegerTerm createInteger(int i);
 
-	public IGYear createGYear(final int year);
+	/**
+	 * Create a new year term
+	 * @param year The year value
+	 * @return The new term
+	 */
+	public IGYear createGYear(int year);
 
-	public IHexBinary createHexBinary(final String s);
+	/**
+	 * Create a new HexBinary term
+	 * @param s The hex binary value
+	 * @return The new term
+	 */
+	public IHexBinary createHexBinary(String s);
 
-	public IIri createIri(final String s);
+	/**
+	 * Create a new IRI term
+	 * @param s The IRI value
+	 * @return The new term
+	 */
+	public IIri createIri(String s);
 
-	public ISqName createSqName(final String s);
+	/**
+	 * Create a new SQName term
+	 * @param s The SQName value
+	 * @return The new term
+	 */
+	public ISqName createSqName(String s);
 
-	public ISqName createSqName(final IIri iri, final String name);
+	/**
+	 * Create a new SQName term
+	 * @param iri The IRI value
+	 * @param s The SQName value
+	 * @return The new term
+	 */
+	public ISqName createSqName(IIri iri, String name);
 }

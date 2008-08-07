@@ -24,11 +24,9 @@ package org.deri.iris.terms.concrete;
 
 import java.math.BigDecimal;
 import java.util.TimeZone;
-
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.ITime;
 
@@ -36,11 +34,6 @@ import org.deri.iris.api.terms.concrete.ITime;
  * <p>
  * Simple implementation of ITime.
  * </p>
- * <p>
- * $Id: Time.java,v 1.9 2007-10-19 10:41:56 bazbishop237 Exp $
- * </p>
- * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision: 1.9 $
  */
 public class Time implements ITime {
 
@@ -57,17 +50,15 @@ public class Time implements ITime {
 	private static final int MILLIS_PER_HOUR = MILLIS_PER_MINUTE * 60;
 
 	static {
-		// creating the factory
-		DatatypeFactory tmp = null;
+		// create the data type factory
 		try {
-			tmp = DatatypeFactory.newInstance();
+			FACTORY = DatatypeFactory.newInstance();
 		} catch (DatatypeConfigurationException e) {
-			throw new IllegalArgumentException(
-					"Couldn't create the factory for the time", e);
+			throw new RuntimeException(
+					"Couldn't create the factory for the Time type", e);
 		}
-		FACTORY = tmp;
 	}
-
+	
 	/**
 	 * Constructs a new time object. With the <code>tzHour</code> and
 	 * <code>tzMinute</code> set to <code>0</code>.
@@ -89,8 +80,8 @@ public class Time implements ITime {
 	 * @throws IllegalArgumentException if, the tzHour and tzMinute
 	 * wheren't both positive, or negative
 	 */
-	Time(int hour, int minute, int second, final int tzHour, final int tzMinute) {
-		this(hour, minute, second, 0, tzHour, tzMinute);
+	Time(int hour, int minute, int second, int tzHour, int tzMinute) {
+		this( hour, minute, second, 0, tzHour, tzMinute );
 	}
 
 	/**
@@ -104,15 +95,34 @@ public class Time implements ITime {
 	 * @throws IllegalArgumentException if, the tzHour and tzMinute
 	 * wheren't both positive, or negative
 	 */
-	Time(final int hour, final int minute, final int second, final int millisecond, 
-			final int tzHour, final int tzMinute) {
+	Time(int hour, int minute, int second, int millisecond, 
+			int tzHour, int tzMinute)
+	{
+		this( hour, minute, second + (millisecond / 1000.0), tzHour, tzMinute );
+	}
 
+	/**
+	 * Constructs a new time object with a given timezone.
+	 * @param hour the hours
+	 * @param minute the minutes
+	 * @param second the seconds
+	 * @param millisecond the milliseconds
+	 * @param tzHour the timezone hours (relative to GMT)
+	 * @param tzMinute the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException if, the tzHour and tzMinute
+	 * wheren't both positive, or negative
+	 */
+	Time(int hour, int minute, double second, int tzHour, int tzMinute)
+	{
 		DateTime.checkTimeZone( tzHour, tzMinute );
+		
+		int intSeconds = (int) second;
+		BigDecimal fractionalSeconds = new BigDecimal( second - intSeconds );
 
 		time = FACTORY.newXMLGregorianCalendarTime(hour, 
 				minute, 
-				second, 
-				new BigDecimal(millisecond / 1000l),
+				intSeconds, 
+				fractionalSeconds,
 				tzHour * 60 + tzMinute);
 	}
 
@@ -147,6 +157,12 @@ public class Time implements ITime {
 
 	public int getMillisecond() {
 		return time.getMillisecond();
+	}
+
+	public double getDecimalSecond()
+	{
+		BigDecimal seconds = time.getFractionalSecond();
+		return seconds.doubleValue();
 	}
 
 	public TimeZone getTimeZone() {

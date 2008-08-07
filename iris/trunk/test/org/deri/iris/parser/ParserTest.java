@@ -198,12 +198,12 @@ public class ParserTest extends TestCase {
 		// asserting the duration
 		assertResult("fact(_duration(2007, 2, 6, 12, 45, 11)).",
 				null,
-				singletonFact(PRED, BASIC.createTuple(CONCRETE.createDuration(2007, 2, 6, 12, 45, 11))),
+				singletonFact(PRED, BASIC.createTuple(CONCRETE.createDuration(true,2007, 2, 6, 12, 45, 11))),
 				null);
 		// asserting the duration with milliseconds
 		assertResult("fact(_duration(2007, 2, 6, 12, 45, 11, 500)).",
 				null,
-				singletonFact(PRED, BASIC.createTuple(CONCRETE.createDuration(2007, 2, 6, 12, 45, 11, 500))),
+				singletonFact(PRED, BASIC.createTuple(CONCRETE.createDuration(true,2007, 2, 6, 12, 45, 11, 500))),
 				null);
 		// asserting the datetime
 		assertResult("fact(_datetime(2007, 2, 6, 12, 45, 11)).",
