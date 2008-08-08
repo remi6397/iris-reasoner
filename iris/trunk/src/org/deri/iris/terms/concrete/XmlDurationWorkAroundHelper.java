@@ -195,7 +195,7 @@ public class XmlDurationWorkAroundHelper
 	
 	public static int computeHashCode( Duration duration )
 	{
-		Duration normalised = normaliseDays( duration );
+		Duration normalised = normaliseSeconds( normaliseDays( duration ) );
 		return normalised.hashCode();
 	}
 
@@ -362,6 +362,23 @@ public class XmlDurationWorkAroundHelper
 		boolean positive = duration.getSign() >= 0;
 		
 		return FACTORY.newDuration( positive, BigInteger.ZERO, BigInteger.ZERO, normalisedDays, hours, minutes, seconds );
+	}
+
+	private static javax.xml.datatype.Duration normaliseSeconds( javax.xml.datatype.Duration duration )
+	{
+		BigInteger years  = (BigInteger) duration.getField( DatatypeConstants.YEARS );
+		BigInteger months = (BigInteger) duration.getField( DatatypeConstants.MONTHS );
+		BigInteger days   = (BigInteger) duration.getField( DatatypeConstants.DAYS );
+		
+		BigInteger hours   = (BigInteger) duration.getField( DatatypeConstants.HOURS );
+		BigInteger minutes = (BigInteger) duration.getField( DatatypeConstants.MINUTES );
+		BigDecimal seconds = (BigDecimal) duration.getField( DatatypeConstants.SECONDS );
+		
+		seconds = seconds.stripTrailingZeros();
+		
+		boolean positive = duration.getSign() >= 0;
+		
+		return FACTORY.newDuration( positive, years, months, days, hours, minutes, seconds );
 	}
 
 	/** An XML data type factory for creating new objects. */
