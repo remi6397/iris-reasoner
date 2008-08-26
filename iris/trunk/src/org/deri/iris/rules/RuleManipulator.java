@@ -338,8 +338,8 @@ public class RuleManipulator
 		return Factory.BASIC.createLiteral( positive, atom );
 	}
 	
-	// default visibility needed for SLDNF resolution
-	IAtom replace( IAtom atom, ITerm remove, ITerm replaceWith )
+	// public visibility needed for SLDNF resolution
+	public IAtom replace( IAtom atom, ITerm remove, ITerm replaceWith )
 	{
 		if( atom instanceof IBuiltinAtom )
 			return replace( (IBuiltinAtom) atom, remove, replaceWith );
