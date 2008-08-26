@@ -26,6 +26,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import junit.framework.Assert;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.KnowledgeBaseFactory;
 import org.deri.iris.api.IKnowledgeBase;
@@ -34,13 +37,12 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.compiler.Parser;
+import org.deri.iris.evaluation.topdown.sldnf.SLDNFEvaluationStrategyFactory;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
 import org.deri.iris.optimisations.magicsets.MagicSets;
 import org.deri.iris.optimisations.rulefilter.RuleFilter;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 import org.deri.iris.storage.IRelation;
-
-import junit.framework.Assert;
 
 public class Helper
 {
@@ -69,7 +71,7 @@ public class Helper
 	
 	/**
 	 * Evaluate a logic program using every combination of evaluation strategy
-	 * and optimisation.
+	 * and optimization.
 	 * Assert that all evaluations produce the same, expected results.
 	 * @throws Exception on failure 
 	 */
@@ -81,6 +83,8 @@ public class Helper
 		evaluateUnsafeRules( program, expectedResults );
 		evaluateWellFounded( program, expectedResults );
 		evaluateSemiNaiveAndOptimisations( program, expectedResults );
+		
+//		evaluateSLDNF( program, expectedResults );
 	}
 	
 	public static void evaluateNotOptimised( String program, String expectedResults ) throws Exception
@@ -139,6 +143,14 @@ public class Helper
 		configuration.programOptmimisers.add( new MagicSets() );
 
 		executeAndCheckResults( program, expectedResults, configuration, "Semi-Naive and Magic Sets" );
+	}
+	
+	public static void evaluateSLDNF( String program, String expectedResults ) throws Exception
+	{
+		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
+		configuration.evaluationStrategyFactory = new SLDNFEvaluationStrategyFactory();
+
+		executeAndCheckResults( program, expectedResults, configuration, "SLDNF" );
 	}
 	
 	public static void executeAndCheckResults( String program, String expected, Configuration configuration, String evaluationName ) throws Exception

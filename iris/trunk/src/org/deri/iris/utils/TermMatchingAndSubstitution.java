@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
@@ -256,6 +257,39 @@ public class TermMatchingAndSubstitution
 	}
 
 	/**
+	 * Given two tuples, unify to give variable bindings for all variables.
+	 * @param tup1 tuple one
+	 * @param tup2 tuple two
+	 * @param variableMap Map where variable bindings are saved
+	 * @param variableList List of variables already in use (for occur check) 
+	 * @return true if it is unifiable, false if not
+	 * 
+	 * @author gigi
+	 */
+	public static boolean unify( ITuple tup1, ITuple tup2, Map<IVariable, ITerm> variableMap ) {
+
+		if (tup1.size() != tup2.size())
+			return false; // Arity-match failed
+		
+		if (tup1.size() == 0)
+			return true; // Trivial case: Both tuples have no terms [ () unifies with () ]
+		
+		boolean unifyTerms = false;
+		
+		for ( int i = 0; i < tup1.size(); i++ ) {
+			ITerm t1 = tup1.get(i);
+			ITerm t2 = tup2.get(i);
+			
+			if (t1.isGround() && t2.isGround() && !t1.equals(t2))
+				return false; // e.g. 4 won't unify with 7
+			
+			unifyTerms = unify(t1, t2, variableMap);
+		}
+		
+		return unifyTerms;	
+	}
+	
+	/**
 	 * Given two terms, unify to give variable bindings for all variables.
 	 * Either, both or none of the input terms need be grounded.
 	 * @param t1 The first term.
@@ -267,6 +301,12 @@ public class TermMatchingAndSubstitution
 	{
 		if( t1.isGround() && t2.isGround() )
 			return t1.equals( t2 );
+		
+		if ( t1 instanceof IVariable && t2 instanceof IVariable )
+		{
+			variableMap.put((IVariable)t1, t2);
+			return true;
+		}
 		
 		if( t1 instanceof IVariable )
 		{
@@ -314,7 +354,7 @@ public class TermMatchingAndSubstitution
 	private static boolean unifyCheckBinding( IVariable variable, ITerm term, Map<IVariable, ITerm> variableMap )
 	{
 		// First version does not skip and retry
-		if( ! term.isGround() )
+		if( ! term.isGround() && ! (term instanceof IConstructedTerm) ) // added by gigi for top-down evaluation: && ! (term instanceof IConstructedTerm), so e.g. X => f(X) is possible
 			return false;
 		
 		ITerm existingMapping = variableMap.get( variable );
@@ -370,7 +410,8 @@ public class TermMatchingAndSubstitution
 			IVariable variable = (IVariable) term;
 			ITerm groundTerm = variableMap.get( variable );
 			
-			assert groundTerm != null;
+			if ( groundTerm == null)
+				return variable;
 			
 			return groundTerm;
 		}
