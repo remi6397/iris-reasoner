@@ -65,11 +65,10 @@ public class SLDNFEvaluationStrategy implements IEvaluationStrategy {
 		if( query == null )
 			throw new IllegalArgumentException( "SLDEvaluationStrategy.evaluateQuery() - query must not be null." ); 
 		
-		
 		SLDNFEvaluator evaluator = new SLDNFEvaluator( mFacts, mRules );
 		IRelation relation = evaluator.evaluate(query);
-		outputVariables = evaluator.getOutputVariables();		
-		
+ 		outputVariables.addAll( evaluator.getOutputVariables() );
+ 		
 		return relation;
 	}
 	
