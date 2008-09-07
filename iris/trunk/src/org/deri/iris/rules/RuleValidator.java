@@ -165,7 +165,7 @@ public class RuleValidator
 	
 	public List<IVariable> getAllUnlimitedVariables()
 	{
-		List<IVariable> result = new ArrayList<IVariable>();
+		Set<IVariable> result = new HashSet<IVariable>();
 		
 		List<IVariable> unlimitedHeadVariables = new ArrayList<IVariable>( mHeadVariables );
 		unlimitedHeadVariables.removeAll( mLimitedVariables );
@@ -185,7 +185,7 @@ public class RuleValidator
 			result.addAll( unlimitedNegativeOrdinaryVariables );
 		}
 		
-		return result;
+		return new ArrayList<IVariable>( result );
 	}
 
 	/**
