@@ -106,7 +106,7 @@ public class FiniteUniverseFacts implements IFacts
 				}
 			}
 
-			for( ILiteral literal : rule.getHead() )
+			for( ILiteral literal : rule.getBody() )
 			{
 				for( ITerm term : literal.getAtom().getTuple() )
 				{
