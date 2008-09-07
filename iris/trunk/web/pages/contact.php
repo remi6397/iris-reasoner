@@ -9,5 +9,5 @@ If you have any questions resulting from using IRIS, please send an email to
 
 <p>
 Further information, including issue trackers, help and discussion forums, etc, are available at
-<a href="http://sourceforge.net/projects/iris-reasoner/">sourceforge</a>
+<a href="https://sourceforge.net/projects/iris-reasoner/">sourceforge</a>
 </p>
