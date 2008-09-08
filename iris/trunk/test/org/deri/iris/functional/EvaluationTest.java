@@ -1138,4 +1138,13 @@ public class EvaluationTest extends TestCase
 
 		Helper.evaluateWithAllStrategies(prog, expected);
 	}
+
+	public void testEmptyResultSet() throws Exception
+	{
+		String program =
+			"?- p(?X, ?Y).";
+		
+		String expectedResults = "";
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
 }
