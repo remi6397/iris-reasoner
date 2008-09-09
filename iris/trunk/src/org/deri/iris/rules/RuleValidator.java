@@ -23,8 +23,11 @@
 package org.deri.iris.rules;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
@@ -35,6 +38,7 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.builtins.ArithmeticBuiltin;
 import org.deri.iris.builtins.EqualBuiltin;
+import org.deri.iris.utils.TermMatchingAndSubstitution;
 
 /**
  * We use the definition of a safe rule as described by Ullman, page 105.
@@ -84,21 +88,63 @@ public class RuleValidator
 			// If it has any variables at all
 			if ( ! lit.getAtom().isGround() )
 			{
-				boolean builtin = lit.getAtom().isBuiltin();
 				boolean positive = lit.isPositive();
-				
-				// Treat built-ins with constructed terms like ordinaries
-				if( containsConstructedTerms( lit.getAtom().getTuple() ) )
-					builtin = false;
-				
+				IAtom atom = lit.getAtom();;
 				List<IVariable> variables = extractVariables( lit );
+				boolean builtin = lit.getAtom().isBuiltin();
 				
-				// Do the special handling for built-in predicates
 				if( builtin )
 				{
-					if( positive && isArithmetic( lit.getAtom() ) )
+					if( positive && isEquality( atom ) )
 					{
-						addVariablesFromPositiveArithmeticPredicate( isEquality( lit.getAtom() ), variables );
+						ITuple tuple = atom.getTuple();
+						assert tuple.size() == 2;
+						
+						Map<IVariable, ITerm> variableMap = new HashMap<IVariable, ITerm>();
+						if( TermMatchingAndSubstitution.unify( tuple.get( 0 ), tuple.get( 1 ), variableMap ) )
+						{
+							for( Map.Entry<IVariable, ITerm> entry : variableMap.entrySet() )
+							{
+								List<IVariable> variableMapping = new ArrayList<IVariable>();
+								variableMapping.add( entry.getKey() );
+								if( entry.getValue() instanceof IVariable )
+								{
+									variableMapping.add( (IVariable) entry.getValue() );
+									addVariablesFromPositiveArithmeticPredicate( true, variableMapping );
+								}
+								else if( entry.getValue() instanceof IConstructedTerm )
+								{
+									IConstructedTerm constructedTerm = (IConstructedTerm) entry.getValue();
+									Set<IVariable> constructedArgs = constructedTerm.getVariables();
+									
+									if( constructedArgs.size() == 0 )
+									{
+										// Effectively: variable = ground term
+										addVariablesFromPositiveArithmeticPredicate( true, variableMapping );
+									}
+									else if( constructedArgs.size() == 1 )
+									{
+										// e.g. ?X = f(?Z)
+										variableMapping.add( constructedArgs.iterator().next() );
+										addVariablesFromPositiveArithmeticPredicate( true, variableMapping );
+									}
+									else
+									{
+										// e.g. ?X = f(?Y,?Z)
+										addVariableDependancy( entry.getKey(), constructedArgs );
+									}
+								}
+								else
+								{
+									// => variable = ground term
+									addVariablesFromPositiveArithmeticPredicate( true, variableMapping );
+								}
+							}
+						}
+					}
+					else if( positive && isArithmetic( atom ) )
+					{
+						addVariablesFromPositiveArithmeticPredicate( isEquality( atom ), variables );
 					}
 					else
 					{
@@ -113,7 +159,7 @@ public class RuleValidator
 			}
 		}
 		
-		processBuiltins();
+		processBuiltinsAndDependencies();
 	}
 	
 	/**
@@ -191,7 +237,7 @@ public class RuleValidator
 	/**
 	 * Do the special case handling of built-in predicates.
 	 */
-	private void processBuiltins()
+	private void processBuiltinsAndDependencies()
 	{
 		// Process the positive arithmetic predicates
 		boolean changed = true;
@@ -212,19 +258,27 @@ public class RuleValidator
 					changed = true;
 				}
 			}
+			
+			Iterator<Map.Entry<IVariable, Set<IVariable>>> fnIterator = mVariableDependancies.entrySet().iterator();
+			while( fnIterator.hasNext() )
+			{
+				Map.Entry<IVariable, Set<IVariable>> entry = fnIterator.next();
+				Set<IVariable> dependents = entry.getValue();
+				if( dependents.removeAll( mLimitedVariables ) )
+				{
+					changed = true;
+				}
+				
+				if( dependents.size() == 0 )
+				{
+					mLimitedVariables.add( entry.getKey() );
+					fnIterator.remove();
+					changed = true;
+				}
+			}
 		}
 	}
 	
-	private boolean containsConstructedTerms( ITuple tuple )
-	{
-		for( ITerm term : tuple )
-		{
-			if( term instanceof IConstructedTerm )
-				return true;
-		}
-		return false;
-	}
-
 	/**
 	 * Get the variable terms in a literal.
 	 * @param literal The literal to be processed.
@@ -254,6 +308,12 @@ public class RuleValidator
 	{
 		return atom instanceof ArithmeticBuiltin;
 	}
+	
+	/** Indicate a (one-way) variable dependency on other variables. */
+	private void addVariableDependancy( IVariable variable, Set<IVariable> dependents )
+	{
+		mVariableDependancies.put( variable, dependents );
+	}
 
 	/** Flag to indicate if variables in negated sub goals must be limited or not. */
 	private final boolean mAllowNotLimitedVariablesInNegatedSubGoals;
@@ -275,4 +335,7 @@ public class RuleValidator
 
 	/** All limited variables. */
 	private final Set<IVariable> mLimitedVariables = new HashSet<IVariable>();
+
+	/** To hold dependencies detected when unifying terms. */
+	private final Map<IVariable, Set<IVariable>> mVariableDependancies = new HashMap<IVariable, Set<IVariable>>();
 }
