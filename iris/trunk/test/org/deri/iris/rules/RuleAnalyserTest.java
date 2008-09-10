@@ -52,19 +52,19 @@ public class RuleAnalyserTest extends TestCase {
 		final String[] trueRules = new String[]{"p(?X) :- a(1), p(?X), b(2)."};
 		for (final String rule : trueRules) {
 			assertTrue("hasHeadLiteralInBody returns false for \"" + rule + "\".",
-					RuleAnalyser.hasHeadLiteralInBody(getRule(rule)));
+					RuleAnalyser.hasHeadLiteralInBody(parseRule(rule)));
 		}
 
 		final String[] falseRules = new String[]{"p(?X) :- a(1), !p(?X), b(2)."};
 		for (final String rule : falseRules) {
 			assertFalse("hasHeadLiteralInBody returns true for \"" + rule + "\".",
-					RuleAnalyser.hasHeadLiteralInBody(getRule(rule)));
+					RuleAnalyser.hasHeadLiteralInBody(parseRule(rule)));
 		}
 
 		final String[] illegalArguemntExceptionRules = new String[]{"p(?X), a(?X) :- p(?X)."};
 		for (final String rule : illegalArguemntExceptionRules) {
 			try {
-				RuleAnalyser.hasHeadLiteralInBody(getRule(rule));
+				RuleAnalyser.hasHeadLiteralInBody(parseRule(rule));
 				fail(rule + " is supposed to throw an IllegalArgumentException.");
 			} catch (final IllegalArgumentException e) {
 				// a exception is supposed to be thrown
@@ -72,34 +72,41 @@ public class RuleAnalyserTest extends TestCase {
 		}
 	}
 
-	/**
-	 * Tests the <code>hasUnsatisfiableVariableAssignment(...)</code>
-	 * method.
-	 */
-	public void testHasUnsatisfiableVariableAssignment() throws ParserException, EvaluationException {
-		final String[] trueRules = new String[]{"p(?X) :- q(?X), ?X=2, ?X=3.",
+	public void testUnsatisfiableVariableAssignment() throws ParserException, EvaluationException {
+		final String[] trueRules = new String[]{
+			"p(?X) :- q(?X), ?X=2, ?X=3.",
 			"p(?X) :- q(?X, ?Y), ?X=2, ?Y=3, ?X=?Y.",
 			"p(?X) :- q(?X, ?Y), ?A=2, ?B=3, ?A=?B.",
 			"p(?X) :- q(?X, ?Y), ?X=2, ?Y=2, ?X!=?Y.",
 			"p(?X) :- q(?X, ?Y), ?A=2, ?B=2, ?A!=?B.",
-			// the next one should fail, since function symbols are
-			// not handled, yet by this method.
-			"p(?X) :- q(?X), r(?X), f(2, ?X) = f(3, ?X)."};
+			"p(?X) :- q(?X), r(?X), f(2, ?X) = f(3, ?X).",
+			"p(?X) :- q(?X), r(?X), f(3, ?X) != f(3, ?X).",
+			"p(?X) :- q(?X), r(?X), ! f(3, ?X) = f(3, ?X).",
+			"p(?X) :- q(?X), r(?X), ! f(3, ?X) != f(4, ?X).",
+			};
 		for (final String rule : trueRules) {
-			assertTrue("hasUnsatisfiableVariableAssignment returns false for \"" + rule + "\".",
-					RuleAnalyser.hasUnsatisfiableVariableAssignment(getRule(rule)));
+			assertFalse("hasSatisfiableVariableAssignment returns true for \"" + rule + "\".",
+					RuleAnalyser.hasSatisfiableVariableAssignment(parseRule(rule)));
 		}
+	}
 
-		final String[] falseRules = new String[]{"p(?X) :- q(?X), ?X=2, ?X=2.",
+	public void testSatisfiableVariableAssignment() throws ParserException, EvaluationException {
+		final String[] falseRules = new String[]{
+			"p(?X) :- q(?X), ?X=2, ?X=2.",
 			"p(?X) :- q(?X, ?Y), ?X=2, ?Y=2, ?X=?Y.",
 			"p(?X) :- q(?X, ?Y), ?A=2, ?B=2, ?A=?B.",
 			"p(?X) :- q(?X, ?Y), ?X=2, ?Y=3, ?X!=?Y.",
 			"p(?X) :- q(?X, ?Y), ?A=2, ?B=3, ?A!=?B.",
 			"p(?X) :- q(?X), r(?Y), ?X=?Y, ?Y=3.",
-			"p(?X) :- q(?X, ?Y), ?A=2, ?B=2, ?A=?B."};
+			"p(?X) :- q(?X, ?Y), ?A=2, ?B=2, ?A=?B.",
+			"p(?X) :- q(?X), r(?X), f(3, ?X) = f(3, ?X).",
+			"p(?X) :- q(?X), r(?X), f(3, ?X) != f(4, ?X).",
+			"p(?X) :- q(?X), r(?X), ! f(3, ?X) = f(4, ?X).",
+			"p(?X) :- q(?X), r(?X), ! f(3, ?X) != f(3, ?X).",
+		};
 		for (final String rule : falseRules) {
-			assertFalse("hasUnsatisfiableVariableAssignment returns true for \"" + rule + "\".",
-					RuleAnalyser.hasUnsatisfiableVariableAssignment(getRule(rule)));
+			assertTrue("hasSatisfiableVariableAssignment returns false for \"" + rule + "\".",
+					RuleAnalyser.hasSatisfiableVariableAssignment(parseRule(rule)));
 		}
 	}
 
@@ -108,7 +115,7 @@ public class RuleAnalyserTest extends TestCase {
 	 * @param program the program to parse
 	 * @return the first parsed rule
 	 */
-	private static IRule getRule(final String program) throws ParserException {
+	private static IRule parseRule(final String program) throws ParserException {
 		assert program != null: "The program must not be null";
 
 		final Parser parser = new Parser();

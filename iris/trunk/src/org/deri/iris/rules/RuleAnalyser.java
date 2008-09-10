@@ -22,25 +22,20 @@
  */
 package org.deri.iris.rules;
 
-import static org.deri.iris.factory.Factory.TERM;
-import static org.deri.iris.factory.Factory.BASIC;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
+import java.util.HashMap;
+import java.util.Map;
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltinAtom;
-
+import org.deri.iris.api.terms.IConstructedTerm;
+import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.builtins.EqualBuiltin;
-import org.deri.iris.builtins.ExactEqualBuiltin;
 import org.deri.iris.builtins.NotEqualBuiltin;
-import org.deri.iris.builtins.NotExactEqualBuiltin;
-import org.deri.iris.EvaluationException;
+import org.deri.iris.utils.TermMatchingAndSubstitution;
 
 /**
  * <p>
@@ -74,8 +69,7 @@ public class RuleAnalyser {
 
 	/**
 	 * <p>
-	 * Checks whether a rule got a variable assignment, which doesn't make
-	 * sense.
+	 * Checks whether it is possible to assign any values to variables by static analysis of the rule.
 	 * </p>
 	 * <p>
 	 * <b>The implementation of this method is not finished. At the moment
@@ -86,25 +80,59 @@ public class RuleAnalyser {
 	 * doesn't make sense.
 	 * @throws EvaluationException if something went wrong while evaluating
 	 * one of the equality built-ins.
-	 * @throws IllegalArgumentException if the rule is <code>null</code>
 	 */
-	public static boolean hasUnsatisfiableVariableAssignment(final IRule rule) throws EvaluationException {
+	public static boolean hasSatisfiableVariableAssignment(final IRule rule) throws EvaluationException {
 		if (rule == null) {
 			throw new IllegalArgumentException("The rule must not be null");
 		}
 
-		final RuleManipulator manipulator = new RuleManipulator();
-		final IRule modRule = manipulator.replaceVariablesWithConstants(rule, false);
-		for (final ILiteral literal : modRule.getBody()) {
-			final IAtom atom = literal.getAtom();
+		RuleManipulator manipulator = new RuleManipulator();
+		IRule modRule = manipulator.replaceVariablesWithConstants(rule, false);
+		
+		for (ILiteral literal : modRule.getBody()) {
+			IAtom atom = literal.getAtom();
+			boolean positive = literal.isPositive();
+			
 			if (atom instanceof IBuiltinAtom) {
-				final IBuiltinAtom builtinAtom = (IBuiltinAtom) atom;
-				final ITuple tuple = builtinAtom.getTuple();
+				IBuiltinAtom builtinAtom = (IBuiltinAtom) atom;
+				ITuple tuple = builtinAtom.getTuple();
+				
 				if (tuple.isGround() && (builtinAtom.evaluate(tuple) == null)) {
-					return true;
+					return false;
 				}
+				if( builtinAtom instanceof EqualBuiltin) {
+					if( positive && ! unifies( tuple ) )
+						return false;
+					if( ! positive && unifies( tuple ) )
+						return false;
+				}
+				else if( builtinAtom instanceof NotEqualBuiltin) {
+					if( positive && unifies( tuple ) )
+						return false;
+					if( ! positive && ! unifies( tuple ) )
+						return false;
+				}
+				else if( containsConstructedTerms( tuple ) )
+					return false;
 			}
 		}
+		return true;
+	}
+	
+	private static boolean unifies( ITuple tuple )
+	{
+		assert tuple != null;
+		assert tuple.size() == 2;
+		Map<IVariable, ITerm> variableMap = new HashMap<IVariable, ITerm>();
+
+		return TermMatchingAndSubstitution.unify( tuple.get( 0 ), tuple.get( 1 ), variableMap );
+	}
+	
+	public static boolean containsConstructedTerms( ITuple tuple )
+	{
+		for( ITerm term : tuple )
+			if( term instanceof IConstructedTerm )
+				return true;
 		return false;
 	}
 
