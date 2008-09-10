@@ -30,17 +30,17 @@ import static org.deri.iris.factory.Factory.TERM;
 
 public class RuleValidatorTest extends TestCase
 {
-	public void testSafeWithConsructedTerm() throws Exception
+	public void testSafeWithConstructedTerm() throws Exception
 	{
 		assertSafe( "p(?y) :- q(?x), f(?x)=?y." );
 	}
 	
-	public void testSafeWithComplexConsructedTerm() throws Exception
+	public void testSafeWithComplexConstructedTerm() throws Exception
 	{
 		assertSafe( "p(?z) :- q(?x), r(?y), f(?x, ?y)=?z." );
 	}
 	
-	public void testUnsafeWithConsructedTerm() throws Exception
+	public void testUnsafeWithConstructedTerm() throws Exception
 	{
 		RuleValidator validator = validate( "p(?y) :- f(?x)=?y." );
 		
@@ -48,7 +48,7 @@ public class RuleValidatorTest extends TestCase
 		assertContains( validator, "y" );
 	}
 	
-	public void testUnsafeWithConsructedTerm2() throws Exception
+	public void testUnsafeWithConstructedTerm2() throws Exception
 	{
 		RuleValidator validator = validate( "p(?y) :- ! f(?x)=?y." );
 		
@@ -56,7 +56,7 @@ public class RuleValidatorTest extends TestCase
 		assertContains( validator, "y" );
 	}
 	
-	public void testUnsafeWithConsructedTerm3() throws Exception
+	public void testUnsafeWithConstructedTerm3() throws Exception
 	{
 		RuleValidator validator = validate( "p(?y) :- q(?x), ! f(?x)=?y." );
 		
@@ -64,7 +64,7 @@ public class RuleValidatorTest extends TestCase
 		assertContains( validator, "y" );
 	}
 	
-	public void testUnsafeWithComplexConsructedTerm() throws Exception
+	public void testUnsafeWithComplexConstructedTerm() throws Exception
 	{
 		RuleValidator validator = validate( "p(?z) :- q(?x), r(?y), f(?x, ?y, ?w)=?z." );
 		
@@ -103,7 +103,7 @@ public class RuleValidatorTest extends TestCase
 		assertSafe( "p(?y) :- q(?x), ?x = ?y." );
 	}
 
-	public void testSafeWithComputedEqualityArgumentAndNoAirthmeticImplications() throws Exception
+	public void testSafeWithComputedEqualityArgumentAndNoArithmeticImplications() throws Exception
 	{
 		RuleValidator validator = validate( "p(?y) :- q(?x), ?x = ?y.", true, false );
 		
