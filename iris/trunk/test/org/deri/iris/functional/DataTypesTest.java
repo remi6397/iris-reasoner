@@ -92,6 +92,35 @@ public class DataTypesTest extends TestCase
        	Helper.evaluateWithAllStrategies( allDataTypes, expectedResults );
 	}
 	
+	public void testFloatingPointSeconds() throws Exception
+	{
+		String allDataTypes =
+			"p( _duration( 1970, 1, 1, 23, 15, 30 ) )." +
+			"p( _duration( 1970, 1, 1, 23, 15, 29, 99 ) )." +
+			"p( _duration( 1970, 1, 1, 23, 15, 31.12345 ) )." +
+
+			"p( _datetime( 1980, 2, 2, 1, 2, 1 ) )." +
+			"p( _datetime( 1980, 2, 2, 1, 2, 2, 1, 30 ) )." +
+			"p( _datetime( 1980, 2, 2, 1, 2, 3, 99, 1, 30 ) )." +
+			"p( _datetime( 1980, 2, 2, 1, 2, 4.1234567 ) )." +
+			"p( _datetime( 1980, 2, 2, 1, 2, 5.1234567, 1, 30 ) )." +
+			
+			"p( _date( 1981, 3, 3 ) )." +
+			"p( _date( 1982, 4, 4, 13, 30 ) )." +
+			
+			"p( _time( 1, 2, 3 ) )." +
+			"p( _time( 1, 2, 3, 1, 30 ) )." +
+			"p( _time( 1, 2, 3, 99, 1, 30 ) )." +
+			"p( _time( 1, 2, 1.1234567 ) )." +
+			"p( _time( 1, 2, 2.1234567, 1, 30 ) )." +
+			
+			"?- p( ?X ).";
+
+       	String expectedResults = allDataTypes;
+
+       	Helper.evaluateWithAllStrategies( allDataTypes, expectedResults );
+	}
+	
 	/**
 	 * Check that badly formatted literals cause failures.
 	 * @throws Exception 

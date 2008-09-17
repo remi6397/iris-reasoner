@@ -87,14 +87,6 @@ public class ConcreteFactory implements IConcreteFactory {
 				tzHour, tzMinute);
 	}
 
-	public IDateTime createDateTime(int year, int month, int day, int hour, int minute, int second, int tzHour, int tzMinute) {
-		return new DateTime( year, month, day, hour, minute, second, tzHour, tzMinute );
-	}
-
-	public IDateTime createDateTime( int year, int month, int day, int hour, int minute, int second ) {
-		return new DateTime(year, month, day, hour, minute, second);
-	}
-
 	public IDateTime createDateTime(int year, int month, int day, int hour, int minute, double second, int tzHour, int tzMinute) {
 		return new DateTime( year, month, day, hour, minute, second, tzHour, tzMinute );
 	}
@@ -102,15 +94,6 @@ public class ConcreteFactory implements IConcreteFactory {
 	public ITime createTime(final int hour, final int minute, final int second, final int millisecond,
 			final int tzHour, final int tzMinute) {
 		return new Time(hour, minute, second, millisecond, tzHour, tzMinute);
-	}
-
-	public ITime createTime(final int hour, final int minute, final int second,
-			final int tzHour, final int tzMinute) {
-		return new Time(hour, minute, second, tzHour, tzMinute);
-	}
-
-	public ITime createTime(final int hour, final int minute, final int second) {
-		return new Time(hour, minute, second);
 	}
 
 	public ITime createTime( int hour, int minute, double second, int tzHour, int tzMinute )
@@ -126,28 +109,12 @@ public class ConcreteFactory implements IConcreteFactory {
 		return new DoubleTerm(d);
 	}
 
-	public IDuration createDuration(boolean positive, int year, int month, int day, int hour, int minute, int second) {
-		return new Duration( positive, year, month, day, hour, minute, second);
-	}
-
-	public IDuration createDuration(int year, int month, int day, int hour, int minute, int second) {
-		return new Duration( true, year, month, day, hour, minute, second);
-	}
-
 	public IDuration createDuration(boolean positive, int year, int month, int day, int hour, int minute, int second, int millisecond) {
 		return new Duration(positive, year, month, day, hour, minute, second, millisecond);
 	}
 
-	public IDuration createDuration(int year, int month, int day, int hour, int minute, int second, int millisecond) {
-		return new Duration(true, year, month, day, hour, minute, second, millisecond);
-	}
-
 	public IDuration createDuration( boolean positive, int year, int month, int day, int hour, int minute, double second ) {
 	    return new Duration( positive, year, month, day, hour, minute, second );
-    }
-
-	public IDuration createDuration( int year, int month, int day, int hour, int minute, double second ) {
-	    return new Duration( true, year, month, day, hour, minute, second );
     }
 
 	public IDuration createDuration(final long millis) {

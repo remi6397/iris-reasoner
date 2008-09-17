@@ -72,23 +72,6 @@ public interface IConcreteFactory {
 	 * @param day day of the month
 	 * @param hour the hours
 	 * @param minute the minutes
-	 * @param second the seconds
-	 * @param tzHour the timezone hours (relative to GMT)
-	 * @param tzMinute the timezone minutes (relative to GMT)
-	 * @throws IllegalArgumentException if, the tzHour and tzMinute
-	 * wheren't both positive, or negative
-	 */
-	public IDateTime createDateTime(int year, int month, int day, 
-			int hour, int minute, int second,
-			int tzHour, int tzMinute);
-
-	/**
-	 * Creates a datetime object with a given timezone.
-	 * @param year the years
-	 * @param month the months (1-12)
-	 * @param day day of the month
-	 * @param hour the hours
-	 * @param minute the minutes
 	 * @param second the decimal seconds
 	 * @param tzHour the timezone hours (relative to GMT)
 	 * @param tzMinute the timezone minutes (relative to GMT)
@@ -118,31 +101,6 @@ public interface IConcreteFactory {
 			int tzHour, int tzMinute);
 
 	/**
-	 * Creates a datetime object. The timezone will be set to GMT.
-	 * @param year the years
-	 * @param month the months (1-12)
-	 * @param day day of the month
-	 * @param hour the hours
-	 * @param minute the minutes
-	 * @param second the seconds
-	 */
-	public IDateTime createDateTime(int year, int month,
-			int day, int hour, int minute, int second);
-
-	/**
-	 * Creates a time object with a given timezone.
-	 * @param hour the hours
-	 * @param minute the minutes
-	 * @param second the seconds
-	 * @param tzHour the timezone hours (relative to GMT)
-	 * @param tzMinute the timezone minutes (relative to GMT)
-	 * @throws IllegalArgumentException if, the tzHour and tzMinute
-	 * wheren't both positive, or negative
-	 */
-	public ITime createTime(int hour, int minute, int second, 
-			int tzHour, int tzMinute);
-
-	/**
 	 * Creates a time object with a given timezone.
 	 * @param hour the hours
 	 * @param minute the minutes
@@ -168,14 +126,6 @@ public interface IConcreteFactory {
 	 */
 	public ITime createTime(int hour, int minute, int second, int millisecond, 
 			int tzHour, int tzMinute);
-
-	/**
-	 * Creates a time object. The timezone will be set to GMT.
-	 * @param hour the hours
-	 * @param minute the minutes
-	 * @param second the seconds
-	 */
-	public ITime createTime(int hour, int minute, int second);
 
 	/**
 	 * Creates a new date object. The timezone will be set to GMT.
@@ -226,27 +176,8 @@ public interface IConcreteFactory {
 	 */
 	public IDuration createDuration(boolean positive, int year, int month, int day, int hour, int minute, int second, int millisecond);
 
-	/** @deprecated */
-	public IDuration createDuration(int year, int month, int day, int hour, int minute, int second, int millisecond);
-
 	/**
-	 * Constructs a new duration.
-	 * @param positive <code>true</code>if the duration is positive,
-	 * otherwise <code>false</code>
-	 * @param year the yearspan
-	 * @param month the monthspa (1-12)
-	 * @param day the dayspan
-	 * @param hour the hourspan
-	 * @param minute the minutespan
-	 * @param second the secondspan
-	 */
-	public IDuration createDuration(boolean positive, int year, int month, int day, int hour, int minute, int second);
-
-	/** @deprecated */
-	public IDuration createDuration(int year, int month, int day, int hour, int minute, int second);
-
-	/**
-	 * 
+	 * Create a new Duration term.
 	 * @param positive true is a positive duration
 	 * @param year
 	 * @param month
@@ -258,13 +189,10 @@ public interface IConcreteFactory {
 	 */
 	public IDuration createDuration(boolean positive, int year, int month, int day, int hour, int minute, double second);
 
-	/** @deprecated */
-	public IDuration createDuration(int year, int month, int day, int hour, int minute, double second);
-	
 	/**
-	 * Contructs a new duration out of a given amount of milliseconds. The
+	 * Constructs a new duration out of a given amount of milliseconds. The
 	 * milliseconds will be round down to the next second.
-	 * @param millis the millisecondspan
+	 * @param millis the millisecond span
 	 */
 	public IDuration createDuration(long millis);
 

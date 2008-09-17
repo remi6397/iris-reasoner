@@ -481,7 +481,7 @@ public class TreeWalker extends DepthFirstAdapter
 	public void outADatetimeTerm(final ADatetimeTerm d) {
 		Integer[] params = transfromIntList(d.getIntlist());
 		if (params.length == 6) {
-			addTerm(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5]));
+			addTerm(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5], 0, 0));
 		} else if (params.length == 8) {
 			addTerm(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5], 
 						params[6], params[7]));
@@ -497,7 +497,7 @@ public class TreeWalker extends DepthFirstAdapter
 	public void outATimeTerm(final ATimeTerm t) {
 		Integer[] params = transfromIntList(t.getIntlist());
 		if (params.length == 3) {
-			addTerm(CONCRETE.createTime(params[0], params[1], params[2]));
+			addTerm(CONCRETE.createTime(params[0], params[1], params[2], 0, 0));
 		} else if (params.length == 5) {
 			addTerm(CONCRETE.createTime(params[0], params[1], params[2], params[3], params[4]));
 		} else if (params.length == 6) {
