@@ -102,41 +102,6 @@ public class DateTime implements IDateTime {
 	}
 
 	/**
-	 * Constructs a new time object. With the <code>tzHour</code> and
-	 * <code>tzMinute</code> set to <code>0</code>.
-	 * @param year the year
-	 * @param month the month (1-12)
-	 * @param day day of the month
-	 * @param hour the hours
-	 * @param minute the minutes
-	 * @param second the seconds
-	 * @param tzHour the timezone hours (relative to GMT)
-	 * @param tzMinute the timezone minutes (relative to GMT)
-	 * @throws IllegalArgumentException if the tzHour and tzMinute
-	 * wheren't both positive, or negative
-	 */
-	DateTime(int year, int month, int day, 
-			int hour, int minute, int second,
-			int tzHour, int tzMinute) {
-		this(year, month, day, hour, minute, second, 0, tzHour, tzMinute);
-	}
-
-	/**
-	 * Constructs a new time object. With the <code>tzHour</code> and
-	 * <code>tzMinute</code> set to <code>0</code>.
-	 * @param year the year
-	 * @param month the month (starting at <code>0</code>)
-	 * @param day day of the month
-	 * @param hour the hours
-	 * @param minute the minutes
-	 * @param second the seconds
-	 */
-	DateTime(int year, int month, int day, 
-			int hour, int minute, int second) {
-		this(year, month, day, hour, minute, second, 0, 0);
-	}
-
-	/**
 	 * Constructs a new datetime object with a given timezone.
 	 * @param year the year
 	 * @param month the month (starting at <code>0</code>)

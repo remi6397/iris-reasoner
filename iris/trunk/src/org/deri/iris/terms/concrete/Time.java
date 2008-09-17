@@ -60,31 +60,6 @@ public class Time implements ITime {
 	}
 	
 	/**
-	 * Constructs a new time object. With the <code>tzHour</code> and
-	 * <code>tzMinute</code> set to <code>0</code>.
-	 * @param hour the hours
-	 * @param minute the minutes
-	 * @param second the seconds
-	 */
-	Time(int hour, int minute, int second) {
-		this(hour, minute, second, 0, 0, 0);
-	}
-
-	/**
-	 * Constructs a new time object. Within the given timezone.
-	 * @param hour the hours
-	 * @param minute the minutes
-	 * @param second the seconds
-	 * @param tzHour the timezone hours (relative to GMT)
-	 * @param tzMinute the timezone minutes (relative to GMT)
-	 * @throws IllegalArgumentException if, the tzHour and tzMinute
-	 * wheren't both positive, or negative
-	 */
-	Time(int hour, int minute, int second, int tzHour, int tzMinute) {
-		this( hour, minute, second, 0, tzHour, tzMinute );
-	}
-
-	/**
 	 * Constructs a new time object with a given timezone.
 	 * @param hour the hours
 	 * @param minute the minutes

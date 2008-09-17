@@ -85,7 +85,7 @@ public class TimeTest extends TestCase {
 	}
 
 	public void testGetMinValue() {
-		TermTests.runTestGetMinValue(new Time(0, 0, 1));
+		TermTests.runTestGetMinValue(new Time(0, 0, 1, 0, 0));
 	}
 
 	/**

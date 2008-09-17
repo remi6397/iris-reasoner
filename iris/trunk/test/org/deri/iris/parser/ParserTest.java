@@ -208,7 +208,7 @@ public class ParserTest extends TestCase {
 		// asserting the datetime
 		assertResult("fact(_datetime(2007, 2, 6, 12, 45, 11)).",
 				null,
-				singletonFact(PRED, BASIC.createTuple(CONCRETE.createDateTime(2007, 2, 6, 12, 45, 11))),
+				singletonFact(PRED, BASIC.createTuple(CONCRETE.createDateTime(2007, 2, 6, 12, 45, 11, 0, 0))),
 				null);
 		// asserting the datetime with timezone
 		assertResult("fact(_datetime(2007, 2, 6, 12, 45, 11, 1, 30)).",
@@ -223,7 +223,7 @@ public class ParserTest extends TestCase {
 		// asserting the time
 		assertResult("fact(_time(12, 45, 11)).",
 				null,
-				singletonFact(PRED, BASIC.createTuple(CONCRETE.createTime(12, 45, 11))),
+				singletonFact(PRED, BASIC.createTuple(CONCRETE.createTime(12, 45, 11, 0, 0))),
 				null);
 		// asserting the time with timezone
 		assertResult("fact(_time(12, 45, 11, 1, 30)).",

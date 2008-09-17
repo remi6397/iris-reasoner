@@ -101,7 +101,7 @@ public class DateTimeTest extends TestCase {
 
 	public void testGetMinValue() {
 		// somehow the year, month and day must not be 0...
-		TermTests.runTestGetMinValue(new DateTime(1, 1, 1, 0, 0, 1));
+		TermTests.runTestGetMinValue(new DateTime(1, 1, 1, 0, 0, 1, 0, 0));
 	}
 
 	/**
@@ -142,9 +142,9 @@ public class DateTimeTest extends TestCase {
 	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1792385&group_id=167309&atid=842434">bug #1792385: DateTime datatype handles months incorrectly</a>
 	 */
 	public void testCorrectMonthBehaviour() {
-		final DateTime y2000m1d1 = new DateTime(2000, 1, 1, 0, 0, 0);
+		final DateTime y2000m1d1 = new DateTime(2000, 1, 1, 0, 0, 0, 0, 0);
 		// if mounthts woule be from 0 - 11 this would shift to year 2001
-		final DateTime y2000m12d1 = new DateTime(2000, 12, 1, 0, 0, 0);
+		final DateTime y2000m12d1 = new DateTime(2000, 12, 1, 0, 0, 0, 0, 0);
 		assertTrue(y2000m1d1 + " must be smaller than " + y2000m12d1, y2000m1d1.compareTo(y2000m12d1) < 0);
 	}
 }
