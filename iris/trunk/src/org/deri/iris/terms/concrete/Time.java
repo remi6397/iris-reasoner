@@ -92,7 +92,7 @@ public class Time implements ITime {
 		DateTime.checkTimeZone( tzHour, tzMinute );
 		
 		int intSeconds = (int) second;
-		BigDecimal fractionalSeconds = new BigDecimal( second - intSeconds );
+		BigDecimal fractionalSeconds = new BigDecimal( Double.toString( second ) ).subtract( BigDecimal.valueOf( intSeconds ) );
 
 		time = FACTORY.newXMLGregorianCalendarTime(hour, 
 				minute, 

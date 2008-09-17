@@ -141,7 +141,7 @@ public class DateTime implements IDateTime {
 		checkTimeZone( tzHour, tzMinute );
 
 		int intSeconds = (int) second;
-		BigDecimal fractionalSeconds = new BigDecimal( second - intSeconds );
+		BigDecimal fractionalSeconds = new BigDecimal( Double.toString( second ) ).subtract( BigDecimal.valueOf( intSeconds ) );
 
 		datetime = FACTORY.newXMLGregorianCalendar(
 				BigInteger.valueOf((long) year), 

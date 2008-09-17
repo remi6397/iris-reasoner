@@ -115,7 +115,7 @@ public class Duration implements IDuration {
 				BigInteger.valueOf( day ), 
 				BigInteger.valueOf( hour ), 
 				BigInteger.valueOf( minute ), 
-				BigDecimal.valueOf( second )
+				new BigDecimal( Double.toString( second ) )
 				);
 	}
 
