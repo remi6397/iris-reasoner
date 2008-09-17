@@ -61,6 +61,21 @@ public class DateTimeTest extends TestCase {
 		assertEquals("Something wrong with setting or equals", dt, dt0);
 	}
 
+	public void testFloatingPointSeconds() {
+		double seconds = 12.34567;
+		final DateTime dt = new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, seconds, TZ_HOUR, TZ_MINUTE);
+
+		assertEquals("Something wrong with getYear", YEAR, dt.getYear());
+		assertEquals("Something wrong with getMonth", MONTH, dt .getMonth());
+		assertEquals("Something wrong with getDay", DAY, dt.getDay());
+		assertEquals("Something wrong with getHour", HOUR, dt.getHour());
+		assertEquals("Something wrong with getMinute", MINUTE, dt.getMinute());
+		assertEquals("Something wrong with getSecond", seconds, dt.getDecimalSecond());
+
+		DateTime dt0 = new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, seconds, TZ_HOUR, TZ_MINUTE);
+		assertEquals("Something wrong with setting or equals", dt, dt0);
+	}
+
 	public void testEquals() {
 		ObjectTests.runTestEquals(new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE),
 				new DateTime(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE),

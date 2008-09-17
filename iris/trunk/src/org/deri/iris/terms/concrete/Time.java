@@ -161,7 +161,7 @@ public class Time implements ITime {
 
 	public double getDecimalSecond()
 	{
-		BigDecimal seconds = time.getFractionalSecond();
+		BigDecimal seconds = time.getFractionalSecond().add( BigDecimal.valueOf( time.getSecond() ) );
 		return seconds.doubleValue();
 	}
 

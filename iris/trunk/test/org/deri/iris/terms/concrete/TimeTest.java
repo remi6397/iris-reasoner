@@ -48,6 +48,19 @@ public class TimeTest extends TestCase {
 		assertEquals("Something wrong with getSecond", SECOND, t.getSecond());
 	}
 
+	public void testFloatingPointSeconds() {
+		double seconds = 12.34567;
+		final Time t = new Time(HOUR, MINUTE, seconds, TZ_HOUR, TZ_MINUTE);
+
+		assertEquals(HOUR, t.getHour());
+		assertEquals(MINUTE, t.getMinute());
+		assertEquals(seconds, t.getDecimalSecond());
+
+		final Time t2 = new Time(HOUR, MINUTE, seconds, TZ_HOUR, TZ_MINUTE);
+		assertEquals(t, t2);
+	}
+
+
 	public void testEquals() {
 		ObjectTests.runTestEquals(new Time(HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE),
 				new Time(HOUR, MINUTE, SECOND, TZ_HOUR, TZ_MINUTE), 

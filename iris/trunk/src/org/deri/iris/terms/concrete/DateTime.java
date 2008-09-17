@@ -232,7 +232,7 @@ public class DateTime implements IDateTime {
 
 	public double getDecimalSecond()
 	{
-		BigDecimal seconds = datetime.getFractionalSecond();
+		BigDecimal seconds = datetime.getFractionalSecond().add( BigDecimal.valueOf( datetime.getSecond() ) );
 		return seconds.doubleValue();
 	}
 
