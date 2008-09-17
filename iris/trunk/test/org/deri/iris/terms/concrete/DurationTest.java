@@ -50,21 +50,27 @@ public class DurationTest extends TestCase {
 	}
 	
 	public void testBasic() {
-		final Duration d = new Duration( true, YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLISECOND);
+		Duration d1 = new Duration( true, YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLISECOND);
 
-		assertEquals("Something wrong with getYear", YEAR, d.getYear());
-		assertEquals("Something wrong with getMonth", MONTH, d.getMonth());
-		assertEquals("Something wrong with getDay", DAY, d.getDay());
-		assertEquals("Something wrong with getHour", HOUR, d.getHour());
-		assertEquals("Something wrong with getMinute", MINUTE, d.getMinute());
-		assertEquals("Something wrong with getSecond", SECOND, d.getSecond());
-		assertEquals("Something wrong with getMillisecond", MILLISECOND, d.getMillisecond());
+		assertEquals("Something wrong with getYear", YEAR, d1.getYear());
+		assertEquals("Something wrong with getMonth", MONTH, d1.getMonth());
+		assertEquals("Something wrong with getDay", DAY, d1.getDay());
+		assertEquals("Something wrong with getHour", HOUR, d1.getHour());
+		assertEquals("Something wrong with getMinute", MINUTE, d1.getMinute());
+		assertEquals("Something wrong with getSecond", SECOND, d1.getSecond());
+		assertEquals("Something wrong with getMillisecond", MILLISECOND, d1.getMillisecond());
+		
+		Duration d2 = new Duration( true, YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLISECOND);
+		assertEquals( d1, d2 );
 	}
 
 	public void testDecimalSeconds() {
-		double seconds = 1.23;
-		final Duration d = new Duration(true, YEAR, MONTH, DAY, HOUR, MINUTE, seconds);
-		assertEquals( seconds, d.getDecimalSecond() );
+		double seconds = 1.234567;
+		Duration d1 = new Duration(true, YEAR, MONTH, DAY, HOUR, MINUTE, seconds);
+		assertEquals( seconds, d1.getDecimalSecond() );
+
+		Duration d2 = new Duration(true, YEAR, MONTH, DAY, HOUR, MINUTE, seconds);
+		assertEquals( d1, d2 );
 	}
 	
 	public void testEquals() {
