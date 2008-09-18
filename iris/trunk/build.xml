@@ -6,6 +6,10 @@
 
 	<property file="build.properties" />
 
+	<patternset id="java-source-files">
+		<include name="**/*.java" />
+	</patternset>
+			
 	<path id="sablecccp">
 		<fileset dir="${dir.lib}">
 			<include name="**/sablecc-anttask.jar" />
@@ -22,12 +26,26 @@
 
 	<taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc" classpathref="sablecccp" />
 
-	<target name="init">
-		<tstamp />
+	<target name="init" />
+
+	<target name="clean" description="deletes ALL generated files" depends="init">
+		<delete dir="${dir.build}" />
 	</target>
 
-	<target name="compile" description="compiles all the class files" depends="init,prepareclasses">
-		<javac srcdir="${dir.api}:${dir.src}" classpathref="defaultcp"
+	<target name="compile" description="compiles all the class files" depends="init">
+		<delete dir="${dir.classes}" />
+		<mkdir  dir="${dir.classes}" />
+		
+		<copy todir="${dir.classes}" preservelastmodified="yes" includeEmptyDirs="no">
+			<fileset dir="${dir.src}">
+				<patternset refid="java-source-files" />
+			</fileset>
+			<fileset dir="${dir.api}">
+				<patternset refid="java-source-files" />
+			</fileset>
+		</copy>
+		
+		<javac srcdir="${dir.classes}" classpathref="defaultcp"
 			destdir="${dir.classes}" deprecation="on">
 			<compilerarg value="-Xlint:unchecked" compiler="modern" />
 			<compilerarg value="-Xlint:unchecked" compiler="classic" />
@@ -65,12 +83,6 @@
 			</classpath>
 			<include name="**/*.java" />
 		</javac>
-		<!-- delete the java files -->
-		<delete>
-			<fileset dir="${dir.sablecc.src}">
-				<include name="**/*.java" />
-			</fileset>
-		</delete>
 		<!-- generate the jar file -->
 		<jar basedir="${dir.sablecc.src}" destfile="${file.jar.parser}" index="true" />
 	</target>
@@ -222,31 +234,10 @@
 				<include name="ChangeLog" />
 			</zipfileset>
 		</zip>
-		<tar destfile="${dir.release}/release.tar">
-			<tarfileset dir="${dir.jar}">
-				<include name="**/*.jar" />
-			</tarfileset>
-			<tarfileset dir="${dir.lib}/ext/jgrapht" prefix="lib/jgrapht" />
-			<tarfileset dir="${dir.javadoc}" prefix="doc/javadoc" />
-			<tarfileset dir="doc" prefix="doc">
-				<include name="**/*" />
-			</tarfileset>
-			<tarfileset dir="${basedir}">
-				<include name="LICENSE.txt" />
-				<include name="ChangeLog" />
-			</tarfileset>
-		</tar>
-		<gzip src="${dir.release}/release.tar" destfile="${file.release.gz}" />
-		<bzip2 src="${dir.release}/release.tar" destfile="${file.release.bz2}" />
-		<delete file="${dir.release}/release.tar" />
 	</target>
 
 	<target name="delclasses" description="deletes only the class files" depends="init">
 		<delete dir="${dir.classes}" />
-	</target>
-
-	<target name="clean" description="deletes ALL generated files" depends="init">
-		<delete dir="${dir.build}" />
 	</target>
 
 	<target name="preparesablecc" depends="init">
@@ -254,10 +245,6 @@
 		<delete dir="${dir.sablecc.src}" />
 		<!-- created the directory again -->
 		<mkdir dir="${dir.sablecc.src}" />
-	</target>
-
-	<target name="prepareclasses" depends="init">
-		<mkdir dir="${dir.classes}" />
 	</target>
 
 	<target name="prepareappclasses" depends="init">
