@@ -1,6 +1,30 @@
 The IRIS ChangeLog:
 ===================
 
+
+Changes for release 0.58
+========================
+
+New features
+1938699 Various parser enhancements
+1904010 Allow unsafe-rules by implementing a rule augmentation step.
+
+Bug fixes
+2103290 RuleAnalyser fails with constructed terms.
+2101601 Unsafe rule detection fails for rules with constructed terms
+2098544 Not all ground terms added to finite universe
+2010451 Time and DateTime not compatible with XSD data types.
+2038566 RuleManipulator does not replace constructed terms
+1919554 magic sets with builtins don't evaluate correctly
+1830964 Magic Sets evaluation produces different results.
+1907086 magic sets: labeled rules are not consturced correctly
+1909118 Rule re-ordering losing rules.
+1904505 magic sets: negative rules with negative query literals
+ 
+Maintenance
+1884378 Reintroduce magic sets and predicate filtering optimisations
+
+
 Changes for release 0.57
 ========================
 
