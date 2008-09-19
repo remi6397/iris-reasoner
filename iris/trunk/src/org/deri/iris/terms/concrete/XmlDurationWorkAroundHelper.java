@@ -247,15 +247,9 @@ public class XmlDurationWorkAroundHelper
 			}
 			else
 			{
-				System.out.print( toString( g1 ) );
 				subtractField( g1, g2, f );
-				System.out.println( "  ===>>>  " + toString( g1 ) );
 			}
 		}
-		
-//		BigDecimal seconds = BigDecimal.valueOf( g1.get( Calendar.MILLISECOND ) );
-//		seconds = seconds.divide( BigDecimal.valueOf( 1000 ) );
-//		seconds = seconds.add( BigDecimal.valueOf( g1.get( Calendar.SECOND ) ) );
 		
 		return FACTORY.newDuration(
 						positive,
