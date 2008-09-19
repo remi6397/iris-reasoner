@@ -225,7 +225,7 @@
 				<include name="${file.src.zip}" />
 			</zipfileset>
 			
-			<zipfileset dir="doc" prefix="doc">
+			<zipfileset dir="doc/user_guide" prefix="doc">
 				<include name="user_guide.pdf" />
 			</zipfileset>
 			
