@@ -231,7 +231,19 @@ public class DemoW
 				"?- democrat(?x)." + NEW_LINE +
 				"?- hippy(?x)."
 			);
+			
+			mProgram.setText(
+							"some_calc(?X,?Z) :- MULTIPLY(?X,?X,?Y), ADD(?Y,-1, ?Z). " + NEW_LINE +
+							"?-some_calc(5,?Z)."
+			);
 
+			mProgram.setText(
+							"p( _datetime( 1999, 12, 31, 23, 59, 59 ), _datetime( 1998, 11, 30, 22, 58, 58 ) )." + NEW_LINE +
+							"p( _datetime( 2000, 1, 1, 0, 0, 0 ), _datetime( 1999, 12, 31, 23, 59, 0 ) )." + NEW_LINE +
+							NEW_LINE +
+							"?- p(?x,?y), ?x-?y=?z."
+			);
+							
 			mRun.addActionListener( this );
 
 			mAbort.addActionListener( this );
