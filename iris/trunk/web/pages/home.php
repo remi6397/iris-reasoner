@@ -65,6 +65,39 @@
 	<tr valign=top>
 		<td width=150>
 			<p align=left>
+				19 Sep 2008
+			</p>
+		</td>
+		<td>
+			<p align=left>
+				IRIS <a href="download#v0_5_8">version 0.58</a> released.<br />
+Unsafe rules are now supported. The technique involves a rule augmentation step,
+where extra literals are added to rules using a special 'universe' predicate.
+This predicate automatically contains all ground terms found in the input program.<br />
+<br />
+The parser has been improved:<br />
+1) comments can now span multiple lines using /*  ... */<br />
+2) both ' and " can be used for string delimiters<br />
+3) ' and " can be used inside strings using the escape character (\)<br />
+4) all characters are now allowed in strings<br />
+5) an end-of-line comment (//...) is now allowed at the end of a program<br />
+<br />
+Magic sets has been re-introduced, although there are still issues:
+The well-founded model of the transformed program does not always coincide with that of the original program.<br />
+<br />
+Proper support for XML schema data-types.
+'time', 'datetime' and 'duration' now have a floating point seconds field.
+'date' now has a timezone field that was previously missing.
+Many bugs have been found and fixed relating to arithmetic with all the date and time data-types.<br />
+<br />
+Several other important bugs have also been fixed.
+			</p>
+		</td>
+	</tr>
+
+	<tr valign=top>
+		<td width=150>
+			<p align=left>
 				28 Feb 2008
 			</p>
 		</td>
