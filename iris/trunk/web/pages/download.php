@@ -7,7 +7,36 @@
 
 <h2>Release History</h2>
 
-<p><b><a id="v0_5_7" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=580282">v0.5.7</a></b> 2008-02-28</p>
+
+<p><b><a id="v0_5_8" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=627356">v0.58</a></b> 2008-09-19</p>
+ 
+<p>New features</p>
+<ul>
+	<li>1938699 Various parser enhancements</li>
+	<li>1904010 Allow unsafe-rules by implementing a rule augmentation step.</li>
+</ul>
+
+<p>Bug fixes</p>
+<ul>
+	<li>2103290 RuleAnalyser fails with constructed terms.</li>
+	<li>2101601 Unsafe rule detection fails for rules with constructed terms</li>
+	<li>2098544 Not all ground terms added to finite universe</li>
+	<li>2010451 Time and DateTime not compatible with XSD data types.</li>
+	<li>2038566 RuleManipulator does not replace constructed terms</li>
+	<li>1919554 magic sets with builtins don't evaluate correctly</li>
+	<li>1830964 Magic Sets evaluation produces different results.</li>
+	<li>1907086 magic sets: labeled rules are not consturced correctly</li>
+	<li>1909118 Rule re-ordering losing rules.</li>
+	<li>1904505 magic sets: negative rules with negative query literals</li>
+</ul>
+
+<p>Maintenance updates</p>
+<ul>
+	<li>1884378 Reintroduce magic sets and predicate filtering optimisations</li>
+</ul>
+
+
+<p><b><a id="v0_5_7" href="http://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=580282">v0.57</a></b> 2008-02-28</p>
 
 <p>New features</p>
 <ul>
@@ -37,7 +66,7 @@
 
 
 
-<p><b><a id="v0_5_6" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=576174">v0.5.6</a></b> 2008-02-13</p> 
+<p><b><a id="v0_5_6" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=576174">v0.56</a></b> 2008-02-13</p> 
 <p>Maintenance</p>
 <ul>
 	<li>1888840 Allow assignment with constructed terms containing variables.</li>
@@ -62,7 +91,7 @@
 </ul>
 	
 
-<p><b><a id="v0_5_5" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=573136">v0.5.5</a></b> 2008-02-01</p> 
+<p><b><a id="v0_5_5" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=573136">v0.55</a></b> 2008-02-01</p> 
 <p>New features</p>
 <ul>
 	<li>1884201 Add support for reasoning with function symbols.</li>
