@@ -24,12 +24,14 @@ package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.CONCRETE;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.deri.iris.Configuration;
@@ -307,10 +309,9 @@ public class BuiltinHelper {
 				dt.getDay(), 
 				dt.getHour(), 
 				dt.getMinute(), 
-				dt.getSecond(),
-				dt.getMillisecond(), 
-				dt.getTimezone() / 60,
-				dt.getTimezone() % 60);
+				XmlDurationWorkAroundHelper.getSeconds( dt ).doubleValue(), 
+				tzHours( dt ),
+				tzMinutes( dt) );
 	}
 
 	/**
@@ -324,8 +325,22 @@ public class BuiltinHelper {
 		return CONCRETE.createDate(dt.getYear(), 
 				dt.getMonth(), 
 				dt.getDay(), 
-				dt.getTimezone() / 60,
-				dt.getTimezone() % 60);
+				tzHours( dt ),
+				tzMinutes( dt) );
+	}
+	
+	private static int tzHours( XMLGregorianCalendar dt )
+	{
+		return dt.getTimezone() / 60;
+	}
+
+	private static int tzMinutes( XMLGregorianCalendar dt )
+	{
+		int tz = dt.getTimezone();
+		if( tz < 0 )
+			return -( (-tz) % 60 );
+		else
+			return tz % 60;
 	}
 
 	/**
@@ -340,8 +355,8 @@ public class BuiltinHelper {
 				dt.getMinute(), 
 				dt.getSecond(),
 				dt.getMillisecond(), 
-				dt.getTimezone() / 60,
-				dt.getTimezone() % 60);
+				tzHours( dt ),
+				tzMinutes( dt) );
 	}
 
 	/**
@@ -436,7 +451,12 @@ public class BuiltinHelper {
 		} else if ((t0 instanceof IDateTime) && (t1 instanceof IDateTime)) { // datetime - datetime = duration
 			final XMLGregorianCalendar cal0 = ((IDateTime) t0).getValue();
 			final XMLGregorianCalendar cal1 = ((IDateTime) t1).getValue();
-			return createDuration(cal0.toGregorianCalendar().getTimeInMillis() - cal1.toGregorianCalendar().getTimeInMillis());
+			
+			return createDuration( XmlDurationWorkAroundHelper.subtract( cal0, cal1 ) );
+			
+//			return createDuration(cal0.toGregorianCalendar().getTimeInMillis() - cal1.toGregorianCalendar().getTimeInMillis());
+			
+			
 		} else if ((t0 instanceof IDateTime) && (t1 instanceof IDuration)) { // datetime - duration = datetime
 			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTime) t0).getValue().clone();
 			cal0.add(((IDuration) t1).getValue().negate());
@@ -444,7 +464,10 @@ public class BuiltinHelper {
 		} else if ((t0 instanceof IDateTerm) && (t1 instanceof IDateTerm)) { // date - date = duration
 			final XMLGregorianCalendar cal0 = ((IDateTerm) t0).getValue();
 			final XMLGregorianCalendar cal1 = ((IDateTerm) t1).getValue();
-			return createDuration(cal0.toGregorianCalendar().getTimeInMillis() - cal1.toGregorianCalendar().getTimeInMillis());
+			
+			return createDuration( XmlDurationWorkAroundHelper.subtract( cal0, cal1 ) );
+//			return createDuration(cal0.toGregorianCalendar().getTimeInMillis() - cal1.toGregorianCalendar().getTimeInMillis());
+			
 		} else if ((t0 instanceof IDateTerm) && (t1 instanceof IDuration)) { // date - duration = date
 			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTerm) t0).getValue().clone();
 			cal0.add(((IDuration) t1).getValue().negate());

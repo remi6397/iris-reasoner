@@ -217,14 +217,14 @@ public class DateTime implements IDateTime {
 		return datetime.toString();
 	}
 
-	protected static int getTimeZoneHour(final TimeZone tz) {
-		return tz.getRawOffset() / MILLIS_PER_HOUR;
-	}
-
-	protected static int getTimeZoneMinute(final TimeZone tz) {
-		return (tz.getRawOffset() % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE;
-	}
-
+//	protected static int getTimeZoneHour(final TimeZone tz) {
+//		return tz.getRawOffset() / MILLIS_PER_HOUR;
+//	}
+//
+//	protected static int getTimeZoneMinute(final TimeZone tz) {
+//		return (tz.getRawOffset() % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE;
+//	}
+//
 	public boolean isGround() {
 		return true;
 	}

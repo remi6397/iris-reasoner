@@ -22,6 +22,7 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.util.TimeZone;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -132,5 +133,9 @@ public class DateTerm implements IDateTerm {
 
 	public XMLGregorianCalendar getValue() {
 		return (XMLGregorianCalendar) date.clone();
+	}
+
+	public TimeZone getTimeZone() {
+		return date.getTimeZone(0);
 	}
 }

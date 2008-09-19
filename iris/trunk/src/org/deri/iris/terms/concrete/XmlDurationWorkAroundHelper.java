@@ -24,10 +24,13 @@ package org.deri.iris.terms.concrete;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * IRIS duration objects are implemented using the javax.xml.datatype.Duration class.
@@ -198,7 +201,92 @@ public class XmlDurationWorkAroundHelper
 		Duration normalised = normaliseSeconds( normaliseDays( duration ) );
 		return normalised.hashCode();
 	}
+	
+	public static BigDecimal getSeconds( XMLGregorianCalendar x )
+	{
+		BigDecimal fractional = x.getFractionalSecond();
+		if( fractional == null )
+			fractional = BigDecimal.ZERO;
+		
+		BigDecimal whole = BigDecimal.valueOf( x.getSecond() );
+		
+		return whole.add( fractional );
+	}
 
+	private static int[] forwardFields = { Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND };
+	private static int[] reverseFields = { Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY, Calendar.DAY_OF_MONTH, Calendar.MONTH, Calendar.YEAR };
+	
+	public static Duration subtract( XMLGregorianCalendar x1, XMLGregorianCalendar x2 )
+	{
+		boolean positive = x1.compare( x2 ) >= 0;
+		
+		if( ! positive )
+		{
+			XMLGregorianCalendar temp = x1;
+			x1 = x2;
+			x2 = temp;
+		}
+		
+		BigDecimal s1 = getSeconds( x1 );
+		BigDecimal s2 = getSeconds( x2 );
+		BigDecimal seconds = s1.subtract( s2 );
+		if( seconds.compareTo( BigDecimal.ZERO ) < 0 )
+			seconds = seconds.add( BigDecimal.valueOf( 60 ) );
+		
+		GregorianCalendar g1 = x1.toGregorianCalendar();
+		GregorianCalendar g2 = x2.toGregorianCalendar();
+		
+		int year = 0;
+		for( int f : reverseFields )
+		{
+			if( f == Calendar.YEAR )
+			{
+				int year1 = g1.get( f );
+				int year2 = g2.get( f );
+				year = year1 - year2;
+			}
+			else
+			{
+				System.out.print( toString( g1 ) );
+				subtractField( g1, g2, f );
+				System.out.println( "  ===>>>  " + toString( g1 ) );
+			}
+		}
+		
+//		BigDecimal seconds = BigDecimal.valueOf( g1.get( Calendar.MILLISECOND ) );
+//		seconds = seconds.divide( BigDecimal.valueOf( 1000 ) );
+//		seconds = seconds.add( BigDecimal.valueOf( g1.get( Calendar.SECOND ) ) );
+		
+		return FACTORY.newDuration(
+						positive,
+						BigInteger.valueOf( year ),
+						BigInteger.valueOf( g1.get( Calendar.MONTH ) ),
+						BigInteger.valueOf( g1.get( Calendar.DAY_OF_MONTH ) - 1 ),
+						BigInteger.valueOf( g1.get( Calendar.HOUR_OF_DAY ) ),
+						BigInteger.valueOf( g1.get( Calendar.MINUTE ) ),
+						seconds );
+	}
+
+	private static String toString( GregorianCalendar g1 )
+	{
+		StringBuilder buffer = new StringBuilder();
+		
+		buffer.append( g1.get( Calendar.YEAR ) + "/" + (g1.get( Calendar.MONTH ) + 1) + "/" + g1.get( Calendar.DAY_OF_MONTH ) );
+		buffer.append( "  " );
+		buffer.append( g1.get( Calendar.HOUR_OF_DAY ) + ":" + g1.get( Calendar.MINUTE ) + ":" + g1.get( Calendar.SECOND )+ "." + g1.get( Calendar.MILLISECOND ) );
+		
+		return buffer.toString();
+	}
+	
+	private static void subtractField( GregorianCalendar g1, GregorianCalendar g2, int field )
+	{
+//		int value1 = g1.get( field );
+		int value2 = g2.get( field );
+
+		if( field == Calendar.DAY_OF_MONTH )
+			value2 -= 1;
+		g1.add( field, -value2 );
+	}
 	
 	/**
 	 * Test for mathematical equality of two BigDecimal objects

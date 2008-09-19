@@ -22,6 +22,7 @@
  */
 package org.deri.iris.api.terms.concrete;
 
+import java.util.TimeZone;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.ITerm;
@@ -46,21 +47,21 @@ public interface IDateTerm extends ITerm {
 	/**
 	 * Return the wrapped type.
 	 */
-	public XMLGregorianCalendar getValue();
+	XMLGregorianCalendar getValue();
 
 	/**
 	 * Returns the month of the year.
 	 * 
 	 * @return the month.
 	 */
-	public int getMonth();
+	int getMonth();
 	
 	/**
 	 * Returns the year.
 	 * 
 	 * @return the year.
 	 */
-	public int getYear();
+	int getYear();
 	
 	
 	/**
@@ -68,5 +69,13 @@ public interface IDateTerm extends ITerm {
 	 * 
 	 * @return the day
 	 */
-	public int getDay();
+	int getDay();
+
+
+	/**
+	 * Returns the Timezone
+	 * 
+	 * @return the timezone
+	 */
+	TimeZone getTimeZone();
 }
