@@ -70,7 +70,7 @@ public class OptimisedProgramStrategyAdaptor implements IEvaluationStrategy
 			
 			for( IProgramOptimisation optimisation : mConfiguration.programOptmimisers )
 			{
-				IProgramOptimisation.Result result = optimisation.optimise( mRules, query );
+				IProgramOptimisation.Result result = optimisation.optimise( rules, query );
 				
 				// If the optimisation succeeded then replace the rules and query with the optimised version. 
 				if( result != null )
@@ -93,7 +93,7 @@ public class OptimisedProgramStrategyAdaptor implements IEvaluationStrategy
 			{
 				// Couldn't optimise at all, so the entire minimal model must be calculated
 				// (assuming a bottom-up evaluation strategy is used!)
-				mStrategy = mConfiguration.evaluationStrategyFactory.createEvaluator( mFacts, rules, mConfiguration );
+				mStrategy = mConfiguration.evaluationStrategyFactory.createEvaluator( mFacts, mRules, mConfiguration );
 				
 				mMinimalModelComputed = true;
 
