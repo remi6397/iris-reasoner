@@ -45,16 +45,16 @@
 			</fileset>
 		</copy>
 		
-		<javac srcdir="${dir.classes}" classpathref="defaultcp"
-			destdir="${dir.classes}" deprecation="on">
-			<compilerarg value="-Xlint:unchecked" compiler="modern" />
-			<compilerarg value="-Xlint:unchecked" compiler="classic" />
+		<javac srcdir="${dir.classes}" classpathref="defaultcp" destdir="${dir.classes}" compiler="modern" deprecation="on" debug="on" debuglevel="lines,vars,source">
+			<compilerarg value="-Xlint:unchecked" />
+			<compilerarg value="-version" />
 			<include name="**/*.java" />
 		</javac>
 	</target>
 
 	<target name="compile_app" description="compiles all the application class files" depends="init,prepareappclasses">
-		<javac srcdir="${dir.src.app}" destdir="${dir.app.classes}" deprecation="on">
+		<javac srcdir="${dir.src.app}" destdir="${dir.app.classes}" compiler="modern" deprecation="on" debug="on" debuglevel="lines,vars,source">
+			<compilerarg value="-version" />
 			<classpath>
 				<pathelement path="${file.jar.main}" />
 				<pathelement path="${file.jar.parser}" />
@@ -76,7 +76,8 @@
 			</fileset>
 		</copy>
 		<!-- compile the classes -->
-		<javac srcdir="${dir.sablecc.src}" destdir="${dir.sablecc.src}">
+		<javac srcdir="${dir.sablecc.src}" destdir="${dir.sablecc.src}" compiler="modern" deprecation="on" debug="on" debuglevel="lines,vars,source">
+			<compilerarg value="-version" />
 			<classpath>
 				<pathelement path="${file.jar.main}" />
 				<path refid="defaultcp" />
@@ -116,9 +117,9 @@
 	</target>
 
 	<target name="compiletest" description="compiles the test classes" depends="init,jar,preparecompiletest">
-		<javac srcdir="${dir.src.test}" destdir="${dir.classes.test}" deprecation="on">
-			<compilerarg value="-Xlint:unchecked" compiler="modern" />
-			<compilerarg value="-Xlint:unchecked" compiler="classic" />
+		<javac srcdir="${dir.src.test}" destdir="${dir.classes.test}" compiler="modern" deprecation="on" debug="on" debuglevel="lines,vars,source">
+			<compilerarg value="-Xlint:unchecked" />
+			<compilerarg value="-version" />
 			<include name="**/*.sql" />
 			<include name="**/*.java" />
 			<exclude name="**/qsq/**" />
