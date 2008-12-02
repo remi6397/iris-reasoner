@@ -79,11 +79,6 @@ public class KnowledgeBase implements IKnowledgeBase
 		
 		mFacts = facts;
 		
-		if( mConfiguration.programOptmimisers.size() > 0 )
-			mEvaluationStrategy = new OptimisedProgramStrategyAdaptor( facts, rules, mConfiguration );
-		else
-			mEvaluationStrategy = mConfiguration.evaluationStrategyFactory.createEvaluator( facts, rules, configuration );
-		
 		// Check if the debug environment variable is set.
 		DEBUG = System.getenv( IRIS_DEBUG_FLAG ) != null;
 		
@@ -96,6 +91,11 @@ public class KnowledgeBase implements IKnowledgeBase
 			System.out.println( "------------------------" );
 			System.out.println( mFacts );
 		}
+
+		if( mConfiguration.programOptmimisers.size() > 0 )
+			mEvaluationStrategy = new OptimisedProgramStrategyAdaptor( facts, rules, mConfiguration );
+		else
+			mEvaluationStrategy = mConfiguration.evaluationStrategyFactory.createEvaluator( facts, rules, configuration );
 	}
 	
 	public IRelation execute( IQuery query, List<IVariable> variableBindings ) throws EvaluationException
