@@ -280,7 +280,6 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 				return; // Literal selection not possible
 			}
 			
-			// TODO gigi: negation
 			if (!selectedLiteral.isPositive()) {
 				// Negate the literal again to get a positive literal
 				ILiteral negatedLiteral = Factory.BASIC.createLiteral(true, selectedLiteral.getAtom());
@@ -291,12 +290,10 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 				newLiteralList.addAll( this.getQuery().getLiterals() );
 				newLiteralList.remove( selectedLiteral );
 				
-//				OLDTEvaluator eval = new OLDTEvaluator(mFacts, mRules);
 				IQuery newQuery = Factory.BASIC.createQuery(newLiteralList);
 				Node nafNode = new Node(newQuery);
 				if (DEBUG) { System.out.println("\n==================================="); }
 				IRelation evaluation = nafNode.evaluate();
-//				IRelation evaluation = eval.evaluate(newQuery);
 				if (DEBUG) { System.out.println("===================================\n"); }
 				this.printNodeDebug();
 				if (DEBUG) { System.out.println("\t NAF evaluation: " + evaluation); }
@@ -359,8 +356,6 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 					if (DEBUG) { printNodeDebug(); System.out.println("\t link extension with " + answer); }
 					
 					List<IVariable> varList = TopDownHelper.getVariables( this.getSelectedLiteral().getAtom().getTuple() );
-					// TODO gigi: check if it does work with set of variables
-//					Set<IVariable> varList = this.getSelectedLiteral().getAtom().getTuple().getVariables();
 					
 					if (answer.size() == varList.size()) {
 						Map<IVariable, ITerm> variableMapForSubstitution = new HashMap<IVariable, ITerm>();
@@ -447,8 +442,6 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 			if (inputMap == null || this.getSelectedLiteral() == null)
 				return;
 			
-//			if (DEBUG) { System.out.println(this.getNumLiteralsLeft() + " " + (this.getQuery().getLiterals().size()-1)); }
-			
 			ITuple tupleToAddToRelation = TopDownHelper.resolveTuple(this.getSelectedLiteral(), inputMap);
 			IAtom atom = this.getSelectedLiteral().getAtom();
 			
@@ -461,7 +454,6 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 					// (tuple was relevant for another node, further down in the tree)
 					mMemoTable.add(atom, tupleToAddToRelation);
 				}
-//				return; // TODO gigi: push tuple up to root?
 			}
 			
 			if (this.getSubstitution() != null)

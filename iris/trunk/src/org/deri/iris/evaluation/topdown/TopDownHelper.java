@@ -263,7 +263,7 @@ public class TopDownHelper {
 			if (term instanceof IVariable && !uniqueVarList.contains((IVariable)term)) {
 				uniqueVarList.add((IVariable)term);
 			}
-			// TODO gigi: add recursion here to get variables inside constructed terms
+			// TODO gigi: check if recursion is needed here to get variables inside constructed terms
 		}
 		
 		return uniqueVarList;
@@ -431,7 +431,6 @@ public class TopDownHelper {
 		Map<IVariable, ITerm> deeperMapUnused = new HashMap<IVariable, ITerm>();
 		deeperMapUnused.putAll(deeperMap);
 		
-		// TODO gigi: finish mergeSubstitutions(map1, map2)
 		for (Entry<IVariable, ITerm> e : higherMap.entrySet()) {
 			ITerm substitutedTerm = null;
 			ITerm term = e.getValue();
@@ -442,12 +441,16 @@ public class TopDownHelper {
 			if (term instanceof IVariable) {
 				deeperMapUnused.remove((IVariable)term);
 			}
+
+			// TODO gigi: check if constructed terms need special treatment
+			
 //			if (term instanceof IConstructedTerm) {
 //				IConstructedTerm ct = (IConstructedTerm)term;
 //				for (IVariable var : ct.getVariables()) {
 //					deeperMapUnused.remove(var);
 //				}
 //			}
+			
 			substitutedTerm = TermMatchingAndSubstitution.substituteVariablesInToTerm(term, deeperMap);
 			assert substitutedTerm != null;
 			mergedMap.put(e.getKey(), substitutedTerm);
