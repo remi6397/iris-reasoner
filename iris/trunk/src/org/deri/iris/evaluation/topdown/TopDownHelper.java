@@ -23,6 +23,7 @@
 package org.deri.iris.evaluation.topdown;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,8 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.deri.iris.EvaluationException;
+import org.deri.iris.RuleUnsafeException;
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -39,8 +42,12 @@ import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.builtins.EqualBuiltin;
+import org.deri.iris.builtins.ExactEqualBuiltin;
+import org.deri.iris.evaluation.topdown.oldt.OLDTEvaluator;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.rules.RuleManipulator;
+import org.deri.iris.storage.IRelation;
 import org.deri.iris.utils.TermMatchingAndSubstitution;
 
 /**
@@ -66,8 +73,8 @@ public class TopDownHelper {
 	 * To avoid intersection, do an occur check first.
 	 * 
 	 * @param query a query element that contains the rule head
-	 * @param rule a rule element
 	 * @param selectedLiteral the selected literal
+	 * @param rule a rule element
 	 * 
 	 * @return A new query element where the rule head is replaced with the rule body, if unifyable with the selected literal.
 	 * 
@@ -77,12 +84,6 @@ public class TopDownHelper {
 		LinkedList<ILiteral> newLiterals = new LinkedList<ILiteral>();
 		
 		assert TopDownHelper.match( selectedLiteral, rule.getHead().get(0) ) == true : "Selected literal MUST match rule head";
-		
-		for (IVariable v : getVariables(query)) {
-			if (getVariables(rule).contains(v)) {
-				throw new EvaluationException("Intersection of variables in rule and query. Run occur check first.");
-			}
-		}
 		
 		for (ILiteral queryLiteral : query.getLiterals()) {
 			// Replace selected literal with rule body
@@ -126,6 +127,8 @@ public class TopDownHelper {
 		return Factory.BASIC.createQuery( substitutedLiterals );
 	}
 
+	
+	
 	/**
 	 * Replaces Variables in a Literal, and gives back the substituted Literal
 	 * 
@@ -135,7 +138,7 @@ public class TopDownHelper {
 	 * @return A new Literal element where the matching variables are replaced 
 	 *         with the terms from the <code>variableMap</code>
 	 */
-	static ILiteral substituteVariablesInToLiteral(ILiteral literal, Map<IVariable, ITerm> variableMap) {
+	public static ILiteral substituteVariablesInToLiteral(ILiteral literal, Map<IVariable, ITerm> variableMap) {
 		ITuple tuple = literal.getAtom().getTuple();
 		ITuple substitutedTuple = tuple;
 		for (IVariable variable : tuple.getVariables()) {
@@ -195,7 +198,7 @@ public class TopDownHelper {
 	 * 
 	 * @return <code>true</code> if the predicates have the same name and arity, <code>false</code> otherwise.
 	 */
-	static boolean match(IPredicate pred1, IPredicate pred2) {
+	public static boolean match(IPredicate pred1, IPredicate pred2) {
 		if ( pred1.getArity() == pred2.getArity() 
 			 && pred1.equals( pred2 ) )
 			return true;
@@ -219,7 +222,7 @@ public class TopDownHelper {
 	 * @param queryLiteral
 	 * @param factPredicate
 	 * 
-	 * @return
+	 * @return <code>true</code> if the predicates of the literals have the same name and arity, <code>false</code> otherwise.
 	 */
 	public static boolean match(ILiteral queryLiteral, IPredicate factPredicate) {
 		return match( queryLiteral.getAtom().getPredicate() , factPredicate );
@@ -244,45 +247,83 @@ public class TopDownHelper {
 		
 		return uniqueList;
 	}
+	
+	/**
+	 * Get a list of variables in the right order, with no duplicates 
+	 * @param tuple the ITuple tuple
+	 * 
+	 * @return A unique list of variables. The list is empty if the tuple contains no variables.
+	 */
+	public static List<IVariable> getVariables(ITuple tuple) {
+		
+		List<IVariable> uniqueVarList = new LinkedList<IVariable>();
+		
+		for (int i=0; i<tuple.size(); i++) {
+			ITerm term = tuple.get(i);
+			if (term instanceof IVariable && !uniqueVarList.contains((IVariable)term)) {
+				uniqueVarList.add((IVariable)term);
+			}
+			// TODO gigi: add recursion here to get variables inside constructed terms
+		}
+		
+		return uniqueVarList;
+	}
 
 	/**
 	 * Creates a variable map that will replace variable ?X with ?X1 if
-	 * the variable occurs in both tuples. Used by SLDNF evaluation.
+	 * the variable occurs in both tuples.
 	 *  
 	 * @param rule a rule
 	 * @param query a query
 	 * 
 	 * @return a variable map that maps the old variable names to the new ones
+	 * @throws RuleUnsafeException thrown if the rule contains unbound variables
 	 */
-	public static Map<IVariable, ITerm> getVariableMapForOccurCheck(IRule rule, IQuery query) {
+	public static Map<IVariable, ITerm> getVariableMapForVariableRenaming(IRule rule, IQuery query) throws RuleUnsafeException {
 		Map<IVariable, ITerm> variableMapForOccurCheck = new HashMap<IVariable, ITerm>();
 		
-		Set<IVariable> ruleVariables = getVariables(rule);
-		List<IVariable> queryVariables = getVariables(query);
+		Set<IVariable> ruleVariables = getBodyVariables(rule);
+					   ruleVariables.addAll(getHeadVariables(rule));
+		List<IVariable> queryVariables = getVariables(query);		
 		
-		if (queryVariables != null) {
-			for ( IVariable var : ruleVariables ) {
-				int i = 0;
-				IVariable varRename = var;
-				while (queryVariables.contains( varRename )) {
-					varRename = Factory.TERM.createVariable(var.getValue().toString() + ++i);
-				}
-				variableMapForOccurCheck.put(var, varRename);
+		for ( IVariable var : queryVariables ) {
+			
+			if ( !ruleVariables.contains(var) )
+				continue; 
+			
+			int i = 0;
+			IVariable varRename = var;
+			while (ruleVariables.contains( varRename )) {
+				varRename = Factory.TERM.createVariable(var.getValue().toString() + ++i);
 			}
+			
+			if (varRename != var)
+				variableMapForOccurCheck.put(var, varRename);
 		}
 		
 		return variableMapForOccurCheck;
 	}
-
+	
 	/**
-	 * Get all distinct variables in a rule. No particular order is guaranteed.
+	 * Get all distinct variables in a rule head. No particular order is guaranteed.
 	 *  
 	 * @param rule the rule
 	 * 
 	 * @return a set of distinct variables
 	 */
-	private static Set<IVariable> getVariables(IRule rule) {
-		Set<IVariable> ruleVariables = rule.getHead().get(0).getAtom().getTuple().getVariables();
+	private static Set<IVariable> getHeadVariables(IRule rule) {
+		return rule.getHead().get(0).getAtom().getTuple().getVariables();
+	}
+	
+	/**
+	 * Get all distinct variables in a rule body. No particular order is guaranteed.
+	 *  
+	 * @param rule the rule
+	 * 
+	 * @return a set of distinct variables
+	 */
+	private static Set<IVariable> getBodyVariables(IRule rule) {
+		Set<IVariable> ruleVariables = new HashSet<IVariable>();
 		for (ILiteral ruleBodyLiteral : rule.getBody()) {
 			ruleVariables.addAll( ruleBodyLiteral.getAtom().getTuple().getVariables() );
 		}
@@ -305,9 +346,18 @@ public class TopDownHelper {
 		
 		Map<IVariable, ITerm> variableMap = new HashMap<IVariable, ITerm>();
 		
+//		assert (getVariables(query).size() == branchTuple.size()) : "Number of variables in query does not match tuple size.";
+		if (getVariables(query).size() != branchTuple.size()) {
+			return variableMap;
+		}
+		
 		int i = 0;
 		for (IVariable var : getVariables(query)) {
-			variableMap.put(var, branchTuple.get(i++));
+			if (branchTuple.isEmpty()) {
+				variableMap.put(var, var);
+			} else {
+				variableMap.put(var, branchTuple.get(i++));
+			}
 		}
 		
 		return variableMap;
@@ -323,6 +373,7 @@ public class TopDownHelper {
 	 * 
 	 * @return a new tuple
 	 */
+	@Deprecated
 	public static ITuple createTupleFromQueryAndVariableMap(IQuery query, Map<IVariable, ITerm> variableMap) {
 		
 		assert query.getVariables().size() == variableMap.size() : "All variables must have a mapping";
@@ -354,10 +405,20 @@ public class TopDownHelper {
 	 * @return a tuple containing the resolved variables of the query
 	 */
 	public static ITuple resolveTuple(IQuery query, Map<IVariable, ITerm> variableMap) {
+		return resolveTuple(getVariables(query), variableMap, false);
+	}
+	public static ITuple resolveTuple(ILiteral literal, Map<IVariable, ITerm> variableMap) {
+		return resolveTuple(getVariables(literal.getAtom().getTuple()), variableMap, false);
+	}
+	public static ITuple resolveTuple(List<IVariable> varList, Map<IVariable, ITerm> variableMap, boolean partialResult) {
 		// Resolve evaluated variables
 		List<ITerm> resolvedVarList = new LinkedList<ITerm>();
-		for (IVariable var : query.getVariables()) {
-			resolvedVarList.add(variableMap.get(var));
+		for (IVariable var : varList) {
+			ITerm mappedTerm = variableMap.get(var);
+			if (mappedTerm != null) { // If no mapping exists, do not add the term to the tuple
+				resolvedVarList.add(mappedTerm);
+			} else if (partialResult) // Add partial result if flag is set
+				resolvedVarList.add(var); 
 		}
 		
 		// Create tuple from resolved variables
@@ -365,6 +426,38 @@ public class TopDownHelper {
 		return tuple;
 	}
 
+	public static Map<IVariable, ITerm> mergeSubstitutions(Map<IVariable, ITerm> deeperMap, Map<IVariable, ITerm> higherMap) {
+		Map<IVariable, ITerm> mergedMap = new HashMap<IVariable, ITerm>();
+		Map<IVariable, ITerm> deeperMapUnused = new HashMap<IVariable, ITerm>();
+		deeperMapUnused.putAll(deeperMap);
+		
+		// TODO gigi: finish mergeSubstitutions(map1, map2)
+		for (Entry<IVariable, ITerm> e : higherMap.entrySet()) {
+			ITerm substitutedTerm = null;
+			ITerm term = e.getValue();
+			
+			if (deeperMap.containsKey(e.getKey()))
+				deeperMapUnused.remove(e.getKey());
+			
+			if (term instanceof IVariable) {
+				deeperMapUnused.remove((IVariable)term);
+			}
+//			if (term instanceof IConstructedTerm) {
+//				IConstructedTerm ct = (IConstructedTerm)term;
+//				for (IVariable var : ct.getVariables()) {
+//					deeperMapUnused.remove(var);
+//				}
+//			}
+			substitutedTerm = TermMatchingAndSubstitution.substituteVariablesInToTerm(term, deeperMap);
+			assert substitutedTerm != null;
+			mergedMap.put(e.getKey(), substitutedTerm);
+		}
+		
+		mergedMap.putAll(deeperMapUnused);
+		
+		return mergedMap;
+	}
+	
 	/**
 	 * Replaces all variables in a rule with the mapped ones. Always modifies the head too.
 	 * 
@@ -379,6 +472,253 @@ public class TopDownHelper {
 			replacedRule = rm .replace(replacedRule, true, entryPair.getKey(), entryPair.getValue());
 		}
 		return replacedRule;
+	}
+	
+	/**
+	 * Does variable re-mapping. Inverse function to <code>replaceVariablesInRule(IRule, Map<IVariable, ITerm>)</code>
+	 * @param rule a rule
+	 * @param variableMap a variable map
+	 * @return rule with replaced variables.
+	 */
+	public static IRule reMapVariablesInRule(IRule rule, Map<IVariable, ITerm> variableMap) {
+		IRule replacedRule = rule;
+		for (Entry<IVariable, ITerm> entryPair : variableMap.entrySet()) {
+			if (entryPair.getValue() instanceof IVariable)
+				replacedRule = rm .replace(replacedRule, true, entryPair.getValue(), entryPair.getKey());
+		}
+		return replacedRule;
+	}
+
+	/**
+	 * Creates a debug prefix for nice output
+	 * 
+	 * @param recursionDepth depth of recursion (0 = root)
+	 * @param inNegationAsFailureFlip <code>true</code> is this a NAF tree, <code>false</code> otherwise
+	 *  
+	 * @return debug prefix string
+	 */
+	public static String getDebugPrefix(int recursionDepth, boolean inNegationAsFailureFlip) {
+		// Debug prefix for proper output
+		String debugPrefix = "";
+		if (System.getenv( OLDTEvaluator.IRIS_DEBUG_FLAG ) != null) {
+			for (int i = 0; i < recursionDepth; i++)
+				debugPrefix += "  ";
+			
+			if (inNegationAsFailureFlip)
+				debugPrefix += "{NAF} ";
+		}
+		return debugPrefix;
+	}
+
+	public static void printDebug(String msg, int recursionDepth) {
+		TopDownHelper.printDebug(msg, recursionDepth, false);
+	}
+
+	public static void printDebug(String msg, int recursionDepth, boolean inNegationAsFailureFlip) {
+		String debugPrefix = getDebugPrefix(recursionDepth, inNegationAsFailureFlip);
+		if (System.getenv( OLDTEvaluator.IRIS_DEBUG_FLAG ) != null)
+			System.out.println(debugPrefix + msg);
+	}
+
+	/**
+	 * Creates a relation by combining the relation from subgoal evaluation
+	 * and the variable bindings of the current query.
+	 * 
+	 * e.g. 
+	 * 
+	 * ?- p( ?X, ?Y, ?Z )
+	 * 			|
+	 *   ?- q( ?Y, ?Z )		// subgoal
+	 * 
+	 * When a mapping ?X = 1 is already known, and the subgoal evaluation
+	 * returned ( 2, 3 ) - which means that ?Y = 2 and ?Z = 3 - a relation 
+	 * ( 1, 2, 3 ) for the variables ( ?X, ?Y, ?Z ) will be created.
+	 * 
+	 * @param query a query
+	 * @param qws a query with proper substitution, which is a subgoal of <code>query</code>
+	 * @param relationFromSubtree relation returned by evaluation the subgoal <code>qws</code>
+	 *  
+	 * @return a relation which covers all variables in <code>query</code>
+	 */
+	public static IRelation getFullSubgoalRelation(IQuery query, QueryWithSubstitution qws, IRelation relationFromSubtree) {
+		return getFullSubgoalRelation(query, qws.getQuery(), qws.getSubstitution(), relationFromSubtree);
+	}
+	
+	public static IRelation getFullSubgoalRelation(IQuery query, IQuery subQuery, Map<IVariable, ITerm> substitution, IRelation relationFromSubtree) {
+		
+		IRelation relation = OLDTEvaluator.srf.createRelation();
+		
+		List<IVariable> queryVariableList = getVariables(query);
+		List<IVariable> newQueryVariableList = getVariables( subQuery );
+		
+		if (relationFromSubtree.size() == 0) {
+			// Do nothing...
+		
+		} else { // relationFromSubtree.size() != 0 
+				 // (means that this is a parent of a success node)
+			
+			// For every branch of the subtree
+			for (int i=0; i < relationFromSubtree.size(); i++) {
+	
+				if (queryVariableList.isEmpty()) {
+					// No variables, but success node 
+					// => create empty tuple (true)
+					relation.add(Factory.BASIC.createTuple());
+					continue;
+				}
+				
+				ITuple branchTuple = relationFromSubtree.get(i);
+				
+				assert !queryVariableList.isEmpty() : "The query MUST contain variables"; 
+				assert branchTuple.getVariables().isEmpty() : "A success-branch MUST NOT have variables";
+				
+				Map<IVariable, ITerm> variableMapFromSubtree = createVariableMapFromTupleAndQuery(subQuery, branchTuple);
+				
+				List<ITerm> termsPerTuple = new LinkedList<ITerm>();
+				
+				
+				// Create a tuple for each success branch to build the returned relation
+				for (IVariable var : queryVariableList) {
+					// For every Variable of the original query, get the mappings
+					ITerm termFromVariableMapping = substitution.get(var);
+					
+					if ( termFromVariableMapping == null && newQueryVariableList.contains(var) ) {
+						// No Mapping: The subtree has computed a mapping
+							
+						
+						// Extract the results we need
+						ITerm termToAdd = null;
+						if ( branchTuple.isEmpty() ) {
+							termToAdd = var;
+						} else if (branchTuple.size() != newQueryVariableList.size()) {
+							continue;
+						} else {
+							termToAdd = branchTuple.get( newQueryVariableList.indexOf(var) );
+						}								
+						
+						if (termToAdd == null) {
+							// Resolution did not return a result. This could be due to unsafe rules
+							// Simply return the variable again, since the variable won't be needed in the final result anyway
+							termToAdd = var;
+						}
+						
+						termsPerTuple.add(termToAdd);
+	
+					} else if ( termFromVariableMapping != null ) {
+						// There is a mapping for the variable (already computed earlier on this stage)
+						termsPerTuple.add(termFromVariableMapping);
+					}
+					
+					if (termsPerTuple.size() == queryVariableList.size()) {
+						ITuple tuple = Factory.BASIC.createTuple(termsPerTuple);
+						tuple = TermMatchingAndSubstitution.substituteVariablesInToTuple(tuple, variableMapFromSubtree);
+						relation.add(tuple);
+					}
+				}
+			}
+		}
+		
+		return relation;
+	}
+
+	/**
+	 * Process a builtin atom.
+	 * 
+	 * @param query the whole query
+	 * @param selectedQueryLiteral the selected literal
+	 * @param queryLiteralAtom
+	 * @return List of new queries and the associated substitutions
+	 * 
+	 * @throws EvaluationException on failure
+	 */
+	public static List<QueryWithSubstitution> processBuiltin(IQuery query, ILiteral selectedQueryLiteral, IAtom queryLiteralAtom)
+			throws EvaluationException {
+		IBuiltinAtom builtinAtom = (IBuiltinAtom)queryLiteralAtom;
+		ITuple builtinTuple = builtinAtom.getTuple();
+		List<QueryWithSubstitution> newQueryList = new LinkedList<QueryWithSubstitution>();
+		
+		ITuple builtinEvaluation = null;
+		boolean unifyable = false;
+		boolean evaluationNeeded = false;
+		
+		Map<IVariable, ITerm> varMapCTarg = new HashMap<IVariable, ITerm>();
+	
+		if ( builtinAtom instanceof EqualBuiltin || builtinAtom instanceof ExactEqualBuiltin ) {
+			// UNIFICATION
+			
+			assert builtinTuple.size() == 2;
+			unifyable = TermMatchingAndSubstitution.unify(builtinTuple.get(0), builtinTuple.get(1), varMapCTarg );
+			
+		} else {
+			// EVALUATION - every builtin except EqualBuiltin 
+			evaluationNeeded = true;
+		}
+		
+		try {
+			builtinEvaluation = builtinAtom.evaluate(builtinTuple);
+		} catch (IllegalArgumentException iae) {
+			// The builtin can't be evaluated yet, simply continue
+		}
+	
+		List<ILiteral> literalsWithoutBuiltin = new LinkedList<ILiteral>(query.getLiterals());
+		literalsWithoutBuiltin.remove(selectedQueryLiteral);
+		IQuery newQuery = Factory.BASIC.createQuery( literalsWithoutBuiltin );
+		
+		if (builtinEvaluation != null) {
+		
+			if (builtinTuple.getVariables().isEmpty()) {
+				// Builtin tuple contained no variables, the result is
+				// true or false, e.g. ADD(1, 2, 3) = true
+				QueryWithSubstitution qws = new QueryWithSubstitution(newQuery, new HashMap<IVariable, ITerm>());
+				newQueryList.add( qws );
+				
+			} else {
+				// Builtin tuple contained variables, so there is a
+				// computed answer, e.g. ADD(1, 2, ?X) => ?X = 3
+				Map<IVariable, ITerm> varMap = new HashMap<IVariable, ITerm>();
+				Set<IVariable> variablesPreEvaluation = builtinTuple.getVariables();
+				
+				if (variablesPreEvaluation.size() != builtinEvaluation.size())
+					throw new EvaluationException("Builtin Evaluation failed. Expected " + variablesPreEvaluation.size() + " results, got " + builtinEvaluation.size());
+				
+				
+				// Add every computed variable to the mapping
+				int variableIndex = 0;
+				for ( IVariable var : variablesPreEvaluation ) {
+					
+					if ( unifyable ) { // unification
+						varMap.putAll(varMapCTarg);
+					} else if ( evaluationNeeded ) { // evaluation 
+						ITerm termPostEvaluation = builtinEvaluation.get( variableIndex ); // get evaluated term
+						varMap.put(var, termPostEvaluation);
+					} else { // no new query / branch
+						variableIndex++; 
+						continue;
+					}
+					
+					// add the new query to the query list
+					newQuery = substituteVariablesInToQuery(newQuery, varMap);
+					QueryWithSubstitution qws = new QueryWithSubstitution( newQuery, varMap );
+					newQueryList.add( qws );
+					
+					
+					variableIndex++; 
+				}
+			}
+		} else if (unifyable) {
+			// Builtin evaluation failed, unification succeeded
+			// Take unify result as mapping
+			Map<IVariable, ITerm> varMap = new HashMap<IVariable, ITerm>();
+	
+			varMap.putAll(varMapCTarg);
+			
+			// add the new query to the query list
+			newQuery = substituteVariablesInToQuery(newQuery, varMap);
+			QueryWithSubstitution qws = new QueryWithSubstitution( newQuery, varMap );
+			newQueryList.add( qws );
+		}
+		
+		return newQueryList;
 	}
 
 }
