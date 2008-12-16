@@ -369,6 +369,62 @@ public class EvaluationTest extends TestCase
 	}
 
 	/**
+	 * Test for recursive rules. Added for OLDT evaluation.
+	 * @see Deduktive Datenbanken - Example 4.14 [Cremers 94]
+	 * 
+	 * @author gigi
+	 */
+	public void testRecursiveRules4() throws Exception
+	{
+		String program =
+    		"r(1, 2)." +
+    		"r(1, 3)." +
+    		"r(2, 1)." +
+    		"r(2, 4)." +
+    		
+		    "s(?X, ?Y) :- s(?X, ?Z), r(?Z, ?Y)." +
+		    "s(?X, ?Y) :- r(?X, ?Y)." +
+		    "?- s(1, ?Y).";
+		
+		String expectedResults =
+		    "dummy(2)." +
+		    "dummy(3)." +
+		    "dummy(1)." +
+		    "dummy(4).";
+		
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
+	 * Same as testRecursiveRules4, but querying s(?X, ?Y) instead of s(1, ?Y).
+	 * @see testRecursiveRules4
+	 */
+	public void testRecursiveRules4b() throws Exception
+	{
+		String program =
+    		"r(1, 2)." +
+    		"r(1, 3)." +
+    		"r(2, 1)." +
+    		"r(2, 4)." + 
+    		
+		    "s(?X, ?Y) :- s(?X, ?Z), r(?Z, ?Y)." +
+		    "s(?X, ?Y) :- r(?X, ?Y)." +
+		    "?- s(?X, ?Y).";
+		
+		String expectedResults =
+			"dummy(1, 2)." +
+			"dummy(1, 3)." +
+			"dummy(2, 1)." +
+			"dummy(2, 4)." +
+		    "dummy(1, 1)." +
+		    "dummy(1, 4)." +
+		    "dummy(2, 2)." +
+		    "dummy(2, 3).";
+		
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}
+	
+	/**
 	 * Test for rules with a cyclic dependency.
 	 * @throws Exception If something goes very wrong.
 	 */
