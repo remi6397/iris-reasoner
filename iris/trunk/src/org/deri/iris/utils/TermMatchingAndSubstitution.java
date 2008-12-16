@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
@@ -257,16 +258,69 @@ public class TermMatchingAndSubstitution
 	}
 
 	/**
+	 * Given two tuples, check if one tuple sub-sums the other one. Used to 
+	 * check if it is necessary to add a atom to the memo table or if an equivalent
+	 * atom is already in the memo table. Unification is not sufficient for this task,
+	 * since e.g. p(?X) and p(1) are unifiable, but are likely to have different answers.
+	 *  
+	 * @param tup1 tuple one
+	 * @param tup2 tuple two
+	 *  
+	 * @return true if the tuples are equivalent, false if not
+	 * 
+	 * @author gigi
+	 */
+	public static boolean subsums( ITuple tup1, ITuple tup2 ) {
+
+		Map<IVariable, ITerm> varMap = new HashMap<IVariable, ITerm>();
+		
+		if (tup2.getVariables().size() > tup1.getVariables().size())
+			return false; // If the second tuple has more variables than the first one, the first tuple does not subsum the second one
+		
+		if (unify(tup1, tup2, varMap, false)) {
+			
+			for (ITerm mappedTerm : varMap.values()) {
+				if (mappedTerm.isGround())
+					return false; // unifiable, but unification mapped a variable to a ground term
+			}
+			
+			if (varMap.isEmpty())
+				return false;
+			
+			return true; // unifiable, only variable to variable mappings
+		}
+		
+		return false;
+	}
+	
+	public static boolean subsums( IAtom atom1, IAtom atom2 ) {
+		if ( atom1.equals(atom2))
+			return true;
+		
+		if ( !atom1.getPredicate().equals(atom2.getPredicate()) )
+			return false;
+		
+		return subsums(atom1.getTuple(), atom2.getTuple());
+	}
+	
+	/**
 	 * Given two tuples, unify to give variable bindings for all variables.
 	 * @param tup1 tuple one
 	 * @param tup2 tuple two
 	 * @param variableMap Map where variable bindings are saved
-	 * @param variableList List of variables already in use (for occur check) 
+	 *  
 	 * @return true if it is unifiable, false if not
 	 * 
 	 * @author gigi
 	 */
-	public static boolean unify( ITuple tup1, ITuple tup2, Map<IVariable, ITerm> variableMap ) {
+	public static boolean unify( ITuple tup1, ITuple tup2, Map<IVariable, ITerm> variableMap) {
+		return unify(tup1, tup2, variableMap, true);
+	}
+	/**
+	 * @see unify( ITuple tup1, ITuple tup2, Map<IVariable, ITerm> variableMap)
+	 * @param bothDirections Do the unification in both directions. Actually an additional flag used by the subsums() method.
+	 */
+	public static boolean unify( ITuple tup1, ITuple tup2, Map<IVariable, ITerm> variableMap, boolean bothDirections ) {
 
 		if (tup1.size() != tup2.size())
 			return false; // Arity-match failed
@@ -281,9 +335,9 @@ public class TermMatchingAndSubstitution
 			ITerm t2 = tup2.get(i);
 			
 			if (t1.isGround() && t2.isGround() && !t1.equals(t2))
-				return false; // e.g. 4 won't unify with 7
+				return false;
 			
-			unifyTerms = unify(t1, t2, variableMap);
+			unifyTerms = unify(t1, t2, variableMap, bothDirections);
 		}
 		
 		return unifyTerms;	
@@ -297,14 +351,29 @@ public class TermMatchingAndSubstitution
 	 * @param variableMap The variable bindings.
 	 * @return true, if unifiable, false otherwise
 	 */
-	public static boolean unify( ITerm t1, ITerm t2, Map<IVariable, ITerm> variableMap )
+	public static boolean unify( ITerm t1, ITerm t2, Map<IVariable, ITerm> variableMap ) {
+		return unify(t1, t2, variableMap, true);
+	}
+	
+	/**
+	 * Given two terms, unify to give variable bindings for all variables.
+	 * Either, both or none of the input terms need be grounded.
+	 * @param t1 The first term.
+	 * @param t2 The second term.
+	 * @param variableMap The variable bindings.
+	 * @param bothDirections Do the unification in both directions. Actually an additional flag used by the subsums() method.
+	 * @return true, if unifiable, false otherwise
+	 * @see unify(ITerm t1, ITerm t2, Map<IVariable, ITerm> variableMap)
+	 */
+	public static boolean unify( ITerm t1, ITerm t2, Map<IVariable, ITerm> variableMap, boolean bothDirections )
 	{
 		if( t1.isGround() && t2.isGround() )
 			return t1.equals( t2 );
 		
 		if ( t1 instanceof IVariable && t2 instanceof IVariable )
 		{
-			variableMap.put((IVariable)t1, t2);
+			if (!t1.equals(t2))
+				variableMap.put((IVariable)t1, t2);
 			return true;
 		}
 		
@@ -313,7 +382,7 @@ public class TermMatchingAndSubstitution
 			return unifyCheckBinding( (IVariable) t1, t2, variableMap );
 		}
 		
-		if( t2 instanceof IVariable )
+		if( t2 instanceof IVariable && bothDirections )
 		{
 			return unifyCheckBinding( (IVariable) t2, t1, variableMap );
 		}
@@ -341,7 +410,7 @@ public class TermMatchingAndSubstitution
 				ITerm c1term = c1terms.get( i );
 				ITerm c2term = c2terms.get( i );
 				
-				boolean termUnifiy = unify( c1term, c2term, variableMap );
+				boolean termUnifiy = unify( c1term, c2term, variableMap, bothDirections );
 				if( ! termUnifiy )
 					return false;
 			}
@@ -398,7 +467,7 @@ public class TermMatchingAndSubstitution
 	 * @param variableMap The variable bindings to use.
 	 * @return The grounded term.
 	 */
-	private static ITerm substituteVariablesInToTerm( ITerm term, Map<IVariable, ITerm> variableMap )
+	public static ITerm substituteVariablesInToTerm( ITerm term, Map<IVariable, ITerm> variableMap )
 	{
 		// Recursion terminator. Probably inefficient as tree is traversed anyway.
 		if( term.isGround() )
