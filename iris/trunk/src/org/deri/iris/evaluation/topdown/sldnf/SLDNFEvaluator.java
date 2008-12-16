@@ -321,7 +321,7 @@ public class SLDNFEvaluator implements ITopDownEvaluator {
 		
 		if (relationFromSubtree.size() == 0) {
 			// This is a success node
-			ITuple tuple = TopDownHelper.createTupleFromQueryAndVariableMap( query, qws.getSubstitution() );
+			ITuple tuple = TopDownHelper.resolveTuple( query, qws.getSubstitution() );
 			relation.add(tuple);
 		
 		} else { // relationFromSubtree.size() != 0 
@@ -417,7 +417,7 @@ public class SLDNFEvaluator implements ITopDownEvaluator {
 				
 				// Occur Check
 				// Replace all variables of the rule with unused ones (variables that are not in the query)
-				Map<IVariable, ITerm> variableMapForOccurCheck = TopDownHelper.getVariableMapForOccurCheck(rule, query);
+				Map<IVariable, ITerm> variableMapForOccurCheck = TopDownHelper.getVariableMapForVariableRenaming(rule, query);
 				IRule ruleAfterOccurCheck = TopDownHelper.replaceVariablesInRule(rule, variableMapForOccurCheck);
 					
 				ITuple ruleHeadAfterOCTuple = ruleAfterOccurCheck.getHead().get(0).getAtom().getTuple(); // ruleHead changed
