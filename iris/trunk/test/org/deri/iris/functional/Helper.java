@@ -37,6 +37,7 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.compiler.Parser;
+import org.deri.iris.evaluation.topdown.oldt.OLDTEvaluationStrategyFactory;
 import org.deri.iris.evaluation.topdown.sldnf.SLDNFEvaluationStrategyFactory;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
 import org.deri.iris.optimisations.magicsets.MagicSets;
@@ -84,6 +85,7 @@ public class Helper
 		evaluateWellFounded( program, expectedResults );
 		evaluateSemiNaiveAndOptimisations( program, expectedResults );
 		
+//		evaluateOLDT( program, expectedResults );
 //		evaluateSLDNF( program, expectedResults );
 	}
 	
@@ -149,6 +151,14 @@ public class Helper
 	{
 		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
 		configuration.evaluationStrategyFactory = new SLDNFEvaluationStrategyFactory();
+
+		executeAndCheckResults( program, expectedResults, configuration, "SLDNF" );
+	}
+	
+	public static void evaluateOLDT( String program, String expectedResults ) throws Exception
+	{
+		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
+		configuration.evaluationStrategyFactory = new OLDTEvaluationStrategyFactory();
 
 		executeAndCheckResults( program, expectedResults, configuration, "SLDNF" );
 	}
