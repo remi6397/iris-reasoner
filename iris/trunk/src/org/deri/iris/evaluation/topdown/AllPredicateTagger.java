@@ -41,7 +41,6 @@ public class AllPredicateTagger implements IPredicateTagger {
 		mRules = rules;
 	}
 	
-	@Override
 	public Set<IPredicate> getMemoPredicates() {
 		Set<IPredicate> memoPredicates = new HashSet<IPredicate>();
 		for (IRule r : mRules) {
