@@ -76,6 +76,12 @@ public class Duration implements IDuration {
 	 */
 	Duration(boolean positive, int year, int month, int day, int hour, int minute, int second, int millisecond) {
 		this( positive, year, month, day, hour, minute, second + (millisecond / 1000.0) ); 
+
+		if( millisecond < 0 || millisecond >= 1000 )
+			throw new IllegalArgumentException( "Millisecond value is out of range: " + second );
+
+		if( second < 0 || second >= 60 )
+			throw new IllegalArgumentException( "Second value is out of range: " + second );
 	}
 
 	/**

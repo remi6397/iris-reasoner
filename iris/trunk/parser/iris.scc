@@ -96,7 +96,8 @@ Tokens
                    
 	// tokens defining the different primitives
 	t_int 		= min? num+;
-	t_dec 		= min? num+ (dot num+)?;
+	t_posint    = num+;
+	t_dec 		= min? (num* dot num+);
 	t_str 		= single_quote stringchar+ single_quote
 				| double_quote stringchar+ double_quote;
 	t_sq 		= alphanum+ '#' alphanum+;
@@ -181,10 +182,27 @@ Productions
                    {double} t_pre_double t_lpar t_dec  t_rpar |
                    {float} t_pre_float t_lpar t_dec  t_rpar |
                    
-                   {date} t_pre_date t_lpar intlist  t_rpar |
-                   {duration} t_pre_duration t_lpar intlist  t_rpar |
-                   {datetime} t_pre_datetime t_lpar intlist  t_rpar |
-                   {time} t_pre_time t_lpar intlist  t_rpar |
+                   {date}   t_pre_date t_lpar [year]:t_int t_comma [month]:t_int [c2]:t_comma [day]:t_int t_rpar |
+                   {datetz} t_pre_date t_lpar [year]:t_int t_comma [month]:t_int [c2]:t_comma [day]:t_int [c3]:t_comma [tzhour]:t_int [c4]:t_comma [tzminute]:t_int t_rpar |
+                   
+                   {timeis}   t_pre_time t_lpar [hour]:t_int t_comma [minute]:t_int [c2]:t_comma [second]:t_int t_rpar |
+                   {timeistz} t_pre_time t_lpar [hour]:t_int t_comma [minute]:t_int [c2]:t_comma [second]:t_int [c3]:t_comma [tzhour]:t_int [c4]:t_comma [tzminute]:t_int t_rpar |
+                   {timefs}   t_pre_time t_lpar [hour]:t_int t_comma [minute]:t_int [c2]:t_comma [second]:t_dec t_rpar |
+                   {timefstz} t_pre_time t_lpar [hour]:t_int t_comma [minute]:t_int [c2]:t_comma [second]:t_dec [c3]:t_comma [tzhour]:t_int [c4]:t_comma [tzminute]:t_int t_rpar |
+                   {timems}   t_pre_time t_lpar [hour]:t_int t_comma [minute]:t_int [c2]:t_comma [second]:t_int [c3]:t_comma [millisecond]:t_int t_rpar |
+                   {timemstz} t_pre_time t_lpar [hour]:t_int t_comma [minute]:t_int [c2]:t_comma [second]:t_int [c3]:t_comma [millisecond]:t_int [c4]:t_comma [tzhour]:t_int [c5]:t_comma [tzminute]:t_int t_rpar |
+
+                   {datetimeis}   t_pre_datetime t_lpar [year]:t_int t_comma [month]:t_int [c2]:t_comma [day]:t_int [c3]:t_comma  [hour]:t_int [c4]:t_comma [minute]:t_int [c5]:t_comma [second]:t_int t_rpar |
+                   {datetimeistz} t_pre_datetime t_lpar [year]:t_int t_comma [month]:t_int [c2]:t_comma [day]:t_int [c3]:t_comma  [hour]:t_int [c4]:t_comma [minute]:t_int [c5]:t_comma [second]:t_int [c6]:t_comma [tzhour]:t_int [c7]:t_comma [tzminute]:t_int t_rpar |
+                   {datetimefs}   t_pre_datetime t_lpar [year]:t_int t_comma [month]:t_int [c2]:t_comma [day]:t_int [c3]:t_comma  [hour]:t_int [c4]:t_comma [minute]:t_int [c5]:t_comma [second]:t_dec t_rpar |
+                   {datetimefstz} t_pre_datetime t_lpar [year]:t_int t_comma [month]:t_int [c2]:t_comma [day]:t_int [c3]:t_comma  [hour]:t_int [c4]:t_comma [minute]:t_int [c5]:t_comma [second]:t_dec [c6]:t_comma [tzhour]:t_int [c7]:t_comma [tzminute]:t_int t_rpar |
+                   {datetimems}   t_pre_datetime t_lpar [year]:t_int t_comma [month]:t_int [c2]:t_comma [day]:t_int [c3]:t_comma  [hour]:t_int [c4]:t_comma [minute]:t_int [c5]:t_comma [second]:t_int [c6]:t_comma [millisecond]:t_int t_rpar |
+                   {datetimemstz} t_pre_datetime t_lpar [year]:t_int t_comma [month]:t_int [c2]:t_comma [day]:t_int [c3]:t_comma  [hour]:t_int [c4]:t_comma [minute]:t_int [c5]:t_comma [second]:t_int [c6]:t_comma [millisecond]:t_int [c7]:t_comma [tzhour]:t_int [c8]:t_comma [tzminute]:t_int t_rpar |
+
+                   {durationis} t_pre_duration t_lpar [year]:t_int t_comma [month]:t_int [c2]:t_comma [day]:t_int [c3]:t_comma  [hour]:t_int [c4]:t_comma [minute]:t_int [c5]:t_comma [second]:t_int t_rpar |
+                   {durationfs} t_pre_duration t_lpar [year]:t_int t_comma [month]:t_int [c2]:t_comma [day]:t_int [c3]:t_comma  [hour]:t_int [c4]:t_comma [minute]:t_int [c5]:t_comma [second]:t_dec t_rpar |
+                   {durationms} t_pre_duration t_lpar [year]:t_int t_comma [month]:t_int [c2]:t_comma [day]:t_int [c3]:t_comma  [hour]:t_int [c4]:t_comma [minute]:t_int [c5]:t_comma [second]:t_int [c6]:t_comma [millisecond]:t_int t_rpar |
+                   
                    {gday} t_pre_gday t_lpar t_int  t_rpar |
                    {gmonth} t_pre_gmonth t_lpar t_int  t_rpar |
                    {gyear} t_pre_gyear t_lpar t_int  t_rpar |
