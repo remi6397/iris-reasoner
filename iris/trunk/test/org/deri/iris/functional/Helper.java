@@ -160,7 +160,7 @@ public class Helper
 		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
 		configuration.evaluationStrategyFactory = new OLDTEvaluationStrategyFactory();
 
-		executeAndCheckResults( program, expectedResults, configuration, "SLDNF" );
+		executeAndCheckResults( program, expectedResults, configuration, "OLDT" );
 	}
 	
 	public static void executeAndCheckResults( String program, String expected, Configuration configuration, String evaluationName ) throws Exception
