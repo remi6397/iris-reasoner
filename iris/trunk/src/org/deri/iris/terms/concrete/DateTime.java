@@ -119,6 +119,12 @@ public class DateTime implements IDateTime {
 			int hour, int minute, int second, int millisecond, 
 			int tzHour, int tzMinute) {
 		this( year, month, day, hour, minute, second + (millisecond/ 1000.0), tzHour, tzMinute );
+
+		if( millisecond < 0 || millisecond >= 1000 )
+			throw new IllegalArgumentException( "Millisecond value is out of range: " + second );
+
+		if( second < 0 || second >= 60 )
+			throw new IllegalArgumentException( "Second value is out of range: " + second );
 	}
 
 	/**

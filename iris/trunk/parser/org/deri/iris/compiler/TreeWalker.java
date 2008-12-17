@@ -45,47 +45,7 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.parser.analysis.DepthFirstAdapter;
-import org.deri.iris.parser.node.ABase64binaryTerm;
-import org.deri.iris.parser.node.ABinaryBuiltin;
-import org.deri.iris.parser.node.ABooleanTerm;
-import org.deri.iris.parser.node.ABuiltinLiteral;
-import org.deri.iris.parser.node.ADateTerm;
-import org.deri.iris.parser.node.ADatetimeTerm;
-import org.deri.iris.parser.node.ADecimalTerm;
-import org.deri.iris.parser.node.ADecimallTerm;
-import org.deri.iris.parser.node.ADoubleTerm;
-import org.deri.iris.parser.node.ADurationTerm;
-import org.deri.iris.parser.node.AEqualsBuiltin;
-import org.deri.iris.parser.node.AFact;
-import org.deri.iris.parser.node.AFloatTerm;
-import org.deri.iris.parser.node.AFunctionTerm;
-import org.deri.iris.parser.node.AGdayTerm;
-import org.deri.iris.parser.node.AGmonthTerm;
-import org.deri.iris.parser.node.AGmonthdayTerm;
-import org.deri.iris.parser.node.AGyearTerm;
-import org.deri.iris.parser.node.AGyearmonthTerm;
-import org.deri.iris.parser.node.AHexbinaryTerm;
-import org.deri.iris.parser.node.AIntIntlist;
-import org.deri.iris.parser.node.AIntegerTerm;
-import org.deri.iris.parser.node.AIntegerlTerm;
-import org.deri.iris.parser.node.AIntlist;
-import org.deri.iris.parser.node.AIriTerm;
-import org.deri.iris.parser.node.AIrilTerm;
-import org.deri.iris.parser.node.ALiteral;
-import org.deri.iris.parser.node.ALitlist;
-import org.deri.iris.parser.node.ANegatedLiteral;
-import org.deri.iris.parser.node.ANegatedbuiltinLiteral;
-import org.deri.iris.parser.node.APredicate;
-import org.deri.iris.parser.node.AQuery;
-import org.deri.iris.parser.node.ARule;
-import org.deri.iris.parser.node.ASqnameTerm;
-import org.deri.iris.parser.node.ASqnamelTerm;
-import org.deri.iris.parser.node.AStringTerm;
-import org.deri.iris.parser.node.AStringlTerm;
-import org.deri.iris.parser.node.ATernaryBuiltin;
-import org.deri.iris.parser.node.ATimeTerm;
-import org.deri.iris.parser.node.AVarTerm;
-import org.deri.iris.parser.node.PIntlist;
+import org.deri.iris.parser.node.*;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.storage.simple.SimpleRelationFactory;
 
@@ -451,62 +411,228 @@ public class TreeWalker extends DepthFirstAdapter
 	public void outAHexbinaryTerm(final AHexbinaryTerm h) {
 		addTerm(CONCRETE.createHexBinary(peeleStr(h.getTStr().getText().trim())));
 	}
-
+	
+	private int parseInt( String text ) {
+		return Integer.parseInt( text.trim() );
+	}
+	
+	private double parseDouble( String text ) {
+		return Double.parseDouble( text.trim() );
+	}
+	
 	public void outADateTerm(final ADateTerm d) {
-		Integer[] params = transfromIntList(d.getIntlist());
-		if (params.length == 3) {
-			addTerm(CONCRETE.createDate(params[0], params[1], params[2]));
-		} else if (params.length == 5) {
-			addTerm(CONCRETE.createDate(params[0], params[1], params[2], params[3], params[4]));
-		} else {
-			throw new IllegalArgumentException("The number of integers in a date must be 3 or 5, but was " + 
-					params.length + ": " + Arrays.toString(params));
-		}
+		int year = parseInt( d.getYear().getText() );
+		int month = parseInt( d.getMonth().getText() );
+		int day = parseInt( d.getDay().getText() );
+
+		addTerm(CONCRETE.createDate(year, month, day));
 	}
 
-	public void outADurationTerm(final ADurationTerm d) {
-		Integer[] params = transfromIntList(d.getIntlist());
-		if (params.length == 6) {
-			addTerm(CONCRETE.createDuration(true,params[0], params[1], params[2], 
-						params[3], params[4], params[5]));
-		} else if (params.length == 7) {
-			addTerm(CONCRETE.createDuration(true,params[0], params[1], params[2], 
-						params[3], params[4], params[5], params[6]));
-		} else {
-			throw new IllegalArgumentException("The number of integers in a duration must be 6 or 7, but was " + 
-					params.length + ": " + Arrays.toString(params));
-		}
+	public void outADatetzTerm(ADatetzTerm d) {
+		int year = parseInt( d.getYear().getText() );
+		int month = parseInt( d.getMonth().getText() );
+		int day = parseInt( d.getDay().getText() );
+
+		int tzhour = parseInt( d.getTzhour().getText() );
+		int tzminute = parseInt( d.getTzminute().getText() );
+
+		addTerm(CONCRETE.createDate(year, month, day, tzhour, tzminute));
 	}
 
-	public void outADatetimeTerm(final ADatetimeTerm d) {
-		Integer[] params = transfromIntList(d.getIntlist());
-		if (params.length == 6) {
-			addTerm(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5], 0, 0));
-		} else if (params.length == 8) {
-			addTerm(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5], 
-						params[6], params[7]));
-		} else if (params.length == 9) {
-			addTerm(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5], 
-						params[6], params[7], params[8]));
-		} else {
-			throw new IllegalArgumentException("The number of integers in a datetime must be 6, 8 or 9, but was " + 
-					params.length + ": " + Arrays.toString(params));
-		}
+	public void outATimeisTerm(final ATimeisTerm t) {
+		int hour = parseInt( t.getHour().getText() );
+		int minute = parseInt( t.getMinute().getText() );
+		int second = parseInt( t.getSecond().getText() );
+
+		addTerm(CONCRETE.createTime(hour, minute, second, 0, 0));
 	}
 
-	public void outATimeTerm(final ATimeTerm t) {
-		Integer[] params = transfromIntList(t.getIntlist());
-		if (params.length == 3) {
-			addTerm(CONCRETE.createTime(params[0], params[1], params[2], 0, 0));
-		} else if (params.length == 5) {
-			addTerm(CONCRETE.createTime(params[0], params[1], params[2], params[3], params[4]));
-		} else if (params.length == 6) {
-			addTerm(CONCRETE.createTime(params[0], params[1], params[2], params[3], params[4], params[5]));
-		} else {
-			throw new IllegalArgumentException("The number of integers in a time must be 3, 5 or 6, but was " + 
-					params.length + ": " + Arrays.toString(params));
-		}
+	public void outATimeistzTerm(final ATimeistzTerm t) {
+		int hour = parseInt( t.getHour().getText() );
+		int minute = parseInt( t.getMinute().getText() );
+		int second = parseInt( t.getSecond().getText() );
+
+		int tzhour = parseInt( t.getTzhour().getText() );
+		int tzminute = parseInt( t.getTzminute().getText() );
+
+		addTerm(CONCRETE.createTime(hour, minute, second, tzhour, tzminute));
 	}
+
+	public void outATimefsTerm(final ATimefsTerm t) {
+		int hour = parseInt( t.getHour().getText() );
+		int minute = parseInt( t.getMinute().getText() );
+		double second = parseDouble( t.getSecond().getText() );
+
+		addTerm(CONCRETE.createTime(hour, minute, second, 0, 0));
+	}
+	
+	public void outATimefstzTerm(final ATimefstzTerm t) {
+		int hour = parseInt( t.getHour().getText() );
+		int minute = parseInt( t.getMinute().getText() );
+		double second = parseDouble( t.getSecond().getText() );
+
+		int tzhour = parseInt( t.getTzhour().getText() );
+		int tzminute = parseInt( t.getTzminute().getText() );
+
+		addTerm(CONCRETE.createTime(hour, minute, second, tzhour, tzminute));
+	}
+	
+	public void outATimemsTerm(final ATimemsTerm t) {
+		int hour = parseInt( t.getHour().getText() );
+		int minute = parseInt( t.getMinute().getText() );
+		int second = parseInt( t.getSecond().getText() );
+		int millisecond = parseInt( t.getMillisecond().getText() );
+
+		addTerm(CONCRETE.createTime(hour, minute, second, millisecond, 0, 0));
+	}
+	
+	public void outATimemstzTerm(final ATimemstzTerm t) {
+		int hour = parseInt( t.getHour().getText() );
+		int minute = parseInt( t.getMinute().getText() );
+		int second = parseInt( t.getSecond().getText() );
+		int millisecond = parseInt( t.getMillisecond().getText() );
+
+		int tzhour = parseInt( t.getTzhour().getText() );
+		int tzminute = parseInt( t.getTzminute().getText() );
+
+		addTerm(CONCRETE.createTime(hour, minute, second, millisecond, tzhour, tzminute));
+	}
+
+	public void outADurationisTerm(final ADurationisTerm d) {
+		int year = parseInt( d.getYear().getText() );
+		int month = parseInt( d.getMonth().getText() );
+		int day = parseInt( d.getDay().getText() );
+	
+		int hour = parseInt( d.getHour().getText() );
+		int minute = parseInt( d.getMinute().getText() );
+		int second = parseInt( d.getSecond().getText() );
+		
+		addTerm(CONCRETE.createDuration(true, year, month, day, hour, minute, second ) );
+	}
+
+	public void outADurationfsTerm(final ADurationfsTerm d) {
+		int year = parseInt( d.getYear().getText() );
+		int month = parseInt( d.getMonth().getText() );
+		int day = parseInt( d.getDay().getText() );
+	
+		int hour = parseInt( d.getHour().getText() );
+		int minute = parseInt( d.getMinute().getText() );
+		double second = parseDouble( d.getSecond().getText() );
+		
+		addTerm(CONCRETE.createDuration(true, year, month, day, hour, minute, second ) );
+	}
+
+	public void outADurationmsTerm(final ADurationmsTerm d) {
+		int year = parseInt( d.getYear().getText() );
+		int month = parseInt( d.getMonth().getText() );
+		int day = parseInt( d.getDay().getText() );
+	
+		int hour = parseInt( d.getHour().getText() );
+		int minute = parseInt( d.getMinute().getText() );
+		int second = parseInt( d.getSecond().getText() );
+		int millisecond = parseInt( d.getMillisecond().getText() );
+		
+		addTerm(CONCRETE.createDuration(true, year, month, day, hour, minute, second, millisecond ) );
+	}
+
+	public void outADatetimeisTerm(final ADatetimeisTerm d) {
+		int year = parseInt( d.getYear().getText() );
+		int month = parseInt( d.getMonth().getText() );
+		int day = parseInt( d.getDay().getText() );
+	
+		int hour = parseInt( d.getHour().getText() );
+		int minute = parseInt( d.getMinute().getText() );
+		int second = parseInt( d.getSecond().getText() );
+		
+		addTerm(CONCRETE.createDateTime(year, month, day, hour, minute, second, 0, 0 ) );
+	}
+	
+	public void outADatetimeistzTerm(final ADatetimeistzTerm d) {
+		int year = parseInt( d.getYear().getText() );
+		int month = parseInt( d.getMonth().getText() );
+		int day = parseInt( d.getDay().getText() );
+	
+		int hour = parseInt( d.getHour().getText() );
+		int minute = parseInt( d.getMinute().getText() );
+		int second = parseInt( d.getSecond().getText() );
+		
+		int tzhour = parseInt( d.getTzhour().getText() );
+		int tzminute = parseInt( d.getTzminute().getText() );
+
+		addTerm(CONCRETE.createDateTime(year, month, day, hour, minute, second, tzhour, tzminute ) );
+	}
+	
+	public void outADatetimefsTerm(final ADatetimefsTerm d) {
+		int year = parseInt( d.getYear().getText() );
+		int month = parseInt( d.getMonth().getText() );
+		int day = parseInt( d.getDay().getText() );
+	
+		int hour = parseInt( d.getHour().getText() );
+		int minute = parseInt( d.getMinute().getText() );
+		double second = parseDouble( d.getSecond().getText() );
+		
+		addTerm(CONCRETE.createDateTime(year, month, day, hour, minute, second, 0, 0 ) );
+	}
+	
+	public void outADatetimefstzTerm(final ADatetimefstzTerm d) {
+		int year = parseInt( d.getYear().getText() );
+		int month = parseInt( d.getMonth().getText() );
+		int day = parseInt( d.getDay().getText() );
+	
+		int hour = parseInt( d.getHour().getText() );
+		int minute = parseInt( d.getMinute().getText() );
+		double second = parseDouble( d.getSecond().getText() );
+		
+		int tzhour = parseInt( d.getTzhour().getText() );
+		int tzminute = parseInt( d.getTzminute().getText() );
+
+		addTerm(CONCRETE.createDateTime(year, month, day, hour, minute, second, tzhour, tzminute ) );
+	}
+	
+	public void outADatetimemsTerm(final ADatetimemsTerm d) {
+		int year = parseInt( d.getYear().getText() );
+		int month = parseInt( d.getMonth().getText() );
+		int day = parseInt( d.getDay().getText() );
+	
+		int hour = parseInt( d.getHour().getText() );
+		int minute = parseInt( d.getMinute().getText() );
+		int second = parseInt( d.getSecond().getText() );
+		int millisecond = parseInt( d.getMillisecond().getText() );
+		
+		addTerm(CONCRETE.createDateTime(year, month, day, hour, minute, second, millisecond, 0, 0 ) );
+	}
+	
+	public void outADatetimemstzTerm(final ADatetimemstzTerm d) {
+		int year = parseInt( d.getYear().getText() );
+		int month = parseInt( d.getMonth().getText() );
+		int day = parseInt( d.getDay().getText() );
+	
+		int hour = parseInt( d.getHour().getText() );
+		int minute = parseInt( d.getMinute().getText() );
+		int second = parseInt( d.getSecond().getText() );
+		int millisecond = parseInt( d.getMillisecond().getText() );
+		
+		int tzhour = parseInt( d.getTzhour().getText() );
+		int tzminute = parseInt( d.getTzminute().getText() );
+
+		addTerm(CONCRETE.createDateTime(year, month, day, hour, minute, second, millisecond, tzhour, tzminute ) );
+	}
+	
+//	public void outADatetimeTerm(final ADatetimeTerm d) {
+//		Integer[] params = transfromIntList(d.getIntlist());
+//		if (params.length == 6) {
+//			addTerm(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5], 0, 0));
+//		} else if (params.length == 8) {
+//			addTerm(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5], 
+//						params[6], params[7]));
+//		} else if (params.length == 9) {
+//			addTerm(CONCRETE.createDateTime(params[0], params[1], params[2], params[3], params[4], params[5], 
+//						params[6], params[7], params[8]));
+//		} else {
+//			throw new IllegalArgumentException("The number of integers in a datetime must be 6, 8 or 9, but was " + 
+//					params.length + ": " + Arrays.toString(params));
+//		}
+//	}
 
 	public void outAGyearTerm(final AGyearTerm g) {
 		addTerm(CONCRETE.createGYear(Integer.parseInt(g.getTInt().getText().trim())));
