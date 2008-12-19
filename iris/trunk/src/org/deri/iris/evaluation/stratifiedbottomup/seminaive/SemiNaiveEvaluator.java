@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.evaluation.seminaive;
+package org.deri.iris.evaluation.stratifiedbottomup.seminaive;
 
 import java.util.List;
 import org.deri.iris.Configuration;

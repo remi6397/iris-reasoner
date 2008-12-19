@@ -20,41 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.evaluation.naive;
+package org.deri.iris.evaluation.stratifiedbottomup.naive;
 
-import java.util.List;
-import org.deri.iris.Configuration;
-import org.deri.iris.EvaluationException;
-import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.evaluation.IRuleEvaluator;
-import org.deri.iris.facts.IFacts;
-import org.deri.iris.rules.compiler.ICompiledRule;
-import org.deri.iris.storage.IRelation;
+import org.deri.iris.evaluation.IRuleEvaluatorFactory;
 
 /**
- * Naive evaluation. see Ullman, Vol. 1
+ * Factory for naive rules evaluator.
  */
-public class NaiveEvaluator implements IRuleEvaluator
+public class NaiveEvaluatorFactory implements IRuleEvaluatorFactory
 {
-	public void evaluateRules( List<ICompiledRule> rules, IFacts facts, Configuration configuration ) throws EvaluationException
+	public IRuleEvaluator createEvaluator()
 	{
-		boolean cont = true;
-		while( cont )
-		{
-			cont = false;
-			
-			// For each rule in the collection (stratum)
-			for (final ICompiledRule rule : rules )
-			{
-				IRelation delta = rule.evaluate();
-
-				if( delta != null && delta.size() > 0 )
-				{
-					IPredicate predicate = rule.headPredicate();
-					if( facts.get( predicate ).addAll( delta ) )
-						cont = true;
-				}
-			}
-		}
+		return new NaiveEvaluator();
 	}
 }
