@@ -85,7 +85,7 @@ public class Helper
 		evaluateWellFounded( program, expectedResults );
 		evaluateSemiNaiveAndOptimisations( program, expectedResults );
 		
-//		evaluateOLDT( program, expectedResults );
+		evaluateOLDT( program, expectedResults );
 //		evaluateSLDNF( program, expectedResults );
 	}
 	
@@ -288,6 +288,15 @@ public class Helper
 		configuration.evaluationStrategyFactory = new WellFoundedEvaluationStrategyFactory();
 		
 		checkFailure( program, expectedExceptionClass, configuration, "Well-founded semantics" );
+	}
+
+	public static void checkFailureWithOLDT( String program, Class<?> expectedExceptionClass )
+	{
+		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
+		
+		configuration.evaluationStrategyFactory = new OLDTEvaluationStrategyFactory();
+
+		checkFailure( program, expectedExceptionClass, configuration, "OLDT" );
 	}
 
 	/**
