@@ -27,7 +27,7 @@ import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.evaluation.IRuleEvaluator;
+import org.deri.iris.evaluation.stratifiedbottomup.IRuleEvaluator;
 import org.deri.iris.facts.Facts;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.rules.compiler.ICompiledRule;

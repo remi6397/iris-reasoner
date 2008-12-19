@@ -26,7 +26,7 @@ import java.util.List;
 import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.evaluation.IRuleEvaluator;
+import org.deri.iris.evaluation.stratifiedbottomup.IRuleEvaluator;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.rules.compiler.ICompiledRule;
 import org.deri.iris.storage.IRelation;

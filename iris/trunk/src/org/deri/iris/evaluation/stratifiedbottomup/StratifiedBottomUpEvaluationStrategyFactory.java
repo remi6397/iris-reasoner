@@ -28,7 +28,6 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.evaluation.IEvaluationStrategy;
 import org.deri.iris.evaluation.IEvaluationStrategyFactory;
-import org.deri.iris.evaluation.IRuleEvaluatorFactory;
 import org.deri.iris.facts.IFacts;
 
 /**

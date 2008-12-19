@@ -22,8 +22,8 @@
  */
 package org.deri.iris.evaluation.stratifiedbottomup.seminaive;
 
-import org.deri.iris.evaluation.IRuleEvaluator;
-import org.deri.iris.evaluation.IRuleEvaluatorFactory;
+import org.deri.iris.evaluation.stratifiedbottomup.IRuleEvaluator;
+import org.deri.iris.evaluation.stratifiedbottomup.IRuleEvaluatorFactory;
 
 /**
  * Factory for semi-naive rules evaluator.
