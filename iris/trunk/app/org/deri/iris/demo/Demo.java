@@ -40,7 +40,6 @@ import org.deri.iris.rules.safety.StandardRuleSafetyProcessor;
  */
 public class Demo
 {
-	public static final String STRATIFIED = "stratified";
 	public static final String WELL_FOUNDED = "well-founded";
 
 	public static final String NAIVE = "naive";
@@ -67,7 +66,6 @@ public class Demo
 		System.out.println( space + PROGRAM + "=<datalog program>" ); 
 		System.out.println( space + PROGRAM_FILE+ "=<filename containing datalog program>" ); 
 		System.out.println( space + TIMEOUT + "=<timeout in miliseconds> (default is to run forever)" ); 
-		System.out.println( space + STRATIFIED + "* (to use the stratified evaluation strategy)" ); 
 		System.out.println( space + WELL_FOUNDED + " (to use the well-founded evaluation strategy)" ); 
 		System.out.println( space + NAIVE + " (to use naive rule evaluation)" ); 
 		System.out.println( space + SEMI_NAIVE + "* (to use semi-naive rule evaluation)" ); 
@@ -145,14 +143,12 @@ public class Demo
 				program = getParameter( argument );
 			else if( startsWith( argument, TIMEOUT ) )
 				configuration.evaluationTimeoutMilliseconds = Integer.parseInt( getParameter( argument ) );
-			else if( startsWith( argument, STRATIFIED ) )
-				configuration.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory();
 			else if( startsWith( argument, WELL_FOUNDED ) )
 				configuration.evaluationStrategyFactory = new WellFoundedEvaluationStrategyFactory();
 			else if( startsWith( argument, NAIVE ) )
-				configuration.ruleEvaluatorFactory = new NaiveEvaluatorFactory();
+				configuration.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory( new NaiveEvaluatorFactory() );
 			else if( startsWith( argument, SEMI_NAIVE ) )
-				configuration.ruleEvaluatorFactory = new SemiNaiveEvaluatorFactory();
+				configuration.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory( new SemiNaiveEvaluatorFactory() );
 			else if( startsWith( argument, SAFE_RULES ) )
 				configuration.ruleSafetyProcessor = new StandardRuleSafetyProcessor();
 			else if( startsWith( argument, UNSAFE_RULES ) )

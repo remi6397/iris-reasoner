@@ -28,6 +28,7 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.evaluation.IEvaluationStrategy;
 import org.deri.iris.evaluation.IEvaluationStrategyFactory;
+import org.deri.iris.evaluation.IRuleEvaluatorFactory;
 import org.deri.iris.facts.IFacts;
 
 /**
@@ -35,10 +36,16 @@ import org.deri.iris.facts.IFacts;
  */
 public class StratifiedBottomUpEvaluationStrategyFactory implements IEvaluationStrategyFactory
 {
+	public StratifiedBottomUpEvaluationStrategyFactory( IRuleEvaluatorFactory ruleEvaluatorFactory )
+	{
+		mRuleEvaluatorFactory = ruleEvaluatorFactory;
+	}
+	
 	public IEvaluationStrategy createEvaluator( IFacts facts, List<IRule> rules, Configuration configuration )
 	                throws EvaluationException
 	{
-		return new StratifiedBottomUpEvaluationStrategy( facts, rules, configuration );
+		return new StratifiedBottomUpEvaluationStrategy( facts, rules, mRuleEvaluatorFactory, configuration );
 	}
 
+	private final IRuleEvaluatorFactory mRuleEvaluatorFactory;
 }
