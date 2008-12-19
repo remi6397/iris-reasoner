@@ -32,6 +32,7 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.EvaluationUtilities;
 import org.deri.iris.evaluation.IEvaluationStrategy;
 import org.deri.iris.evaluation.IRuleEvaluator;
+import org.deri.iris.evaluation.IRuleEvaluatorFactory;
 import org.deri.iris.facts.FiniteUniverseFacts;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.rules.compiler.ICompiledRule;
@@ -44,9 +45,11 @@ import org.deri.iris.storage.IRelation;
  */
 public class StratifiedBottomUpEvaluationStrategy implements IEvaluationStrategy
 {
-	StratifiedBottomUpEvaluationStrategy( IFacts facts, List<IRule> rules, Configuration configuration ) throws EvaluationException
+	StratifiedBottomUpEvaluationStrategy( IFacts facts, List<IRule> rules, IRuleEvaluatorFactory ruleEvaluatorFactory, Configuration configuration ) throws EvaluationException
 	{
 		mConfiguration = configuration;
+		
+		mRuleEvaluatorFactory = ruleEvaluatorFactory;
 
 		mFacts = facts;
 
@@ -76,7 +79,7 @@ public class StratifiedBottomUpEvaluationStrategy implements IEvaluationStrategy
 			for( IRule rule : optimisedRules )
 				compiledRules.add( rc.compile( rule ) );
 			
-			IRuleEvaluator eval = mConfiguration.ruleEvaluatorFactory.createEvaluator();
+			IRuleEvaluator eval = mRuleEvaluatorFactory.createEvaluator();
 			eval.evaluateRules( compiledRules, facts, configuration );
 		}
 		
@@ -104,4 +107,5 @@ public class StratifiedBottomUpEvaluationStrategy implements IEvaluationStrategy
 
 	protected final Configuration mConfiguration;
 	protected final IFacts mFacts;
+	protected final IRuleEvaluatorFactory mRuleEvaluatorFactory;
 }

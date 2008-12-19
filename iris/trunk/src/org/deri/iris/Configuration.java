@@ -53,11 +53,8 @@ import org.deri.iris.storage.simple.SimpleRelationFactory;
 public class Configuration
 {
 	/** The evaluation strategy to use. */
-	public IEvaluationStrategyFactory evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory();
+	public IEvaluationStrategyFactory evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory( new SemiNaiveEvaluatorFactory() );
 
-	/** The default rule evaluator. */
-	public IRuleEvaluatorFactory ruleEvaluatorFactory = new SemiNaiveEvaluatorFactory();
-	
 	/** The evaluation timeout in milliseconds. Zero means no timeout. */
 	public int evaluationTimeoutMilliseconds = 0;
 

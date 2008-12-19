@@ -26,9 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import junit.framework.Assert;
-
 import org.deri.iris.Configuration;
 import org.deri.iris.KnowledgeBaseFactory;
 import org.deri.iris.api.IKnowledgeBase;
@@ -37,6 +35,8 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.compiler.Parser;
+import org.deri.iris.evaluation.naive.NaiveEvaluatorFactory;
+import org.deri.iris.evaluation.stratifiedbottomup.StratifiedBottomUpEvaluationStrategyFactory;
 import org.deri.iris.evaluation.topdown.oldt.OLDTEvaluationStrategyFactory;
 import org.deri.iris.evaluation.topdown.sldnf.SLDNFEvaluationStrategyFactory;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
@@ -93,7 +93,7 @@ public class Helper
 	{
 		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
 		
-		configuration.ruleEvaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
+		configuration.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory( new NaiveEvaluatorFactory() );
 		configuration.reOrderingOptimiser = null;
 		configuration.ruleOptimisers.clear();
 		configuration.programOptmimisers.clear();
@@ -105,7 +105,7 @@ public class Helper
 	{
 		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
 		
-		configuration.ruleEvaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
+		configuration.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory( new NaiveEvaluatorFactory() );
 		
 		executeAndCheckResults( program, expectedResults, configuration, "Naive" );
 	}
@@ -259,7 +259,7 @@ public class Helper
 	{
 		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
 
-		configuration.ruleEvaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
+		configuration.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory( new NaiveEvaluatorFactory() );
 		
 		checkFailure( program, expectedExceptionClass, configuration, "Naive" );
 	}

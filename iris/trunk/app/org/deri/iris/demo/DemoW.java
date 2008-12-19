@@ -40,6 +40,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.deri.iris.Configuration;
 import org.deri.iris.KnowledgeBaseFactory;
+import org.deri.iris.evaluation.naive.NaiveEvaluatorFactory;
+import org.deri.iris.evaluation.seminaive.SemiNaiveEvaluatorFactory;
+import org.deri.iris.evaluation.stratifiedbottomup.StratifiedBottomUpEvaluationStrategyFactory;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
 import org.deri.iris.optimisations.magicsets.MagicSets;
 import org.deri.iris.optimisations.rulefilter.RuleFilter;
@@ -260,10 +263,7 @@ public class DemoW
 
 			getContentPane().add( mainSplitter, BorderLayout.CENTER );
 			
-			mEvaluator.setSelectedIndex( 1 );
-			
 			JPanel panel = new JPanel();
-			panel.add( mEvaluator );
 			panel.add( mStrategy );
 			panel.add( mUnsafeRules );
 			panel.add( mOptimise );
@@ -291,8 +291,8 @@ public class DemoW
 		private final JTextArea mProgram = new JTextArea();
 		private final JTextArea mOutput = new JTextArea();
 		
-		private final JComboBox mEvaluator = new JComboBox( new String[] { "Naive", "Semi-naive" } );
-		private final JComboBox mStrategy = new JComboBox( new String[] { "Stratified", "Well-founded" } );
+//		private final JComboBox mEvaluator = new JComboBox( new String[] { "Naive", "Semi-naive" } );
+		private final JComboBox mStrategy = new JComboBox( new String[] { "Stratified (Semi-naive)", "Stratified (Naive)", "Well-founded" } );
 		private final JCheckBox mUnsafeRules = new JCheckBox( "Unsafe-rules", false );
 		private final JComboBox mOptimise = new JComboBox( new String[] { "none", "Magic Sets" } );
 		
@@ -360,25 +360,18 @@ public class DemoW
 			if( mUnsafeRules.isSelected() )
 				config.ruleSafetyProcessor = new AugmentingRuleSafetyProcessor();
 			
-			switch( mEvaluator.getSelectedIndex() )
-			{
-			case 0:
-				config.ruleEvaluatorFactory = new org.deri.iris.evaluation.naive.NaiveEvaluatorFactory();
-				break;
-			
-			default:
-			case 1:
-				// Actually the default
-				break;
-			}
-			
 			switch( mStrategy.getSelectedIndex() )
 			{
 			default:
 			case 0:
+				config.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory( new SemiNaiveEvaluatorFactory() );
 				break;
 				
 			case 1:
+				config.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory( new NaiveEvaluatorFactory() );
+				break;
+				
+			case 2:
 				config.evaluationStrategyFactory = new WellFoundedEvaluationStrategyFactory();
 				config.stratifiers.clear();
 				break;
