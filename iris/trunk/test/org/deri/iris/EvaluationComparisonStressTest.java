@@ -28,9 +28,11 @@ import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import junit.framework.TestCase;
 import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IAtom;
@@ -41,6 +43,9 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.evaluation.stratifiedbottomup.StratifiedBottomUpEvaluationStrategyFactory;
+import org.deri.iris.evaluation.stratifiedbottomup.seminaive.SemiNaiveEvaluatorFactory;
+import org.deri.iris.evaluation.topdown.oldt.OLDTEvaluationStrategyFactory;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
 import org.deri.iris.optimisations.magicsets.MagicSets;
 import org.deri.iris.optimisations.rulefilter.RuleFilter;
@@ -59,7 +64,7 @@ public class EvaluationComparisonStressTest extends TestCase
 {
 	public static boolean SHOW_FAILURE_PROGRAMS = true;
 	
-	public static final int NUM_KNOWLEDGEBASES = 100;
+	public static final int NUM_KNOWLEDGEBASES = 120;
 	
 	public static final int NUM_FACTS_PER_PREDICATE = 6;
 	public static final int MAX_ARITY = 5;
@@ -98,6 +103,12 @@ public class EvaluationComparisonStressTest extends TestCase
 	private int mNumValidPrograms;
 	private int mNumValidProgramsWithOutput;
 	private int mNumTotalFailures;
+	
+	enum Strategy {
+		SemiNaive,
+		WellFounded,
+		OLDT
+	}
 	
 	private List<Config> mConfigs;
 	
@@ -338,6 +349,23 @@ public class EvaluationComparisonStressTest extends TestCase
 		return BASIC.createLiteral( positive, builtinAtom );
 	}
 	
+	private IQuery createQueryFromRuleHead( IRule rule ) {
+		ILiteral ruleHead = rule.getHead().get( 0 );
+		
+		IPredicate predicate = ruleHead.getAtom().getPredicate();
+		int arity = predicate.getArity();
+		ITerm[] terms = new ITerm[ arity ];
+		for( int a = 0; a < arity; ++a )
+			terms[ a ] = getVariable( a );
+		ITuple tuple = BASIC.createTuple( terms );
+		ILiteral queryLiteral = BASIC.createLiteral( true, predicate, tuple );
+
+		List<ILiteral> queryLiterals = new ArrayList<ILiteral>();
+		queryLiterals.add( queryLiteral );
+		
+		return BASIC.createQuery( queryLiterals );
+	}
+	
 	private IQuery createQuery()
 	{
 		int numLiterals = random( MAX_QUERY_LITERALS ) + 1;
@@ -385,10 +413,10 @@ public class EvaluationComparisonStressTest extends TestCase
 	{
 		mGenerateSafeRulesOnly = true;
 		
-		makeConfiguration( false, false, false );
-		makeConfiguration( false, true, false );
-		makeConfiguration( true, false, false );
-		makeConfiguration( true, true, false );
+		makeConfiguration( Strategy.SemiNaive, false, false );
+		makeConfiguration( Strategy.SemiNaive, true, false );
+		makeConfiguration( Strategy.WellFounded, false, false );
+		makeConfiguration( Strategy.WellFounded, true, false );
 		
 		doComparisons();
 		outputResults();
@@ -400,10 +428,10 @@ public class EvaluationComparisonStressTest extends TestCase
 	{
 		mGenerateSafeRulesOnly = false;
 		
-		makeConfiguration( false, false, true );
-		makeConfiguration( false, true, true );
-		makeConfiguration( true, false, true );
-		makeConfiguration( true, true, true );
+		makeConfiguration( Strategy.SemiNaive, false, true );
+		makeConfiguration( Strategy.SemiNaive, true, true );
+		makeConfiguration( Strategy.WellFounded, false, true );
+		makeConfiguration( Strategy.WellFounded, true, true );
 		
 		doComparisons();
 		outputResults();
@@ -411,7 +439,7 @@ public class EvaluationComparisonStressTest extends TestCase
 		assertEquals( 0, mNumTotalFailures );
 	}
 	
-	private void makeConfiguration( boolean wellFounded, boolean magicSets, boolean unsafeRules )
+	private void makeConfiguration( Strategy strategy, boolean magicSets, boolean unsafeRules )
 	{
 		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
 
@@ -420,45 +448,37 @@ public class EvaluationComparisonStressTest extends TestCase
 		configuration.stratifiers.add( new GlobalStratifier() );
 		// ***************************************************************************
 		
-		if( wellFounded )
-		{
+		String name = "";
+
+		switch( strategy ) {
+		case SemiNaive:
+			configuration.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory( new SemiNaiveEvaluatorFactory() );
+			name += "Semi-naive bottom-up";
+			break;
+			
+		case WellFounded:
 			configuration.evaluationStrategyFactory = new WellFoundedEvaluationStrategyFactory();
 			configuration.stratifiers.clear();
+			name += "Well-founded semantics (bottom-up)";
+			break;
+
+		case OLDT:
+			configuration.evaluationStrategyFactory = new OLDTEvaluationStrategyFactory();
+			name += "OLDT";
+			break;
 		}
 		
 		if( magicSets )
 		{
 			configuration.programOptmimisers.add( new RuleFilter() );
 			configuration.programOptmimisers.add( new MagicSets() );
+			name += ", Magic sets";
 		}
 		
 		if( unsafeRules )
 		{
 			configuration.ruleSafetyProcessor = new AugmentingRuleSafetyProcessor();
-		}
-		
-		String name = "";
-		
-		if( ! wellFounded && ! magicSets && ! unsafeRules )
-			name = "Default";
-		else
-		{
-			if( wellFounded )
-				name += "Well-founded semantics";
-			
-			if( magicSets )
-			{
-				if( name.length() > 0 )
-					name += ", ";
-				name += "Magic sets";
-			}
-			
-			if( unsafeRules )
-			{
-				if( name.length() > 0 )
-					name += ", ";
-				name += "Unsafe Rules";
-			}
+			name += ", Unsafe Rules";
 		}
 		
 		mConfigs.add( new Config( configuration, name ) );
@@ -468,8 +488,8 @@ public class EvaluationComparisonStressTest extends TestCase
 	{
 		mGenerateSafeRulesOnly = true;
 		
-		makeConfiguration( true, false, false );
-		makeConfiguration( true, true, false );
+		makeConfiguration( Strategy.WellFounded, false, false );
+		makeConfiguration( Strategy.WellFounded, true, false );
 		
 		doComparisons();
 		outputResults();
@@ -481,8 +501,21 @@ public class EvaluationComparisonStressTest extends TestCase
 	{
 		mGenerateSafeRulesOnly = false;
 		
-		makeConfiguration( true, false, true );
-		makeConfiguration( true, true, true );
+		makeConfiguration( Strategy.WellFounded, false, true );
+		makeConfiguration( Strategy.WellFounded, true, true );
+		
+		doComparisons();
+		outputResults();
+		
+		assertEquals( 0, mNumTotalFailures );
+	}
+
+	public void testCompareSemiNaiveAndOLDT() throws Exception
+	{
+		mGenerateSafeRulesOnly = false;
+		
+		makeConfiguration( Strategy.SemiNaive, false, false );
+		makeConfiguration( Strategy.OLDT, false, false );
 		
 		doComparisons();
 		outputResults();
@@ -520,12 +553,21 @@ public class EvaluationComparisonStressTest extends TestCase
 			
 			Map<IPredicate,IRelation> facts = createFacts();
 
+			// Do random conjunctive queries
 			for( int q = 0; q < NUM_QUERIES; ++q )
 			{
 				IQuery query = createQuery();
 				
 				compareEvaluations( query, rules, facts );
 			}
+			
+			// And query every rule head as well
+			Set<IQuery> ruleHeadQueries = new HashSet<IQuery>();
+			for( IRule rule : rules )
+				ruleHeadQueries.add( createQueryFromRuleHead( rule ) );
+			
+			for( IQuery query : ruleHeadQueries )
+				compareEvaluations( query, rules, facts );
 		}
 	}
 	
