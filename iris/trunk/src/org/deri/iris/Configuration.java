@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.deri.iris.api.IProgramOptimisation;
 import org.deri.iris.evaluation.IEvaluationStrategyFactory;
-import org.deri.iris.evaluation.IRuleEvaluatorFactory;
+import org.deri.iris.evaluation.stratifiedbottomup.IRuleEvaluatorFactory;
 import org.deri.iris.evaluation.stratifiedbottomup.StratifiedBottomUpEvaluationStrategyFactory;
 import org.deri.iris.evaluation.stratifiedbottomup.seminaive.SemiNaiveEvaluatorFactory;
 import org.deri.iris.facts.IDataSource;
