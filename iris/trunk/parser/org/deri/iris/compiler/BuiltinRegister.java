@@ -24,6 +24,7 @@ package org.deri.iris.compiler;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.ITerm;
@@ -68,8 +69,9 @@ public final class BuiltinRegister {
 		ITerm t1 = Factory.TERM.createVariable( "a" );
 		ITerm t2 = Factory.TERM.createVariable( "b" );
 		ITerm t3 = Factory.TERM.createVariable( "c" );
-		registerBuiltin( new org.deri.iris.builtins.AddBuiltin( t1, t2, t3 ) );
+		ITerm t4 = Factory.TERM.createVariable( "d" );
 		
+		registerBuiltin( new org.deri.iris.builtins.AddBuiltin( t1, t2, t3 ) );
 		registerBuiltin( new org.deri.iris.builtins.SubtractBuiltin( t1, t2, t3 ) );
 		registerBuiltin( new org.deri.iris.builtins.MultiplyBuiltin( t1, t2, t3 ) );
 		registerBuiltin( new org.deri.iris.builtins.DivideBuiltin( t1, t2, t3 ) );
@@ -85,33 +87,107 @@ public final class BuiltinRegister {
 		registerBuiltin( new org.deri.iris.builtins.GreaterBuiltin( t1, t2 ) );
 		registerBuiltin( new org.deri.iris.builtins.GreaterEqualBuiltin( t1, t2 ) );
 
-		registerBuiltin( new org.deri.iris.builtins.IsBase64BinaryBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsBooleanBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsDateBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsDateTimeBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsDecimalBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsDoubleBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsDurationBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsFloatBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsGDayBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsGMonthBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsGMonthDayBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsGYearBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsGYearMonthBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsHexBinaryBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsIntegerBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsIriBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsNumericBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsSqNameBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsStringBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.IsTimeBuiltin( t1 ) );
-
-		registerBuiltin( new org.deri.iris.builtins.SameTypeBuiltin( t1, t2 ) );
-
 		registerBuiltin( new org.deri.iris.builtins.TrueBuiltin() );
 		registerBuiltin( new org.deri.iris.builtins.FalseBuiltin() );
 
 		registerBuiltin( new org.deri.iris.builtins.RegexBuiltin( t1, Factory.TERM.createString( "" ) ) );
+		
+		// Datatype check builtins.
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsBase64BinaryBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsBooleanBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsDateBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsDateTimeBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsDayTimeDurationBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsDecimalBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsDoubleBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsDurationBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsFloatBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsGDayBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsGMonthBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsGMonthDayBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsGYearBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsGYearMonthBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsHexBinaryBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsIntegerBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsIriBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsNumericBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsSqNameBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsStringBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsTextBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsTimeBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsXMLLiteralBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsYearMonthDurationBuiltin( t1 ) );
+		
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsDatatypeBuiltin( t1, t2 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsNotDatatypeBuiltin( t1, t2 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.SameTypeBuiltin( t1, t2 ) );
+		
+		// Datatype conversion builtins.
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToBase64Builtin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToBooleanBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToDateBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToDateTimeBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToDayTimeDurationBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToDecimalBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToDoubleBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToDurationBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToFloatBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToGDayBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToGMonthBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToGMonthDayBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToGYearBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToGYearMonthBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToHexBinaryBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToDurationBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToIntegerBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToIriBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToStringBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToTextBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToTimeBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToXMLLiteralBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToYearMonthDurationBuiltin(t1));
+		
+		// Date builtins.
+		registerBuiltin(new org.deri.iris.builtins.date.DayPartBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.date.HourPartBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.date.MinutePartBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.date.MonthPartBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.date.SecondPartBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.date.TimezonePartBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.date.YearPartBuiltin(t1));
+		
+		// String builtins.
+		registerBuiltin(new org.deri.iris.builtins.string.LangFromTextBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.string.StringCompareBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.StringConcatBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.StringContainsBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.StringContainsBuiltin(t1, t2, t3));
+		registerBuiltin(new org.deri.iris.builtins.string.StringEndsWithBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.StringEndsWithBuiltin(t1, t2, t3));
+		registerBuiltin(new org.deri.iris.builtins.string.StringEscapeHtmlUriBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.string.StringFromTextBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.string.StringIriToUriBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.string.StringJoinBuiltin(t1, t2, t3));
+		registerBuiltin(new org.deri.iris.builtins.string.StringLengthBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.string.StringMatchesBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.StringMatchesBuiltin(t1, t2, t3));
+		registerBuiltin(new org.deri.iris.builtins.string.StringReplaceBuiltin(t1, t2, t3));
+		registerBuiltin(new org.deri.iris.builtins.string.StringReplaceBuiltin(t1, t2, t3, t4));
+		registerBuiltin(new org.deri.iris.builtins.string.StringStartsWithBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.StringStartsWithBuiltin(t1, t2, t3));
+		registerBuiltin(new org.deri.iris.builtins.string.StringSubstringAfterBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.StringSubstringAfterBuiltin(t1, t2, t3));
+		registerBuiltin(new org.deri.iris.builtins.string.StringSubstringBeforeBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.StringSubstringBeforeBuiltin(t1, t2, t3));
+		registerBuiltin(new org.deri.iris.builtins.string.StringSubstringBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.StringSubstringBuiltin(t1, t2, t3));
+		registerBuiltin(new org.deri.iris.builtins.string.StringToLowerBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.string.StringToUpperBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.string.StringUriEncodeBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.string.TextCompareBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.TextFromStringBuiltin(t1));
+		registerBuiltin(new org.deri.iris.builtins.string.TextFromStringLangBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.TextLengthBuiltin(t1));
 	}
 
 	/**
