@@ -22,6 +22,8 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.net.URI;
+
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.utils.StandardFloatingPointComparator;
@@ -33,17 +35,18 @@ import org.deri.iris.utils.StandardFloatingPointComparator;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class DoubleTerm implements IDoubleTerm {
 
 	private final Double d;
-	
+
 	DoubleTerm(final double d) {
 		this.d = d;
 	}
-	
+
 	public Double getValue() {
 		return d;
 	}
@@ -56,30 +59,40 @@ public class DoubleTerm implements IDoubleTerm {
 		if (o == null) {
 			return 1;
 		}
-		
+
 		DoubleTerm dt = (DoubleTerm) o;
-		return StandardFloatingPointComparator.getDouble().compare( d, dt.d );
+		return StandardFloatingPointComparator.getDouble().compare(d, dt.d);
 	}
-	
+
 	public boolean equals(final Object o) {
 		if (!(o instanceof DoubleTerm)) {
 			return false;
 		}
 		DoubleTerm dt = (DoubleTerm) o;
 		// Use the floating point comparer to allow for round-off errors.
-		return StandardFloatingPointComparator.getDouble().equals( d, dt.d );
+		return StandardFloatingPointComparator.getDouble().equals(d, dt.d);
 	}
-	
+
 	public int hashCode() {
 		return d.hashCode();
 	}
-	
+
 	/**
 	 * Simply returns the String representation of the holded double.
 	 * 
 	 * @return the String representation of the holded double
 	 */
 	public String toString() {
+		return d.toString();
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#double");
+	}
+
+	@Override
+	public String toCanonicalString() {
 		return d.toString();
 	}
 }

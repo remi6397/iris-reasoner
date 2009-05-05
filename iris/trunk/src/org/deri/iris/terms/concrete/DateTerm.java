@@ -22,6 +22,7 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.net.URI;
 import java.util.TimeZone;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -137,5 +138,15 @@ public class DateTerm implements IDateTerm {
 
 	public TimeZone getTimeZone() {
 		return date.getTimeZone(0);
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#date");
+	}
+
+	@Override
+	public String toCanonicalString() {
+		return date.toString();
 	}
 }

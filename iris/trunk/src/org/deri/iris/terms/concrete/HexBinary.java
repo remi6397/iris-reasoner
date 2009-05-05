@@ -22,6 +22,7 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.net.URI;
 import java.util.regex.Pattern;
 
 import org.deri.iris.api.terms.ITerm;
@@ -95,5 +96,15 @@ public class HexBinary implements IHexBinary {
 
 	public IHexBinary getMinValue() {
 		return new HexBinary("00");
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#hexBinary");
+	}
+
+	@Override
+	public String toCanonicalString() {
+		return new String(getValue());
 	}
 }

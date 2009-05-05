@@ -22,6 +22,8 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.net.URI;
+
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IIri;
 import org.deri.iris.api.terms.concrete.ISqName;
@@ -33,6 +35,7 @@ import org.deri.iris.api.terms.concrete.ISqName;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
@@ -137,8 +140,8 @@ public class SqName implements ISqName {
 	}
 
 	public String toString() {
-		return getClass().getSimpleName() + "(" + namespace.getValue() + "#" +
-							name + ")";
+		return getClass().getSimpleName() + "(" + namespace.getValue() + "#"
+				+ name + ")";
 	}
 
 	public boolean equals(final Object obj) {
@@ -187,5 +190,15 @@ public class SqName implements ISqName {
 
 	public boolean isGround() {
 		return true;
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.wsmo.org/wsml/wsml-syntax#sQName");
+	}
+
+	@Override
+	public String toCanonicalString() {
+		return getValue();
 	}
 }

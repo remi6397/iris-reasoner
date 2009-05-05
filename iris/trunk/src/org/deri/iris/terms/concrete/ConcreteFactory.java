@@ -27,6 +27,7 @@ import org.deri.iris.api.terms.concrete.IBase64Binary;
 import org.deri.iris.api.terms.concrete.IBooleanTerm;
 import org.deri.iris.api.terms.concrete.IDateTerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
+import org.deri.iris.api.terms.concrete.IDayTimeDuration;
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
 import org.deri.iris.api.terms.concrete.IDuration;
@@ -40,7 +41,10 @@ import org.deri.iris.api.terms.concrete.IHexBinary;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.concrete.IIri;
 import org.deri.iris.api.terms.concrete.ISqName;
+import org.deri.iris.api.terms.concrete.IText;
 import org.deri.iris.api.terms.concrete.ITime;
+import org.deri.iris.api.terms.concrete.IXMLLiteral;
+import org.deri.iris.api.terms.concrete.IYearMonthDuration;
 
 /**
  * <p>
@@ -70,7 +74,7 @@ public class ConcreteFactory implements IConcreteFactory {
 	public IBooleanTerm createBoolean(final String value) {
 		return new BooleanTerm(value);
 	}
-	
+
 	public IDateTerm createDate(final int year, final int month, final int day) {
 		return new DateTerm(year, month, day);
 	}
@@ -80,26 +84,27 @@ public class ConcreteFactory implements IConcreteFactory {
 		return new DateTerm(year, month, day, tzHour, tzMinute);
 	}
 
-	public IDateTime createDateTime( int year, int month, int day, int hour, int minute, int second, int millisecond,
-			int tzHour, int tzMinute) {
-		return new DateTime(year, month, day, 
-				hour, minute, second, millisecond, 
-				tzHour, tzMinute);
+	public IDateTime createDateTime(int year, int month, int day, int hour,
+			int minute, int second, int millisecond, int tzHour, int tzMinute) {
+		return new DateTime(year, month, day, hour, minute, second,
+				millisecond, tzHour, tzMinute);
 	}
 
-	public IDateTime createDateTime(int year, int month, int day, int hour, int minute, double second, int tzHour, int tzMinute) {
-		return new DateTime( year, month, day, hour, minute, second, tzHour, tzMinute );
+	public IDateTime createDateTime(int year, int month, int day, int hour,
+			int minute, double second, int tzHour, int tzMinute) {
+		return new DateTime(year, month, day, hour, minute, second, tzHour,
+				tzMinute);
 	}
 
-	public ITime createTime(final int hour, final int minute, final int second, final int millisecond,
-			final int tzHour, final int tzMinute) {
+	public ITime createTime(final int hour, final int minute, final int second,
+			final int millisecond, final int tzHour, final int tzMinute) {
 		return new Time(hour, minute, second, millisecond, tzHour, tzMinute);
 	}
 
-	public ITime createTime( int hour, int minute, double second, int tzHour, int tzMinute )
-    {
+	public ITime createTime(int hour, int minute, double second, int tzHour,
+			int tzMinute) {
 		return new Time(hour, minute, second, tzHour, tzMinute);
-    }
+	}
 
 	public IDecimalTerm createDecimal(final double d) {
 		return new DecimalTerm(d);
@@ -109,13 +114,16 @@ public class ConcreteFactory implements IConcreteFactory {
 		return new DoubleTerm(d);
 	}
 
-	public IDuration createDuration(boolean positive, int year, int month, int day, int hour, int minute, int second, int millisecond) {
-		return new Duration(positive, year, month, day, hour, minute, second, millisecond);
+	public IDuration createDuration(boolean positive, int year, int month,
+			int day, int hour, int minute, int second, int millisecond) {
+		return new Duration(positive, year, month, day, hour, minute, second,
+				millisecond);
 	}
 
-	public IDuration createDuration( boolean positive, int year, int month, int day, int hour, int minute, double second ) {
-	    return new Duration( positive, year, month, day, hour, minute, second );
-    }
+	public IDuration createDuration(boolean positive, int year, int month,
+			int day, int hour, int minute, double second) {
+		return new Duration(positive, year, month, day, hour, minute, second);
+	}
 
 	public IDuration createDuration(final long millis) {
 		return new Duration(millis);
@@ -163,5 +171,42 @@ public class ConcreteFactory implements IConcreteFactory {
 
 	public ISqName createSqName(final IIri iri, final String name) {
 		return new SqName(iri, name);
+	}
+
+	public IText createText(final String string, final String language) {
+		return new Text(string, language);
+	}
+
+	public IText createText(final String string) {
+		return new Text(string);
+	}
+
+	@Override
+	public IXMLLiteral createXMLLiteral(String string) {
+		return new XMLLiteral(string);
+	}
+
+	@Override
+	public IXMLLiteral createXMLLiteral(String string, String lang) {
+		return new XMLLiteral(string, lang);
+	}
+
+	@Override
+	public IYearMonthDuration createYearMonthDuration(boolean positive,
+			int year, int month) {
+		return new YearMonthDuration(positive, year, month);
+	}
+
+	@Override
+	public IDayTimeDuration createDayTimeDuration(boolean positive, int day,
+			int hour, int minute, double second) {
+		return new DayTimeDuration(positive, day, hour, minute, second);
+	}
+
+	@Override
+	public IDayTimeDuration createDayTimeDuration(boolean positive, int day,
+			int hour, int minute, int second, int millisecond) {
+		return new DayTimeDuration(positive, day, hour, minute, second,
+				millisecond);
 	}
 }

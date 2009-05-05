@@ -22,6 +22,8 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.net.URI;
+
 import org.deri.iris.api.terms.concrete.IFloatTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.utils.StandardFloatingPointComparator;
@@ -33,6 +35,7 @@ import org.deri.iris.utils.StandardFloatingPointComparator;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
@@ -40,17 +43,19 @@ public class FloatTerm implements IFloatTerm {
 
 	/** The float represented by this object */
 	private final Float f;
-	
-	
+
 	/**
 	 * Constructs a new float with the given value.
-	 * @param f the float value for this object
-	 * @throws NullPointerException if the float is null
+	 * 
+	 * @param f
+	 *            the float value for this object
+	 * @throws NullPointerException
+	 *             if the float is null
 	 */
 	FloatTerm(final float f) {
 		this.f = f;
 	}
-	
+
 	public Float getValue() {
 		return f;
 	}
@@ -63,25 +68,35 @@ public class FloatTerm implements IFloatTerm {
 		if (o == null) {
 			return 1;
 		}
-		
+
 		FloatTerm ft = (FloatTerm) o;
-		return StandardFloatingPointComparator.getFloat().compare( f, ft.f );
+		return StandardFloatingPointComparator.getFloat().compare(f, ft.f);
 	}
 
 	public int hashCode() {
 		return f.hashCode();
 	}
-	
+
 	public boolean equals(Object o) {
 		if (!(o instanceof FloatTerm)) {
 			return false;
 		}
 		FloatTerm ft = (FloatTerm) o;
 		// Use the floating point comparer to allow for round-off errors.
-		return StandardFloatingPointComparator.getFloat().equals( f, ft.f );
+		return StandardFloatingPointComparator.getFloat().equals(f, ft.f);
 	}
-	
+
 	public String toString() {
+		return f.toString();
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#float");
+	}
+
+	@Override
+	public String toCanonicalString() {
 		return f.toString();
 	}
 }

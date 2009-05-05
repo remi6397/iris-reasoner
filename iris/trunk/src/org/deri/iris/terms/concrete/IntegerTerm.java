@@ -22,6 +22,8 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.net.URI;
+
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.ITerm;
 
@@ -32,6 +34,7 @@ import org.deri.iris.api.terms.ITerm;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Holger Lausen
  * @version $Revision$
@@ -69,7 +72,7 @@ public class IntegerTerm implements IIntegerTerm {
 			return false;
 		}
 		IntegerTerm it = (IntegerTerm) o;
-		return i.equals( it.i );
+		return i.equals(it.i);
 	}
 
 	/**
@@ -78,6 +81,18 @@ public class IntegerTerm implements IIntegerTerm {
 	 * @return the String representation of the holded int
 	 */
 	public String toString() {
+		return i.toString();
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		// This class represents a 32-bit integer, therefore the corresponding
+		// XML Schema data type is xs:int, not xs:integer.
+		return URI.create("http://www.w3.org/2001/XMLSchema#int");
+	}
+
+	@Override
+	public String toCanonicalString() {
 		return i.toString();
 	}
 }

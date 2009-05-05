@@ -24,6 +24,7 @@ package org.deri.iris.terms.concrete;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -64,38 +65,60 @@ public class Duration implements IDuration {
 
 	/**
 	 * Constructs a new duration.
-	 * @param positive <code>true</code>if the duration is positive,
-	 * otherwise <code>false</code>
-	 * @param year the yearspan
-	 * @param month the monthspan
-	 * @param day the dayspan
-	 * @param hour the hourspan
-	 * @param minute the minutespan
-	 * @param second the secondspan
-	 * @param millisecond the millisecondspan
+	 * 
+	 * @param positive
+	 *            <code>true</code>if the duration is positive, otherwise
+	 *            <code>false</code>
+	 * @param year
+	 *            the yearspan
+	 * @param month
+	 *            the monthspan
+	 * @param day
+	 *            the dayspan
+	 * @param hour
+	 *            the hourspan
+	 * @param minute
+	 *            the minutespan
+	 * @param second
+	 *            the secondspan
+	 * @param millisecond
+	 *            the millisecondspan
 	 */
-	Duration(boolean positive, int year, int month, int day, int hour, int minute, int second, int millisecond) {
-		this( positive, year, month, day, hour, minute, second + (millisecond / 1000.0) ); 
+	Duration(boolean positive, int year, int month, int day, int hour,
+			int minute, int second, int millisecond) {
+		this(positive, year, month, day, hour, minute, second
+				+ (millisecond / 1000.0));
 
-		if( millisecond < 0 || millisecond >= 1000 )
-			throw new IllegalArgumentException( "Millisecond value is out of range: " + second );
+		if (millisecond < 0 || millisecond >= 1000)
+			throw new IllegalArgumentException(
+					"Millisecond value is out of range: " + second);
 
-		if( second < 0 || second >= 60 )
-			throw new IllegalArgumentException( "Second value is out of range: " + second );
+		if (second < 0 || second >= 60)
+			throw new IllegalArgumentException("Second value is out of range: "
+					+ second);
 	}
 
 	/**
 	 * Constructs a new duration.
-	 * @param positive <code>true</code>if the duration is positive,
-	 * otherwise <code>false</code>
-	 * @param year the year
-	 * @param month the month
-	 * @param day the day
-	 * @param hour the hour
-	 * @param minute the minute
-	 * @param second the second
+	 * 
+	 * @param positive
+	 *            <code>true</code>if the duration is positive, otherwise
+	 *            <code>false</code>
+	 * @param year
+	 *            the year
+	 * @param month
+	 *            the month
+	 * @param day
+	 *            the day
+	 * @param hour
+	 *            the hour
+	 * @param minute
+	 *            the minute
+	 * @param second
+	 *            the second
 	 */
-	Duration(boolean positive, int year, int month, int day, int hour, int minute, double second) {
+	Duration(boolean positive, int year, int month, int day, int hour,
+			int minute, double second) {
 		if (year < 0) {
 			throw new IllegalArgumentException("The year must not be negative");
 		}
@@ -109,26 +132,26 @@ public class Duration implements IDuration {
 			throw new IllegalArgumentException("The hour must not be negative");
 		}
 		if (minute < 0) {
-			throw new IllegalArgumentException("The minute must not be negative");
+			throw new IllegalArgumentException(
+					"The minute must not be negative");
 		}
 		if (second < 0) {
-			throw new IllegalArgumentException("The second must not be negative");
+			throw new IllegalArgumentException(
+					"The second must not be negative");
 		}
 
-		mDuration = FACTORY.newDuration(positive, 
-				BigInteger.valueOf( year ), 
-				BigInteger.valueOf( month ), 
-				BigInteger.valueOf( day ), 
-				BigInteger.valueOf( hour ), 
-				BigInteger.valueOf( minute ), 
-				new BigDecimal( Double.toString( second ) )
-				);
+		mDuration = FACTORY.newDuration(positive, BigInteger.valueOf(year),
+				BigInteger.valueOf(month), BigInteger.valueOf(day), BigInteger
+						.valueOf(hour), BigInteger.valueOf(minute),
+				new BigDecimal(Double.toString(second)));
 	}
 
 	/**
 	 * Contructs a new duration out of a given amount of milliseconds. The
 	 * milliseconds will be round down to the next second.
-	 * @param millis the millisecondspan
+	 * 
+	 * @param millis
+	 *            the millisecondspan
 	 */
 	Duration(final long millis) {
 		mDuration = FACTORY.newDuration(millis);
@@ -162,24 +185,27 @@ public class Duration implements IDuration {
 		return Long.valueOf(mDuration.getTimeInMillis(ZERO) % 1000).intValue();
 	}
 
-	public double getDecimalSecond()
-	{
-		BigDecimal seconds = (BigDecimal) mDuration.getField( DatatypeConstants.SECONDS );
-		return seconds.doubleValue();
+	public double getDecimalSecond() {
+		// The following approach would discard the fractional part
+		// Number seconds = mDuration.getField(DatatypeConstants.SECONDS);
+		// return seconds.doubleValue();
+		
+		return getSecond() + ((double) getMillisecond()) / 1000.0;
 	}
 
 	public int hashCode() {
-		return XmlDurationWorkAroundHelper.computeHashCode( mDuration );
+		return XmlDurationWorkAroundHelper.computeHashCode(mDuration);
 	}
 
 	/**
 	 * <p>
-	 * Returns a short string representation of this object. <b>The format
-	 * of the returned string is subject to change.</b>
+	 * Returns a short string representation of this object. <b>The format of
+	 * the returned string is subject to change.</b>
 	 * </p>
 	 * <p>
 	 * The resutl is formatted according to the XML 1.0 specification.
 	 * </p>
+	 * 
 	 * @return the string representation
 	 */
 	public String toString() {
@@ -190,19 +216,19 @@ public class Duration implements IDuration {
 		if (!(obj instanceof IDuration)) {
 			return false;
 		}
-		
-		javax.xml.datatype.Duration thatDuration = ( (IDuration) obj).getValue();
-		
-		return XmlDurationWorkAroundHelper.equals( mDuration, thatDuration );
+
+		javax.xml.datatype.Duration thatDuration = ((IDuration) obj).getValue();
+
+		return XmlDurationWorkAroundHelper.equals(mDuration, thatDuration);
 	}
-	
+
 	public int compareTo(ITerm o) {
 		if (o == null)
 			return 1;
-		
-		javax.xml.datatype.Duration thatDuration = ( (IDuration) o).getValue();
 
-		return XmlDurationWorkAroundHelper.compare( mDuration, thatDuration );
+		javax.xml.datatype.Duration thatDuration = ((IDuration) o).getValue();
+
+		return XmlDurationWorkAroundHelper.compare(mDuration, thatDuration);
 	}
 
 	public boolean isGround() {
@@ -211,5 +237,20 @@ public class Duration implements IDuration {
 
 	public javax.xml.datatype.Duration getValue() {
 		return mDuration;
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#duration");
+	}
+
+	@Override
+	public boolean isPositive() {
+		return mDuration.getSign() >= 0;
+	}
+
+	@Override
+	public String toCanonicalString() {
+		return mDuration.toString();
 	}
 }

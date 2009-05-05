@@ -22,6 +22,8 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.net.URI;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
@@ -135,5 +137,15 @@ public class GMonthDay implements IGMonthDay {
 
 	public Integer[] getValue() {
 		return new Integer[]{date.getMonth(), date.getDay()};
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#gMonthDay");
+	}
+
+	@Override
+	public String toCanonicalString() {
+		return date.toString();
 	}
 }

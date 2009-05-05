@@ -22,6 +22,8 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.net.URI;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
@@ -37,6 +39,7 @@ import org.deri.iris.api.terms.concrete.IGMonth;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
@@ -62,7 +65,9 @@ public class GMonth implements IGMonth {
 
 	/**
 	 * Creates a new month. The timezone will be set to GMT.
-	 * @param month the month
+	 * 
+	 * @param month
+	 *            the month
 	 */
 	GMonth(final int month) {
 		this(month, 0, 0);
@@ -70,30 +75,35 @@ public class GMonth implements IGMonth {
 
 	/**
 	 * Creates a new month withing the given timezone.
-	 * @param month the month (1-12)
-	 * @param tzHour the timezone hours (relative to GMT)
-	 * @param tzMinute the timezone minutes (relative to GMT)
-	 * @throws IllegalArgumentException if the tzHour and tzMinute
-	 * wheren't both positive, or negative
+	 * 
+	 * @param month
+	 *            the month (1-12)
+	 * @param tzHour
+	 *            the timezone hours (relative to GMT)
+	 * @param tzMinute
+	 *            the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException
+	 *             if the tzHour and tzMinute wheren't both positive, or
+	 *             negative
 	 */
 	GMonth(final int month, final int tzHour, final int tzMinute) {
-		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0))) {
-			throw new IllegalArgumentException("Both, the timezone hours and " + 
-					"minutes must be negative, or positive, but were " + 
-					tzHour + " and " + tzMinute);
+		if (((tzHour < 0) && (tzMinute > 0))
+				|| ((tzHour > 0) && (tzMinute < 0))) {
+			throw new IllegalArgumentException("Both, the timezone hours and "
+					+ "minutes must be negative, or positive, but were "
+					+ tzHour + " and " + tzMinute);
 		}
 
-		date = FACTORY.newXMLGregorianCalendarDate(DatatypeConstants.FIELD_UNDEFINED, 
-				month, 
-				DatatypeConstants.FIELD_UNDEFINED, 
-				tzHour * 60 + tzMinute);
+		date = FACTORY.newXMLGregorianCalendarDate(
+				DatatypeConstants.FIELD_UNDEFINED, month,
+				DatatypeConstants.FIELD_UNDEFINED, tzHour * 60 + tzMinute);
 	}
 
 	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		
+
 		GMonth gm = (GMonth) o;
 		return getMonth() - gm.getValue();
 	}
@@ -124,5 +134,15 @@ public class GMonth implements IGMonth {
 
 	public Integer getValue() {
 		return date.getMonth();
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#gMonth");
+	}
+
+	@Override
+	public String toCanonicalString() {
+		return date.toString();
 	}
 }
