@@ -26,6 +26,7 @@ import org.deri.iris.api.terms.concrete.IBase64Binary;
 import org.deri.iris.api.terms.concrete.IBooleanTerm;
 import org.deri.iris.api.terms.concrete.IDateTerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
+import org.deri.iris.api.terms.concrete.IDayTimeDuration;
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
 import org.deri.iris.api.terms.concrete.IDuration;
@@ -39,146 +40,197 @@ import org.deri.iris.api.terms.concrete.IHexBinary;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.concrete.IIri;
 import org.deri.iris.api.terms.concrete.ISqName;
+import org.deri.iris.api.terms.concrete.IText;
 import org.deri.iris.api.terms.concrete.ITime;
+import org.deri.iris.api.terms.concrete.IXMLLiteral;
+import org.deri.iris.api.terms.concrete.IYearMonthDuration;
 
 /**
  * <p>
- * An interface that can be used to create set of data types 
- * supported by this engine.
+ * An interface that can be used to create set of data types supported by this
+ * engine.
  * </p>
  */
 public interface IConcreteFactory {
+	/**
+	 * Create a Base64 term from a String representing a Base64 data type.
+	 * 
+	 * @param s
+	 *            The String representing a Base64 data type.
+	 * @return The Base64 term.
+	 */
 	public IBase64Binary createBase64Binary(String s);
 
 	/**
 	 * Create a boolean term from a boolean value.
-	 * @param b The value of the term
+	 * 
+	 * @param b
+	 *            The value of the term
 	 * @return The boolean term.
 	 */
 	public IBooleanTerm createBoolean(boolean b);
 
 	/**
 	 * Create a boolean term with a string value.
-	 * @param value The string value, which must be either 'true' or '1' for true, or
-	 * 'false' or '0' for false. 
+	 * 
+	 * @param value
+	 *            The string value, which must be either 'true' or '1' for true,
+	 *            or 'false' or '0' for false.
 	 * @return The boolean term.
 	 */
 	public IBooleanTerm createBoolean(String value);
 
 	/**
-	 * Creates a datetime object with a given timezone.
-	 * @param year the years
-	 * @param month the months (1-12)
-	 * @param day day of the month
-	 * @param hour the hours
-	 * @param minute the minutes
-	 * @param second the decimal seconds
-	 * @param tzHour the timezone hours (relative to GMT)
-	 * @param tzMinute the timezone minutes (relative to GMT)
-	 * @throws IllegalArgumentException if, the tzHour and tzMinute
-	 * wheren't both positive, or negative
-	 */
-	public IDateTime createDateTime(int year, int month, int day, 
-			int hour, int minute, double second,
-			int tzHour, int tzMinute);
-
-	/**
-	 * Creates a datetime object with a given timezone.
-	 * @param year the years
-	 * @param month the months (1-12)
-	 * @param day day of the month
-	 * @param hour the hours
-	 * @param minute the minutes
-	 * @param second the seconds
-	 * @param millisecond the milliseconds
-	 * @param tzHour the timezone hours (relative to GMT)
-	 * @param tzMinute the timezone minutes (relative to GMT)
-	 * @throws IllegalArgumentException if, the tzHour and tzMinute
-	 * wheren't both positive, or negative
-	 */
-	public IDateTime createDateTime(int year, int month, int day, 
-			int hour, int minute, int second, int millisecond, 
-			int tzHour, int tzMinute);
-
-	/**
-	 * Creates a time object with a given timezone.
-	 * @param hour the hours
-	 * @param minute the minutes
-	 * @param second the decimal seconds
-	 * @param tzHour the timezone hours (relative to GMT)
-	 * @param tzMinute the timezone minutes (relative to GMT)
-	 * @throws IllegalArgumentException if, the tzHour and tzMinute
-	 * wheren't both positive, or negative
-	 */
-	public ITime createTime(int hour, int minute, double second, 
-			int tzHour, int tzMinute);
-
-	/**
-	 * Creates a time object with a given timezone.
-	 * @param hour the hours
-	 * @param minute the minutes
-	 * @param second the seconds
-	 * @param millisecond the milliseconds
-	 * @param tzHour the timezone hours (relative to GMT)
-	 * @param tzMinute the timezone minutes (relative to GMT)
-	 * @throws IllegalArgumentException if, the tzHour and tzMinute
-	 * wheren't both positive, or negative
-	 */
-	public ITime createTime(int hour, int minute, int second, int millisecond, 
-			int tzHour, int tzMinute);
-
-	/**
 	 * Creates a new date object. The timezone will be set to GMT.
-	 * @param year the year
-	 * @param month the mont (1-12)
-	 * @param day the day
+	 * 
+	 * @param year
+	 *            the year
+	 * @param month
+	 *            the mont (1-12)
+	 * @param day
+	 *            the day
 	 */
 	public IDateTerm createDate(int year, int month, int day);
 
 	/**
 	 * Creates a new date object within the given timezone.
-	 * @param year the year
-	 * @param month the mont (1-12)
-	 * @param day the day
-	 * @param tzHour the timezone hours (relative to GMT)
-	 * @param tzMinute the timezone minutes (relative to GMT)
-	 * @throws IllegalArgumentException if, the tzHour and tzMinute
-	 * wheren't both positive, or negative
+	 * 
+	 * @param year
+	 *            the year
+	 * @param month
+	 *            the mont (1-12)
+	 * @param day
+	 *            the day
+	 * @param tzHour
+	 *            the timezone hours (relative to GMT)
+	 * @param tzMinute
+	 *            the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException
+	 *             if, the tzHour and tzMinute wheren't both positive, or
+	 *             negative
 	 */
-	public IDateTerm createDate(int year, int month, int day, 
-			int tzHour, int tzMinute);
+	public IDateTerm createDate(int year, int month, int day, int tzHour,
+			int tzMinute);
+
+	/**
+	 * Creates a datetime object with a given timezone.
+	 * 
+	 * @param year
+	 *            the years
+	 * @param month
+	 *            the months (1-12)
+	 * @param day
+	 *            day of the month
+	 * @param hour
+	 *            the hours
+	 * @param minute
+	 *            the minutes
+	 * @param second
+	 *            the decimal seconds
+	 * @param tzHour
+	 *            the timezone hours (relative to GMT)
+	 * @param tzMinute
+	 *            the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException
+	 *             if, the tzHour and tzMinute wheren't both positive, or
+	 *             negative
+	 */
+	public IDateTime createDateTime(int year, int month, int day, int hour,
+			int minute, double second, int tzHour, int tzMinute);
+
+	/**
+	 * Creates a datetime object with a given timezone.
+	 * 
+	 * @param year
+	 *            the years
+	 * @param month
+	 *            the months (1-12)
+	 * @param day
+	 *            day of the month
+	 * @param hour
+	 *            the hours
+	 * @param minute
+	 *            the minutes
+	 * @param second
+	 *            the seconds
+	 * @param millisecond
+	 *            the milliseconds
+	 * @param tzHour
+	 *            the timezone hours (relative to GMT)
+	 * @param tzMinute
+	 *            the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException
+	 *             if, the tzHour and tzMinute wheren't both positive, or
+	 *             negative
+	 */
+	public IDateTime createDateTime(int year, int month, int day, int hour,
+			int minute, int second, int millisecond, int tzHour, int tzMinute);
+
+	/**
+	 * Creates a new term representing a xs:dayTimeDuration.
+	 * 
+	 * @param positive
+	 *            True if this term represents a positive duration, false
+	 *            otherwise.
+	 * @param day
+	 *            The day.
+	 * @param hour
+	 *            The hour.
+	 * @param minute
+	 *            The minute.
+	 * @param second
+	 *            The second.
+	 * 
+	 * @return The new term representing a xs:dayTimeDuration.
+	 */
+	public IDayTimeDuration createDayTimeDuration(boolean positive, int day,
+			int hour, int minute, double second);
+
+	/**
+	 * Creates a new term representing a xs:dayTimeDuration.
+	 * 
+	 * @param positive
+	 *            True if this term represents a positive duration, false
+	 *            otherwise.
+	 * @param day
+	 *            The day.
+	 * @param hour
+	 *            The hour.
+	 * @param minute
+	 *            The minute.
+	 * @param second
+	 *            The second.
+	 * @param millisecond
+	 *            The millisecond.
+	 * 
+	 * @return The new term representing a xs:dayTimeDuration.
+	 */
+	public IDayTimeDuration createDayTimeDuration(boolean positive, int day,
+			int hour, int minute, int second, int millisecond);
 
 	/**
 	 * Create a new decimal term.
-	 * @param d The decimal value
+	 * 
+	 * @param d
+	 *            The decimal value
 	 * @return The new decimal term
 	 */
 	public IDecimalTerm createDecimal(double d);
 
 	/**
 	 * Create a double term.
-	 * @param d The double values
+	 * 
+	 * @param d
+	 *            The double values
 	 * @return The new term
 	 */
 	public IDoubleTerm createDouble(double d);
 
 	/**
-	 * Constructs a new duration.
-	 * @param positive <code>true</code>if the duration is positive,
-	 * otherwise <code>false</code>
-	 * @param year the yearspan
-	 * @param month the monthspa (1-12)
-	 * @param day the dayspan
-	 * @param hour the hourspan
-	 * @param minute the minutespan
-	 * @param second the secondspan
-	 * @param millisecond the millisecondspan
-	 */
-	public IDuration createDuration(boolean positive, int year, int month, int day, int hour, int minute, int second, int millisecond);
-
-	/**
 	 * Create a new Duration term.
-	 * @param positive true is a positive duration
+	 * 
+	 * @param positive
+	 *            true is a positive duration
 	 * @param year
 	 * @param month
 	 * @param day
@@ -187,92 +239,244 @@ public interface IConcreteFactory {
 	 * @param second
 	 * @return
 	 */
-	public IDuration createDuration(boolean positive, int year, int month, int day, int hour, int minute, double second);
+	public IDuration createDuration(boolean positive, int year, int month,
+			int day, int hour, int minute, double second);
+
+	/**
+	 * Constructs a new duration.
+	 * 
+	 * @param positive
+	 *            <code>true</code>if the duration is positive, otherwise
+	 *            <code>false</code>
+	 * @param year
+	 *            the yearspan
+	 * @param month
+	 *            the monthspa (1-12)
+	 * @param day
+	 *            the dayspan
+	 * @param hour
+	 *            the hourspan
+	 * @param minute
+	 *            the minutespan
+	 * @param second
+	 *            the secondspan
+	 * @param millisecond
+	 *            the millisecondspan
+	 */
+	public IDuration createDuration(boolean positive, int year, int month,
+			int day, int hour, int minute, int second, int millisecond);
 
 	/**
 	 * Constructs a new duration out of a given amount of milliseconds. The
 	 * milliseconds will be round down to the next second.
-	 * @param millis the millisecond span
+	 * 
+	 * @param millis
+	 *            the millisecond span
 	 */
 	public IDuration createDuration(long millis);
 
 	/**
 	 * Create a new float term
-	 * @param f The float value
+	 * 
+	 * @param f
+	 *            The float value
 	 * @return The new float term
 	 */
 	public IFloatTerm createFloat(float f);
 
 	/**
 	 * Create a new day term
-	 * @param day The day value
+	 * 
+	 * @param day
+	 *            The day value
 	 * @return The new term
 	 */
 	public IGDay createGDay(int day);
 
 	/**
-	 * Create a new month/day term
-	 * @param month The month value
-	 * @param day The day value
-	 * @return The new term
-	 */
-	public IGMonthDay createGMonthDay(int month, int day);
-
-	/**
 	 * Create a new month term
-	 * @param month The month value
+	 * 
+	 * @param month
+	 *            The month value
 	 * @return The new term
 	 */
 	public IGMonth createGMonth(int month);
 
 	/**
-	 * Create a new year/month term
-	 * @param year The year value
-	 * @param month The month value
+	 * Create a new month/day term
+	 * 
+	 * @param month
+	 *            The month value
+	 * @param day
+	 *            The day value
 	 * @return The new term
 	 */
-	public IGYearMonth createGYearMonth(int year, int month);
-
-	/**
-	 * Create a new integer term
-	 * @param i The integer value
-	 * @return The new term
-	 */
-	public IIntegerTerm createInteger(int i);
+	public IGMonthDay createGMonthDay(int month, int day);
 
 	/**
 	 * Create a new year term
-	 * @param year The year value
+	 * 
+	 * @param year
+	 *            The year value
 	 * @return The new term
 	 */
 	public IGYear createGYear(int year);
 
 	/**
+	 * Create a new year/month term
+	 * 
+	 * @param year
+	 *            The year value
+	 * @param month
+	 *            The month value
+	 * @return The new term
+	 */
+	public IGYearMonth createGYearMonth(int year, int month);
+
+	/**
 	 * Create a new HexBinary term
-	 * @param s The hex binary value
+	 * 
+	 * @param s
+	 *            The hex binary value
 	 * @return The new term
 	 */
 	public IHexBinary createHexBinary(String s);
 
 	/**
+	 * Create a new integer term
+	 * 
+	 * @param i
+	 *            The integer value
+	 * @return The new term
+	 */
+	public IIntegerTerm createInteger(int i);
+
+	/**
 	 * Create a new IRI term
-	 * @param s The IRI value
+	 * 
+	 * @param s
+	 *            The IRI value
 	 * @return The new term
 	 */
 	public IIri createIri(String s);
 
 	/**
 	 * Create a new SQName term
-	 * @param s The SQName value
+	 * 
+	 * @param iri
+	 *            The IRI value
+	 * @param s
+	 *            The SQName value
+	 * @return The new term
+	 */
+	public ISqName createSqName(IIri iri, String name);
+
+	/**
+	 * Create a new SQName term
+	 * 
+	 * @param s
+	 *            The SQName value
 	 * @return The new term
 	 */
 	public ISqName createSqName(String s);
 
 	/**
-	 * Create a new SQName term
-	 * @param iri The IRI value
-	 * @param s The SQName value
-	 * @return The new term
+	 * Creates a new Text term representing a rdf:text in canonical form. The
+	 * string passed to this method is of the form "text@lang" and contains at
+	 * least one "@".
+	 * 
+	 * @param string
+	 *            A string of the form "text@lang", where "lang" is the language
+	 *            of the text. Must contain at least one "@" character.
+	 * @return The Text term representing the rdf:text.
 	 */
-	public ISqName createSqName(IIri iri, String name);
+	public IText createText(String string);
+
+	/**
+	 * Creates a new Text term representing a rdf:text.
+	 * 
+	 * @param string
+	 *            The string.
+	 * @param language
+	 *            The language tag.
+	 * @return The Text term representing the rdf:text.
+	 */
+	public IText createText(String string, String language);
+
+	/**
+	 * Creates a time object with a given timezone.
+	 * 
+	 * @param hour
+	 *            the hours
+	 * @param minute
+	 *            the minutes
+	 * @param second
+	 *            the decimal seconds
+	 * @param tzHour
+	 *            the timezone hours (relative to GMT)
+	 * @param tzMinute
+	 *            the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException
+	 *             if, the tzHour and tzMinute wheren't both positive, or
+	 *             negative
+	 */
+	public ITime createTime(int hour, int minute, double second, int tzHour,
+			int tzMinute);
+
+	/**
+	 * Creates a time object with a given timezone.
+	 * 
+	 * @param hour
+	 *            the hours
+	 * @param minute
+	 *            the minutes
+	 * @param second
+	 *            the seconds
+	 * @param millisecond
+	 *            the milliseconds
+	 * @param tzHour
+	 *            the timezone hours (relative to GMT)
+	 * @param tzMinute
+	 *            the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException
+	 *             if, the tzHour and tzMinute wheren't both positive, or
+	 *             negative
+	 */
+	public ITime createTime(int hour, int minute, int second, int millisecond,
+			int tzHour, int tzMinute);
+
+	/**
+	 * Creates a new term representing a rdf:XMLLiteral.
+	 * 
+	 * @param string
+	 *            A string representing a XML element.
+	 * @return The new term representing the rdf:XMLLiteral.
+	 */
+	public IXMLLiteral createXMLLiteral(String string);
+
+	/**
+	 * Creates a new term representing a rdf:XMLLiteral.
+	 * 
+	 * @param string
+	 *            A string representing a XML element.
+	 * @param lang
+	 *            The language of the XML element.
+	 * @return The new term representing the rdf:XMLLiteral.
+	 */
+	public IXMLLiteral createXMLLiteral(String string, String lang);
+
+	/**
+	 * Creates a new term representing a xs:yearMonthDuration.
+	 * 
+	 * @param positive
+	 *            True if this term represents a positive duration, false
+	 *            otherwise.
+	 * @param year
+	 *            The year.
+	 * @param month
+	 *            The month.
+	 * @return The new term representing a xs:yearMonthDuration.
+	 */
+	public IYearMonthDuration createYearMonthDuration(boolean positive,
+			int year, int month);
 }
