@@ -35,6 +35,7 @@ import org.deri.iris.api.terms.concrete.IIri;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
@@ -122,5 +123,15 @@ public class Iri implements IIri {
 
 	public boolean isGround() {
 		return true;
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2007/rif#iri");
+	}
+
+	@Override
+	public String toCanonicalString() {
+		return uri.toString();
 	}
 }

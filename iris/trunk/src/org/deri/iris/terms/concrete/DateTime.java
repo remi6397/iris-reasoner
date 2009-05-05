@@ -24,6 +24,7 @@ package org.deri.iris.terms.concrete;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
 import java.util.TimeZone;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -51,44 +52,49 @@ public class DateTime implements IDateTime {
 
 	/** Milliseconds per hour. */
 	private static final int MILLIS_PER_HOUR = MILLIS_PER_MINUTE * 60;
-	
+
 	public static final int MAX_TIMEZONE_HOURS = 14;
 	public static final int MAX_TIMEZONE_MINUTES = 59;
-	
+
 	/**
-	 * Implements the restrictions as detailed in: http://www.w3.org/TR/xmlschema-2/#dateTime
-	 * ( |h| < 14 AND |m| <= 59 ) OR ( |h| = 14, m = 0 )
-	 *   AND
-	 * sign( h ) = sign( m )
-	 * @param tzHour The time zone hours
-	 * @param tzMinute The time zone minutes
+	 * Implements the restrictions as detailed in:
+	 * http://www.w3.org/TR/xmlschema-2/#dateTime ( |h| < 14 AND |m| <= 59 ) OR
+	 * ( |h| = 14, m = 0 ) AND sign( h ) = sign( m )
+	 * 
+	 * @param tzHour
+	 *            The time zone hours
+	 * @param tzMinute
+	 *            The time zone minutes
 	 */
-	public static void checkTimeZone( int tzHour, int tzMinute )
-	{
+	public static void checkTimeZone(int tzHour, int tzMinute) {
 		// Sign of hours and minutes must be the same
-		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0)))
-			throw new IllegalArgumentException("The timezone hours and " + 
-					"minutes must be both positive or both negative, but were " + 
-					tzHour + " and " + tzMinute);
-		
+		if (((tzHour < 0) && (tzMinute > 0))
+				|| ((tzHour > 0) && (tzMinute < 0)))
+			throw new IllegalArgumentException(
+					"The timezone hours and "
+							+ "minutes must be both positive or both negative, but were "
+							+ tzHour + " and " + tzMinute);
+
 		// Magnitude of hours must not be greater than MAX_TIMEZONE_HOURS
-		if( Math.abs( tzHour ) > MAX_TIMEZONE_HOURS )
-			throw new IllegalArgumentException("The timezone hours magnitude can not be greater than " +
-							MAX_TIMEZONE_HOURS + ", but was " + tzHour );
+		if (Math.abs(tzHour) > MAX_TIMEZONE_HOURS)
+			throw new IllegalArgumentException(
+					"The timezone hours magnitude can not be greater than "
+							+ MAX_TIMEZONE_HOURS + ", but was " + tzHour);
 
 		// Magnitude of minutes must not be greater than MAX_TIMEZONE_MINUTES
-		if( Math.abs( tzMinute ) > MAX_TIMEZONE_MINUTES )
-			throw new IllegalArgumentException("The timezone minutes magnitude can not be greater than " +
-							MAX_TIMEZONE_MINUTES + ", but was " + tzMinute );
+		if (Math.abs(tzMinute) > MAX_TIMEZONE_MINUTES)
+			throw new IllegalArgumentException(
+					"The timezone minutes magnitude can not be greater than "
+							+ MAX_TIMEZONE_MINUTES + ", but was " + tzMinute);
 
 		// Minutes must be zero if hours are +/- 14
-		if( Math.abs( tzHour ) == MAX_TIMEZONE_HOURS )
-		{
-			if( tzMinute != 0 )
-				throw new IllegalArgumentException("The timezone minutes must be zero when the timezone hours magnitude is " +
-								MAX_TIMEZONE_HOURS + ", but was " + tzMinute );
+		if (Math.abs(tzHour) == MAX_TIMEZONE_HOURS) {
+			if (tzMinute != 0)
+				throw new IllegalArgumentException(
+						"The timezone minutes must be zero when the timezone hours magnitude is "
+								+ MAX_TIMEZONE_HOURS + ", but was " + tzMinute);
 		}
-		
+
 	}
 
 	static {
@@ -103,77 +109,94 @@ public class DateTime implements IDateTime {
 
 	/**
 	 * Constructs a new datetime object with a given timezone.
-	 * @param year the year
-	 * @param month the month (starting at <code>0</code>)
-	 * @param day day of the month
-	 * @param hour the hours
-	 * @param minute the minutes
-	 * @param second the seconds
-	 * @param millisecond the milliseconds
-	 * @param tzHour the timezone hours (relative to GMT)
-	 * @param tzMinute the timezone minutes (relative to GMT)
-	 * @throws IllegalArgumentException if the tzHour and tzMinute
-	 * wheren't both positive, or negative
+	 * 
+	 * @param year
+	 *            the year
+	 * @param month
+	 *            the month (starting at <code>0</code>)
+	 * @param day
+	 *            day of the month
+	 * @param hour
+	 *            the hours
+	 * @param minute
+	 *            the minutes
+	 * @param second
+	 *            the seconds
+	 * @param millisecond
+	 *            the milliseconds
+	 * @param tzHour
+	 *            the timezone hours (relative to GMT)
+	 * @param tzMinute
+	 *            the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException
+	 *             if the tzHour and tzMinute wheren't both positive, or
+	 *             negative
 	 */
-	DateTime(int year, int month, int day, 
-			int hour, int minute, int second, int millisecond, 
-			int tzHour, int tzMinute) {
-		this( year, month, day, hour, minute, second + (millisecond/ 1000.0), tzHour, tzMinute );
+	DateTime(int year, int month, int day, int hour, int minute, int second,
+			int millisecond, int tzHour, int tzMinute) {
+		this(year, month, day, hour, minute, second + (millisecond / 1000.0),
+				tzHour, tzMinute);
 
-		if( millisecond < 0 || millisecond >= 1000 )
-			throw new IllegalArgumentException( "Millisecond value is out of range: " + second );
+		if (millisecond < 0 || millisecond >= 1000)
+			throw new IllegalArgumentException(
+					"Millisecond value is out of range: " + second);
 
-		if( second < 0 || second >= 60 )
-			throw new IllegalArgumentException( "Second value is out of range: " + second );
+		if (second < 0 || second >= 60)
+			throw new IllegalArgumentException("Second value is out of range: "
+					+ second);
 	}
 
 	/**
 	 * Constructs a new datetime object with a given timezone.
-	 * @param year the year
-	 * @param month the month (starting at <code>0</code>)
-	 * @param day day of the month
-	 * @param hour the hours
-	 * @param minute the minutes
-	 * @param second the seconds
-	 * @param tzHour the timezone hours (relative to GMT)
-	 * @param tzMinute the timezone minutes (relative to GMT)
-	 * @throws IllegalArgumentException if the tzHour and tzMinute
-	 * wheren't both positive, or negative
+	 * 
+	 * @param year
+	 *            the year
+	 * @param month
+	 *            the month (starting at <code>0</code>)
+	 * @param day
+	 *            day of the month
+	 * @param hour
+	 *            the hours
+	 * @param minute
+	 *            the minutes
+	 * @param second
+	 *            the seconds
+	 * @param tzHour
+	 *            the timezone hours (relative to GMT)
+	 * @param tzMinute
+	 *            the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException
+	 *             if the tzHour and tzMinute wheren't both positive, or
+	 *             negative
 	 */
-	DateTime(int year, int month, int day, 
-			int hour, int minute, double second, 
+	DateTime(int year, int month, int day, int hour, int minute, double second,
 			int tzHour, int tzMinute) {
 
-		checkTimeZone( tzHour, tzMinute );
+		checkTimeZone(tzHour, tzMinute);
 
 		int intSeconds = (int) second;
-		BigDecimal fractionalSeconds = new BigDecimal( Double.toString( second ) ).subtract( BigDecimal.valueOf( intSeconds ) );
+		BigDecimal fractionalSeconds = new BigDecimal(Double.toString(second))
+				.subtract(BigDecimal.valueOf(intSeconds));
 
-		datetime = FACTORY.newXMLGregorianCalendar(
-				BigInteger.valueOf((long) year), 
-				month, 
-				day, 
-				hour, 
-				minute, 
-				intSeconds, 
-				fractionalSeconds, 
-				tzHour * 60 + tzMinute);
+		datetime = FACTORY.newXMLGregorianCalendar(BigInteger
+				.valueOf((long) year), month, day, hour, minute, intSeconds,
+				fractionalSeconds, tzHour * 60 + tzMinute);
 	}
 
 	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		
-		DateTime dt = (DateTime) o;
+
+		IDateTime dt = (IDateTime) o;
 		return datetime.compare(dt.getValue());
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof DateTime)) {
+		if (!(obj instanceof IDateTime)) {
 			return false;
 		}
-		DateTime dx = (DateTime) obj;
+		IDateTime dx = (IDateTime) obj;
 		return datetime.equals(dx.getValue());
 	}
 
@@ -201,9 +224,9 @@ public class DateTime implements IDateTime {
 		return datetime.getMillisecond();
 	}
 
-	public double getDecimalSecond()
-	{
-		BigDecimal seconds = datetime.getFractionalSecond().add( BigDecimal.valueOf( datetime.getSecond() ) );
+	public double getDecimalSecond() {
+		BigDecimal seconds = datetime.getFractionalSecond().add(
+				BigDecimal.valueOf(datetime.getSecond()));
 		return seconds.doubleValue();
 	}
 
@@ -223,19 +246,29 @@ public class DateTime implements IDateTime {
 		return datetime.toString();
 	}
 
-//	protected static int getTimeZoneHour(final TimeZone tz) {
-//		return tz.getRawOffset() / MILLIS_PER_HOUR;
-//	}
-//
-//	protected static int getTimeZoneMinute(final TimeZone tz) {
-//		return (tz.getRawOffset() % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE;
-//	}
-//
+	// protected static int getTimeZoneHour(final TimeZone tz) {
+	// return tz.getRawOffset() / MILLIS_PER_HOUR;
+	// }
+	//
+	// protected static int getTimeZoneMinute(final TimeZone tz) {
+	// return (tz.getRawOffset() % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE;
+	// }
+	//
 	public boolean isGround() {
 		return true;
 	}
 
 	public XMLGregorianCalendar getValue() {
 		return (XMLGregorianCalendar) datetime.clone();
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#dateTime");
+	}
+
+	@Override
+	public String toCanonicalString() {
+		return datetime.toString();
 	}
 }

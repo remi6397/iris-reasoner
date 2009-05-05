@@ -23,6 +23,7 @@
 package org.deri.iris.terms.concrete;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.TimeZone;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -176,5 +177,15 @@ public class Time implements ITime {
 
 	public XMLGregorianCalendar getValue() {
 		return (XMLGregorianCalendar) time.clone();
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#time");
+	}
+
+	@Override
+	public String toCanonicalString() {
+		return time.toString();
 	}
 }

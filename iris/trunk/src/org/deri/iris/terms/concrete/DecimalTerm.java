@@ -22,6 +22,8 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.net.URI;
+
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.utils.StandardFloatingPointComparator;
@@ -33,6 +35,7 @@ import org.deri.iris.utils.StandardFloatingPointComparator;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
@@ -56,9 +59,9 @@ public class DecimalTerm implements IDecimalTerm {
 		if (o == null) {
 			return 1;
 		}
-		
+
 		DecimalTerm dt = (DecimalTerm) o;
-		return StandardFloatingPointComparator.getDouble().compare( d, dt.d );
+		return StandardFloatingPointComparator.getDouble().compare(d, dt.d);
 	}
 
 	public boolean equals(final Object o) {
@@ -66,9 +69,9 @@ public class DecimalTerm implements IDecimalTerm {
 			return false;
 		}
 		DecimalTerm dt = (DecimalTerm) o;
-		
+
 		// Use the floating point comparer to allow for round-off errors.
-		return StandardFloatingPointComparator.getDouble().equals( d, dt.d );
+		return StandardFloatingPointComparator.getDouble().equals(d, dt.d);
 	}
 
 	public int hashCode() {
@@ -81,6 +84,16 @@ public class DecimalTerm implements IDecimalTerm {
 	 * @return the String representation of the holded double
 	 */
 	public String toString() {
+		return d.toString();
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#decimal");
+	}
+
+	@Override
+	public String toCanonicalString() {
 		return d.toString();
 	}
 }

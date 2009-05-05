@@ -22,6 +22,7 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.net.URI;
 import java.util.regex.Pattern;
 
 import org.deri.iris.api.terms.concrete.IBase64Binary;
@@ -34,6 +35,7 @@ import org.deri.iris.api.terms.ITerm;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
@@ -42,7 +44,7 @@ public class Base64Binary implements IBase64Binary {
 	public static final Pattern PATTERN = Pattern.compile("([a-zA-Z0-9/+]{4})*"
 			+ "(([a-zA-Z0-9/+]{2}[AEIMQUYcgkosw048]=)|"
 			+ "([a-zA-Z0-9/+]{1}[AQgw]==))?");
-	
+
 	private String content = "";
 
 	Base64Binary() {
@@ -54,13 +56,13 @@ public class Base64Binary implements IBase64Binary {
 	}
 
 	public int compareTo(ITerm o) {
-		if(o == null)
+		if (o == null)
 			return 1;
-		
+
 		Base64Binary b64 = (Base64Binary) o;
 		return content.compareTo(b64.getValue());
 	}
-	
+
 	public boolean equals(final Object obj) {
 		if (!(obj instanceof Base64Binary)) {
 			return false;
@@ -92,5 +94,15 @@ public class Base64Binary implements IBase64Binary {
 
 	public boolean isGround() {
 		return true;
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#base64Binary");
+	}
+
+	@Override
+	public String toCanonicalString() {
+		return new String(getValue());
 	}
 }

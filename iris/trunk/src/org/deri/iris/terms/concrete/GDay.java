@@ -22,13 +22,15 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.net.URI;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.deri.iris.api.terms.concrete.IGDay;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.concrete.IGDay;
 
 /**
  * <p>
@@ -37,6 +39,7 @@ import org.deri.iris.api.terms.ITerm;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
@@ -62,7 +65,9 @@ public class GDay implements IGDay {
 
 	/**
 	 * Creates a new day. The timezone will be set to GMT.
-	 * @param day the day
+	 * 
+	 * @param day
+	 *            the day
 	 */
 	GDay(final int day) {
 		this(day, 0, 0);
@@ -70,30 +75,35 @@ public class GDay implements IGDay {
 
 	/**
 	 * Creates a new day within the given timezone.
-	 * @param day the day
-	 * @param tzHour the timezone hours (relative to GMT)
-	 * @param tzMinute the timezone minutes (relative to GMT)
-	 * @throws IllegalArgumentException if the tzHour and tzMinute
-	 * wheren't both positive, or negative
+	 * 
+	 * @param day
+	 *            the day
+	 * @param tzHour
+	 *            the timezone hours (relative to GMT)
+	 * @param tzMinute
+	 *            the timezone minutes (relative to GMT)
+	 * @throws IllegalArgumentException
+	 *             if the tzHour and tzMinute wheren't both positive, or
+	 *             negative
 	 */
 	GDay(final int day, final int tzHour, final int tzMinute) {
-		if (((tzHour < 0) && (tzMinute > 0)) || ((tzHour > 0) && (tzMinute < 0))) {
-			throw new IllegalArgumentException("Both, the timezone hours and " + 
-					"minutes must be negative, or positive, but were " + 
-					tzHour + " and " + tzMinute);
+		if (((tzHour < 0) && (tzMinute > 0))
+				|| ((tzHour > 0) && (tzMinute < 0))) {
+			throw new IllegalArgumentException("Both, the timezone hours and "
+					+ "minutes must be negative, or positive, but were "
+					+ tzHour + " and " + tzMinute);
 		}
 
-		date = FACTORY.newXMLGregorianCalendarDate(DatatypeConstants.FIELD_UNDEFINED,
-				DatatypeConstants.FIELD_UNDEFINED, 
-				day, 
-				tzHour * 60 + tzMinute);
+		date = FACTORY.newXMLGregorianCalendarDate(
+				DatatypeConstants.FIELD_UNDEFINED,
+				DatatypeConstants.FIELD_UNDEFINED, day, tzHour * 60 + tzMinute);
 	}
 
 	public int compareTo(ITerm o) {
 		if (o == null) {
 			return 1;
 		}
-		
+
 		GDay gd = (GDay) o;
 		return getDay() - gd.getValue();
 	}
@@ -124,5 +134,15 @@ public class GDay implements IGDay {
 
 	public Integer getValue() {
 		return date.getDay();
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#gDay");
+	}
+
+	@Override
+	public String toCanonicalString() {
+		return date.toString();
 	}
 }

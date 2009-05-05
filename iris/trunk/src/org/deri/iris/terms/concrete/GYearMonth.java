@@ -22,6 +22,8 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.net.URI;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
@@ -133,5 +135,15 @@ public class GYearMonth implements IGYearMonth {
 
 	public Integer[] getValue() {
 		return new Integer[]{date.getYear(), date.getMonth()};
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#gYearMonth");
+	}
+
+	@Override
+	public String toCanonicalString() {
+		return date.toString();
 	}
 }
