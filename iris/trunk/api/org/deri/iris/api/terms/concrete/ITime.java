@@ -26,7 +26,7 @@ import java.util.TimeZone;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IConstantTerm;
 
 /**
  * <p>
@@ -40,7 +40,7 @@ import org.deri.iris.api.terms.ITerm;
  * <code>ATTENTION: set the correct timezone</code>
  * </p>
  */
-public interface ITime extends ITerm
+public interface ITime extends IConstantTerm
 {
 	/**
 	 * Return the wrapped type.

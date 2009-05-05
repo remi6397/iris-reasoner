@@ -22,7 +22,7 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IConstantTerm;
 
 
 /**
@@ -53,7 +53,7 @@ import org.deri.iris.api.terms.ITerm;
  * 
  * @version $Revision: 1.6 $ $Date: 2007-10-09 20:21:21 $
  */
-public interface IBase64Binary extends ITerm
+public interface IBase64Binary extends IConstantTerm
 {
 	/**
 	 * Return the wrapped type.

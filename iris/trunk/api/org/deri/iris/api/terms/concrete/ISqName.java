@@ -22,7 +22,7 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IConstantTerm;
 
 /**
  * <p>
@@ -31,7 +31,7 @@ import org.deri.iris.api.terms.ITerm;
  * 
  * @author Richard Pöttler
  */
-public interface ISqName extends ITerm
+public interface ISqName extends IConstantTerm
 {
 	/**
 	 * Return the wrapped type.

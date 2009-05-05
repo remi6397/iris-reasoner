@@ -24,7 +24,7 @@ package org.deri.iris.api.terms.concrete;
 
 import javax.xml.datatype.Duration;
 
-import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IConstantTerm;
 
 /**
  * 
@@ -32,15 +32,25 @@ import org.deri.iris.api.terms.ITerm;
  * This is a interface to represent durations from seconds up to years.
  * </p>
  * <p>
- * Remark: IRIS supports datatypes according to the standard 
- * specification for primitive XML Schema datatypes.
+ * Remark: IRIS supports datatypes according to the standard specification for
+ * primitive XML Schema datatypes.
  * </p>
  */
-public interface IDuration extends ITerm{
+public interface IDuration extends IConstantTerm {
 	/**
 	 * Return the wrapped type.
 	 */
 	Duration getValue();
+
+	/**
+	 * Returns <code>true</code> if this is a positive duration,
+	 * <code>false</code> otherwise. Also returns <code>true</code> if this is a
+	 * duration of length 0.
+	 * 
+	 * @return <code>true</code> if this is a positive duration,
+	 *         <code>false</code> otherwise.
+	 */
+	boolean isPositive();
 
 	/**
 	 * Returns the years.
@@ -86,12 +96,15 @@ public interface IDuration extends ITerm{
 
 	/**
 	 * Returns the milliseconds.
+	 * 
 	 * @return the milliseconds
 	 */
 	int getMillisecond();
 
 	/**
-	 * Return the complete floating point representation of the seconds components.
+	 * Return the complete floating point representation of the seconds
+	 * components.
+	 * 
 	 * @return Decimal seconds
 	 */
 	double getDecimalSecond();
