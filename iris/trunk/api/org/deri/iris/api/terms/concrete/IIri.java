@@ -23,7 +23,8 @@
 package org.deri.iris.api.terms.concrete;
 
 import java.net.URI;
-import org.deri.iris.api.terms.ITerm;
+
+import org.deri.iris.api.terms.IConstantTerm;
 
 /**
  * <p>
@@ -33,7 +34,7 @@ import org.deri.iris.api.terms.ITerm;
  * 
  * @author Richard Pöttler
  */
-public interface IIri extends ITerm
+public interface IIri extends IConstantTerm
 {
 	/**
 	 * Return the wrapped type.

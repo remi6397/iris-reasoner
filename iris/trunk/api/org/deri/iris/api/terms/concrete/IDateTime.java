@@ -26,7 +26,7 @@ import java.util.TimeZone;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IConstantTerm;
 
 /**
  * This is a representation of the builtin datatype IDateTime.
@@ -40,7 +40,7 @@ import org.deri.iris.api.terms.ITerm;
  * <br />
  * <code>ATTENTION: set the correct timezone</code>
  */
-public interface IDateTime extends ITerm
+public interface IDateTime extends IConstantTerm
 {
 	/**
 	 * Return the wrapped type.
