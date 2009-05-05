@@ -22,6 +22,8 @@
  */
 package org.deri.iris.terms;
 
+import java.net.URI;
+
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
 
@@ -32,6 +34,7 @@ import org.deri.iris.api.terms.ITerm;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
@@ -56,9 +59,9 @@ public class StringTerm implements IStringTerm {
 		if (o == null) {
 			return 1;
 		}
-		
+
 		IStringTerm st = (IStringTerm) o;
-		return value.compareTo( st.getValue() );
+		return value.compareTo(st.getValue());
 	}
 
 	public int hashCode() {
@@ -74,12 +77,22 @@ public class StringTerm implements IStringTerm {
 	}
 
 	/**
-	 * Simple toString() method wich only returns the holded value
-	 * surrounded by &quot;'&quot;.
+	 * Simple toString() method wich only returns the holded value surrounded by
+	 * &quot;'&quot;.
 	 * 
 	 * @return the containing String
 	 */
 	public String toString() {
 		return "'" + value + "'";
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create("http://www.w3.org/2001/XMLSchema#string");
+	}
+
+	@Override
+	public String toCanonicalString() {
+		return new String(value);
 	}
 }
