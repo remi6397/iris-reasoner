@@ -37,7 +37,9 @@ import java.util.Set;
 public class PercentEncoder {
 
 	private static final int CASE_DIFF = ('a' - 'A');
+
 	private Set<Integer> unreserved;
+
 	private boolean allUnreserved;
 
 	/**
@@ -71,8 +73,8 @@ public class PercentEncoder {
 	/**
 	 * Puts the given code point in the set of reserved characters.
 	 * 
-	 * @param codePoint
-	 *            The code point to be put in the set of reserved characters.
+	 * @param codePoint The code point to be put in the set of reserved
+	 *            characters.
 	 */
 	public void reserve(int codePoint) {
 		if (unreserved.remove(codePoint)) {
@@ -83,8 +85,8 @@ public class PercentEncoder {
 	/**
 	 * Puts the given character in the set of reserved characters.
 	 * 
-	 * @param character
-	 *            The character to be put in the set of reserved characters.
+	 * @param character The character to be put in the set of reserved
+	 *            characters.
 	 */
 	public void reserve(char character) {
 		reserve((int) character);
@@ -94,9 +96,8 @@ public class PercentEncoder {
 	 * Puts all character in the given array of characters in the set of
 	 * reserved characters.
 	 * 
-	 * @param characters
-	 *            The array of characters to be put in the set of reserved
-	 *            characters.
+	 * @param characters The array of characters to be put in the set of
+	 *            reserved characters.
 	 */
 	public void reserve(char[] characters) {
 		for (char character : characters) {
@@ -116,8 +117,8 @@ public class PercentEncoder {
 	/**
 	 * Puts the given code point in the set of unreserved characters.
 	 * 
-	 * @param codePoint
-	 *            The code point to be put in the set of unreserved characters.
+	 * @param codePoint The code point to be put in the set of unreserved
+	 *            characters.
 	 */
 	public void unreserve(int codePoint) {
 		unreserved.add(codePoint);
@@ -126,8 +127,8 @@ public class PercentEncoder {
 	/**
 	 * Puts the given character in the set of unreserved characters.
 	 * 
-	 * @param codePoint
-	 *            The character to be put in the set of unreserved characters.
+	 * @param codePoint The character to be put in the set of unreserved
+	 *            characters.
 	 */
 	public void unreserve(char character) {
 		unreserve((int) character);
@@ -137,9 +138,8 @@ public class PercentEncoder {
 	 * Puts all character in the given array of characters in the set of
 	 * unreserved characters.
 	 * 
-	 * @param characters
-	 *            The array of characters to be put in the set of unreserved
-	 *            characters.
+	 * @param characters The array of characters to be put in the set of
+	 *            unreserved characters.
 	 */
 	public void unreserve(char[] characters) {
 		for (char character : characters) {
@@ -159,8 +159,7 @@ public class PercentEncoder {
 	 * Percent-encodes the given string according to the sets of reserved and
 	 * unreserved characters.
 	 * 
-	 * @param string
-	 *            The String to be percent-encoded.
+	 * @param string The String to be percent-encoded.
 	 * @return The percent-encoded String.
 	 */
 	public String encode(String string) {
