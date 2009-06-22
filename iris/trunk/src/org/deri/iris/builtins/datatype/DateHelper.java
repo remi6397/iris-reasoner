@@ -32,8 +32,7 @@ class DateHelper {
 	/**
 	 * Returns the hour part of a time zone.
 	 * 
-	 * @param timeZone
-	 *            The time zone.
+	 * @param timeZone The time zone.
 	 * @return The hour part of the given time zone.
 	 */
 	static int getHourPart(TimeZone timeZone) {
@@ -46,8 +45,7 @@ class DateHelper {
 	/**
 	 * Returns the minute part of a time zone.
 	 * 
-	 * @param timeZone
-	 *            The time zone.
+	 * @param timeZone The time zone.
 	 * @return The minute part of the given time zone.
 	 */
 	static int getMinutePart(TimeZone timeZone) {
