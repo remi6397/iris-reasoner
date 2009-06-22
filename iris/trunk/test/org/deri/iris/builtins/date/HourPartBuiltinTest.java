@@ -22,6 +22,7 @@
  */
 package org.deri.iris.builtins.date;
 
+import static org.deri.iris.factory.Factory.TERM;
 import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
@@ -34,7 +35,9 @@ import org.deri.iris.factory.Factory;
  */
 public class HourPartBuiltinTest extends TestCase {
 
-	private static ITerm X = Factory.TERM.createVariable("X");
+	private static final ITerm X = Factory.TERM.createVariable("X");
+
+	private static final ITerm Y = TERM.createVariable("Y");
 
 	public HourPartBuiltinTest(String name) {
 		super(name);
@@ -70,9 +73,9 @@ public class HourPartBuiltinTest extends TestCase {
 	}
 
 	private void check(int expected, ITerm time) throws EvaluationException {
-		HourPartBuiltin builtin = new HourPartBuiltin(X);
+		HourPartBuiltin builtin = new HourPartBuiltin(time, Y);
 
-		ITuple arguments = Factory.BASIC.createTuple(time);
+		ITuple arguments = Factory.BASIC.createTuple(X, Y);
 		ITuple expectedTuple = Factory.BASIC.createTuple(Factory.CONCRETE
 				.createInteger(expected));
 		ITuple actual = builtin.evaluate(arguments);
