@@ -32,84 +32,51 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents a string replace operation as described in
+ * Represents the RIF built-in func:replace as described in
  * http://www.w3.org/TR/xpath-functions/#func-replace.
  */
-public class StringReplaceBuiltin extends AbstractBuiltin {
+public class StringReplaceBuiltin extends FunctionalBuiltin {
 
-	private static final IPredicate PREDICATE1 = BASIC.createPredicate(
-			"STRING_REPLACE3", 3);
-	private static final IPredicate PREDICATE2 = BASIC.createPredicate(
-			"STRING_REPLACE4", 4);
+	private static final IPredicate PREDICATE = BASIC.createPredicate(
+			"STRING_REPLACE4", 5);
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param string
-	 *            The term representing the string to apply the replace
-	 *            operation on.
-	 * @param regex
-	 *            The regular expression.
-	 * @param replacement
-	 *            The replacement for the matching substrings.
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 */
-	public StringReplaceBuiltin(final ITerm string, final ITerm regex,
-			final ITerm replacement) {
-		super(PREDICATE1, new ITerm[] { string, regex, replacement });
-	}
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param string
-	 *            The term representing the string to apply the replace
-	 *            operation on.
-	 * @param regex
-	 *            The regular expression.
-	 * @param replacement
-	 *            The replacement for the matching substrings.
-	 * @param flags
-	 *            The flags as described in
+	 * @param term The terms, where the term at the first position is the
+	 *            string, the term at the second position is the regex, the term
+	 *            at the third position is the replacement and the term at the
+	 *            fourth position are the flags and the term at the fifth
+	 *            position represents the result. The string is the string to
+	 *            apply the replace operation on. The regex is the regular
+	 *            expression. The replacement is the replacement for the
+	 *            matching substrings. The flags are the flags as described in
 	 *            http://www.w3.org/TR/xpath-functions/#flags.
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
+	 * @throws IllegalArgumentException if one of the terms is {@code null}
 	 */
-	public StringReplaceBuiltin(final ITerm string, final ITerm regex,
-			final ITerm replacement, final ITerm flags) {
-		super(PREDICATE2, new ITerm[] { string, regex, replacement, flags });
+	public StringReplaceBuiltin(ITerm... terms) {
+		super(PREDICATE, terms);
 	}
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
-			throws EvaluationException {
-		assert variableIndexes.length == 0;
-		assert terms.length >= 3 && terms.length <= 4;
-
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		String string = null;
 		String regex = null;
 		String replacement = null;
 		String flags = "";
 
 		if (terms[0] instanceof IStringTerm && terms[1] instanceof IStringTerm
-				&& terms[2] instanceof IStringTerm) {
+				&& terms[2] instanceof IStringTerm
+				&& terms[3] instanceof IStringTerm) {
 			string = ((IStringTerm) terms[0]).getValue();
 			regex = ((IStringTerm) terms[1]).getValue();
 			replacement = ((IStringTerm) terms[2]).getValue();
+			flags = ((IStringTerm) terms[3]).getValue();
 		} else {
 			return null;
-		}
-
-		if (terms.length > 3) {
-			if (terms[3] instanceof IStringTerm) {
-				flags = ((IStringTerm) terms[3]).getValue();
-			} else {
-				return null;
-			}
 		}
 
 		String result = replace(string, regex, replacement, flags);
@@ -121,7 +88,7 @@ public class StringReplaceBuiltin extends AbstractBuiltin {
 		return null;
 	}
 
-	private String replace(String string, String regex, String replacement,
+	static String replace(String string, String regex, String replacement,
 			String flags) {
 		int flag = 0;
 
@@ -180,10 +147,6 @@ public class StringReplaceBuiltin extends AbstractBuiltin {
 		Matcher matcher = pattern.matcher(string);
 
 		return matcher.replaceAll(replacement);
-	}
-
-	public int maxUnknownVariables() {
-		return 0;
 	}
 
 }
