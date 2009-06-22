@@ -22,9 +22,11 @@
  */
 package org.deri.iris.builtins.string;
 
+import static org.deri.iris.factory.Factory.TERM;
 import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
+import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.string.StringReplaceBuiltin;
 import org.deri.iris.factory.Factory;
@@ -34,10 +36,15 @@ import org.deri.iris.factory.Factory;
  */
 public class StringReplaceBuiltinTest extends TestCase {
 
-	public static ITerm W = Factory.TERM.createVariable("W");
-	public static ITerm X = Factory.TERM.createVariable("X");
-	public static ITerm Y = Factory.TERM.createVariable("Y");
-	public static ITerm Z = Factory.TERM.createVariable("Z");
+	public static ITerm W = TERM.createVariable("W");
+
+	public static ITerm X = TERM.createVariable("X");
+
+	public static ITerm Y = TERM.createVariable("Y");
+
+	public static ITerm Z = TERM.createVariable("Z");
+
+	public static ITerm R = TERM.createVariable("R");
 
 	public StringReplaceBuiltinTest(String name) {
 		super(name);
@@ -56,34 +63,31 @@ public class StringReplaceBuiltinTest extends TestCase {
 	}
 
 	public void testReplace2() throws EvaluationException {
-		check("hello world", "hello world", "hello world", "foobar",
-				"x");
+		check("hello world", "hello world", "hello world", "foobar", "x");
 		check("foobar", "helloworld", "hello world", "foobar", "x");
-		check("helloworld", "helloworld", "hello[ ]world", "foobar",
-				"x");
+		check("helloworld", "helloworld", "hello[ ]world", "foobar", "x");
 		check("foobar", "hello world", "hello\\ sworld", "foobar", "x");
 	}
 
 	private void check(String expected, String string, String regex,
 			String replacement) throws EvaluationException {
-		StringReplaceBuiltin replace = new StringReplaceBuiltin(X, Y, Z);
+		IBuiltinAtom replace = new StringReplaceWithoutFlagsBuiltin(TERM
+				.createString(string), TERM.createString(regex), TERM
+				.createString(replacement), R);
 
 		assertEquals(Factory.BASIC.createTuple(Factory.TERM
 				.createString(expected)), replace.evaluate(Factory.BASIC
-				.createTuple(Factory.TERM.createString(string), Factory.TERM
-						.createString(regex), Factory.TERM
-						.createString(replacement))));
+				.createTuple(X, Y, Z, R)));
 	}
 
 	private void check(String expected, String string, String regex,
 			String replacement, String flags) throws EvaluationException {
-		StringReplaceBuiltin replace = new StringReplaceBuiltin(W, X, Y, Z);
+		IBuiltinAtom replace = new StringReplaceBuiltin(TERM
+				.createString(string), TERM.createString(regex), TERM
+				.createString(replacement), TERM.createString(flags), R);
 
 		assertEquals(Factory.BASIC.createTuple(Factory.TERM
 				.createString(expected)), replace.evaluate(Factory.BASIC
-				.createTuple(Factory.TERM.createString(string), Factory.TERM
-						.createString(regex), Factory.TERM
-						.createString(replacement), Factory.TERM
-						.createString(flags))));
+				.createTuple(W, X, Y, Z, R)));
 	}
 }

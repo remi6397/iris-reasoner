@@ -37,7 +37,10 @@ import org.deri.iris.api.terms.ITerm;
 public class TextFromStringLangBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
+
 	private static final ITerm Y = TERM.createVariable("Y");
+
+	private static final ITerm Z = TERM.createVariable("Z");
 
 	public TextFromStringLangBuiltinTest(String name) {
 		super(name);
@@ -53,14 +56,15 @@ public class TextFromStringLangBuiltinTest extends TestCase {
 
 	private void check(ITerm expectedTerm, String text, String lang)
 			throws EvaluationException {
-		TextFromStringLangBuiltin builtin = new TextFromStringLangBuiltin(X, Y);
 
 		ITuple expectedTuple = BASIC.createTuple(expectedTerm);
 
 		ITerm textTerm = TERM.createString(text);
 		ITerm langTerm = TERM.createString(lang);
-		ITuple arguments = BASIC.createTuple(textTerm, langTerm);
+		ITuple arguments = BASIC.createTuple(X, Y, Z);
 
+		TextFromStringLangBuiltin builtin = new TextFromStringLangBuiltin(
+				textTerm, langTerm, Z);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		assertEquals(expectedTuple, actualTuple);

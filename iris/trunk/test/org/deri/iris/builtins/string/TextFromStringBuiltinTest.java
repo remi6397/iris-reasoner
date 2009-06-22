@@ -38,6 +38,8 @@ public class TextFromStringBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
 
+	private static final ITerm Y = TERM.createVariable("Y");
+
 	public TextFromStringBuiltinTest(String name) {
 		super(name);
 	}
@@ -49,12 +51,11 @@ public class TextFromStringBuiltinTest extends TestCase {
 
 	private void check(ITerm expectedTerm, String string)
 			throws EvaluationException {
-		TextFromStringBuiltin builtin = new TextFromStringBuiltin(X);
-
 		ITuple expectedTuple = BASIC.createTuple(expectedTerm);
-
 		ITerm textTerm = TERM.createString(string);
-		ITuple arguments = BASIC.createTuple(textTerm);
+
+		TextFromStringBuiltin builtin = new TextFromStringBuiltin(textTerm, Y);
+		ITuple arguments = BASIC.createTuple(X, Y);
 
 		ITuple actualTuple = builtin.evaluate(arguments);
 

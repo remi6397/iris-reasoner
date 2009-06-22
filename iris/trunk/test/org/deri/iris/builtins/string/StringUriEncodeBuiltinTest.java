@@ -38,6 +38,8 @@ public class StringUriEncodeBuiltinTest extends TestCase {
 
 	private static final ITerm X = Factory.TERM.createVariable("X");
 
+	private static final ITerm Y = Factory.TERM.createVariable("Y");
+
 	public StringUriEncodeBuiltinTest(String name) {
 		super(name);
 	}
@@ -57,10 +59,11 @@ public class StringUriEncodeBuiltinTest extends TestCase {
 
 	private void check(String expected, String actual)
 			throws EvaluationException {
-		StringUriEncodeBuiltin encode = new StringUriEncodeBuiltin(X);
-
 		IStringTerm actualTerm = Factory.TERM.createString(actual);
-		ITuple arguments = Factory.BASIC.createTuple(actualTerm);
+
+		StringUriEncodeBuiltin encode = new StringUriEncodeBuiltin(actualTerm,
+				Y);
+		ITuple arguments = Factory.BASIC.createTuple(X, Y);
 
 		IStringTerm expectedTerm = Factory.TERM.createString(expected);
 		ITuple expectedTuple = Factory.BASIC.createTuple(expectedTerm);

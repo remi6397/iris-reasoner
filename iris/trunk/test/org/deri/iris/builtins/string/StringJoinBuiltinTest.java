@@ -36,8 +36,12 @@ import org.deri.iris.factory.Factory;
 public class StringJoinBuiltinTest extends TestCase {
 
 	private static final ITerm X = Factory.TERM.createVariable("X");
+
 	private static final ITerm Y = Factory.TERM.createVariable("Y");
+
 	private static final ITerm Z = Factory.TERM.createVariable("Z");
+
+	private static final ITerm R = Factory.TERM.createVariable("R");
 
 	public StringJoinBuiltinTest(String name) {
 		super(name);
@@ -49,13 +53,14 @@ public class StringJoinBuiltinTest extends TestCase {
 
 	private void check(String expected, String... actual)
 			throws EvaluationException {
-		StringJoinBuiltin length = new StringJoinBuiltin(X, Y, Z);
-
-		IStringTerm[] terms = new IStringTerm[actual.length];
+		ITerm[] terms = new ITerm[actual.length + 1];
 		for (int i = 0; i < actual.length; i++) {
 			terms[i] = Factory.TERM.createString(actual[i]);
 		}
-		ITuple arguments = Factory.BASIC.createTuple(terms);
+		terms[actual.length] = R;
+		ITuple arguments = Factory.BASIC.createTuple(X, Y, Z, R);
+
+		StringJoinBuiltin length = new StringJoinBuiltin(terms);
 
 		IStringTerm expectedTerm = Factory.TERM.createString(expected);
 		ITuple expectedTuple = Factory.BASIC.createTuple(expectedTerm);

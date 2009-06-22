@@ -39,7 +39,10 @@ import org.deri.iris.api.terms.ITerm;
 public class StringConcatBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
+
 	private static final ITerm Y = TERM.createVariable("Y");
+
+	private static final ITerm Z = TERM.createVariable("Z");
 
 	public StringConcatBuiltinTest(String name) {
 		super(name);
@@ -56,9 +59,9 @@ public class StringConcatBuiltinTest extends TestCase {
 
 	private void check(String expected, ITerm term1, ITerm term2)
 			throws EvaluationException {
-		StringConcatBuiltin length = new StringConcatBuiltin(X, Y);
+		StringConcatBuiltin length = new StringConcatBuiltin(term1, term2, Z);
 
-		ITuple arguments = BASIC.createTuple(term1, term2);
+		ITuple arguments = BASIC.createTuple(X, Y, Z);
 
 		IStringTerm expectedTerm = TERM.createString(expected);
 		ITuple expectedTuple = BASIC.createTuple(expectedTerm);

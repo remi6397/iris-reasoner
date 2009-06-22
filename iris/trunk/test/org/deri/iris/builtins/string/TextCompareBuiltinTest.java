@@ -34,7 +34,10 @@ import org.deri.iris.factory.Factory;
 public class TextCompareBuiltinTest extends TestCase {
 
 	private static final ITerm X = Factory.TERM.createVariable("X");
+
 	private static final ITerm Y = Factory.TERM.createVariable("Y");
+
+	private static final ITerm Z = Factory.TERM.createVariable("Z");
 
 	public TextCompareBuiltinTest(String name) {
 		super(name);
@@ -49,12 +52,12 @@ public class TextCompareBuiltinTest extends TestCase {
 
 	private void check(int expected, String string1, String string2)
 			throws EvaluationException {
-		TextCompareBuiltin compare = new TextCompareBuiltin(X, Y);
+		TextCompareBuiltin compare = new TextCompareBuiltin(Factory.CONCRETE
+				.createText(string1), Factory.CONCRETE.createText(string2), Z);
 
 		assertEquals(Factory.BASIC.createTuple(Factory.CONCRETE
 				.createInteger(expected)), compare.evaluate(Factory.BASIC
-				.createTuple(Factory.CONCRETE.createText(string1),
-						Factory.CONCRETE.createText(string2))));
+				.createTuple(X, Y, Z)));
 	}
 
 }
