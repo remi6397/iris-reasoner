@@ -28,50 +28,40 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.AbstractBuiltin;
 import org.deri.iris.builtins.BuiltinHelper;
+import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
  * Represents a string compare operation.
  */
-public class StringCompareBuiltin extends AbstractBuiltin {
+public class StringCompareBuiltin extends FunctionalBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"STRING_COMPARE", 2);
+			"STRING_COMPARE", 3);
 
 	/**
-	 * Constructor. Two terms must be passed to the constructor, otherwise an
+	 * Constructor. Three terms must be passed to the constructor, otherwise an
 	 * exception will be thrown.
 	 * 
-	 * @param t
-	 *            the terms
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the number of terms submitted is not 2
-	 * @throws IllegalArgumentException
-	 *             if t is <code>null</code>
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             3.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
-	public StringCompareBuiltin(final ITerm... t) {
-		super(PREDICATE, t);
+	public StringCompareBuiltin(ITerm... terms) {
+		super(PREDICATE, terms);
 	}
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
-			throws EvaluationException {
-		assert variableIndexes.length == 0;
-
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		if (terms[0] instanceof IStringTerm && terms[1] instanceof IStringTerm) {
 			int result = BuiltinHelper.compare(terms[0], terms[1]);
 			return Factory.CONCRETE.createInteger(result);
 		}
 
 		return null;
-	}
-
-	public int maxUnknownVariables() {
-		return 0;
 	}
 
 }
