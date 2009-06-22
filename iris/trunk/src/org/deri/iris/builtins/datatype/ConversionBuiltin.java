@@ -24,39 +24,33 @@ package org.deri.iris.builtins.datatype;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.FunctionalBuiltin;
 
 /**
  * Represents a data type conversion function. Implementations of this builtin
  * convert supported data types to a specific data type.
  */
-public abstract class ConversionBuiltin extends AbstractBuiltin {
+public abstract class ConversionBuiltin extends FunctionalBuiltin {
 
 	/**
 	 * Creates a new ConversionBuiltin instance. The number of terms submitted
 	 * to this constructor must match the arity of the predicate, which in this
-	 * case should always be one.
+	 * case must always be two.
 	 * 
-	 * @param predicate
-	 *            The special predicate for this builtin.
-	 * @param terms
-	 *            The terms defining the values and variables for this builtin.
-	 * @throws NullPointerException
-	 *             If the predicate or the terms is {@code null}.
-	 * @throws NullPointerException
-	 *             If the terms contain {@code null}.
-	 * @throws IllegalArgumentException
-	 *             If the length of the terms and the arity of the predicate
-	 *             don't match.
+	 * @param predicate The special predicate for this builtin.
+	 * @param terms The terms defining the values and variables for this
+	 *            builtin.
+	 * @throws NullPointerException If the predicate or the terms is {@code
+	 *             null}.
+	 * @throws NullPointerException If the terms contain {@code null}.
+	 * @throws IllegalArgumentException If the length of the terms and the arity
+	 *             of the predicate do not match.
 	 */
-	protected ConversionBuiltin(IPredicate predicate, ITerm[] terms) {
+	protected ConversionBuiltin(IPredicate predicate, ITerm... terms) {
 		super(predicate, terms);
 	}
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes) {
-		assert variableIndexes.length == 0;
-		assert terms.length == 1;
-
+	protected ITerm computeResult(ITerm[] terms) {
 		ITerm term = terms[0];
 
 		return convert(term);
@@ -65,8 +59,7 @@ public abstract class ConversionBuiltin extends AbstractBuiltin {
 	/**
 	 * Converts the given supported data type instance to the specific data type
 	 * 
-	 * @param terms
-	 *            The term representing the data type to be converted.
+	 * @param terms The term representing the data type to be converted.
 	 * @return The result of the conversion or <code>null</code> if the given
 	 *         data type is not supported.
 	 */
