@@ -22,6 +22,7 @@
  */
 package org.deri.iris.builtins.date;
 
+import static org.deri.iris.factory.Factory.TERM;
 import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
@@ -35,6 +36,8 @@ import org.deri.iris.factory.Factory;
 public class TimezonePartBuiltinTest extends TestCase {
 
 	private static ITerm X = Factory.TERM.createVariable("X");
+
+	private static final ITerm Y = TERM.createVariable("Y");
 
 	public TimezonePartBuiltinTest(String name) {
 		super(name);
@@ -76,9 +79,9 @@ public class TimezonePartBuiltinTest extends TestCase {
 	}
 
 	private void check(ITerm expected, ITerm time) throws EvaluationException {
-		TimezonePartBuiltin builtin = new TimezonePartBuiltin(X);
+		TimezonePartBuiltin builtin = new TimezonePartBuiltin(time, Y);
 
-		ITuple arguments = Factory.BASIC.createTuple(time);
+		ITuple arguments = Factory.BASIC.createTuple(X, Y);
 		ITuple expectedTuple = Factory.BASIC.createTuple(expected);
 		ITuple actual = builtin.evaluate(arguments);
 
