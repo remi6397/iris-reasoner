@@ -39,6 +39,8 @@ public class ToBase64BuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
 
+	private static final ITerm Y = TERM.createVariable("Y");
+
 	public ToBase64BuiltinTest(String name) {
 		super(name);
 	}
@@ -147,9 +149,9 @@ public class ToBase64BuiltinTest extends TestCase {
 	}
 
 	private ITuple compute(ITerm term) throws EvaluationException {
-		ToBase64Builtin builtin = new ToBase64Builtin(X);
+		ToBase64Builtin builtin = new ToBase64Builtin(term, Y);
 
-		ITuple arguments = BASIC.createTuple(term);
+		ITuple arguments = BASIC.createTuple(X, Y);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		return actualTuple;

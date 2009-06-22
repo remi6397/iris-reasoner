@@ -39,6 +39,8 @@ public class ToXMLLiteralBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
 
+	private static final ITerm Y = TERM.createVariable("Y");
+
 	public ToXMLLiteralBuiltinTest(String name) {
 		super(name);
 	}
@@ -151,9 +153,9 @@ public class ToXMLLiteralBuiltinTest extends TestCase {
 	}
 
 	private ITuple compute(ITerm term) throws EvaluationException {
-		ToXMLLiteralBuiltin builtin = new ToXMLLiteralBuiltin(X);
+		ToXMLLiteralBuiltin builtin = new ToXMLLiteralBuiltin(term, Y);
 
-		ITuple arguments = BASIC.createTuple(term);
+		ITuple arguments = BASIC.createTuple(X, Y);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		return actualTuple;

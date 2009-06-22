@@ -39,6 +39,8 @@ public class ToGDayBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
 
+	private static final ITerm Y = TERM.createVariable("Y");
+
 	public ToGDayBuiltinTest(String name) {
 		super(name);
 	}
@@ -151,9 +153,9 @@ public class ToGDayBuiltinTest extends TestCase {
 	}
 
 	private ITuple compute(ITerm term) throws EvaluationException {
-		ToGDayBuiltin builtin = new ToGDayBuiltin(X);
+		ToGDayBuiltin builtin = new ToGDayBuiltin(term, Y);
 
-		ITuple arguments = BASIC.createTuple(term);
+		ITuple arguments = BASIC.createTuple(X, Y);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		return actualTuple;

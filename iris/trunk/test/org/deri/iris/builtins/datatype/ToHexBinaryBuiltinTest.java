@@ -39,6 +39,8 @@ public class ToHexBinaryBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
 
+	private static final ITerm Y = TERM.createVariable("Y");
+
 	public ToHexBinaryBuiltinTest(String name) {
 		super(name);
 	}
@@ -146,9 +148,9 @@ public class ToHexBinaryBuiltinTest extends TestCase {
 	}
 
 	private ITuple compute(ITerm term) throws EvaluationException {
-		ToHexBinaryBuiltin builtin = new ToHexBinaryBuiltin(X);
+		ToHexBinaryBuiltin builtin = new ToHexBinaryBuiltin(term, Y);
 
-		ITuple arguments = BASIC.createTuple(term);
+		ITuple arguments = BASIC.createTuple(X, Y);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		return actualTuple;

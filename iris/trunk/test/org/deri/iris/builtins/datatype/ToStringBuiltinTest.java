@@ -39,6 +39,8 @@ public class ToStringBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
 
+	private static final ITerm Y = TERM.createVariable("Y");
+
 	public ToStringBuiltinTest(String name) {
 		super(name);
 	}
@@ -152,9 +154,9 @@ public class ToStringBuiltinTest extends TestCase {
 	}
 
 	private ITuple compute(ITerm term) throws EvaluationException {
-		ToStringBuiltin builtin = new ToStringBuiltin(X);
+		ToStringBuiltin builtin = new ToStringBuiltin(term, Y);
 
-		ITuple arguments = BASIC.createTuple(term);
+		ITuple arguments = BASIC.createTuple(X, Y);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		return actualTuple;

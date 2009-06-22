@@ -39,6 +39,8 @@ public class ToGYearBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
 
+	private static final ITerm Y = TERM.createVariable("Y");
+
 	public ToGYearBuiltinTest(String name) {
 		super(name);
 	}
@@ -145,6 +147,7 @@ public class ToGYearBuiltinTest extends TestCase {
 		ITuple actualTuple = compute(term);
 
 		assertEquals(expectedTuple, actualTuple);
+		assertNotNull(check(expected, term));
 	}
 
 	private void fails(ITerm term) throws EvaluationException {
@@ -152,9 +155,18 @@ public class ToGYearBuiltinTest extends TestCase {
 	}
 
 	private ITuple compute(ITerm term) throws EvaluationException {
-		ToGYearBuiltin builtin = new ToGYearBuiltin(X);
+		ToGYearBuiltin builtin = new ToGYearBuiltin(term, Y);
 
-		ITuple arguments = BASIC.createTuple(term);
+		ITuple arguments = BASIC.createTuple(X, Y);
+		ITuple actualTuple = builtin.evaluate(arguments);
+
+		return actualTuple;
+	}
+
+	private ITuple check(ITerm expected, ITerm term) throws EvaluationException {
+		ToGYearBuiltin builtin = new ToGYearBuiltin(term, expected);
+
+		ITuple arguments = BASIC.createTuple(X, Y);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		return actualTuple;
