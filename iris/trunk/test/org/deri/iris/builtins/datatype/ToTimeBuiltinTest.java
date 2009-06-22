@@ -40,6 +40,8 @@ public class ToTimeBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
 
+	private static final ITerm Y = TERM.createVariable("Y");
+
 	public ToTimeBuiltinTest(String name) {
 		super(name);
 	}
@@ -148,9 +150,9 @@ public class ToTimeBuiltinTest extends TestCase {
 	}
 
 	private ITuple compute(ITerm term) throws EvaluationException {
-		ToTimeBuiltin builtin = new ToTimeBuiltin(X);
+		ToTimeBuiltin builtin = new ToTimeBuiltin(term, Y);
 
-		ITuple arguments = BASIC.createTuple(term);
+		ITuple arguments = BASIC.createTuple(X, Y);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		return actualTuple;

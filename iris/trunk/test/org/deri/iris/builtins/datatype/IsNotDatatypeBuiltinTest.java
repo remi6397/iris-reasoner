@@ -38,6 +38,7 @@ import org.deri.iris.api.terms.concrete.ISqName;
 public class IsNotDatatypeBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
+
 	private static final ITerm Y = TERM.createVariable("Y");
 
 	public IsNotDatatypeBuiltinTest(String name) {
@@ -172,9 +173,9 @@ public class IsNotDatatypeBuiltinTest extends TestCase {
 
 		check(true, name, iri);
 		check(true, CONCRETE.createInteger(0), iri);
-		
+
 		iri = "http://www.wsmo.org/wsml/wsml-syntax#sQName";
-		
+
 		check(false, name, iri);
 	}
 

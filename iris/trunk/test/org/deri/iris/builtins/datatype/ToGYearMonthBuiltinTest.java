@@ -39,6 +39,8 @@ public class ToGYearMonthBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
 
+	private static final ITerm Y = TERM.createVariable("Y");
+
 	public ToGYearMonthBuiltinTest(String name) {
 		super(name);
 	}
@@ -154,9 +156,9 @@ public class ToGYearMonthBuiltinTest extends TestCase {
 	}
 
 	private ITuple compute(ITerm term) throws EvaluationException {
-		ToGYearMonthBuiltin builtin = new ToGYearMonthBuiltin(X);
+		ToGYearMonthBuiltin builtin = new ToGYearMonthBuiltin(term, Y);
 
-		ITuple arguments = BASIC.createTuple(term);
+		ITuple arguments = BASIC.createTuple(X, Y);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		return actualTuple;

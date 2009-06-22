@@ -39,6 +39,8 @@ public class ToGMonthBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
 
+	private static final ITerm Y = TERM.createVariable("Y");
+
 	public ToGMonthBuiltinTest(String name) {
 		super(name);
 	}
@@ -152,9 +154,9 @@ public class ToGMonthBuiltinTest extends TestCase {
 	}
 
 	private ITuple compute(ITerm term) throws EvaluationException {
-		ToGMonthBuiltin builtin = new ToGMonthBuiltin(X);
+		ToGMonthBuiltin builtin = new ToGMonthBuiltin(term, X);
 
-		ITuple arguments = BASIC.createTuple(term);
+		ITuple arguments = BASIC.createTuple(X, Y);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		return actualTuple;

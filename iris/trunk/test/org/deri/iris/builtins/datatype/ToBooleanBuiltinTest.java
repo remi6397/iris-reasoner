@@ -39,6 +39,8 @@ public class ToBooleanBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
 
+	private static final ITerm Y = TERM.createVariable("Y");
+
 	public ToBooleanBuiltinTest(String name) {
 		super(name);
 	}
@@ -141,7 +143,8 @@ public class ToBooleanBuiltinTest extends TestCase {
 		fails(CONCRETE.createYearMonthDuration(true, 2009, 4));
 	}
 
-	private void equals(boolean expected, ITerm term) throws EvaluationException {
+	private void equals(boolean expected, ITerm term)
+			throws EvaluationException {
 		ITuple expectedTuple = BASIC.createTuple(CONCRETE
 				.createBoolean(expected));
 		ITuple actualTuple = compute(term);
@@ -154,9 +157,9 @@ public class ToBooleanBuiltinTest extends TestCase {
 	}
 
 	private ITuple compute(ITerm term) throws EvaluationException {
-		ToBooleanBuiltin builtin = new ToBooleanBuiltin(X);
+		ToBooleanBuiltin builtin = new ToBooleanBuiltin(term, Y);
 
-		ITuple arguments = BASIC.createTuple(term);
+		ITuple arguments = BASIC.createTuple(X, Y);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		return actualTuple;

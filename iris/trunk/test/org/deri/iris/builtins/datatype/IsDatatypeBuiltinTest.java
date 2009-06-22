@@ -38,6 +38,7 @@ import org.deri.iris.api.terms.concrete.ISqName;
 public class IsDatatypeBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
+
 	private static final ITerm Y = TERM.createVariable("Y");
 
 	public IsDatatypeBuiltinTest(String name) {
