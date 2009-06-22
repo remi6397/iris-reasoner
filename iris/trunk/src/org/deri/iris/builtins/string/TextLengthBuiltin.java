@@ -28,42 +28,35 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IText;
-import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents a text-length operation as defined in
+ * Represents the RIF built-in text-length as defined in
  * http://www.w3.org/2005/rules/
  * wiki/DTB#func:text-length_.28adapted_from_rtfn:length.29.
  */
-public class TextLengthBuiltin extends AbstractBuiltin {
+public class TextLengthBuiltin extends FunctionalBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TEXT_LENGTH", 1);
+			"TEXT_LENGTH", 2);
 
 	/**
-	 * Constructor. One term must be passed to the constructor, otherwise an
+	 * Constructor. Two terms must be passed to the constructor, otherwise an
 	 * exception will be thrown.
 	 * 
-	 * @param t
-	 *            the terms
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the number of terms submitted is not 1
-	 * @throws IllegalArgumentException
-	 *             if t is <code>null</code>
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             2.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
-	public TextLengthBuiltin(final ITerm... t) {
-		super(PREDICATE, t);
+	public TextLengthBuiltin(ITerm... terms) {
+		super(PREDICATE, terms);
 	}
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
-			throws EvaluationException {
-		assert variableIndexes.length == 0;
-		assert terms.length == 1;
-
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		if (terms[0] instanceof IText) {
 			String text = ((IText) terms[0]).getString();
 			int result = text.length();
@@ -71,10 +64,6 @@ public class TextLengthBuiltin extends AbstractBuiltin {
 		}
 
 		return null;
-	}
-
-	public int maxUnknownVariables() {
-		return 0;
 	}
 
 }
