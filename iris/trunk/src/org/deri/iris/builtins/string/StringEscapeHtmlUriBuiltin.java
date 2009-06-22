@@ -28,40 +28,34 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents a encode-html-uri operation as defined in
+ * Represents the RIF built-in func:encode-html-uri as defined in
  * http://www.w3.org/TR/xpath-functions/#func-escape-html-uri.
  */
-public class StringEscapeHtmlUriBuiltin extends AbstractBuiltin {
+public class StringEscapeHtmlUriBuiltin extends FunctionalBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"STRING_ESCAPEHTMLURI", 1);
+			"STRING_ESCAPE_HTML_URI", 2);
 
 	/**
-	 * Constructor. One term must be passed to the constructor, otherwise an
+	 * Constructor. Two terms must be passed to the constructor, otherwise an
 	 * exception will be thrown.
 	 * 
-	 * @param terms
-	 *            The terms
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the number of terms submitted is not 1
-	 * @throws IllegalArgumentException
-	 *             if t is <code>null</code>
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             2.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
-	public StringEscapeHtmlUriBuiltin(final ITerm... terms) {
+	public StringEscapeHtmlUriBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
-			throws EvaluationException {
-		assert variableIndexes.length == 0;
-
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		if (terms[0] instanceof IStringTerm) {
 			IStringTerm string = (IStringTerm) terms[0];
 
@@ -83,10 +77,6 @@ public class StringEscapeHtmlUriBuiltin extends AbstractBuiltin {
 		}
 
 		return null;
-	}
-
-	public int maxUnknownVariables() {
-		return 0;
 	}
 
 }
