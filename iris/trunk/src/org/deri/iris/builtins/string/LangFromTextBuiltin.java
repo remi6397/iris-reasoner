@@ -29,41 +29,35 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IText;
-import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.FunctionalBuiltin;
 
 /**
- * Represents a lang-from-text operation as defined in
- * http://www.w3.org/2005/rules
- * /wiki/DTB#func:lang-from-text_.28adapted_from_rtfn:lang-from-text.29.
+ * Represents the RIF built-ins func:lang-from-text as defined in
+ * http://www.w3.org
+ * /2005/rules/wiki/DTB#func:lang-from-text_.28adapted_from_rtfn
+ * :lang-from-text.29.
  */
-public class LangFromTextBuiltin extends AbstractBuiltin {
+public class LangFromTextBuiltin extends FunctionalBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TEXT_LANGFROMTEXT", 1);
+			"LANG_FROM_TEXT", 2);
 
 	/**
-	 * Constructor. One term must be passed to the constructor, otherwise an
+	 * Constructor. Two terms must be passed to the constructor, otherwise an
 	 * exception will be thrown.
 	 * 
-	 * @param t
-	 *            the terms
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the number of terms submitted is not 1
-	 * @throws IllegalArgumentException
-	 *             if t is <code>null</code>
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             2.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
-	public LangFromTextBuiltin(final ITerm... t) {
-		super(PREDICATE, t);
+	public LangFromTextBuiltin(ITerm... terms) {
+		super(PREDICATE, terms);
 	}
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
-			throws EvaluationException {
-		assert variableIndexes.length == 0;
-		assert terms.length == 1;
-
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		if (terms[0] instanceof IText) {
 			String string = ((IText) terms[0]).getLang();
 
@@ -71,10 +65,6 @@ public class LangFromTextBuiltin extends AbstractBuiltin {
 		}
 
 		return null;
-	}
-
-	public int maxUnknownVariables() {
-		return 0;
 	}
 
 }
