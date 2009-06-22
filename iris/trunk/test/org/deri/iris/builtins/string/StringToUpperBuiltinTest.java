@@ -38,6 +38,8 @@ public class StringToUpperBuiltinTest extends TestCase {
 
 	private static final ITerm X = Factory.TERM.createVariable("X");
 
+	private static final ITerm Y = Factory.TERM.createVariable("Y");
+
 	public StringToUpperBuiltinTest(String name) {
 		super(name);
 	}
@@ -50,10 +52,10 @@ public class StringToUpperBuiltinTest extends TestCase {
 
 	private void check(String expected, String actual)
 			throws EvaluationException {
-		StringToUpperBuiltin length = new StringToUpperBuiltin(X);
-
 		IStringTerm actualTerm = Factory.TERM.createString(actual);
-		ITuple arguments = Factory.BASIC.createTuple(actualTerm);
+		ITuple arguments = Factory.BASIC.createTuple(X, Y);
+
+		StringToUpperBuiltin length = new StringToUpperBuiltin(actualTerm, Y);
 
 		IStringTerm expectedTerm = Factory.TERM.createString(expected);
 		ITuple expectedTuple = Factory.BASIC.createTuple(expectedTerm);

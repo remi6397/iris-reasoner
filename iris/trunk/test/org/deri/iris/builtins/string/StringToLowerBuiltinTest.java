@@ -22,6 +22,7 @@
  */
 package org.deri.iris.builtins.string;
 
+import static org.deri.iris.factory.Factory.TERM;
 import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
@@ -38,6 +39,8 @@ public class StringToLowerBuiltinTest extends TestCase {
 
 	private static final ITerm X = Factory.TERM.createVariable("X");
 
+	private static final ITerm Y = TERM.createVariable("Y");
+
 	public StringToLowerBuiltinTest(String name) {
 		super(name);
 	}
@@ -49,17 +52,22 @@ public class StringToLowerBuiltinTest extends TestCase {
 
 	private void check(String expected, String actual)
 			throws EvaluationException {
-		StringToLowerBuiltin length = new StringToLowerBuiltin(X);
-
 		IStringTerm actualTerm = Factory.TERM.createString(actual);
-		ITuple arguments = Factory.BASIC.createTuple(actualTerm);
+		ITuple arguments = Factory.BASIC.createTuple(X, Y);
+
+		StringToLowerBuiltin builtin = new StringToLowerBuiltin(actualTerm, Y);
 
 		IStringTerm expectedTerm = Factory.TERM.createString(expected);
 		ITuple expectedTuple = Factory.BASIC.createTuple(expectedTerm);
 
-		ITuple actualTuple = length.evaluate(arguments);
+		ITuple actualTuple = builtin.evaluate(arguments);
 
 		assertEquals(expectedTuple, actualTuple);
+		
+		builtin = new StringToLowerBuiltin(actualTerm, expectedTerm);
+		actualTuple = builtin.evaluate(arguments);
+		
+		assertNotNull(actualTuple);
 	}
 
 }

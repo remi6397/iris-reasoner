@@ -22,6 +22,7 @@
  */
 package org.deri.iris.builtins.string;
 
+import static org.deri.iris.factory.Factory.TERM;
 import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
@@ -36,7 +37,9 @@ import org.deri.iris.factory.Factory;
  */
 public class TextLengthBuiltinTest extends TestCase {
 
-	private static final ITerm X = Factory.TERM.createVariable("X");
+	private static final ITerm X = TERM.createVariable("X");
+
+	private static final ITerm Y = TERM.createVariable("Y");
 
 	public TextLengthBuiltinTest(String name) {
 		super(name);
@@ -48,16 +51,14 @@ public class TextLengthBuiltinTest extends TestCase {
 		check(0, "@");
 	}
 
-	public void check(int expected, String string)
-			throws EvaluationException {
-		TextLengthBuiltin builtin = new TextLengthBuiltin(X);
-
+	public void check(int expected, String string) throws EvaluationException {
 		IIntegerTerm expectedTerm = Factory.CONCRETE.createInteger(expected);
 		ITuple expectedTuple = Factory.BASIC.createTuple(expectedTerm);
 
 		IText stringTerm = Factory.CONCRETE.createText(string);
-		ITuple arguments = Factory.BASIC.createTuple(stringTerm);
+		ITuple arguments = Factory.BASIC.createTuple(X, Y);
 
+		TextLengthBuiltin builtin = new TextLengthBuiltin(stringTerm, Y);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		assertEquals(expectedTuple, actualTuple);

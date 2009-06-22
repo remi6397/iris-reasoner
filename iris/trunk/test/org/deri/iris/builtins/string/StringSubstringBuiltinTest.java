@@ -34,8 +34,12 @@ import org.deri.iris.factory.Factory;
 public class StringSubstringBuiltinTest extends TestCase {
 
 	public static ITerm X = Factory.TERM.createVariable("X");
+
 	public static ITerm Y = Factory.TERM.createVariable("Y");
+
 	public static ITerm Z = Factory.TERM.createVariable("Z");
+
+	public static ITerm R = Factory.TERM.createVariable("R");
 
 	public StringSubstringBuiltinTest(String name) {
 		super(name);
@@ -48,23 +52,25 @@ public class StringSubstringBuiltinTest extends TestCase {
 
 	private void check(String expected, String string, int beginIndex)
 			throws EvaluationException {
-		StringSubstringBuiltin substring = new StringSubstringBuiltin(X, Y);
+		StringSubstringUntilEndBuiltin builtin = new StringSubstringUntilEndBuiltin(
+				Factory.TERM.createString(string), Factory.CONCRETE
+						.createInteger(beginIndex), Z);
 
 		assertEquals(Factory.BASIC.createTuple(Factory.TERM
-				.createString(expected)), substring.evaluate(Factory.BASIC
-				.createTuple(Factory.TERM.createString(string),
-						Factory.CONCRETE.createInteger(beginIndex))));
+				.createString(expected)), builtin.evaluate(Factory.BASIC
+				.createTuple(X, Y, Z)));
 	}
 
 	private void check(String expected, String string, int beginIndex,
 			int endIndex) throws EvaluationException {
-		StringSubstringBuiltin substring = new StringSubstringBuiltin(X, Y, Z);
+		StringSubstringBuiltin substring = new StringSubstringBuiltin(
+				Factory.TERM.createString(string), Factory.CONCRETE
+						.createInteger(beginIndex), Factory.CONCRETE
+						.createInteger(endIndex), R);
 
 		assertEquals(Factory.BASIC.createTuple(Factory.TERM
 				.createString(expected)), substring.evaluate(Factory.BASIC
-				.createTuple(Factory.TERM.createString(string),
-						Factory.CONCRETE.createInteger(beginIndex),
-						Factory.CONCRETE.createInteger(endIndex))));
+				.createTuple(X, Y, Z, R)));
 	}
 
 }

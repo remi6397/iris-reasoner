@@ -36,7 +36,9 @@ import org.deri.iris.factory.Factory;
 public class StringStartsWithBuiltinTest extends TestCase {
 
 	public static ITerm X = Factory.TERM.createVariable("X");
+
 	public static ITerm Y = Factory.TERM.createVariable("Y");
+
 	public static ITerm Z = Factory.TERM.createVariable("Z");
 
 	public StringStartsWithBuiltinTest(String name) {
@@ -52,18 +54,21 @@ public class StringStartsWithBuiltinTest extends TestCase {
 
 	public void testStartsWith2() throws EvaluationException {
 		try {
-			check(true, "tattoo", "tat", "Minimal Match");
-			check(false, "tattoo", "att", "Minimal Match");
-			check(false, "", "t", "Minimal Match");
-			check(true, "tattoo", "", "Minimal Match");
+			String collation = "http://www.w3.org/2005/xpath-functions/collation/codepoint";
+
+			check(true, "tattoo", "tat", collation);
+			check(false, "tattoo", "att", collation);
+			check(false, "", "t", collation);
+			check(true, "tattoo", "", collation);
 		} catch (IllegalArgumentException iae) {
-			fail("Minimal Match collation not supported");
+			fail("Unicode code point collation not supported.");
 		}
 	}
 
 	private void check(boolean expected, String haystack, String needle)
 			throws EvaluationException {
-		StringStartsWithBuiltin startsWith = new StringStartsWithBuiltin(X, Y);
+		StringStartsWithWithoutCollationBuiltin startsWith = new StringStartsWithWithoutCollationBuiltin(
+				X, Y);
 
 		ITuple result = startsWith.evaluate(Factory.BASIC.createTuple(
 				Factory.TERM.createString(haystack), Factory.TERM
@@ -76,9 +81,8 @@ public class StringStartsWithBuiltinTest extends TestCase {
 		}
 	}
 
-	private void check(boolean expected, String haystack,
-			String needle, String collation) throws EvaluationException,
-			IllegalArgumentException {
+	private void check(boolean expected, String haystack, String needle,
+			String collation) throws EvaluationException {
 		StringStartsWithBuiltin startsWith = new StringStartsWithBuiltin(X, Y,
 				Z);
 

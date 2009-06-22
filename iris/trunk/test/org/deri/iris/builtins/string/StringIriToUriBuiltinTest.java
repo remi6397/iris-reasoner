@@ -37,6 +37,8 @@ public class StringIriToUriBuiltinTest extends TestCase {
 
 	private static final ITerm X = Factory.TERM.createVariable("X");
 
+	private static final ITerm Y = Factory.TERM.createVariable("Y");
+
 	public StringIriToUriBuiltinTest(String name) {
 		super(name);
 	}
@@ -50,10 +52,10 @@ public class StringIriToUriBuiltinTest extends TestCase {
 
 	private void check(String expected, String actual)
 			throws EvaluationException {
-		StringIriToUriBuiltin builtin = new StringIriToUriBuiltin(X);
-
 		IStringTerm actualTerm = Factory.TERM.createString(actual);
-		ITuple arguments = Factory.BASIC.createTuple(actualTerm);
+		ITuple arguments = Factory.BASIC.createTuple(X, Y);
+
+		StringIriToUriBuiltin builtin = new StringIriToUriBuiltin(actualTerm, Y);
 
 		IStringTerm expectedTerm = Factory.TERM.createString(expected);
 		ITuple expectedTuple = Factory.BASIC.createTuple(expectedTerm);

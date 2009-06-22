@@ -35,8 +35,12 @@ import org.deri.iris.factory.Factory;
 public class StringSubstringAfterBuiltinTest extends TestCase {
 
 	public static ITerm X = Factory.TERM.createVariable("X");
+
 	public static ITerm Y = Factory.TERM.createVariable("Y");
+
 	public static ITerm Z = Factory.TERM.createVariable("Z");
+
+	public static ITerm R = Factory.TERM.createVariable("R");
 
 	public StringSubstringAfterBuiltinTest(String name) {
 		super(name);
@@ -51,36 +55,37 @@ public class StringSubstringAfterBuiltinTest extends TestCase {
 
 	public void testSubstringAfter2() throws EvaluationException {
 		try {
-			check("too", "tattoo", "tat", "Minimal Match");
-			check("", "tattoo", "tattoo", "Minimal Match");
-			check("tattoo", "tattoo", "", "Minimal Match");
-			check("", "tattoo", "foobar", "Minimal Match");
+			String collation = "http://www.w3.org/2005/xpath-functions/collation/codepoint";
+
+			check("too", "tattoo", "tat", collation);
+			check("", "tattoo", "tattoo", collation);
+			check("tattoo", "tattoo", "", collation);
+			check("", "tattoo", "foobar", collation);
 		} catch (IllegalArgumentException iae) {
-			fail("Minimal Match collation not supported");
+			fail("Unicode code point collation not supported.");
 		}
 	}
 
 	private void check(String expected, String haystack, String needle)
 			throws EvaluationException {
-		StringSubstringAfterBuiltin substring = new StringSubstringAfterBuiltin(
-				X, Y);
+		StringSubstringAfterWithoutCollationBuiltin substring = new StringSubstringAfterWithoutCollationBuiltin(
+				Factory.TERM.createString(haystack), Factory.TERM
+						.createString(needle), R);
 
 		assertEquals(Factory.BASIC.createTuple(Factory.TERM
 				.createString(expected)), substring.evaluate(Factory.BASIC
-				.createTuple(Factory.TERM.createString(haystack), Factory.TERM
-						.createString(needle))));
+				.createTuple(X, Y, R)));
 	}
 
 	private void check(String expected, String haystack, String needle,
-			String collation) throws EvaluationException,
-			IllegalArgumentException {
+			String collation) throws EvaluationException {
 		StringSubstringAfterBuiltin substring = new StringSubstringAfterBuiltin(
-				X, Y, Z);
+				Factory.TERM.createString(haystack), Factory.TERM
+						.createString(needle), Factory.TERM
+						.createString(collation), R);
 
 		assertEquals(Factory.BASIC.createTuple(Factory.TERM
 				.createString(expected)), substring.evaluate(Factory.BASIC
-				.createTuple(Factory.TERM.createString(haystack), Factory.TERM
-						.createString(needle), Factory.TERM
-						.createString(collation))));
+				.createTuple(X, Y, Z, R)));
 	}
 }

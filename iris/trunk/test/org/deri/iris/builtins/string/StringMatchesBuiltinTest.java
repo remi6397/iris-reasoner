@@ -26,8 +26,8 @@ import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.string.StringMatchesBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -36,7 +36,9 @@ import org.deri.iris.factory.Factory;
 public class StringMatchesBuiltinTest extends TestCase {
 
 	public static ITerm X = Factory.TERM.createVariable("X");
+
 	public static ITerm Y = Factory.TERM.createVariable("Y");
+
 	public static ITerm Z = Factory.TERM.createVariable("Z");
 
 	public StringMatchesBuiltinTest(String name) {
@@ -51,7 +53,7 @@ public class StringMatchesBuiltinTest extends TestCase {
 
 	private void check(boolean expected, String string, String pattern)
 			throws EvaluationException {
-		StringMatchesBuiltin matches = new StringMatchesBuiltin(X, Y);
+		IBuiltinAtom matches = new StringMatchesWithoutFlagsBuiltin(X, Y);
 
 		ITuple result = matches.evaluate(Factory.BASIC.createTuple(Factory.TERM
 				.createString(string), Factory.TERM.createString(pattern)));
