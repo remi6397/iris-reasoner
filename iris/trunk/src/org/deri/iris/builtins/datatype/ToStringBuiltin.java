@@ -40,13 +40,13 @@ import org.deri.iris.api.terms.concrete.IXMLLiteral;
 public class ToStringBuiltin extends ConversionBuiltin {
 
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TO_STRING", 1);
+			"TO_STRING", 2);
 
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms
-	 *            The term representing the data type instance to be converted.
+	 * @param terms The term representing the data type instance to be
+	 *            converted.
 	 */
 	public ToStringBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -65,8 +65,7 @@ public class ToStringBuiltin extends ConversionBuiltin {
 	 * Converts a XMLLiteral term to a String term. The language tag of the
 	 * XMLLiteral term is omitted.
 	 * 
-	 * @param term
-	 *            The XMLLiteral term to be converted.
+	 * @param term The XMLLiteral term to be converted.
 	 * @return A new String term representing the result of the conversion.
 	 */
 	public static IStringTerm toString(IXMLLiteral term) {
@@ -78,8 +77,7 @@ public class ToStringBuiltin extends ConversionBuiltin {
 	 * Converts a Text term to a String term. The language tag of the Text term
 	 * is omitted.
 	 * 
-	 * @param term
-	 *            The Text term to be converted.
+	 * @param term The Text term to be converted.
 	 * @return A new String term representing the result of the conversion.
 	 */
 	public static IStringTerm toString(IText term) {
@@ -88,11 +86,11 @@ public class ToStringBuiltin extends ConversionBuiltin {
 	}
 
 	/**
-	 * Converts a constant term to a String term. The <code>toCanonicalString</code>
-	 * method of the given term is used to convert to String.
+	 * Converts a constant term to a String term. The
+	 * <code>toCanonicalString</code> method of the given term is used to
+	 * convert to String term.
 	 * 
-	 * @param term
-	 *            The term to be converted.
+	 * @param term The term to be converted.
 	 * @return A new String term representing the result of the conversion, or
 	 *         <code>null</code> if the data type represented by the given term
 	 *         is not supported.

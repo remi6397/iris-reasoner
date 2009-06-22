@@ -34,9 +34,7 @@ import org.deri.iris.api.terms.concrete.IDateTime;
 
 /**
  * Represents a data type conversion function, which converts supported data
- * type instances to DateTime instances.
- * 
- * The following data types are supported:
+ * type instances to DateTime instances. The following data types are supported:
  * <ul>
  * <li>Date</li>
  * </ul>
@@ -44,13 +42,13 @@ import org.deri.iris.api.terms.concrete.IDateTime;
 public class ToDateTimeBuiltin extends ConversionBuiltin {
 
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TO_DATETIME", 1);
+			"TO_DATETIME", 2);
 
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms
-	 *            The term representing the data type instance to be converted.
+	 * @param terms The term representing the data type instance to be
+	 *            converted.
 	 */
 	public ToDateTimeBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -70,8 +68,7 @@ public class ToDateTimeBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a Date term to a DateTime term.
 	 * 
-	 * @param term
-	 *            The Date term to be converted.
+	 * @param term The Date term to be converted.
 	 * @return A new DateTime term representing the result of the conversion.
 	 */
 	public static IDateTime toDateTime(IDateTerm term) {

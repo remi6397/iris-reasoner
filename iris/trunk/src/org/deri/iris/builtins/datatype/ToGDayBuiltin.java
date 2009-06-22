@@ -33,9 +33,7 @@ import org.deri.iris.api.terms.concrete.IGDay;
 
 /**
  * Represents a data type conversion function, which converts supported data
- * type instances to GDay instances.
- * 
- * The following data types are supported:
+ * type instances to GDay instances. The following data types are supported:
  * <ul>
  * <li>Date</li>
  * <li>DateTime</li>
@@ -43,14 +41,14 @@ import org.deri.iris.api.terms.concrete.IGDay;
  */
 public class ToGDayBuiltin extends ConversionBuiltin {
 
-	private static final IPredicate PREDICATE = BASIC.createPredicate("TO_GDAY",
-			1);
+	private static final IPredicate PREDICATE = BASIC.createPredicate(
+			"TO_GDAY", 2);
 
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms
-	 *            The term representing the data type instance to be converted.
+	 * @param terms The term representing the data type instance to be
+	 *            converted.
 	 */
 	public ToGDayBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -72,8 +70,7 @@ public class ToGDayBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a Date term to a GDay term.
 	 * 
-	 * @param term
-	 *            The Date term to be converted.
+	 * @param term The Date term to be converted.
 	 * @return A new GDay term representing the result of the conversion.
 	 */
 	public static IGDay toGDay(IDateTerm term) {
@@ -83,8 +80,7 @@ public class ToGDayBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a DateTime term to a GDay term.
 	 * 
-	 * @param term
-	 *            The DateTime term to be converted.
+	 * @param term The DateTime term to be converted.
 	 * @return A new GDay term representing the result of the conversion.
 	 */
 	public static IGDay toGDay(IDateTime term) {

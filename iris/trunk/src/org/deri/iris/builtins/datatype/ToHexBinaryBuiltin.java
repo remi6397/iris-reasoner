@@ -33,9 +33,8 @@ import org.deri.iris.api.terms.concrete.IHexBinary;
 
 /**
  * Represents a data type conversion function, which converts supported data
- * type instances to HexBinary instances.
- * 
- * The following data types are supported:
+ * type instances to HexBinary instances. The following data types are
+ * supported:
  * <ul>
  * <li>Base64</li>
  * <li>String</li>
@@ -44,13 +43,13 @@ import org.deri.iris.api.terms.concrete.IHexBinary;
 public class ToHexBinaryBuiltin extends ConversionBuiltin {
 
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TO_HEXBINARY", 1);
+			"TO_HEXBINARY", 2);
 
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms
-	 *            The term representing the data type instance to be converted.
+	 * @param terms The term representing the data type instance to be
+	 *            converted.
 	 */
 	public ToHexBinaryBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -72,8 +71,7 @@ public class ToHexBinaryBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a String term to a HexBinary term.
 	 * 
-	 * @param term
-	 *            The String term to be converted.
+	 * @param term The String term to be converted.
 	 * @return A new HexBinary term representing the result of the conversion,
 	 *         or <code>null</code> if the conversion fails.
 	 */
@@ -85,8 +83,7 @@ public class ToHexBinaryBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a Base64 term to a HexBinary term.
 	 * 
-	 * @param term
-	 *            The Base64 term to be converted.
+	 * @param term The Base64 term to be converted.
 	 * @return A new HexBinary term representing the result of the conversion.
 	 */
 	public static IHexBinary toHexBinary(IBase64Binary term) {

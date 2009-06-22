@@ -34,9 +34,7 @@ import org.deri.iris.api.terms.concrete.IXMLLiteral;
 
 /**
  * Represents a data type conversion function, which converts supported data
- * type instances to Text instances.
- * 
- * The following data types are supported:
+ * type instances to Text instances. The following data types are supported:
  * <ul>
  * <li>String</li>
  * <li>All data types for which casting to string is supported</li>
@@ -44,14 +42,14 @@ import org.deri.iris.api.terms.concrete.IXMLLiteral;
  */
 public class ToTextBuiltin extends ConversionBuiltin {
 
-	private static final IPredicate PREDICATE = BASIC.createPredicate("TO_TEXT",
-			1);
+	private static final IPredicate PREDICATE = BASIC.createPredicate(
+			"TO_TEXT", 2);
 
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms
-	 *            The term representing the data type instance to be converted.
+	 * @param terms The term representing the data type instance to be
+	 *            converted.
 	 */
 	public ToTextBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -65,8 +63,7 @@ public class ToTextBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a XMLLiteral term to a Text term.
 	 * 
-	 * @param term
-	 *            The XMLLiteral term to be converted.
+	 * @param term The XMLLiteral term to be converted.
 	 * @return A new Text term representing the result of the conversion.
 	 */
 	public static IText toText(IXMLLiteral term) {
@@ -76,8 +73,7 @@ public class ToTextBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a String term to a Text term.
 	 * 
-	 * @param term
-	 *            The String term to be converted.
+	 * @param term The String term to be converted.
 	 * @return A new Text term representing the result of the conversion.
 	 */
 	public static IText toText(IStringTerm term) {
@@ -91,8 +87,7 @@ public class ToTextBuiltin extends ConversionBuiltin {
 	 * term is used to convert to first convert to a String term and then to a
 	 * Text term.
 	 * 
-	 * @param term
-	 *            The term to be converted.
+	 * @param term The term to be converted.
 	 * @return A new String term representing the result of the conversion, or
 	 *         <code>null</code> if the data type represented by the given term
 	 *         is not supported.
