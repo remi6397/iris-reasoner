@@ -33,24 +33,21 @@ import org.deri.iris.builtins.BooleanBuiltin;
 /**
  * Checks if a term is of type 'GMonth'.
  */
-public class IsGMonthBuiltin extends BooleanBuiltin
-{
+public class IsGMonthBuiltin extends BooleanBuiltin {
 	/**
 	 * Constructor.
+	 * 
 	 * @param t The list of terms. Must always be of length 1 in this case.
 	 */
-	public IsGMonthBuiltin( final ITerm... t )
-	{
-		super( PREDICATE, t );
+	public IsGMonthBuiltin(final ITerm... t) {
+		super(PREDICATE, t);
 	}
 
-	protected boolean computeResult( ITerm[] terms )
-	{
-		assert terms.length == 1;
-		return terms[ 0 ] instanceof IGMonth;
+	protected boolean computeResult(ITerm[] terms) {
+		return terms[0] instanceof IGMonth;
 	}
 
 	/** The predicate defining this built-in. */
-	private static final IPredicate PREDICATE = 
-		org.deri.iris.factory.Factory.BASIC.createPredicate("IS_GMONTH", 1);
+	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
+			.createPredicate("IS_GMONTH", 1);
 }

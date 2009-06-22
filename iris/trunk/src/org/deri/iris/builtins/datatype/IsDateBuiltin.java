@@ -34,6 +34,7 @@ import org.deri.iris.builtins.BooleanBuiltin;
  * <p>
  * $Id: IsDateBuiltin.java,v 1.3 2007-10-12 12:40:58 bazbishop237 Exp $
  * </p>
+ * 
  * @author Nathalie Steinmetz, DERI Innsbruck
  * @version $Revision: 1.3 $
  * @since 0.4
@@ -44,14 +45,12 @@ public class IsDateBuiltin extends BooleanBuiltin {
 		super(PREDICATE, t);
 	}
 
-	protected boolean computeResult( ITerm[] terms )
-	{
-		assert terms.length == 1;
-		return terms[ 0 ] instanceof IDateTerm;
+	protected boolean computeResult(ITerm[] terms) {
+		return terms[0] instanceof IDateTerm;
 	}
 
 	/** The predicate defining this built-in. */
-	private static final IPredicate PREDICATE = 
-		org.deri.iris.factory.Factory.BASIC.createPredicate("IS_DATE", 1);
+	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
+			.createPredicate("IS_DATE", 1);
 
 }

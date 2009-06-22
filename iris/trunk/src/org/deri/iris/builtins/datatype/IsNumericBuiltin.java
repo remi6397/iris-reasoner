@@ -28,26 +28,24 @@ import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.builtins.BooleanBuiltin;
 
 /**
- * Checks whether a term is of any numeric type (integer, float, double, decimal).
+ * Checks whether a term is of any numeric type (integer, float, double,
+ * decimal).
  */
-public class IsNumericBuiltin extends BooleanBuiltin
-{
+public class IsNumericBuiltin extends BooleanBuiltin {
 	/**
 	 * Constructor.
+	 * 
 	 * @param terms List of exactly one term.
 	 */
-	public IsNumericBuiltin( final ITerm... terms )
-	{
-		super( PREDICATE, terms );
+	public IsNumericBuiltin(final ITerm... terms) {
+		super(PREDICATE, terms);
 	}
 
-	protected boolean computeResult( ITerm[] terms )
-	{
-		assert terms.length == 1;
-		return terms[ 0 ] instanceof INumericTerm;
+	protected boolean computeResult(ITerm[] terms) {
+		return terms[0] instanceof INumericTerm;
 	}
 
 	/** The predicate defining this built-in. */
-	private static final IPredicate PREDICATE = 
-		org.deri.iris.factory.Factory.BASIC.createPredicate("IS_NUMERIC", 1);
+	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
+			.createPredicate("IS_NUMERIC", 1);
 }

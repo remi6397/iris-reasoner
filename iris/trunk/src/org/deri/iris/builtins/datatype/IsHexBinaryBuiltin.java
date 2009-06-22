@@ -30,24 +30,21 @@ import org.deri.iris.builtins.BooleanBuiltin;
 /**
  * Checks if a term is of type 'HexBinary'.
  */
-public class IsHexBinaryBuiltin extends BooleanBuiltin
-{
+public class IsHexBinaryBuiltin extends BooleanBuiltin {
 	/**
 	 * Constructor.
+	 * 
 	 * @param t The list of terms. Must always be of length 1 in this case.
 	 */
-	public IsHexBinaryBuiltin( final ITerm... t )
-	{
-		super( PREDICATE, t );
+	public IsHexBinaryBuiltin(final ITerm... t) {
+		super(PREDICATE, t);
 	}
 
-	protected boolean computeResult( ITerm[] terms )
-	{
-		assert terms.length == 1;
-		return terms[ 0 ] instanceof IHexBinary;
+	protected boolean computeResult(ITerm[] terms) {
+		return terms[0] instanceof IHexBinary;
 	}
 
 	/** The predicate defining this built-in. */
-	private static final IPredicate PREDICATE = 
-		org.deri.iris.factory.Factory.BASIC.createPredicate("IS_HEXBINARY", 1);
+	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
+			.createPredicate("IS_HEXBINARY", 1);
 }
