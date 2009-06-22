@@ -29,24 +29,21 @@ import org.deri.iris.builtins.BooleanBuiltin;
 /**
  * Checks whether two terms have exactly the same type.
  */
-public class SameTypeBuiltin extends BooleanBuiltin
-{
+public class SameTypeBuiltin extends BooleanBuiltin {
 	/**
 	 * Constructor.
+	 * 
 	 * @param terms List of exactly one term.
 	 */
-	public SameTypeBuiltin( final ITerm... terms )
-	{
-		super( PREDICATE, terms );
+	public SameTypeBuiltin(final ITerm... terms) {
+		super(PREDICATE, terms);
 	}
 
-	protected boolean computeResult( ITerm[] terms )
-	{
-		assert terms.length == 2;
-		return terms[ 0 ].getClass() == terms[ 1 ].getClass();
+	protected boolean computeResult(ITerm[] terms) {
+		return terms[0].getClass() == terms[1].getClass();
 	}
 
 	/** The predicate defining this built-in. */
-	private static final IPredicate PREDICATE = 
-		org.deri.iris.factory.Factory.BASIC.createPredicate("SAME_TYPE", 2);
+	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
+			.createPredicate("SAME_TYPE", 2);
 }

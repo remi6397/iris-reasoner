@@ -39,15 +39,13 @@ public class IsTextBuiltin extends BooleanBuiltin {
 	/**
 	 * Constructor.
 	 * 
-	 * @param t
-	 *            The list of terms. Must always be of length 1 in this case.
+	 * @param terms The list of terms. Must always be of length 1 in this case.
 	 */
-	public IsTextBuiltin(final ITerm... t) {
-		super(PREDICATE, t);
+	public IsTextBuiltin(ITerm... terms) {
+		super(PREDICATE, terms);
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		assert terms.length == 1;
 		return terms[0] instanceof IText;
 	}
 

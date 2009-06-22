@@ -30,24 +30,21 @@ import org.deri.iris.builtins.BooleanBuiltin;
 /**
  * Checks if a term is of type 'double'.
  */
-public class IsDoubleBuiltin extends BooleanBuiltin
-{
+public class IsDoubleBuiltin extends BooleanBuiltin {
 	/**
 	 * Constructor.
+	 * 
 	 * @param t The list of terms. Must always be of length 1 in this case.
 	 */
-	public IsDoubleBuiltin( final ITerm... t )
-	{
-		super( PREDICATE, t );
+	public IsDoubleBuiltin(final ITerm... t) {
+		super(PREDICATE, t);
 	}
 
-	protected boolean computeResult( ITerm[] terms )
-	{
-		assert terms.length == 1;
-		return terms[ 0 ] instanceof IDoubleTerm;
+	protected boolean computeResult(ITerm[] terms) {
+		return terms[0] instanceof IDoubleTerm;
 	}
 
 	/** The predicate defining this built-in. */
-	private static final IPredicate PREDICATE = 
-		org.deri.iris.factory.Factory.BASIC.createPredicate("IS_DOUBLE", 1);
+	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
+			.createPredicate("IS_DOUBLE", 1);
 }

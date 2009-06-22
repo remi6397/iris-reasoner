@@ -30,24 +30,21 @@ import org.deri.iris.builtins.BooleanBuiltin;
 /**
  * Checks if a term is of type 'SqName'.
  */
-public class IsSqNameBuiltin extends BooleanBuiltin
-{
+public class IsSqNameBuiltin extends BooleanBuiltin {
 	/**
 	 * Constructor.
+	 * 
 	 * @param t The list of terms. Must always be of length 1 in this case.
 	 */
-	public IsSqNameBuiltin( final ITerm... t )
-	{
-		super( PREDICATE, t );
+	public IsSqNameBuiltin(final ITerm... t) {
+		super(PREDICATE, t);
 	}
 
-	protected boolean computeResult( ITerm[] terms )
-	{
-		assert terms.length == 1;
-		return terms[ 0 ] instanceof ISqName;
+	protected boolean computeResult(ITerm[] terms) {
+		return terms[0] instanceof ISqName;
 	}
 
 	/** The predicate defining this built-in. */
-	private static final IPredicate PREDICATE = 
-		org.deri.iris.factory.Factory.BASIC.createPredicate("IS_SQNAME", 1);
+	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
+			.createPredicate("IS_SQNAME", 1);
 }

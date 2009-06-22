@@ -31,22 +31,22 @@ import org.deri.iris.builtins.BooleanBuiltin;
  * Checks if a term is of type 'DayTimeDuration'.
  */
 public class IsDayTimeDurationBuiltin extends BooleanBuiltin {
-	/**
-	 * Constructor.
-	 * 
-	 * @param t
-	 *            The list of terms. Must always be of length 1 in this case.
-	 */
-	public IsDayTimeDurationBuiltin(final ITerm... t) {
-		super(PREDICATE, t);
-	}
-
-	protected boolean computeResult(ITerm[] terms) {
-		assert terms.length == 1;
-		return terms[0] instanceof IDayTimeDuration;
-	}
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
 			.createPredicate("IS_DAYTIMEDURATION", 1);
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param terms The list of terms. Must always be of length 1 in this case.
+	 */
+	public IsDayTimeDurationBuiltin(final ITerm... terms) {
+		super(PREDICATE, terms);
+	}
+
+	protected boolean computeResult(ITerm[] terms) {
+		return terms[0] instanceof IDayTimeDuration;
+	}
+
 }

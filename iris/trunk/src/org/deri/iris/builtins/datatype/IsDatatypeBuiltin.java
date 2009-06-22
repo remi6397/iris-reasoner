@@ -33,7 +33,7 @@ import org.deri.iris.api.terms.concrete.IIri;
 import org.deri.iris.builtins.BooleanBuiltin;
 
 /**
- * Represents a isLiteralOfType predicate as defined in
+ * Represents the RIF built-in <code>isLiteralOfType</code> as defined in
  * http://www.w3.org/2005/rules/wiki/DTB#pred:isLiteralOfType.
  */
 public class IsDatatypeBuiltin extends BooleanBuiltin {
@@ -46,33 +46,28 @@ public class IsDatatypeBuiltin extends BooleanBuiltin {
 	 * Constructor. At least two terms must be passed to the constructor,
 	 * otherwise an exception will be thrown.
 	 * 
-	 * @param terms
-	 *            The terms
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the number of terms submitted is not 1
-	 * @throws IllegalArgumentException
-	 *             if t is <code>null</code>
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException if one of the terms is {@code null}
+	 * @throws IllegalArgumentException if the number of terms submitted is not
+	 *             1
+	 * @throws IllegalArgumentException if t is <code>null</code>
 	 */
-	public IsDatatypeBuiltin(final ITerm... terms) {
+	public IsDatatypeBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
 	@Override
 	protected boolean computeResult(ITerm[] terms) {
-		assert terms.length == 2;
-		
 		if (terms[0] instanceof IConstantTerm) {
 			IConstantTerm term = (IConstantTerm) terms[0];
-			
+
 			if (terms[1] instanceof IIri) {
 				URI iri = ((IIri) terms[1]).getURI();
-				
+
 				return iri.equals(term.getDatatypeIRI());
 			}
 		}
-		
+
 		return false;
 	}
 

@@ -40,20 +40,17 @@ public class IsNotDatatypeBuiltin extends BooleanBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"IS_NOTDATATYPE", 2);
+			"IS_NOT_DATATYPE", 2);
 
 	/**
 	 * Constructor. At least two terms must be passed to the constructor,
 	 * otherwise an exception will be thrown.
 	 * 
-	 * @param terms
-	 *            The terms
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the number of terms submitted is not 1
-	 * @throws IllegalArgumentException
-	 *             if t is <code>null</code>
+	 * @param terms The terms
+	 * @throws IllegalArgumentException if one of the terms is {@code null}
+	 * @throws IllegalArgumentException if the number of terms submitted is not
+	 *             1
+	 * @throws IllegalArgumentException if t is <code>null</code>
 	 */
 	public IsNotDatatypeBuiltin(final ITerm... terms) {
 		super(PREDICATE, terms);
@@ -61,18 +58,16 @@ public class IsNotDatatypeBuiltin extends BooleanBuiltin {
 
 	@Override
 	protected boolean computeResult(ITerm[] terms) {
-		assert terms.length == 2;
-		
 		if (terms[0] instanceof IConstantTerm) {
 			IConstantTerm term = (IConstantTerm) terms[0];
-			
+
 			if (terms[1] instanceof IIri) {
 				URI iri = ((IIri) terms[1]).getURI();
-				
+
 				return !iri.equals(term.getDatatypeIRI());
 			}
 		}
-		
+
 		return false;
 	}
 

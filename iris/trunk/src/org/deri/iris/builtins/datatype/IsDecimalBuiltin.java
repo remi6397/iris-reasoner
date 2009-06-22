@@ -34,6 +34,7 @@ import org.deri.iris.builtins.BooleanBuiltin;
  * <p>
  * $Id: IsDecimalBuiltin.java,v 1.2 2007-10-12 12:40:58 bazbishop237 Exp $
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision: 1.2 $
  * @since 0.4
@@ -44,13 +45,11 @@ public class IsDecimalBuiltin extends BooleanBuiltin {
 		super(PREDICATE, t);
 	}
 
-	protected boolean computeResult( ITerm[] terms )
-	{
-		assert terms.length == 1;
-		return terms[ 0 ] instanceof IDecimalTerm;
+	protected boolean computeResult(ITerm[] terms) {
+		return terms[0] instanceof IDecimalTerm;
 	}
 
 	/** The predicate defining this built-in. */
-	private static final IPredicate PREDICATE = 
-		org.deri.iris.factory.Factory.BASIC.createPredicate("IS_DECIMAL", 1);
+	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
+			.createPredicate("IS_DECIMAL", 1);
 }
