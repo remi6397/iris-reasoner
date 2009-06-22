@@ -28,53 +28,42 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IText;
-import org.deri.iris.builtins.AbstractBuiltin;
 import org.deri.iris.builtins.BuiltinHelper;
+import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents a text-compare operation as defined in
+ * Represents the RIF built-in func:text-compare as defined in
  * http://www.w3.org/2005/rules
  * /wiki/DTB#func:text-compare_.28adapted_from_rtfn:compare.29.
  */
-public class TextCompareBuiltin extends AbstractBuiltin {
+public class TextCompareBuiltin extends FunctionalBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TEXT_COMPARE", 2);
+			"TEXT_COMPARE", 3);
 
 	/**
-	 * Constructor. Two terms must be passed to the constructor, otherwise an
+	 * Constructor. Three terms must be passed to the constructor, otherwise an
 	 * exception will be thrown.
 	 * 
-	 * @param t
-	 *            the terms
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the number of terms submitted is not 1
-	 * @throws IllegalArgumentException
-	 *             if t is <code>null</code>
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             3.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
-	public TextCompareBuiltin(final ITerm... t) {
-		super(PREDICATE, t);
+	public TextCompareBuiltin(ITerm... terms) {
+		super(PREDICATE, terms);
 	}
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
-			throws EvaluationException {
-		assert variableIndexes.length == 0;
-		assert terms.length == 2;
-
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		if (terms[0] instanceof IText) {
 			int result = BuiltinHelper.compare(terms[0], terms[1]);
 			return Factory.CONCRETE.createInteger(result);
 		}
 
 		return null;
-	}
-
-	public int maxUnknownVariables() {
-		return 0;
 	}
 
 }

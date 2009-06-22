@@ -28,39 +28,33 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
  * Represents a string URI encode operation.
  */
-public class StringUriEncodeBuiltin extends AbstractBuiltin {
+public class StringUriEncodeBuiltin extends FunctionalBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"STRING_URIENCODE", 1);
+			"STRING_URI_ENCODE", 2);
 
 	/**
-	 * Constructor. One term must be passed to the constructor, otherwise an
+	 * Constructor. Two terms must be passed to the constructor, otherwise an
 	 * exception will be thrown.
 	 * 
-	 * @param terms
-	 *            The terms
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the number of terms submitted is not 1
-	 * @throws IllegalArgumentException
-	 *             if t is <code>null</code>
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             2.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
-	public StringUriEncodeBuiltin(final ITerm... terms) {
+	public StringUriEncodeBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
-			throws EvaluationException {
-		assert variableIndexes.length == 0;
-
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		if (terms[0] instanceof IStringTerm) {
 			IStringTerm string = (IStringTerm) terms[0];
 
@@ -68,7 +62,6 @@ public class StringUriEncodeBuiltin extends AbstractBuiltin {
 			 * We use our own URL encoding mechanism, since there are a few
 			 * problems with the URLEncoder of the Java API.
 			 */
-
 			PercentEncoder encoder = new PercentEncoder();
 			String result = encoder.encode(string.getValue());
 
@@ -76,10 +69,6 @@ public class StringUriEncodeBuiltin extends AbstractBuiltin {
 		}
 
 		return null;
-	}
-
-	public int maxUnknownVariables() {
-		return 0;
 	}
 
 }
