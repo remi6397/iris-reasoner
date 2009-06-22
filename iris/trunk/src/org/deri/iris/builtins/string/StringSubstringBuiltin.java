@@ -29,88 +29,46 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
-import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
  * Represents a string substring operation.
  * 
  * @author gigi
- * 
+ * @author Adrian Marte
  */
-public class StringSubstringBuiltin extends AbstractBuiltin {
+public class StringSubstringBuiltin extends FunctionalBuiltin {
 
-	private static final IPredicate PREDICATE1 = BASIC.createPredicate(
-			"STRING_SUBSTRING2", 2);
-	private static final IPredicate PREDICATE2 = BASIC.createPredicate(
-			"STRING_SUBSTRING3", 3);
+	private static final IPredicate PREDICATE = BASIC.createPredicate(
+			"STRING_SUBSTRING3", 4);
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param string
-	 *            The term representing the string.
-	 * @param beginIndex
-	 *            The term representing the begin index.
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
+	 * @param terms The terms, where the first term is the string, the second
+	 *            term is the begin index, the third term is the endIndex and
+	 *            the fourth term represents the result.
+	 * @throws IllegalArgumentException if one of the terms is {@code null}
 	 */
-	public StringSubstringBuiltin(final ITerm string, final ITerm beginIndex) {
-		super(PREDICATE1, new ITerm[] { string, beginIndex });
+	public StringSubstringBuiltin(ITerm... terms) {
+		super(PREDICATE, terms);
 	}
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param string
-	 *            The term representing the string.
-	 * @param beginIndex
-	 *            The term representing the begin index.
-	 * @param endIndex
-	 *            The term representing the end index.
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 */
-	public StringSubstringBuiltin(final ITerm string, final ITerm beginIndex,
-			final ITerm endIndex) {
-		super(PREDICATE2, new ITerm[] {
-				string, beginIndex, endIndex });
-	}
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
+		if (terms[0] instanceof IStringTerm && terms[1] instanceof IIntegerTerm
+				&& terms[2] instanceof IIntegerTerm) {
+			IStringTerm string = (IStringTerm) terms[0];
+			IIntegerTerm beginIndex = (IIntegerTerm) terms[1];
+			IIntegerTerm endIndex = (IIntegerTerm) terms[2];
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
-			throws EvaluationException {
-		assert variableIndexes.length == 0;
+			String substring = string.getValue().substring(
+					beginIndex.getValue(), endIndex.getValue());
 
-		if (terms.length == 2) {
-			if (terms[0] instanceof IStringTerm
-					&& terms[1] instanceof IIntegerTerm) {
-				IStringTerm string = (IStringTerm) terms[0];
-				IIntegerTerm beginIndex = (IIntegerTerm) terms[1];
-
-				String substring = string.getValue().substring(
-						beginIndex.getValue());
-
-				return Factory.TERM.createString(substring);
-			}
-		} else if (terms.length == 3) {
-			if (terms[0] instanceof IStringTerm
-					&& terms[1] instanceof IIntegerTerm
-					&& terms[2] instanceof IIntegerTerm) {
-				IStringTerm string = (IStringTerm) terms[0];
-				IIntegerTerm beginIndex = (IIntegerTerm) terms[1];
-				IIntegerTerm endIndex = (IIntegerTerm) terms[2];
-
-				String substring = string.getValue().substring(
-						beginIndex.getValue(), endIndex.getValue());
-
-				return Factory.TERM.createString(substring);
-			}
+			return Factory.TERM.createString(substring);
 		}
 
 		return null;
 	}
 
-	public int maxUnknownVariables() {
-		return 0;
-	}
 }
