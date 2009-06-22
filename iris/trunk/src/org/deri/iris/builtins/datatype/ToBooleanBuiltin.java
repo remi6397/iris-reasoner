@@ -33,9 +33,7 @@ import org.deri.iris.api.terms.concrete.IBooleanTerm;
 
 /**
  * Represents a data type conversion function, which converts supported data
- * type instances to Boolean instances.
- * 
- * The following data types are supported:
+ * type instances to Boolean instances. The following data types are supported:
  * <ul>
  * <li>Float</li>
  * <li>Double</li>
@@ -47,13 +45,13 @@ import org.deri.iris.api.terms.concrete.IBooleanTerm;
 public class ToBooleanBuiltin extends ConversionBuiltin {
 
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TO_BOOLEAN", 1);
+			"TO_BOOLEAN", 2);
 
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms
-	 *            The term representing the data type instance to be converted.
+	 * @param terms The term representing the data type instance to be
+	 *            converted.
 	 */
 	public ToBooleanBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -75,8 +73,7 @@ public class ToBooleanBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a String term to a Boolean term.
 	 * 
-	 * @param term
-	 *            The String term to be converted.
+	 * @param term The String term to be converted.
 	 * @return A new Boolean term representing the result of the conversion.
 	 */
 	public static IBooleanTerm toBoolean(IStringTerm term) {
@@ -87,10 +84,11 @@ public class ToBooleanBuiltin extends ConversionBuiltin {
 	}
 
 	/**
-	 * Converts a Numeric term to a Boolean term.
+	 * Converts a Numeric term to a Boolean term. The Boolean term represents
+	 * <code>true</code>, if the numeric term represents any number not equal to
+	 * 0.0, false<code>false</code> otherwise.
 	 * 
-	 * @param term
-	 *            The Numeric term to be converted.
+	 * @param term The Numeric term to be converted.
 	 * @return A new Boolean term representing the result of the conversion.
 	 */
 	public static IBooleanTerm toBoolean(INumericTerm term) {

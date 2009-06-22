@@ -33,9 +33,8 @@ import org.deri.iris.api.terms.concrete.IYearMonthDuration;
 
 /**
  * Represents a data type conversion function, which converts supported data
- * type instances to YearMonthDuration instances.
- * 
- * The following data types are supported:
+ * type instances to YearMonthDuration instances. The following data types are
+ * supported:
  * <ul>
  * <li>Duration</li>
  * <li>DayTimeDuration</li>
@@ -44,13 +43,13 @@ import org.deri.iris.api.terms.concrete.IYearMonthDuration;
 public class ToYearMonthDurationBuiltin extends ConversionBuiltin {
 
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TO_YEARMONTHDURATION", 1);
+			"TO_YEARMONTHDURATION", 2);
 
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms
-	 *            The term representing the data type instance to be converted.
+	 * @param terms The term representing the data type instance to be
+	 *            converted.
 	 */
 	public ToYearMonthDurationBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -72,8 +71,7 @@ public class ToYearMonthDurationBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a Duration term to a YearMonthDuration term.
 	 * 
-	 * @param term
-	 *            The Duration term to be converted.
+	 * @param term The Duration term to be converted.
 	 * @return A new YearMonthDuration term representing the result of the
 	 *         conversion.
 	 */
@@ -85,8 +83,7 @@ public class ToYearMonthDurationBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a DayTimeDuration term to a YearMonthDuration term.
 	 * 
-	 * @param term
-	 *            The DayTimeDuration term to be converted.
+	 * @param term The DayTimeDuration term to be converted.
 	 * @return A new YearMonthDuration term representing the result of the
 	 *         conversion.
 	 */

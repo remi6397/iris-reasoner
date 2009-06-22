@@ -35,9 +35,7 @@ import org.deri.iris.api.terms.concrete.IFloatTerm;
 
 /**
  * Represents a data type conversion function, which converts supported data
- * type instances to Decimal instances.
- * 
- * The following data types are supported:
+ * type instances to Decimal instances. The following data types are supported:
  * <ul>
  * <li>Boolean</li>
  * <li>Double</li>
@@ -49,13 +47,13 @@ import org.deri.iris.api.terms.concrete.IFloatTerm;
 public class ToDecimalBuiltin extends ConversionBuiltin {
 
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TO_DECIMAL", 1);
+			"TO_DECIMAL", 2);
 
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms
-	 *            The term representing the data type instance to be converted.
+	 * @param terms The term representing the data type instance to be
+	 *            converted.
 	 */
 	public ToDecimalBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -82,8 +80,7 @@ public class ToDecimalBuiltin extends ConversionBuiltin {
 	 * Boolean term representing the value "False" is converted to a Decimal
 	 * term representing "0.0".
 	 * 
-	 * @param term
-	 *            The Boolean term to be converted.
+	 * @param term The Boolean term to be converted.
 	 * @return A new Decimal term representing the result of the conversion.
 	 */
 	public static IDecimalTerm toDecimal(IBooleanTerm term) {
@@ -97,8 +94,7 @@ public class ToDecimalBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a Float term to a Decimal term.
 	 * 
-	 * @param term
-	 *            The Float term to be converted.
+	 * @param term The Float term to be converted.
 	 * @return A new Decimal term representing the result of the conversion.
 	 */
 	public static IDecimalTerm toDecimal(IFloatTerm term) {
@@ -115,8 +111,7 @@ public class ToDecimalBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a Numeric term to a Decimal term.
 	 * 
-	 * @param term
-	 *            The Float term to be converted.
+	 * @param term The Float term to be converted.
 	 * @return A new Decimal term representing the result of the conversion.
 	 */
 	public static IDecimalTerm toDecimal(INumericTerm term) {
@@ -133,8 +128,7 @@ public class ToDecimalBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a String term to a Decimal term.
 	 * 
-	 * @param term
-	 *            The String term to be converted.
+	 * @param term The String term to be converted.
 	 * @return A new Decimal term representing the result of the conversion.
 	 */
 	public static IDecimalTerm toDecimal(IStringTerm term) {

@@ -34,9 +34,7 @@ import org.deri.iris.api.terms.concrete.IFloatTerm;
 
 /**
  * Represents a data type conversion function, which converts supported data
- * type instances to Float instances.
- * 
- * The following data types are supported:
+ * type instances to Float instances. The following data types are supported:
  * <ul>
  * <li>Double</li>
  * <li>Decimal</li>
@@ -48,13 +46,13 @@ import org.deri.iris.api.terms.concrete.IFloatTerm;
 public class ToFloatBuiltin extends ConversionBuiltin {
 
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TO_FLOAT", 1);
+			"TO_FLOAT", 2);
 
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms
-	 *            The term representing the data type instance to be converted.
+	 * @param terms The term representing the data type instance to be
+	 *            converted.
 	 */
 	public ToFloatBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -79,8 +77,7 @@ public class ToFloatBuiltin extends ConversionBuiltin {
 	 * term representing the value "False" is converted to a Float term
 	 * representing "0.0".
 	 * 
-	 * @param term
-	 *            The Boolean term to be converted.
+	 * @param term The Boolean term to be converted.
 	 * @return A new Float term representing the result of the conversion.
 	 */
 	public static IFloatTerm toFloat(IBooleanTerm term) {
@@ -94,8 +91,7 @@ public class ToFloatBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a Numeric term to a Float term.
 	 * 
-	 * @param term
-	 *            The Numeric term to be converted.
+	 * @param term The Numeric term to be converted.
 	 * @return A new Float term representing the result of the conversion.
 	 */
 	public static IFloatTerm toFloat(INumericTerm term) {
@@ -112,8 +108,7 @@ public class ToFloatBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a String term to a Float term.
 	 * 
-	 * @param term
-	 *            The String term to be converted.
+	 * @param term The String term to be converted.
 	 * @return A new Float term representing the result of the conversion.
 	 */
 	public static IFloatTerm toFloat(IStringTerm term) {

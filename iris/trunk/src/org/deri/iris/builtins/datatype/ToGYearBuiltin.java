@@ -33,9 +33,7 @@ import org.deri.iris.api.terms.concrete.IGYear;
 
 /**
  * Represents a data type conversion function, which converts supported data
- * type instances to GYear instances.
- * 
- * The following data types are supported:
+ * type instances to GYear instances. The following data types are supported:
  * <ul>
  * <li>Date</li>
  * <li>DateTime</li>
@@ -44,13 +42,13 @@ import org.deri.iris.api.terms.concrete.IGYear;
 public class ToGYearBuiltin extends ConversionBuiltin {
 
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TO_GYEAR", 1);
+			"TO_GYEAR", 2);
 
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms
-	 *            The term representing the data type instance to be converted.
+	 * @param terms The term representing the data type instance to be
+	 *            converted.
 	 */
 	public ToGYearBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -72,8 +70,7 @@ public class ToGYearBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a Date term to a GYear term.
 	 * 
-	 * @param term
-	 *            The Date term to be converted.
+	 * @param term The Date term to be converted.
 	 * @return A new GYear term representing the result of the conversion.
 	 */
 	public static IGYear toGYear(IDateTerm term) {
@@ -83,8 +80,7 @@ public class ToGYearBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a DateTime term to a GYear term.
 	 * 
-	 * @param term
-	 *            The DateTime term to be converted.
+	 * @param term The DateTime term to be converted.
 	 * @return A new GYear term representing the result of the conversion.
 	 */
 	public static IGYear toGYear(IDateTime term) {

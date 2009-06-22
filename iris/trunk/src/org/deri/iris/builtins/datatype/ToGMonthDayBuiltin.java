@@ -33,9 +33,8 @@ import org.deri.iris.api.terms.concrete.IGMonthDay;
 
 /**
  * Represents a data type conversion function, which converts supported data
- * type instances to GMonthDay instances.
- * 
- * The following data types are supported:
+ * type instances to GMonthDay instances. The following data types are
+ * supported:
  * <ul>
  * <li>Date</li>
  * <li>DateTime</li>
@@ -44,13 +43,13 @@ import org.deri.iris.api.terms.concrete.IGMonthDay;
 public class ToGMonthDayBuiltin extends ConversionBuiltin {
 
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TO_GMONTHDAY", 1);
+			"TO_GMONTHDAY", 2);
 
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms
-	 *            The term representing the data type instance to be converted.
+	 * @param terms The term representing the data type instance to be
+	 *            converted.
 	 */
 	public ToGMonthDayBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -72,8 +71,7 @@ public class ToGMonthDayBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a Date term to a GMonthDay term.
 	 * 
-	 * @param term
-	 *            The Date term to be converted.
+	 * @param term The Date term to be converted.
 	 * @return A new GMonthDay term representing the result of the conversion.
 	 */
 	public static IGMonthDay toGMonthDay(IDateTerm term) {
@@ -83,8 +81,7 @@ public class ToGMonthDayBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a DateTime term to a GMonthDay term.
 	 * 
-	 * @param term
-	 *            The DateTime term to be converted.
+	 * @param term The DateTime term to be converted.
 	 * @return A new GMonthDay term representing the result of the conversion.
 	 */
 	public static IGMonthDay toGMonthDay(IDateTime term) {

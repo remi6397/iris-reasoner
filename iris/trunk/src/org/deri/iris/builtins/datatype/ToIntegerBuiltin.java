@@ -34,9 +34,7 @@ import org.deri.iris.api.terms.concrete.IIntegerTerm;
 
 /**
  * Represents a data type conversion function, which converts supported data
- * type instances to Integer instances.
- * 
- * The following data types are supported:
+ * type instances to Integer instances. The following data types are supported:
  * <ul>
  * <li>Decimal</li>
  * <li>Double</li>
@@ -48,13 +46,13 @@ import org.deri.iris.api.terms.concrete.IIntegerTerm;
 public class ToIntegerBuiltin extends ConversionBuiltin {
 
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TO_INTEGER", 1);
+			"TO_INTEGER", 2);
 
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms
-	 *            The term representing the data type instance to be converted.
+	 * @param terms The term representing the data type instance to be
+	 *            converted.
 	 */
 	public ToIntegerBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -79,8 +77,7 @@ public class ToIntegerBuiltin extends ConversionBuiltin {
 	 * Boolean term representing the value "False" is converted to an Integer
 	 * term representing "0".
 	 * 
-	 * @param term
-	 *            The Boolean term to be converted.
+	 * @param term The Boolean term to be converted.
 	 * @return A new Integer term representing the result of the conversion.
 	 */
 	public static IIntegerTerm toInteger(IBooleanTerm term) {
@@ -94,8 +91,7 @@ public class ToIntegerBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a Numeric term to an Integer term.
 	 * 
-	 * @param term
-	 *            The Numeric term to be converted.
+	 * @param term The Numeric term to be converted.
 	 * @return A new Integer term representing the result of the conversion.
 	 */
 	public static IIntegerTerm toInteger(INumericTerm term) {
@@ -112,8 +108,7 @@ public class ToIntegerBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a String term to an Integer term.
 	 * 
-	 * @param term
-	 *            The String term to be converted.
+	 * @param term The String term to be converted.
 	 * @return A new Integer term representing the result of the conversion, or
 	 *         <code>null</code> if the conversion fails.
 	 */
