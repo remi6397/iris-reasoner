@@ -28,52 +28,45 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents a string join operation as defined in
+ * Represents the RIF built-in func:string-join as defined in
  * http://www.w3.org/2005/rules/
  * wiki/DTB#func:string-join_.28adapted_from_fn:string-join.29.
  */
-public class StringJoinBuiltin extends AbstractBuiltin {
+public class StringJoinBuiltin extends FunctionalBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"STRING_JOIN", 3);
+			"STRING_JOIN", 4);
 
 	/**
-	 * Constructor. At least three terms must be passed to the constructor,
-	 * otherwise an exception will be thrown.
+	 * Constructor. Four terms must be passed to the constructor, otherwise an
+	 * exception will be thrown.
 	 * 
-	 * @param terms
-	 *            The terms
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the number of terms submitted is not 1
-	 * @throws IllegalArgumentException
-	 *             if t is <code>null</code>
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             4.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
-	public StringJoinBuiltin(final ITerm... terms) {
+	public StringJoinBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
-			throws EvaluationException {
-		assert variableIndexes.length == 0;
-		assert terms.length == 3;
-
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		StringBuffer buffer = new StringBuffer();
 		String separator = null;
 
-		if (terms[terms.length - 1] instanceof IStringTerm) {
-			separator = ((IStringTerm) terms[terms.length - 1]).getValue();
+		if (terms[terms.length - 2] instanceof IStringTerm) {
+			separator = ((IStringTerm) terms[terms.length - 2]).getValue();
 		} else {
 			return null;
 		}
 
-		for (int i = 0; i < terms.length - 1; i++) {
+		for (int i = 0; i < terms.length - 2; i++) {
 			if (terms[i] instanceof IStringTerm) {
 				String string = ((IStringTerm) terms[i]).getValue();
 
@@ -86,10 +79,6 @@ public class StringJoinBuiltin extends AbstractBuiltin {
 
 		String result = buffer.toString();
 		return Factory.TERM.createString(result);
-	}
-
-	public int maxUnknownVariables() {
-		return 0;
 	}
 
 }
