@@ -33,42 +33,35 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IDateTerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
 import org.deri.iris.api.terms.concrete.ITime;
-import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents the func:timezone-from-dateTime and func:timezone-from-date and
- * functions as described in
+ * Represents the RIF built-ins func:timezone-from-dateTime and
+ * func:timezone-from-date and functions as described in
  * http://www.w3.org/TR/xpath-functions/#func-timezone-from-dateTime.
  */
-public class TimezonePartBuiltin extends AbstractBuiltin {
+public class TimezonePartBuiltin extends FunctionalBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TIMEZONEPART", 1);
+			"TIMEZONE_PART", 2);
 
 	/**
-	 * Constructor. One term must be passed to the constructor, otherwise an
+	 * Constructor. Two terms must be passed to the constructor, otherwise an
 	 * exception will be thrown.
 	 * 
-	 * @param terms
-	 *            the terms
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the number of terms submitted is not 2
-	 * @throws IllegalArgumentException
-	 *             if t is <code>null</code>
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             2.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
-	public TimezonePartBuiltin(final ITerm... terms) {
+	public TimezonePartBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
-			throws EvaluationException {
-		assert variableIndexes.length == 0;
-		assert terms.length == 1;
-
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		GregorianCalendar calendar = null;
 		TimeZone timeZone = null;
 
@@ -94,10 +87,6 @@ public class TimezonePartBuiltin extends AbstractBuiltin {
 		// Other than the specification suggests, we return a Duration instance
 		// here, instead of DayTimeDuration.
 		return Factory.CONCRETE.createDuration(offset);
-	}
-
-	public int maxUnknownVariables() {
-		return 0;
 	}
 
 }

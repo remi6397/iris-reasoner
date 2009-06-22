@@ -31,43 +31,36 @@ import org.deri.iris.api.terms.concrete.IDateTerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
 import org.deri.iris.api.terms.concrete.IDuration;
 import org.deri.iris.api.terms.concrete.IYearMonthDuration;
-import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.builtins.datatype.ToYearMonthDurationBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents the func:month-from-dateTime, func:month-from-date and
- * func:month-from-duration functions as described in
+ * Represents the RIF built-ins func:month-from-dateTime, func:month-from-date
+ * and func:month-from-duration functions as described in
  * http://www.w3.org/TR/xpath-functions/#func-month-from-dateTime.
  */
-public class MonthPartBuiltin extends AbstractBuiltin {
+public class MonthPartBuiltin extends FunctionalBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"MONTHPART", 1);
+			"MONTH_PART", 2);
 
 	/**
-	 * Constructor. One term must be passed to the constructor, otherwise an
+	 * Constructor. Two terms must be passed to the constructor, otherwise an
 	 * exception will be thrown.
 	 * 
-	 * @param terms
-	 *            the terms
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the number of terms submitted is not 2
-	 * @throws IllegalArgumentException
-	 *             if t is <code>null</code>
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             2.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
-	public MonthPartBuiltin(final ITerm... terms) {
+	public MonthPartBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
-			throws EvaluationException {
-		assert variableIndexes.length == 0;
-		assert terms.length == 1;
-
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		int month = 0;
 
 		if (terms[0] instanceof IDateTerm) {
@@ -93,10 +86,6 @@ public class MonthPartBuiltin extends AbstractBuiltin {
 		}
 
 		return Factory.CONCRETE.createInteger(month);
-	}
-
-	public int maxUnknownVariables() {
-		return 0;
 	}
 
 }
