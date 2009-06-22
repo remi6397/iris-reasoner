@@ -28,43 +28,35 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.builtins.datatype.ToStringBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents a string concatenation operation as defined in
- * http://www.w3.org/2005
+ * Represents the RIF built-in func:concat as defined in http://www.w3.org/2005
  * /rules/wiki/DTB#func:concat_.28adapted_from_fn:concat.29.
  */
-public class StringConcatBuiltin extends AbstractBuiltin {
+public class StringConcatBuiltin extends FunctionalBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"STRING_CONCAT", 2);
+			"STRING_CONCAT", 3);
 
 	/**
-	 * Constructor. At least three terms must be passed to the constructor,
-	 * otherwise an exception will be thrown.
+	 * Constructor. Three terms must be passed to the constructor, otherwise an
+	 * exception will be thrown.
 	 * 
-	 * @param terms
-	 *            The terms
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the number of terms submitted is not 1
-	 * @throws IllegalArgumentException
-	 *             if t is <code>null</code>
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             3.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
-	public StringConcatBuiltin(final ITerm... terms) {
+	public StringConcatBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
-			throws EvaluationException {
-		assert variableIndexes.length == 0;
-		assert terms.length == 2;
-
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		IStringTerm string1 = ToStringBuiltin.toString(terms[0]);
 		IStringTerm string2 = ToStringBuiltin.toString(terms[1]);
 
@@ -75,10 +67,6 @@ public class StringConcatBuiltin extends AbstractBuiltin {
 		}
 
 		return null;
-	}
-
-	public int maxUnknownVariables() {
-		return 0;
 	}
 
 }
