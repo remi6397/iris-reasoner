@@ -31,43 +31,36 @@ import org.deri.iris.api.terms.concrete.IDateTerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
 import org.deri.iris.api.terms.concrete.IDuration;
 import org.deri.iris.api.terms.concrete.IYearMonthDuration;
-import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.builtins.datatype.ToYearMonthDurationBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents the func:year-from-dateTime, func:year-from_date and
+ * Represents the RIF built-ins func:year-from-dateTime, func:year-from_date and
  * func:year-from-duration functions as described in
  * http://www.w3.org/TR/xpath-functions/#func-year-from-dateTime.
  */
-public class YearPartBuiltin extends AbstractBuiltin {
+public class YearPartBuiltin extends FunctionalBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"YEARPART", 1);
+			"YEAR_PART", 2);
 
 	/**
-	 * Constructor. One term must be passed to the constructor, otherwise an
+	 * Constructor. Two terms must be passed to the constructor, otherwise an
 	 * exception will be thrown.
 	 * 
-	 * @param terms
-	 *            the terms
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if the number of terms submitted is not 2
-	 * @throws IllegalArgumentException
-	 *             if t is <code>null</code>
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             2.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
-	public YearPartBuiltin(final ITerm... terms) {
+	public YearPartBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
-	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
-			throws EvaluationException {
-		assert variableIndexes.length == 0;
-		assert terms.length == 1;
-
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		int year = 0;
 
 		if (terms[0] instanceof IDateTerm) {
@@ -100,10 +93,6 @@ public class YearPartBuiltin extends AbstractBuiltin {
 		}
 
 		return Factory.CONCRETE.createInteger(year);
-	}
-
-	public int maxUnknownVariables() {
-		return 0;
 	}
 
 }
