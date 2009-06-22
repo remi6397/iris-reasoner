@@ -34,77 +34,49 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.BooleanBuiltin;
 
 /**
- * Represents a string starts-with operation as described in
- * http://www.w3.org/TR/xpath-functions/#func-starts-with.
+ * Represents the RIF built-in func:matches as described in
+ * http://www.w3.org/TR/xpath-functions/#func-matches.
  */
 public class StringMatchesBuiltin extends BooleanBuiltin {
 
-	private static final IPredicate PREDICATE1 = BASIC.createPredicate(
-			"STRING_MATCHES2", 2);
-	private static final IPredicate PREDICATE2 = BASIC.createPredicate(
+	private static final IPredicate PREDICATE = BASIC.createPredicate(
 			"STRING_MATCHES3", 3);
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param string
-	 *            The term representing the string the regular expression is
-	 *            being matched against.
-	 * @param pattern
-	 *            The term representing the regular expression.
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
-	 */
-	public StringMatchesBuiltin(final ITerm string, final ITerm pattern) {
-		super(PREDICATE1, new ITerm[] { string, pattern });
-	}
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param string
-	 *            The term representing the string the regular expression is
-	 *            being matched against.
-	 * @param pattern
-	 *            The term representing the regular expression.
-	 * @param flags
-	 *            The flags as described in
+	 * @param terms The terms, where the term at the first position is the
+	 *            string, the terms at the second position is the pattern and
+	 *            the term at the third position represents the flags. The
+	 *            string is the string the regular expression is being matched
+	 *            against. The patterns is the string representing the regular
+	 *            expression. The flags are the flags as described in
 	 *            http://www.w3.org/TR/xpath-functions/#flags.
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is {@code null}
+	 * @throws IllegalArgumentException if one of the terms is {@code null}
 	 */
-	public StringMatchesBuiltin(final ITerm string, final ITerm pattern,
-			final ITerm flags) {
-		super(PREDICATE2, new ITerm[] { string, pattern, flags });
+	public StringMatchesBuiltin(ITerm... terms) {
+		super(PREDICATE, terms);
 	}
 
 	@Override
 	protected boolean computeResult(ITerm[] terms) {
-		assert terms.length >= 2 && terms.length <= 3;
-
 		String string = null;
 		String pattern = null;
 		String flags = "";
 
-		if (terms[0] instanceof IStringTerm && terms[1] instanceof IStringTerm) {
+		if (terms[0] instanceof IStringTerm && terms[1] instanceof IStringTerm
+				&& terms[2] instanceof IStringTerm) {
 			string = ((IStringTerm) terms[0]).getValue();
 			pattern = ((IStringTerm) terms[1]).getValue();
+			flags = ((IStringTerm) terms[2]).getValue();
 		} else {
 			return false;
-		}
-
-		if (terms.length > 2) {
-			if (terms[2] instanceof IStringTerm) {
-				flags = ((IStringTerm) terms[2]).getValue();
-			} else {
-				return false;
-			}
 		}
 
 		return matches(string, pattern, flags);
 	}
 
-	private boolean matches(String string, String regex, String flags) {
+	static boolean matches(String string, String regex, String flags) {
 		int flag = 0;
 
 		// See http://www.w3.org/TR/xpath-functions/#flags.
@@ -162,10 +134,6 @@ public class StringMatchesBuiltin extends BooleanBuiltin {
 		Matcher matcher = pattern.matcher(string);
 
 		return matcher.find();
-	}
-
-	public int maxUnknownVariables() {
-		return 0;
 	}
 
 }
