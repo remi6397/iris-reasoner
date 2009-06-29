@@ -37,7 +37,6 @@ public interface IXMLLiteral extends IConstantTerm {
 	 * The first element is the string, the second element is the language
 	 * identifier.
 	 */
-	@Override
 	public String[] getValue();
 
 	/**
