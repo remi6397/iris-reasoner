@@ -181,29 +181,24 @@ public class ConcreteFactory implements IConcreteFactory {
 		return new Text(string);
 	}
 
-	@Override
 	public IXMLLiteral createXMLLiteral(String string) {
 		return new XMLLiteral(string);
 	}
 
-	@Override
 	public IXMLLiteral createXMLLiteral(String string, String lang) {
 		return new XMLLiteral(string, lang);
 	}
 
-	@Override
 	public IYearMonthDuration createYearMonthDuration(boolean positive,
 			int year, int month) {
 		return new YearMonthDuration(positive, year, month);
 	}
 
-	@Override
 	public IDayTimeDuration createDayTimeDuration(boolean positive, int day,
 			int hour, int minute, double second) {
 		return new DayTimeDuration(positive, day, hour, minute, second);
 	}
 
-	@Override
 	public IDayTimeDuration createDayTimeDuration(boolean positive, int day,
 			int hour, int minute, int second, int millisecond) {
 		return new DayTimeDuration(positive, day, hour, minute, second,

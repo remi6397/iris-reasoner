@@ -137,12 +137,10 @@ public class GYearMonth implements IGYearMonth {
 		return new Integer[]{date.getYear(), date.getMonth()};
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#gYearMonth");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return date.toString();
 	}

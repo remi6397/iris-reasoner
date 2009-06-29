@@ -86,12 +86,10 @@ public class DoubleTerm implements IDoubleTerm {
 		return d.toString();
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#double");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return d.toString();
 	}

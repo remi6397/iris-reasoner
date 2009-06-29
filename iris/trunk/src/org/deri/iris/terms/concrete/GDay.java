@@ -136,12 +136,10 @@ public class GDay implements IGDay {
 		return date.getDay();
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#gDay");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return date.toString();
 	}

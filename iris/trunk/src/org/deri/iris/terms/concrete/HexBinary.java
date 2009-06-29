@@ -98,12 +98,10 @@ public class HexBinary implements IHexBinary {
 		return new HexBinary("00");
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#hexBinary");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return new String(getValue());
 	}

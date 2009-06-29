@@ -128,12 +128,10 @@ public class BooleanTerm implements IBooleanTerm {
 		return value.compareTo(b.getValue());
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#boolean");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return value.toString();
 	}

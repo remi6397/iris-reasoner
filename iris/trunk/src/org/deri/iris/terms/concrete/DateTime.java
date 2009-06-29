@@ -262,12 +262,10 @@ public class DateTime implements IDateTime {
 		return (XMLGregorianCalendar) datetime.clone();
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#dateTime");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return datetime.toString();
 	}

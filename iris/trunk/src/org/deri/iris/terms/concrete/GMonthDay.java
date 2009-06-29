@@ -139,12 +139,10 @@ public class GMonthDay implements IGMonthDay {
 		return new Integer[]{date.getMonth(), date.getDay()};
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#gMonthDay");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return date.toString();
 	}

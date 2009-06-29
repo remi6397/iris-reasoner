@@ -80,7 +80,6 @@ public class DayTimeDuration extends org.deri.iris.terms.concrete.Duration
 	 * 
 	 * source: http://www.w3.org/TR/xpath-functions/#dt-dayTimeDuration
 	 */
-	@Override
 	public String toCanonicalString() {
 		Duration duration = this.getValue();
 		if (duration.getSign() == 0)
@@ -133,12 +132,10 @@ public class DayTimeDuration extends org.deri.iris.terms.concrete.Duration
 		return repr.toString();
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#dayTimeDuration");
 	}
 
-	@Override
 	public IDayTimeDuration toCanonical() {
 		double seconds = getFractionalSeconds();
 
@@ -159,7 +156,6 @@ public class DayTimeDuration extends org.deri.iris.terms.concrete.Duration
 		return sum;
 	}
 
-	@Override
 	public String toString() {
 		return toCanonicalString();
 	}

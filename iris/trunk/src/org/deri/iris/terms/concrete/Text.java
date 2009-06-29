@@ -113,7 +113,6 @@ public class Text implements IText {
 		return getString().equals(thatText.getString());
 	}
 
-	@Override
 	public int hashCode() {
 		int result = string.hashCode();
 		result = result * 37 + lang.hashCode();
@@ -132,14 +131,11 @@ public class Text implements IText {
 		return lang;
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/1999/02/22-rdf-syntax-ns#text");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return this.getString() + "@" + this.getLang();
 	}
-
 }

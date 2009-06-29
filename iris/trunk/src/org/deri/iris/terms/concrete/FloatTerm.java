@@ -90,12 +90,10 @@ public class FloatTerm implements IFloatTerm {
 		return f.toString();
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#float");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return f.toString();
 	}
