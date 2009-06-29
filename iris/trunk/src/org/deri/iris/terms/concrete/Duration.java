@@ -239,17 +239,14 @@ public class Duration implements IDuration {
 		return mDuration;
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#duration");
 	}
 
-	@Override
 	public boolean isPositive() {
 		return mDuration.getSign() >= 0;
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return mDuration.toString();
 	}

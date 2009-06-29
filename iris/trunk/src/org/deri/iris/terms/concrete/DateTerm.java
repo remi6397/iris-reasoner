@@ -140,12 +140,10 @@ public class DateTerm implements IDateTerm {
 		return date.getTimeZone(0);
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#date");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return date.toString();
 	}

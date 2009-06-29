@@ -192,12 +192,10 @@ public class SqName implements ISqName {
 		return true;
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.wsmo.org/wsml/wsml-syntax#sQName");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return getValue();
 	}

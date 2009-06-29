@@ -136,12 +136,10 @@ public class GMonth implements IGMonth {
 		return date.getMonth();
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#gMonth");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return date.toString();
 	}

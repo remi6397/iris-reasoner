@@ -125,12 +125,10 @@ public class Iri implements IIri {
 		return true;
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2007/rif#iri");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return uri.toString();
 	}

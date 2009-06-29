@@ -90,7 +90,6 @@ public class YearMonthDuration extends org.deri.iris.terms.concrete.Duration
 	 * source:
 	 * http://my.safaribooksonline.com/0596006349/orm9780596006341-APP-B-SECT-50
 	 */
-	@Override
 	public String toCanonicalString() {
 		Duration duration = this.getValue();
 		if (duration.getSign() == 0)
@@ -116,14 +115,11 @@ public class YearMonthDuration extends org.deri.iris.terms.concrete.Duration
 		return repr.toString();
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#yearMonthDuration");
 	}
 
-	@Override
 	public String toString() {
 		return toCanonicalString();
 	}
-
 }

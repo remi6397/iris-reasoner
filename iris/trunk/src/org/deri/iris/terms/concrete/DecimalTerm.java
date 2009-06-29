@@ -87,12 +87,10 @@ public class DecimalTerm implements IDecimalTerm {
 		return d.toString();
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#decimal");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return d.toString();
 	}

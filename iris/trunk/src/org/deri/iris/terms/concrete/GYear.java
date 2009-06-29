@@ -132,12 +132,10 @@ public class GYear implements IGYear {
 		return date.getYear();
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#gYear");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return date.toString();
 	}

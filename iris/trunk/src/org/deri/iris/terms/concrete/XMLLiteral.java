@@ -68,33 +68,27 @@ public class XMLLiteral implements IXMLLiteral {
 		return toCanonicalString();
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI
 				.create("http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral");
 	}
 
-	@Override
 	public String getString() {
 		return string;
 	}
 
-	@Override
 	public String getLang() {
 		return lang;
 	}
 
-	@Override
 	public String[] getValue() {
 		return new String[] { string, lang };
 	}
 
-	@Override
 	public boolean isGround() {
 		return true;
 	}
 
-	@Override
 	public boolean equals(Object thatObject) {
 		if (!(thatObject instanceof IXMLLiteral)) {
 			return false;
@@ -103,14 +97,12 @@ public class XMLLiteral implements IXMLLiteral {
 		return compareTo((ITerm) thatObject) == 0;
 	}
 
-	@Override
 	public int hashCode() {
 		int result = string.hashCode();
 		result = result * 37 + lang.hashCode();
 		return result;
 	}
 
-	@Override
 	public int compareTo(ITerm thatObject) {
 		if (thatObject == null) {
 			return 1;
@@ -121,9 +113,7 @@ public class XMLLiteral implements IXMLLiteral {
 		return this.getString().compareTo(thatLiteral.getString());
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return new String(string);
 	}
-
 }

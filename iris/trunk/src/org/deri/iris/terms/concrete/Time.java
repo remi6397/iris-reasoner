@@ -179,12 +179,10 @@ public class Time implements ITime {
 		return (XMLGregorianCalendar) time.clone();
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#time");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return time.toString();
 	}

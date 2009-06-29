@@ -86,12 +86,10 @@ public class StringTerm implements IStringTerm {
 		return "'" + value + "'";
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#string");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return new String(value);
 	}

@@ -96,12 +96,10 @@ public class Base64Binary implements IBase64Binary {
 		return true;
 	}
 
-	@Override
 	public URI getDatatypeIRI() {
 		return URI.create("http://www.w3.org/2001/XMLSchema#base64Binary");
 	}
 
-	@Override
 	public String toCanonicalString() {
 		return new String(getValue());
 	}
