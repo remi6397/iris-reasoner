@@ -25,8 +25,28 @@ package org.deri.iris.builtins;
 import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.factory.IBuiltinsFactory;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.builtins.datatype.IsBase64BinaryBuiltin;
+import org.deri.iris.builtins.datatype.IsBooleanBuiltin;
 import org.deri.iris.builtins.datatype.IsDatatypeBuiltin;
+import org.deri.iris.builtins.datatype.IsDateBuiltin;
+import org.deri.iris.builtins.datatype.IsDateTimeBuiltin;
+import org.deri.iris.builtins.datatype.IsDayTimeDurationBuiltin;
+import org.deri.iris.builtins.datatype.IsDecimalBuiltin;
+import org.deri.iris.builtins.datatype.IsDurationBuiltin;
+import org.deri.iris.builtins.datatype.IsFloatBuiltin;
+import org.deri.iris.builtins.datatype.IsGDayBuiltin;
+import org.deri.iris.builtins.datatype.IsGMonthBuiltin;
+import org.deri.iris.builtins.datatype.IsGYearBuiltin;
+import org.deri.iris.builtins.datatype.IsGYearMonthBuiltin;
+import org.deri.iris.builtins.datatype.IsHexBinaryBuiltin;
+import org.deri.iris.builtins.datatype.IsIntegerBuiltin;
+import org.deri.iris.builtins.datatype.IsIriBuiltin;
 import org.deri.iris.builtins.datatype.IsNotDatatypeBuiltin;
+import org.deri.iris.builtins.datatype.IsStringBuiltin;
+import org.deri.iris.builtins.datatype.IsTextBuiltin;
+import org.deri.iris.builtins.datatype.IsTimeBuiltin;
+import org.deri.iris.builtins.datatype.IsXMLLiteralBuiltin;
+import org.deri.iris.builtins.datatype.IsYearMonthDurationBuiltin;
 import org.deri.iris.builtins.datatype.ToBase64Builtin;
 import org.deri.iris.builtins.datatype.ToBooleanBuiltin;
 import org.deri.iris.builtins.datatype.ToDateBuiltin;
@@ -383,6 +403,90 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 
 	public IBuiltinAtom createToYearMonthDuration(ITerm... terms) {
 		return new ToYearMonthDurationBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsBase64Binary(ITerm... terms) {
+		return new IsBase64BinaryBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsBoolean(ITerm... terms) {
+		return new IsBooleanBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsDate(ITerm... terms) {
+		return new IsDateBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsDateTime(ITerm... terms) {
+		return new IsDateTimeBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsDayTimeDuration(ITerm... terms) {
+		return new IsDayTimeDurationBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsDecimal(ITerm... terms) {
+		return new IsDecimalBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsDuration(ITerm... terms) {
+		return new IsDurationBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsFloat(ITerm... terms) {
+		return new IsFloatBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsGDay(ITerm... terms) {
+		return new IsGDayBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsGMonth(ITerm... terms) {
+		return new IsGMonthBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsGMonthDay(ITerm... terms) {
+		return new IsGMonthBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsGYear(ITerm... terms) {
+		return new IsGYearBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsGYearMonth(ITerm... terms) {
+		return new IsGYearMonthBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsHexBinary(ITerm... terms) {
+		return new IsHexBinaryBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsInteger(ITerm... terms) {
+		return new IsIntegerBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsIRI(ITerm... terms) {
+		return new IsIriBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsString(ITerm... terms) {
+		return new IsStringBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsText(ITerm... terms) {
+		return new IsTextBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsTime(ITerm... terms) {
+		return new IsTimeBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsXMLLiteral(ITerm... terms) {
+		return new IsXMLLiteralBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsYearMonthDuration(ITerm... terms) {
+		return new IsYearMonthDurationBuiltin(terms);
 	}
 	
 	
