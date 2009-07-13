@@ -26,17 +26,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
 import java.util.Set;
+
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
-//import org.deri.iris.api.graph.IPredicateGraph;
-//import org.deri.iris.graph.*;
 import org.deri.iris.rules.IRuleReOrderingOptimiser;
+import org.deri.iris.rules.RuleHeadEquality;
 
 /**
  * Very naive proof of concept, but speeds up a few unit tests by a factor of 10.
@@ -92,6 +93,20 @@ public class SimpleReOrdering implements IRuleReOrderingOptimiser
 			result.set( i, result.get( hi ) );
 			result.set( hi, temp );
 		}
+		
+		List<IRule> temp = new LinkedList<IRule>();
+		
+		// For efficiency, move all rules with head equality to head of list.
+		for (IRule rule : result) {
+			if (RuleHeadEquality.hasRuleHeadEquality(rule)) {
+				temp.add(0, rule);
+			} else {
+				temp.add(rule);
+			}
+		}
+		
+		result.clear();
+		result.addAll(temp);
 		
 		assert result.size() == inputRuleCount: "Some rules lost while reordering";
 	    return result;
