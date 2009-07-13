@@ -24,16 +24,18 @@ package org.deri.iris;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.deri.iris.api.IProgramOptimisation;
 import org.deri.iris.evaluation.IEvaluationStrategyFactory;
-import org.deri.iris.evaluation.stratifiedbottomup.IRuleEvaluatorFactory;
 import org.deri.iris.evaluation.stratifiedbottomup.StratifiedBottomUpEvaluationStrategyFactory;
 import org.deri.iris.evaluation.stratifiedbottomup.seminaive.SemiNaiveEvaluatorFactory;
 import org.deri.iris.facts.IDataSource;
+import org.deri.iris.rules.IRuleHeadEqualityPreProcessor;
 import org.deri.iris.rules.IRuleOptimiser;
 import org.deri.iris.rules.IRuleReOrderingOptimiser;
 import org.deri.iris.rules.IRuleSafetyProcessor;
 import org.deri.iris.rules.IRuleStratifier;
+import org.deri.iris.rules.IgnoreRuleHeadEquality;
 import org.deri.iris.rules.optimisation.JoinConditionOptimiser;
 import org.deri.iris.rules.optimisation.ReOrderLiteralsOptimiser;
 import org.deri.iris.rules.optimisation.RemoveDuplicateLiteralOptimiser;
@@ -46,6 +48,8 @@ import org.deri.iris.storage.IIndexFactory;
 import org.deri.iris.storage.IRelationFactory;
 import org.deri.iris.storage.simple.SimpleIndexFactory;
 import org.deri.iris.storage.simple.SimpleRelationFactory;
+import org.deri.iris.utils.equivalence.IEquivalentTermsFactory;
+import org.deri.iris.utils.equivalence.TermEquivalenceFactory;
 
 /**
  * This class holds all configuration data for a knowledge base.
@@ -114,6 +118,12 @@ public class Configuration
 	
 	/** Rule safety processors (e.g. standard rule-safety check and augmented-unsafe-rule modifier). */
 	public IRuleSafetyProcessor ruleSafetyProcessor = new StandardRuleSafetyProcessor();
+	
+	/**	The rule head equality pre-processor. */
+	public IRuleHeadEqualityPreProcessor ruleHeadEqualityPreProcessor = new IgnoreRuleHeadEquality();
+	
+	/** The equivalent terms factory to use. */
+	public IEquivalentTermsFactory equivalentTermsFactory = new TermEquivalenceFactory();
 	
 	/**
 	 * Constructor.
