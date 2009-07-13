@@ -33,6 +33,7 @@ import org.deri.iris.builtins.AddBuiltin;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.storage.simple.SimpleRelationFactory;
+import org.deri.iris.utils.equivalence.IgnoreTermEquivalence;
 
 public class BuiltinTest extends TestCase
 {
@@ -56,7 +57,8 @@ public class BuiltinTest extends TestCase
 		
 		IBuiltinAtom builtinPredicate = new AddBuiltin( criteria.toArray( new ITerm[0]) );
 		
-		Builtin builtin = new Builtin( view.variables(), builtinPredicate, true, configuration );
+		Builtin builtin = new Builtin( view.variables(), builtinPredicate, true, 
+				new IgnoreTermEquivalence(), configuration );
 		
 		IRelation result = builtin.process( view );
 		
@@ -75,7 +77,8 @@ public class BuiltinTest extends TestCase
 		
 		try
 		{
-			new Builtin( view.variables(), builtinPredicate, true, configuration );
+			new Builtin( view.variables(), builtinPredicate, true, 
+					new IgnoreTermEquivalence(), configuration );
 			fail( "Builtin should have thrown an exception" );
 		}
 		catch( Exception e ) // TODO Choose the proper exception type later
@@ -100,7 +103,8 @@ public class BuiltinTest extends TestCase
 		ITuple builtinTuple = Helper.createTuple( "X", "Y", "Z" );
 		IBuiltinAtom builtinPredicate = new AddBuiltin( builtinTuple.toArray( new ITerm[0]) );
 		
-		Builtin builtin = new Builtin( view.variables(), builtinPredicate, true, configuration );
+		Builtin builtin = new Builtin( view.variables(), builtinPredicate, true, 
+				new IgnoreTermEquivalence(), configuration );
 		
 		IRelation output = builtin.process( view );
 		
@@ -116,7 +120,8 @@ public class BuiltinTest extends TestCase
 		ITuple builtinTuple = Helper.createTuple( 3, 4, "X" );
 		IBuiltinAtom builtinPredicate = new AddBuiltin( builtinTuple.toArray( new ITerm[0]) );
 		
-		Builtin builtin = new Builtin( new ArrayList<IVariable>(), builtinPredicate, true, configuration );
+		Builtin builtin = new Builtin( new ArrayList<IVariable>(), builtinPredicate, true, 
+				new IgnoreTermEquivalence(), configuration );
 		
 		IRelation output = builtin.process( mRelationWithOneZeroLengthTuple );
 		
