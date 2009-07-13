@@ -241,9 +241,16 @@ public class View implements IRelation
 	 */
 	private void update()
 	{
-		// The size of a view can not increase after initiation, therefore
-		// we do not need to check if new equivalence relations have been
-		// established between terms.
+		// The matching tuples may increase due to a change in the equivalence relation,
+		// therefore we have to check all tuples again if any change to the term
+		// equivalence relation has been done.
+		int hashCode = mEquivalentTerms.hashCode();
+		
+		if (hashCode != mPreviousHashCode) {
+			mLastIndex = 0;
+			
+			mPreviousHashCode = hashCode;
+		}
 		
 		for( ; mLastIndex < mInputRelation.size(); ++mLastIndex )
 		{
@@ -267,6 +274,9 @@ public class View implements IRelation
 
 	/** The equivalent terms. */
 	private IEquivalentTerms mEquivalentTerms;
+	
+	/** The hash code of the previous equivalent terms. */
+	private int mPreviousHashCode = 0;
 	
 	/** The filtered view of the relation. */
 	private final IRelation mViewTuples;
