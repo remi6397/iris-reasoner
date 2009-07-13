@@ -25,6 +25,7 @@ package org.deri.iris.storage.simple;
 import org.deri.iris.storage.IIndex;
 import org.deri.iris.storage.IIndexFactory;
 import org.deri.iris.storage.IRelation;
+import org.deri.iris.utils.equivalence.IEquivalentTerms;
 
 /**
  * Factory for simple indexes.
@@ -35,6 +36,11 @@ public class SimpleIndexFactory implements IIndexFactory
 	public IIndex createIndex( IRelation relation, int... indices )
 	{
 		return new SimpleIndex( relation, indices );
+	}
+
+	public IIndex createIndex( IRelation relation, IEquivalentTerms equivalentTerms, int... indices )
+	{
+		return new SimpleIndex( relation, equivalentTerms, indices);
 	}
 
 }
