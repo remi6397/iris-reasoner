@@ -25,6 +25,7 @@ package org.deri.iris.rules.stratification;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
@@ -152,8 +153,16 @@ public class LocalStratifier implements IRuleStratifier
 			for( int stratum = 0; stratum <= highest; ++stratum )
 				result.add( new ArrayList<IRule>() );
 
-			for( int r = 0; r < mRules.size(); ++r )
-				result.get( ruleStratum[ r ] ).add(  mRules.get( r ).getRule() );
+			for( int r = 0; r < mRules.size(); ++r ) {
+				IRule rule = mRules.get( r ).getRule();
+				
+				// Check if rule with rule head equality is in stratum 0.
+				if (!GlobalStratifier.checkRuleHeadEquality(rule, ruleStratum[r])) {
+					return null;
+				}
+				
+				result.get( ruleStratum[ r ] ).add( rule );
+			}
 			
 			return result;
 		}

@@ -30,6 +30,7 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.rules.IRuleStratifier;
+import org.deri.iris.rules.RuleHeadEquality;
 
 /**
  * The global stratification algorithm.
@@ -111,6 +112,10 @@ public class GlobalStratifier implements IRuleStratifier
 				// Now search for all rules that have this predicate as the head
 				for( IRule rule : rules )
 				{
+					if (!checkRuleHeadEquality(rule, stratum)) {
+						return null;
+					}
+					
 					if( rule.getHead().get( 0 ).getAtom().getPredicate().equals( predicate ) )
 					{
 						result.get( stratum ).add( rule );
@@ -155,6 +160,32 @@ public class GlobalStratifier implements IRuleStratifier
 		assert stratum >= 0 : "The stratum must not be negative, but was: " + stratum;
 		
 		mStrata.put(predicate, Integer.valueOf(stratum));
+	}
+	
+	
+	/**
+	 * Checks if a rule with head equality is stratified. 
+	 * A program is stratified if and only if rules with head equality are
+	 * in the bottom stratum and they don't have negated predicates.
+	 * 
+	 * @param rule The rule to check if stratified.
+	 * @param stratum The stratum of the rule.
+	 * @return <code>true</code> if the rule is stratified, <code>false</code> otherwise.
+	 */
+	public static boolean checkRuleHeadEquality(IRule rule, int stratum) {
+		if (RuleHeadEquality.hasRuleHeadEquality(rule)) {
+			if (stratum != 0) {
+				return false;
+			}
+			
+			for (ILiteral literal : rule.getBody()) {
+				if (!literal.isPositive()) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 
 	/** Map for the strata of the different predicates. */
