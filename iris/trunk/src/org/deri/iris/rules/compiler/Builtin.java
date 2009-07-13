@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
@@ -34,6 +35,7 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IRelation;
+import org.deri.iris.utils.equivalence.IEquivalentTerms;
 
 /**
  * A compiled rule element representing a built-in predicate.
@@ -45,9 +47,10 @@ public class Builtin extends RuleElement
 	 * @param inputVariables The variables from proceeding literals. Can be null if this is the first literal.
 	 * @param builtinAtom The built-in atom object at this position in the rule.
 	 * @param positive true, if the built-in is positive, false if it is negative.
+	 * @param equivalentTerms The equivalent terms.
 	 * @throws EvaluationException If constructed terms are used with a built-in or there are unbound variables.
 	 */
-	public Builtin( List<IVariable> inputVariables, IBuiltinAtom builtinAtom, boolean positive, Configuration configuration ) throws EvaluationException
+	public Builtin( List<IVariable> inputVariables, IBuiltinAtom builtinAtom, boolean positive, IEquivalentTerms equivalentTerms, Configuration configuration ) throws EvaluationException
 	{
 		assert inputVariables != null;
 		assert builtinAtom != null;
@@ -55,6 +58,7 @@ public class Builtin extends RuleElement
 		
 		mBuiltinAtom = builtinAtom;
 		mPositive = positive;
+		mEquivalentTerms = equivalentTerms;
 		mConfiguration = configuration;
 		
 		// TODO Properly calculate output variables and indices for negative literals
@@ -146,16 +150,25 @@ public class Builtin extends RuleElement
 			
 			if( mPositive )
 			{
-				if( builtinOutputTuple != null )
-					result.add( makeResultTuple( input, builtinOutputTuple ) );
+				if( builtinOutputTuple != null ) {
+					// Create all possible combinations.
+					List<ITuple> combinations = Utils.createAllCombinations(
+							builtinOutputTuple, mEquivalentTerms);
+					
+					for (ITuple combination : combinations) {
+						ITuple concatenated = makeResultTuple(input, combination);
+						result.add(concatenated);
+					}
+				}
 			}
 			else
 			{
-				if( builtinOutputTuple == null )
+				if( builtinOutputTuple == null ) {
 					result.add( input );
+				}
 			}
 		}
-		
+			
 		return result;
 	}
 
@@ -186,6 +199,9 @@ public class Builtin extends RuleElement
 		return Factory.BASIC.createTuple( terms );
 	}
 
+	/** The equivalent terms. */
+	private IEquivalentTerms mEquivalentTerms;
+	
 	/** The built-in atom at this positio in the rule. */
 	private final IBuiltinAtom mBuiltinAtom;
 	

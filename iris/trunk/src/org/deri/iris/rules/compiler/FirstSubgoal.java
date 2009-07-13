@@ -23,12 +23,14 @@
 package org.deri.iris.rules.compiler;
 
 import java.util.List;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.storage.IRelation;
+import org.deri.iris.utils.equivalence.IEquivalentTerms;
 
 /**
  * A compiled rule element representing the first literal in a rule body,
@@ -41,8 +43,10 @@ public class FirstSubgoal extends RuleElement
 	 * @param predicate The predicate for this literal.
 	 * @param relation The relation for this literal.
 	 * @param viewCriteria The tuple from the sub-goal in the rule.
+	 * @param equivalentTerms The equivalent terms.
 	 */
-	public FirstSubgoal( IPredicate predicate, IRelation relation, ITuple viewCriteria, Configuration configuration )
+	public FirstSubgoal( IPredicate predicate, IRelation relation, ITuple viewCriteria, 
+			IEquivalentTerms equivalentTerms, Configuration configuration )
 	{
 		assert predicate != null;
 		assert relation != null;
@@ -51,13 +55,14 @@ public class FirstSubgoal extends RuleElement
 		
 		mConfiguration = configuration;
 		
-		mView = new View( relation, viewCriteria, mConfiguration.relationFactory );
+		mView = new View( relation, viewCriteria, equivalentTerms, mConfiguration.relationFactory );
 
 		mPredicate = predicate;
 		mViewCriteria = viewCriteria;
 		mOutputVariables = mView.variables();
+		mEquivalentTerms = equivalentTerms;
 	}
-
+	
 	/**
 	 * Constructor used for iterative evaluation.
 	 * @param predicate The predicate for this literal.
@@ -65,10 +70,11 @@ public class FirstSubgoal extends RuleElement
 	 * @param viewCriteria The tuple from the sub-goal in the rule.
 	 * @param variables Calculated variables.
 	 * @param simple Indicator if the view is a simple one (only unique variables).
+	 * @param equivalentTerms The equivalent terms.
 	 */
 	public FirstSubgoal(	IPredicate predicate, IRelation relation,
-							ITuple viewCriteria, List<IVariable> variables, boolean simple,
-							Configuration configuration )
+			ITuple viewCriteria, List<IVariable> variables, boolean simple,
+			IEquivalentTerms equivalentTerms, Configuration configuration )
 	{
 		assert predicate != null;
 		assert relation != null;
@@ -77,11 +83,12 @@ public class FirstSubgoal extends RuleElement
 		
 		mConfiguration = configuration;
 		
-		mView = new View( relation, viewCriteria, variables, simple, mConfiguration.relationFactory );
-
+		mView = new View( relation, viewCriteria, variables, simple, equivalentTerms, mConfiguration.relationFactory );
+		
 		mPredicate = predicate;
 		mViewCriteria = viewCriteria;
 		mOutputVariables = mView.variables();
+		mEquivalentTerms = equivalentTerms;
 	}
 
 	@Override
@@ -90,7 +97,21 @@ public class FirstSubgoal extends RuleElement
 		assert leftRelation != null;
 		assert leftRelation.size() == 1;	// i.e. there is no left relation, just a starting point.
 		
-		return mView;
+		// Create a new relation since we can not add new tuples to views.
+		IRelation relation = mConfiguration.relationFactory.createRelation();
+		
+		// For each tuple in the view we create all combinations of equivalent terms
+		// and add them to the new relation.
+		for (int i = 0; i < mView.size(); i++) {
+			ITuple tuple = mView.get(i);
+			List<ITuple> combinations = Utils.createAllCombinations(tuple, mEquivalentTerms);
+			
+			for (ITuple combination : combinations) {
+				relation.add(combination);
+			}
+		}
+		
+		return relation;
 	}
 	
 	@Override
@@ -101,9 +122,12 @@ public class FirstSubgoal extends RuleElement
 		if( delta == null || delta.size() == 0 )
 			return null;
 
-	    return new FirstSubgoal( mPredicate, delta, mViewCriteria, mView.variables(), mView.isSimple(), mConfiguration );
+	    return new FirstSubgoal( mPredicate, delta, mViewCriteria, mView.variables(), mView.isSimple(), mEquivalentTerms, mConfiguration );
     }
 
+	/** The equivalent terms. */
+	private IEquivalentTerms mEquivalentTerms;
+	
 	/** Predicate of the literal. */
 	private final IPredicate mPredicate;
 	
