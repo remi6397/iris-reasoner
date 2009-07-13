@@ -24,6 +24,7 @@ package org.deri.iris.evaluation.wellfounded;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
@@ -39,6 +40,7 @@ import org.deri.iris.facts.IFacts;
 import org.deri.iris.rules.compiler.ICompiledRule;
 import org.deri.iris.rules.compiler.RuleCompiler;
 import org.deri.iris.storage.IRelation;
+import org.deri.iris.utils.equivalence.IEquivalentTerms;
 
 /**
  * A well-founded evaluation strategy that uses an alternating fixed-point procedure.
@@ -47,6 +49,7 @@ import org.deri.iris.storage.IRelation;
  */
 public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 {
+
 	/**
 	 * Constructor.
 	 * @param facts The starting facts and the storage ares for deduced facts.
@@ -68,11 +71,15 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 		
 		mConfiguration = configuration;
 //		mFacts = facts;
+		mEquivalentTerms = mConfiguration.equivalentTermsFactory.createEquivalentTerms();
+
+		List<IRule> allRules = mConfiguration.ruleHeadEqualityPreProcessor
+				.process(rules, facts);
 
 		EvaluationUtilities utils = new EvaluationUtilities( mConfiguration );
 
 		// Re-order stratum
-		List<IRule> reorderedRules = utils.reOrderRules( rules );
+		List<IRule> reorderedRules = utils.reOrderRules( allRules );
 
 		// Rule optimisation
 //		List<IRule> optimisedRules = utils.optimiseRules( reorderedRules );
@@ -96,7 +103,7 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 		
 		List<ICompiledRule> compiledRules = new ArrayList<ICompiledRule>();
 		
-		RuleCompiler rc = new RuleCompiler( facts, mConfiguration );
+		RuleCompiler rc = new RuleCompiler( facts, mEquivalentTerms, mConfiguration );
 
 		for( IRule rule : rules )
 			compiledRules.add( rc.compile( rule ) );
@@ -229,7 +236,7 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 		if( outputVariables == null )
 			throw new IllegalArgumentException( "StratifiedBottomUpEvaluationStrategy.evaluateQuery() - outputVariables must not be null." ); 
 
-		RuleCompiler compiler = new RuleCompiler( mFacts, mConfiguration );
+		RuleCompiler compiler = new RuleCompiler( mFacts, mEquivalentTerms, mConfiguration );
 
 		ICompiledRule compiledQuery = compiler.compile( query );
 
@@ -241,6 +248,9 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 		return result;
 	}
 
+	/** The equivalent terms. */
+	private IEquivalentTerms mEquivalentTerms;
+	
 	/** The knowledge base configuration object. */
 	private final Configuration mConfiguration;
 
