@@ -96,7 +96,9 @@ public class SimpleIndex implements IIndex {
 		// change due to a change in the equivalence relation, therefore we have
 		// to check all keys and update them if any change to the term
 		// equivalence relation has been applied.
-		if (mPreviousHashCode != mEquivalentTerms.hashCode()) {
+		int hashCode = mEquivalentTerms.hashCode();
+		
+		if (hashCode != mPreviousHashCode) {
 			// Update the keys in the map.
 			updateKeys();
 			
@@ -104,7 +106,7 @@ public class SimpleIndex implements IIndex {
 			mLastIndexOfView = 0;
 
 			// Store the current hash code of the equivalent terms.
-			mPreviousHashCode = mEquivalentTerms.hashCode();
+			mPreviousHashCode = hashCode;
 		}
 
 		for (; mLastIndexOfView < mRelation.size(); ++mLastIndexOfView) {
