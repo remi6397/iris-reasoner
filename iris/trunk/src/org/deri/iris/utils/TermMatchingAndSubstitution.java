@@ -33,6 +33,8 @@ import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
+import org.deri.iris.utils.equivalence.IEquivalentTerms;
+import org.deri.iris.utils.equivalence.IgnoreTermEquivalence;
 
 /**
  * A collection of utility methods for term/tuple matching and variable substitution.
@@ -109,6 +111,19 @@ public class TermMatchingAndSubstitution
 	 */
 	public static ITuple matchTuple( ITuple viewCriteria, ITuple relation )
 	{
+		return matchTuple(viewCriteria, relation, new IgnoreTermEquivalence());
+	}
+	
+	/**
+	 * Match a tuple to view criteria.
+	 * If a match occurs, return a tuple with values for each distinct variable in the view criteria.
+	 * @param viewCriteria The tuple from a sub-goal instance.
+	 * @param relation The tuple from an EDB relation.
+	 * @param equivalentTerms The equivalent terms.
+	 * @return The tuple of values for the view's variables or null if a match did not occur.
+	 */
+	public static ITuple matchTuple( ITuple viewCriteria, ITuple relation, IEquivalentTerms equivalentTerms )
+	{
 		Map<IVariable, ITerm> variableMap = new HashMap<IVariable, ITerm>();
 		List<ITerm> terms = new ArrayList<ITerm>();
 		
@@ -117,7 +132,7 @@ public class TermMatchingAndSubstitution
 			ITerm bodyTerm = viewCriteria.get( i );
 			ITerm relationTerm = relation.get( i );
 			
-			if( ! matchTermOfTuple( bodyTerm, relationTerm, variableMap, terms ) )
+			if( ! matchTermOfTuple( bodyTerm, relationTerm, equivalentTerms, variableMap, terms ) )
 				return null;
 		}
 
@@ -128,12 +143,12 @@ public class TermMatchingAndSubstitution
 	 * Helper for matching terms of a tuple.
 	 * @param viewTerm The term from the rule's sub-goal tuple. 
 	 * @param relationTerm The term from the relation's tuple.
+	 * @param equivalentTerms The equivalent terms.
 	 * @param variableMap The current map of variable-constant bindings.
 	 * @param terms The bound variable values in the order in which they are found.
 	 * @return true, if these terms match and are consistent with previous macthed term pairs.
 	 */
-	private static boolean matchTermOfTuple( ITerm viewTerm, ITerm relationTerm, Map<IVariable, ITerm> variableMap, List<ITerm> terms )
-	{
+	private static boolean matchTermOfTuple( ITerm viewTerm, ITerm relationTerm, IEquivalentTerms equivalentTerms, Map<IVariable, ITerm> variableMap, List<ITerm> terms ) {
 		if( viewTerm instanceof IVariable )
 		{
 			IVariable variable = (IVariable) viewTerm;
@@ -146,7 +161,8 @@ public class TermMatchingAndSubstitution
 				terms.add( relationTerm );
 				return true;
 			}
-			else if( mappedGroundTerm.equals( relationTerm ) )
+			else if( mappedGroundTerm.equals( relationTerm ) ||
+					equivalentTerms.areEquivalent(mappedGroundTerm, relationTerm))
 			{
 				// Mapped to something we found already
 				return true;
@@ -176,7 +192,7 @@ public class TermMatchingAndSubstitution
 				
 				for( int i = 0; i < bodyTerms.size(); ++i )
 				{
-					if( ! matchTermOfTuple( bodyTerms.get( i ), relationTerms.get( i ), variableMap, terms ) )
+					if( ! matchTermOfTuple( bodyTerms.get( i ), relationTerms.get( i ), equivalentTerms, variableMap, terms ) )
 						return false;
 				}
 				return true;
@@ -187,7 +203,7 @@ public class TermMatchingAndSubstitution
 		else
 		{
 			// The only other option is that bodyTerm is a concrete term (constant).
-			return viewTerm.equals( relationTerm );
+			return viewTerm.equals( relationTerm ) || equivalentTerms.areEquivalent(viewTerm, relationTerm);
 		}
 	}
 
@@ -352,7 +368,20 @@ public class TermMatchingAndSubstitution
 	 * @return true, if unifiable, false otherwise
 	 */
 	public static boolean unify( ITerm t1, ITerm t2, Map<IVariable, ITerm> variableMap ) {
-		return unify(t1, t2, variableMap, true);
+		return unify(t1, t2, variableMap, new IgnoreTermEquivalence());
+	}
+	
+	/**
+	 * Given two terms, unify to give variable bindings for all variables.
+	 * Either, both or none of the input terms need be grounded.
+	 * @param t1 The first term.
+	 * @param t2 The second term.
+	 * @param variableMap The variable bindings.
+	 * @param equivalentTerms The equivalent terms.
+	 * @return true, if unifiable, false otherwise
+	 */
+	public static boolean unify( ITerm t1, ITerm t2, Map<IVariable, ITerm> variableMap, IEquivalentTerms equivalentTerms ) {
+		return unify(t1, t2, variableMap, true, equivalentTerms);
 	}
 	
 	/**
@@ -365,7 +394,22 @@ public class TermMatchingAndSubstitution
 	 * @return true, if unifiable, false otherwise
 	 * @see unify(ITerm t1, ITerm t2, Map<IVariable, ITerm> variableMap)
 	 */
-	public static boolean unify( ITerm t1, ITerm t2, Map<IVariable, ITerm> variableMap, boolean bothDirections )
+	public static boolean unify( ITerm t1, ITerm t2, Map<IVariable, ITerm> variableMap, boolean bothDirections ) {
+		return unify(t1, t2, variableMap, bothDirections, new IgnoreTermEquivalence());
+	}
+	
+	/**
+	 * Given two terms, unify to give variable bindings for all variables.
+	 * Either, both or none of the input terms need be grounded.
+	 * @param t1 The first term.
+	 * @param t2 The second term.
+	 * @param variableMap The variable bindings.
+	 * @param bothDirections Do the unification in both directions. Actually an additional flag used by the subsums() method.
+	 * @param equivalentTerms The equivalent terms.
+	 * @return true, if unifiable, false otherwise
+	 * @see unify(ITerm t1, ITerm t2, Map<IVariable, ITerm> variableMap)
+	 */
+	public static boolean unify( ITerm t1, ITerm t2, Map<IVariable, ITerm> variableMap, boolean bothDirections, IEquivalentTerms equivalentTerms )
 	{
 		if( t1.isGround() && t2.isGround() )
 			return t1.equals( t2 );
@@ -379,12 +423,12 @@ public class TermMatchingAndSubstitution
 		
 		if( t1 instanceof IVariable )
 		{
-			return unifyCheckBinding( (IVariable) t1, t2, variableMap );
+			return unifyCheckBinding( (IVariable) t1, t2, variableMap, equivalentTerms );
 		}
 		
 		if( t2 instanceof IVariable && bothDirections )
 		{
-			return unifyCheckBinding( (IVariable) t2, t1, variableMap );
+			return unifyCheckBinding( (IVariable) t2, t1, variableMap, equivalentTerms );
 		}
 		
 		// Here, we know that neither t1 nor t2 is a variable
@@ -410,7 +454,7 @@ public class TermMatchingAndSubstitution
 				ITerm c1term = c1terms.get( i );
 				ITerm c2term = c2terms.get( i );
 				
-				boolean termUnifiy = unify( c1term, c2term, variableMap, bothDirections );
+				boolean termUnifiy = unify( c1term, c2term, variableMap, bothDirections, equivalentTerms );
 				if( ! termUnifiy )
 					return false;
 			}
@@ -420,7 +464,7 @@ public class TermMatchingAndSubstitution
 			return false;
 	}
 	
-	private static boolean unifyCheckBinding( IVariable variable, ITerm term, Map<IVariable, ITerm> variableMap )
+	private static boolean unifyCheckBinding( IVariable variable, ITerm term, Map<IVariable, ITerm> variableMap, IEquivalentTerms equivalentTerms )
 	{
 		// First version does not skip and retry
 		if( ! term.isGround() && ! (term instanceof IConstructedTerm) ) // added by gigi for top-down evaluation: && ! (term instanceof IConstructedTerm), so e.g. X => f(X) is possible
@@ -435,7 +479,8 @@ public class TermMatchingAndSubstitution
 		else
 		{
 			// check that the existing mapping is the same
-			if( ! existingMapping.equals( term ) )
+			if( ! existingMapping.equals( term ) && 
+					!equivalentTerms.areEquivalent(existingMapping, term) )
 				return false;
 		}
 		
