@@ -25,12 +25,15 @@ package org.deri.iris.rules.compiler;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.storage.IRelationFactory;
 import org.deri.iris.utils.TermMatchingAndSubstitution;
+import org.deri.iris.utils.equivalence.IEquivalentTerms;
+import org.deri.iris.utils.equivalence.IgnoreTermEquivalence;
 
 /**
  * <p>
@@ -88,10 +91,21 @@ public class View implements IRelation
 	 */
 	public View( IRelation relation, ITuple viewCriteria, IRelationFactory relationFactory )
 	{
+		this(relation, viewCriteria, new IgnoreTermEquivalence(), relationFactory);
+	}
+
+	/**
+	 * Constructor.
+	 * @param relation The relation to create the view over.
+	 * @param viewCriteria The criteria to filter with.
+	 * @param equivalentTerms The equivalent terms.
+	 */
+	public View( IRelation relation, ITuple viewCriteria, IEquivalentTerms equivalentTerms, IRelationFactory relationFactory ) {
 		mViewCriteria = viewCriteria;
 		mVariables = TermMatchingAndSubstitution.getVariables( mViewCriteria, true );
 		mInputRelation = relation;
 		mRelationFactory = relationFactory;
+		mEquivalentTerms = equivalentTerms;
 
 		// Check if simple view, i.e. only unique variables
 		mSimple = isSimpleView( viewCriteria );
@@ -100,7 +114,7 @@ public class View implements IRelation
 		else
 			mViewTuples = relationFactory.createRelation();
 	}
-
+	
 	/**
 	 * Kind of copy constructor.
 	 * @param relation The viewed relation.
@@ -110,11 +124,26 @@ public class View implements IRelation
 	 */
 	public View( IRelation relation, ITuple viewCriteria, List<IVariable> variables, boolean simple, IRelationFactory relationFactory )
 	{
+		this(relation, viewCriteria, variables, simple, new IgnoreTermEquivalence(), relationFactory);
+	}
+	
+	/**
+	 * Kind of copy constructor.
+	 * @param relation The viewed relation.
+	 * @param viewCriteria The view criteria.
+	 * @param variables The computed output variables.
+	 * @param simple Indicates of the view is simple (pass thorugh)
+	 * @param equivalentTerms The equivalent terms.
+	 */
+	public View( IRelation relation, ITuple viewCriteria, List<IVariable> variables, boolean simple, 
+			IEquivalentTerms equivalentTerms, IRelationFactory relationFactory )
+	{
 		mViewCriteria = viewCriteria;
 		mVariables = variables;
 		mInputRelation = relation;
 		mSimple = simple;
 		mRelationFactory = relationFactory;
+		mEquivalentTerms = equivalentTerms;
 
 		if( mSimple )
 			mViewTuples = relation;
@@ -212,13 +241,21 @@ public class View implements IRelation
 	 */
 	private void update()
 	{
+		// The size of a view can not increase after initiation, therefore
+		// we do not need to check if new equivalence relations have been
+		// established between terms.
+		
 		for( ; mLastIndex < mInputRelation.size(); ++mLastIndex )
 		{
 			ITuple tuple = mInputRelation.get( mLastIndex );
 			
-			ITuple viewTuple = TermMatchingAndSubstitution.matchTuple( mViewCriteria, tuple );
-			if( viewTuple != null )
+			// When matching terms we also use the equivalent terms.
+			ITuple viewTuple = TermMatchingAndSubstitution.matchTuple( mViewCriteria, 
+					tuple, mEquivalentTerms );
+			
+			if( viewTuple != null ) {
 				mViewTuples.add( viewTuple );
+			}
 		}
 	}
 	
@@ -228,6 +265,9 @@ public class View implements IRelation
 		return mViewTuples.toString();
     }
 
+	/** The equivalent terms. */
+	private IEquivalentTerms mEquivalentTerms;
+	
 	/** The filtered view of the relation. */
 	private final IRelation mViewTuples;
 	

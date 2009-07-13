@@ -24,33 +24,39 @@ package org.deri.iris.rules.compiler;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.storage.IIndex;
 import org.deri.iris.storage.IRelation;
+import org.deri.iris.utils.equivalence.IEquivalentTerms;
 
 /**
  * A compiled rule element representing a negated ordinary literal.
  */
 public class Differ extends RuleElement
 {
+	
 	/**
 	 * Constructor.
 	 * @param inputVariables The variable bindings from previous rule elements.
 	 * @param thisLiteralsRelation The relation to use for this literal.
 	 * @param viewCriteria The view criteria (tuple in the sub-goal instance in the rule).
+	 * @param equivalentTerms The equivalent terms.
 	 */
-	public Differ( List<IVariable> inputVariables, IRelation thisLiteralsRelation, ITuple viewCriteria, Configuration configuration )
+	public Differ( List<IVariable> inputVariables, IRelation thisLiteralsRelation, ITuple viewCriteria, IEquivalentTerms equivalentTerms, Configuration configuration )
 	{
 		// If there are no input variables then this is the first sub-goal.
 		assert thisLiteralsRelation != null;
 		assert viewCriteria != null;
 		assert configuration != null;
 		
+		mEquivalentTerms = equivalentTerms;
+		
 		mConfiguration = configuration;
 		
-		mView = new View( thisLiteralsRelation, viewCriteria, mConfiguration.relationFactory );
+		mView = new View( thisLiteralsRelation, viewCriteria, equivalentTerms, mConfiguration.relationFactory );
 		
 		// Find the indices of the variables used in the natural join
 		List<Integer> join1 = new ArrayList<Integer>();
@@ -84,7 +90,7 @@ public class Differ extends RuleElement
 		mJoinIndices2 = Utils.integerListToArray( join2 );
 
 		// Create the index for the second relation
-		mIndex2 = mConfiguration.indexFactory.createIndex( mView, mJoinIndices2 );
+		mIndex2 = mConfiguration.indexFactory.createIndex( mView, mEquivalentTerms, mJoinIndices2 );
 		
 		mOutputVariables = inputVariables == null ? new ArrayList<IVariable>() : inputVariables;
 	}
@@ -109,7 +115,7 @@ public class Differ extends RuleElement
 //			else
 //				return mConfiguration.relationFactory.createRelation();
 //		}
-
+		
 		IRelation result = mConfiguration.relationFactory.createRelation();
 		for( int left = 0; left < leftRelation.size(); ++left )
 		{
@@ -117,12 +123,24 @@ public class Differ extends RuleElement
 			
 			List<ITuple> matchingRightTuples = mIndex2.get( Utils.makeKey( leftTuple, mJoinIndices1 ) );
 
-			if( matchingRightTuples.size() == 0 )
-				result.add( leftTuple );
+			// Only add those tuples, which do not match with the left tuple.
+			if( matchingRightTuples.size() == 0 ) {
+				// Only add combinations, if negative tuple at first position. Is this possible?
+				// Comments in RuleCompiler may be outdated, since negative literals at
+				// the first position are moved in the rule.
+				List<ITuple> combinations = Utils.createAllCombinations(leftTuple, mEquivalentTerms);
+				
+				for (ITuple combination : combinations) {
+					result.add(combination);
+				}
+			}
 		}
 		
 		return result;
 	}
+	
+	/** The equivalent terms. */
+	private IEquivalentTerms mEquivalentTerms;
 	
 	/** The view on the relation (as seen with the view criteria). */
 	private final View mView;

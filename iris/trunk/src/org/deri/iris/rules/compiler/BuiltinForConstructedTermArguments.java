@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.RuleUnsafeException;
@@ -40,6 +41,7 @@ import org.deri.iris.builtins.NotExactEqualBuiltin;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.utils.TermMatchingAndSubstitution;
+import org.deri.iris.utils.equivalence.IEquivalentTerms;
 
 
 /**
@@ -52,9 +54,10 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 	 * @param inputVariables The variables from proceeding literals. Can be null if this is the first literal.
 	 * @param builtinAtom The built-in atom object at this position in the rule.
 	 * @param positive true, if the built-in is positive, false if it is negative.
+	 * @param equivalentTerms The equivalent terms..
 	 * @throws EvaluationException If constructed terms are used with a built-in or there are unbound variables.
 	 */
-	public BuiltinForConstructedTermArguments( List<IVariable> inputVariables, IBuiltinAtom builtinAtom, boolean positive, Configuration configuration ) throws EvaluationException
+	public BuiltinForConstructedTermArguments( List<IVariable> inputVariables, IBuiltinAtom builtinAtom, boolean positive, IEquivalentTerms equivalentTerms, Configuration configuration ) throws EvaluationException
 	{
 		assert inputVariables != null;
 		assert builtinAtom != null;
@@ -62,6 +65,7 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 		
 		mBuiltinAtom = builtinAtom;
 		mPositive = positive;
+		mEquivalentTerms = equivalentTerms;
 		mConfiguration = configuration;
 		
 		if( mBuiltinAtom instanceof EqualBuiltin ||
@@ -154,12 +158,12 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 			{
 				if( mPositive )
 				{
-					if( ! t1.equals( t2 ) )
+					if( ! t1.equals( t2 ) && !mEquivalentTerms.areEquivalent(t1, t2) )
 						result.add( inputTuple );
 				}
 				else
 				{
-					if( t1.equals( t2 ) )
+					if( t1.equals( t2 ) || mEquivalentTerms.areEquivalent(t1, t2) )
 						result.add( inputTuple );
 				}
 			}
@@ -167,25 +171,33 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 			{
 				Map<IVariable, ITerm> variableMap = new HashMap<IVariable, ITerm>();
 				
-				boolean unified = TermMatchingAndSubstitution.unify( t1, t2, variableMap );
+				boolean unified = TermMatchingAndSubstitution.unify( t1, t2, variableMap, mEquivalentTerms );
 				
 				if( mPositive )
 				{
 					if( unified )
 					{
-						ITerm[] terms = new ITerm[ inputTuple.size() + mUniqueUnboundVariables.size() ];
-	
-						int t = 0;
-						for( ; t < inputTuple.size(); ++t )
-							terms[ t ] = inputTuple.get( t );
+						List<ITerm> rightTerms = new ArrayList<ITerm>(mUniqueUnboundVariables.size());
 						
 						for( IVariable variable : mUniqueUnboundVariables )
 						{
-							terms[ t++ ] = variableMap.get( variable );
+							rightTerms.add(variableMap.get( variable ));
 						}
-						ITuple outputTuple = Factory.BASIC.createTuple( terms );
-	
-						result.add( outputTuple );
+						
+						ITuple rightTuple = Factory.BASIC.createTuple(rightTerms);
+						List<ITerm> concatenatedTerms = new ArrayList<ITerm>(inputTuple.size() + rightTuple.size());
+
+						// Create all possible combinations.
+						List<ITuple> combinations = Utils.createAllCombinations(rightTuple, mEquivalentTerms);
+						
+						for (ITuple combination : combinations) {
+							concatenatedTerms.clear();
+							concatenatedTerms.addAll(inputTuple);
+							concatenatedTerms.addAll(combination);
+							
+							ITuple concatenated = Factory.BASIC.createTuple(concatenatedTerms);
+							result.add(concatenated);
+						}
 					}
 				}
 				else
@@ -203,6 +215,9 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 	
 	private static enum TYPE { UNIFICATION, INEQUALITY };
 	private final TYPE mType;
+	
+	/** The equivalent terms. */
+	private IEquivalentTerms mEquivalentTerms;
 	
 	/** The built-in atom at this position in the rule. */
 	private final IBuiltinAtom mBuiltinAtom;
