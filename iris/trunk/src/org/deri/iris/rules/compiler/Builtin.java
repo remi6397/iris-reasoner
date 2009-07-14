@@ -135,7 +135,7 @@ public class Builtin extends RuleElement
 		for( int i = 0; i < leftRelation.size(); ++i )
 		{
 			ITuple input = leftRelation.get( i );
-	
+			
 			// Make the tuple for input to the built-in predicate
 			ITerm[] terms = new ITerm[ mIndicesFromInputRelationToMakeInputTuple.length ];
 			
@@ -146,25 +146,31 @@ public class Builtin extends RuleElement
 			}
 			
 			ITuple builtinInputTuple = Factory.BASIC.createTuple( terms );
-			ITuple builtinOutputTuple = mBuiltinAtom.evaluate( builtinInputTuple );
 			
-			if( mPositive )
-			{
-				if( builtinOutputTuple != null ) {
-					// Create all possible combinations.
-					List<ITuple> combinations = Utils.createAllCombinations(
-							builtinOutputTuple, mEquivalentTerms);
-					
-					for (ITuple combination : combinations) {
-						ITuple concatenated = makeResultTuple(input, combination);
-						result.add(concatenated);
+			List<ITuple> combinationsForBuiltin = Utils.createAllCombinations(
+					builtinInputTuple, mEquivalentTerms);
+			
+			for (ITuple combinationForBuiltin : combinationsForBuiltin) {
+				ITuple builtinOutputTuple = mBuiltinAtom.evaluate( combinationForBuiltin );
+				
+				if( mPositive )
+				{
+					if( builtinOutputTuple != null ) {
+						// Create all possible combinations.
+						List<ITuple> combinations = Utils.createAllCombinations(
+								builtinOutputTuple, mEquivalentTerms);
+						
+						for (ITuple combination : combinations) {
+							ITuple concatenated = makeResultTuple(input, combination);
+							result.add(concatenated);
+						}
 					}
 				}
-			}
-			else
-			{
-				if( builtinOutputTuple == null ) {
-					result.add( input );
+				else
+				{
+					if( builtinOutputTuple == null ) {
+						result.add( input );
+					}
 				}
 			}
 		}
