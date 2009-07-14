@@ -48,7 +48,7 @@ public abstract class EvaluationTest extends TestCase {
 
 	protected IFacts facts;
 
-	private Configuration defaultConfiguration;
+	protected Configuration defaultConfiguration;
 
 	private long duration;
 
