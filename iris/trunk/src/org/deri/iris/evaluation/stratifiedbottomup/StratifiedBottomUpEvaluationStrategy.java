@@ -31,8 +31,10 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.IEvaluationStrategy;
+import org.deri.iris.evaluation.stratifiedbottomup.naive.NaiveEvaluator;
 import org.deri.iris.facts.FiniteUniverseFacts;
 import org.deri.iris.facts.IFacts;
+import org.deri.iris.rules.RuleHeadEquality;
 import org.deri.iris.rules.compiler.ICompiledRule;
 import org.deri.iris.rules.compiler.RuleCompiler;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
@@ -50,7 +52,8 @@ public class StratifiedBottomUpEvaluationStrategy implements
 		mConfiguration = configuration;
 		mRuleEvaluatorFactory = ruleEvaluatorFactory;
 		mFacts = facts;
-		mEquivalentTerms = mConfiguration.equivalentTermsFactory.createEquivalentTerms();
+		mEquivalentTerms = mConfiguration.equivalentTermsFactory
+				.createEquivalentTerms();
 
 		List<IRule> allRules = mConfiguration.ruleHeadEqualityPreProcessor
 				.process(rules, facts);
@@ -69,6 +72,7 @@ public class StratifiedBottomUpEvaluationStrategy implements
 		RuleCompiler rc = new RuleCompiler(facts, mEquivalentTerms,
 				mConfiguration);
 
+		int stratumNumber = 0;
 		for (List<IRule> stratum : stratifiedRules) {
 			// Re-order stratum
 			List<IRule> reorderedRules = utils.reOrderRules(stratum);
@@ -76,16 +80,36 @@ public class StratifiedBottomUpEvaluationStrategy implements
 			// Rule optimisation
 			List<IRule> optimisedRules = utils
 					.applyRuleOptimisers(reorderedRules);
-			
+
 			List<ICompiledRule> compiledRules = new ArrayList<ICompiledRule>();
 
 			for (IRule rule : optimisedRules) {
 				compiledRules.add(rc.compile(rule));
 			}
 
-			IRuleEvaluator eval = mRuleEvaluatorFactory.createEvaluator();
-			eval.evaluateRules(compiledRules, facts, configuration);
+			// TODO Enable rule head equality support for semi-naive evaluation.
+			// Choose the correct evaluation technique for the specified rules and stratum.
+			IRuleEvaluator evaluator = chooseEvaluator(stratumNumber,
+					optimisedRules, mRuleEvaluatorFactory);
+
+			evaluator.evaluateRules(compiledRules, facts, configuration);
+
+			stratumNumber++;
 		}
+	}
+
+	private IRuleEvaluator chooseEvaluator(int stratum, List<IRule> rules,
+			IRuleEvaluatorFactory factory) {
+		if (stratum == 0) {
+			for (IRule rule : rules) {
+				if (RuleHeadEquality.hasRuleHeadEquality(rule)) {
+					return new NaiveEvaluator();
+				}
+			}
+		}
+
+		// Create default evaluator.
+		return factory.createEvaluator();
 	}
 
 	public IRelation evaluateQuery(IQuery query, List<IVariable> outputVariables)
