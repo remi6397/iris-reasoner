@@ -34,9 +34,11 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.IEvaluationStrategy;
 import org.deri.iris.evaluation.stratifiedbottomup.EvaluationUtilities;
 import org.deri.iris.evaluation.stratifiedbottomup.IRuleEvaluator;
+import org.deri.iris.evaluation.stratifiedbottomup.naive.NaiveEvaluator;
 import org.deri.iris.evaluation.stratifiedbottomup.seminaive.SemiNaiveEvaluator;
 import org.deri.iris.facts.FiniteUniverseFacts;
 import org.deri.iris.facts.IFacts;
+import org.deri.iris.rules.RuleHeadEquality;
 import org.deri.iris.rules.compiler.ICompiledRule;
 import org.deri.iris.rules.compiler.RuleCompiler;
 import org.deri.iris.storage.IRelation;
@@ -152,8 +154,12 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 		IFacts finiteFacts = new FiniteUniverseFacts( simpleFacts, startingRules );
 
 		List<ICompiledRule> startingCompiledRules = compile( startingRules, finiteFacts );
-		IRuleEvaluator semiNaive = new SemiNaiveEvaluator();
-		semiNaive.evaluateRules( startingCompiledRules, finiteFacts, mConfiguration );
+		
+		// TODO Enable rule head equality support for semi-naive evaluation.
+		// Choose the correct evaluation technique for the specified rules.
+		IRuleEvaluator evaluator = chooseEvaluator(rules);
+		
+		evaluator.evaluateRules( startingCompiledRules, finiteFacts, mConfiguration );
 
 		int currentDefinitelyTrueSize = size( simpleFacts );
 
@@ -172,7 +178,7 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 			finiteFacts = new FiniteUniverseFacts( simpleFacts, negativeRules );
 
 			List<ICompiledRule> negativeCompiledRules = compile( negativeRules, finiteFacts );
-			semiNaive.evaluateRules( negativeCompiledRules, finiteFacts, mConfiguration );
+			evaluator.evaluateRules( negativeCompiledRules, finiteFacts, mConfiguration );
 			simpleFacts = doubler.extractNegativeFacts( simpleFacts );
 
 			// Do positive evaluation
@@ -182,7 +188,7 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 			finiteFacts = new FiniteUniverseFacts( simpleFacts, positiveRules );
 
 			List<ICompiledRule> positiveCompiledRules = compile( positiveRules, finiteFacts );
-			semiNaive.evaluateRules( positiveCompiledRules, finiteFacts, mConfiguration );
+			evaluator.evaluateRules( positiveCompiledRules, finiteFacts, mConfiguration );
 			simpleFacts = doubler.extractPositiveFacts( simpleFacts );
 
 			int newDefinitelyTrueSize = size( simpleFacts );
@@ -194,6 +200,16 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy
 		}
 	}
 
+	private IRuleEvaluator chooseEvaluator(List<IRule> rules) {
+		for (IRule rule : rules) {
+			if (RuleHeadEquality.hasRuleHeadEquality(rule)) {
+				return new NaiveEvaluator();
+			}
+		}
+		
+		return new SemiNaiveEvaluator();
+	}
+	
 	/**
 	 * Add one collection of facts to another.
 	 * @param target The facts to append to.
