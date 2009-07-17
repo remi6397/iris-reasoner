@@ -62,6 +62,7 @@ public class NegatedLiteralTest extends ProgramEvaluationTest {
 		// The result should be: A, B
 
 		try {
+			// FIXME Check evaluation with well founded.
 			evaluate("?- foo(?X).");
 			fail("Program identified as stratified.");
 		} catch (EvaluationException e) {
