@@ -156,14 +156,8 @@ public class Builtin extends RuleElement
 				if( mPositive )
 				{
 					if( builtinOutputTuple != null ) {
-						// Create all possible combinations.
-						List<ITuple> combinations = Utils.createAllCombinations(
-								builtinOutputTuple, mEquivalentTerms);
-						
-						for (ITuple combination : combinations) {
-							ITuple concatenated = makeResultTuple(input, combination);
-							result.add(concatenated);
-						}
+						ITuple concatenated = makeResultTuple(input, builtinOutputTuple);
+						result.add(concatenated);
 					}
 				}
 				else

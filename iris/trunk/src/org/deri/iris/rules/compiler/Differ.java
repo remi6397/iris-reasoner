@@ -125,14 +125,7 @@ public class Differ extends RuleElement
 
 			// Only add those tuples, which do not match with the left tuple.
 			if( matchingRightTuples.size() == 0 ) {
-				// Only add combinations, if negative tuple at first position. Is this possible?
-				// Comments in RuleCompiler may be outdated, since negative literals at
-				// the first position are moved in the rule.
-				List<ITuple> combinations = Utils.createAllCombinations(leftTuple, mEquivalentTerms);
-				
-				for (ITuple combination : combinations) {
-					result.add(combination);
-				}
+				result.add(leftTuple);
 			}
 		}
 		

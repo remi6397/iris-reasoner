@@ -194,19 +194,8 @@ class Joiner extends RuleElement {
 
 			// Must match because that's what the index does
 			for (ITuple matchingRightTuple : matchingRightTuples) {
-				// Create all combinations of the matching right tuples
-				// using the equivalent terms. We do not need to create the
-				// combinations of the concatenated tuple, since the previous
-				// rule elements should have already done that
-				// i.e. the left relation should already contain the
-				// combinations.
-				List<ITuple> allCombinations = Utils.createAllCombinations(
-						matchingRightTuple, mEquivalentTerms);
-
-				for (ITuple combination : allCombinations) {
-					ITuple concatenated = concatenate(leftTuple, combination);
-					result.add(concatenated);
-				}
+				ITuple concatenated = concatenate(leftTuple, matchingRightTuple);
+				result.add(concatenated);
 			}
 		}
 

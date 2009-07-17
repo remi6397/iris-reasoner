@@ -22,10 +22,7 @@
  */
 package org.deri.iris.rules.compiler;
 
-import static org.deri.iris.factory.Factory.BASIC;
-
 import java.util.List;
-import java.util.Set;
 
 import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
@@ -90,15 +87,6 @@ public class RuleHeadEqualitySubstituter extends HeadSubstituter {
 
 		// ?X and ?Y are equivalent.
 		equivalentTerms.setEquivalent(x, y);
-
-		// We create all possible combinations.
-		Set<ITerm> equivalent = equivalentTerms.getEquivalent(x);
-
-		for (ITerm term1 : equivalent) {
-			for (ITerm term2 : equivalent) {
-				relation.add(BASIC.createTuple(term1, term2));
-			}
-		}
 	}
 
 }
