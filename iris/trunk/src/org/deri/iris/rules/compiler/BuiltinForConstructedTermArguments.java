@@ -187,17 +187,11 @@ public class BuiltinForConstructedTermArguments extends RuleElement
 						ITuple rightTuple = Factory.BASIC.createTuple(rightTerms);
 						List<ITerm> concatenatedTerms = new ArrayList<ITerm>(inputTuple.size() + rightTuple.size());
 
-						// Create all possible combinations.
-						List<ITuple> combinations = Utils.createAllCombinations(rightTuple, mEquivalentTerms);
+						concatenatedTerms.addAll(inputTuple);
+						concatenatedTerms.addAll(rightTuple);
 						
-						for (ITuple combination : combinations) {
-							concatenatedTerms.clear();
-							concatenatedTerms.addAll(inputTuple);
-							concatenatedTerms.addAll(combination);
-							
-							ITuple concatenated = Factory.BASIC.createTuple(concatenatedTerms);
-							result.add(concatenated);
-						}
+						ITuple concatenated = Factory.BASIC.createTuple(concatenatedTerms);
+						result.add(concatenated);
 					}
 				}
 				else

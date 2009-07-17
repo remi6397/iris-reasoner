@@ -225,6 +225,14 @@ public class RuleCompiler {
 				throw lastException;
 			}
 		}
+
+		if (elements.size() > 0) {
+			RuleElement lastElement = elements.get(elements.size() - 1);
+			RuleElement element = new EquivalenceResolver(lastElement
+					.getOutputVariables(), mEquivalentTerms, mConfiguration);
+			elements.add(element);
+		}
+
 		return elements;
 	}
 

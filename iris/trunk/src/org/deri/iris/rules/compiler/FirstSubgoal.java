@@ -97,21 +97,7 @@ public class FirstSubgoal extends RuleElement
 		assert leftRelation != null;
 		assert leftRelation.size() == 1;	// i.e. there is no left relation, just a starting point.
 		
-		// Create a new relation since we can not add new tuples to views.
-		IRelation relation = mConfiguration.relationFactory.createRelation();
-		
-		// For each tuple in the view we create all combinations of equivalent terms
-		// and add them to the new relation.
-		for (int i = 0; i < mView.size(); i++) {
-			ITuple tuple = mView.get(i);
-			List<ITuple> combinations = Utils.createAllCombinations(tuple, mEquivalentTerms);
-			
-			for (ITuple combination : combinations) {
-				relation.add(combination);
-			}
-		}
-		
-		return relation;
+		return mView;
 	}
 	
 	@Override
