@@ -55,7 +55,7 @@ public class RuleHeadEqualitySubstituter extends HeadSubstituter {
 	 * @param headTuple The tuple from the rule head.
 	 * @param equivalentTerms The equivalent terms.
 	 * @param configuration The configuration.
-	 * @throws EvaluationException
+	 * @throws EvaluationException If unbound variables occur.
 	 */
 	public RuleHeadEqualitySubstituter(List<IVariable> variables,
 			ITuple headTuple, IEquivalentTerms equivalentTerms,

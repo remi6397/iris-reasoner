@@ -40,7 +40,7 @@ public class HeadSubstituter extends RuleElement
 	 * Constructor.
 	 * @param variables The variables from the rule body.
 	 * @param headTuple The tuple from the rule head.
-	 * @throws EvaluationException 
+	 * @throws EvaluationException If unbound variables occur.
 	 */
 	public HeadSubstituter( List<IVariable> variables, ITuple headTuple, Configuration configuration ) throws EvaluationException
 	{
