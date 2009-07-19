@@ -40,7 +40,7 @@ public interface IRuleHeadEqualityPreProcessor {
 	 * 
 	 * @param rules The rule to pre-process.
 	 * @param facts The facts to pre-process.
-	 * @throws If an error occurrs, or rule head equality is explicitly not
+	 * @throws EvaluationException If an error occurs, or rule head equality is not
 	 *             supported.
 	 * @return The resulting rules after pre-processing.
 	 */
