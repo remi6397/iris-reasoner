@@ -22,55 +22,96 @@
  */
 package org.deri.iris.rules.stratification;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.compiler.Parser;
+import org.deri.iris.compiler.ParserException;
 import org.deri.iris.rules.IRuleStratifier;
 
 /**
- * A test if non stratified rules with rule head equality are identified as
- * such.
+ * A test for correct stratificiation of rules with head equality.
  * 
  * @author Adrian Marte
  */
-public class IncorrectStratificationTest extends TestCase {
-
+public class RuleHeadEqualityStratificationTest extends TestCase {
+	
+	private Parser parser;
+	
 	private List<IRule> rules;
-
-	public IncorrectStratificationTest(String name) {
+	
+ 	public RuleHeadEqualityStratificationTest(String name) {
 		super(name);
 	}
+	
+	public void setUp() {
+		parser = new Parser();
+		rules = new ArrayList<IRule>();
+	}
+	
+	public void testSuccessful() throws ParserException {
+		String program = "";
+		program += "q(?X) :- r(?X), t(?X).";
+		program += "s(?X, ?Y) :- t(?X, ?Y), q(?X).";
+		program += "?X = ?Y :- s(?X, ?Y).";
 
-	protected void setUp() throws Exception {
-		Parser parser = new Parser();
-
+		parser.parse(program);
+		rules = parser.getRules();
+		
+		stratify(rules, true);
+	}
+	
+	public void testUnsuccessful() throws ParserException {
 		String program = "";
 		program += "q(?X) :- r(?X), t(?X).";
 		program += "s(?X, ?Y) :- t(?X, ?Y), not q(?X).";
 		program += "?X = ?Y :- s(?X, ?Y).";
 
 		parser.parse(program);
-
 		rules = parser.getRules();
+		
+		stratify(rules, false);
+	}
+	
+	public void testNegatedLiteral() throws ParserException {
+		String program = "?X = ?Y :- not c(?X), a(?X), b(?Y).";
+
+		parser.parse(program);
+		rules = parser.getRules();
+		
+		stratify(rules, false);
 	}
 
-	public void testLocalStratifier() {
+	public static void stratify(List<IRule> rules, boolean succeeds) {
 		IRuleStratifier stratifier = new LocalStratifier(true);
 		List<List<IRule>> result = stratifier.stratify(rules);
-		assertNull(result);
+
+		if (succeeds) {
+			assertNotNull(result);
+		} else {
+			assertNull(result);
+		}
 
 		stratifier = new LocalStratifier(false);
 		result = stratifier.stratify(rules);
-		assertNull(result);
-	}
 
-	public void testGlobalStratifier() {
-		IRuleStratifier stratifier = new GlobalStratifier();
-		List<List<IRule>> result = stratifier.stratify(rules);
-		assertNull(result);
-	}
+		if (succeeds) {
+			assertNotNull(result);
+		} else {
+			assertNull(result);
+		}
 
+		stratifier = new GlobalStratifier();
+		result = stratifier.stratify(rules);
+
+		if (succeeds) {
+			assertNotNull(result);
+		} else {
+			assertNull(result);
+		}
+	}
+	
 }
