@@ -33,18 +33,26 @@ import org.deri.iris.api.terms.concrete.IText;
 public class Text implements IText {
 
 	private String string;
+
 	private String lang;
 
 	/**
 	 * Constructs a new term representing a rdf:text.
 	 * 
-	 * @param string
-	 *            The string.
-	 * @param lang
-	 *            The language.
+	 * @param string The string.
+	 * @param lang The language.
+	 * @throws NullPointerException If the value of <code>string</code> or
+	 *             <code>lang</code> is <code>null</code>.
 	 */
 	Text(String string, String lang) {
-		super();
+		if (string == null) {
+			throw new NullPointerException("String value must not be null");
+		}
+
+		if (lang == null) {
+			throw new NullPointerException("Language tag must not be null");
+		}
+
 		this.string = string;
 		this.lang = lang;
 	}
@@ -54,11 +62,16 @@ public class Text implements IText {
 	 * this constructor is of the form "text@lang", the value of lang will be
 	 * used as the language tag.
 	 * 
-	 * @param string
-	 *            The string value. May be of the form "text@lang", where "lang"
-	 *            is the language of the text.
+	 * @param string The string value. May be of the form "text@lang", where
+	 *            "lang" is the language of the text.
+	 * @throws NullPointerException If the value of <code>string</code> is
+	 *             <code>null</code>.
 	 */
 	Text(String string) {
+		if (string == null) {
+			throw new NullPointerException("String value must not be null");
+		}
+
 		this.lang = "";
 
 		if (string.contains("@")) {
@@ -76,9 +89,7 @@ public class Text implements IText {
 
 	/*
 	 * Returns the a string representing the rdf:text in the form "text@lang".
-	 * 
 	 * (non-Javadoc)
-	 * 
 	 * @see org.deri.iris.api.terms.IStringTerm#getValue()
 	 */
 	public String[] getValue() {

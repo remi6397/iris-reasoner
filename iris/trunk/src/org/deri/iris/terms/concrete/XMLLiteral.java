@@ -55,16 +55,6 @@ public class XMLLiteral implements IXMLLiteral {
 	}
 
 	public String toString() {
-		// String result = "<rdf-wrapper xml:lang='";
-		//
-		// if (getLang() != null) {
-		// result += getLang();
-		// }
-		//
-		// result += "'>" + getString() + "</rdf-wrapper>";
-		//
-		// return result;
-
 		return toCanonicalString();
 	}
 
@@ -99,7 +89,11 @@ public class XMLLiteral implements IXMLLiteral {
 
 	public int hashCode() {
 		int result = string.hashCode();
-		result = result * 37 + lang.hashCode();
+		
+		if (lang != null) {
+			result = result * 37 + lang.hashCode();
+		}
+		
 		return result;
 	}
 
