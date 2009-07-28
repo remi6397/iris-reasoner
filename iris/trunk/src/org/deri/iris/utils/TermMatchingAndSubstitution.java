@@ -412,7 +412,7 @@ public class TermMatchingAndSubstitution
 	public static boolean unify( ITerm t1, ITerm t2, Map<IVariable, ITerm> variableMap, boolean bothDirections, IEquivalentTerms equivalentTerms )
 	{
 		if( t1.isGround() && t2.isGround() )
-			return t1.equals( t2 );
+			return t1.equals( t2 ) || equivalentTerms.areEquivalent(t1, t2);
 		
 		if ( t1 instanceof IVariable && t2 instanceof IVariable )
 		{
