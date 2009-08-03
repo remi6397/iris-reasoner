@@ -618,6 +618,36 @@ public class TreeWalker extends DepthFirstAdapter
 		addTerm(CONCRETE.createDateTime(year, month, day, hour, minute, second, millisecond, tzhour, tzminute ) );
 	}
 	
+	@Override
+	public void outADaytimedurationfsTerm(ADaytimedurationfsTerm node) {
+		int day = parseInt(node.getDay().getText());
+		int hour = parseInt(node.getHour().getText());
+		int minute = parseInt(node.getMinute().getText());
+		double second = parseDouble(node.getSecond().getText());
+
+		addTerm(CONCRETE.createDayTimeDuration(true, day, hour, minute, second));
+	}
+
+	@Override
+	public void outADaytimedurationmsTerm(ADaytimedurationmsTerm node) {
+		int day = parseInt(node.getDay().getText());
+		int hour = parseInt(node.getHour().getText());
+		int minute = parseInt(node.getMinute().getText());
+		int second = parseInt(node.getSecond().getText());
+		int millisecond = parseInt(node.getMillisecond().getText());
+
+		addTerm(CONCRETE.createDayTimeDuration(true, day, hour, minute, second,
+				millisecond));
+	}
+
+	@Override
+	public void outAYearmonthdurationTerm(AYearmonthdurationTerm node) {
+		int year = parseInt(node.getYear().getText());
+		int month = parseInt(node.getMonth().getText());
+
+		addTerm(CONCRETE.createYearMonthDuration(true, year, month));
+	}
+	
 //	public void outADatetimeTerm(final ADatetimeTerm d) {
 //		Integer[] params = transfromIntList(d.getIntlist());
 //		if (params.length == 6) {
@@ -663,7 +693,34 @@ public class TreeWalker extends DepthFirstAdapter
 		}
 		addTerm(CONCRETE.createGMonthDay(params[0], params[1]));
 	}
-
+	
+	@Override
+	public void outARdftextTerm(ARdftextTerm node) {
+		String string = peeleStr(node.getString().getText().trim());
+		String lang = peeleStr(node.getLang().getText().trim());
+		
+		addTerm(CONCRETE.createText(string, lang));
+	}
+	
+	@Override
+	public void outAXmlliteralTerm(AXmlliteralTerm node) {
+		String string = peeleStr(node.getString().getText().trim());
+		
+		string = preprocess(string);
+		
+		addTerm(CONCRETE.createXMLLiteral(string));
+	}
+	
+	@Override
+	public void outAXmlliterallangTerm(AXmlliterallangTerm node) {
+		String string = peeleStr(node.getString().getText().trim());
+		String lang = peeleStr(node.getLang().getText().trim());
+		
+		string = preprocess(string);
+		
+		addTerm(CONCRETE.createXMLLiteral(string, lang));
+	}
+	
 	/**
 	 * Removes the leading and tailing <code>'</code> or <code>&quot;</code>
 	 * from a string.
@@ -702,6 +759,15 @@ public class TreeWalker extends DepthFirstAdapter
 		mTermStack.remove( last );
 		
 		return result;
+	}
+	
+	private static String preprocess(String string) {
+		for (final PatternReplace replace : escapes) {
+			string = replace.replaceAll(string);
+		}
+		string = replaceUnicodeEscapes(string);
+		
+		return string;
 	}
 
 	/**
