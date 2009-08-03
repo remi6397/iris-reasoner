@@ -22,6 +22,7 @@
  */
 package org.deri.iris.builtins;
 
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.factory.IBuiltinsFactory;
 import org.deri.iris.api.terms.ITerm;
@@ -315,6 +316,15 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 
 	public IBuiltinAtom createTextCompare(ITerm... terms) {
 		return new TextCompareBuiltin(terms);
+	}
+
+	
+	public IAtom createFalse() {
+		return new FalseBuiltin(new ITerm[0]);
+	}
+
+	public IAtom createTrue() {
+		return new TrueBuiltin(new ITerm[0]);
 	}
 
 	public IBuiltinAtom createToBase64Binary(ITerm... terms) {

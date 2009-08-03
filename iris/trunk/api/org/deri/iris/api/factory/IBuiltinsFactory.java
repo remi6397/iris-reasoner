@@ -23,6 +23,9 @@
 package org.deri.iris.api.factory;
 
 
+import java.util.List;
+
+import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.ITerm;
 
@@ -1185,6 +1188,20 @@ public interface IBuiltinsFactory {
 	 * @throws IllegalArgumentException if t is <code>null</code>
 	 */
 	public abstract IBuiltinAtom createIsYearMonthDuration(ITerm ... terms);
+
+	/**
+	 * Creates the builtin representing true.  
+	 * 
+	 * @return The builtin representing true.
+	 */
+	public abstract IAtom createTrue();
+
+	/**
+	 * Creates the builtin representing false.  
+	 *
+	 * @return The builtin representing false.  
+	 */
+	public abstract IAtom createFalse();
 	
 }
 
