@@ -22,11 +22,11 @@
  */
 package org.deri.iris.parser;
 
+import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
-import static org.deri.iris.MiscHelper.createLiteral;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,7 +39,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
@@ -249,6 +248,20 @@ public class ParserTest extends TestCase {
 		assertResult("fact(_base64binary('45df')).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createBase64Binary("45df"))), null);
 		// asserting the hex binary
 		assertResult("fact(_hexbinary('a1df')).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createHexBinary("a1df"))), null);
+		
+		// Testing YearMonthDuration.
+		assertResult("fact(_yearmonthduration(2009, 07)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createYearMonthDuration(true, 2009, 7))), null);
+		
+		// Testing DayTimeDuration.
+		assertResult("fact(_daytimeduration(1, 2, 5, 6.0)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createDayTimeDuration(true, 1, 2, 5, 6.0))), null);
+		assertResult("fact(_daytimeduration(1, 2, 5, 6, 500)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createDayTimeDuration(true, 1, 2, 5, 6, 500))), null);
+		
+		// Testing RDF Text.
+		assertResult("fact(_rdftext('Pwnage', 'en')).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createText("Pwnage", "en"))), null);
+		
+		// Testing XMLLiteral.
+		assertResult("fact(_xmlliteral('<tag attribute=\\\"value\\\">Text</tag>')).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createXMLLiteral("<tag attribute=\"value\">Text</tag>"))), null);
+		assertResult("fact(_xmlliteral('<tag attribute=\\\"value\\\">Text</tag>', 'en')).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createXMLLiteral("<tag attribute=\"value\">Text</tag>", "en"))), null);
 	}
 
 	public void testParseBinaryBuiltins() throws Exception {
