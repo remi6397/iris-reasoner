@@ -23,7 +23,6 @@
 package org.deri.iris.api.factory;
 
 
-import java.util.List;
 
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.builtins.IBuiltinAtom;
@@ -993,6 +992,19 @@ public interface IBuiltinsFactory {
 	 * @throws IllegalArgumentException if t is <code>null</code>
 	 */
 	public abstract IBuiltinAtom createIsDecimal(ITerm ... terms);
+	
+	/**
+	 * Creates IsDouble builtin. 
+	 *
+	 * @param terms The terms. 
+	 * @return the builtin
+	 * @throws NullPointerException
+	 *             if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if one of the terms is {@code null}
+	 * @throws IllegalArgumentException if the number of terms submitted is not correct
+	 * @throws IllegalArgumentException if t is <code>null</code>
+	 */
+	public abstract IAtom createIsDouble(ITerm ... terms);
 
 	/**
 	 * Creates IsDuration builtin. 
@@ -1202,6 +1214,8 @@ public interface IBuiltinsFactory {
 	 * @return The builtin representing false.  
 	 */
 	public abstract IAtom createFalse();
+
+	
 	
 }
 

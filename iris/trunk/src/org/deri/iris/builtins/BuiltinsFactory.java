@@ -33,6 +33,7 @@ import org.deri.iris.builtins.datatype.IsDateBuiltin;
 import org.deri.iris.builtins.datatype.IsDateTimeBuiltin;
 import org.deri.iris.builtins.datatype.IsDayTimeDurationBuiltin;
 import org.deri.iris.builtins.datatype.IsDecimalBuiltin;
+import org.deri.iris.builtins.datatype.IsDoubleBuiltin;
 import org.deri.iris.builtins.datatype.IsDurationBuiltin;
 import org.deri.iris.builtins.datatype.IsFloatBuiltin;
 import org.deri.iris.builtins.datatype.IsGDayBuiltin;
@@ -437,6 +438,10 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 
 	public IBuiltinAtom createIsDecimal(ITerm... terms) {
 		return new IsDecimalBuiltin(terms);
+	}
+	
+	public IBuiltinAtom createIsDouble(ITerm... terms) {
+		return new IsDoubleBuiltin(terms);
 	}
 
 	public IBuiltinAtom createIsDuration(ITerm... terms) {
