@@ -44,7 +44,6 @@ public class Atom implements IAtom {
 	
 	private final ITuple tuple;
 
-	@SuppressWarnings("unchecked") 
 	Atom(final IPredicate predicate, final ITuple tuple) {
 		if (predicate == null || tuple == null) {
 			throw new IllegalArgumentException("The parameters must not be null");
@@ -65,12 +64,10 @@ public class Atom implements IAtom {
 		return this.tuple;
 	}
 
-	@SuppressWarnings("unchecked")
 	public boolean isGround() {
 		return this.tuple.isGround();
 	}
 
-	@SuppressWarnings("unchecked")
 	public int compareTo(IAtom o) {
 		int res = 0;
 		if ((res = predicate.compareTo(o.getPredicate())) != 0) {
