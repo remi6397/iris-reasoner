@@ -31,7 +31,6 @@ import org.deri.iris.api.terms.concrete.IXMLLiteral;
  * Implementation of the rdf:XMLLiteral data-type.
  * 
  * @author gigi
- * 
  */
 public class XMLLiteral implements IXMLLiteral {
 
@@ -45,13 +44,36 @@ public class XMLLiteral implements IXMLLiteral {
 	 */
 	private String lang;
 
-	public XMLLiteral(String string, String lang) {
+	/**
+	 * Creates a new term representing a XMLLiteral.
+	 * 
+	 * @param string The string.
+	 * @param lang The language.
+	 * @throws NullPointerException If the value of <code>string</code> or
+	 *             <code>lang</code> is <code>null</code>.
+	 */
+	XMLLiteral(String string, String lang) {
+		if (string == null) {
+			throw new NullPointerException("String value must not be null");
+		}
+
+		if (lang == null) {
+			throw new NullPointerException("Language tag must not be null");
+		}
+
 		this.string = string;
 		this.lang = lang;
 	}
 
-	public XMLLiteral(String string) {
-		this(string, null);
+	/**
+	 * Creates a new term representing a XMLLiteral.
+	 * 
+	 * @param string The string.
+	 * @throws NullPointerException If the value of <code>string</code> is
+	 *             <code>null</code>.
+	 */
+	XMLLiteral(String string) {
+		this(string, "");
 	}
 
 	public String toString() {
@@ -89,11 +111,11 @@ public class XMLLiteral implements IXMLLiteral {
 
 	public int hashCode() {
 		int result = string.hashCode();
-		
+
 		if (lang != null) {
 			result = result * 37 + lang.hashCode();
 		}
-		
+
 		return result;
 	}
 
