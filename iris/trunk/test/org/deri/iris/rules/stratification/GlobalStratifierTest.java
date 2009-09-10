@@ -25,9 +25,12 @@ package org.deri.iris.rules.stratification;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import junit.framework.TestCase;
+
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.ITerm;

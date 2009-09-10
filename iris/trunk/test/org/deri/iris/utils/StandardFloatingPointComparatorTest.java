@@ -22,7 +22,6 @@
  */
 package org.deri.iris.utils;
 
-import org.deri.iris.utils.StandardFloatingPointComparator;
 import junit.framework.TestCase;
 
 public class StandardFloatingPointComparatorTest extends TestCase

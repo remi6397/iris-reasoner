@@ -22,9 +22,9 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.ObjectTests;
-
 import junit.framework.TestCase;
+
+import org.deri.iris.ObjectTests;
 
 /**
  * Simple tests for the implementation of the rdf:XMLLiteral

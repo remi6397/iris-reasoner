@@ -24,6 +24,8 @@ package org.deri.iris.topdown.oldt;
 
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.deri.iris.RuleUnsafeException;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
@@ -32,8 +34,6 @@ import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserException;
 import org.deri.iris.evaluation.topdown.TopDownHelper;
-
-import junit.framework.TestCase;
 
 /**
  * Test class for TopDownHelper.getVariableMapForVariableRenaming(rule, query)

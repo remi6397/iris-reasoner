@@ -22,8 +22,8 @@
  */
 package org.deri.iris.terms;
 
-import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 
 /**
  * <p>

@@ -26,9 +26,9 @@ package org.deri.iris.builtins;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 import junit.framework.TestCase;
+
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.MaxBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**

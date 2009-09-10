@@ -23,7 +23,9 @@
 package org.deri.iris.rules.compiler;
 
 import java.util.ArrayList;
+
 import junit.framework.TestCase;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltinAtom;

@@ -28,7 +28,6 @@ import junit.framework.TestCase;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.string.StringReplaceBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**

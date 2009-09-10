@@ -29,8 +29,8 @@ import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.deri.iris.api.terms.concrete.IGYear;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.concrete.IGYear;
 
 /**
  * <p>

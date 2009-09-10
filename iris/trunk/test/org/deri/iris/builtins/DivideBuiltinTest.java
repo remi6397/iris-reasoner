@@ -28,7 +28,7 @@ import static org.deri.iris.factory.Factory.TERM;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.deri.iris.EvaluationException;
+
 import org.deri.iris.api.terms.ITerm;
 
 /**

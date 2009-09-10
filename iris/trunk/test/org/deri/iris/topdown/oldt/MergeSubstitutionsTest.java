@@ -25,13 +25,13 @@ package org.deri.iris.topdown.oldt;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.topdown.TopDownHelper;
 import org.deri.iris.factory.Factory;
-
-import junit.framework.TestCase;
 
 /**
  * Test class for the mergeSubstitutions() helper method.  

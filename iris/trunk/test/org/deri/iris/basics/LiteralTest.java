@@ -26,6 +26,7 @@ import static org.deri.iris.factory.Factory.BASIC;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.deri.iris.MiscHelper;
 import org.deri.iris.ObjectTests;
 import org.deri.iris.api.basics.IAtom;

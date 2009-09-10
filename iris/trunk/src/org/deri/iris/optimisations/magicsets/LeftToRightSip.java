@@ -22,7 +22,6 @@
  */
 package org.deri.iris.optimisations.magicsets;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,7 +41,6 @@ import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.factory.Factory;
 import org.deri.iris.graph.LabeledEdge;
 import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedPredicate;
 import org.jgrapht.DirectedGraph;

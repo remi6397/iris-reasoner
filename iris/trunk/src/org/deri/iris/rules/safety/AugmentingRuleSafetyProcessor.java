@@ -24,6 +24,7 @@ package org.deri.iris.rules.safety;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.deri.iris.RuleUnsafeException;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;

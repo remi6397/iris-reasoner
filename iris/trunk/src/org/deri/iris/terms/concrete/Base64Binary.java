@@ -25,8 +25,8 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 import java.util.regex.Pattern;
 
-import org.deri.iris.api.terms.concrete.IBase64Binary;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.concrete.IBase64Binary;
 
 /**
  * <p>

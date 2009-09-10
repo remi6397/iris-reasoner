@@ -23,10 +23,10 @@
 package org.deri.iris.storage.simple;
 
 import junit.framework.TestCase;
+
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.rules.compiler.Helper;
 import org.deri.iris.storage.IRelation;
-import org.deri.iris.storage.simple.SimpleRelation;
 
 public class TestSimpleRelation extends TestCase
 {

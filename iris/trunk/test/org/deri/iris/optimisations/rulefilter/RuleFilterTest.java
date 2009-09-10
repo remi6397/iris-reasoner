@@ -24,14 +24,12 @@ package org.deri.iris.optimisations.rulefilter;
 
 import java.util.HashSet;
 
-import org.deri.iris.api.basics.IRule;
-
-import org.deri.iris.compiler.Parser;
-//import org.deri.iris.optimisations.RuleFilter;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.deri.iris.api.basics.IRule;
+import org.deri.iris.compiler.Parser;
 
 /**
  * Tests the rule filter.

@@ -28,7 +28,6 @@ import junit.framework.TestCase;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.date.MonthPartBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**

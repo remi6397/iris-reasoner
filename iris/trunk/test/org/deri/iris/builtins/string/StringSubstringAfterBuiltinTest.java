@@ -26,7 +26,6 @@ import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.string.StringSubstringAfterBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**

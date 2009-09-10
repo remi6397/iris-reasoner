@@ -24,8 +24,8 @@ package org.deri.iris.terms.concrete;
 
 import java.net.URI;
 
-import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.concrete.IIntegerTerm;
 
 /**
  * <p>

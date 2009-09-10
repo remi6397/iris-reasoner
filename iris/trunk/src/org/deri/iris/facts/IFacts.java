@@ -23,6 +23,7 @@
 package org.deri.iris.facts;
 
 import java.util.Set;
+
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.storage.IRelation;
 

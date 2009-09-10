@@ -26,11 +26,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IRule;
-
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserException;
-import org.deri.iris.EvaluationException;
 
 /**
  * <p>

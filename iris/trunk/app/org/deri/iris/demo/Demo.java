@@ -24,14 +24,15 @@ package org.deri.iris.demo;
 
 import java.io.FileReader;
 import java.io.IOException;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.KnowledgeBaseFactory;
 import org.deri.iris.evaluation.stratifiedbottomup.StratifiedBottomUpEvaluationStrategyFactory;
 import org.deri.iris.evaluation.stratifiedbottomup.naive.NaiveEvaluatorFactory;
 import org.deri.iris.evaluation.stratifiedbottomup.seminaive.SemiNaiveEvaluatorFactory;
 import org.deri.iris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
-import org.deri.iris.optimisations.rulefilter.RuleFilter;
 import org.deri.iris.optimisations.magicsets.MagicSets;
+import org.deri.iris.optimisations.rulefilter.RuleFilter;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 import org.deri.iris.rules.safety.StandardRuleSafetyProcessor;
 

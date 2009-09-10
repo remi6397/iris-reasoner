@@ -23,6 +23,7 @@
 package org.deri.iris.functional;
 
 import junit.framework.TestCase;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.KnowledgeBaseFactory;

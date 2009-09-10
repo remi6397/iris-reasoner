@@ -25,11 +25,11 @@ package org.deri.iris.builtins;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
-import org.deri.iris.api.builtins.IBuiltinAtom;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.deri.iris.api.builtins.IBuiltinAtom;
 
 /**
  * Tests for the exact equal built-in.

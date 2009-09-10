@@ -23,6 +23,7 @@
 package org.deri.iris.functional;
 
 import junit.framework.TestCase;
+
 import org.deri.iris.RuleUnsafeException;
 import org.deri.iris.compiler.ParserException;
 

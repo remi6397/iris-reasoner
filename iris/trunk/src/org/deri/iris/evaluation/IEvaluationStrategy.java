@@ -23,6 +23,7 @@
 package org.deri.iris.evaluation;
 
 import java.util.List;
+
 import org.deri.iris.EvaluationException;
 import org.deri.iris.ProgramNotStratifiedException;
 import org.deri.iris.RuleUnsafeException;

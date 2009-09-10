@@ -23,7 +23,7 @@
 package org.deri.iris.utils;
 
 import java.util.Iterator;
-import org.deri.iris.utils.UniqueList;
+
 import junit.framework.TestCase;
 
 public class UniqueListTest extends TestCase

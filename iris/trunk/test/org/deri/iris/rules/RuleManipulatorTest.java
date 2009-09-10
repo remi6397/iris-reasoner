@@ -23,10 +23,12 @@
 package org.deri.iris.rules;
 
 import static org.deri.iris.factory.Factory.BASIC;
-import static org.deri.iris.factory.Factory.TERM;
 import static org.deri.iris.factory.Factory.CONCRETE;
+import static org.deri.iris.factory.Factory.TERM;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.deri.iris.api.basics.IAtom;
@@ -35,7 +37,6 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.EqualBuiltin;
-import org.deri.iris.rules.RuleManipulator;
 
 public class RuleManipulatorTest extends TestCase
 {

@@ -25,6 +25,7 @@ package org.deri.iris.builtins;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.builtins.IBuiltinAtom;

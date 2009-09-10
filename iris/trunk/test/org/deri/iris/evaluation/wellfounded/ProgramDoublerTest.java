@@ -23,7 +23,9 @@
 package org.deri.iris.evaluation.wellfounded;
 
 import java.util.List;
+
 import junit.framework.TestCase;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IRule;

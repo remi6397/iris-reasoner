@@ -32,7 +32,6 @@ import java.util.Set;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.storage.IRelation;
 
 /**
  * <p>

@@ -24,6 +24,7 @@ package org.deri.iris.rules;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.ILiteral;

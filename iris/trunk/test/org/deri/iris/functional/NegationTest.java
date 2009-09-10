@@ -22,9 +22,10 @@
  */
 package org.deri.iris.functional;
 
+import junit.framework.TestCase;
+
 import org.deri.iris.ProgramNotStratifiedException;
 import org.deri.iris.RuleUnsafeException;
-import junit.framework.TestCase;
 
 public class NegationTest extends TestCase
 {
