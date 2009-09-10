@@ -22,13 +22,13 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.ObjectTests;
-import org.deri.iris.TermTests;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 public class Base64BinaryTest extends TestCase {
 	private static final String BASIC = "adf3";

@@ -41,7 +41,6 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-
 import org.deri.iris.rules.RuleAnalyser;
 
 /**

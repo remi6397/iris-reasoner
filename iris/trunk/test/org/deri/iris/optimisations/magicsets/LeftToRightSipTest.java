@@ -22,11 +22,10 @@
  */
 package org.deri.iris.optimisations.magicsets;
 
+import static org.deri.iris.MiscHelper.createLiteral;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.TERM;
-import static org.deri.iris.MiscHelper.createLiteral;
-import static org.deri.iris.MiscHelper.createVarList;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,7 +38,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.deri.iris.api.basics.ILiteral;
-import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.compiler.Parser;

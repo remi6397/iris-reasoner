@@ -24,6 +24,7 @@ package org.deri.iris.evaluation.wellfounded;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;

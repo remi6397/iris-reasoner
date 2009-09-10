@@ -24,6 +24,7 @@ package org.deri.iris.builtins;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;

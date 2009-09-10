@@ -24,6 +24,7 @@ package org.deri.iris.rules.stratification;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;

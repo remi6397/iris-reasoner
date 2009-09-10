@@ -23,7 +23,9 @@
 package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.BASIC;
+
 import java.util.Arrays;
+
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.basics.IPredicate;

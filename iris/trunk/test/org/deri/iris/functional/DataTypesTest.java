@@ -22,8 +22,9 @@
  */
 package org.deri.iris.functional;
 
-import org.deri.iris.compiler.ParserException;
 import junit.framework.TestCase;
+
+import org.deri.iris.compiler.ParserException;
 
 /**
  * Tests for IRIS supported data types.

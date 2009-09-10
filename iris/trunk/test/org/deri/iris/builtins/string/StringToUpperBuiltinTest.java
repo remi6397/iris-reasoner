@@ -28,7 +28,6 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.string.StringToUpperBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**

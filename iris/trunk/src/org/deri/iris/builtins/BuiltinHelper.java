@@ -23,17 +23,18 @@
 package org.deri.iris.builtins;
 
 import static org.deri.iris.factory.Factory.CONCRETE;
+
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
+
 import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.ConfigurationThreadLocalStorage;
 import org.deri.iris.EvaluationException;

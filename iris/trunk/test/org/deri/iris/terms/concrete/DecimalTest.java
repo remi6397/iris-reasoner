@@ -22,12 +22,12 @@
  */
 package org.deri.iris.terms.concrete;
 
-import org.deri.iris.ObjectTests;
-import org.deri.iris.TermTests;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.deri.iris.ObjectTests;
+import org.deri.iris.TermTests;
 
 /**
  * <p>

@@ -24,6 +24,7 @@ package org.deri.iris.evaluation.stratifiedbottomup;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.ProgramNotStratifiedException;
 import org.deri.iris.RuleUnsafeException;

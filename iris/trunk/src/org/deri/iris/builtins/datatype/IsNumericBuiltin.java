@@ -23,8 +23,8 @@
 package org.deri.iris.builtins.datatype;
 
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.INumericTerm;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.BooleanBuiltin;
 
 /**

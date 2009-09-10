@@ -24,6 +24,7 @@ package org.deri.iris.builtins;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;

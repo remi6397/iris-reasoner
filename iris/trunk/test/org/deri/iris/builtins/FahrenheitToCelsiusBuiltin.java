@@ -28,6 +28,7 @@ import static org.deri.iris.builtins.BuiltinHelper.multiply;
 import static org.deri.iris.builtins.BuiltinHelper.subtract;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
+
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;

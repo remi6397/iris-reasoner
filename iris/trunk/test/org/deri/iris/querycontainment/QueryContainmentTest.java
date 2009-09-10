@@ -23,9 +23,11 @@
 package org.deri.iris.querycontainment;
 
 import java.util.List;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.compiler.Parser;

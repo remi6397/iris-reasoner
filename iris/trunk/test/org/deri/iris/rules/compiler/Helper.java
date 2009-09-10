@@ -25,8 +25,10 @@ package org.deri.iris.rules.compiler;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;

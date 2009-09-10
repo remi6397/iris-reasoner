@@ -28,6 +28,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
+
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;

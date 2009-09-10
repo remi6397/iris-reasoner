@@ -23,6 +23,7 @@
 package org.deri.iris.functional;
 
 import junit.framework.TestCase;
+
 import org.deri.iris.RuleUnsafeException;
 
 public class FunctionSymbolsTest extends TestCase

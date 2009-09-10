@@ -24,13 +24,13 @@ package org.deri.iris.topdown.oldt;
 
 import java.util.HashSet;
 
+import junit.framework.TestCase;
+
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserException;
 import org.deri.iris.evaluation.topdown.RecursivePredicateTagger;
 import org.deri.iris.factory.Factory;
-
-import junit.framework.TestCase;
 
 /**
  * 

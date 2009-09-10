@@ -24,6 +24,7 @@ package org.deri.iris.utils;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.storage.IRelation;
 

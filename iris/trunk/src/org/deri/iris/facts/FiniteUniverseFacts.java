@@ -24,6 +24,7 @@ package org.deri.iris.facts;
 
 import java.util.Collection;
 import java.util.Set;
+
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;

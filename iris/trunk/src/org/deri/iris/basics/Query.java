@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.deri.iris.VariableExtractor;
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.VariableExtractor;
 
 /**
  * <p>

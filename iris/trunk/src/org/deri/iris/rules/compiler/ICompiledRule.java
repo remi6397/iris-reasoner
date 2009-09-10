@@ -23,6 +23,7 @@
 package org.deri.iris.rules.compiler;
 
 import java.util.List;
+
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IVariable;

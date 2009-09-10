@@ -23,6 +23,7 @@
 package org.deri.iris.evaluation.stratifiedbottomup.seminaive;
 
 import java.util.List;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;

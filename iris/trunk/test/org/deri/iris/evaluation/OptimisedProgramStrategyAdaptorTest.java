@@ -25,7 +25,9 @@ package org.deri.iris.evaluation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import junit.framework.TestCase;
+
 import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.ProgramNotStratifiedException;

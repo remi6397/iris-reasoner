@@ -22,14 +22,14 @@
  */
 package org.deri.iris.topdown;
 
+import junit.framework.TestCase;
+
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserException;
 import org.deri.iris.evaluation.topdown.ILiteralSelector;
 import org.deri.iris.evaluation.topdown.SafeStandardLiteralSelector;
-
-import junit.framework.TestCase;
 
 /**
  * Test class for SafeStandardLiteralSelector

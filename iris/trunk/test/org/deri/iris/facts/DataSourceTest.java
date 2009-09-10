@@ -24,18 +24,17 @@ package org.deri.iris.facts;
 
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.deri.iris.Configuration;
+import org.deri.iris.KnowledgeBaseFactory;
+import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.Configuration;
-import org.deri.iris.KnowledgeBaseFactory;
 import org.deri.iris.storage.IRelation;
 
 /**

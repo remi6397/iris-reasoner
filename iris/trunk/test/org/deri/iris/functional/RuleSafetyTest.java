@@ -22,8 +22,9 @@
  */
 package org.deri.iris.functional;
 
-import org.deri.iris.RuleUnsafeException;
 import junit.framework.TestCase;
+
+import org.deri.iris.RuleUnsafeException;
 
 public class RuleSafetyTest extends TestCase
 {

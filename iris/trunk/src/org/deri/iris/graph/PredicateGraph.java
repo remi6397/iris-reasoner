@@ -34,13 +34,12 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.graph.IPredicateGraph;
-
-import org.jgrapht.alg.ConnectivityInspector;
-import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
-import org.jgrapht.graph.DirectedMultigraph;
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.graph.DirectedMultigraph;
 
 /**
  * <p>

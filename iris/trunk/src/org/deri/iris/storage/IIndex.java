@@ -23,6 +23,7 @@
 package org.deri.iris.storage;
 
 import java.util.List;
+
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 

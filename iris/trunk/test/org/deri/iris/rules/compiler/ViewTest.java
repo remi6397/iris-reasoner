@@ -23,7 +23,9 @@
 package org.deri.iris.rules.compiler;
 
 import java.util.List;
+
 import junit.framework.TestCase;
+
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;

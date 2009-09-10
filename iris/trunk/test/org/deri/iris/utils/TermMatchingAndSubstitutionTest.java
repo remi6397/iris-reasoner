@@ -24,13 +24,13 @@ package org.deri.iris.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
-import org.deri.iris.utils.TermMatchingAndSubstitution;
 
 public class TermMatchingAndSubstitutionTest extends TestCase
 {

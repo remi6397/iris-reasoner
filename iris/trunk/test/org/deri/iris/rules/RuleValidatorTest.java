@@ -22,11 +22,12 @@
  */
 package org.deri.iris.rules;
 
+import static org.deri.iris.factory.Factory.TERM;
 import junit.framework.TestCase;
+
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserException;
-import static org.deri.iris.factory.Factory.TERM;
 
 public class RuleValidatorTest extends TestCase
 {

@@ -23,9 +23,8 @@
 package org.deri.iris.builtins.string;
 
 import static org.deri.iris.factory.Factory.BASIC;
-import static org.deri.iris.factory.Factory.TERM;
 import static org.deri.iris.factory.Factory.CONCRETE;
-
+import static org.deri.iris.factory.Factory.TERM;
 import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
