@@ -27,7 +27,7 @@ import static org.deri.iris.factory.Factory.BASIC;
 import java.net.URI;
 
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.IConcreteTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IIri;
 import org.deri.iris.builtins.BooleanBuiltin;
@@ -58,8 +58,8 @@ public class IsDatatypeBuiltin extends BooleanBuiltin {
 
 	@Override
 	protected boolean computeResult(ITerm[] terms) {
-		if (terms[0] instanceof IConstantTerm) {
-			IConstantTerm term = (IConstantTerm) terms[0];
+		if (terms[0] instanceof IConcreteTerm) {
+			IConcreteTerm term = (IConcreteTerm) terms[0];
 
 			if (terms[1] instanceof IIri) {
 				URI iri = ((IIri) terms[1]).getURI();

@@ -22,12 +22,12 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.IConcreteTerm;
 
 /**
  * A term representing a rdf:XMLLiteral.
  */
-public interface IXMLLiteral extends IConstantTerm {
+public interface IXMLLiteral extends IConcreteTerm {
 
 	/*
 	 * (non-Javadoc)

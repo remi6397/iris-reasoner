@@ -22,14 +22,14 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.IConcreteTerm;
 
 
 /**
  * Represents the rdf:text data type. rdf:text are internationalized string values that
  * contain a tag indicating their spoken language, e.g. "Padre de familia@es".
  */
-public interface IText extends IConstantTerm {
+public interface IText extends IConcreteTerm {
 
 	/**
 	 * Returns the wrapped type. The first element of this array is the string

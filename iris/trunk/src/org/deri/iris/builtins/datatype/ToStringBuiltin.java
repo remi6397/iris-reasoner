@@ -26,7 +26,7 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
 
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.IConcreteTerm;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IText;
@@ -54,7 +54,7 @@ public class ToStringBuiltin extends ConversionBuiltin {
 
 	@Override
 	protected ITerm convert(ITerm term) {
-		if (term instanceof IConstantTerm) {
+		if (term instanceof IConcreteTerm) {
 			return toString(term);
 		}
 
@@ -96,7 +96,7 @@ public class ToStringBuiltin extends ConversionBuiltin {
 	 *         is not supported.
 	 */
 	public static IStringTerm toString(ITerm term) {
-		if (term instanceof IConstantTerm) {
+		if (term instanceof IConcreteTerm) {
 			if (term instanceof IText) {
 				return toString((IText) term);
 			} else if (term instanceof IStringTerm) {
@@ -105,7 +105,7 @@ public class ToStringBuiltin extends ConversionBuiltin {
 				return toString((IXMLLiteral) term);
 			}
 
-			String string = ((IConstantTerm) term).toCanonicalString();
+			String string = ((IConcreteTerm) term).toCanonicalString();
 			return TERM.createString(string);
 		}
 
