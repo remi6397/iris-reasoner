@@ -24,7 +24,7 @@ package org.deri.iris.api.terms.concrete;
 
 import javax.xml.datatype.Duration;
 
-import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.IConcreteTerm;
 
 /*
  * W3C specification: http://www.w3.org/TR/xpath-functions/#dt-yearMonthDuration
@@ -41,7 +41,7 @@ import org.deri.iris.api.terms.IConstantTerm;
  * primitive XML Schema data types.
  * </p>
  */
-public interface IYearMonthDuration extends IConstantTerm {
+public interface IYearMonthDuration extends IConcreteTerm {
 
 	/**
 	 * Returns the wrapped type.

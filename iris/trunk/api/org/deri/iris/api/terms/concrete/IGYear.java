@@ -22,7 +22,7 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.IConcreteTerm;
 
 /**
  * <p>
@@ -37,7 +37,7 @@ import org.deri.iris.api.terms.IConstantTerm;
  * @author Darko Anicic, DERI Innsbruck
  * @date 22.01.2007 16:20:59
  */
-public interface IGYear extends IConstantTerm
+public interface IGYear extends IConcreteTerm
 {
 	/**
 	 * Return the wrapped type.

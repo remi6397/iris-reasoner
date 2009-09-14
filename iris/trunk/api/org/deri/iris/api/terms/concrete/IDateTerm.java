@@ -26,7 +26,7 @@ import java.util.TimeZone;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.IConcreteTerm;
 
 /**
  * <p>
@@ -43,7 +43,7 @@ import org.deri.iris.api.terms.IConstantTerm;
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
-public interface IDateTerm extends IConstantTerm {
+public interface IDateTerm extends IConcreteTerm {
 	
 	/**
 	 * Return the wrapped type.

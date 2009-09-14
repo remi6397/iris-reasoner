@@ -22,7 +22,7 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.IConcreteTerm;
 
 /**
  * <p>
@@ -36,7 +36,7 @@ import org.deri.iris.api.terms.IConstantTerm;
  * @author Darko Anicic, DERI Innsbruck
  * @date   11.01.2006 15:25:47
  */
-public interface IBooleanTerm extends IConstantTerm
+public interface IBooleanTerm extends IConcreteTerm
 {
 	/**
 	 * Return the wrapped type.

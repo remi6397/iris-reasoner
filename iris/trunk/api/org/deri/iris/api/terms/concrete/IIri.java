@@ -24,7 +24,7 @@ package org.deri.iris.api.terms.concrete;
 
 import java.net.URI;
 
-import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.IConcreteTerm;
 
 /**
  * <p>
@@ -34,7 +34,7 @@ import org.deri.iris.api.terms.IConstantTerm;
  * 
  * @author Richard Pöttler
  */
-public interface IIri extends IConstantTerm
+public interface IIri extends IConcreteTerm
 {
 	/**
 	 * Return the wrapped type.

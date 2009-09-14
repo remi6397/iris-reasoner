@@ -22,7 +22,7 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.IConcreteTerm;
 
 /**
  * 
@@ -42,7 +42,7 @@ import org.deri.iris.api.terms.IConstantTerm;
  * 
  * @version $Revision: 1.5 $ $Date: 2007-10-09 20:21:21 $
  */
-public interface IGMonthDay extends IConstantTerm
+public interface IGMonthDay extends IConcreteTerm
 {
 	/**
 	 * Return the wrapped type.

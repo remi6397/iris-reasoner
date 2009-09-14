@@ -24,7 +24,7 @@ package org.deri.iris.api.terms.concrete;
 
 import javax.xml.datatype.Duration;
 
-import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.IConcreteTerm;
 
 /**
  * 
@@ -36,7 +36,7 @@ import org.deri.iris.api.terms.IConstantTerm;
  * primitive XML Schema datatypes.
  * </p>
  */
-public interface IDuration extends IConstantTerm {
+public interface IDuration extends IConcreteTerm {
 	/**
 	 * Return the wrapped type.
 	 */

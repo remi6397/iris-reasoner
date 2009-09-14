@@ -26,7 +26,7 @@ import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.terms.IConstantTerm;
+import org.deri.iris.api.terms.IConcreteTerm;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IText;
@@ -93,7 +93,7 @@ public class ToTextBuiltin extends ConversionBuiltin {
 	 *         is not supported.
 	 */
 	public static IText toText(ITerm term) {
-		if (term instanceof IConstantTerm) {
+		if (term instanceof IConcreteTerm) {
 			if (term instanceof IText) {
 				return (IText) term;
 			} else if (term instanceof IStringTerm) {

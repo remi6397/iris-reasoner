@@ -20,14 +20,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+
 package org.deri.iris.api.terms;
 
 import java.net.URI;
 
 /**
  * <p>
- * An interface representing a constant term. A constant term has a
- * corresponding data type.
+ * An interface representing a constant term. A concrete term has a
+ * corresponding data type. For instance, a term representing a double data type
+ * should return the URI "http://www.w3.org/2001/XMLSchema#double".
  * </p>
  * <p>
  * Remark: IRIS supports data types according to the standard specification for
@@ -38,11 +40,11 @@ import java.net.URI;
  * @see <a href="http://www.w3.org/2005/rules/wiki/DTB#Primitive_Datatypes">RIF:
  *      Primitive Datatypes</a>
  */
-public interface IConstantTerm extends ITerm {
+public interface IConcreteTerm extends ITerm {
 
 	/**
 	 * Returns the fully qualified identifier for the data type corresponding to
-	 * this term. For instance, all terms representing a double data tpye should
+	 * this term. For instance, a terms representing a double data type should
 	 * return the URI "http://www.w3.org/2001/XMLSchema#double".
 	 * 
 	 * @return The fully qualified identifier for the data type corresponding to
