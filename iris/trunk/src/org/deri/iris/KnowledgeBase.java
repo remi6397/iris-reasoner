@@ -31,6 +31,7 @@ import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.evaluation.IEvaluationStrategy;
 import org.deri.iris.evaluation.OptimisedProgramStrategyAdaptor;
@@ -90,7 +91,13 @@ public class KnowledgeBase implements IKnowledgeBase
 			for( IRule rule : rules )
 				System.out.println( rule );
 			System.out.println( "------------------------" );
-			System.out.println( mFacts );
+			for (IPredicate f : mFacts.getPredicates()) {
+				IRelation relation = mFacts.get(f);
+				for (int i = 0; i < relation.size(); i++) {
+					ITuple tuple = relation.get(i);
+					System.out.println(f + " " + tuple);
+				}
+			}
 		}
 
 		if( mConfiguration.programOptmimisers.size() > 0 )
@@ -111,6 +118,7 @@ public class KnowledgeBase implements IKnowledgeBase
 		// Store the configuration object against the current thread.
 		ConfigurationThreadLocalStorage.setConfiguration( mConfiguration );
 
+		
 		if( DEBUG )
 		{
 			System.out.println( "IRIS query" );
