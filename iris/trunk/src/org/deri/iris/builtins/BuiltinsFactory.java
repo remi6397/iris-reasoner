@@ -82,18 +82,26 @@ import org.deri.iris.builtins.string.LangFromTextBuiltin;
 import org.deri.iris.builtins.string.StringCompareBuiltin;
 import org.deri.iris.builtins.string.StringConcatBuiltin;
 import org.deri.iris.builtins.string.StringContainsBuiltin;
+import org.deri.iris.builtins.string.StringContainsWithoutCollationBuiltin;
 import org.deri.iris.builtins.string.StringEndsWithBuiltin;
+import org.deri.iris.builtins.string.StringEndsWithWithoutCollationBuiltin;
 import org.deri.iris.builtins.string.StringEscapeHtmlUriBuiltin;
 import org.deri.iris.builtins.string.StringFromTextBuiltin;
 import org.deri.iris.builtins.string.StringIriToUriBuiltin;
 import org.deri.iris.builtins.string.StringJoinBuiltin;
 import org.deri.iris.builtins.string.StringLengthBuiltin;
 import org.deri.iris.builtins.string.StringMatchesBuiltin;
+import org.deri.iris.builtins.string.StringMatchesWithoutFlagsBuiltin;
 import org.deri.iris.builtins.string.StringReplaceBuiltin;
+import org.deri.iris.builtins.string.StringReplaceWithoutFlagsBuiltin;
 import org.deri.iris.builtins.string.StringStartsWithBuiltin;
+import org.deri.iris.builtins.string.StringStartsWithWithoutCollationBuiltin;
 import org.deri.iris.builtins.string.StringSubstringAfterBuiltin;
+import org.deri.iris.builtins.string.StringSubstringAfterWithoutCollationBuiltin;
 import org.deri.iris.builtins.string.StringSubstringBeforeBuiltin;
+import org.deri.iris.builtins.string.StringSubstringBeforeWithoutCollationBuiltin;
 import org.deri.iris.builtins.string.StringSubstringBuiltin;
+import org.deri.iris.builtins.string.StringSubstringUntilEndBuiltin;
 import org.deri.iris.builtins.string.StringToLowerBuiltin;
 import org.deri.iris.builtins.string.StringToUpperBuiltin;
 import org.deri.iris.builtins.string.StringUriEncodeBuiltin;
@@ -216,7 +224,11 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 
 	public IBuiltinAtom createStringSubstring(ITerm... terms) {
-		return new StringSubstringBuiltin(terms);
+		if (terms.length <= 3) {
+			return new StringSubstringUntilEndBuiltin(terms);
+		} else {
+			return new StringSubstringBuiltin(terms);
+		}
 	}
 
 	public IBuiltinAtom createStringLength(ITerm... terms) {
@@ -244,31 +256,59 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 
 	public IBuiltinAtom createStringSubstringBefore(ITerm... terms) {
-		return new StringSubstringBeforeBuiltin(terms);
+		if (terms.length <= 3) {
+			return new StringSubstringBeforeWithoutCollationBuiltin(terms);
+		} else {
+			return new StringSubstringBeforeBuiltin(terms);
+		}
 	}
 
 	public IBuiltinAtom createStringSubstringAfter(ITerm... terms) {
-		return new StringSubstringAfterBuiltin(terms);
+		if (terms.length <= 3) {
+			return new StringSubstringAfterWithoutCollationBuiltin(terms);
+		} else {
+			return new StringSubstringAfterBuiltin(terms);
+		}
 	}
 
 	public IBuiltinAtom createStringReplace(ITerm... terms) {
-		return new StringReplaceBuiltin(terms);
+		if (terms.length <= 4) {
+			return new StringReplaceWithoutFlagsBuiltin(terms);
+		} else {
+			return new StringReplaceBuiltin(terms);
+		}
 	}
 
 	public IBuiltinAtom createStringContains(ITerm... terms) {
-		return new StringContainsBuiltin(terms);
+		if (terms.length <= 2) {
+			return new StringContainsWithoutCollationBuiltin(terms);
+		} else {
+			return new StringContainsBuiltin(terms);
+		}
 	}
 
 	public IBuiltinAtom createStringStartsWith(ITerm... terms) {
-		return new StringStartsWithBuiltin(terms);
+		if (terms.length <= 2) {
+			return new StringStartsWithWithoutCollationBuiltin(terms);
+		} else {
+			return new StringStartsWithBuiltin(terms);
+		}
 	}
 
 	public IBuiltinAtom createStringEndsWith(ITerm... terms) {
-		return new StringEndsWithBuiltin(terms);
+		if (terms.length <= 2) {
+			return new StringEndsWithWithoutCollationBuiltin(terms);
+		} else {
+			return new StringEndsWithBuiltin(terms);
+		}
 	}
 	
 	public IBuiltinAtom createStringMatches(ITerm... terms) {
-		return new StringMatchesBuiltin(terms);
+		if (terms.length <= 2) {
+			return new StringMatchesWithoutFlagsBuiltin(terms);
+		} else {
+			return new StringMatchesBuiltin(terms);
+		}
 	}
 
 	public IBuiltinAtom createYearPart(ITerm... terms) {
