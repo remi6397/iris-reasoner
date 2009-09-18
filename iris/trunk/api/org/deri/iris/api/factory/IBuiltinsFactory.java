@@ -1004,7 +1004,7 @@ public interface IBuiltinsFactory {
 	 * @throws IllegalArgumentException if the number of terms submitted is not correct
 	 * @throws IllegalArgumentException if t is <code>null</code>
 	 */
-	public abstract IAtom createIsDouble(ITerm ... terms);
+	public abstract IBuiltinAtom createIsDouble(ITerm ... terms);
 
 	/**
 	 * Creates IsDuration builtin. 
