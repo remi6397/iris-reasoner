@@ -151,7 +151,7 @@ public class IsDatatypeBuiltinTest extends TestCase {
 	}
 
 	public void testInteger() throws EvaluationException {
-		String iri = "http://www.w3.org/2001/XMLSchema#int";
+		String iri = "http://www.w3.org/2001/XMLSchema#integer";
 
 		check(true, CONCRETE.createInteger(1337), iri);
 		check(false, CONCRETE.createDouble(0.0), iri);
