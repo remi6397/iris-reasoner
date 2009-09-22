@@ -86,8 +86,9 @@ public class IntegerTerm implements IIntegerTerm {
 
 	public URI getDatatypeIRI() {
 		// This class represents a 32-bit integer, therefore the corresponding
-		// XML Schema data type is xs:int, not xs:integer.
-		return URI.create("http://www.w3.org/2001/XMLSchema#int");
+		// XML Schema data type should be xs:int, not xs:integer.
+		// TODO Fix data type IRI.
+		return URI.create("http://www.w3.org/2001/XMLSchema#integer");
 	}
 
 	public String toCanonicalString() {
