@@ -617,6 +617,19 @@ public interface IBuiltinsFactory {
 	public abstract IBuiltinAtom createLangFromText(ITerm ... terms);
 
 	/**
+	 * Creates TextLenght builtin. 
+	 *
+	 * @param terms The terms 
+	 * @return The builtin
+	 * @throws NullPointerException
+	 *             Iif any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if one of the terms is {@code null}
+	 * @throws IllegalArgumentException if the number of terms submitted is not correct
+	 * @throws IllegalArgumentException if t is <code>null</code>
+	 */
+	public abstract IBuiltinAtom createTextLength(ITerm ... terms);
+	
+	/**
 	 * Creates TextCompare builtin. 
 	 *
 	 * @param terms The terms. 

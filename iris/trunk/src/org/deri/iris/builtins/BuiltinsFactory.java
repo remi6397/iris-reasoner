@@ -22,7 +22,6 @@
  */
 package org.deri.iris.builtins;
 
-import org.deri.iris.api.basics.IAtom;
 import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.factory.IBuiltinsFactory;
 import org.deri.iris.api.terms.ITerm;
@@ -108,6 +107,7 @@ import org.deri.iris.builtins.string.StringUriEncodeBuiltin;
 import org.deri.iris.builtins.string.TextCompareBuiltin;
 import org.deri.iris.builtins.string.TextFromStringBuiltin;
 import org.deri.iris.builtins.string.TextFromStringLangBuiltin;
+import org.deri.iris.builtins.string.TextLengthBuiltin;
 
 /**
  * <p>
@@ -359,12 +359,15 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 		return new TextCompareBuiltin(terms);
 	}
 
+	public IBuiltinAtom createTextLength(ITerm... terms) {
+		return new TextLengthBuiltin(terms);
+	}
 	
-	public IAtom createFalse() {
+	public IBuiltinAtom createFalse() {
 		return new FalseBuiltin(new ITerm[0]);
 	}
 
-	public IAtom createTrue() {
+	public IBuiltinAtom createTrue() {
 		return new TrueBuiltin(new ITerm[0]);
 	}
 
