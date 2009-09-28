@@ -38,9 +38,14 @@ import org.deri.iris.factory.Factory;
  */
 public class StringJoinBuiltin extends FunctionalBuiltin {
 
-	/** The predicate defining this built-in. */
-	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"STRING_JOIN", 4);
+	/**
+	 * The predicate defining this built-in. Here special because RIF built-in
+	 * StringJoin can have arity X (RIF: func:string-join<N> string x N).
+	 */
+	private static final IPredicate PREDICATE = BASIC.createPredicate("STRING_JOIN", 4);
+	
+	// TODO mp : handle arity of N length ! 
+	// private IPredicate predicate = BASIC.createPredicate("STRING_JOIN", 4);
 
 	/**
 	 * Constructor. Four terms must be passed to the constructor, otherwise an
@@ -55,11 +60,22 @@ public class StringJoinBuiltin extends FunctionalBuiltin {
 	public StringJoinBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
+		
+	// mp: should be x strings:
+	// RIF: func:string-join<N> string x N
+	//		super(BASIC.createPredicate("STRING_JOIN", terms.length), terms);
+	//		predicate = BASIC.createPredicate("STRING_JOIN", terms.length);
+	//		if (terms.length < 4) {
+	//			throw new IllegalArgumentException("The amount of terms <" + terms.length + 
+	//					"> must match the arity of the predicate <" + "4" + ">");
+	//		}
+	
 
 	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		StringBuffer buffer = new StringBuffer();
 		String separator = null;
 
+		// the last one of the strings is the separator
 		if (terms[terms.length - 2] instanceof IStringTerm) {
 			separator = ((IStringTerm) terms[terms.length - 2]).getValue();
 		} else {
@@ -80,5 +96,15 @@ public class StringJoinBuiltin extends FunctionalBuiltin {
 		String result = buffer.toString();
 		return Factory.TERM.createString(result);
 	}
+
+	// /**
+	// * String join can have x string parameters
+	// *
+	// * @returns the Predicate with the specific arity.
+	// */
+	// @Override
+	// public IPredicate getPredicate() {
+	// return this.predicate;
+	// }
 
 }
