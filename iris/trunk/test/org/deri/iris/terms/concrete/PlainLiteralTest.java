@@ -28,91 +28,91 @@ import junit.framework.TestCase;
 import org.deri.iris.ObjectTests;
 
 /**
- * Test the implementation of the rdf:text data-type. Specification is available
- * at http://www.w3.org/TR/rdf-text/
+ * Test the implementation of the PlainLiteral data-type. Specification is
+ * available at http://www.w3.org/TR/rdf-text/.
  * 
  * @author gigi
- * 
  */
-public class TextTest extends TestCase {
+public class PlainLiteralTest extends TestCase {
 
 	private static final String STRING = "text";
+
 	private static final String LANG = "de";
 
 	private static final String LANG_AND_TEXT = "text@de";
 
 	public void testBasic() {
-		Text rdfText = new Text(STRING, LANG);
+		PlainLiteral rdfText = new PlainLiteral(STRING, LANG);
 
 		assertEquals(STRING, rdfText.getString());
 		assertEquals(LANG, rdfText.getLang());
 
-		Text rdfTextParsing = new Text(LANG_AND_TEXT);
+		PlainLiteral rdfTextParsing = new PlainLiteral(LANG_AND_TEXT);
 
 		assertEquals(STRING, rdfTextParsing.getString());
 		assertEquals(LANG, rdfTextParsing.getLang());
 
-		assertEquals("Object not initialized correctly", "foobar", new Text(
-				"foobar").getValue()[0]);
+		assertEquals("Object not initialized correctly", "foobar",
+				new PlainLiteral("foobar").getValue()[0]);
 	}
 
 	public void testSimpleParsing() {
-		Text rdfText = new Text("parser-test@home@de-AT");
+		PlainLiteral rdfText = new PlainLiteral("parser-test@home@de-AT");
 		assertEquals("parser-test@home", rdfText.getString());
 		assertEquals("de-AT", rdfText.getLang());
 
-		rdfText = new Text("some other rdf:text", "de");
+		rdfText = new PlainLiteral("some other rdf:text", "de");
 		assertEquals("some other rdf:text", rdfText.getString());
 		assertEquals("de", rdfText.getLang());
 
-		rdfText = new Text("some simple string without any language@");
+		rdfText = new PlainLiteral("some simple string without any language@");
 		assertEquals("some simple string without any language", rdfText
 				.getString());
 		assertEquals("", rdfText.getLang());
 
 		// rdf:text containing only the @ and a language tag
-		rdfText = new Text("@en");
+		rdfText = new PlainLiteral("@en");
 		assertEquals("", rdfText.getString());
 		assertEquals("en", rdfText.getLang());
 
-		rdfText = new Text("@");
+		rdfText = new PlainLiteral("@");
 		assertEquals("", rdfText.getString());
 		assertEquals("", rdfText.getLang());
 	}
 
 	public void testToString() {
-		Text rdfText = new Text("");
+		PlainLiteral rdfText = new PlainLiteral("");
 		assertEquals("@", rdfText.toString());
 
-		rdfText = new Text("some other rdf:text", "de");
+		rdfText = new PlainLiteral("some other rdf:text", "de");
 		assertEquals("some other rdf:text@de", rdfText.toString());
 	}
 
 	public void testCompareTo() {
-		Text rdfTextA = new Text("rdf:text to compare 1@en");
-		Text rdfTextB = new Text("rdf:text to compare 2@en");
-		Text rdfTextC = new Text("rdf:text to compare 1@en");
+		PlainLiteral rdfTextA = new PlainLiteral("rdf:text to compare 1@en");
+		PlainLiteral rdfTextB = new PlainLiteral("rdf:text to compare 2@en");
+		PlainLiteral rdfTextC = new PlainLiteral("rdf:text to compare 1@en");
 
 		ObjectTests.runTestCompareTo(rdfTextA, rdfTextC, rdfTextB);
 
 		assertEquals(-1, rdfTextA.compareTo(rdfTextB));
 		assertEquals(1, rdfTextB.compareTo(rdfTextA));
 
-		Text rdfTextA2 = new Text("rdf:text to compare 1@en");
+		PlainLiteral rdfTextA2 = new PlainLiteral("rdf:text to compare 1@en");
 		assertEquals(0, rdfTextA.compareTo(rdfTextA2));
 	}
 
 	public void testEquals() {
-		Text rdfTextA = new Text("rdf:text to compare 1@en");
-		Text rdfTextB = new Text("rdf:text to compare 1@de");
-		Text rdfTextC = new Text("rdf:text to compare 2@en");
+		PlainLiteral rdfTextA = new PlainLiteral("rdf:text to compare 1@en");
+		PlainLiteral rdfTextB = new PlainLiteral("rdf:text to compare 1@de");
+		PlainLiteral rdfTextC = new PlainLiteral("rdf:text to compare 2@en");
 
 		ObjectTests.runTestEquals(rdfTextA, rdfTextB, rdfTextC);
 	}
 
 	public void testHashCode() {
-		Text rdfTextA = new Text(STRING, LANG);
-		Text rdfTextB = new Text(STRING, LANG);
+		PlainLiteral rdfTextA = new PlainLiteral(STRING, LANG);
+		PlainLiteral rdfTextB = new PlainLiteral(STRING, LANG);
 
 		ObjectTests.runTestHashCode(rdfTextA, rdfTextB);
 	}

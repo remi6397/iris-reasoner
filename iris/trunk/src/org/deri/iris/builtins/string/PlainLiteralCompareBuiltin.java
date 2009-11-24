@@ -27,17 +27,15 @@ import static org.deri.iris.factory.Factory.BASIC;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IText;
+import org.deri.iris.api.terms.concrete.IPlainLiteral;
 import org.deri.iris.builtins.BuiltinHelper;
 import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents the RIF built-in func:text-compare as defined in
- * http://www.w3.org/2005/rules
- * /wiki/DTB#func:text-compare_.28adapted_from_rtfn:compare.29.
+ * Represents the RIF built-in function func:PlainLiteral-compare.
  */
-public class TextCompareBuiltin extends FunctionalBuiltin {
+public class PlainLiteralCompareBuiltin extends FunctionalBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
@@ -53,12 +51,12 @@ public class TextCompareBuiltin extends FunctionalBuiltin {
 	 *             3.
 	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
-	public TextCompareBuiltin(ITerm... terms) {
+	public PlainLiteralCompareBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
 	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
-		if (terms[0] instanceof IText) {
+		if (terms[0] instanceof IPlainLiteral) {
 			int result = BuiltinHelper.compare(terms[0], terms[1]);
 			return Factory.CONCRETE.createInteger(result);
 		}

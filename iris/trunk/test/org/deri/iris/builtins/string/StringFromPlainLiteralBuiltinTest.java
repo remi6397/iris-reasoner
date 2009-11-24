@@ -22,42 +22,46 @@
  */
 package org.deri.iris.builtins.string;
 
+import static org.deri.iris.factory.Factory.BASIC;
+import static org.deri.iris.factory.Factory.CONCRETE;
+import static org.deri.iris.factory.Factory.TERM;
 import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.factory.Factory;
 
 /**
- * Test for TextCompareBuiltin.
+ * Test for StringFromPlainLiteralBuiltin.
  */
-public class TextCompareBuiltinTest extends TestCase {
+public class StringFromPlainLiteralBuiltinTest extends TestCase {
 
-	private static final ITerm X = Factory.TERM.createVariable("X");
+	private static final ITerm X = TERM.createVariable("X");
 
-	private static final ITerm Y = Factory.TERM.createVariable("Y");
+	private static final ITerm Y = TERM.createVariable("Y");
 
-	private static final ITerm Z = Factory.TERM.createVariable("Z");
-
-	public TextCompareBuiltinTest(String name) {
+	public StringFromPlainLiteralBuiltinTest(String name) {
 		super(name);
 	}
 
-	public void testCompare() throws EvaluationException {
-		check(0, "foobar@de", "foobar@en");
-		check(0, "foobar@de", "foobar@de");
-		check(-1, "a@de", "b@en");
-		check(1, "b@de", "a@en");
+	public void testEvaluation() throws EvaluationException {
+		check("foobar", "foobar", "de");
 	}
 
-	private void check(int expected, String string1, String string2)
+	private void check(String expected, String text, String lang)
 			throws EvaluationException {
-		TextCompareBuiltin compare = new TextCompareBuiltin(Factory.CONCRETE
-				.createText(string1), Factory.CONCRETE.createText(string2), Z);
 
-		assertEquals(Factory.BASIC.createTuple(Factory.CONCRETE
-				.createInteger(expected)), compare.evaluate(Factory.BASIC
-				.createTuple(X, Y, Z)));
+		ITerm expectedTerm = TERM.createString(expected);
+		ITuple expectedTuple = BASIC.createTuple(expectedTerm);
+
+		ITerm textTerm = CONCRETE.createPlainLiteral(text, lang);
+		ITuple arguments = BASIC.createTuple(X, Y);
+
+		StringFromPlainLiteralBuiltin builtin = new StringFromPlainLiteralBuiltin(textTerm, Y);
+
+		ITuple actualTuple = builtin.evaluate(arguments);
+
+		assertEquals(expectedTuple, actualTuple);
 	}
 
 }

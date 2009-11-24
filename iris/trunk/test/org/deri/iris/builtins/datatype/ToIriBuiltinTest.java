@@ -127,7 +127,7 @@ public class ToIriBuiltinTest extends TestCase {
 
 	public void testText() throws EvaluationException {
 		equals(CONCRETE.createIri("http://www.w3.org/2007/rif#iri"), CONCRETE
-				.createText("http://www.w3.org/2007/rif#iri"));
+				.createPlainLiteral("http://www.w3.org/2007/rif#iri"));
 	}
 
 	public void testTime() throws EvaluationException {

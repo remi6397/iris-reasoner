@@ -29,7 +29,7 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IConcreteTerm;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IText;
+import org.deri.iris.api.terms.concrete.IPlainLiteral;
 import org.deri.iris.api.terms.concrete.IXMLLiteral;
 
 /**
@@ -74,13 +74,13 @@ public class ToStringBuiltin extends ConversionBuiltin {
 	}
 
 	/**
-	 * Converts a Text term to a String term. The language tag of the Text term
-	 * is omitted.
+	 * Converts a PlainLiteral term to a String term. The language tag of the
+	 * PlainLiteral term is omitted.
 	 * 
-	 * @param term The Text term to be converted.
+	 * @param term The PlainLiteral term to be converted.
 	 * @return A new String term representing the result of the conversion.
 	 */
-	public static IStringTerm toString(IText term) {
+	public static IStringTerm toString(IPlainLiteral term) {
 		String string = term.getString();
 		return TERM.createString(string);
 	}
@@ -97,8 +97,8 @@ public class ToStringBuiltin extends ConversionBuiltin {
 	 */
 	public static IStringTerm toString(ITerm term) {
 		if (term instanceof IConcreteTerm) {
-			if (term instanceof IText) {
-				return toString((IText) term);
+			if (term instanceof IPlainLiteral) {
+				return toString((IPlainLiteral) term);
 			} else if (term instanceof IStringTerm) {
 				return (IStringTerm) term;
 			} else if (term instanceof IXMLLiteral) {

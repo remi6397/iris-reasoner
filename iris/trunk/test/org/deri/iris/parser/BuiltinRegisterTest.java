@@ -109,7 +109,7 @@ public class BuiltinRegisterTest extends TestCase {
 		// Datatype check builtins for new datatypes DayTimeDuration, YearMonthDuration, Text and XMLLiteral.
 		checkRegisteredBuiltin("IS_DAYTIMEDURATION", org.deri.iris.builtins.datatype.IsDayTimeDurationBuiltin.class, 1 );
 		checkRegisteredBuiltin("IS_YEARMONTHDURATION", org.deri.iris.builtins.datatype.IsYearMonthDurationBuiltin.class, 1 );
-		checkRegisteredBuiltin("IS_TEXT", org.deri.iris.builtins.datatype.IsTextBuiltin.class, 1 );
+		checkRegisteredBuiltin("IS_TEXT", org.deri.iris.builtins.datatype.IsPlainLiteralBuiltin.class, 1 );
 		checkRegisteredBuiltin("IS_XMLLITERAL", org.deri.iris.builtins.datatype.IsXMLLiteralBuiltin.class, 1 );		
 		
 		checkRegisteredBuiltin("IS_DATATYPE", org.deri.iris.builtins.datatype.IsDatatypeBuiltin.class, 2 );
@@ -135,7 +135,7 @@ public class BuiltinRegisterTest extends TestCase {
 		checkRegisteredBuiltin("TO_INTEGER", org.deri.iris.builtins.datatype.ToIntegerBuiltin.class, 2 );
 		checkRegisteredBuiltin("TO_IRI", org.deri.iris.builtins.datatype.ToIriBuiltin.class, 2 );
 		checkRegisteredBuiltin("TO_STRING", org.deri.iris.builtins.datatype.ToStringBuiltin.class, 2 );
-		checkRegisteredBuiltin("TO_TEXT", org.deri.iris.builtins.datatype.ToTextBuiltin.class, 2 );
+		checkRegisteredBuiltin("TO_TEXT", org.deri.iris.builtins.datatype.ToPlainLiteralBuiltin.class, 2 );
 		checkRegisteredBuiltin("TO_TIME", org.deri.iris.builtins.datatype.ToTimeBuiltin.class, 2 );
 		checkRegisteredBuiltin("TO_XMLLITERAL", org.deri.iris.builtins.datatype.ToXMLLiteralBuiltin.class, 2 );
 		checkRegisteredBuiltin("TO_YEARMONTHDURATION", org.deri.iris.builtins.datatype.ToYearMonthDurationBuiltin.class, 2 );
@@ -150,7 +150,7 @@ public class BuiltinRegisterTest extends TestCase {
 		checkRegisteredBuiltin("YEAR_PART", org.deri.iris.builtins.date.YearPartBuiltin.class, 2 );
 		
 		// String builtins.
-		checkRegisteredBuiltin("LANG_FROM_TEXT", org.deri.iris.builtins.string.LangFromTextBuiltin.class, 2 );
+		checkRegisteredBuiltin("LANG_FROM_TEXT", org.deri.iris.builtins.string.LangFromPlainLiteralBuiltin.class, 2 );
 		checkRegisteredBuiltin("STRING_COMPARE", org.deri.iris.builtins.string.StringCompareBuiltin.class, 3 );
 		checkRegisteredBuiltin("STRING_CONCAT", org.deri.iris.builtins.string.StringConcatBuiltin.class, 3 );
 		checkRegisteredBuiltin("STRING_CONTAINS3", org.deri.iris.builtins.string.StringContainsBuiltin.class, 3 );
@@ -158,7 +158,7 @@ public class BuiltinRegisterTest extends TestCase {
 		checkRegisteredBuiltin("STRING_ENDS_WITH3", org.deri.iris.builtins.string.StringEndsWithBuiltin.class, 3 );
 		checkRegisteredBuiltin("STRING_ENDS_WITH2", org.deri.iris.builtins.string.StringEndsWithWithoutCollationBuiltin.class, 2 );
 		checkRegisteredBuiltin("STRING_ESCAPE_HTML_URI", org.deri.iris.builtins.string.StringEscapeHtmlUriBuiltin.class, 2 );
-		checkRegisteredBuiltin("STRING_FROM_TEXT", org.deri.iris.builtins.string.StringFromTextBuiltin.class, 2 );
+		checkRegisteredBuiltin("STRING_FROM_TEXT", org.deri.iris.builtins.string.StringFromPlainLiteralBuiltin.class, 2 );
 		checkRegisteredBuiltin("STRING_IRI_TO_URI", org.deri.iris.builtins.string.StringIriToUriBuiltin.class, 2 );
 		checkRegisteredBuiltin("STRING_JOIN", org.deri.iris.builtins.string.StringJoinBuiltin.class, 4 );
 		checkRegisteredBuiltin("STRING_LENGTH", org.deri.iris.builtins.string.StringLengthBuiltin.class, 2 );
@@ -177,10 +177,10 @@ public class BuiltinRegisterTest extends TestCase {
 		checkRegisteredBuiltin("STRING_TO_LOWER", org.deri.iris.builtins.string.StringToLowerBuiltin.class, 2 );
 		checkRegisteredBuiltin("STRING_TO_UPPER", org.deri.iris.builtins.string.StringToUpperBuiltin.class, 2 );
 		checkRegisteredBuiltin("STRING_URI_ENCODE", org.deri.iris.builtins.string.StringUriEncodeBuiltin.class, 2 );
-		checkRegisteredBuiltin("TEXT_COMPARE", org.deri.iris.builtins.string.TextCompareBuiltin.class, 3 );
-		checkRegisteredBuiltin("TEXT_FROM_STRING", org.deri.iris.builtins.string.TextFromStringBuiltin.class, 2 );
-		checkRegisteredBuiltin("TEXT_FROM_STRING_LANG", org.deri.iris.builtins.string.TextFromStringLangBuiltin.class, 3 );
-		checkRegisteredBuiltin("TEXT_LENGTH", org.deri.iris.builtins.string.TextLengthBuiltin.class, 2 );
+		checkRegisteredBuiltin("TEXT_COMPARE", org.deri.iris.builtins.string.PlainLiteralCompareBuiltin.class, 3 );
+		checkRegisteredBuiltin("TEXT_FROM_STRING", org.deri.iris.builtins.string.PlainLiteralFromStringBuiltin.class, 2 );
+		checkRegisteredBuiltin("TEXT_FROM_STRING_LANG", org.deri.iris.builtins.string.PlainLiteralFromStringLangBuiltin.class, 3 );
+		checkRegisteredBuiltin("TEXT_LENGTH", org.deri.iris.builtins.string.PlainLiteralLengthBuiltin.class, 2 );
 	}
 
 	/**

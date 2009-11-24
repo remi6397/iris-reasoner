@@ -40,8 +40,8 @@ import org.deri.iris.api.terms.concrete.IGYearMonth;
 import org.deri.iris.api.terms.concrete.IHexBinary;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.concrete.IIri;
+import org.deri.iris.api.terms.concrete.IPlainLiteral;
 import org.deri.iris.api.terms.concrete.ISqName;
-import org.deri.iris.api.terms.concrete.IText;
 import org.deri.iris.api.terms.concrete.ITime;
 import org.deri.iris.api.terms.concrete.IXMLLiteral;
 import org.deri.iris.api.terms.concrete.IYearMonthDuration;
@@ -173,12 +173,12 @@ public class ConcreteFactory implements IConcreteFactory {
 		return new SqName(iri, name);
 	}
 
-	public IText createText(final String string, final String language) {
-		return new Text(string, language);
+	public IPlainLiteral createPlainLiteral(final String string, final String language) {
+		return new PlainLiteral(string, language);
 	}
 
-	public IText createText(final String string) {
-		return new Text(string);
+	public IPlainLiteral createPlainLiteral(final String string) {
+		return new PlainLiteral(string);
 	}
 
 	public IXMLLiteral createXMLLiteral(String string) {

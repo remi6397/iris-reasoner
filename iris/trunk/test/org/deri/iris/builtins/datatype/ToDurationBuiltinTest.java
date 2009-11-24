@@ -123,7 +123,7 @@ public class ToDurationBuiltinTest extends TestCase {
 	}
 
 	public void testText() throws EvaluationException {
-		fails(CONCRETE.createText("Ein Text@de"));
+		fails(CONCRETE.createPlainLiteral("Ein Text@de"));
 	}
 
 	public void testTime() throws EvaluationException {

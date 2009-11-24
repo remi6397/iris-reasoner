@@ -24,13 +24,13 @@ package org.deri.iris.builtins.datatype;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IText;
+import org.deri.iris.api.terms.concrete.IPlainLiteral;
 import org.deri.iris.builtins.BooleanBuiltin;
 
 /**
- * Checks if a term is of type 'Text'.
+ * Checks if a term is of type 'PlainLiteral'.
  */
-public class IsTextBuiltin extends BooleanBuiltin {
+public class IsPlainLiteralBuiltin extends BooleanBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
@@ -41,12 +41,12 @@ public class IsTextBuiltin extends BooleanBuiltin {
 	 * 
 	 * @param terms The list of terms. Must always be of length 1 in this case.
 	 */
-	public IsTextBuiltin(ITerm... terms) {
+	public IsPlainLiteralBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IText;
+		return terms[0] instanceof IPlainLiteral;
 	}
 
 }

@@ -32,31 +32,39 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 
 /**
- * Test for the TextFromStringBuiltin.
+ * Test for PlainLiteralFromStringLangBuiltin.
  */
-public class TextFromStringBuiltinTest extends TestCase {
+public class PlainLiteralFromStringLangBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
 
 	private static final ITerm Y = TERM.createVariable("Y");
 
-	public TextFromStringBuiltinTest(String name) {
+	private static final ITerm Z = TERM.createVariable("Z");
+
+	public PlainLiteralFromStringLangBuiltinTest(String name) {
 		super(name);
 	}
 
 	public void testEvaluation() throws EvaluationException {
-		ITerm expected = CONCRETE.createText("foobar", "de");
-		check(expected, "foobar@de");
+		ITerm expected = CONCRETE.createPlainLiteral("foobar", "de");
+		check(expected, "foobar", "de");
+
+		expected = CONCRETE.createPlainLiteral("foobar@de");
+		check(expected, "foobar", "de");
 	}
 
-	private void check(ITerm expectedTerm, String string)
+	private void check(ITerm expectedTerm, String text, String lang)
 			throws EvaluationException {
+
 		ITuple expectedTuple = BASIC.createTuple(expectedTerm);
-		ITerm textTerm = TERM.createString(string);
 
-		TextFromStringBuiltin builtin = new TextFromStringBuiltin(textTerm, Y);
-		ITuple arguments = BASIC.createTuple(X, Y);
+		ITerm textTerm = TERM.createString(text);
+		ITerm langTerm = TERM.createString(lang);
+		ITuple arguments = BASIC.createTuple(X, Y, Z);
 
+		PlainLiteralFromStringLangBuiltin builtin = new PlainLiteralFromStringLangBuiltin(
+				textTerm, langTerm, Z);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		assertEquals(expectedTuple, actualTuple);

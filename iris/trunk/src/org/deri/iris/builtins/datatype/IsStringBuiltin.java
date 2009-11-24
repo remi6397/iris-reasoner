@@ -25,6 +25,7 @@ package org.deri.iris.builtins.datatype;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.concrete.IPlainLiteral;
 import org.deri.iris.builtins.BooleanBuiltin;
 
 /**
@@ -45,7 +46,14 @@ public class IsStringBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IStringTerm;
+		ITerm term = terms[0];
+
+		// A PlainLiteral with empty language is a string.
+		if (term instanceof IPlainLiteral) {
+			return ((IPlainLiteral) term).getLang().isEmpty();
+		}
+
+		return term instanceof IStringTerm;
 	}
 
 	/** The predicate defining this built-in. */

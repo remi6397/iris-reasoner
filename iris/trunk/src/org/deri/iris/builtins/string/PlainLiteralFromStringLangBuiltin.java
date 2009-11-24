@@ -24,50 +24,45 @@ package org.deri.iris.builtins.string;
 
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
-import static org.deri.iris.factory.Factory.TERM;
-import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
-import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.builtins.FunctionalBuiltin;
 
 /**
- * Test for TextFromStringLangBuiltin.
+ * Represents the RIF built-in function func:PlainLiteral-from-string-lang.
  */
-public class TextFromStringLangBuiltinTest extends TestCase {
+public class PlainLiteralFromStringLangBuiltin extends FunctionalBuiltin {
 
-	private static final ITerm X = TERM.createVariable("X");
+	/** The predicate defining this built-in. */
+	private static final IPredicate PREDICATE = BASIC.createPredicate(
+			"TEXT_FROM_STRING_LANG", 3);
 
-	private static final ITerm Y = TERM.createVariable("Y");
-
-	private static final ITerm Z = TERM.createVariable("Z");
-
-	public TextFromStringLangBuiltinTest(String name) {
-		super(name);
+	/**
+	 * Constructor. Three terms must be passed to the constructor, otherwise an
+	 * exception will be thrown.
+	 * 
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             3.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
+	 */
+	public PlainLiteralFromStringLangBuiltin(ITerm... terms) {
+		super(PREDICATE, terms);
 	}
 
-	public void testEvaluation() throws EvaluationException {
-		ITerm expected = CONCRETE.createText("foobar", "de");
-		check(expected, "foobar", "de");
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
+		if (terms[0] instanceof IStringTerm && terms[1] instanceof IStringTerm) {
+			String text = ((IStringTerm) terms[0]).getValue();
+			String lang = ((IStringTerm) terms[1]).getValue();
 
-		expected = CONCRETE.createText("foobar@de");
-		check(expected, "foobar", "de");
-	}
+			return CONCRETE.createPlainLiteral(text, lang);
+		}
 
-	private void check(ITerm expectedTerm, String text, String lang)
-			throws EvaluationException {
-
-		ITuple expectedTuple = BASIC.createTuple(expectedTerm);
-
-		ITerm textTerm = TERM.createString(text);
-		ITerm langTerm = TERM.createString(lang);
-		ITuple arguments = BASIC.createTuple(X, Y, Z);
-
-		TextFromStringLangBuiltin builtin = new TextFromStringLangBuiltin(
-				textTerm, langTerm, Z);
-		ITuple actualTuple = builtin.evaluate(arguments);
-
-		assertEquals(expectedTuple, actualTuple);
+		return null;
 	}
 
 }

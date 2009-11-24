@@ -758,7 +758,7 @@ public class TreeWalker extends DepthFirstAdapter
 		String string = peeleStr(node.getString().getText().trim());
 		String lang = peeleStr(node.getLang().getText().trim());
 		
-		addTerm(CONCRETE.createText(string, lang));
+		addTerm(CONCRETE.createPlainLiteral(string, lang));
 	}
 	
 	@Override

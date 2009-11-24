@@ -29,18 +29,19 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IConcreteTerm;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IText;
+import org.deri.iris.api.terms.concrete.IPlainLiteral;
 import org.deri.iris.api.terms.concrete.IXMLLiteral;
 
 /**
  * Represents a data type conversion function, which converts supported data
- * type instances to Text instances. The following data types are supported:
+ * type instances to PlainLiteral instances. The following data types are
+ * supported:
  * <ul>
  * <li>String</li>
  * <li>All data types for which casting to string is supported</li>
  * </ul>
  */
-public class ToTextBuiltin extends ConversionBuiltin {
+public class ToPlainLiteralBuiltin extends ConversionBuiltin {
 
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
 			"TO_TEXT", 2);
@@ -51,61 +52,63 @@ public class ToTextBuiltin extends ConversionBuiltin {
 	 * @param terms The term representing the data type instance to be
 	 *            converted.
 	 */
-	public ToTextBuiltin(ITerm... terms) {
+	public ToPlainLiteralBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
 	@Override
 	protected ITerm convert(ITerm term) {
-		return toText(term);
+		return toPlainLiteral(term);
 	}
 
 	/**
-	 * Converts a XMLLiteral term to a Text term.
+	 * Converts a XMLLiteral term to a PlainLiteral term.
 	 * 
 	 * @param term The XMLLiteral term to be converted.
-	 * @return A new Text term representing the result of the conversion.
+	 * @return A new PlainLiteral term representing the result of the
+	 *         conversion.
 	 */
-	public static IText toText(IXMLLiteral term) {
-		return CONCRETE.createText(term.getString(), term.getLang());
+	public static IPlainLiteral toPlainLiteral(IXMLLiteral term) {
+		return CONCRETE.createPlainLiteral(term.getString(), term.getLang());
 	}
 
 	/**
-	 * Converts a String term to a Text term.
+	 * Converts a String term to a PlainLiteral term.
 	 * 
 	 * @param term The String term to be converted.
-	 * @return A new Text term representing the result of the conversion.
+	 * @return A new PlainLiteral term representing the result of the
+	 *         conversion.
 	 */
-	public static IText toText(IStringTerm term) {
+	public static IPlainLiteral toPlainLiteral(IStringTerm term) {
 		String value = term.getValue();
-		return CONCRETE.createText(value);
+		return CONCRETE.createPlainLiteral(value);
 	}
 
 	/**
-	 * Converts a constant term to a Text term. For data types other than Text
-	 * and XMLLiteral, the <code>toCanonicalString</code> method of the given
-	 * term is used to convert to first convert to a String term and then to a
-	 * Text term.
+	 * Converts a constant term to a PlainLiteral term. For data types other
+	 * than Text and XMLLiteral, the <code>toCanonicalString</code> method of
+	 * the given term is used to convert to first convert to a String term and
+	 * then to a PlainLiteral term.
 	 * 
 	 * @param term The term to be converted.
-	 * @return A new String term representing the result of the conversion, or
-	 *         <code>null</code> if the data type represented by the given term
-	 *         is not supported.
+	 * @return A new PlainLiteral term representing the result of the
+	 *         conversion, or <code>null</code> if the data type represented by
+	 *         the given term is not supported.
 	 */
-	public static IText toText(ITerm term) {
+	public static IPlainLiteral toPlainLiteral(ITerm term) {
 		if (term instanceof IConcreteTerm) {
-			if (term instanceof IText) {
-				return (IText) term;
+			if (term instanceof IPlainLiteral) {
+				return (IPlainLiteral) term;
 			} else if (term instanceof IStringTerm) {
-				return toText((IStringTerm) term);
+				return toPlainLiteral((IStringTerm) term);
 			} else if (term instanceof IXMLLiteral) {
-				return toText((IXMLLiteral) term);
+				return toPlainLiteral((IXMLLiteral) term);
 			}
 
 			IStringTerm string = ToStringBuiltin.toString(term);
 
 			if (string != null) {
-				return toText(string);
+				return toPlainLiteral(string);
 			}
 		}
 

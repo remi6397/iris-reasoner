@@ -114,7 +114,7 @@ public final class BuiltinRegister {
 		registerBuiltin( new org.deri.iris.builtins.datatype.IsNumericBuiltin( t1 ) );
 		registerBuiltin( new org.deri.iris.builtins.datatype.IsSqNameBuiltin( t1 ) );
 		registerBuiltin( new org.deri.iris.builtins.datatype.IsStringBuiltin( t1 ) );
-		registerBuiltin( new org.deri.iris.builtins.datatype.IsTextBuiltin( t1 ) );
+		registerBuiltin( new org.deri.iris.builtins.datatype.IsPlainLiteralBuiltin( t1 ) );
 		registerBuiltin( new org.deri.iris.builtins.datatype.IsTimeBuiltin( t1 ) );
 		registerBuiltin( new org.deri.iris.builtins.datatype.IsXMLLiteralBuiltin( t1 ) );
 		registerBuiltin( new org.deri.iris.builtins.datatype.IsYearMonthDurationBuiltin( t1 ) );
@@ -143,7 +143,7 @@ public final class BuiltinRegister {
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToIntegerBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToIriBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToStringBuiltin(t1, t2));
-		registerBuiltin(new org.deri.iris.builtins.datatype.ToTextBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToPlainLiteralBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToTimeBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToXMLLiteralBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToYearMonthDurationBuiltin(t1, t2));
@@ -158,7 +158,7 @@ public final class BuiltinRegister {
 		registerBuiltin(new org.deri.iris.builtins.date.YearPartBuiltin(t1, t2));
 		
 		// String builtins.
-		registerBuiltin(new org.deri.iris.builtins.string.LangFromTextBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.LangFromPlainLiteralBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.string.StringCompareBuiltin(t1, t2, t3));
 		registerBuiltin(new org.deri.iris.builtins.string.StringConcatBuiltin(t1, t2, t3));
 		registerBuiltin(new org.deri.iris.builtins.string.StringContainsBuiltin(t1, t2, t3));
@@ -166,7 +166,7 @@ public final class BuiltinRegister {
 		registerBuiltin(new org.deri.iris.builtins.string.StringEndsWithBuiltin(t1, t2, t3));
 		registerBuiltin(new org.deri.iris.builtins.string.StringEndsWithWithoutCollationBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.string.StringEscapeHtmlUriBuiltin(t1, t2));
-		registerBuiltin(new org.deri.iris.builtins.string.StringFromTextBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.StringFromPlainLiteralBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.string.StringIriToUriBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.string.StringJoinBuiltin(t1, t2, t3, t4));
 		registerBuiltin(new org.deri.iris.builtins.string.StringLengthBuiltin(t1, t2));
@@ -185,10 +185,10 @@ public final class BuiltinRegister {
 		registerBuiltin(new org.deri.iris.builtins.string.StringToLowerBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.string.StringToUpperBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.string.StringUriEncodeBuiltin(t1, t2));
-		registerBuiltin(new org.deri.iris.builtins.string.TextCompareBuiltin(t1, t2, t2));
-		registerBuiltin(new org.deri.iris.builtins.string.TextFromStringBuiltin(t1, t2));
-		registerBuiltin(new org.deri.iris.builtins.string.TextFromStringLangBuiltin(t1, t2, t3));
-		registerBuiltin(new org.deri.iris.builtins.string.TextLengthBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.PlainLiteralCompareBuiltin(t1, t2, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.PlainLiteralFromStringBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.string.PlainLiteralFromStringLangBuiltin(t1, t2, t3));
+		registerBuiltin(new org.deri.iris.builtins.string.PlainLiteralLengthBuiltin(t1, t2));
 	}
 
 	/**
