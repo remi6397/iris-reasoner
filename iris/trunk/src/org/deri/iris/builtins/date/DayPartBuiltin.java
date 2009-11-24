@@ -36,9 +36,8 @@ import org.deri.iris.builtins.datatype.ToDayTimeDurationBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents the RIF built-ins func:day-from-dateTime, func:day-from-date and
- * func:days-from-duration functions as described in
- * http://www.w3.org/TR/xpath-functions/#func-day-from-dateTime.
+ * Represents the RIF built-in functions func:day-from-dateTime,
+ * func:day-from-date and func:days-from-duration.
  */
 public class DayPartBuiltin extends FunctionalBuiltin {
 

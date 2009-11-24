@@ -36,9 +36,8 @@ import org.deri.iris.builtins.datatype.ToYearMonthDurationBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents the RIF built-ins func:year-from-dateTime, func:year-from_date and
- * func:year-from-duration functions as described in
- * http://www.w3.org/TR/xpath-functions/#func-year-from-dateTime.
+ * Represents the RIF built-in functions func:year-from-dateTime,
+ * func:year-from-date and func:years-from-duration.
  */
 public class YearPartBuiltin extends FunctionalBuiltin {
 

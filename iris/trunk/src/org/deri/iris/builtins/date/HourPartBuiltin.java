@@ -35,9 +35,8 @@ import org.deri.iris.builtins.datatype.ToDayTimeDurationBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents the RIF built-ins func:hours-from-dateTime and
- * func:hours-from-duration functions as described in
- * http://www.w3.org/TR/xpath-functions/#func-hours-from-dateTime.
+ * Represents the RIF built-in functions func:hours-from-dateTime,
+ * func:hours-from-time and func:hours-from-duration.
  */
 public class HourPartBuiltin extends FunctionalBuiltin {
 

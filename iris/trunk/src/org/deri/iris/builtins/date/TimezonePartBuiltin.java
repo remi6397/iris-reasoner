@@ -37,9 +37,8 @@ import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents the RIF built-ins func:timezone-from-dateTime and
- * func:timezone-from-date and functions as described in
- * http://www.w3.org/TR/xpath-functions/#func-timezone-from-dateTime.
+ * Represents the RIF built-in functions func:timezone-from-dateTime and
+ * func:timezone-from-date.
  */
 public class TimezonePartBuiltin extends FunctionalBuiltin {
 
