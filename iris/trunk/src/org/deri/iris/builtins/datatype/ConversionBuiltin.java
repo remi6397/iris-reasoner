@@ -27,7 +27,7 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.FunctionalBuiltin;
 
 /**
- * Represents a data type conversion function. Implementations of this builtin
+ * Represents a data type conversion function. Implementations of this built-in
  * convert supported data types to a specific data type.
  */
 public abstract class ConversionBuiltin extends FunctionalBuiltin {
@@ -37,9 +37,9 @@ public abstract class ConversionBuiltin extends FunctionalBuiltin {
 	 * to this constructor must match the arity of the predicate, which in this
 	 * case must always be two.
 	 * 
-	 * @param predicate The special predicate for this builtin.
+	 * @param predicate The special predicate for this built-in.
 	 * @param terms The terms defining the values and variables for this
-	 *            builtin.
+	 *            built-in.
 	 * @throws NullPointerException If the predicate or the terms is {@code
 	 *             null}.
 	 * @throws NullPointerException If the terms contain {@code null}.
@@ -60,8 +60,8 @@ public abstract class ConversionBuiltin extends FunctionalBuiltin {
 	 * Converts the given supported data type instance to the specific data type
 	 * 
 	 * @param terms The term representing the data type to be converted.
-	 * @return The result of the conversion or <code>null</code> if the given
-	 *         data type is not supported.
+	 * @return The result of the conversion or <code>null</code> if the
+	 *         specified data value is not compatible.
 	 */
 	protected abstract ITerm convert(ITerm term);
 
