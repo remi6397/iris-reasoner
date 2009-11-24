@@ -127,7 +127,7 @@ public class ToTextBuiltinTest extends TestCase {
 	}
 
 	public void testText() throws EvaluationException {
-		equals("Ein Text@de", CONCRETE.createText("Ein Text@de"));
+		equals("Ein Text@de", CONCRETE.createPlainLiteral("Ein Text@de"));
 	}
 
 	public void testTime() throws EvaluationException {
@@ -145,14 +145,14 @@ public class ToTextBuiltinTest extends TestCase {
 	}
 
 	private void equals(String expected, ITerm term) throws EvaluationException {
-		ITuple expectedTuple = BASIC.createTuple(CONCRETE.createText(expected));
+		ITuple expectedTuple = BASIC.createTuple(CONCRETE.createPlainLiteral(expected));
 		ITuple actualTuple = compute(term);
 
 		assertEquals(expectedTuple, actualTuple);
 	}
 
 	private ITuple compute(ITerm term) throws EvaluationException {
-		ToTextBuiltin builtin = new ToTextBuiltin(term, Y);
+		ToPlainLiteralBuiltin builtin = new ToPlainLiteralBuiltin(term, Y);
 
 		ITuple arguments = BASIC.createTuple(X, Y);
 		ITuple actualTuple = builtin.evaluate(arguments);

@@ -22,46 +22,46 @@
  */
 package org.deri.iris.builtins.string;
 
+import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.TERM;
-import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
-import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IIntegerTerm;
-import org.deri.iris.api.terms.concrete.IText;
-import org.deri.iris.factory.Factory;
+import org.deri.iris.api.terms.concrete.IPlainLiteral;
+import org.deri.iris.builtins.FunctionalBuiltin;
 
 /**
- * Test for TextLengthBuiltin.
+ * Represents the RIF built-in function func:lang-from-PlainLiteral.
  */
-public class TextLengthBuiltinTest extends TestCase {
+public class LangFromPlainLiteralBuiltin extends FunctionalBuiltin {
 
-	private static final ITerm X = TERM.createVariable("X");
+	/** The predicate defining this built-in. */
+	private static final IPredicate PREDICATE = BASIC.createPredicate(
+			"LANG_FROM_TEXT", 2);
 
-	private static final ITerm Y = TERM.createVariable("Y");
-
-	public TextLengthBuiltinTest(String name) {
-		super(name);
+	/**
+	 * Constructor. Two terms must be passed to the constructor, otherwise an
+	 * exception will be thrown.
+	 * 
+	 * @param terms The terms.
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             2.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
+	 */
+	public LangFromPlainLiteralBuiltin(ITerm... terms) {
+		super(PREDICATE, terms);
 	}
 
-	public void testLength() throws EvaluationException {
-		check(6, "foobar@de");
-		check(0, "@en");
-		check(0, "@");
-	}
+	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
+		if (terms[0] instanceof IPlainLiteral) {
+			String string = ((IPlainLiteral) terms[0]).getLang();
 
-	public void check(int expected, String string) throws EvaluationException {
-		IIntegerTerm expectedTerm = Factory.CONCRETE.createInteger(expected);
-		ITuple expectedTuple = Factory.BASIC.createTuple(expectedTerm);
+			return TERM.createString(string);
+		}
 
-		IText stringTerm = Factory.CONCRETE.createText(string);
-		ITuple arguments = Factory.BASIC.createTuple(X, Y);
-
-		TextLengthBuiltin builtin = new TextLengthBuiltin(stringTerm, Y);
-		ITuple actualTuple = builtin.evaluate(arguments);
-
-		assertEquals(expectedTuple, actualTuple);
+		return null;
 	}
 
 }

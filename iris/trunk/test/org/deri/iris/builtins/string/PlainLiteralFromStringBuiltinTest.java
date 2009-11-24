@@ -24,46 +24,42 @@ package org.deri.iris.builtins.string;
 
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
+import static org.deri.iris.factory.Factory.TERM;
+import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
-import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.terms.IStringTerm;
+import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.FunctionalBuiltin;
 
 /**
- * Represents a text-from-string operation as defined in http://www.w3.org/2005
- * /rules/wiki/DTB#func:text-from-string_.28adapted_from_rtfn
- * :text-from-string.29.
+ * Test for the PlainLiteralFromStringBuiltin.
  */
-public class TextFromStringBuiltin extends FunctionalBuiltin {
+public class PlainLiteralFromStringBuiltinTest extends TestCase {
 
-	/** The predicate defining this built-in. */
-	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"TEXT_FROM_STRING", 2);
+	private static final ITerm X = TERM.createVariable("X");
 
-	/**
-	 * Constructor. Two terms must be passed to the constructor, otherwise an
-	 * exception will be thrown.
-	 * 
-	 * @param terms The terms.
-	 * @throws IllegalArgumentException If one of the terms is {@code null}.
-	 * @throws IllegalArgumentException If the number of terms submitted is not
-	 *             2.
-	 * @throws IllegalArgumentException If terms is <code>null</code>.
-	 */
-	public TextFromStringBuiltin(ITerm... terms) {
-		super(PREDICATE, terms);
+	private static final ITerm Y = TERM.createVariable("Y");
+
+	public PlainLiteralFromStringBuiltinTest(String name) {
+		super(name);
 	}
 
-	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
-		if (terms[0] instanceof IStringTerm) {
-			String string = ((IStringTerm) terms[0]).getValue();
+	public void testEvaluation() throws EvaluationException {
+		ITerm expected = CONCRETE.createPlainLiteral("foobar", "de");
+		check(expected, "foobar@de");
+	}
 
-			return CONCRETE.createText(string);
-		}
+	private void check(ITerm expectedTerm, String string)
+			throws EvaluationException {
+		ITuple expectedTuple = BASIC.createTuple(expectedTerm);
+		ITerm textTerm = TERM.createString(string);
 
-		return null;
+		PlainLiteralFromStringBuiltin builtin = new PlainLiteralFromStringBuiltin(textTerm, Y);
+		ITuple arguments = BASIC.createTuple(X, Y);
+
+		ITuple actualTuple = builtin.evaluate(arguments);
+
+		assertEquals(expectedTuple, actualTuple);
 	}
 
 }

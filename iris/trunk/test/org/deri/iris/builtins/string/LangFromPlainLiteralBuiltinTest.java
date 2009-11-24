@@ -32,15 +32,15 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 
 /**
- * Test for LangFromTextBuiltin.
+ * Test for LangFromPlainLiteralBuiltin.
  */
-public class LangFromTextBuiltinTest extends TestCase {
+public class LangFromPlainLiteralBuiltinTest extends TestCase {
 
 	private static final ITerm X = TERM.createVariable("X");
 
 	private static final ITerm Y = TERM.createVariable("Y");
 
-	public LangFromTextBuiltinTest(String name) {
+	public LangFromPlainLiteralBuiltinTest(String name) {
 		super(name);
 	}
 
@@ -53,10 +53,11 @@ public class LangFromTextBuiltinTest extends TestCase {
 		ITerm expectedTerm = TERM.createString(expected);
 		ITuple expectedTuple = BASIC.createTuple(expectedTerm);
 
-		ITerm textTerm = CONCRETE.createText(text, lang);
+		ITerm textTerm = CONCRETE.createPlainLiteral(text, lang);
 		ITuple arguments = BASIC.createTuple(X, Y);
 
-		LangFromTextBuiltin builtin = new LangFromTextBuiltin(textTerm, X);
+		LangFromPlainLiteralBuiltin builtin = new LangFromPlainLiteralBuiltin(
+				textTerm, X);
 		ITuple actualTuple = builtin.evaluate(arguments);
 
 		assertEquals(expectedTuple, actualTuple);

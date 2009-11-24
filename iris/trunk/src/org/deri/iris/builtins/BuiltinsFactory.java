@@ -44,7 +44,7 @@ import org.deri.iris.builtins.datatype.IsIntegerBuiltin;
 import org.deri.iris.builtins.datatype.IsIriBuiltin;
 import org.deri.iris.builtins.datatype.IsNotDatatypeBuiltin;
 import org.deri.iris.builtins.datatype.IsStringBuiltin;
-import org.deri.iris.builtins.datatype.IsTextBuiltin;
+import org.deri.iris.builtins.datatype.IsPlainLiteralBuiltin;
 import org.deri.iris.builtins.datatype.IsTimeBuiltin;
 import org.deri.iris.builtins.datatype.IsXMLLiteralBuiltin;
 import org.deri.iris.builtins.datatype.IsYearMonthDurationBuiltin;
@@ -66,7 +66,7 @@ import org.deri.iris.builtins.datatype.ToHexBinaryBuiltin;
 import org.deri.iris.builtins.datatype.ToIntegerBuiltin;
 import org.deri.iris.builtins.datatype.ToIriBuiltin;
 import org.deri.iris.builtins.datatype.ToStringBuiltin;
-import org.deri.iris.builtins.datatype.ToTextBuiltin;
+import org.deri.iris.builtins.datatype.ToPlainLiteralBuiltin;
 import org.deri.iris.builtins.datatype.ToTimeBuiltin;
 import org.deri.iris.builtins.datatype.ToXMLLiteralBuiltin;
 import org.deri.iris.builtins.datatype.ToYearMonthDurationBuiltin;
@@ -77,7 +77,7 @@ import org.deri.iris.builtins.date.MonthPartBuiltin;
 import org.deri.iris.builtins.date.SecondPartBuiltin;
 import org.deri.iris.builtins.date.TimezonePartBuiltin;
 import org.deri.iris.builtins.date.YearPartBuiltin;
-import org.deri.iris.builtins.string.LangFromTextBuiltin;
+import org.deri.iris.builtins.string.LangFromPlainLiteralBuiltin;
 import org.deri.iris.builtins.string.StringCompareBuiltin;
 import org.deri.iris.builtins.string.StringConcatBuiltin;
 import org.deri.iris.builtins.string.StringContainsBuiltin;
@@ -85,7 +85,7 @@ import org.deri.iris.builtins.string.StringContainsWithoutCollationBuiltin;
 import org.deri.iris.builtins.string.StringEndsWithBuiltin;
 import org.deri.iris.builtins.string.StringEndsWithWithoutCollationBuiltin;
 import org.deri.iris.builtins.string.StringEscapeHtmlUriBuiltin;
-import org.deri.iris.builtins.string.StringFromTextBuiltin;
+import org.deri.iris.builtins.string.StringFromPlainLiteralBuiltin;
 import org.deri.iris.builtins.string.StringIriToUriBuiltin;
 import org.deri.iris.builtins.string.StringJoinBuiltin;
 import org.deri.iris.builtins.string.StringLengthBuiltin;
@@ -104,10 +104,10 @@ import org.deri.iris.builtins.string.StringSubstringUntilEndBuiltin;
 import org.deri.iris.builtins.string.StringToLowerBuiltin;
 import org.deri.iris.builtins.string.StringToUpperBuiltin;
 import org.deri.iris.builtins.string.StringUriEncodeBuiltin;
-import org.deri.iris.builtins.string.TextCompareBuiltin;
-import org.deri.iris.builtins.string.TextFromStringBuiltin;
-import org.deri.iris.builtins.string.TextFromStringLangBuiltin;
-import org.deri.iris.builtins.string.TextLengthBuiltin;
+import org.deri.iris.builtins.string.PlainLiteralCompareBuiltin;
+import org.deri.iris.builtins.string.PlainLiteralFromStringBuiltin;
+import org.deri.iris.builtins.string.PlainLiteralFromStringLangBuiltin;
+import org.deri.iris.builtins.string.PlainLiteralLengthBuiltin;
 
 /**
  * <p>
@@ -340,27 +340,27 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 	
 	public IBuiltinAtom createTextFromStringLang(ITerm... terms) {
-		return new TextFromStringLangBuiltin(terms);
+		return new PlainLiteralFromStringLangBuiltin(terms);
 	}
 
 	public IBuiltinAtom createStringFromText(ITerm... terms) {
-		return new StringFromTextBuiltin(terms);
+		return new StringFromPlainLiteralBuiltin(terms);
 	}
 
 	public IBuiltinAtom createLangFromText(ITerm... terms) {
-		return new LangFromTextBuiltin(terms);
+		return new LangFromPlainLiteralBuiltin(terms);
 	}
 
 	public IBuiltinAtom createTextFromString(ITerm... terms) {
-		return new TextFromStringBuiltin(terms);
+		return new PlainLiteralFromStringBuiltin(terms);
 	}
 
 	public IBuiltinAtom createTextCompare(ITerm... terms) {
-		return new TextCompareBuiltin(terms);
+		return new PlainLiteralCompareBuiltin(terms);
 	}
 
 	public IBuiltinAtom createTextLength(ITerm... terms) {
-		return new TextLengthBuiltin(terms);
+		return new PlainLiteralLengthBuiltin(terms);
 	}
 	
 	public IBuiltinAtom createFalse() {
@@ -444,7 +444,7 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 
 	public IBuiltinAtom createToText(ITerm... terms) {
-		return new ToTextBuiltin(terms);
+		return new ToPlainLiteralBuiltin(terms);
 	}
 
 	public IBuiltinAtom createToTime(ITerm... terms) {
@@ -532,7 +532,7 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 
 	public IBuiltinAtom createIsText(ITerm... terms) {
-		return new IsTextBuiltin(terms);
+		return new IsPlainLiteralBuiltin(terms);
 	}
 
 	public IBuiltinAtom createIsTime(ITerm... terms) {

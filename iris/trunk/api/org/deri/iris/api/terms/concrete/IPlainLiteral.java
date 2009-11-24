@@ -24,12 +24,12 @@ package org.deri.iris.api.terms.concrete;
 
 import org.deri.iris.api.terms.IConcreteTerm;
 
-
 /**
- * Represents the rdf:text data type. rdf:text are internationalized string values that
- * contain a tag indicating their spoken language, e.g. "Padre de familia@es".
+ * Represents the rdf:PlainLiteral data type, formerly known as rdf:text.
+ * rdf:PlainLiteral is an internationalized string value that contains a
+ * language tag indicating it's spoken language, e.g. "Padre de familia@es".
  */
-public interface IText extends IConcreteTerm {
+public interface IPlainLiteral extends IConcreteTerm {
 
 	/**
 	 * Returns the wrapped type. The first element of this array is the string

@@ -177,7 +177,7 @@ public class IsDatatypeBuiltinTest extends TestCase {
 	public void testText() throws EvaluationException {
 		String iri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#text";
 
-		check(true, CONCRETE.createText("Ein Text@de"), iri);
+		check(true, CONCRETE.createPlainLiteral("Ein Text@de"), iri);
 		check(false, CONCRETE.createInteger(0), iri);
 	}
 

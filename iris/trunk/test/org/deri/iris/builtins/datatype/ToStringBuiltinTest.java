@@ -129,7 +129,7 @@ public class ToStringBuiltinTest extends TestCase {
 	}
 
 	public void testText() throws EvaluationException {
-		equals("Ein Text", CONCRETE.createText("Ein Text@de"));
+		equals("Ein Text", CONCRETE.createPlainLiteral("Ein Text@de"));
 	}
 
 	public void testTime() throws EvaluationException {

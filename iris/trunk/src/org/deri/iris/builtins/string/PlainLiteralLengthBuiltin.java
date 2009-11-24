@@ -27,16 +27,14 @@ import static org.deri.iris.factory.Factory.BASIC;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IText;
+import org.deri.iris.api.terms.concrete.IPlainLiteral;
 import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents the RIF built-in text-length as defined in
- * http://www.w3.org/2005/rules/
- * wiki/DTB#func:text-length_.28adapted_from_rtfn:length.29.
+ * Represents the RIF built-in function func:PlainLiteral-length.
  */
-public class TextLengthBuiltin extends FunctionalBuiltin {
+public class PlainLiteralLengthBuiltin extends FunctionalBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
@@ -52,13 +50,13 @@ public class TextLengthBuiltin extends FunctionalBuiltin {
 	 *             2.
 	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
-	public TextLengthBuiltin(ITerm... terms) {
+	public PlainLiteralLengthBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
 	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
-		if (terms[0] instanceof IText) {
-			String text = ((IText) terms[0]).getString();
+		if (terms[0] instanceof IPlainLiteral) {
+			String text = ((IPlainLiteral) terms[0]).getString();
 			int result = text.length();
 			return Factory.CONCRETE.createInteger(result);
 		}

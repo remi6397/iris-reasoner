@@ -25,12 +25,12 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IText;
+import org.deri.iris.api.terms.concrete.IPlainLiteral;
 
 /**
- * A term representing a rdf:text.
+ * A term representing a rdf:PlainLiteral, former known as rdf:text.
  */
-public class Text implements IText {
+public class PlainLiteral implements IPlainLiteral {
 
 	private String string;
 
@@ -44,7 +44,7 @@ public class Text implements IText {
 	 * @throws NullPointerException If the value of <code>string</code> or
 	 *             <code>lang</code> is <code>null</code>.
 	 */
-	Text(String string, String lang) {
+	PlainLiteral(String string, String lang) {
 		if (string == null) {
 			throw new NullPointerException("String value must not be null");
 		}
@@ -67,7 +67,7 @@ public class Text implements IText {
 	 * @throws NullPointerException If the value of <code>string</code> is
 	 *             <code>null</code>.
 	 */
-	Text(String string) {
+	PlainLiteral(String string) {
 		if (string == null) {
 			throw new NullPointerException("String value must not be null");
 		}
@@ -87,10 +87,9 @@ public class Text implements IText {
 		}
 	}
 
-	/*
-	 * Returns the a string representing the rdf:text in the form "text@lang".
-	 * (non-Javadoc)
-	 * @see org.deri.iris.api.terms.IStringTerm#getValue()
+	/**
+	 * Returns a string array where the first element is the text string and the
+	 * second element is the language tag.
 	 */
 	public String[] getValue() {
 		return new String[] { string, lang };
@@ -105,7 +104,7 @@ public class Text implements IText {
 			return 1;
 		}
 
-		IText thatText = (IText) o;
+		IPlainLiteral thatText = (IPlainLiteral) o;
 
 		/*
 		 * We compare the text value, since per definition two rdf:texts that
@@ -116,11 +115,11 @@ public class Text implements IText {
 	}
 
 	public boolean equals(final Object o) {
-		if (!(o instanceof IText)) {
+		if (!(o instanceof IPlainLiteral)) {
 			return false;
 		}
 
-		IText thatText = (IText) o;
+		IPlainLiteral thatText = (IPlainLiteral) o;
 		return getString().equals(thatText.getString());
 	}
 

@@ -29,7 +29,7 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IIri;
-import org.deri.iris.api.terms.concrete.IText;
+import org.deri.iris.api.terms.concrete.IPlainLiteral;
 import org.deri.iris.api.terms.concrete.IXMLLiteral;
 
 /**
@@ -64,8 +64,8 @@ public class ToIriBuiltin extends ConversionBuiltin {
 			return toIri((IStringTerm) term);
 		} else if (term instanceof IXMLLiteral) {
 			return toText((IXMLLiteral) term);
-		} else if (term instanceof IText) {
-			return toText((IText) term);
+		} else if (term instanceof IPlainLiteral) {
+			return toText((IPlainLiteral) term);
 		}
 
 		return null;
@@ -78,7 +78,7 @@ public class ToIriBuiltin extends ConversionBuiltin {
 	 * @return A new IRI term representing the result of the conversion, or
 	 *         <code>null</code> if the conversion fails.
 	 */
-	public static IIri toText(IText term) {
+	public static IIri toText(IPlainLiteral term) {
 		return toIri(term.getString());
 	}
 
