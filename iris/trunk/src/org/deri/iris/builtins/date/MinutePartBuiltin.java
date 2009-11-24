@@ -36,9 +36,8 @@ import org.deri.iris.builtins.datatype.ToDayTimeDurationBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents the RIF built-ins func:minutes-from-dateTime and
- * func:minutes-from-duration functions as described in
- * http://www.w3.org/TR/xpath-functions/#func-minutes-from-dateTime.
+ * Represents the RIF built-in functions func:minutes-from-dateTime,
+ * func:minutes-from-time and func:minutes-from-duration.
  */
 public class MinutePartBuiltin extends FunctionalBuiltin {
 

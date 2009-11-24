@@ -34,9 +34,8 @@ import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
 /**
- * Represents the RIF built-ins func:minutes-from-dateTime and
- * func:minutes-from-duration functions as described in
- * http://www.w3.org/TR/xpath-functions/#func-minutes-from-dateTime.
+ * Represents the RIF built-in functions func:seconds-from-dateTime,
+ * func:seconds-from-time and func:minutes-from-duration.
  */
 public class SecondPartBuiltin extends FunctionalBuiltin {
 
