@@ -2,7 +2,7 @@
  * Integrated Rule Inference System (IRIS):
  * An extensible rule inference system for datalog with extensions.
  * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
+ * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
  * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
  * 
  * This library is free software; you can redistribute it and/or
@@ -22,26 +22,36 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import org.deri.iris.api.terms.INumericTerm;
+import java.net.URI;
+
+import org.deri.iris.api.terms.IConcreteTerm;
 
 /**
  * <p>
- * An interface for representing the integer datatype. Referring to XML Schema
- * datatypes this interface represents the xsd:int datatype. In contrast to
- * xsd:integer the values of xsd:int consists of a finite-length sequence of
- * decimal digits, in the range of -2147483648 and 2147483647.
+ * Represents the XML Schema datatype xsd:anyURI.
  * </p>
  * <p>
- * Remark: IRIS supports datatypes according to the standard specification for
- * primitive XML Schema datatypes.
+ * xsd:anyURI represents a Uniform Resource Identifier Reference (URI). An
+ * xsd:anyURI value can be absolute or relative, and may have an optional
+ * fragment identifier (i.e., it may be a URI Reference). This type should be
+ * used to specify the intention that the value fulfills the role of a URI as
+ * defined by RFC 2396, as amended by RFC 2732.
  * </p>
  * 
- * @author Darko Anicic, DERI Innsbruck
- * @date 06.01.2006 17:18:34
+ * @author Adrian Marte
  */
-public interface IIntegerTerm extends INumericTerm {
+public interface IAnyURI extends IConcreteTerm {
+
 	/**
-	 * Return the wrapped type.
+	 * Defines the XML Schema datatype URI.
 	 */
-	public Integer getValue();
+	public static String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#anyURI";
+
+	/**
+	 * Returns the URI representing this anyURI.
+	 * 
+	 * @return The URI representing this anyURI.
+	 */
+	public URI getValue();
+
 }

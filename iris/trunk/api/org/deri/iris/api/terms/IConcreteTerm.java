@@ -27,9 +27,9 @@ import java.net.URI;
 
 /**
  * <p>
- * An interface representing a constant term. A concrete term has a
- * corresponding data type. For instance, a term representing a double data type
- * should return the URI "http://www.w3.org/2001/XMLSchema#double".
+ * An interface representing a concrete term. A concrete term has a
+ * corresponding data type URI. For instance, a term representing a double data
+ * type should return the URI "http://www.w3.org/2001/XMLSchema#double".
  * </p>
  * <p>
  * Remark: IRIS supports data types according to the standard specification for
@@ -37,8 +37,8 @@ import java.net.URI;
  * </p>
  * 
  * @see <a href="http://www.w3.org/TR/xmlschema-2/">XML Schema: Datatypes</a>
- * @see <a href="http://www.w3.org/2005/rules/wiki/DTB#Primitive_Datatypes">RIF:
- *      Primitive Datatypes</a>
+ * @see <a href="http://www.w3.org/2005/rules/wiki/DTB">RIF Datatypes and
+ *      Built-Ins</a>
  */
 public interface IConcreteTerm extends ITerm {
 

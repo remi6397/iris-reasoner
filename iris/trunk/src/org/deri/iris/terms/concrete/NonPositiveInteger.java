@@ -2,7 +2,7 @@
  * Integrated Rule Inference System (IRIS):
  * An extensible rule inference system for datalog with extensions.
  * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
+ * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
  * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
  * 
  * This library is free software; you can redistribute it and/or
@@ -20,28 +20,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.api.terms.concrete;
+package org.deri.iris.terms.concrete;
 
-import org.deri.iris.api.terms.INumericTerm;
+import java.net.URI;
+
+import org.deri.iris.api.terms.concrete.INonPositiveInteger;
 
 /**
  * <p>
- * An interface for representing the integer datatype. Referring to XML Schema
- * datatypes this interface represents the xsd:int datatype. In contrast to
- * xsd:integer the values of xsd:int consists of a finite-length sequence of
- * decimal digits, in the range of -2147483648 and 2147483647.
- * </p>
- * <p>
- * Remark: IRIS supports datatypes according to the standard specification for
- * primitive XML Schema datatypes.
+ * A simple implementation of NonPositiveInteger.
  * </p>
  * 
- * @author Darko Anicic, DERI Innsbruck
- * @date 06.01.2006 17:18:34
+ * @author Adrian Marte
  */
-public interface IIntegerTerm extends INumericTerm {
+public class NonPositiveInteger extends IntegerTerm implements
+		INonPositiveInteger {
+
 	/**
-	 * Return the wrapped type.
+	 * Creates a new NonPositiveInteger for the specified integer.
+	 * 
+	 * @param value The integer representing a number not greater than 0.
+	 * @throws IllegalArgumentException If the specified integer is greater than
+	 *             0.
 	 */
-	public Integer getValue();
+	public NonPositiveInteger(int value) {
+		super(value);
+
+		if (value > 0) {
+			throw new IllegalArgumentException(
+					"Value must not be greater than 0");
+		}
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create(INonPositiveInteger.DATATYPE_URI);
+	}
+
 }

@@ -2,7 +2,7 @@
  * Integrated Rule Inference System (IRIS):
  * An extensible rule inference system for datalog with extensions.
  * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
+ * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
  * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
  * 
  * This library is free software; you can redistribute it and/or
@@ -22,26 +22,18 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import org.deri.iris.api.terms.INumericTerm;
-
 /**
  * <p>
- * An interface for representing the integer datatype. Referring to XML Schema
- * datatypes this interface represents the xsd:int datatype. In contrast to
- * xsd:integer the values of xsd:int consists of a finite-length sequence of
- * decimal digits, in the range of -2147483648 and 2147483647.
- * </p>
- * <p>
- * Remark: IRIS supports datatypes according to the standard specification for
- * primitive XML Schema datatypes.
+ * Represent the XML Schema datatype xsd:byte.
  * </p>
  * 
- * @author Darko Anicic, DERI Innsbruck
- * @date 06.01.2006 17:18:34
+ * @author Adrian Marte
  */
-public interface IIntegerTerm extends INumericTerm {
+public interface IByteTerm extends IIntegerTerm {
+
 	/**
-	 * Return the wrapped type.
+	 * Defines the XML Schema datatype URI.
 	 */
-	public Integer getValue();
+	public static String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#byte";
+
 }
