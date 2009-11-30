@@ -22,15 +22,20 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.net.URI;
+
 import org.deri.iris.api.factory.IConcreteFactory;
+import org.deri.iris.api.terms.concrete.IAnyURI;
 import org.deri.iris.api.terms.concrete.IBase64Binary;
 import org.deri.iris.api.terms.concrete.IBooleanTerm;
+import org.deri.iris.api.terms.concrete.IByteTerm;
 import org.deri.iris.api.terms.concrete.IDateTerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
 import org.deri.iris.api.terms.concrete.IDayTimeDuration;
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
 import org.deri.iris.api.terms.concrete.IDuration;
+import org.deri.iris.api.terms.concrete.IENTITY;
 import org.deri.iris.api.terms.concrete.IFloatTerm;
 import org.deri.iris.api.terms.concrete.IGDay;
 import org.deri.iris.api.terms.concrete.IGMonth;
@@ -38,11 +43,25 @@ import org.deri.iris.api.terms.concrete.IGMonthDay;
 import org.deri.iris.api.terms.concrete.IGYear;
 import org.deri.iris.api.terms.concrete.IGYearMonth;
 import org.deri.iris.api.terms.concrete.IHexBinary;
+import org.deri.iris.api.terms.concrete.IID;
+import org.deri.iris.api.terms.concrete.IIDREF;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.concrete.IIri;
+import org.deri.iris.api.terms.concrete.ILanguage;
+import org.deri.iris.api.terms.concrete.ILongTerm;
+import org.deri.iris.api.terms.concrete.INCName;
+import org.deri.iris.api.terms.concrete.INMTOKEN;
+import org.deri.iris.api.terms.concrete.IName;
+import org.deri.iris.api.terms.concrete.INegativeInteger;
+import org.deri.iris.api.terms.concrete.INonNegativeInteger;
+import org.deri.iris.api.terms.concrete.INonPositiveInteger;
+import org.deri.iris.api.terms.concrete.INormalizedString;
 import org.deri.iris.api.terms.concrete.IPlainLiteral;
+import org.deri.iris.api.terms.concrete.IPositiveInteger;
+import org.deri.iris.api.terms.concrete.IShortTerm;
 import org.deri.iris.api.terms.concrete.ISqName;
 import org.deri.iris.api.terms.concrete.ITime;
+import org.deri.iris.api.terms.concrete.IToken;
 import org.deri.iris.api.terms.concrete.IXMLLiteral;
 import org.deri.iris.api.terms.concrete.IYearMonthDuration;
 
@@ -173,7 +192,8 @@ public class ConcreteFactory implements IConcreteFactory {
 		return new SqName(iri, name);
 	}
 
-	public IPlainLiteral createPlainLiteral(final String string, final String language) {
+	public IPlainLiteral createPlainLiteral(final String string,
+			final String language) {
 		return new PlainLiteral(string, language);
 	}
 
@@ -203,5 +223,73 @@ public class ConcreteFactory implements IConcreteFactory {
 			int hour, int minute, int second, int millisecond) {
 		return new DayTimeDuration(positive, day, hour, minute, second,
 				millisecond);
+	}
+
+	public IAnyURI createAnyURI(URI uri) {
+		return new AnyURI(uri);
+	}
+
+	public IByteTerm createByte(byte value) {
+		return new ByteTerm(value);
+	}
+
+	public IENTITY createEntity(String entity) {
+		return new ENTITY(entity);
+	}
+
+	public IID createID(String id) {
+		return new ID(id);
+	}
+
+	public IIDREF createIDREF(String idRef) {
+		return new IDREF(idRef);
+	}
+
+	public ILanguage createLanguage(String language) {
+		return new Language(language);
+	}
+
+	public ILongTerm createLong(int value) {
+		return new LongTerm(value);
+	}
+
+	public INCName createNCName(String name) {
+		return new NCName(name);
+	}
+
+	public INMTOKEN createNMTOKEN(String token) {
+		return new NMTOKEN(token);
+	}
+
+	public IName createName(String name) {
+		return new Name(name);
+	}
+
+	public INegativeInteger createNegativeInteger(int value) {
+		return new NegativeInteger(value);
+	}
+
+	public INonNegativeInteger createNonNegativeInteger(int value) {
+		return new NonNegativeInteger(value);
+	}
+
+	public INonPositiveInteger createNonPositiveInteger(int value) {
+		return new NonPositiveInteger(value);
+	}
+
+	public INormalizedString createNormalizedString(String string) {
+		return new NormalizedString(string);
+	}
+
+	public IPositiveInteger createPositiveInteger(int value) {
+		return new PositiveInteger(value);
+	}
+
+	public IShortTerm createShort(short value) {
+		return new ShortTerm(value);
+	}
+
+	public IToken createToken(String token) {
+		return new Token(token);
 	}
 }

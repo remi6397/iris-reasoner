@@ -20,28 +20,57 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.api.terms.concrete;
+
+package org.deri.iris.terms.concrete;
+
+import java.net.URI;
 
 import org.deri.iris.api.terms.INumericTerm;
+import org.deri.iris.api.terms.concrete.IByteTerm;
+import org.deri.iris.terms.AbstractConcreteTermTest;
 
 /**
  * <p>
- * An interface for representing the integer datatype. Referring to XML Schema
- * datatypes this interface represents the xsd:int datatype. In contrast to
- * xsd:integer the values of xsd:int consists of a finite-length sequence of
- * decimal digits, in the range of -2147483648 and 2147483647.
- * </p>
- * <p>
- * Remark: IRIS supports datatypes according to the standard specification for
- * primitive XML Schema datatypes.
+ * Test the implementation of the Byte data-type.
  * </p>
  * 
- * @author Darko Anicic, DERI Innsbruck
- * @date 06.01.2006 17:18:34
+ * @author Adrian Marte
  */
-public interface IIntegerTerm extends INumericTerm {
-	/**
-	 * Return the wrapped type.
-	 */
-	public Integer getValue();
+public class ByteTest extends AbstractConcreteTermTest {
+
+	@Override
+	protected INumericTerm createBasic() {
+		return new ByteTerm((byte) 1);
+	}
+
+	@Override
+	protected String createBasicString() {
+		return "1";
+	}
+
+	@Override
+	protected INumericTerm createEqual() {
+		return new ByteTerm((byte) 1);
+	}
+
+	@Override
+	protected String createEqualString() {
+		return "1";
+	}
+
+	@Override
+	protected INumericTerm createGreater() {
+		return new ByteTerm((byte) 2);
+	}
+
+	@Override
+	protected String createGreaterString() {
+		return "2";
+	}
+
+	@Override
+	protected URI getDatatypeIRI() {
+		return URI.create(IByteTerm.DATATYPE_URI);
+	}
+
 }

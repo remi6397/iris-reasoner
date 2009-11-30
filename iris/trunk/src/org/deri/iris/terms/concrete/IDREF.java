@@ -2,7 +2,7 @@
  * Integrated Rule Inference System (IRIS):
  * An extensible rule inference system for datalog with extensions.
  * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
+ * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
  * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
  * 
  * This library is free software; you can redistribute it and/or
@@ -20,28 +20,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.api.terms.concrete;
+package org.deri.iris.terms.concrete;
 
-import org.deri.iris.api.terms.INumericTerm;
+import java.net.URI;
+
+import org.deri.iris.api.terms.concrete.IIDREF;
 
 /**
  * <p>
- * An interface for representing the integer datatype. Referring to XML Schema
- * datatypes this interface represents the xsd:int datatype. In contrast to
- * xsd:integer the values of xsd:int consists of a finite-length sequence of
- * decimal digits, in the range of -2147483648 and 2147483647.
- * </p>
- * <p>
- * Remark: IRIS supports datatypes according to the standard specification for
- * primitive XML Schema datatypes.
+ * A simple implementation of IDREF.
  * </p>
  * 
- * @author Darko Anicic, DERI Innsbruck
- * @date 06.01.2006 17:18:34
+ * @author Adrian Marte
  */
-public interface IIntegerTerm extends INumericTerm {
+public class IDREF extends NCName implements IIDREF {
+
 	/**
-	 * Return the wrapped type.
+	 * Creates a new IDREF for the specified IDREF. Does not check for validity
+	 * of the specified IDRef.
+	 * 
+	 * @param idRef The string representing the IDREF.
 	 */
-	public Integer getValue();
+	public IDREF(String idRef) {
+		super(idRef);
+	}
+
+	@Override
+	public URI getDatatypeIRI() {
+		return URI.create(IIDREF.DATATYPE_URI);
+	}
+
 }
