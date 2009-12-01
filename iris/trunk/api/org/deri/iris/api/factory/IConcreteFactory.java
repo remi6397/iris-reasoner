@@ -44,6 +44,7 @@ import org.deri.iris.api.terms.concrete.IGYearMonth;
 import org.deri.iris.api.terms.concrete.IHexBinary;
 import org.deri.iris.api.terms.concrete.IID;
 import org.deri.iris.api.terms.concrete.IIDREF;
+import org.deri.iris.api.terms.concrete.IIntTerm;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.concrete.IIri;
 import org.deri.iris.api.terms.concrete.ILanguage;
@@ -61,6 +62,10 @@ import org.deri.iris.api.terms.concrete.IShortTerm;
 import org.deri.iris.api.terms.concrete.ISqName;
 import org.deri.iris.api.terms.concrete.ITime;
 import org.deri.iris.api.terms.concrete.IToken;
+import org.deri.iris.api.terms.concrete.IUnsignedByte;
+import org.deri.iris.api.terms.concrete.IUnsignedInt;
+import org.deri.iris.api.terms.concrete.IUnsignedLong;
+import org.deri.iris.api.terms.concrete.IUnsignedShort;
 import org.deri.iris.api.terms.concrete.IXMLLiteral;
 import org.deri.iris.api.terms.concrete.IYearMonthDuration;
 
@@ -442,4 +447,15 @@ public interface IConcreteFactory {
 	public IShortTerm createShort(short value);
 
 	public IToken createToken(String token);
+
+	public IUnsignedLong createUnsignedLong(int value);
+
+	public IUnsignedInt createUnsignedInt(int value);
+
+	public IUnsignedShort createUnsignedShort(int value);
+
+	public IUnsignedByte createUnsignedByte(short value);
+	
+	public IIntTerm createInt(int value);
+	
 }
