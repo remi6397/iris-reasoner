@@ -35,7 +35,12 @@ import org.deri.iris.api.terms.concrete.IShortTerm;
  */
 public class ShortTerm extends IntegerTerm implements IShortTerm {
 
-	public ShortTerm(Short value) {
+	/**
+	 * Creates a new Short for the specified short.
+	 * 
+	 * @param value The short value.
+	 */
+	public ShortTerm(short value) {
 		super(value);
 	}
 

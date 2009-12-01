@@ -35,6 +35,11 @@ import org.deri.iris.api.terms.concrete.IIntTerm;
  */
 public class IntTerm extends LongTerm implements IIntTerm {
 
+	/**
+	 * Creates a new Int for the specified integer.
+	 * 
+	 * @param value The integer value.
+	 */
 	public IntTerm(int value) {
 		super(value);
 	}

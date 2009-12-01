@@ -37,9 +37,15 @@ public class Token extends NormalizedString implements IToken {
 
 	private static String[] removePatterns = new String[] { "[\\x20]{2,}" };
 
+	/**
+	 * Creates a new Token for the specified string. The string is normalized if
+	 * it is not normalized already.
+	 * 
+	 * @param string The normalized or non-normalized string.
+	 */
 	public Token(String string) {
 		super(string);
-		value = normalize(string);
+		value = normalize(value);
 	}
 
 	public static String normalize(String string) {
