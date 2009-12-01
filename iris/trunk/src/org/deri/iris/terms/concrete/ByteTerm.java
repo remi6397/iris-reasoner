@@ -35,7 +35,12 @@ import org.deri.iris.api.terms.concrete.IByteTerm;
  */
 public class ByteTerm extends IntegerTerm implements IByteTerm {
 
-	public ByteTerm(Byte value) {
+	/**
+	 * Creates a new Byte instance for the specified byte.
+	 * 
+	 * @param value The byte value.
+	 */
+	public ByteTerm(byte value) {
 		super(value);
 	}
 

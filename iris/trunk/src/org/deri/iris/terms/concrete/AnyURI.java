@@ -24,7 +24,6 @@ package org.deri.iris.terms.concrete;
 
 import java.net.URI;
 
-import org.deri.iris.api.terms.IConcreteTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IAnyURI;
 
@@ -35,10 +34,15 @@ import org.deri.iris.api.terms.concrete.IAnyURI;
  * 
  * @author Adrian Marte
  */
-public class AnyURI implements IAnyURI, IConcreteTerm {
+public class AnyURI implements IAnyURI {
 
 	private URI uri;
 
+	/**
+	 * Creates a new AnyURI instance for the given URI.
+	 * 
+	 * @param uri The URI with which the AnyURI is created.
+	 */
 	public AnyURI(URI uri) {
 		this.uri = uri;
 	}
@@ -54,7 +58,7 @@ public class AnyURI implements IAnyURI, IConcreteTerm {
 	public String toCanonicalString() {
 		return uri.toString();
 	}
-	
+
 	@Override
 	public String toString() {
 		return toCanonicalString();
@@ -73,17 +77,17 @@ public class AnyURI implements IAnyURI, IConcreteTerm {
 
 		return uri.compareTo(thatUri.getValue());
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof IAnyURI)) {
 			return false;
 		}
-		
+
 		IAnyURI thatAnyURI = (IAnyURI) obj;
 		return uri.equals(thatAnyURI.getValue());
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return uri.hashCode();
