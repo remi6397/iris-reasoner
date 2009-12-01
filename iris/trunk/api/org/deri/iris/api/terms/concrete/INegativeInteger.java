@@ -25,6 +25,7 @@ package org.deri.iris.api.terms.concrete;
 /**
  * <p>
  * Represents the XML Schema datatype xsd:negativeInteger.
+ * </p>
  * 
  * @author Adrian Marte
  */
