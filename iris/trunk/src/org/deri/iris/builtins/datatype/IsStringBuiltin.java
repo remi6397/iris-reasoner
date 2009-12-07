@@ -50,7 +50,7 @@ public class IsStringBuiltin extends BooleanBuiltin {
 
 		// A PlainLiteral with empty language is a string.
 		if (term instanceof IPlainLiteral) {
-			return ((IPlainLiteral) term).getLang().isEmpty();
+			return ((IPlainLiteral) term).getLang().length() == 0;
 		}
 
 		return term instanceof IStringTerm;
