@@ -55,8 +55,7 @@ public class StringTerm implements IStringTerm {
 	}
 
 	public int compareTo(ITerm o) {
-		// TODO Remove these lines?
-		if (o == null) {
+		if (o == null || !(o instanceof IStringTerm)) {
 			return 1;
 		}
 
@@ -69,11 +68,11 @@ public class StringTerm implements IStringTerm {
 	}
 
 	public boolean equals(final Object o) {
-		if (!(o instanceof StringTerm)) {
+		if (!(o instanceof IStringTerm)) {
 			return false;
 		}
-		StringTerm st = (StringTerm) o;
-		return value.equals(st.value);
+		IStringTerm st = (IStringTerm) o;
+		return value.equals(st.getValue());
 	}
 
 	/**
