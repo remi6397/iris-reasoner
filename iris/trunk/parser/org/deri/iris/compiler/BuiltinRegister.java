@@ -78,6 +78,8 @@ public final class BuiltinRegister {
 		registerBuiltin( new org.deri.iris.builtins.DivideBuiltin( t1, t2, t3 ) );
 		registerBuiltin( new org.deri.iris.builtins.ModulusBuiltin( t1, t2, t3 ) );
 
+		registerBuiltin( new org.deri.iris.builtins.MaxBuiltin( t1, t2, t3 ) );
+
 		registerBuiltin( new org.deri.iris.builtins.EqualBuiltin( t1, t2 ) );
 		registerBuiltin( new org.deri.iris.builtins.NotEqualBuiltin( t1, t2 ) );
 		registerBuiltin( new org.deri.iris.builtins.ExactEqualBuiltin( t1, t2 ) );
