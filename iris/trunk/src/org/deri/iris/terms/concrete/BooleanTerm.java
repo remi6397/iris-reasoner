@@ -96,11 +96,11 @@ public class BooleanTerm implements IBooleanTerm {
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof BooleanTerm)) {
+		if (!(obj instanceof IBooleanTerm)) {
 			return false;
 		}
-		BooleanTerm bt = (BooleanTerm) obj;
-		return value.equals(bt.value);
+		IBooleanTerm bt = (IBooleanTerm) obj;
+		return value.equals(bt.getValue());
 	}
 
 	public Boolean getValue() {
@@ -120,11 +120,11 @@ public class BooleanTerm implements IBooleanTerm {
 	}
 
 	public int compareTo(ITerm o) {
-		if (o == null) {
+		if (o == null || !(o instanceof IBooleanTerm)) {
 			return 1;
 		}
 
-		BooleanTerm b = (BooleanTerm) o;
+		IBooleanTerm b = (IBooleanTerm) o;
 		return value.compareTo(b.getValue());
 	}
 
