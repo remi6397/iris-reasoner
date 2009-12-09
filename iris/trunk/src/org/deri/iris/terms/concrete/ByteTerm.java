@@ -33,7 +33,7 @@ import org.deri.iris.api.terms.concrete.IByteTerm;
  * 
  * @author Adrian Marte
  */
-public class ByteTerm extends IntegerTerm implements IByteTerm {
+public class ByteTerm extends ShortTerm implements IByteTerm {
 
 	/**
 	 * Creates a new Byte instance for the specified byte.

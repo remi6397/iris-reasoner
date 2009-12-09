@@ -33,7 +33,7 @@ import org.deri.iris.api.terms.concrete.IShortTerm;
  * 
  * @author Adrian Marte
  */
-public class ShortTerm extends IntegerTerm implements IShortTerm {
+public class ShortTerm extends IntTerm implements IShortTerm {
 
 	/**
 	 * Creates a new Short for the specified short.
