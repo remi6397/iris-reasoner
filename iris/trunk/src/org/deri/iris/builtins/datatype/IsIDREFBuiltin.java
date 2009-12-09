@@ -50,7 +50,11 @@ public class IsIDREFBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IIDREF;
+		return isIDREF(terms[0]);
 	}
 
+	public static boolean isIDREF(ITerm term) {
+		return term instanceof IIDREF;
+	}
+	
 }

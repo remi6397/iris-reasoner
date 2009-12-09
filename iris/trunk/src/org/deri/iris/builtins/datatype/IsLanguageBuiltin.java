@@ -50,7 +50,11 @@ public class IsLanguageBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof ILanguage;
+		return isLanguage(terms[0]);
+	}
+	
+	public static boolean isLanguage(ITerm term) {
+		return term instanceof ILanguage;
 	}
 
 }

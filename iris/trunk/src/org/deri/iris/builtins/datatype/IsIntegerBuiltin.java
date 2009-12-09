@@ -45,7 +45,11 @@ public class IsIntegerBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IIntegerTerm;
+		return isInteger(terms[0]);
+	}
+	
+	public static boolean isInteger(ITerm term) {
+		return term instanceof IIntegerTerm; 
 	}
 
 	/** The predicate defining this built-in. */

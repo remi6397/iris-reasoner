@@ -50,7 +50,11 @@ public class IsUnsignedByteBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IUnsignedByte;
+		return isUnsignedByte(terms[0]);
+	}
+	
+	public static boolean isUnsignedByte(ITerm term) {
+		return term instanceof IUnsignedByte;
 	}
 
 }

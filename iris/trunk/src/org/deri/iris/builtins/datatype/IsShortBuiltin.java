@@ -50,7 +50,11 @@ public class IsShortBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IShortTerm;
+		return isShort(terms[0]);
+	}
+	
+	public static boolean isShort(ITerm term) {
+		return term instanceof IShortTerm;
 	}
 
 }

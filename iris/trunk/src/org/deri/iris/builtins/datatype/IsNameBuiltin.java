@@ -50,7 +50,11 @@ public class IsNameBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IName;
+		return isName(terms[0]);
 	}
 
+	public static boolean isName(ITerm term) {
+		return term instanceof IName;
+	}
+	
 }

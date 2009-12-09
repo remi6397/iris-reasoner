@@ -50,7 +50,11 @@ public class IsLongBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof ILongTerm;
+		return isLong(terms[0]);
+	}
+	
+	public static boolean isLong(ITerm term) {
+		return term instanceof ILongTerm;
 	}
 
 }

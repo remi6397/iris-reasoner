@@ -42,7 +42,11 @@ public class IsNumericBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof INumericTerm;
+		return isNumeric(terms[0]);
+	}
+	
+	public static boolean isNumeric(ITerm term) {
+		return term instanceof INumericTerm;
 	}
 
 	/** The predicate defining this built-in. */

@@ -50,7 +50,11 @@ public class IsNormalizedStringBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof INormalizedString;
+		return isNormalizedString(terms[0]);
+	}
+	
+	public static boolean isNormalizedString(ITerm term) {
+		return term instanceof INormalizedString;
 	}
 
 }

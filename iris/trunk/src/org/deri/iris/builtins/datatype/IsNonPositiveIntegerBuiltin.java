@@ -50,7 +50,11 @@ public class IsNonPositiveIntegerBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof INonPositiveInteger;
+		return isNonPositiveInteger(terms[0]);
+	}
+	
+	public static boolean isNonPositiveInteger(ITerm term) {
+		return term instanceof INonPositiveInteger;
 	}
 
 }

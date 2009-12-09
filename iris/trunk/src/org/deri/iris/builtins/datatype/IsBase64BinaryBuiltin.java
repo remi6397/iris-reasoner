@@ -46,7 +46,11 @@ public class IsBase64BinaryBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IBase64Binary;
+		return isBase64(terms[0]);
+	}
+	
+	public static boolean isBase64(ITerm term) {
+		return term instanceof IBase64Binary;
 	}
 
 }

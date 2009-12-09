@@ -41,7 +41,11 @@ public class IsSqNameBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof ISqName;
+		return isSqName(terms[0]);
+	}
+	
+	public static boolean isSqName(ITerm term) {
+		return term instanceof ISqName;
 	}
 
 	/** The predicate defining this built-in. */

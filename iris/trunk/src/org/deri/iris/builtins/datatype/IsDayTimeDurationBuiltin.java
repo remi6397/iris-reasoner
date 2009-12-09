@@ -46,7 +46,11 @@ public class IsDayTimeDurationBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IDayTimeDuration;
+		return isDayTimeDuration(terms[0]);
+	}
+	
+	public static boolean isDayTimeDuration(ITerm term) {
+		return term instanceof IDayTimeDuration;
 	}
 
 }

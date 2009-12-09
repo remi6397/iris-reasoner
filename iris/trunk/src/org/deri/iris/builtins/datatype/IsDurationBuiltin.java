@@ -41,9 +41,13 @@ public class IsDurationBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IDuration;
+		return isDuration(terms[0]);
 	}
 
+	public static boolean isDuration(ITerm term) {
+		return term instanceof IDuration;
+	}
+	
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
 			.createPredicate("IS_DURATION", 1);

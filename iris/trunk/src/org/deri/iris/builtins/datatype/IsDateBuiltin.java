@@ -46,9 +46,13 @@ public class IsDateBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IDateTerm;
+		return isDate(terms[0]);
 	}
 
+	public static boolean isDate(ITerm term) {
+		return term instanceof IDateTerm;
+	}
+	
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
 			.createPredicate("IS_DATE", 1);

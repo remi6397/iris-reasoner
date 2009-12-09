@@ -41,7 +41,11 @@ public class IsFloatBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IFloatTerm;
+		return isFloat(terms[0]);
+	}
+	
+	public static boolean isFloat(ITerm term) {
+		return term instanceof IFloatTerm; 
 	}
 
 	/** The predicate defining this built-in. */

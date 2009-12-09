@@ -50,7 +50,11 @@ public class IsNMTOKENBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof INMTOKEN;
+		return isNMTOKEN(terms[0]);
+	}
+	
+	public static boolean isNMTOKEN(ITerm term) {
+		return term instanceof INMTOKEN; 
 	}
 
 }

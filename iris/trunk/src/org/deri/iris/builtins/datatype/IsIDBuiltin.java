@@ -50,7 +50,11 @@ public class IsIDBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IID;
+		return isID(terms[0]);
 	}
 
+	public static boolean isID(ITerm term) {
+		return term instanceof IID; 
+	}
+	
 }

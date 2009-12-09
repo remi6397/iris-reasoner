@@ -50,7 +50,11 @@ public class IsUnsignedShortBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IUnsignedShort;
+		return isUnsignedShort(terms[0]);
+	}
+	
+	public static boolean isUnsignedShort(ITerm term) {
+		return term instanceof IUnsignedShort;
 	}
 
 }

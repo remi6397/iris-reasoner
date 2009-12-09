@@ -50,7 +50,11 @@ public class IsNegativeIntegerBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof INegativeInteger;
+		return isNegativeInteger(terms[0]);
+	}
+	
+	public static boolean isNegativeInteger(ITerm term) {
+		return term instanceof INegativeInteger;
 	}
 
 }
