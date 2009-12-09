@@ -111,19 +111,19 @@ public class Time implements ITime {
 	}
 
 	public int compareTo(ITerm o) {
-		if (o == null) {
+		if (o == null || !(o instanceof ITime)) {
 			return 1;
 		}
 		
-		Time t = (Time) o;
+		ITime t = (ITime) o;
 		return time.compare(t.getValue());
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof Time)) {
+		if (!(obj instanceof ITime)) {
 			return false;
 		}
-		Time dx = (Time) obj;
+		ITime dx = (ITime) obj;
 		return time.equals(dx.getValue());
 	}
 

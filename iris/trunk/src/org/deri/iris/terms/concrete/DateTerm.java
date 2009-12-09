@@ -93,11 +93,11 @@ public class DateTerm implements IDateTerm {
 	}
 
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof DateTerm)) {
+		if (!(obj instanceof IDateTerm)) {
 			return false;
 		}
-		DateTerm dt = (DateTerm) obj;
-		return date.equals(dt.date);
+		IDateTerm dt = (IDateTerm) obj;
+		return date.equals(dt.getValue());
 	}
 
 	public int hashCode() {
@@ -113,11 +113,11 @@ public class DateTerm implements IDateTerm {
 	}
 
 	public int compareTo(ITerm o) {
-		if (o == null) {
+		if (o == null || !(o instanceof IDateTerm)) {
 			return 1;
 		}
 		
-		DateTerm dt = (DateTerm) o;
+		IDateTerm dt = (IDateTerm) o;
 		return date.compare(dt.getValue());
 	}
 

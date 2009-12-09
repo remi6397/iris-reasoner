@@ -184,7 +184,7 @@ public class DateTime implements IDateTime {
 	}
 
 	public int compareTo(ITerm o) {
-		if (o == null) {
+		if (o == null || !(o instanceof IDateTime)) {
 			return 1;
 		}
 

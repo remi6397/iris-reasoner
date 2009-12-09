@@ -224,7 +224,7 @@ public class Duration implements IDuration {
 	}
 
 	public int compareTo(ITerm o) {
-		if (o == null)
+		if (o == null || !(o instanceof IDuration))
 			return 1;
 
 		javax.xml.datatype.Duration thatDuration = ((IDuration) o).getValue();
