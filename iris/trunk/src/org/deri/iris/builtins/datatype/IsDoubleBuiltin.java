@@ -41,7 +41,11 @@ public class IsDoubleBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IDoubleTerm;
+		return isDouble(terms[0]);
+	}
+
+	public static boolean isDouble(ITerm term) {
+		return term instanceof IDoubleTerm;
 	}
 
 	/** The predicate defining this built-in. */

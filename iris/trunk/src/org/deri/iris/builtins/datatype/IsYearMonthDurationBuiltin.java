@@ -46,7 +46,11 @@ public class IsYearMonthDurationBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IYearMonthDuration;
+		return isYearMonthDuration(terms[0]);
+	}
+	
+	public static boolean isYearMonthDuration(ITerm term) {
+		return term instanceof IYearMonthDuration;
 	}
 
 }

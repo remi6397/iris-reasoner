@@ -41,9 +41,13 @@ public class IsIriBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IIri;
+		return isIri(terms[0]);
 	}
 
+	public static boolean isIri(ITerm term) {
+		return term instanceof IIri;
+	}
+	
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
 			.createPredicate("IS_IRI", 1);

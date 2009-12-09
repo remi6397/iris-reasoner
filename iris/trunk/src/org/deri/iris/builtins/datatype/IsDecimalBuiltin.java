@@ -46,7 +46,11 @@ public class IsDecimalBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IDecimalTerm;
+		return isDecimal(terms[0]);
+	}
+	
+	public static boolean isDecimal(ITerm term) {
+		return term instanceof IDecimalTerm;
 	}
 
 	/** The predicate defining this built-in. */

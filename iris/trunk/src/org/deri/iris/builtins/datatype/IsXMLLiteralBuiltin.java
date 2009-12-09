@@ -46,7 +46,11 @@ public class IsXMLLiteralBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IXMLLiteral;
+		return isXMLLiteral(terms[0]);
 	}
 
+	public static boolean isXMLLiteral(ITerm term) {
+		return term instanceof IXMLLiteral;
+	}
+	
 }

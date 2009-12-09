@@ -46,14 +46,16 @@ public class IsStringBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		ITerm term = terms[0];
-
+		return isString(terms[0]);
+	}
+	
+	public static boolean isString(ITerm term) {
 		// A PlainLiteral with empty language is a string.
 		if (term instanceof IPlainLiteral) {
 			return ((IPlainLiteral) term).getLang().length() == 0;
 		}
 
-		return term instanceof IStringTerm;
+		return term instanceof IStringTerm; 
 	}
 
 	/** The predicate defining this built-in. */

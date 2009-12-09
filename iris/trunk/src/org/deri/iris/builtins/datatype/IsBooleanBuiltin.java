@@ -41,7 +41,11 @@ public class IsBooleanBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IBooleanTerm;
+		return isBoolean(terms[0]);
+	}
+
+	public static boolean isBoolean(ITerm term) {
+		return term instanceof IBooleanTerm;
 	}
 
 	/** The predicate defining this built-in. */

@@ -46,7 +46,11 @@ public class IsPlainLiteralBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IPlainLiteral;
+		return isPlainLiteral(terms[0]);
+	}
+	
+	public static boolean isPlainLiteral(ITerm term) {
+		return term instanceof IPlainLiteral;
 	}
 
 }

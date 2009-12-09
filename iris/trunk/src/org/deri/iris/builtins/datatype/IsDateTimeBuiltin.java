@@ -46,7 +46,11 @@ public class IsDateTimeBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IDateTime;
+		return isDateTime(terms[0]);
+	}
+	
+	public static boolean isDateTime(ITerm term) {
+		return term instanceof IDateTime;
 	}
 
 	/** The predicate defining this built-in. */

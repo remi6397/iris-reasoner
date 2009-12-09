@@ -41,7 +41,11 @@ public class IsTimeBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof ITime;
+		return isTime(terms[0]);
+	}
+	
+	public static boolean isTime(ITerm term) {
+		return term instanceof ITime;
 	}
 
 	/** The predicate defining this built-in. */

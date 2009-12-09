@@ -50,7 +50,11 @@ public class IsIntBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IIntTerm;
+		return isInt(terms[0]);
+	}
+	
+	public static boolean isInt(ITerm term) {
+		return term instanceof IIntTerm;
 	}
 
 }

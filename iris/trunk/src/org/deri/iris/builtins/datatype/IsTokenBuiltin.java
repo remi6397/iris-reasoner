@@ -50,7 +50,11 @@ public class IsTokenBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IToken;
+		return isToken(terms[0]);
+	}
+	
+	public static boolean isToken(ITerm term) {
+		return term instanceof IToken;
 	}
 
 }

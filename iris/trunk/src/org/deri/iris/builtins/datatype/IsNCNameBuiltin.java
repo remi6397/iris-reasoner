@@ -50,7 +50,11 @@ public class IsNCNameBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof INCName;
+		return isNCName(terms[0]);
+	}
+	
+	public static boolean isNCName(ITerm term) {
+		return term instanceof INCName;
 	}
 
 }

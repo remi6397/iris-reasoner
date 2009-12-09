@@ -50,7 +50,11 @@ public class IsUnsignedLongBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IUnsignedLong;
+		return isUnsignedLong(terms[0]);
 	}
 
+	public static boolean isUnsignedLong(ITerm term) {
+		return term instanceof IUnsignedLong;
+	}
+	
 }

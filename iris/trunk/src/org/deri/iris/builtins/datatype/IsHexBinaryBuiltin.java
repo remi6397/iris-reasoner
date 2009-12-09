@@ -41,9 +41,13 @@ public class IsHexBinaryBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IHexBinary;
+		return isHexBinary(terms[0]);
 	}
 
+	public static boolean isHexBinary(ITerm term) {
+		return term instanceof IHexBinary;
+	}
+	
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
 			.createPredicate("IS_HEXBINARY", 1);

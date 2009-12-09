@@ -50,7 +50,11 @@ public class IsByteBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IByteTerm;
+		return isByte(terms[0]);
 	}
 
+	public static boolean isByte(ITerm term) {
+		 return term instanceof IByteTerm;
+	}
+	
 }

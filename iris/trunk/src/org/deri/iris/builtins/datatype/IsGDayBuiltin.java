@@ -41,7 +41,11 @@ public class IsGDayBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IGDay;
+		return isGDay(terms[0]);
+	}
+	
+	public static boolean isGDay(ITerm term) {
+		return term instanceof IGDay;
 	}
 
 	/** The predicate defining this built-in. */

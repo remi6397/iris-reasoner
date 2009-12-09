@@ -44,7 +44,11 @@ public class IsGMonthDayBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IGMonthDay;
+		return isGMonthDay(terms[0]);
+	}
+	
+	public static boolean isGMonthDay(ITerm term) {
+		return term instanceof IGMonthDay;
 	}
 
 	/** The predicate defining this built-in. */

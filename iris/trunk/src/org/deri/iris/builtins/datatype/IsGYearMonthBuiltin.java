@@ -44,7 +44,11 @@ public class IsGYearMonthBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IGYearMonth;
+		return isGYearMonth(terms[0]);
+	}
+	
+	public static boolean isGYearMonth(ITerm term) {
+		return term instanceof IGYearMonth;
 	}
 
 	/** The predicate defining this built-in. */

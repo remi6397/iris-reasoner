@@ -50,7 +50,11 @@ public class IsPositiveIntegerBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IPositiveInteger;
+		return isPositiveInteger(terms[0]);
+	}
+	
+	public static boolean isPositiveInteger(ITerm term) {
+		return term instanceof IPositiveInteger;
 	}
 
 }

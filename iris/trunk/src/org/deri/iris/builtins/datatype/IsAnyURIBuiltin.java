@@ -50,7 +50,11 @@ public class IsAnyURIBuiltin extends BooleanBuiltin {
 	}
 
 	protected boolean computeResult(ITerm[] terms) {
-		return terms[0] instanceof IAnyURI;
+		return isAnyURI(terms[0]);
 	}
 
+	public static boolean isAnyURI(ITerm term) {
+		return term instanceof IAnyURI;
+	}
+	
 }
