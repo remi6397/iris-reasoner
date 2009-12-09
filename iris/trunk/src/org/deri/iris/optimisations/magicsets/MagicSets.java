@@ -69,9 +69,6 @@ public final class MagicSets implements IProgramOptimisation {
 	 */
 	static final String LABEL_PREFIX = "label_xXx_prefix_xXx";
 
-	/** An empty list that getBounds() can return. */
-	private static final List<ITerm> EMPTY_TERM_LIST = new ArrayList<ITerm>();
-
 	public Result optimise(final Collection<IRule> rules, final IQuery query) {
 		if (rules == null) {
 			throw new IllegalArgumentException("The rules must not be null");
