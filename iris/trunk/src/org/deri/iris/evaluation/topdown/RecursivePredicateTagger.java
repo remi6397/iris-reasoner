@@ -36,11 +36,7 @@ public class RecursivePredicateTagger implements IPredicateTagger {
 	private List<IRule> mRules;
 	private Set<IPredicate> mMemoPredicates;
 
-	private RecursivePredicateTagger() {
-	}
-	
 	public RecursivePredicateTagger(List<IRule> rules, IQuery query) {
-		this();
 		mRules = rules;
 		mMemoPredicates = tagMemoPredicates(query);
 	}

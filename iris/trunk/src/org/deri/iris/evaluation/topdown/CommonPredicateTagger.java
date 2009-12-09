@@ -41,11 +41,7 @@ public class CommonPredicateTagger implements IPredicateTagger {
 	private List<IRule> mRules;
 	private Set<IPredicate> mMemoPredicates;
 
-	private CommonPredicateTagger() {
-	}
-	
 	public CommonPredicateTagger(List<IRule> rules, IQuery query) {
-		this();
 		mRules = rules;
 		mMemoPredicates = tagMemoPredicates(query);
 	}
