@@ -168,8 +168,6 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 		private NodeType type;
 		private int numLiteralsLeft; /** Literal count of parenting answer node - 1. If reached, the evaluation is pushed up to the answer node */
 		
-		private Node() { }
-		
 		/**
 		 * Root node. Has no substitution and no predecessor.
 		 * 
@@ -177,7 +175,6 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 		 * @throws EvaluationException on failure
 		 */
 		public Node(IQuery query) throws EvaluationException {
-			this();
 			this.query = query;
 			this.substitution = null;
 			this.predecessor = null;

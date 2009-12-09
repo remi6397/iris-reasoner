@@ -33,11 +33,7 @@ public class AllPredicateTagger implements IPredicateTagger {
 
 	private List<IRule> mRules;
 	
-	private AllPredicateTagger() {
-	}
-	
 	public AllPredicateTagger(List<IRule> rules) {
-		this();
 		mRules = rules;
 	}
 	
