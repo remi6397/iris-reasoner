@@ -22,6 +22,7 @@
  */
 package org.deri.iris.evaluation;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.deri.iris.Configuration;
@@ -68,7 +69,7 @@ public class OptimisedProgramStrategyAdaptor implements IEvaluationStrategy
 		{
 			List<IRule> rules = mRules;
 			boolean optimised = false;
-			
+	
 			for( IProgramOptimisation optimisation : mConfiguration.programOptmimisers )
 			{
 				IProgramOptimisation.Result result = optimisation.optimise( rules, query );
@@ -81,6 +82,14 @@ public class OptimisedProgramStrategyAdaptor implements IEvaluationStrategy
 					optimised = true;
 				}
 			}
+
+			// Uncomment for dumping the optimised rule set
+//			System.out.println( "==================================================================");
+//			for( IRule rule : rules ) {
+//				System.out.println( rule );
+//			}
+//			System.out.println( "Rule count: " + rules.size() );
+//			System.out.println( "==================================================================");
 			
 			if( optimised )
 			{
