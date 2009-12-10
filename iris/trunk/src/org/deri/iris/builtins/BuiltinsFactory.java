@@ -25,51 +25,7 @@ package org.deri.iris.builtins;
 import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.factory.IBuiltinsFactory;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.datatype.IsBase64BinaryBuiltin;
-import org.deri.iris.builtins.datatype.IsBooleanBuiltin;
-import org.deri.iris.builtins.datatype.IsDatatypeBuiltin;
-import org.deri.iris.builtins.datatype.IsDateBuiltin;
-import org.deri.iris.builtins.datatype.IsDateTimeBuiltin;
-import org.deri.iris.builtins.datatype.IsDayTimeDurationBuiltin;
-import org.deri.iris.builtins.datatype.IsDecimalBuiltin;
-import org.deri.iris.builtins.datatype.IsDoubleBuiltin;
-import org.deri.iris.builtins.datatype.IsDurationBuiltin;
-import org.deri.iris.builtins.datatype.IsFloatBuiltin;
-import org.deri.iris.builtins.datatype.IsGDayBuiltin;
-import org.deri.iris.builtins.datatype.IsGMonthBuiltin;
-import org.deri.iris.builtins.datatype.IsGYearBuiltin;
-import org.deri.iris.builtins.datatype.IsGYearMonthBuiltin;
-import org.deri.iris.builtins.datatype.IsHexBinaryBuiltin;
-import org.deri.iris.builtins.datatype.IsIntegerBuiltin;
-import org.deri.iris.builtins.datatype.IsIriBuiltin;
-import org.deri.iris.builtins.datatype.IsNotDatatypeBuiltin;
-import org.deri.iris.builtins.datatype.IsStringBuiltin;
-import org.deri.iris.builtins.datatype.IsPlainLiteralBuiltin;
-import org.deri.iris.builtins.datatype.IsTimeBuiltin;
-import org.deri.iris.builtins.datatype.IsXMLLiteralBuiltin;
-import org.deri.iris.builtins.datatype.IsYearMonthDurationBuiltin;
-import org.deri.iris.builtins.datatype.ToBase64Builtin;
-import org.deri.iris.builtins.datatype.ToBooleanBuiltin;
-import org.deri.iris.builtins.datatype.ToDateBuiltin;
-import org.deri.iris.builtins.datatype.ToDateTimeBuiltin;
-import org.deri.iris.builtins.datatype.ToDayTimeDurationBuiltin;
-import org.deri.iris.builtins.datatype.ToDecimalBuiltin;
-import org.deri.iris.builtins.datatype.ToDoubleBuiltin;
-import org.deri.iris.builtins.datatype.ToDurationBuiltin;
-import org.deri.iris.builtins.datatype.ToFloatBuiltin;
-import org.deri.iris.builtins.datatype.ToGDayBuiltin;
-import org.deri.iris.builtins.datatype.ToGMonthBuiltin;
-import org.deri.iris.builtins.datatype.ToGMonthDayBuiltin;
-import org.deri.iris.builtins.datatype.ToGYearBuiltin;
-import org.deri.iris.builtins.datatype.ToGYearMonthBuiltin;
-import org.deri.iris.builtins.datatype.ToHexBinaryBuiltin;
-import org.deri.iris.builtins.datatype.ToIntegerBuiltin;
-import org.deri.iris.builtins.datatype.ToIriBuiltin;
-import org.deri.iris.builtins.datatype.ToStringBuiltin;
-import org.deri.iris.builtins.datatype.ToPlainLiteralBuiltin;
-import org.deri.iris.builtins.datatype.ToTimeBuiltin;
-import org.deri.iris.builtins.datatype.ToXMLLiteralBuiltin;
-import org.deri.iris.builtins.datatype.ToYearMonthDurationBuiltin;
+import org.deri.iris.builtins.datatype.*;
 import org.deri.iris.builtins.date.DayPartBuiltin;
 import org.deri.iris.builtins.date.HourPartBuiltin;
 import org.deri.iris.builtins.date.MinutePartBuiltin;
@@ -78,6 +34,10 @@ import org.deri.iris.builtins.date.SecondPartBuiltin;
 import org.deri.iris.builtins.date.TimezonePartBuiltin;
 import org.deri.iris.builtins.date.YearPartBuiltin;
 import org.deri.iris.builtins.string.LangFromPlainLiteralBuiltin;
+import org.deri.iris.builtins.string.PlainLiteralCompareBuiltin;
+import org.deri.iris.builtins.string.PlainLiteralFromStringBuiltin;
+import org.deri.iris.builtins.string.PlainLiteralFromStringLangBuiltin;
+import org.deri.iris.builtins.string.PlainLiteralLengthBuiltin;
 import org.deri.iris.builtins.string.StringCompareBuiltin;
 import org.deri.iris.builtins.string.StringConcatBuiltin;
 import org.deri.iris.builtins.string.StringContainsBuiltin;
@@ -104,10 +64,6 @@ import org.deri.iris.builtins.string.StringSubstringUntilEndBuiltin;
 import org.deri.iris.builtins.string.StringToLowerBuiltin;
 import org.deri.iris.builtins.string.StringToUpperBuiltin;
 import org.deri.iris.builtins.string.StringUriEncodeBuiltin;
-import org.deri.iris.builtins.string.PlainLiteralCompareBuiltin;
-import org.deri.iris.builtins.string.PlainLiteralFromStringBuiltin;
-import org.deri.iris.builtins.string.PlainLiteralFromStringLangBuiltin;
-import org.deri.iris.builtins.string.PlainLiteralLengthBuiltin;
 
 /**
  * <p>
@@ -122,7 +78,7 @@ import org.deri.iris.builtins.string.PlainLiteralLengthBuiltin;
  */
 public class BuiltinsFactory implements IBuiltinsFactory {
 
-	private static final IBuiltinsFactory INSTANCE = new BuiltinsFactory();
+	private static IBuiltinsFactory INSTANCE = new BuiltinsFactory();
 
 	private BuiltinsFactory() {
 		// this is a singelton
@@ -137,23 +93,23 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 		return INSTANCE;
 	}
 
-	public IBuiltinAtom createAddBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
+	public IBuiltinAtom createAddBuiltin(ITerm t0, ITerm t1, ITerm t2) {
 		return new AddBuiltin(t0, t1, t2);
 	}
 
-	public IBuiltinAtom createSubtractBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
+	public IBuiltinAtom createSubtractBuiltin(ITerm t0, ITerm t1, ITerm t2) {
 		return new SubtractBuiltin(t0, t1, t2);
 	}
 
-	public IBuiltinAtom createMultiplyBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
+	public IBuiltinAtom createMultiplyBuiltin(ITerm t0, ITerm t1, ITerm t2) {
 		return new MultiplyBuiltin(t0, t1, t2);
 	}
 
-	public IBuiltinAtom createDivideBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
+	public IBuiltinAtom createDivideBuiltin(ITerm t0, ITerm t1, ITerm t2) {
 		return new DivideBuiltin(t0, t1, t2);
 	}
 
-	public IBuiltinAtom createModulusBuiltin(final ITerm t0, final ITerm t1, final ITerm t2){
+	public IBuiltinAtom createModulusBuiltin(ITerm t0, ITerm t1, ITerm t2) {
 		return new ModulusBuiltin(t0, t1, t2);
 	}
 
@@ -180,32 +136,16 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	public IBuiltinAtom createUnequal(ITerm t0, ITerm t1) {
 		return new NotEqualBuiltin(t0, t1);
 	}
-	
-	public IBuiltinAtom createExactEqual(final ITerm t0, final ITerm t1)
-	{
+
+	public IBuiltinAtom createExactEqual(ITerm t0, ITerm t1) {
 		return new ExactEqualBuiltin(t0, t1);
 	}
 
-	public IBuiltinAtom createNotExactEqual(final ITerm t0, final ITerm t1)
-	{
+	public IBuiltinAtom createNotExactEqual(ITerm t0, ITerm t1) {
 		return new NotExactEqualBuiltin(t0, t1);
 	}
-	
+
 	// check D3.1.4 Defining the features of the WSML-Rule v2.0 language
-
-	public IBuiltinAtom createIsDatatype(final ITerm ... terms) {
-		return new IsDatatypeBuiltin(terms);
-	}
-
-	public IBuiltinAtom createIsNotDatatype(ITerm... terms) {
-		return new IsNotDatatypeBuiltin(terms);
-	}
-
-	public IBuiltinAtom createHasDatatype(ITerm... terms) {
-//		return new HasDatatypeBuiltin(terms);
-//		TODO check 
-		return null;
-	}
 
 	public IBuiltinAtom createNumericModulus(ITerm... terms) {
 		return new ModulusBuiltin(terms);
@@ -302,7 +242,7 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 			return new StringEndsWithBuiltin(terms);
 		}
 	}
-	
+
 	public IBuiltinAtom createStringMatches(ITerm... terms) {
 		if (terms.length <= 2) {
 			return new StringMatchesWithoutFlagsBuiltin(terms);
@@ -322,23 +262,23 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	public IBuiltinAtom createDayPart(ITerm... terms) {
 		return new DayPartBuiltin(terms);
 	}
-	
+
 	public IBuiltinAtom createHourPart(ITerm... terms) {
 		return new HourPartBuiltin(terms);
 	}
-	
+
 	public IBuiltinAtom createMinutePart(ITerm... terms) {
 		return new MinutePartBuiltin(terms);
 	}
-	
+
 	public IBuiltinAtom createSecondPart(ITerm... terms) {
 		return new SecondPartBuiltin(terms);
 	}
-	
+
 	public IBuiltinAtom createTimezonePart(ITerm... terms) {
 		return new TimezonePartBuiltin(terms);
 	}
-	
+
 	public IBuiltinAtom createTextFromStringLang(ITerm... terms) {
 		return new PlainLiteralFromStringLangBuiltin(terms);
 	}
@@ -362,7 +302,7 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	public IBuiltinAtom createTextLength(ITerm... terms) {
 		return new PlainLiteralLengthBuiltin(terms);
 	}
-	
+
 	public IBuiltinAtom createFalse() {
 		return new FalseBuiltin(new ITerm[0]);
 	}
@@ -482,7 +422,7 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	public IBuiltinAtom createIsDecimal(ITerm... terms) {
 		return new IsDecimalBuiltin(terms);
 	}
-	
+
 	public IBuiltinAtom createIsDouble(ITerm... terms) {
 		return new IsDoubleBuiltin(terms);
 	}
@@ -546,6 +486,269 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	public IBuiltinAtom createIsYearMonthDuration(ITerm... terms) {
 		return new IsYearMonthDurationBuiltin(terms);
 	}
-	
-	
+
+	public IBuiltinAtom createIsAnyURI(ITerm... terms) {
+		return new IsAnyURIBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsByte(ITerm... terms) {
+		return new IsByteBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsFalse(ITerm... terms) {
+		return new IsFalseBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsLanguage(ITerm... terms) {
+		return new IsLanguageBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsLong(ITerm... terms) {
+		return new IsLongBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNCName(ITerm... terms) {
+		return new IsNCNameBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNMTOKEN(ITerm... terms) {
+		return new IsNMTOKENBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsName(ITerm... terms) {
+		return new IsNameBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNegativeInteger(ITerm... terms) {
+		return new IsNegativeIntegerBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNonNegativeInteger(ITerm... terms) {
+		return new IsNonNegativeIntegerBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNonPositiveInteger(ITerm... terms) {
+		return new IsNonPositiveIntegerBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNormalizedString(ITerm... terms) {
+		return new IsNormalizedStringBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsPositiveInteger(ITerm... terms) {
+		return new IsPositiveIntegerBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsShort(ITerm... terms) {
+		return new IsShortBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsToken(ITerm... terms) {
+		return new IsTokenBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsUnsignedByte(ITerm... terms) {
+		return new IsTokenBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsUnsignedInt(ITerm... terms) {
+		return new IsUnsignedIntBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsUnsignedLong(ITerm... terms) {
+		return new IsUnsignedLongBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsUnsignedShort(ITerm... terms) {
+		return new IsUnsignedShortBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsInt(ITerm... terms) {
+		return new IsIntBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIntegerDivide(ITerm... terms) {
+		return new IntegerDivideBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotAnyURI(ITerm... terms) {
+		return new IsNotAnyURIBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotBase64Binary(ITerm... terms) {
+		return new IsNotBase64BinaryBuiltin(terms); 
+	}
+
+	public IBuiltinAtom createIsNotBoolean(ITerm... terms) {
+		return new IsNotBooleanBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotByte(ITerm... terms) {
+		return new IsNotByteBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotDate(ITerm... terms) {
+		return new IsNotDateBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotDateTime(ITerm... terms) {
+		return new IsNotDateTimeBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotDayTimeDuration(ITerm... terms) {
+		return new IsNotDayTimeDurationBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotDecimal(ITerm... terms) {
+		return new IsNotDecimalBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotDouble(ITerm... terms) {
+		return new IsNotDoubleBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotDuration(ITerm... terms) {
+		return new IsNotDurationBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotFloat(ITerm... terms) {
+		return new IsNotFloatBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotGDay(ITerm... terms) {
+		return new IsNotGDayBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotGMonth(ITerm... terms) {
+		return new IsNotGMonthBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotGMonthDay(ITerm... terms) {
+		return new IsNotGMonthDayBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotGYear(ITerm... terms) {
+		return new IsNotGYearBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotGYearMonth(ITerm... terms) {
+		return new IsNotGYearMonthBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotHexBinary(ITerm... terms) {
+		return new IsNotHexBinaryBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotIRI(ITerm... terms) {
+		return new IsNotIriBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotInt(ITerm... terms) {
+		return new IsNotIntBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotInteger(ITerm... terms) {
+		return new IsNotIntegerBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotLanguage(ITerm... terms) {
+		return new IsNotLanguageBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotLong(ITerm... terms) {
+		return new IsNotLongBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotNCName(ITerm... terms) {
+		return new IsNotNCNameBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotNMTOKEN(ITerm... terms) {
+		return new IsNotNMTOKENBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotName(ITerm... terms) {
+		return new IsNotNameBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotNegativeInteger(ITerm... terms) {
+		return new IsNotNegativeIntegerBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotNonNegativeInteger(ITerm... terms) {
+		return new IsNonNegativeIntegerBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotNonPositiveInteger(ITerm... terms) {
+		return new IsNotNonPositiveIntegerBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotNormalizedString(ITerm... terms) {
+		return new IsNotNormalizedStringBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotPositiveInteger(ITerm... terms) {
+		return new IsNotPositiveIntegerBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotShort(ITerm... terms) {
+		return new IsNotShortBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotString(ITerm... terms) {
+		return new IsNotStringBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotText(ITerm... terms) {
+		return new IsNotPlainLiteralBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotTime(ITerm... terms) {
+		return new IsNotTimeBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotToken(ITerm... terms) {
+		return new IsNotTokenBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotUnsignedByte(ITerm... terms) {
+		return new IsNotUnsignedByteBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotUnsignedInt(ITerm... terms) {
+		return new IsNotUnsignedIntBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotUnsignedLong(ITerm... terms) {
+		return new IsNotUnsignedLongBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotUnsignedShort(ITerm... terms) {
+		return new IsNotUnsignedShortBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotXMLLiteral(ITerm... terms) {
+		return new IsNotXMLLiteralBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotYearMonthDuration(ITerm... terms) {
+		return new IsNotYearMonthDurationBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsDatatype(ITerm... terms) {
+		return new IsDatatypeBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotDatatype(ITerm... terms) {
+		return new IsNotDatatypeBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsDateTimeStamp(ITerm... terms) {
+		return new IsDateTimeStampBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIsNotDateTimeStamp(ITerm... terms) {
+		return new IsNotDateTimeStampBuiltin(terms);
+	}
+
 }
