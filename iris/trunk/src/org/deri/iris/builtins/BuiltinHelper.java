@@ -620,6 +620,17 @@ public class BuiltinHelper {
 			return toAppropriateType(getDouble((INumericTerm) t0) / denominator, t0, t1);
 		}
 		
+		if (t0 instanceof IDuration && t1 instanceof IDuration) {
+			Duration duration0 = ((IDuration) t0).getValue();
+			Duration duration1 = ((IDuration) t1).getValue();
+			
+			double value0 = duration0.getTimeInMillis(ZERO);
+			double value1 = duration1.getTimeInMillis(ZERO);
+			
+			double quotient = value0 / value1;
+			return CONCRETE.createDouble(quotient);
+		}
+		
 		if (t0 instanceof IDuration && t1 instanceof INumericTerm) {
 			double number = ((INumericTerm) t1).getValue().doubleValue();
 			
@@ -628,7 +639,7 @@ public class BuiltinHelper {
 				return  null;
 			}
 			
-			double invertedNumber = 1 / number;
+			double invertedNumber = 1.0 / number;
 			IDoubleTerm invertedTerm = CONCRETE.createDouble(invertedNumber);
 			
 			return multiply(t0, invertedTerm);
