@@ -317,4 +317,10 @@ public class ConcreteFactory implements IConcreteFactory {
 	public IIntTerm createInt(int value) {
 		return new IntTerm(value);
 	}
+
+	public IDateTime createDateTimeStamp(int year, int month, int day,
+			int hour, int minute, double second, int tzHour, int tzMinute) {
+		return new DateTimeStamp(year, month, day, hour, minute, second,
+				tzHour, tzMinute);
+	}
 }

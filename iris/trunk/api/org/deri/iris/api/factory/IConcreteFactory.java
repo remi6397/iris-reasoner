@@ -160,6 +160,23 @@ public interface IConcreteFactory {
 	 */
 	public IDateTime createDateTime(int year, int month, int day, int hour,
 			int minute, int second, int millisecond, int tzHour, int tzMinute);
+	
+	/**
+	 * Creates a dateTimeStamp term for the specified values.
+	 * 
+	 * @param year The year fragment.
+	 * @param month The month fragment.
+	 * @param day The Day of month fragment.
+	 * @param hour The hour fragment.
+	 * @param minute The minute fragment.
+	 * @param second The second fragment.
+	 * @param tzHour The timezone hour (relative to GMT) fragment.
+	 * @param tzMinute The timezone minute (relative to GMT) fragment.
+	 * @throws IllegalArgumentException If not both the tzHour and tzMinute are
+	 *             positive or negative.
+	 */
+	public IDateTime createDateTimeStamp(int year, int month, int day,
+			int hour, int minute, double second, int tzHour, int tzMinute);
 
 	/**
 	 * Creates a new term representing a xs:dayTimeDuration.
@@ -304,10 +321,17 @@ public interface IConcreteFactory {
 	public IHexBinary createHexBinary(String s);
 
 	/**
-	 * Create a new integer term
+	 * <p>
+	 * Create a new term representing a xs:integer.
+	 * </p>
+	 * <p>
+	 * Note that IRIS currently only supports 32 bit (signed) integer values.
+	 * Therefore, the value space of the data type represented by this term may
+	 * be reduced due to this limitation.
+	 * </p>
 	 * 
-	 * @param i The integer value
-	 * @return The new term
+	 * @param i The integer value.
+	 * @return The new term.
 	 */
 	public IIntegerTerm createInteger(int i);
 
@@ -414,48 +438,255 @@ public interface IConcreteFactory {
 	public IYearMonthDuration createYearMonthDuration(boolean positive,
 			int year, int month);
 
+	/**
+	 * Creates a new term representing a xs:anyURI.
+	 * 
+	 * @param uri The URI representing the value of the xs:anyURI.
+	 * @return The term representing the xs:anyURI for the specified URI.
+	 */
 	public IAnyURI createAnyURI(URI uri);
 
+	/**
+	 * Creates a new term representing a xs:byte.
+	 * 
+	 * @param value The byte value.
+	 * @return The term representing the xs:byte for the specified byte.
+	 */
 	public IByteTerm createByte(byte value);
 
+	/**
+	 * Create a new term representing a xs:ENTITY.
+	 * 
+	 * @param entity The string representing the value of the xs:ENTITY.
+	 * @return The term representing the xs:ENTITY for the specified string.
+	 */
 	public IENTITY createEntity(String entity);
 
+	/**
+	 * Create a new term representing a xs:ID.
+	 * 
+	 * @param id The string representing the value of the xs:ID.
+	 * @return The term representing the xs:ID for the specified string.
+	 */
 	public IID createID(String id);
 
+	/**
+	 * Create a new term representing a xs:IDREF.
+	 * 
+	 * @param idRef The string representing the value of the xs:IDREF.
+	 * @return The term representing the xs:IDREF for the specified string.
+	 */
 	public IIDREF createIDREF(String idRef);
 
+	/**
+	 * Create a new term representing a xs:language.
+	 * 
+	 * @param language The string representing the value of the xs:language.
+	 * @return The term representing the xs:language for the specified string.
+	 */
 	public ILanguage createLanguage(String language);
 
+	/**
+	 * <p>
+	 * Create a new term representing a xs:long.
+	 * </p>
+	 * <p>
+	 * Note that IRIS currently only supports 32 bit (signed) integer values.
+	 * Therefore, the value space of the data type represented by this term may
+	 * be reduced due to this limitation.
+	 * </p>
+	 * 
+	 * @param value The integer value representing the value of the xs:long.
+	 * @return The term representing the xs:long for the specified integer
+	 *         value.
+	 */
 	public ILongTerm createLong(int value);
 
+	/**
+	 * Create a new term representing a xs:Name.
+	 * 
+	 * @param name The string value representing the value of the xs:Name.
+	 * @return The term representing the xs:Name for the specified string.
+	 */
 	public IName createName(String name);
 
+	/**
+	 * Create a new term representing a xs:NCName.
+	 * 
+	 * @param name The string value representing the value of the xs:NCName.
+	 * @return The term representing the xs:NCName for the specified string.
+	 */
 	public INCName createNCName(String name);
 
+	/**
+	 * <p>
+	 * Create a new term representing a xs:negativeInteger.
+	 * </p>
+	 * <p>
+	 * Note that IRIS currently only supports 32 bit (signed) integer values.
+	 * Therefore, the value space of the data type represented by this term may
+	 * be reduced due to this limitation.
+	 * </p>
+	 * 
+	 * @param value The integer value representing the value of the
+	 *            xs:negativeInteger.
+	 * @return The term representing the xs:negativeInteger for the specified
+	 *         integer value.
+	 */
 	public INegativeInteger createNegativeInteger(int value);
 
+	/**
+	 * Create a new term representing a xs:NMTOKEN.
+	 * 
+	 * @param token The string value representing the value of the xs:NMTOKEN.
+	 * @return The term representing the xs:NMTOKEN for the specified string.
+	 */
 	public INMTOKEN createNMTOKEN(String token);
 
+	/**
+	 * <p>
+	 * Create a new term representing a xs:nonNegativeInteger.
+	 * </p>
+	 * <p>
+	 * Note that IRIS currently only supports 32 bit (signed) integer values.
+	 * Therefore, the value space of the data type represented by this term may
+	 * be reduced due to this limitation.
+	 * </p>
+	 * 
+	 * @param value The integer value representing the value of the
+	 *            xs:nonNegativeInteger.
+	 * @return The term representing the xs:nonNegativeInteger for the specified
+	 *         integer value.
+	 */
 	public INonNegativeInteger createNonNegativeInteger(int value);
 
+	/**
+	 * <p>
+	 * Create a new term representing a xs:nonPositiveInteger.
+	 * </p>
+	 * <p>
+	 * Note that IRIS currently only supports 32 bit (signed) integer values.
+	 * Therefore, the value space of the data type represented by this term may
+	 * be reduced due to this limitation.
+	 * </p>
+	 * 
+	 * @param value The integer value representing the value of the
+	 *            xs:nonPositiveInteger.
+	 * @return The term representing the xs:nonPositiveInteger for the specified
+	 *         integer value.
+	 */
 	public INonPositiveInteger createNonPositiveInteger(int value);
 
+	/**
+	 * Create a new term representing a xs:normalizedString.
+	 * 
+	 * @param string The string value representing the value of the
+	 *            xs:normalizedString.
+	 * @return The term representing the xs:normalizedString for the specified
+	 *         string.
+	 */
 	public INormalizedString createNormalizedString(String string);
 
+	/**
+	 * <p>
+	 * Create a new term representing a xs:positiveInteger.
+	 * </p>
+	 * <p>
+	 * Note that IRIS currently only supports 32 bit (signed) integer values.
+	 * Therefore, the value space of the data type represented by this term may
+	 * be reduced due to this limitation.
+	 * </p>
+	 * 
+	 * @param value The integer value representing the value of the
+	 *            xs:positiveInteger.
+	 * @return The term representing the xs:positiveInteger for the specified
+	 *         integer value.
+	 */
 	public IPositiveInteger createPositiveInteger(int value);
 
+	/**
+	 * Create a new term representing a xs:short.
+	 * 
+	 * @param value The integer value representing the value of the xs:short.
+	 * @return The term representing the xs:short for the specified integer
+	 *         value.
+	 */
 	public IShortTerm createShort(short value);
 
+	/**
+	 * Create a new term representing a xs:token.
+	 * 
+	 * @param token The string value representing the value of the xs:token.
+	 * @return The term representing the xs:token for the specified string.
+	 */
 	public IToken createToken(String token);
 
+	/**
+	 * <p>
+	 * Create a new term representing a xs:unsignedLong.
+	 * </p>
+	 * <p>
+	 * Note that IRIS currently only supports 32 bit (signed) integer values.
+	 * Therefore, the value space of the data type represented by this term may
+	 * be reduced due to this limitation.
+	 * </p>
+	 * 
+	 * @param value The integer value representing the value of the
+	 *            xs:unsignedLong.
+	 * @return The term representing the xs:unsignedLong for the specified
+	 *         integer value.
+	 */
 	public IUnsignedLong createUnsignedLong(int value);
 
+	/**
+	 * <p>
+	 * Create a new term representing a xs:unsignedInt.
+	 * </p>
+	 * <p>
+	 * Note that IRIS currently only supports 32 bit (signed) integer values.
+	 * Therefore, the value space of the data type represented by this term may
+	 * be reduced due to this limitation.
+	 * </p>
+	 * 
+	 * @param value The integer value representing the value of the
+	 *            xs:unsignedInt.
+	 * @return The term representing the xs:unsignedInt for the specified
+	 *         integer value.
+	 */
 	public IUnsignedInt createUnsignedInt(int value);
 
+	/**
+	 * <p>
+	 * Create a new term representing a xs:unsignedShort.
+	 * </p>
+	 * 
+	 * @param value The integer value representing the value of the
+	 *            xs:unsignedShort.
+	 * @return The term representing the xs:unsignedShort for the specified
+	 *         integer value.
+	 */
 	public IUnsignedShort createUnsignedShort(int value);
 
+	/**
+	 * <p>
+	 * Create a new term representing a xs:unsignedByte.
+	 * </p>
+	 * 
+	 * @param value The short value representing the value of the
+	 *            xs:unsignedByte.
+	 * @return The term representing the xs:unsignedByte for the specified short
+	 *         value.
+	 */
 	public IUnsignedByte createUnsignedByte(short value);
-	
+
+	/**
+	 * <p>
+	 * Create a new term representing a xs:int.
+	 * </p>
+	 * 
+	 * @param value The integer value representing the value of the xs:int.
+	 * @return The term representing the xs:int for the specified integer value.
+	 */
 	public IIntTerm createInt(int value);
-	
+
 }
