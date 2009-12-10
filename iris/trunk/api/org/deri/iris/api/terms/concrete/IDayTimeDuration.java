@@ -22,17 +22,14 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import javax.xml.datatype.Duration;
-
-import org.deri.iris.api.terms.IConcreteTerm;
-
 /*
  * W3C specification: http://www.w3.org/TR/xpath-functions/#dt-dayTimeDuration
  */
 
 /**
  * <p>
- * An interface for representing the xs:dayTimeDuration data-type. xs:dayTimeDuration is derived from xs:duration by restricting its lexical
+ * An interface for representing the xs:dayTimeDuration data-type.
+ * xs:dayTimeDuration is derived from xs:duration by restricting its lexical
  * representation to contain only the days, hours, minutes and seconds
  * components.
  * </p>
@@ -41,71 +38,13 @@ import org.deri.iris.api.terms.IConcreteTerm;
  * primitive XML Schema data types.
  * </p>
  */
-public interface IDayTimeDuration extends IConcreteTerm {
+public interface IDayTimeDuration extends IDuration {
 
 	/**
-	 * Returns the wrapped type.
-	 */
-	public Duration getValue();
-
-	/**
-	 * Returns <code>true</code> if this is a positive duration,
-	 * <code>false</code> otherwise. Also returns <code>true</code> if this is a
-	 * duration of length 0.
+	 * Returns a canonical representation of dayTimeDuration as defined in
+	 * http://www.w3.org/TR/xpath-functions/#canonical-dayTimeDuration.
 	 * 
-	 * @return <code>true</code> if this is a positive duration,
-	 *         <code>false</code> otherwise.
-	 */
-	boolean isPositive();
-
-	/**
-	 * Returns the days.
-	 * 
-	 * @return The days.
-	 */
-	public int getDay();
-
-	/**
-	 * Returns the hours.
-	 * 
-	 * @return The hours.
-	 */
-	public int getHour();
-
-	/**
-	 * Returns the minutes.
-	 * 
-	 * @return The minutes.
-	 */
-	public int getMinute();
-
-	/**
-	 * Returns the seconds.
-	 * 
-	 * @return The seconds.
-	 */
-	public int getSecond();
-
-	/**
-	 * Returns the milliseconds.
-	 * 
-	 * @return The milliseconds.
-	 */
-	public int getMillisecond();
-
-	/**
-	 * Return the complete floating point representation of the seconds
-	 * components.
-	 * 
-	 * @return The decimal seconds
-	 */
-	public double getDecimalSecond();
-
-	/**
-	 * Returns a canonical representation of dayMonthDuration as defined in
-	 * http://www.w3.org/TR/xpath-functions/#canonical-yearMonthDuration.
-	 * 
-	 * @return A canonical representation of this yearMonthDuration instance.
+	 * @return A canonical representation of this dayTimeDuration instance.
 	 */
 	public IDayTimeDuration toCanonical();
 

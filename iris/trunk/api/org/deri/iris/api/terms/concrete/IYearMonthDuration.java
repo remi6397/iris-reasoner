@@ -22,10 +22,6 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import javax.xml.datatype.Duration;
-
-import org.deri.iris.api.terms.IConcreteTerm;
-
 /*
  * W3C specification: http://www.w3.org/TR/xpath-functions/#dt-yearMonthDuration
  */
@@ -41,36 +37,7 @@ import org.deri.iris.api.terms.IConcreteTerm;
  * primitive XML Schema data types.
  * </p>
  */
-public interface IYearMonthDuration extends IConcreteTerm {
-
-	/**
-	 * Returns the wrapped type.
-	 */
-	Duration getValue();
-
-	/**
-	 * Returns <code>true</code> if this is a positive duration,
-	 * <code>false</code> otherwise. Also returns <code>true</code> if this is a
-	 * duration of length 0.
-	 * 
-	 * @return <code>true</code> if this is a positive duration,
-	 *         <code>false</code> otherwise.
-	 */
-	boolean isPositive();
-
-	/**
-	 * Returns the years.
-	 * 
-	 * @return The years.
-	 */
-	int getYear();
-
-	/**
-	 * Returns the months.
-	 * 
-	 * @return The months.
-	 */
-	int getMonth();
+public interface IYearMonthDuration extends IDuration {
 
 	/**
 	 * Returns a canonical representation of yearMonthDuration as defined in
