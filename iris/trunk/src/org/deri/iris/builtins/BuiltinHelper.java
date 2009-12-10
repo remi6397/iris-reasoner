@@ -39,16 +39,21 @@ import org.deri.iris.Configuration;
 import org.deri.iris.ConfigurationThreadLocalStorage;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.IConcreteTerm;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IDateTerm;
 import org.deri.iris.api.terms.concrete.IDateTime;
+import org.deri.iris.api.terms.concrete.IDayTimeDuration;
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
 import org.deri.iris.api.terms.concrete.IDuration;
 import org.deri.iris.api.terms.concrete.IFloatTerm;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.api.terms.concrete.ITime;
+import org.deri.iris.api.terms.concrete.IYearMonthDuration;
+import org.deri.iris.builtins.datatype.ToDayTimeDurationBuiltin;
+import org.deri.iris.builtins.datatype.ToYearMonthDurationBuiltin;
 import org.deri.iris.terms.concrete.XmlDurationWorkAroundHelper;
 import org.deri.iris.utils.StandardFloatingPointComparator;
 
@@ -186,7 +191,7 @@ public class BuiltinHelper {
 		if( (t0 instanceof INumericTerm) && (t1 instanceof INumericTerm) )
 			return numbersCompare((INumericTerm) t0, (INumericTerm) t1) < 0;
 			
-		if( t0.getClass() == t1.getClass() )
+		if( t0.getClass().isAssignableFrom(t1.getClass()) )
 			return t0.compareTo( t1 ) < 0;
 		
 		return false;
@@ -206,7 +211,7 @@ public class BuiltinHelper {
 		if( (t0 instanceof INumericTerm) && (t1 instanceof INumericTerm) )
 			return numbersCompare((INumericTerm) t0, (INumericTerm) t1) <= 0;
 			
-		if( t0.getClass() == t1.getClass() )
+		if( t0.getClass().isAssignableFrom(t1.getClass()) )
 			return t0.compareTo( t1 ) <= 0;
 		
 		return false;
@@ -252,7 +257,7 @@ public class BuiltinHelper {
 		// point behaviour.
 		// Specifically, -0.0 should equal to +0.0, Nan != NaN etc
 		// In any case, the floating point comparison should allow for round-off errors.
-		if( t0.getClass() == t1.getClass() )
+		if( t0.getClass().equals(t1.getClass()) )
 		{
 			Object ot0 = t0.getValue();
 			Object ot1 = t1.getValue();
@@ -265,14 +270,18 @@ public class BuiltinHelper {
 			{
 				return StandardFloatingPointComparator.getDouble().equals( ( (Double) ot0).doubleValue(), ( (Double) ot1).doubleValue() );
 			}
+		} else if (t0 instanceof IConcreteTerm && t1 instanceof IConcreteTerm) {
+			IConcreteTerm concreteTerm0 = (IConcreteTerm) t0;
+			IConcreteTerm concreteTerm1 = (IConcreteTerm) t1;
+			
+			return concreteTerm0.getDatatypeIRI().equals(concreteTerm1.getDatatypeIRI());
 		}
 	    return t0.equals( t1 );
 	}
 
 
 	/**
-	 * Returns the Double value from a <code>INumericTerm</code> <b>This
-	 * method assumes that only numbers are stored in <code>INumericTerm</code>.</b>
+	 * Returns the Double value from a <code>INumericTerm</code>.
 	 * 
 	 * @param n
 	 *            the term
@@ -284,8 +293,7 @@ public class BuiltinHelper {
 	private static double getDouble(final INumericTerm n) {
 		assert n != null;
 
-		// TODO: maybe instance check for Number
-		return ((Number) n.getValue()).doubleValue();
+		return n.getValue().doubleValue();
 	}
 
 	/**
@@ -424,7 +432,17 @@ public class BuiltinHelper {
 		} else if ((t0 instanceof IDuration) && (t1 instanceof IDuration)) { // duration + duration = duration
 			final Duration d0 = ((IDuration) t0).getValue();
 			final Duration d1 = ((IDuration) t1).getValue();
-			return createDuration(XmlDurationWorkAroundHelper.add(d0, d1));
+			IDuration result = createDuration(XmlDurationWorkAroundHelper.add(d0, d1));
+			
+			if (t0 instanceof IYearMonthDuration
+					&& t1 instanceof IYearMonthDuration) {
+				return ToYearMonthDurationBuiltin.toYearMonthDuration(result);
+			} else if (t0 instanceof IDayTimeDuration
+					&& t1 instanceof IDayTimeDuration) {
+				return ToDayTimeDurationBuiltin.toDayTimeDuration(result);
+			} else {
+				return result;
+			}
 		}
 		return null;
 	}
@@ -484,7 +502,18 @@ public class BuiltinHelper {
 		} else if ((t0 instanceof IDuration) && (t1 instanceof IDuration)) { // duration - duration
 			final Duration d0 = ((IDuration) t0).getValue();
 			final Duration d1 = ((IDuration) t1).getValue();
-			return createDuration( XmlDurationWorkAroundHelper.subtract( d0, d1 ) );
+			IDuration result = createDuration( XmlDurationWorkAroundHelper.subtract( d0, d1 ) );
+			
+			if (t0 instanceof IYearMonthDuration && t1 instanceof IYearMonthDuration) {
+				return CONCRETE.createYearMonthDuration(result.isPositive(),
+						result.getYear(), result.getMonth());
+			} else if (t0 instanceof IDayTimeDuration && t1 instanceof IDayTimeDuration) {
+				return CONCRETE.createDayTimeDuration(result.isPositive(),
+						result.getDay(), result.getHour(), result.getMinute(),
+						result.getDecimalSecond());
+			} else {
+				return result;
+			}
 		}
 		
 		return null;
@@ -519,6 +548,28 @@ public class BuiltinHelper {
 
 		if( t0 instanceof INumericTerm && t1 instanceof INumericTerm) // number - number = number
 			return toAppropriateType(getDouble((INumericTerm) t0) * getDouble((INumericTerm) t1), t0, t1);
+		
+		if (t0 instanceof IDuration && t1 instanceof INumericTerm) {
+			IDuration duration = (IDuration) t0;
+			INumericTerm number = (INumericTerm) t1;
+			
+			Duration result = duration.getValue().multiply(
+					new BigDecimal(number.getValue().doubleValue()));
+			IDuration multipliedDuration = CONCRETE.createDuration(result
+					.getSign() > -1, result.getYears(), result.getMonths(),
+					result.getDays(), result.getHours(), result.getMinutes(),
+					result.getSeconds());
+			
+			if (duration instanceof IYearMonthDuration) {
+				return ToYearMonthDurationBuiltin
+						.toYearMonthDuration(multipliedDuration);
+			} else if (duration instanceof IDayTimeDuration) {
+				return ToDayTimeDurationBuiltin
+						.toDayTimeDuration(multipliedDuration);
+			}
+			
+			return multipliedDuration;
+		}
 
 		return null;
 	}
@@ -567,6 +618,20 @@ public class BuiltinHelper {
 			}
 			
 			return toAppropriateType(getDouble((INumericTerm) t0) / denominator, t0, t1);
+		}
+		
+		if (t0 instanceof IDuration && t1 instanceof INumericTerm) {
+			double number = ((INumericTerm) t1).getValue().doubleValue();
+			
+			if (number == 0.0) {
+				handleDivideByZero();
+				return  null;
+			}
+			
+			double invertedNumber = 1 / number;
+			IDoubleTerm invertedTerm = CONCRETE.createDouble(invertedNumber);
+			
+			return multiply(t0, invertedTerm);
 		}
 		
 		return null;
