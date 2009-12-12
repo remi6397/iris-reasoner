@@ -22,64 +22,87 @@
  */
 package org.deri.iris.terms.concrete;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
-import org.deri.iris.ObjectTests;
-import org.deri.iris.TermTests;
-
-/**
- * <p>
- * Tests the functionality of the <code>FloatTerm</code>.
- * </p>
- * <p>
- * $Id$
- * </p>
- * 
- * @author Richard Pöttler, richard dot poettler at deri dot org
- * @version $Revision$
- */
 public class FloatTest extends TestCase {
 
-	private final static float BASIC = 0.1f;
-
-	private final static float MORE = 0.2f;
-
-	private final static float MORE1 = 0.3f;
-
-	public static Test suite() {
-		return new TestSuite(FloatTest.class, FloatTest.class.getSimpleName());
+	public void testConstruct() {
+		FloatTerm ft = new FloatTerm(0.123f);
+		assertEquals( 0.123f, ft.getValue() );
 	}
-
-	public void testBasic() {
-		FloatTerm basic = new FloatTerm(BASIC);
-
-		assertEquals("object not initialized correctly", BASIC, basic
-				.getValue());
-	}
-
+	
 	public void testEquals() {
-		ObjectTests.runTestEquals(new FloatTerm(BASIC), new FloatTerm(BASIC),
-				new FloatTerm(MORE));
+		checkEqual( +0.0f, +0.0f );
+		checkEqual( -0.0f, -0.0f );
+		checkEqual( 1.1f, 1.1f );
+		checkEqual( -1.1f, -1.1f );
+		checkEqual( Float.NaN, Float.NaN );
+		checkEqual( Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY );
+		checkEqual( Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY );
+		checkEqual( Float.MAX_VALUE, Float.MAX_VALUE );
+		checkEqual( Float.MIN_VALUE, Float.MIN_VALUE );
+		checkEqual( Float.MIN_NORMAL, Float.MIN_NORMAL );
+	}
+	
+	public void testNotEquals() {
+		checkNotEqual( +0.0f, -0.0f );
+		checkNotEqual( +0.0f, -0.0f );
+		checkNotEqual( 0.0f, Float.MIN_NORMAL );
+		checkNotEqual( 0.0f, -Float.MIN_NORMAL );
+		checkNotEqual( Float.NaN, 0.0f );
+		checkNotEqual( Float.POSITIVE_INFINITY, 0.0f );
+		checkNotEqual( Float.NEGATIVE_INFINITY, 0.0f );
+		checkNotEqual( Float.NaN, 0.0f );
 	}
 
 	public void testCompare() {
-		ObjectTests.runTestCompareTo(new FloatTerm(BASIC), new FloatTerm(BASIC),
-				new FloatTerm(MORE), new FloatTerm(MORE1));
-	}
-
-	public void testEqualsPositiveNegativeZero() {
-		ObjectTests.runTestCompareTo(new FloatTerm(+0.0f),
-				new FloatTerm(-0.0f), new FloatTerm(0.0001f), new FloatTerm(
-								0.0002f));
+		checkLess( 0.0f, Float.MIN_VALUE );
+		checkLess( -Float.MIN_VALUE, 0.0f );
+		checkLess( Float.NEGATIVE_INFINITY, 0.0f );
+		checkLess( 0.0f, Float.POSITIVE_INFINITY );
 	}
 
 	public void testHashCode() {
-		ObjectTests.runTestHashCode(new FloatTerm(BASIC), new FloatTerm(BASIC));
+		checkSameHashCode( 1.234f, 1.234f );
+		checkSameHashCode( 0.0f, 0.0f );
+		checkSameHashCode( Float.NaN, Float.NaN );
 	}
 
-	public void testGetMinValue() {
-		TermTests.runTestGetMinValue(new FloatTerm(Float.MIN_VALUE + 0.0001f));
+	private void checkSameHashCode( float f1, float f2 ) {
+		FloatTerm ft1 = new FloatTerm( f1 );
+		FloatTerm ft2 = new FloatTerm( f2 );
+		
+		assertEquals( ft1.hashCode(), ft2.hashCode() );
+	}
+
+	private void checkEqual( float f1, float f2 ) {
+		FloatTerm ft1 = new FloatTerm( f1 );
+		FloatTerm ft2 = new FloatTerm( f2 );
+		
+		assertEquals( ft1, ft2 );
+		assertEquals( ft2, ft1 );
+		assertTrue( ft1.compareTo( ft2 ) == 0 );
+		assertTrue( ft2.compareTo( ft1 ) == 0 );
+	}
+
+	private void checkNotEqual( float f1, float f2 ) {
+		FloatTerm ft1 = new FloatTerm( f1 );
+		FloatTerm ft2 = new FloatTerm( f2 );
+		
+		assertFalse( ft1.equals( ft2 ) );
+		assertFalse( ft2.equals( ft1 ) );
+		assertTrue( ft1.compareTo( ft2 ) != 0 );
+		assertTrue( ft2.compareTo( ft1 ) != 0 );
+	}
+
+	private void checkLess( float f1, float f2 ) {
+		FloatTerm ft1 = new FloatTerm( f1 );
+		FloatTerm ft2 = new FloatTerm( f2 );
+		
+		assertTrue( ft1.compareTo( ft2 ) < 0 );
+		assertTrue( ft2.compareTo( ft1 ) > 0 );
+
+		assertFalse( ft1.equals( ft2 ) );
+		assertFalse( ft2.equals( ft1 ) );
 	}
 }

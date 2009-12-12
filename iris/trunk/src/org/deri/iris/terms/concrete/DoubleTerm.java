@@ -32,23 +32,17 @@ import org.deri.iris.utils.StandardFloatingPointComparator;
  * <p>
  * Simple implementation of the IDoubleTerm.
  * </p>
- * <p>
- * $Id$
- * </p>
- * 
- * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision$
  */
 public class DoubleTerm implements IDoubleTerm {
 
-	private final Double d;
+	private final Double mValue;
 
 	DoubleTerm(final double d) {
-		this.d = d;
+		mValue = d;
 	}
 
 	public Double getValue() {
-		return d;
+		return mValue;
 	}
 
 	public boolean isGround() {
@@ -61,7 +55,7 @@ public class DoubleTerm implements IDoubleTerm {
 		}
 
 		DoubleTerm dt = (DoubleTerm) o;
-		return StandardFloatingPointComparator.getDouble().compare(d, dt.d);
+		return mValue.compareTo(dt.mValue);
 	}
 
 	public boolean equals(final Object o) {
@@ -69,12 +63,12 @@ public class DoubleTerm implements IDoubleTerm {
 			return false;
 		}
 		DoubleTerm dt = (DoubleTerm) o;
-		// Use the floating point comparer to allow for round-off errors.
-		return StandardFloatingPointComparator.getDouble().equals(d, dt.d);
+
+		return mValue.equals( dt.mValue );
 	}
 
 	public int hashCode() {
-		return d.hashCode();
+		return mValue.hashCode();
 	}
 
 	/**
@@ -83,7 +77,7 @@ public class DoubleTerm implements IDoubleTerm {
 	 * @return the String representation of the holded double
 	 */
 	public String toString() {
-		return d.toString();
+		return mValue.toString();
 	}
 
 	public URI getDatatypeIRI() {
@@ -91,6 +85,6 @@ public class DoubleTerm implements IDoubleTerm {
 	}
 
 	public String toCanonicalString() {
-		return d.toString();
+		return mValue.toString();
 	}
 }

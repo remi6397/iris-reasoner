@@ -26,7 +26,6 @@ import java.net.URI;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IFloatTerm;
-import org.deri.iris.utils.StandardFloatingPointComparator;
 
 /**
  * <p>
@@ -42,7 +41,7 @@ import org.deri.iris.utils.StandardFloatingPointComparator;
 public class FloatTerm implements IFloatTerm {
 
 	/** The float represented by this object */
-	private final Float f;
+	private final Float mValue;
 
 	/**
 	 * Constructs a new float with the given value.
@@ -53,11 +52,11 @@ public class FloatTerm implements IFloatTerm {
 	 *             if the float is null
 	 */
 	FloatTerm(final float f) {
-		this.f = f;
+		mValue = f;
 	}
 
 	public Float getValue() {
-		return f;
+		return mValue;
 	}
 
 	public boolean isGround() {
@@ -70,11 +69,14 @@ public class FloatTerm implements IFloatTerm {
 		}
 
 		FloatTerm ft = (FloatTerm) o;
-		return StandardFloatingPointComparator.getFloat().compare(f, ft.f);
+
+		// NaN > all non-NaN values
+	    // +0.0 > -0.0f  
+		return mValue.compareTo( ft.mValue );
 	}
 
 	public int hashCode() {
-		return f.hashCode();
+		return mValue.hashCode();
 	}
 
 	public boolean equals(Object o) {
@@ -82,12 +84,15 @@ public class FloatTerm implements IFloatTerm {
 			return false;
 		}
 		FloatTerm ft = (FloatTerm) o;
-		// Use the floating point comparer to allow for round-off errors.
-		return StandardFloatingPointComparator.getFloat().equals(f, ft.f);
+
+		// This method behaves as follows: 
+		//     NaN == NaN - required by XSD
+		//     +0.0 != -0.0 - required for OWL 2, but contrary to XSD
+		return mValue.equals( ft.mValue );
 	}
 
 	public String toString() {
-		return f.toString();
+		return mValue.toString();
 	}
 
 	public URI getDatatypeIRI() {
@@ -95,6 +100,6 @@ public class FloatTerm implements IFloatTerm {
 	}
 
 	public String toCanonicalString() {
-		return f.toString();
+		return mValue.toString();
 	}
 }
