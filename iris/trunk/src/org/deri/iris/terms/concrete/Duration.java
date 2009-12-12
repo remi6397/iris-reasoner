@@ -148,7 +148,7 @@ public class Duration implements IDuration {
 	}
 
 	/**
-	 * Contructs a new duration out of a given amount of milliseconds. The
+	 * Constructs a new duration out of a given amount of milliseconds. The
 	 * milliseconds will be round down to the next second.
 	 * 
 	 * @param millis
