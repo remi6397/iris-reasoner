@@ -51,6 +51,9 @@ public class EqualsTest extends ProgramEvaluationTest {
 		// Create rules.
 		expressions.add("?X = ?Y :- a(?X), b(?Y), ?X = 'A', ?Y = 'B'.");
 		expressions.add("?X = ?Y :- b(?Y), ?X = 'A', ?Y = 'B'.");
+		
+		expressions.add("'Peter' = 'Peter_Griffin' :- .");
+		expressions.add("unsat('foo') :- 'Peter' = 'Peter_Griffin'.");
 
 		return expressions;
 	}
@@ -79,6 +82,17 @@ public class EqualsTest extends ProgramEvaluationTest {
 				.createConstantTuple("B")));
 		
 		assertEquals("Relation does not have correct size", 2, relation.size());
+	}
+	
+	public void testUnsat() throws Exception {
+		// The result should be: foo
+
+		IRelation relation = evaluate("?- unsat(?X).");
+
+		assertTrue("foo not in relation.", relation.contains(Helper
+				.createConstantTuple("foo")));
+		
+		assertEquals("Relation does not have correct size", 1, relation.size());
 	}
 
 }
