@@ -128,7 +128,7 @@ public class ToIntegerBuiltinTest extends TestCase {
 
 	public void testString() throws EvaluationException {
 		equals(1, TERM.createString("1"));
-		fails(TERM.createString("1.337"));
+		equals(1, TERM.createString("1.337"));
 		fails(TERM.createString("abcd"));
 	}
 
