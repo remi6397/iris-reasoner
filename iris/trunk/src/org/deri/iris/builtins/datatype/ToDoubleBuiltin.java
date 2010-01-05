@@ -61,9 +61,7 @@ public class ToDoubleBuiltin extends ConversionBuiltin {
 
 	@Override
 	protected ITerm convert(ITerm term) {
-		if (term instanceof IDoubleTerm) {
-			return term;
-		} else if (term instanceof IBooleanTerm) {
+		if (term instanceof IBooleanTerm) {
 			return toDouble((IBooleanTerm) term);
 		} else if (term instanceof INumericTerm) {
 			return toDouble((INumericTerm) term);
@@ -115,7 +113,9 @@ public class ToDoubleBuiltin extends ConversionBuiltin {
 	 * @return A new Double term representing the result of the conversion.
 	 */
 	public static IDoubleTerm toDouble(INumericTerm term) {
-		if (term instanceof IFloatTerm) {
+		if (term instanceof IDoubleTerm) {
+			return (IDoubleTerm) term;
+		} else if (term instanceof IFloatTerm) {
 			return toDouble((IFloatTerm) term);
 		}
 

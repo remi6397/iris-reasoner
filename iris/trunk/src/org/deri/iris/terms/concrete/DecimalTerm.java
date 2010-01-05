@@ -22,76 +22,46 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.math.BigDecimal;
 import java.net.URI;
 
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
-import org.deri.iris.utils.StandardFloatingPointComparator;
 
 /**
  * <p>
- * Simple implementation of the IDecimalTerm.
+ * Simple implementation of IDecimalTerm.
  * </p>
- * <p>
- * $Id$
- * </p>
- * 
- * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision$
  */
-public class DecimalTerm implements IDecimalTerm {
+public class DecimalTerm extends AbstractNumericTerm implements IDecimalTerm {
 
-	private final Double d;
+	protected final BigDecimal value;
 
-	DecimalTerm(final double d) {
-		this.d = d;
+	DecimalTerm(double value) {
+		this(new BigDecimal(Double.toString(value)));
 	}
 
-	public Double getValue() {
-		return d;
+	DecimalTerm(BigDecimal value) {
+		this.value = value;
 	}
 
-	public boolean isGround() {
-		return true;
-	}
-
-	public int compareTo(ITerm o) {
-		if (o == null) {
-			return 1;
-		}
-
-		DecimalTerm dt = (DecimalTerm) o;
-		return StandardFloatingPointComparator.getDouble().compare(d, dt.d);
-	}
-
-	public boolean equals(final Object o) {
-		if (!(o instanceof DecimalTerm)) {
-			return false;
-		}
-		DecimalTerm dt = (DecimalTerm) o;
-
-		// Use the floating point comparer to allow for round-off errors.
-		return StandardFloatingPointComparator.getDouble().equals(d, dt.d);
-	}
-
-	public int hashCode() {
-		return d.hashCode();
-	}
-
-	/**
-	 * Simply returns the String representation of the holded double.
-	 * 
-	 * @return the String representation of the holded double
-	 */
-	public String toString() {
-		return d.toString();
+	public BigDecimal getValue() {
+		return value;
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/2001/XMLSchema#decimal");
+		return URI.create(IDecimalTerm.DATATYPE_URI);
+	}
+	
+	public boolean isNotANumber() {
+		return false;
 	}
 
-	public String toCanonicalString() {
-		return d.toString();
+	public boolean isPositiveInfinity() {
+		return false;
 	}
+
+	public boolean isNegativeInfinity() {
+		return false;
+	}
+
 }

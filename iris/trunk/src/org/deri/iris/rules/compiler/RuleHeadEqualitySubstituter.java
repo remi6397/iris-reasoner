@@ -27,6 +27,7 @@ import java.util.List;
 import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.storage.IRelation;
@@ -69,24 +70,30 @@ public class RuleHeadEqualitySubstituter extends HeadSubstituter {
 
 	@Override
 	public IRelation process(IRelation inputRelation) {
+		// Do standard head substitution.
 		IRelation relation = super.process(inputRelation);
+
+		// Create a new relation which only contains valid equivalence
+		// relations. For instance, an equivalence relation of two numeric terms
+		// is invalid.
+		IRelation result = mConfiguration.relationFactory.createRelation();
 
 		for (int i = 0; i < relation.size(); i++) {
 			ITuple tuple = relation.get(i);
-			analyze(relation, tuple);
+
+			assert tuple.size() == 2 : "Only works on binary tuples.";
+
+			ITerm x = tuple.get(0);
+			ITerm y = tuple.get(1);
+
+			if (!(x instanceof INumericTerm) && !(y instanceof INumericTerm)) {
+				// ?X and ?Y are equivalent.
+				equivalentTerms.setEquivalent(x, y);
+				result.add(tuple);
+			}
 		}
 
-		return relation;
-	}
-
-	private void analyze(IRelation relation, ITuple tuple) {
-		assert tuple.size() == 2 : "Only works on binary tuples.";
-
-		ITerm x = tuple.get(0);
-		ITerm y = tuple.get(1);
-
-		// ?X and ?Y are equivalent.
-		equivalentTerms.setEquivalent(x, y);
+		return result;
 	}
 
 }

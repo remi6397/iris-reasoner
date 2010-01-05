@@ -23,6 +23,7 @@
 
 package org.deri.iris.terms.concrete;
 
+import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.INumericTerm;
@@ -40,7 +41,7 @@ public class UnsignedLongTest extends AbstractConcreteTermTest {
 
 	@Override
 	protected INumericTerm createBasic() {
-		return new UnsignedLong(1337);
+		return new UnsignedLong(BigInteger.valueOf(1337));
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class UnsignedLongTest extends AbstractConcreteTermTest {
 
 	@Override
 	protected INumericTerm createEqual() {
-		return new UnsignedLong(1337);
+		return new UnsignedLong(BigInteger.valueOf(1337));
 	}
 
 	@Override
@@ -60,7 +61,7 @@ public class UnsignedLongTest extends AbstractConcreteTermTest {
 
 	@Override
 	protected INumericTerm createGreater() {
-		return new UnsignedLong(123423236);
+		return new UnsignedLong(BigInteger.valueOf(123423236));
 	}
 
 	@Override
@@ -75,13 +76,13 @@ public class UnsignedLongTest extends AbstractConcreteTermTest {
 
 	public void testValidity() {
 		try {
-			new UnsignedLong(-1);
+			new UnsignedLong(BigInteger.valueOf(-1));
 			fail("Did not recognize invalid value");
 		} catch (IllegalArgumentException e) {
 		}
 
 		try {
-			new UnsignedLong(-12131);
+			new UnsignedLong(BigInteger.valueOf(-12131));
 			fail("Did not recognize invalid value");
 		} catch (IllegalArgumentException e) {
 		}

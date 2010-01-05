@@ -25,6 +25,8 @@ package org.deri.iris.builtins.datatype;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 
+import java.math.BigDecimal;
+
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.IStringTerm;
@@ -61,9 +63,7 @@ public class ToDecimalBuiltin extends ConversionBuiltin {
 
 	@Override
 	protected ITerm convert(ITerm term) {
-		if (term instanceof IDecimalTerm) {
-			return term;
-		} else if (term instanceof IBooleanTerm) {
+		if (term instanceof IBooleanTerm) {
 			return toDecimal((IBooleanTerm) term);
 		} else if (term instanceof INumericTerm) {
 			return toDecimal((INumericTerm) term);
@@ -99,13 +99,11 @@ public class ToDecimalBuiltin extends ConversionBuiltin {
 	 */
 	public static IDecimalTerm toDecimal(IFloatTerm term) {
 		/*
-		 * This is a workaround for casting from float to double in order to
-		 * keep precision.
+		 * This is a workaround in order to keep precision.
 		 */
 		String floatString = String.valueOf(term.getValue());
-		double value = Double.parseDouble(floatString);
 
-		return CONCRETE.createDecimal(value);
+		return CONCRETE.createDecimal(new BigDecimal(floatString));
 	}
 
 	/**
@@ -119,10 +117,7 @@ public class ToDecimalBuiltin extends ConversionBuiltin {
 			return toDecimal((IFloatTerm) term);
 		}
 
-		Number number = term.getValue();
-		double value = number.doubleValue();
-
-		return CONCRETE.createDecimal(value);
+		return CONCRETE.createDecimal(term.getValue());
 	}
 
 	/**
@@ -134,9 +129,8 @@ public class ToDecimalBuiltin extends ConversionBuiltin {
 	public static IDecimalTerm toDecimal(IStringTerm term) {
 		try {
 			String string = term.getValue();
-			double value = Double.parseDouble(string);
 
-			return CONCRETE.createDecimal(value);
+			return CONCRETE.createDecimal(new BigDecimal(string));
 		} catch (NumberFormatException e) {
 		}
 

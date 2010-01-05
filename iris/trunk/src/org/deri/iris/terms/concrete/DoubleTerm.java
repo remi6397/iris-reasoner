@@ -22,69 +22,61 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.math.BigDecimal;
 import java.net.URI;
 
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
-import org.deri.iris.utils.StandardFloatingPointComparator;
 
 /**
  * <p>
  * Simple implementation of the IDoubleTerm.
  * </p>
  */
-public class DoubleTerm implements IDoubleTerm {
+public class DoubleTerm extends AbstractNumericTerm implements IDoubleTerm {
 
-	private final Double mValue;
+	private final Double value;
 
-	DoubleTerm(final double d) {
-		mValue = d;
+	private BigDecimal decimalValue;
+
+	DoubleTerm(float value) {
+		this(Double.valueOf(Float.toString(value)));
 	}
 
-	public Double getValue() {
-		return mValue;
+	DoubleTerm(double value) {
+		this.value = value;
 	}
 
-	public boolean isGround() {
-		return true;
-	}
-
-	public int compareTo(ITerm o) {
-		if (o == null) {
-			return 1;
+	public BigDecimal getValue() {
+		if (isNotANumber() || isPositiveInfinity() || isNegativeInfinity()) {
+			return null;
 		}
 
-		DoubleTerm dt = (DoubleTerm) o;
-		return mValue.compareTo(dt.mValue);
-	}
-
-	public boolean equals(final Object o) {
-		if (!(o instanceof DoubleTerm)) {
-			return false;
+		if (decimalValue == null) {
+			decimalValue = new BigDecimal(Double.toString(value));
 		}
-		DoubleTerm dt = (DoubleTerm) o;
 
-		return mValue.equals( dt.mValue );
+		return decimalValue;
 	}
 
+	public boolean isNotANumber() {
+		return value.equals(Double.NaN);
+	}
+
+	public boolean isPositiveInfinity() {
+		return value.equals(Double.POSITIVE_INFINITY);
+	}
+
+	public boolean isNegativeInfinity() {
+		return value.equals(Double.NEGATIVE_INFINITY);
+	}
+
+	@Override
 	public int hashCode() {
-		return mValue.hashCode();
-	}
-
-	/**
-	 * Simply returns the String representation of the holded double.
-	 * 
-	 * @return the String representation of the holded double
-	 */
-	public String toString() {
-		return mValue.toString();
+		return value.hashCode();
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/2001/XMLSchema#double");
+		return URI.create(IDoubleTerm.DATATYPE_URI);
 	}
 
-	public String toCanonicalString() {
-		return mValue.toString();
-	}
 }

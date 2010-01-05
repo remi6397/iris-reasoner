@@ -2,7 +2,7 @@
  * Integrated Rule Inference System (IRIS):
  * An extensible rule inference system for datalog with extensions.
  * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
+ * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
  * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
  * 
  * This library is free software; you can redistribute it and/or
@@ -20,37 +20,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.builtins;
+package org.deri.iris.builtins.date;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IBooleanTerm;
-import org.deri.iris.factory.Factory;
+import org.deri.iris.api.terms.concrete.IDayTimeDuration;
+import org.deri.iris.api.terms.concrete.IDoubleTerm;
+import org.deri.iris.builtins.DivideBuiltin;
 
 /**
- * Checks if a boolean has the value 'false'.
+ * <p>
+ * Represents the RIF built-in function func:divide-dayTimeDuration.
+ * </p>
  */
-public class IsFalseBuiltin extends BooleanBuiltin {
-	/**
-	 * Constructs a built-in. Two terms must be passed to the constructor,
-	 * otherwise an exception will be thrown.
-	 * 
-	 * @param terms the terms
-	 */
-	public IsFalseBuiltin(final ITerm... terms) {
+public class DayTimeDurationDivideBuiltin extends DivideBuiltin {
+
+	/** The predicate defining this built-in. */
+	private static final IPredicate PREDICATE = BASIC.createPredicate(
+			"DAYTIMEDURATION_DIVIDE", 3);
+
+	public DayTimeDurationDivideBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
-	protected boolean computeResult(ITerm[] terms) {
-		if (!(terms[0] instanceof IBooleanTerm)) {
-			return false;
-		} else {
-			IBooleanTerm term = (IBooleanTerm) terms[0];
-			return term.getValue().booleanValue() == false;
+	@Override
+	protected ITerm computeMissingTerm(int missingTermIndex, ITerm[] terms)
+			throws EvaluationException {
+		if (terms[0] instanceof IDayTimeDuration
+				&& terms[1] instanceof IDoubleTerm) {
+			return super.computeMissingTerm(missingTermIndex, terms);
 		}
+
+		return null;
 	}
 
-	/** The predicate defining this built-in. */
-	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate(
-			"IS_BOOLEAN_FALSE", 2);
 }

@@ -90,7 +90,8 @@ public class UnaryBuiltinsTest extends TestCase
 			"?- p( ?X ), IS_DECIMAL( ?X ).";
 		
        	String expectedResults = 
-       		"p( _decimal( -1.11 ) ).";
+       		"p( _decimal( -1.11 ) )." +
+       		"p( _integer( 333 ) ).";
 
        	Helper.evaluateWithAllStrategies( program, expectedResults );
 	}

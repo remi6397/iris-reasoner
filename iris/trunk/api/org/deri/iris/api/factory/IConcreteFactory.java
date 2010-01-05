@@ -22,6 +22,8 @@
  */
 package org.deri.iris.api.factory;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IAnyURI;
@@ -160,7 +162,7 @@ public interface IConcreteFactory {
 	 */
 	public IDateTime createDateTime(int year, int month, int day, int hour,
 			int minute, int second, int millisecond, int tzHour, int tzMinute);
-	
+
 	/**
 	 * Creates a dateTimeStamp term for the specified values.
 	 * 
@@ -214,6 +216,14 @@ public interface IConcreteFactory {
 	 * @return The new decimal term
 	 */
 	public IDecimalTerm createDecimal(double d);
+
+	/**
+	 * Create a new decimal term.
+	 * 
+	 * @param value The decimal value.
+	 * @return The new decimal term.
+	 */
+	public IDecimalTerm createDecimal(BigDecimal value);
 
 	/**
 	 * Create a double term.
@@ -324,16 +334,21 @@ public interface IConcreteFactory {
 	 * <p>
 	 * Create a new term representing a xs:integer.
 	 * </p>
-	 * <p>
-	 * Note that IRIS currently only supports 32 bit (signed) integer values.
-	 * Therefore, the value space of the data type represented by this term may
-	 * be reduced due to this limitation.
-	 * </p>
 	 * 
 	 * @param i The integer value.
 	 * @return The new term.
 	 */
 	public IIntegerTerm createInteger(int i);
+
+	/**
+	 * <p>
+	 * Create a new term representing a xs:integer.
+	 * </p>
+	 * 
+	 * @param i The BigInteger value.
+	 * @return The new term.
+	 */
+	public IIntegerTerm createInteger(BigInteger i);
 
 	/**
 	 * Create a new IRI term
@@ -490,17 +505,12 @@ public interface IConcreteFactory {
 	 * <p>
 	 * Create a new term representing a xs:long.
 	 * </p>
-	 * <p>
-	 * Note that IRIS currently only supports 32 bit (signed) integer values.
-	 * Therefore, the value space of the data type represented by this term may
-	 * be reduced due to this limitation.
-	 * </p>
 	 * 
 	 * @param value The integer value representing the value of the xs:long.
 	 * @return The term representing the xs:long for the specified integer
 	 *         value.
 	 */
-	public ILongTerm createLong(int value);
+	public ILongTerm createLong(long value);
 
 	/**
 	 * Create a new term representing a xs:Name.
@@ -522,18 +532,13 @@ public interface IConcreteFactory {
 	 * <p>
 	 * Create a new term representing a xs:negativeInteger.
 	 * </p>
-	 * <p>
-	 * Note that IRIS currently only supports 32 bit (signed) integer values.
-	 * Therefore, the value space of the data type represented by this term may
-	 * be reduced due to this limitation.
-	 * </p>
 	 * 
-	 * @param value The integer value representing the value of the
+	 * @param value The BigInteger value representing the value of the
 	 *            xs:negativeInteger.
 	 * @return The term representing the xs:negativeInteger for the specified
-	 *         integer value.
+	 *         BigInteger value.
 	 */
-	public INegativeInteger createNegativeInteger(int value);
+	public INegativeInteger createNegativeInteger(BigInteger value);
 
 	/**
 	 * Create a new term representing a xs:NMTOKEN.
@@ -547,35 +552,25 @@ public interface IConcreteFactory {
 	 * <p>
 	 * Create a new term representing a xs:nonNegativeInteger.
 	 * </p>
-	 * <p>
-	 * Note that IRIS currently only supports 32 bit (signed) integer values.
-	 * Therefore, the value space of the data type represented by this term may
-	 * be reduced due to this limitation.
-	 * </p>
 	 * 
-	 * @param value The integer value representing the value of the
+	 * @param value The BigInteger value representing the value of the
 	 *            xs:nonNegativeInteger.
 	 * @return The term representing the xs:nonNegativeInteger for the specified
-	 *         integer value.
+	 *         BigInteger value.
 	 */
-	public INonNegativeInteger createNonNegativeInteger(int value);
+	public INonNegativeInteger createNonNegativeInteger(BigInteger value);
 
 	/**
 	 * <p>
 	 * Create a new term representing a xs:nonPositiveInteger.
 	 * </p>
-	 * <p>
-	 * Note that IRIS currently only supports 32 bit (signed) integer values.
-	 * Therefore, the value space of the data type represented by this term may
-	 * be reduced due to this limitation.
-	 * </p>
 	 * 
-	 * @param value The integer value representing the value of the
+	 * @param value The BigInteger value representing the value of the
 	 *            xs:nonPositiveInteger.
 	 * @return The term representing the xs:nonPositiveInteger for the specified
-	 *         integer value.
+	 *         BigInteger value.
 	 */
-	public INonPositiveInteger createNonPositiveInteger(int value);
+	public INonPositiveInteger createNonPositiveInteger(BigInteger value);
 
 	/**
 	 * Create a new term representing a xs:normalizedString.
@@ -591,18 +586,13 @@ public interface IConcreteFactory {
 	 * <p>
 	 * Create a new term representing a xs:positiveInteger.
 	 * </p>
-	 * <p>
-	 * Note that IRIS currently only supports 32 bit (signed) integer values.
-	 * Therefore, the value space of the data type represented by this term may
-	 * be reduced due to this limitation.
-	 * </p>
 	 * 
-	 * @param value The integer value representing the value of the
+	 * @param value The BigInteger value representing the value of the
 	 *            xs:positiveInteger.
 	 * @return The term representing the xs:positiveInteger for the specified
-	 *         integer value.
+	 *         BigInteger value.
 	 */
-	public IPositiveInteger createPositiveInteger(int value);
+	public IPositiveInteger createPositiveInteger(BigInteger value);
 
 	/**
 	 * Create a new term representing a xs:short.
@@ -625,35 +615,25 @@ public interface IConcreteFactory {
 	 * <p>
 	 * Create a new term representing a xs:unsignedLong.
 	 * </p>
-	 * <p>
-	 * Note that IRIS currently only supports 32 bit (signed) integer values.
-	 * Therefore, the value space of the data type represented by this term may
-	 * be reduced due to this limitation.
-	 * </p>
 	 * 
-	 * @param value The integer value representing the value of the
+	 * @param value The BigInteger value representing the value of the
 	 *            xs:unsignedLong.
 	 * @return The term representing the xs:unsignedLong for the specified
-	 *         integer value.
+	 *         BigInteger value.
 	 */
-	public IUnsignedLong createUnsignedLong(int value);
+	public IUnsignedLong createUnsignedLong(BigInteger value);
 
 	/**
 	 * <p>
 	 * Create a new term representing a xs:unsignedInt.
 	 * </p>
-	 * <p>
-	 * Note that IRIS currently only supports 32 bit (signed) integer values.
-	 * Therefore, the value space of the data type represented by this term may
-	 * be reduced due to this limitation.
-	 * </p>
 	 * 
-	 * @param value The integer value representing the value of the
+	 * @param value The long value representing the value of the
 	 *            xs:unsignedInt.
 	 * @return The term representing the xs:unsignedInt for the specified
-	 *         integer value.
+	 *         long value.
 	 */
-	public IUnsignedInt createUnsignedInt(int value);
+	public IUnsignedInt createUnsignedInt(long value);
 
 	/**
 	 * <p>

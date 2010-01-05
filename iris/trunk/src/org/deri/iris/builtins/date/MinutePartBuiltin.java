@@ -27,13 +27,8 @@ import static org.deri.iris.factory.Factory.BASIC;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IDateTime;
-import org.deri.iris.api.terms.concrete.IDayTimeDuration;
-import org.deri.iris.api.terms.concrete.IDuration;
-import org.deri.iris.api.terms.concrete.ITime;
+import org.deri.iris.builtins.BuiltinHelper;
 import org.deri.iris.builtins.FunctionalBuiltin;
-import org.deri.iris.builtins.datatype.ToDayTimeDurationBuiltin;
-import org.deri.iris.factory.Factory;
 
 /**
  * Represents the RIF built-in functions func:minutes-from-dateTime,
@@ -60,31 +55,7 @@ public class MinutePartBuiltin extends FunctionalBuiltin {
 	}
 
 	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
-		int minute = 0;
-
-		if (terms[0] instanceof ITime) {
-			ITime time = (ITime) terms[0];
-			minute = time.getMinute();
-		} else if (terms[0] instanceof IDateTime) {
-			IDateTime dateTime = (IDateTime) terms[0];
-			minute = dateTime.getMinute();
-		} else if (terms[0] instanceof IDuration) {
-			IDuration duration = (IDuration) terms[0];
-
-			IDayTimeDuration dayTime = ToDayTimeDurationBuiltin
-					.toDayTimeDuration(duration);
-			dayTime = dayTime.toCanonical();
-
-			minute = dayTime.getMinute();
-
-			if (!dayTime.isPositive()) {
-				minute *= -1;
-			}
-		} else {
-			return null;
-		}
-
-		return Factory.CONCRETE.createInteger(minute);
+		return BuiltinHelper.minutePart(terms[0]);
 	}
 
 }

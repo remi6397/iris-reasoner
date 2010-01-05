@@ -22,6 +22,7 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.INonPositiveInteger;
@@ -44,9 +45,20 @@ public class NonPositiveInteger extends IntegerTerm implements
 	 *             0.
 	 */
 	public NonPositiveInteger(int value) {
+		this(BigInteger.valueOf(value));
+	}
+
+	/**
+	 * Creates a new NonPositiveInteger for the specified BigInteger.
+	 * 
+	 * @param value The BigInteger representing a number not greater than 0.
+	 * @throws IllegalArgumentException If the specified BigInteger is greater
+	 *             than 0.
+	 */
+	public NonPositiveInteger(BigInteger value) {
 		super(value);
 
-		if (value > 0) {
+		if (value.compareTo(BigInteger.ZERO) > 0) {
 			throw new IllegalArgumentException(
 					"Value must not be greater than 0");
 		}

@@ -27,6 +27,8 @@ import static org.deri.iris.factory.Factory.BUILTIN;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -419,19 +421,19 @@ public class TreeWalker extends DepthFirstAdapter
 	}
 
 	public void outAIntegerTerm(final AIntegerTerm it) {
-		addTerm(CONCRETE.createInteger(Integer.parseInt(it.getTInt().toString().trim())));
+		addTerm(CONCRETE.createInteger(new BigInteger(it.getTInt().toString().trim())));
 	}
 
 	public void outAIntegerlTerm(final AIntegerlTerm it) {
-		addTerm(CONCRETE.createInteger(Integer.parseInt(it.getTInt().toString().trim())));
+		addTerm(CONCRETE.createInteger(new BigInteger(it.getTInt().toString().trim())));
 	}
 
 	public void outADecimalTerm(final ADecimalTerm dt) {
-		addTerm(CONCRETE.createDecimal(Double.parseDouble(dt.getTDec().toString().trim())));
+		addTerm(CONCRETE.createDecimal(new BigDecimal(dt.getTDec().toString().trim())));
 	}
 
 	public void outADecimallTerm(final ADecimallTerm dt) {
-		addTerm(CONCRETE.createDecimal(Double.parseDouble(dt.getTDec().toString().trim())));
+		addTerm(CONCRETE.createDecimal(new BigDecimal(dt.getTDec().toString().trim())));
 	}
 
 	public void outASqnameTerm(final ASqnameTerm st) {
@@ -456,7 +458,10 @@ public class TreeWalker extends DepthFirstAdapter
 	}
 
 	public void outADoubleTerm(final ADoubleTerm d) {
-		addTerm(CONCRETE.createDouble(Double.parseDouble(d.getTDec().toString().trim())));
+		String numberString = d.getTDec().toString().trim();
+		Double number = Double.parseDouble(numberString);
+		
+		addTerm(CONCRETE.createDouble(number));
 	}
 
 	public void outAFloatTerm(final AFloatTerm f) {

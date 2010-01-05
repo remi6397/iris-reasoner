@@ -25,6 +25,9 @@ package org.deri.iris.builtins;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.INumericTerm;
@@ -77,8 +80,8 @@ public class IntegerDivideBuiltin extends ArithmeticBuiltin {
 
 		// Truncate the fractional part of the result.
 		if (result != null && result instanceof INumericTerm) {
-			INumericTerm numericResult = (INumericTerm) result;
-			int truncatedResult = (int) numericResult.getValue().doubleValue();
+			BigDecimal value = ((INumericTerm) result).getValue();
+			BigInteger truncatedResult = value.toBigInteger();
 			result = CONCRETE.createInteger(truncatedResult);
 		}
 

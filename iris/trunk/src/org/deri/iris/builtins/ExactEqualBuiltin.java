@@ -60,6 +60,8 @@ public class ExactEqualBuiltin extends ArithmeticBuiltin
 		assert t0 != null;
 		assert t1 != null;
 		
+		System.err.println(t0 + " = " + t1);
+		
 		return BuiltinHelper.exactlyEqual( t0, t1 );
     }
 	

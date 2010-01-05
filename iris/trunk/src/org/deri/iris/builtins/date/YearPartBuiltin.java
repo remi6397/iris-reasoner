@@ -27,13 +27,8 @@ import static org.deri.iris.factory.Factory.BASIC;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IDateTerm;
-import org.deri.iris.api.terms.concrete.IDateTime;
-import org.deri.iris.api.terms.concrete.IDuration;
-import org.deri.iris.api.terms.concrete.IYearMonthDuration;
+import org.deri.iris.builtins.BuiltinHelper;
 import org.deri.iris.builtins.FunctionalBuiltin;
-import org.deri.iris.builtins.datatype.ToYearMonthDurationBuiltin;
-import org.deri.iris.factory.Factory;
 
 /**
  * Represents the RIF built-in functions func:year-from-dateTime,
@@ -60,38 +55,7 @@ public class YearPartBuiltin extends FunctionalBuiltin {
 	}
 
 	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
-		int year = 0;
-
-		if (terms[0] instanceof IDateTerm) {
-			IDateTerm date = (IDateTerm) terms[0];
-			year = date.getYear();
-		} else if (terms[0] instanceof IDateTime) {
-			IDateTime dateTime = (IDateTime) terms[0];
-			year = dateTime.getYear();
-
-			// Quick fix for "new year problem". year-from-dateTime of dateTime
-			// "1999-12-31T24:00:00" should yield 2000 instead of 1999.
-			if (dateTime.getMonth() == 12 && dateTime.getDay() == 31
-					&& dateTime.getHour() == 24 || dateTime.getHour() == 0) {
-				year++;
-			}
-		} else if (terms[0] instanceof IDuration) {
-			IDuration duration = (IDuration) terms[0];
-
-			IYearMonthDuration yearMonth = ToYearMonthDurationBuiltin
-					.toYearMonthDuration(duration);
-			yearMonth = yearMonth.toCanonical();
-
-			year = yearMonth.getYear();
-
-			if (!yearMonth.isPositive()) {
-				year *= -1;
-			}
-		} else {
-			return null;
-		}
-
-		return Factory.CONCRETE.createInteger(year);
+		return BuiltinHelper.yearPart(terms[0]);
 	}
 
 }

@@ -22,6 +22,7 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.INonNegativeInteger;
@@ -43,9 +44,20 @@ public class NonNegativeInteger extends IntegerTerm implements
 	 * @throws IllegalArgumentException If the specified integer is less than 0.
 	 */
 	public NonNegativeInteger(int value) {
+		this(BigInteger.valueOf(value));
+	}
+
+	/**
+	 * Creates a new NonNegativeInteger for the specified BigInteger.
+	 * 
+	 * @param value The BigInteger representing a number not less than 0.
+	 * @throws IllegalArgumentException If the specified BigInteger is less than
+	 *             0.
+	 */
+	public NonNegativeInteger(BigInteger value) {
 		super(value);
 
-		if (value < 0) {
+		if (value.compareTo(BigInteger.ZERO) < 0) {
 			throw new IllegalArgumentException("Value must not be less than 0");
 		}
 	}

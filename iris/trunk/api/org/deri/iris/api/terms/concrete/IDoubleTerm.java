@@ -32,14 +32,9 @@ import org.deri.iris.api.terms.INumericTerm;
  * Remark: IRIS supports datatypes according to the standard 
  * specification for primitive XML Schema datatypes.
  * </p>
- * 
- * @author Darko Anicic, DERI Innsbruck
- * @date 06.01.2006 17:19:12
  */
-public interface IDoubleTerm extends INumericTerm
-{
-	/**
-	 * Return the wrapped type.
-	 */
-	public Double getValue();
+public interface IDoubleTerm extends INumericTerm {
+	
+	public static final String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#double";
+	
 }

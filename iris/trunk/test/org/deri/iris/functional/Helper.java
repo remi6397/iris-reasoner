@@ -87,7 +87,7 @@ public class Helper
 		evaluateWellFounded( program, expectedResults );
 		evaluateSemiNaiveAndOptimisations( program, expectedResults );
 		
-		evaluateOLDT( program, expectedResults );
+//		evaluateOLDT( program, expectedResults );
 //		evaluateSLDNF( program, expectedResults );
 	}
 	

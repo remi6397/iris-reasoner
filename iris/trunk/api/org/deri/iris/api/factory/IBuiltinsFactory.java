@@ -107,32 +107,6 @@ public interface IBuiltinsFactory {
 			final ITerm t2);
 
 	/**
-	 * Creates the IntegerDivide built-in.
-	 * 
-	 * @param terms The terms.
-	 * @return The builtin.
-	 * @throws NullPointerException If any of the terms is <code>null</code>.
-	 * @throws IllegalArgumentException If one of the terms is <code>null</code>
-	 *             .
-	 * @throws IllegalArgumentException If the number of terms submitted is not
-	 *             correct.
-	 */
-	public IBuiltinAtom createIntegerDivide(ITerm... terms);
-
-	/**
-	 * Creates NumericModulus builtin.
-	 * 
-	 * @param terms The terms.
-	 * @return the builtin
-	 * @throws NullPointerException if any of the terms is <code>null</code>
-	 * @throws IllegalArgumentException if one of the terms is {@code null}
-	 * @throws IllegalArgumentException if the number of terms submitted is not
-	 *             correct
-	 * @throws IllegalArgumentException if t is <code>null</code>
-	 */
-	public IBuiltinAtom createNumericModulus(ITerm... terms);
-
-	/**
 	 * Creates an equal builtin.
 	 * 
 	 * @param t0 the first term
@@ -210,6 +184,142 @@ public interface IBuiltinsFactory {
 	 * @throws NullPointerException if any of the terms is <code>null</code>
 	 */
 	public IBuiltinAtom createGreaterEqual(final ITerm t0, final ITerm t1);
+
+	/* Numeric built-ins */
+
+	/**
+	 * Creates the NumericAdd built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createNumericAdd(ITerm... terms);
+
+	/**
+	 * Creates the NumericSubtract built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createNumericSubtract(ITerm... terms);
+
+	/**
+	 * Creates the NumericMultiply built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createNumericMultiply(ITerm... terms);
+
+	/**
+	 * Creates the NumericDividebuilt-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createNumericDivide(ITerm... terms);
+
+	/**
+	 * Creates the NumericIntegerDivide built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>. -
+	 *             * @throws IllegalArgumentException If the number of terms
+	 *             submitted is not correct.
+	 */
+	public IBuiltinAtom createNumericIntegerDivide(ITerm... terms);
+
+	/**
+	 * Creates NumericModulus builtin.
+	 * 
+	 * @param terms The terms.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if one of the terms is {@code null}
+	 * @throws IllegalArgumentException if the number of terms submitted is not
+	 *             correct
+	 * @throws IllegalArgumentException if t is <code>null</code>
+	 */
+	public IBuiltinAtom createNumericModulus(ITerm... terms);
+
+	/**
+	 * Creates the NumericEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createNumericEqual(ITerm... terms);
+
+	/**
+	 * Creates the NumericNotEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createNumericNotEqual(ITerm... terms);
+
+	/**
+	 * Creates the NumericLess built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createNumericLess(ITerm... terms);
+
+	/**
+	 * Creates the NumericGreater built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createNumericGreater(ITerm... terms);
+
+	/**
+	 * Creates the NumericLessEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createNumericLessEqual(ITerm... terms);
+
+	/**
+	 * Creates the NumericGreaterEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createNumericGreaterEqual(ITerm... terms);
 
 	/*
 	 * String built-ins.
@@ -441,6 +551,237 @@ public interface IBuiltinsFactory {
 	 */
 
 	/**
+	 * Creates the YearFromDateTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createYearFromDateTime(ITerm... terms);
+
+	/**
+	 * Creates the MonthFromDateTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createMonthFromDateTime(ITerm... terms);
+
+	/**
+	 * Creates the DayFromDateTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDayFromDateTime(ITerm... terms);
+
+	/**
+	 * Creates the HoursFromDateTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createHoursFromDateTime(ITerm... terms);
+
+	/**
+	 * Creates the MinutesFromDateTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createMinutesFromDateTime(ITerm... terms);
+
+	/**
+	 * Creates the SecondsFromDateTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createSecondsFromDateTime(ITerm... terms);
+
+	/**
+	 * Creates the YearFromDate built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createYearFromDate(ITerm... terms);
+
+	/**
+	 * Creates the MonthFromDate built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createMonthFromDate(ITerm... terms);
+
+	/**
+	 * Creates the DayFromDate built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDayFromDate(ITerm... terms);
+
+	/**
+	 * Creates the HoursFromTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createHoursFromTime(ITerm... terms);
+	
+	/**
+	 * Creates the MinutesFromTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createMinutesFromTime(ITerm... terms);
+	
+	/**
+	 * Creates the SecondsFromTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createSecondsFromTime(ITerm... terms);
+	
+	/**
+	 * Creates the YearsFromDuration built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createYearsFromDuration(ITerm... terms);
+	
+	/**
+	 * Creates the MonthsFromDuration built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createMonthsFromDuration(ITerm... terms);
+	
+	/**
+	 * Creates the DaysFromDuration built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDaysFromDuration(ITerm... terms);
+	
+	/**
+	 * Creates the HoursFromDuration built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createHoursFromDuration(ITerm... terms);
+	
+	/**
+	 * Creates the MinutesFromDuration built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createMinutesFromDuration(ITerm... terms);
+	
+	/**
+	 * Creates the SecondsFromDuration built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createSecondsFromDuration(ITerm... terms);
+	
+	/**
+	 * Creates the TimezoneFromDateTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createTimezoneFromDateTime(ITerm... terms);
+	
+	/**
+	 * Creates the TimezoneFromDate built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createTimezoneFromDate(ITerm... terms);
+	
+	/**
+	 * Creates the TimezoneFromTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createTimezoneFromTime(ITerm... terms);
+
+	/**
 	 * Creates YearPart builtin.
 	 * 
 	 * @param terms The terms.
@@ -531,6 +872,560 @@ public interface IBuiltinsFactory {
 	 */
 	public IBuiltinAtom createTimezonePart(ITerm... terms);
 
+	/**
+	 * Creates the DateTimeSubtract built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateTimeSubtract(ITerm... terms);
+
+	/**
+	 * Creates the TimeSubtract built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createTimeSubtract(ITerm... terms);
+
+	/**
+	 * Creates the YearMonthDurationAdd built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createYearMonthDurationAdd(ITerm... terms);
+
+	/**
+	 * Creates the YearMonthDurationSubtract built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createYearMonthDurationSubtract(ITerm... terms);
+
+	/**
+	 * Creates the YearMonthDurationMultiply built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createYearMonthDurationMultiply(ITerm... terms);
+
+	/**
+	 * Creates the YearMonthDurationDivide built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createYearMonthDurationDivide(ITerm... terms);
+
+	/**
+	 * Creates the YearMonthDurationDivideByYearMonthduration built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createYearMonthDurationDivideByYearMonthDuration(
+			ITerm... terms);
+
+	/**
+	 * Creates the DayTimeDurationAdd built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDayTimeDurationAdd(ITerm... terms);
+
+	/**
+	 * Creates the DayTimeDurationSubtract built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDayTimeDurationSubtract(ITerm... terms);
+
+	/**
+	 * Creates the DayTimeDurationMultiply built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDayTimeDurationMultiply(ITerm... terms);
+
+	/**
+	 * Creates the DayTimeDurationDivide built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDayTimeDurationDivide(ITerm... terms);
+
+	/**
+	 * Creates the DayTimeDurationDivideByDayTimeDuration built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDayTimeDurationDivideByDayTimeDuration(
+			ITerm... terms);
+
+	/**
+	 * Creates the AddYearMonthDurationToDateTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createAddYearMonthDurationToDateTime(ITerm... terms);
+
+	/**
+	 * Creates the AddYearMonthDurationToDate built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createAddYearMonthDurationToDate(ITerm... terms);
+
+	/**
+	 * Creates the AddDayTimeDurationToDateTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createAddDayTimeDurationToDateTime(ITerm... terms);
+
+	/**
+	 * Creates the AddDayTimeDurationToDate built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createAddDayTimeDurationToDate(ITerm... terms);
+
+	/**
+	 * Creates the AddDayTimeDurationToTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createAddDayTimeDurationToTime(ITerm... terms);
+
+	/**
+	 * Creates the SubtractYearMonthDurationFromDateTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createSubtractYearMonthDurationFromDateTime(
+			ITerm... terms);
+
+	/**
+	 * Creates the SubtractYearMonthDurationToDate built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createSubtractYearMonthDurationFromDate(ITerm... terms);
+
+	/**
+	 * Creates the SubtractDayTimeDurationToDateTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createSubtractDayTimeDurationFromDateTime(
+			ITerm... terms);
+
+	/**
+	 * Creates the SubtractDayTimeDurationToDate built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createSubtractDayTimeDurationFromDate(ITerm... terms);
+
+	/**
+	 * Creates the SubtractDayTimeDurationFromTime built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createSubtractDayTimeDurationFromTime(ITerm... terms);
+
+	/**
+	 * Creates the DateTimeEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateTimeEqual(ITerm... terms);
+
+	/**
+	 * Creates the DateTimeLess built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateTimeLess(ITerm... terms);
+
+	/**
+	 * Creates the DateTimeGreater built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateTimeGreater(ITerm... terms);
+
+	/**
+	 * Creates the DateEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateEqual(ITerm... terms);
+
+	/**
+	 * Creates the DateLess built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateLess(ITerm... terms);
+
+	/**
+	 * Creates the DateGreater built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateGreater(ITerm... terms);
+
+	/**
+	 * Creates the TimeEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createTimeEqual(ITerm... terms);
+
+	/**
+	 * Creates the TimeLess built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createTimeLess(ITerm... terms);
+
+	/**
+	 * Creates the TimeGreater built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createTimeGreater(ITerm... terms);
+
+	/**
+	 * Creates the DurationEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDurationEqual(ITerm... terms);
+
+	/**
+	 * Creates the DurationNotEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDurationNotEqual(ITerm... terms);
+
+	/**
+	 * Creates the DayTimeDurationLess built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDayTimeDurationLess(ITerm... terms);
+
+	/**
+	 * Creates the DayTimeDurationLess built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDayTimeDurationGreater(ITerm... terms);
+
+	/**
+	 * Creates the YearMonthDurationLess built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createYearMonthDurationLess(ITerm... terms);
+
+	/**
+	 * Creates the YearMonthDurationGreater built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createYearMonthDurationGreater(ITerm... terms);
+
+	/**
+	 * Creates the DateTimeNotEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateTimeNotEqual(ITerm... terms);
+
+	/**
+	 * Creates the DateTimeLessEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateTimeLessEqual(ITerm... terms);
+
+	/**
+	 * Creates the DateTimeGreaterEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateTimeGreaterEqual(ITerm... terms);
+
+	/**
+	 * Creates the DateNotEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateNotEqual(ITerm... terms);
+
+	/**
+	 * Creates the DateLessEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateLessEqual(ITerm... terms);
+
+	/**
+	 * Creates the DateGreaterEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateGreaterEqual(ITerm... terms);
+
+	/**
+	 * Creates the TimeNotEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createTimeNotEqual(ITerm... terms);
+
+	/**
+	 * Creates the TimeLessEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createTimeLessEqual(ITerm... terms);
+
+	/**
+	 * Creates the TimeGreaterEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createTimeGreaterEqual(ITerm... terms);
+
+	/**
+	 * Creates the DayTimeDurationLessEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDayTimeDurationLessEqual(ITerm... terms);
+
+	/**
+	 * Creates the DayTimeDurationGreaterEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDayTimeDurationGreaterEqual(ITerm... terms);
+
+	/**
+	 * Creates the YearMonthDurationLessEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createYearMonthDurationLessEqual(ITerm... terms);
+
+	/**
+	 * Creates the YearMonthDurationGreaterEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createYearMonthDurationGreaterEqual(ITerm... terms);
+
 	/*
 	 * PlaintLiteral built-ins.
 	 */
@@ -612,6 +1507,30 @@ public interface IBuiltinsFactory {
 	 * @throws IllegalArgumentException if t is <code>null</code>
 	 */
 	public IBuiltinAtom createTextCompare(ITerm... terms);
+
+	/* XMLLiteral built-ins. */
+
+	/**
+	 * Creates the XMLLiteralEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createXMLLiteralEqual(ITerm... terms);
+
+	/**
+	 * Creates the XMLLiteralNotEqual built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createXMLLiteralNotEqual(ITerm... terms);
 
 	/*
 	 * Data type conversion built-ins.
@@ -906,10 +1825,10 @@ public interface IBuiltinsFactory {
 	/*
 	 * Data type guard built-ins.
 	 */
-	
+
 	/**
-	 * Creates a IsDatatype built-in. 
-	 *
+	 * Creates a IsDatatype built-in.
+	 * 
 	 * @param terms The terms.
 	 * @return The builtin.
 	 * @throws NullPointerException If any of the terms is <code>null</code>.
@@ -917,10 +1836,10 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public abstract IBuiltinAtom createIsDatatype(ITerm... terms);
-	
+
 	/**
-	 * Creates a IsNotDatatype built-in. 
-	 *
+	 * Creates a IsNotDatatype built-in.
+	 * 
 	 * @param terms The terms.
 	 * @return The builtin.
 	 * @throws NullPointerException If any of the terms is <code>null</code>.
@@ -972,7 +1891,7 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createIsDateTime(ITerm... terms);
-	
+
 	/**
 	 * Creates the IsDateTimeStamp built-in.
 	 * 
@@ -1390,11 +2309,11 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createIsInt(ITerm... terms);
-	
+
 	/*
 	 * Negative data type guard built-ins.
 	 */
-	
+
 	/**
 	 * Creates the IsNotBase64Binary buil-tin.
 	 * 
@@ -1438,7 +2357,7 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createIsNotDateTime(ITerm... terms);
-	
+
 	/**
 	 * Creates the IsNotDateTimeStamp built-in.
 	 * 
@@ -1889,6 +2808,42 @@ public interface IBuiltinsFactory {
 	 * @throws IllegalArgumentException If the number of terms submitted is not
 	 *             correct.
 	 */
-	public IBuiltinAtom createIsFalse(ITerm... terms);
+	public IBuiltinAtom createBooleanNot(ITerm... terms);
+
+	/**
+	 * Creates the built-in for checking if two boolean terms have the same
+	 * value.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createBooleanEqual(ITerm... terms);
+
+	/**
+	 * Creates the built-in for checking if a boolean terms is less than another
+	 * term.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createBooleanLess(ITerm... terms);
+
+	/**
+	 * Creates the built-in for checking if a boolean terms is greater than
+	 * another term.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createBooleanGreater(ITerm... terms);
 
 }

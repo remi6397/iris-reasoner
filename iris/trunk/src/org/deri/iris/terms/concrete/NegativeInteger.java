@@ -22,6 +22,7 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.INegativeInteger;
@@ -43,9 +44,20 @@ public class NegativeInteger extends IntegerTerm implements INegativeInteger {
 	 *             -1.
 	 */
 	public NegativeInteger(int value) {
-		super(value);
+		this(BigInteger.valueOf(value));
+	}
 
-		if (value > -1) {
+	/**
+	 * Creates a new NegativeInteger for the specified BigInteger.
+	 * 
+	 * @param value The BigInteger representing a number not greater than -1.
+	 * @throws IllegalArgumentException If the specified BigInteger is greater
+	 *             than -1.
+	 */
+	public NegativeInteger(BigInteger value) {
+		super(value);
+		
+		if (value.compareTo(BigInteger.ONE.negate()) > 0) {
 			throw new IllegalArgumentException(
 					"Value must not be greater than -1");
 		}

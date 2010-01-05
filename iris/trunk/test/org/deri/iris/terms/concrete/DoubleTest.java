@@ -28,7 +28,7 @@ public class DoubleTest extends TestCase {
 
 	public void testConstruct() {
 		DoubleTerm dt = new DoubleTerm(0.123);
-		assertEquals( 0.123, dt.getValue() );
+		assertEquals( 0.123, dt.getValue().doubleValue() );
 	}
 	
 	public void testEquals() {

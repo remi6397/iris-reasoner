@@ -32,6 +32,11 @@ package org.deri.iris.api.terms.concrete;
 public interface IUnsignedInt extends IUnsignedLong {
 
 	/**
+	 * The maximal value of unsigned int.
+	 */
+	public static final long MAX_INCLUSIVE = 4294967295l;
+
+	/**
 	 * Defines the XML Schema datatype URI.
 	 */
 	public static String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#unsignedInt";

@@ -26,13 +26,68 @@ import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.factory.IBuiltinsFactory;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.datatype.*;
+import org.deri.iris.builtins.date.AddDayTimeDurationToDateBuiltin;
+import org.deri.iris.builtins.date.AddDayTimeDurationToDateTimeBuiltin;
+import org.deri.iris.builtins.date.AddDayTimeDurationToTimeBuiltin;
+import org.deri.iris.builtins.date.AddYearMonthDurationToDateBuiltin;
+import org.deri.iris.builtins.date.AddYearMonthDurationToDateTimeBuiltin;
+import org.deri.iris.builtins.date.DateEqualBuiltin;
+import org.deri.iris.builtins.date.DateGreaterBuiltin;
+import org.deri.iris.builtins.date.DateGreaterEqualBuiltin;
+import org.deri.iris.builtins.date.DateLessBuiltin;
+import org.deri.iris.builtins.date.DateLessEqualBuiltin;
+import org.deri.iris.builtins.date.DateNotEqualBuiltin;
+import org.deri.iris.builtins.date.DateTimeEqualBuiltin;
+import org.deri.iris.builtins.date.DateTimeGreaterBuiltin;
+import org.deri.iris.builtins.date.DateTimeGreaterEqualBuiltin;
+import org.deri.iris.builtins.date.DateTimeLessBuiltin;
+import org.deri.iris.builtins.date.DateTimeLessEqualBuiltin;
+import org.deri.iris.builtins.date.DateTimeNotEqualBuiltin;
+import org.deri.iris.builtins.date.DateTimeSubtractBuiltin;
+import org.deri.iris.builtins.date.DayFromDateBuiltin;
+import org.deri.iris.builtins.date.DayFromDateTimeBuiltin;
 import org.deri.iris.builtins.date.DayPartBuiltin;
+import org.deri.iris.builtins.date.DayTimeDurationAddBuiltin;
+import org.deri.iris.builtins.date.DayTimeDurationDivideBuiltin;
+import org.deri.iris.builtins.date.DayTimeDurationDivideByDayTimeDurationBuiltin;
+import org.deri.iris.builtins.date.DayTimeDurationGreaterBuiltin;
+import org.deri.iris.builtins.date.DayTimeDurationGreaterEqualBuiltin;
+import org.deri.iris.builtins.date.DayTimeDurationLessBuiltin;
+import org.deri.iris.builtins.date.DayTimeDurationLessEqualBuiltin;
+import org.deri.iris.builtins.date.DayTimeDurationMultiplyBuiltin;
+import org.deri.iris.builtins.date.DayTimeDurationSubtractBuiltin;
+import org.deri.iris.builtins.date.DaysFromDurationBuiltin;
+import org.deri.iris.builtins.date.DurationEqualBuiltin;
+import org.deri.iris.builtins.date.DurationNotEqualBuiltin;
 import org.deri.iris.builtins.date.HourPartBuiltin;
+import org.deri.iris.builtins.date.HoursFromDateTimeBuiltin;
+import org.deri.iris.builtins.date.HoursFromDurationBuiltin;
+import org.deri.iris.builtins.date.HoursFromTimeBuiltin;
 import org.deri.iris.builtins.date.MinutePartBuiltin;
 import org.deri.iris.builtins.date.MonthPartBuiltin;
 import org.deri.iris.builtins.date.SecondPartBuiltin;
+import org.deri.iris.builtins.date.TimeEqualBuiltin;
+import org.deri.iris.builtins.date.TimeGreaterBuiltin;
+import org.deri.iris.builtins.date.TimeGreaterEqualBuiltin;
+import org.deri.iris.builtins.date.TimeLessBuiltin;
+import org.deri.iris.builtins.date.TimeLessEqualBuiltin;
+import org.deri.iris.builtins.date.TimeNotEqualBuiltin;
 import org.deri.iris.builtins.date.TimezonePartBuiltin;
+import org.deri.iris.builtins.date.YearMonthDurationGreaterBuiltin;
+import org.deri.iris.builtins.date.YearMonthDurationGreaterEqualBuiltin;
+import org.deri.iris.builtins.date.YearMonthDurationLessBuiltin;
+import org.deri.iris.builtins.date.YearMonthDurationLessEqualBuiltin;
 import org.deri.iris.builtins.date.YearPartBuiltin;
+import org.deri.iris.builtins.numeric.NumericAddBuiltin;
+import org.deri.iris.builtins.numeric.NumericDivideBuiltin;
+import org.deri.iris.builtins.numeric.NumericEqualBuiltin;
+import org.deri.iris.builtins.numeric.NumericGreaterBuiltin;
+import org.deri.iris.builtins.numeric.NumericGreaterEqualBuiltin;
+import org.deri.iris.builtins.numeric.NumericLessBuiltin;
+import org.deri.iris.builtins.numeric.NumericLessEqualBuiltin;
+import org.deri.iris.builtins.numeric.NumericMultiplyBuiltin;
+import org.deri.iris.builtins.numeric.NumericNotEqualBuiltin;
+import org.deri.iris.builtins.numeric.NumericSubtractBuiltin;
 import org.deri.iris.builtins.string.LangFromPlainLiteralBuiltin;
 import org.deri.iris.builtins.string.PlainLiteralCompareBuiltin;
 import org.deri.iris.builtins.string.PlainLiteralFromStringBuiltin;
@@ -64,6 +119,8 @@ import org.deri.iris.builtins.string.StringSubstringUntilEndBuiltin;
 import org.deri.iris.builtins.string.StringToLowerBuiltin;
 import org.deri.iris.builtins.string.StringToUpperBuiltin;
 import org.deri.iris.builtins.string.StringUriEncodeBuiltin;
+import org.deri.iris.builtins.string.XMLLiteralEqualBuiltin;
+import org.deri.iris.builtins.string.XMLLiteralNotEqualBuiltin;
 
 /**
  * <p>
@@ -495,8 +552,8 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 		return new IsByteBuiltin(terms);
 	}
 
-	public IBuiltinAtom createIsFalse(ITerm... terms) {
-		return new IsFalseBuiltin(terms);
+	public IBuiltinAtom createBooleanNot(ITerm... terms) {
+		return new BooleanNotBuiltin(terms);
 	}
 
 	public IBuiltinAtom createIsLanguage(ITerm... terms) {
@@ -567,7 +624,7 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 		return new IsIntBuiltin(terms);
 	}
 
-	public IBuiltinAtom createIntegerDivide(ITerm... terms) {
+	public IBuiltinAtom createNumericIntegerDivide(ITerm... terms) {
 		return new IntegerDivideBuiltin(terms);
 	}
 
@@ -576,7 +633,7 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 
 	public IBuiltinAtom createIsNotBase64Binary(ITerm... terms) {
-		return new IsNotBase64BinaryBuiltin(terms); 
+		return new IsNotBase64BinaryBuiltin(terms);
 	}
 
 	public IBuiltinAtom createIsNotBoolean(ITerm... terms) {
@@ -749,6 +806,380 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 
 	public IBuiltinAtom createIsNotDateTimeStamp(ITerm... terms) {
 		return new IsNotDateTimeStampBuiltin(terms);
+	}
+
+	public IBuiltinAtom createAddDayTimeDurationToDate(ITerm... terms) {
+		return new AddDayTimeDurationToDateBuiltin(terms);
+	}
+
+	public IBuiltinAtom createAddDayTimeDurationToDateTime(ITerm... terms) {
+		return new AddDayTimeDurationToDateTimeBuiltin(terms);
+	}
+
+	public IBuiltinAtom createAddDayTimeDurationToTime(ITerm... terms) {
+		return new AddDayTimeDurationToTimeBuiltin(terms);
+	}
+
+	public IBuiltinAtom createAddYearMonthDurationToDate(ITerm... terms) {
+		return new AddYearMonthDurationToDateBuiltin(terms);
+	}
+
+	public IBuiltinAtom createAddYearMonthDurationToDateTime(ITerm... terms) {
+		return new AddYearMonthDurationToDateTimeBuiltin(terms);
+	}
+
+	public IBuiltinAtom createBooleanEqual(ITerm... terms) {
+		return new BooleanEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createBooleanGreater(ITerm... terms) {
+		return new BooleanGreaterBuiltin(terms);
+	}
+
+	public IBuiltinAtom createBooleanLess(ITerm... terms) {
+		return new BooleanLessBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateEqual(ITerm... terms) {
+		return new DateEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateGreater(ITerm... terms) {
+		return new DateGreaterBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateGreaterEqual(ITerm... terms) {
+		return new DateGreaterEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateLess(ITerm... terms) {
+		return new DateLessBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateLessEqual(ITerm... terms) {
+		return new DateLessEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateNotEqual(ITerm... terms) {
+		return new DateNotEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateTimeEqual(ITerm... terms) {
+		return new DateTimeEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateTimeGreater(ITerm... terms) {
+		return new DateTimeGreaterBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateTimeGreaterEqual(ITerm... terms) {
+		return new DateTimeGreaterEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateTimeLess(ITerm... terms) {
+		return new DateTimeLessBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateTimeLessEqual(ITerm... terms) {
+		return new DateTimeLessEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateTimeNotEqual(ITerm... terms) {
+		return new DateTimeNotEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateTimeSubtract(ITerm... terms) {
+		return new DateTimeSubtractBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDayFromDate(ITerm... terms) {
+		return new DayFromDateBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDayFromDateTime(ITerm... terms) {
+		return new DayFromDateTimeBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDayTimeDurationAdd(ITerm... terms) {
+		return new DayTimeDurationAddBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDayTimeDurationDivide(ITerm... terms) {
+		return new DayTimeDurationDivideBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDayTimeDurationDivideByDayTimeDuration(
+			ITerm... terms) {
+		return new DayTimeDurationDivideByDayTimeDurationBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDayTimeDurationGreater(ITerm... terms) {
+		return new DayTimeDurationGreaterBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDayTimeDurationGreaterEqual(ITerm... terms) {
+		return new DayTimeDurationGreaterEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDayTimeDurationLess(ITerm... terms) {
+		return new DayTimeDurationLessBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDayTimeDurationLessEqual(ITerm... terms) {
+		return new DayTimeDurationLessEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDayTimeDurationMultiply(ITerm... terms) {
+		return new DayTimeDurationMultiplyBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDayTimeDurationSubtract(ITerm... terms) {
+		return new DayTimeDurationSubtractBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDaysFromDuration(ITerm... terms) {
+		return new DaysFromDurationBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDurationEqual(ITerm... terms) {
+		return new DurationEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDurationNotEqual(ITerm... terms) {
+		return new DurationNotEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createHoursFromDateTime(ITerm... terms) {
+		return new HoursFromDateTimeBuiltin(terms);
+	}
+
+	public IBuiltinAtom createHoursFromDuration(ITerm... terms) {
+		return new HoursFromDurationBuiltin(terms);
+	}
+
+	public IBuiltinAtom createHoursFromTime(ITerm... terms) {
+		return new HoursFromTimeBuiltin(terms);
+	}
+
+	public IBuiltinAtom createMinutesFromDateTime(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createMinutesFromDuration(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createMinutesFromTime(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createMonthFromDate(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createMonthFromDateTime(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createMonthsFromDuration(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createNumericAdd(ITerm... terms) {
+		return new NumericAddBuiltin(terms);
+	}
+
+	public IBuiltinAtom createNumericDivide(ITerm... terms) {
+		return new NumericDivideBuiltin(terms);
+	}
+
+	public IBuiltinAtom createNumericEqual(ITerm... terms) {
+		return new NumericEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createNumericGreater(ITerm... terms) {
+		return new NumericGreaterBuiltin(terms);
+	}
+
+	public IBuiltinAtom createNumericGreaterEqual(ITerm... terms) {
+		return new NumericGreaterEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createNumericLess(ITerm... terms) {
+		return new NumericLessBuiltin(terms);
+	}
+
+	public IBuiltinAtom createNumericLessEqual(ITerm... terms) {
+		return new NumericLessEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createNumericMultiply(ITerm... terms) {
+		return new NumericMultiplyBuiltin(terms);
+	}
+
+	public IBuiltinAtom createNumericNotEqual(ITerm... terms) {
+		return new NumericNotEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createNumericSubtract(ITerm... terms) {
+		return new NumericSubtractBuiltin(terms);
+	}
+
+	public IBuiltinAtom createSecondsFromDateTime(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createSecondsFromDuration(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createSecondsFromTime(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createSubtractDayTimeDurationFromDate(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createSubtractDayTimeDurationFromDateTime(
+			ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createSubtractDayTimeDurationFromTime(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createSubtractYearMonthDurationFromDate(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createSubtractYearMonthDurationFromDateTime(
+			ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createTimeEqual(ITerm... terms) {
+		return new TimeEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createTimeGreater(ITerm... terms) {
+		return new TimeGreaterBuiltin(terms);
+	}
+
+	public IBuiltinAtom createTimeGreaterEqual(ITerm... terms) {
+		return new TimeGreaterEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createTimeLess(ITerm... terms) {
+		return new TimeLessBuiltin(terms);
+	}
+
+	public IBuiltinAtom createTimeLessEqual(ITerm... terms) {
+		return new TimeLessEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createTimeNotEqual(ITerm... terms) {
+		return new TimeNotEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createTimeSubtract(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createTimezoneFromDate(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createTimezoneFromDateTime(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createTimezoneFromTime(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createXMLLiteralEqual(ITerm... terms) {
+		return new XMLLiteralEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createXMLLiteralNotEqual(ITerm... terms) {
+		return new XMLLiteralNotEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createYearFromDate(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createYearFromDateTime(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createYearMonthDurationAdd(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createYearMonthDurationDivide(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createYearMonthDurationDivideByYearMonthDuration(
+			ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createYearMonthDurationGreater(ITerm... terms) {
+		return new YearMonthDurationGreaterBuiltin(terms);
+	}
+
+	public IBuiltinAtom createYearMonthDurationGreaterEqual(ITerm... terms) {
+		return new YearMonthDurationGreaterEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createYearMonthDurationLess(ITerm... terms) {
+		return new YearMonthDurationLessBuiltin(terms);
+	}
+
+	public IBuiltinAtom createYearMonthDurationLessEqual(ITerm... terms) {
+		return new YearMonthDurationLessEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createYearMonthDurationMultiply(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createYearMonthDurationSubtract(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBuiltinAtom createYearsFromDuration(ITerm... terms) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
