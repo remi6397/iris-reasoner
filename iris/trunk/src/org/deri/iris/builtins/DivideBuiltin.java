@@ -45,16 +45,30 @@ public class DivideBuiltin extends ArithmeticBuiltin {
 	/** The predicate defining this builtin. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
 			"DIVIDE", 3);
+	
+	/**
+	 * Construct a new DivideBuiltin for the specific predicate and terms.
+	 * 
+	 * @param predicate The predicate of the built-in.
+	 * @param terms The terms.
+	 * @throws NullPointerException If the predicate or one of the terms is
+	 *             <code>null</code>.
+	 * @throws IllegalArgumentException If the length of the terms and the arity
+	 *             of the predicate do not match.
+	 */
+	protected DivideBuiltin(IPredicate predicate, ITerm... terms) {
+		super(predicate, terms);
+	}
 
 	/**
 	 * Constructs a builtin. Three terms must be passed to the constructor,
 	 * otherwise an exception will be thrown.
 	 * 
 	 * @param t the terms
-	 * @throws NullPointerException if one of the terms is {@code null}
-	 * @throws IllegalArgumentException if the number of terms submitted is
-	 * not 3
-	 * @throws NullPointerException if t is <code>null</code>
+	 * @throws NullPointerException If the predicate or one of the terms is
+	 *             <code>null</code>.
+	 * @throws IllegalArgumentException If the length of the terms and the arity
+	 *             of the predicate do not match.
 	 */
 	public DivideBuiltin(final ITerm... t) {
 		super(PREDICATE, t);

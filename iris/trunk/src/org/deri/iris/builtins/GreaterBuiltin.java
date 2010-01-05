@@ -40,14 +40,28 @@ import org.deri.iris.factory.Factory;
 public class GreaterBuiltin extends BooleanBuiltin {
 
 	/**
+	 * Construct a new GreaterBuiltin for the specific predicate and terms.
+	 * 
+	 * @param predicate The predicate of the built-in.
+	 * @param terms The terms.
+	 * @throws NullPointerException If the predicate or one of the terms is
+	 *             <code>null</code>.
+	 * @throws IllegalArgumentException If the length of the terms and the arity
+	 *             of the predicate do not match.
+	 */
+	protected GreaterBuiltin(IPredicate predicate, ITerm... terms) {
+		super(predicate, terms);
+	}
+	
+	/**
 	 * Constructs a builtin. Two terms must be passed to the constructor,
 	 * otherwise an exception will be thrown.
 	 * 
-	 * @param t the terms
-	 * @throws NullPointerException if one of the terms is null
-	 * @throws IllegalArgumentException if the number of terms submitted is
-	 * not 2
-	 * @throws NullPointerException if t is <code>null</code>
+	 * @param terms The terms.
+	 * @throws NullPointerException If the predicate or one of the terms is
+	 *             <code>null</code>.
+	 * @throws IllegalArgumentException If the length of the terms and the arity
+	 *             of the predicate do not match.
 	 */
 	public GreaterBuiltin(final ITerm... t)
 	{

@@ -27,13 +27,8 @@ import static org.deri.iris.factory.Factory.BASIC;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IDateTerm;
-import org.deri.iris.api.terms.concrete.IDateTime;
-import org.deri.iris.api.terms.concrete.IDuration;
-import org.deri.iris.api.terms.concrete.IYearMonthDuration;
+import org.deri.iris.builtins.BuiltinHelper;
 import org.deri.iris.builtins.FunctionalBuiltin;
-import org.deri.iris.builtins.datatype.ToYearMonthDurationBuiltin;
-import org.deri.iris.factory.Factory;
 
 /**
  * Represents the RIF built-in functions func:month-from-dateTime,
@@ -60,31 +55,7 @@ public class MonthPartBuiltin extends FunctionalBuiltin {
 	}
 
 	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
-		int month = 0;
-
-		if (terms[0] instanceof IDateTerm) {
-			IDateTerm date = (IDateTerm) terms[0];
-			month = date.getMonth();
-		} else if (terms[0] instanceof IDateTime) {
-			IDateTime dateTime = (IDateTime) terms[0];
-			month = dateTime.getMonth();
-		} else if (terms[0] instanceof IDuration) {
-			IDuration duration = (IDuration) terms[0];
-
-			IYearMonthDuration yearMonth = ToYearMonthDurationBuiltin
-					.toYearMonthDuration(duration);
-			yearMonth = yearMonth.toCanonical();
-
-			month = yearMonth.getMonth();
-
-			if (!yearMonth.isPositive()) {
-				month *= -1;
-			}
-		} else {
-			return null;
-		}
-
-		return Factory.CONCRETE.createInteger(month);
+		return BuiltinHelper.monthPart(terms[0]);
 	}
 
 }

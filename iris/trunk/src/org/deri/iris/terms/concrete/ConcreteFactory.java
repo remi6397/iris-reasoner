@@ -22,6 +22,8 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.factory.IConcreteFactory;
@@ -130,8 +132,12 @@ public class ConcreteFactory implements IConcreteFactory {
 		return new Time(hour, minute, second, tzHour, tzMinute);
 	}
 
-	public IDecimalTerm createDecimal(final double d) {
+	public IDecimalTerm createDecimal(double d) {
 		return new DecimalTerm(d);
+	}
+	
+	public IDecimalTerm createDecimal(BigDecimal value) {
+		return new DecimalTerm(value);
 	}
 
 	public IDoubleTerm createDouble(final double d) {
@@ -181,7 +187,11 @@ public class ConcreteFactory implements IConcreteFactory {
 		return new HexBinary(s);
 	}
 
-	public IIntegerTerm createInteger(final int i) {
+	public IIntegerTerm createInteger(int i) {
+		return new IntegerTerm(i);
+	}
+	
+	public IIntegerTerm createInteger(BigInteger i) {
 		return new IntegerTerm(i);
 	}
 
@@ -254,7 +264,7 @@ public class ConcreteFactory implements IConcreteFactory {
 		return new Language(language);
 	}
 
-	public ILongTerm createLong(int value) {
+	public ILongTerm createLong(long value) {
 		return new LongTerm(value);
 	}
 
@@ -270,15 +280,15 @@ public class ConcreteFactory implements IConcreteFactory {
 		return new Name(name);
 	}
 
-	public INegativeInteger createNegativeInteger(int value) {
+	public INegativeInteger createNegativeInteger(BigInteger value) {
 		return new NegativeInteger(value);
 	}
 
-	public INonNegativeInteger createNonNegativeInteger(int value) {
+	public INonNegativeInteger createNonNegativeInteger(BigInteger value) {
 		return new NonNegativeInteger(value);
 	}
 
-	public INonPositiveInteger createNonPositiveInteger(int value) {
+	public INonPositiveInteger createNonPositiveInteger(BigInteger value) {
 		return new NonPositiveInteger(value);
 	}
 
@@ -286,7 +296,7 @@ public class ConcreteFactory implements IConcreteFactory {
 		return new NormalizedString(string);
 	}
 
-	public IPositiveInteger createPositiveInteger(int value) {
+	public IPositiveInteger createPositiveInteger(BigInteger value) {
 		return new PositiveInteger(value);
 	}
 
@@ -302,11 +312,15 @@ public class ConcreteFactory implements IConcreteFactory {
 		return new UnsignedByte(value);
 	}
 
-	public IUnsignedInt createUnsignedInt(int value) {
+	public IUnsignedInt createUnsignedInt(long value) {
 		return new UnsignedInt(value);
 	}
 
-	public IUnsignedLong createUnsignedLong(int value) {
+	public IUnsignedLong createUnsignedLong(long value) {
+		return new UnsignedLong(BigInteger.valueOf(value));
+	}
+	
+	public IUnsignedLong createUnsignedLong(BigInteger value) {
 		return new UnsignedLong(value);
 	}
 

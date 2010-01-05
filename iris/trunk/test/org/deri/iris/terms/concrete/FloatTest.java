@@ -28,7 +28,7 @@ public class FloatTest extends TestCase {
 
 	public void testConstruct() {
 		FloatTerm ft = new FloatTerm(0.123f);
-		assertEquals( 0.123f, ft.getValue() );
+		assertEquals( 0.123f, ft.getValue().floatValue() );
 	}
 	
 	public void testEquals() {

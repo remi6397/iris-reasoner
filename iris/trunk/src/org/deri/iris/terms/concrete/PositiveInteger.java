@@ -22,6 +22,7 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IPositiveInteger;
@@ -42,9 +43,20 @@ public class PositiveInteger extends IntegerTerm implements IPositiveInteger {
 	 * @throws IllegalArgumentException If the specified integer is less than 1.
 	 */
 	public PositiveInteger(int value) {
+		this(BigInteger.valueOf(value));
+	}
+
+	/**
+	 * Creates a new PositiveInteger for the specified BigInteger.
+	 * 
+	 * @param value The BigInteger representing a number not less than 1.
+	 * @throws IllegalArgumentException If the specified BigInteger is less than
+	 *             1.
+	 */
+	public PositiveInteger(BigInteger value) {
 		super(value);
 
-		if (value < 1) {
+		if (value.compareTo(BigInteger.ONE) < 0) {
 			throw new IllegalArgumentException("Value must not be less than 1");
 		}
 	}

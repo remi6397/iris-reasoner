@@ -22,6 +22,7 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IUnsignedLong;
@@ -36,13 +37,21 @@ import org.deri.iris.api.terms.concrete.IUnsignedLong;
 public class UnsignedLong extends NonNegativeInteger implements IUnsignedLong {
 
 	/**
-	 * Creates a new UnsignedLong for the specified integer.
+	 * Creates a new UnsignedLong for the specified BigInteger.
 	 * 
-	 * @param value The integer representing a number not less than 0.
-	 * @throws IllegalArgumentException If the specified integer is less than 0.
+	 * @param value The BigInteger representing a number not less than 0 and not
+	 *            greater than 18446744073709551615.
+	 * @throws IllegalArgumentException If the specified BigInteger is less than
+	 *             0 or greater than 18446744073709551615.
 	 */
-	public UnsignedLong(int value) {
+	public UnsignedLong(BigInteger value) {
 		super(value);
+
+		if (value.compareTo(IUnsignedLong.MAX_INCLUSIVE) >= 1) {
+			throw new IllegalArgumentException(
+					"Value must not be greater than "
+							+ IUnsignedLong.MAX_INCLUSIVE);
+		}
 	}
 
 	@Override

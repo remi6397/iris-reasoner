@@ -22,6 +22,8 @@
  */
 package org.deri.iris.api.terms.concrete;
 
+import java.math.BigInteger;
+
 /**
  * <p>
  * Represents the XML Schema datatype xsd:unsignedLong.
@@ -30,6 +32,12 @@ package org.deri.iris.api.terms.concrete;
  * @author Adrian Marte
  */
 public interface IUnsignedLong extends INonNegativeInteger {
+
+	/**
+	 * The maximal value of unsigned long.
+	 */
+	public static final BigInteger MAX_INCLUSIVE = new BigInteger(
+			"18446744073709551615");
 
 	/**
 	 * Defines the XML Schema datatype URI.

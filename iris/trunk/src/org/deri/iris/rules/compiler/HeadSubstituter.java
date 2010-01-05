@@ -87,11 +87,11 @@ public class HeadSubstituter extends RuleElement
 	}
 
 	/** The rule head tuple. */
-	private final ITuple mHeadTuple;
+	protected final ITuple mHeadTuple;
 	
 	/** The indices of variables in substitution order. */
-	private final int[] mIndices;
+	protected final int[] mIndices;
 	
 	/** The knowledge-base's configuration object. */
-	private final Configuration mConfiguration;
+	protected final Configuration mConfiguration;
 }

@@ -62,7 +62,7 @@ public class StringSubstringUntilEndBuiltin extends FunctionalBuiltin {
 			IIntegerTerm beginIndex = (IIntegerTerm) terms[1];
 
 			String substring = string.getValue().substring(
-					beginIndex.getValue());
+					beginIndex.getValue().intValue());
 
 			return Factory.TERM.createString(substring);
 		}

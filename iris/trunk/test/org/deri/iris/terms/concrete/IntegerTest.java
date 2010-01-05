@@ -56,7 +56,7 @@ public class IntegerTest extends TestCase {
 	public void testBasic() {
 		IntegerTerm basic = new IntegerTerm(BASIC);
 		assertEquals("object not initialized correctly",
-				Integer.valueOf(BASIC), basic.getValue());
+				Integer.valueOf(BASIC), Integer.valueOf(basic.getValue().intValue()));
 	}
 
 	public void testEquals() {

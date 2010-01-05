@@ -22,76 +22,30 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
 
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
 
 /**
  * <p>
  * Simple implementation of the IIntegerTerm.
  * </p>
- * <p>
- * $Id$
- * </p>
- * 
- * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @author Holger Lausen
- * @version $Revision$
  */
-public class IntegerTerm implements IIntegerTerm {
-	/** integer to represent this datatype */
-	private final Integer i;
+public class IntegerTerm extends DecimalTerm implements IIntegerTerm {
 
-	IntegerTerm(int z) {
-		this.i = z;
+	IntegerTerm(int value) {
+		this(BigInteger.valueOf(value));
+	}
+	
+	IntegerTerm(BigInteger value) {
+		super(new BigDecimal(value));
 	}
 
-	public Integer getValue() {
-		return i;
-	}
-
-	public boolean isGround() {
-		return true;
-	}
-
-	public int compareTo(ITerm o) {
-		if (o == null) {
-			return 1;
-		}
-		IntegerTerm it = (IntegerTerm) o;
-		return i.compareTo(it.getValue());
-	}
-
-	public int hashCode() {
-		return i;
-	}
-
-	public boolean equals(final Object o) {
-		if (!(o instanceof IntegerTerm)) {
-			return false;
-		}
-		IntegerTerm it = (IntegerTerm) o;
-		return i.equals(it.i);
-	}
-
-	/**
-	 * Simply returns the String representation of the holded int.
-	 * 
-	 * @return the String representation of the holded int
-	 */
-	public String toString() {
-		return i.toString();
-	}
-
+	@Override
 	public URI getDatatypeIRI() {
-		// This class represents a 32-bit integer, therefore the corresponding
-		// XML Schema data type should be xs:int, not xs:integer.
-		// TODO Fix data type IRI.
-		return URI.create("http://www.w3.org/2001/XMLSchema#integer");
+		return URI.create(IIntegerTerm.DATATYPE_URI);
 	}
 
-	public String toCanonicalString() {
-		return i.toString();
-	}
 }

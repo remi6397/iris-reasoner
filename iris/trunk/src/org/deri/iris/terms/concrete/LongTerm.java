@@ -22,6 +22,7 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.ILongTerm;
@@ -40,8 +41,8 @@ public class LongTerm extends IntegerTerm implements ILongTerm {
 	 * 
 	 * @param value The Long value.
 	 */
-	public LongTerm(Integer value) {
-		super(value);
+	public LongTerm(long value) {
+		super(BigInteger.valueOf(value));
 	}
 
 	@Override

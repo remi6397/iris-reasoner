@@ -22,6 +22,8 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.math.BigDecimal;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -42,11 +44,11 @@ import org.deri.iris.TermTests;
  */
 public class DecimalTest extends TestCase {
 
-	private final static double BASIC = 0.1d;
+	private final static BigDecimal BASIC = new BigDecimal(0.1d);
 
-	private final static double MORE = 0.2d;
+	private final static BigDecimal MORE = new BigDecimal(0.2d);
 
-	private final static double MORE1 = 0.3d;
+	private final static BigDecimal MORE1 = new BigDecimal(0.3d);
 
 	public static Test suite() {
 		return new TestSuite(DecimalTest.class, DecimalTest.class

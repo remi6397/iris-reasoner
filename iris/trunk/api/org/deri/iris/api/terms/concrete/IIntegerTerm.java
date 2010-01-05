@@ -22,26 +22,18 @@
  */
 package org.deri.iris.api.terms.concrete;
 
-import org.deri.iris.api.terms.INumericTerm;
-
 /**
  * <p>
- * An interface for representing the integer datatype. Referring to XML Schema
- * datatypes this interface represents the xsd:int datatype. In contrast to
- * xsd:integer the values of xsd:int consists of a finite-length sequence of
- * decimal digits, in the range of -2147483648 and 2147483647.
+ * An interface for representing the integer datatype. The values of this
+ * datatype consist of a ifinite-length sequence of decimal digits.
  * </p>
  * <p>
  * Remark: IRIS supports datatypes according to the standard specification for
  * primitive XML Schema datatypes.
  * </p>
- * 
- * @author Darko Anicic, DERI Innsbruck
- * @date 06.01.2006 17:18:34
  */
-public interface IIntegerTerm extends INumericTerm {
-	/**
-	 * Return the wrapped type.
-	 */
-	public Integer getValue();
+public interface IIntegerTerm extends IDecimalTerm {
+
+	public static final String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#integer";
+
 }

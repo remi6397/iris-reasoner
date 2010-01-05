@@ -26,20 +26,15 @@ import org.deri.iris.api.terms.INumericTerm;
 
 /**
  * <p>
- * An interface for representing the float datatype. 
+ * An interface for representing the float datatype.
  * </p>
  * <p>
- * Remark: IRIS supports datatypes according to the standard 
- * specification for primitive XML Schema datatypes.
+ * Remark: IRIS supports datatypes according to the standard specification for
+ * primitive XML Schema datatypes.
  * </p>
- * 
- * @author Darko Anicic, DERI Innsbruck
- * @date 06.01.2006 17:31:11
  */
-public interface IFloatTerm extends INumericTerm
-{
-	/**
-	 * Return the wrapped type.
-	 */
-	public Float getValue();
+public interface IFloatTerm extends INumericTerm {
+
+	public static final String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#float";
+
 }

@@ -22,84 +22,63 @@
  */
 package org.deri.iris.terms.concrete;
 
+import java.math.BigDecimal;
 import java.net.URI;
 
-import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IFloatTerm;
 
 /**
  * <p>
  * Simple implementation of the IFloatTerm.
  * </p>
- * <p>
- * $Id$
- * </p>
- * 
- * @author Richard Pöttler (richard dot poettler at deri dot at)
- * @version $Revision$
  */
-public class FloatTerm implements IFloatTerm {
+public class FloatTerm extends AbstractNumericTerm implements IFloatTerm {
 
-	/** The float represented by this object */
-	private final Float mValue;
+	private final Float value;
+
+	private BigDecimal decimalValue;
 
 	/**
 	 * Constructs a new float with the given value.
 	 * 
-	 * @param f
-	 *            the float value for this object
-	 * @throws NullPointerException
-	 *             if the float is null
+	 * @param value the float value for this object
+	 * @throws NullPointerException if the float is null
 	 */
-	FloatTerm(final float f) {
-		mValue = f;
+	FloatTerm(float value) {
+		this.value = value;
 	}
 
-	public Float getValue() {
-		return mValue;
-	}
-
-	public boolean isGround() {
-		return true;
-	}
-
-	public int compareTo(ITerm o) {
-		if (o == null) {
-			return 1;
+	public BigDecimal getValue() {
+		if (isNotANumber() || isPositiveInfinity() || isNegativeInfinity()) {
+			return null;
 		}
 
-		FloatTerm ft = (FloatTerm) o;
+		if (decimalValue == null) {
+			decimalValue = new BigDecimal(Float.toString(value));
+		}
 
-		// NaN > all non-NaN values
-	    // +0.0 > -0.0f  
-		return mValue.compareTo( ft.mValue );
+		return decimalValue;
 	}
 
+	public boolean isNotANumber() {
+		return value.equals(Float.NaN);
+	}
+
+	public boolean isPositiveInfinity() {
+		return value.equals(Float.POSITIVE_INFINITY);
+	}
+
+	public boolean isNegativeInfinity() {
+		return value.equals(Float.NEGATIVE_INFINITY);
+	}
+
+	@Override
 	public int hashCode() {
-		return mValue.hashCode();
-	}
-
-	public boolean equals(Object o) {
-		if (!(o instanceof FloatTerm)) {
-			return false;
-		}
-		FloatTerm ft = (FloatTerm) o;
-
-		// This method behaves as follows: 
-		//     NaN == NaN - required by XSD
-		//     +0.0 != -0.0 - required for OWL 2, but contrary to XSD
-		return mValue.equals( ft.mValue );
-	}
-
-	public String toString() {
-		return mValue.toString();
+		return value.hashCode();
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/2001/XMLSchema#float");
+		return URI.create(IFloatTerm.DATATYPE_URI);
 	}
 
-	public String toCanonicalString() {
-		return mValue.toString();
-	}
 }

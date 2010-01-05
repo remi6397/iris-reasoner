@@ -25,6 +25,8 @@ package org.deri.iris.builtins.datatype;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 
+import java.math.BigInteger;
+
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.IStringTerm;
@@ -95,14 +97,7 @@ public class ToIntegerBuiltin extends ConversionBuiltin {
 	 * @return A new Integer term representing the result of the conversion.
 	 */
 	public static IIntegerTerm toInteger(INumericTerm term) {
-		if (term instanceof IIntegerTerm) {
-			return (IIntegerTerm) term;
-		}
-
-		Number number = term.getValue();
-		int value = number.intValue();
-
-		return CONCRETE.createInteger(value);
+		return CONCRETE.createInteger(term.getValue().toBigInteger());
 	}
 
 	/**
@@ -115,9 +110,13 @@ public class ToIntegerBuiltin extends ConversionBuiltin {
 	public static IIntegerTerm toInteger(IStringTerm term) {
 		try {
 			String string = term.getValue();
-			int value = Integer.parseInt(string);
 
-			return CONCRETE.createInteger(value);
+			int indexOfDot = string.indexOf(".");
+			if (indexOfDot > -1) {
+				string = string.substring(0, indexOfDot);
+			}
+
+			return CONCRETE.createInteger(new BigInteger(string));
 		} catch (NumberFormatException e) {
 		}
 

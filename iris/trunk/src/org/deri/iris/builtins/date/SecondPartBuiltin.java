@@ -27,11 +27,8 @@ import static org.deri.iris.factory.Factory.BASIC;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IDateTime;
-import org.deri.iris.api.terms.concrete.IDuration;
-import org.deri.iris.api.terms.concrete.ITime;
+import org.deri.iris.builtins.BuiltinHelper;
 import org.deri.iris.builtins.FunctionalBuiltin;
-import org.deri.iris.factory.Factory;
 
 /**
  * Represents the RIF built-in functions func:seconds-from-dateTime,
@@ -58,34 +55,7 @@ public class SecondPartBuiltin extends FunctionalBuiltin {
 	}
 
 	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
-		double second = 0;
-
-		if (terms[0] instanceof ITime) {
-			ITime time = (ITime) terms[0];
-			second = time.getSecond();
-		} else if (terms[0] instanceof IDateTime) {
-			IDateTime dateTime = (IDateTime) terms[0];
-			second = dateTime.getSecond();
-		} else if (terms[0] instanceof IDuration) {
-			/*
-			 * We do not convert to DayTimeDuration here, since we can not
-			 * retrieve the second part of a duration without losing its
-			 * fractional part.
-			 */
-
-			IDuration duration = (IDuration) terms[0];
-
-			double seconds = duration.getDecimalSecond() + duration.getMinute()
-					* 60 + duration.getHour() * 3600 + duration.getDay()
-					* 86400;
-			double remainder = ((seconds % 86400.0) % 3600.0) % 60.0;
-
-			second = remainder * duration.getValue().getSign();
-		} else {
-			return null;
-		}
-
-		return Factory.CONCRETE.createDecimal(second);
+		return BuiltinHelper.secondPart(terms[0]);
 	}
 
 }

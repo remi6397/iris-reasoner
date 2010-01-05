@@ -26,13 +26,8 @@ import static org.deri.iris.factory.Factory.BASIC;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IDateTime;
-import org.deri.iris.api.terms.concrete.IDayTimeDuration;
-import org.deri.iris.api.terms.concrete.IDuration;
-import org.deri.iris.api.terms.concrete.ITime;
+import org.deri.iris.builtins.BuiltinHelper;
 import org.deri.iris.builtins.FunctionalBuiltin;
-import org.deri.iris.builtins.datatype.ToDayTimeDurationBuiltin;
-import org.deri.iris.factory.Factory;
 
 /**
  * Represents the RIF built-in functions func:hours-from-dateTime,
@@ -59,42 +54,7 @@ public class HourPartBuiltin extends FunctionalBuiltin {
 	}
 
 	protected ITerm computeResult(ITerm[] terms) {
-		int hour = 0;
-
-		if (terms[0] instanceof ITime) {
-			ITime time = (ITime) terms[0];
-
-			hour = time.getHour();
-
-			// Quick fix for "hour 24" problem.
-			if (hour == 24) {
-				hour = 0;
-			}
-		} else if (terms[0] instanceof IDateTime) {
-			IDateTime dateTime = (IDateTime) terms[0];
-			hour = dateTime.getHour();
-
-			// Quick fix for "hour 24" problem.
-			if (hour == 24) {
-				hour = 0;
-			}
-		} else if (terms[0] instanceof IDuration) {
-			IDuration duration = (IDuration) terms[0];
-
-			IDayTimeDuration dayTime = ToDayTimeDurationBuiltin
-					.toDayTimeDuration(duration);
-			dayTime = dayTime.toCanonical();
-
-			hour = dayTime.getHour();
-
-			if (!dayTime.isPositive()) {
-				hour *= -1;
-			}
-		} else {
-			return null;
-		}
-
-		return Factory.CONCRETE.createInteger(hour);
+		return BuiltinHelper.hourPart(terms[0]);
 	}
 
 }
