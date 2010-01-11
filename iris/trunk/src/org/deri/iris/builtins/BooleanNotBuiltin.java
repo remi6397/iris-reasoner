@@ -52,5 +52,5 @@ public class BooleanNotBuiltin extends BooleanBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = Factory.BASIC.createPredicate(
-			"BOOLEAN_NOT", 2);
+			"BOOLEAN_NOT", 1);
 }
