@@ -54,6 +54,7 @@ import org.deri.iris.api.terms.concrete.ILanguage;
 import org.deri.iris.api.terms.concrete.ILongTerm;
 import org.deri.iris.api.terms.concrete.INCName;
 import org.deri.iris.api.terms.concrete.INMTOKEN;
+import org.deri.iris.api.terms.concrete.INOTATION;
 import org.deri.iris.api.terms.concrete.IName;
 import org.deri.iris.api.terms.concrete.INegativeInteger;
 import org.deri.iris.api.terms.concrete.INonNegativeInteger;
@@ -61,6 +62,7 @@ import org.deri.iris.api.terms.concrete.INonPositiveInteger;
 import org.deri.iris.api.terms.concrete.INormalizedString;
 import org.deri.iris.api.terms.concrete.IPlainLiteral;
 import org.deri.iris.api.terms.concrete.IPositiveInteger;
+import org.deri.iris.api.terms.concrete.IQName;
 import org.deri.iris.api.terms.concrete.IShortTerm;
 import org.deri.iris.api.terms.concrete.ISqName;
 import org.deri.iris.api.terms.concrete.ITime;
@@ -336,5 +338,13 @@ public class ConcreteFactory implements IConcreteFactory {
 			int hour, int minute, double second, int tzHour, int tzMinute) {
 		return new DateTimeStamp(year, month, day, hour, minute, second,
 				tzHour, tzMinute);
+	}
+
+	public INOTATION createNOTATION(String namespaceName, String localPart) {
+		return new NOTATION(namespaceName, localPart);
+	}
+
+	public IQName createQName(String namespaceName, String localPart) {
+		return new QName(namespaceName, localPart);
 	}
 }
