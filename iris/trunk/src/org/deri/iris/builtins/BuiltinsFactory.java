@@ -78,6 +78,7 @@ import org.deri.iris.builtins.date.YearMonthDurationGreaterEqualBuiltin;
 import org.deri.iris.builtins.date.YearMonthDurationLessBuiltin;
 import org.deri.iris.builtins.date.YearMonthDurationLessEqualBuiltin;
 import org.deri.iris.builtins.date.YearPartBuiltin;
+import org.deri.iris.builtins.numeric.NumericIntegerDivideBuiltin;
 import org.deri.iris.builtins.numeric.NumericAddBuiltin;
 import org.deri.iris.builtins.numeric.NumericDivideBuiltin;
 import org.deri.iris.builtins.numeric.NumericEqualBuiltin;
@@ -625,7 +626,7 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 
 	public IBuiltinAtom createNumericIntegerDivide(ITerm... terms) {
-		return new IntegerDivideBuiltin(terms);
+		return new NumericIntegerDivideBuiltin(terms);
 	}
 
 	public IBuiltinAtom createIsNotAnyURI(ITerm... terms) {
