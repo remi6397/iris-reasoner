@@ -53,6 +53,7 @@ import org.deri.iris.api.terms.concrete.ILanguage;
 import org.deri.iris.api.terms.concrete.ILongTerm;
 import org.deri.iris.api.terms.concrete.INCName;
 import org.deri.iris.api.terms.concrete.INMTOKEN;
+import org.deri.iris.api.terms.concrete.INOTATION;
 import org.deri.iris.api.terms.concrete.IName;
 import org.deri.iris.api.terms.concrete.INegativeInteger;
 import org.deri.iris.api.terms.concrete.INonNegativeInteger;
@@ -60,6 +61,7 @@ import org.deri.iris.api.terms.concrete.INonPositiveInteger;
 import org.deri.iris.api.terms.concrete.INormalizedString;
 import org.deri.iris.api.terms.concrete.IPlainLiteral;
 import org.deri.iris.api.terms.concrete.IPositiveInteger;
+import org.deri.iris.api.terms.concrete.IQName;
 import org.deri.iris.api.terms.concrete.IShortTerm;
 import org.deri.iris.api.terms.concrete.ISqName;
 import org.deri.iris.api.terms.concrete.ITime;
@@ -462,6 +464,28 @@ public interface IConcreteFactory {
 	public IAnyURI createAnyURI(URI uri);
 
 	/**
+	 * Creates a new term representing a xs:QName.
+	 * 
+	 * @param namespaceName The namespace name of the xs:QName. May be
+	 *            <code>null</code>.
+	 * @param localPart The local part of the xs:QName.
+	 * @return A term representing the xs:QName for the specified namespace name
+	 *         and local part.
+	 */
+	public IQName createQName(String namespaceName, String localPart);
+
+	/**
+	 * Creates a new term representing a xs:NOTATION.
+	 * 
+	 * @param namespaceName The namespace name of the xs:NOTATION.
+	 * @param localPart The local part of the xs:NOTATION. May be
+	 *            <code>null</code>.
+	 * @return A term representing the xs:NOTATION for the specified namespace
+	 *         name and local part.
+	 */
+	public INOTATION createNOTATION(String namespaceName, String localPart);
+
+	/**
 	 * Creates a new term representing a xs:byte.
 	 * 
 	 * @param value The byte value.
@@ -628,10 +652,9 @@ public interface IConcreteFactory {
 	 * Create a new term representing a xs:unsignedInt.
 	 * </p>
 	 * 
-	 * @param value The long value representing the value of the
-	 *            xs:unsignedInt.
-	 * @return The term representing the xs:unsignedInt for the specified
-	 *         long value.
+	 * @param value The long value representing the value of the xs:unsignedInt.
+	 * @return The term representing the xs:unsignedInt for the specified long
+	 *         value.
 	 */
 	public IUnsignedInt createUnsignedInt(long value);
 
