@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.builtins;
+package org.deri.iris.builtins.numeric;
 
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
@@ -32,6 +32,7 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.builtins.DivideBuiltin;
 
 /**
  * <p>
@@ -43,11 +44,11 @@ import org.deri.iris.api.terms.ITerm;
  * 
  * @author Adrian Marte
  */
-public class IntegerDivideBuiltin extends ArithmeticBuiltin {
+public class NumericIntegerDivideBuiltin extends DivideBuiltin {
 
 	/** The predicate defining this builtin. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"INTEGER_DIVIDE", 3);
+			"NUMERIC_INTEGER_DIVIDE", 3);
 
 	/**
 	 * Constructs a builtin. Three terms must be passed to the constructor,
@@ -59,24 +60,13 @@ public class IntegerDivideBuiltin extends ArithmeticBuiltin {
 	 *             3.
 	 * @throws NullPointerException If <code>t</code> is <code>null</code>.
 	 */
-	public IntegerDivideBuiltin(ITerm... terms) {
+	public NumericIntegerDivideBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
 
 	protected ITerm computeMissingTerm(int missingTermIndex, ITerm[] terms)
 			throws EvaluationException {
-		ITerm result = null;
-
-		switch (missingTermIndex) {
-		case 0:
-			result = BuiltinHelper.multiply(terms[2], terms[1]);
-
-		case 1:
-			result = BuiltinHelper.divide(terms[0], terms[2]);
-
-		default:
-			result = BuiltinHelper.divide(terms[0], terms[1]);
-		}
+		ITerm result = super.computeMissingTerm(missingTermIndex, terms);
 
 		// Truncate the fractional part of the result.
 		if (result != null && result instanceof INumericTerm) {
