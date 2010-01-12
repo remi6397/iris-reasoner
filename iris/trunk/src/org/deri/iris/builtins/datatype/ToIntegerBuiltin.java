@@ -118,9 +118,9 @@ public class ToIntegerBuiltin extends ConversionBuiltin {
 
 			return CONCRETE.createInteger(new BigInteger(string));
 		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(
+					"The specified string can not be cast to integer", e);
 		}
-
-		return null;
 	}
 
 }

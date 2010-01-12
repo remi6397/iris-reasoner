@@ -109,7 +109,8 @@ public class ToIriBuiltin extends ConversionBuiltin {
 		try {
 			return CONCRETE.createIri(iri);
 		} catch (Exception e) {
-			return null;
+			throw new IllegalArgumentException(
+					"The specified string can not be cast to IRI", e);
 		}
 	}
 

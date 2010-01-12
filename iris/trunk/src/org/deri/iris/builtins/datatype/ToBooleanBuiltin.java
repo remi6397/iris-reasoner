@@ -25,6 +25,8 @@ package org.deri.iris.builtins.datatype;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 
+import java.math.BigDecimal;
+
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.IStringTerm;
@@ -92,10 +94,9 @@ public class ToBooleanBuiltin extends ConversionBuiltin {
 	 * @return A new Boolean term representing the result of the conversion.
 	 */
 	public static IBooleanTerm toBoolean(INumericTerm term) {
-		Number number = term.getValue();
-		double value = number.doubleValue();
+		BigDecimal value = term.getValue();
 
-		boolean result = (value != 0.0);
+		boolean result = value.compareTo(BigDecimal.ZERO) != 0;
 
 		return CONCRETE.createBoolean(result);
 	}

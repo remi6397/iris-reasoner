@@ -95,9 +95,10 @@ public class ToHexBinaryBuiltin extends ConversionBuiltin {
 		try {
 			return CONCRETE.createHexBinary(binary);
 		} catch (Exception e) {
-			return null;
+			throw new IllegalArgumentException(
+					"The specified string does not represent a hex binary value",
+					e);
 		}
-
 	}
 
 }
