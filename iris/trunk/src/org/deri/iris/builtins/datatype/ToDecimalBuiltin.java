@@ -132,9 +132,10 @@ public class ToDecimalBuiltin extends ConversionBuiltin {
 
 			return CONCRETE.createDecimal(new BigDecimal(string));
 		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(
+					"The specified string does not represent a decimal number",
+					e);
 		}
-
-		return null;
 	}
 
 }

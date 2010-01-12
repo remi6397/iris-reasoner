@@ -118,9 +118,9 @@ public class ToFloatBuiltin extends ConversionBuiltin {
 
 			return CONCRETE.createFloat(value);
 		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(
+					"The specified term does not represent a float value", e);
 		}
-
-		return null;
 	}
 
 }

@@ -53,7 +53,11 @@ public abstract class ConversionBuiltin extends FunctionalBuiltin {
 	protected ITerm computeResult(ITerm[] terms) {
 		ITerm term = terms[0];
 
-		return convert(term);
+		try {
+			return convert(term);
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
 	}
 
 	/**
@@ -61,7 +65,9 @@ public abstract class ConversionBuiltin extends FunctionalBuiltin {
 	 * 
 	 * @param terms The term representing the data type to be converted.
 	 * @return The result of the conversion or <code>null</code> if the
-	 *         specified data value is not compatible.
+	 *         specified data type is not compatible.
+	 * @throws IllegalArgumentException If the conversion fails for the
+	 *             specified value.
 	 */
 	protected abstract ITerm convert(ITerm term);
 

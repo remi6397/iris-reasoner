@@ -138,9 +138,9 @@ public class ToDoubleBuiltin extends ConversionBuiltin {
 
 			return CONCRETE.createDouble(value);
 		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(
+					"The specified term does not represent a double value", e);
 		}
-
-		return null;
 	}
 
 }

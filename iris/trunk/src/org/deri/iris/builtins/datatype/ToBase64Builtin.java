@@ -90,11 +90,7 @@ public class ToBase64Builtin extends ConversionBuiltin {
 	}
 
 	private static IBase64Binary toBase64(String binary) {
-		try {
-			return CONCRETE.createBase64Binary(binary);
-		} catch (Exception e) {
-			return null;
-		}
+		return CONCRETE.createBase64Binary(binary);
 	}
 
 }
