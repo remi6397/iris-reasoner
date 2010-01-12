@@ -36,6 +36,20 @@ import org.deri.iris.api.terms.ITerm;
 public class ModulusBuiltin extends ArithmeticBuiltin
 {
 	/**
+	 * Construct a new ModulusBuiltin for the specific predicate and terms.
+	 * 
+	 * @param predicate The predicate of the built-in.
+	 * @param terms The terms.
+	 * @throws NullPointerException If the predicate or one of the terms is
+	 *             <code>null</code>.
+	 * @throws IllegalArgumentException If the length of the terms and the arity
+	 *             of the predicate do not match.
+	 */
+	protected ModulusBuiltin(IPredicate predicate, ITerm... terms) {
+		super(predicate, terms);
+	}
+	
+	/**
 	 * Constructor.
 	 * @param terms the terms. There must always be 3 terms.
 	 */

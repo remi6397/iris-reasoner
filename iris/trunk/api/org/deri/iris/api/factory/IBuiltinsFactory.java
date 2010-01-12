@@ -659,7 +659,7 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createHoursFromTime(ITerm... terms);
-	
+
 	/**
 	 * Creates the MinutesFromTime built-in.
 	 * 
@@ -670,7 +670,7 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createMinutesFromTime(ITerm... terms);
-	
+
 	/**
 	 * Creates the SecondsFromTime built-in.
 	 * 
@@ -681,7 +681,7 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createSecondsFromTime(ITerm... terms);
-	
+
 	/**
 	 * Creates the YearsFromDuration built-in.
 	 * 
@@ -692,7 +692,7 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createYearsFromDuration(ITerm... terms);
-	
+
 	/**
 	 * Creates the MonthsFromDuration built-in.
 	 * 
@@ -703,7 +703,7 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createMonthsFromDuration(ITerm... terms);
-	
+
 	/**
 	 * Creates the DaysFromDuration built-in.
 	 * 
@@ -714,7 +714,7 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createDaysFromDuration(ITerm... terms);
-	
+
 	/**
 	 * Creates the HoursFromDuration built-in.
 	 * 
@@ -725,7 +725,7 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createHoursFromDuration(ITerm... terms);
-	
+
 	/**
 	 * Creates the MinutesFromDuration built-in.
 	 * 
@@ -736,7 +736,7 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createMinutesFromDuration(ITerm... terms);
-	
+
 	/**
 	 * Creates the SecondsFromDuration built-in.
 	 * 
@@ -747,7 +747,7 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createSecondsFromDuration(ITerm... terms);
-	
+
 	/**
 	 * Creates the TimezoneFromDateTime built-in.
 	 * 
@@ -758,7 +758,7 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createTimezoneFromDateTime(ITerm... terms);
-	
+
 	/**
 	 * Creates the TimezoneFromDate built-in.
 	 * 
@@ -769,7 +769,7 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createTimezoneFromDate(ITerm... terms);
-	
+
 	/**
 	 * Creates the TimezoneFromTime built-in.
 	 * 
@@ -2845,5 +2845,16 @@ public interface IBuiltinsFactory {
 	 *             correct.
 	 */
 	public IBuiltinAtom createBooleanGreater(ITerm... terms);
+
+	/**
+	 * Creates the built-in for checking if a given IRI equals a given string.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createIriString(ITerm... terms);
 
 }

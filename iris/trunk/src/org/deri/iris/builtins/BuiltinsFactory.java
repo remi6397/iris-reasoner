@@ -64,20 +64,46 @@ import org.deri.iris.builtins.date.HoursFromDateTimeBuiltin;
 import org.deri.iris.builtins.date.HoursFromDurationBuiltin;
 import org.deri.iris.builtins.date.HoursFromTimeBuiltin;
 import org.deri.iris.builtins.date.MinutePartBuiltin;
+import org.deri.iris.builtins.date.MinutesFromDateTimeBuiltin;
+import org.deri.iris.builtins.date.MinutesFromDurationBuiltin;
+import org.deri.iris.builtins.date.MinutesFromTimeBuiltin;
+import org.deri.iris.builtins.date.MonthFromDateBuiltin;
+import org.deri.iris.builtins.date.MonthFromDateTimeBuiltin;
 import org.deri.iris.builtins.date.MonthPartBuiltin;
+import org.deri.iris.builtins.date.MonthsFromDurationBuiltin;
 import org.deri.iris.builtins.date.SecondPartBuiltin;
+import org.deri.iris.builtins.date.SecondsFromDateTimeBuiltin;
+import org.deri.iris.builtins.date.SecondsFromDurationBuiltin;
+import org.deri.iris.builtins.date.SecondsFromTimeBuiltin;
+import org.deri.iris.builtins.date.SubtractDayTimeDurationFromDateBuiltin;
+import org.deri.iris.builtins.date.SubtractDayTimeDurationFromDateTimeBuiltin;
+import org.deri.iris.builtins.date.SubtractDayTimeDurationFromTimeBuiltin;
+import org.deri.iris.builtins.date.SubtractYearMonthDurationFromDateBuiltin;
+import org.deri.iris.builtins.date.SubtractYearMonthDurationFromDateTimeBuiltin;
 import org.deri.iris.builtins.date.TimeEqualBuiltin;
 import org.deri.iris.builtins.date.TimeGreaterBuiltin;
 import org.deri.iris.builtins.date.TimeGreaterEqualBuiltin;
 import org.deri.iris.builtins.date.TimeLessBuiltin;
 import org.deri.iris.builtins.date.TimeLessEqualBuiltin;
 import org.deri.iris.builtins.date.TimeNotEqualBuiltin;
+import org.deri.iris.builtins.date.TimeSubtractBuiltin;
+import org.deri.iris.builtins.date.TimezoneFromDateBuiltin;
+import org.deri.iris.builtins.date.TimezoneFromDateTimeBuiltin;
+import org.deri.iris.builtins.date.TimezoneFromTimeBuiltin;
 import org.deri.iris.builtins.date.TimezonePartBuiltin;
+import org.deri.iris.builtins.date.YearFromDateBuiltin;
+import org.deri.iris.builtins.date.YearFromDateTimeBuiltin;
+import org.deri.iris.builtins.date.YearMonthDurationAddBuiltin;
+import org.deri.iris.builtins.date.YearMonthDurationDivideBuiltin;
+import org.deri.iris.builtins.date.YearMonthDurationDivideByYearMonthDurationBuiltin;
 import org.deri.iris.builtins.date.YearMonthDurationGreaterBuiltin;
 import org.deri.iris.builtins.date.YearMonthDurationGreaterEqualBuiltin;
 import org.deri.iris.builtins.date.YearMonthDurationLessBuiltin;
 import org.deri.iris.builtins.date.YearMonthDurationLessEqualBuiltin;
+import org.deri.iris.builtins.date.YearMonthDurationMultiplyBuiltin;
+import org.deri.iris.builtins.date.YearMonthDurationSubtractBuiltin;
 import org.deri.iris.builtins.date.YearPartBuiltin;
+import org.deri.iris.builtins.date.YearsFromDurationBuiltin;
 import org.deri.iris.builtins.numeric.NumericIntegerDivideBuiltin;
 import org.deri.iris.builtins.numeric.NumericAddBuiltin;
 import org.deri.iris.builtins.numeric.NumericDivideBuiltin;
@@ -963,33 +989,27 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 
 	public IBuiltinAtom createMinutesFromDateTime(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new MinutesFromDateTimeBuiltin(terms);
 	}
 
 	public IBuiltinAtom createMinutesFromDuration(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new MinutesFromDurationBuiltin(terms);
 	}
 
 	public IBuiltinAtom createMinutesFromTime(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new MinutesFromTimeBuiltin(terms);
 	}
 
 	public IBuiltinAtom createMonthFromDate(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new MonthFromDateBuiltin(terms);
 	}
 
 	public IBuiltinAtom createMonthFromDateTime(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new MonthFromDateTimeBuiltin(terms);
 	}
 
 	public IBuiltinAtom createMonthsFromDuration(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new MonthsFromDurationBuiltin(terms);
 	}
 
 	public IBuiltinAtom createNumericAdd(ITerm... terms) {
@@ -1033,45 +1053,37 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 
 	public IBuiltinAtom createSecondsFromDateTime(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SecondsFromDateTimeBuiltin(terms);
 	}
 
 	public IBuiltinAtom createSecondsFromDuration(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SecondsFromDurationBuiltin(terms);
 	}
 
 	public IBuiltinAtom createSecondsFromTime(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SecondsFromTimeBuiltin(terms);
 	}
 
 	public IBuiltinAtom createSubtractDayTimeDurationFromDate(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SubtractDayTimeDurationFromDateBuiltin(terms);
 	}
 
 	public IBuiltinAtom createSubtractDayTimeDurationFromDateTime(
 			ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SubtractDayTimeDurationFromDateTimeBuiltin(terms);
 	}
 
 	public IBuiltinAtom createSubtractDayTimeDurationFromTime(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SubtractDayTimeDurationFromTimeBuiltin(terms);
 	}
 
 	public IBuiltinAtom createSubtractYearMonthDurationFromDate(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SubtractYearMonthDurationFromDateBuiltin(terms);
 	}
 
 	public IBuiltinAtom createSubtractYearMonthDurationFromDateTime(
 			ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SubtractYearMonthDurationFromDateTimeBuiltin(terms);
 	}
 
 	public IBuiltinAtom createTimeEqual(ITerm... terms) {
@@ -1099,23 +1111,19 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 
 	public IBuiltinAtom createTimeSubtract(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new TimeSubtractBuiltin(terms);
 	}
 
 	public IBuiltinAtom createTimezoneFromDate(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new TimezoneFromDateBuiltin(terms);
 	}
 
 	public IBuiltinAtom createTimezoneFromDateTime(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new TimezoneFromDateTimeBuiltin(terms);
 	}
 
 	public IBuiltinAtom createTimezoneFromTime(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new TimezoneFromTimeBuiltin(terms);
 	}
 
 	public IBuiltinAtom createXMLLiteralEqual(ITerm... terms) {
@@ -1127,29 +1135,24 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 
 	public IBuiltinAtom createYearFromDate(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new YearFromDateBuiltin(terms);
 	}
 
 	public IBuiltinAtom createYearFromDateTime(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new YearFromDateTimeBuiltin(terms);
 	}
 
 	public IBuiltinAtom createYearMonthDurationAdd(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new YearMonthDurationAddBuiltin(terms);
 	}
 
 	public IBuiltinAtom createYearMonthDurationDivide(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new YearMonthDurationDivideBuiltin(terms);
 	}
 
 	public IBuiltinAtom createYearMonthDurationDivideByYearMonthDuration(
 			ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new YearMonthDurationDivideByYearMonthDurationBuiltin(terms);
 	}
 
 	public IBuiltinAtom createYearMonthDurationGreater(ITerm... terms) {
@@ -1169,18 +1172,19 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 
 	public IBuiltinAtom createYearMonthDurationMultiply(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new YearMonthDurationMultiplyBuiltin(terms);
 	}
 
 	public IBuiltinAtom createYearMonthDurationSubtract(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new YearMonthDurationSubtractBuiltin(terms);
 	}
 
 	public IBuiltinAtom createYearsFromDuration(ITerm... terms) {
-		// TODO Auto-generated method stub
-		return null;
+		return new YearsFromDurationBuiltin(terms);
+	}
+
+	public IBuiltinAtom createIriString(ITerm... terms) {
+		return new IriStringBuiltin(terms);
 	}
 
 }
