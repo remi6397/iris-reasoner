@@ -25,9 +25,10 @@ package org.deri.iris.builtins;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
+
+import org.deri.iris.EvaluationException;
+import org.deri.iris.api.basics.ITuple;
 
 /**
  * <p>
@@ -42,33 +43,72 @@ import junit.framework.TestSuite;
  */
 public class EqualBuiltinTest extends TestCase {
 
-	public static Test suite() {
-		return new TestSuite(EqualBuiltinTest.class, EqualBuiltinTest.class.getSimpleName());
+	private EqualBuiltin xy;
+
+	public EqualBuiltinTest(String name) {
+		super(name);
 	}
 
-	public void testEvaluation() throws Exception{
-		final EqualBuiltin xy = new EqualBuiltin(TERM.createVariable("X"), TERM.createVariable("Y"));
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
 
-		assertNotNull("5 should be equal to 5", xy.evaluate(
-					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createInteger(5))));
-		assertNotNull("5 should be equal to 5.0", xy.evaluate(
-					BASIC.createTuple(CONCRETE.createInteger(5), CONCRETE.createDouble(5d))));
+		xy = new EqualBuiltin(TERM.createVariable("X"), TERM
+				.createVariable("Y"));
+	}
+
+	private void succeeds(String message, ITuple tuple) {
+		try {
+			assertNotNull(message, xy.evaluate(tuple));
+		} catch (EvaluationException e) {
+			fail("Evaluation exception");
+		}
+	}
+
+	private void fails(String message, ITuple tuple) {
+		try {
+			assertNull(message, xy.evaluate(tuple));
+		} catch (EvaluationException e) {
+			fail("Evaluation exception");
+		}
+	}
+
+	public void testNumerics() throws Exception {
+		succeeds("5 should be equal to 5", BASIC.createTuple(CONCRETE
+				.createInteger(5), CONCRETE.createInteger(5)));
+		succeeds("5 should be equal to 5.0", BASIC.createTuple(CONCRETE
+				.createInteger(5), CONCRETE.createDouble(5d)));
+
+		succeeds("+0.0 should be equal to -0.0", BASIC.createTuple(CONCRETE
+				.createDecimal(+0.0), CONCRETE.createDecimal(-0.0)));
 		
-		assertNotNull("+0.0 should be equal to -0.0", xy.evaluate(
-						BASIC.createTuple(CONCRETE.createDecimal(+0.0), CONCRETE.createDecimal(-0.0))));
-		assertNotNull("+0.0 should be equal to -0.0", xy.evaluate(
-						BASIC.createTuple(CONCRETE.createDouble(+0.0), CONCRETE.createDouble(-0.0))));
-		assertNotNull("+0.0 should be equal to -0.0", xy.evaluate(
-						BASIC.createTuple(CONCRETE.createFloat(+0.0f), CONCRETE.createFloat(-0.0f))));
+		succeeds("+0.0 should be equal to -0.0", BASIC.createTuple(CONCRETE
+				.createDouble(+0.0), CONCRETE.createDouble(-0.0)));
+		succeeds("+Inf should be equal to +Inf", BASIC.createTuple(CONCRETE
+				.createDouble(Double.POSITIVE_INFINITY), CONCRETE
+				.createDouble(Double.POSITIVE_INFINITY)));
+		succeeds("-Inf should be equal to -Inf", BASIC.createTuple(CONCRETE
+				.createDouble(Double.NEGATIVE_INFINITY), CONCRETE
+				.createDouble(Double.NEGATIVE_INFINITY)));
 
-		assertNull("5 should not equal to 2", xy.evaluate(
-					BASIC.createTuple(CONCRETE.createInteger(2), CONCRETE.createInteger(5))));
-		assertNull("5 should not be equal to a", xy.evaluate(
-					BASIC.createTuple(CONCRETE.createInteger(5), TERM.createString("a"))));
+		succeeds("+0.0 should be equal to -0.0", BASIC.createTuple(CONCRETE
+				.createFloat(+0.0f), CONCRETE.createFloat(-0.0f)));
+		succeeds("+Inf should be equal to +Inf", BASIC.createTuple(CONCRETE
+				.createDouble(Float.POSITIVE_INFINITY), CONCRETE
+				.createDouble(Float.POSITIVE_INFINITY)));
+		succeeds("-Inf should be equal to -Inf", BASIC.createTuple(CONCRETE
+				.createDouble(Float.NEGATIVE_INFINITY), CONCRETE
+				.createDouble(Float.NEGATIVE_INFINITY)));
+
+		fails("5 should not equal to 2", BASIC.createTuple(CONCRETE
+				.createInteger(2), CONCRETE.createInteger(5)));
+		fails("5 should not be equal to a", BASIC.createTuple(CONCRETE
+				.createInteger(5), TERM.createString("a")));
 	}
-	
-	public void test_isBuiltin() {
-		assertTrue("buitin predicates should be identifiable as builtins", (new EqualBuiltin(CONCRETE
-				.createInteger(5), CONCRETE.createInteger(5)).isBuiltin()));
+
+	public void testIsBuiltin() {
+		assertTrue("buitin predicates should be identifiable as builtins",
+				(new EqualBuiltin(CONCRETE.createInteger(5), CONCRETE
+						.createInteger(5)).isBuiltin()));
 	}
 }

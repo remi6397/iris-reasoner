@@ -25,6 +25,9 @@ package org.deri.iris.builtins.datatype;
 import static org.deri.iris.factory.Factory.BASIC;
 import static org.deri.iris.factory.Factory.CONCRETE;
 import static org.deri.iris.factory.Factory.TERM;
+
+import java.math.BigDecimal;
+
 import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
@@ -67,7 +70,9 @@ public class ToDecimalBuiltinTest extends TestCase {
 	}
 
 	public void testDecimal() throws EvaluationException {
-		equals(1.337, CONCRETE.createDecimal(1.337));
+		BigDecimal value = new BigDecimal(
+				"123423429340239420342341029412412410294812094124.234209435692034092394020934209");
+		equals(value, CONCRETE.createDecimal(value));
 	}
 
 	public void testDouble() throws EvaluationException {
@@ -141,12 +146,17 @@ public class ToDecimalBuiltinTest extends TestCase {
 		fails(CONCRETE.createYearMonthDuration(true, 2009, 4));
 	}
 
-	private void equals(double expected, ITerm term) throws EvaluationException {
+	private void equals(BigDecimal expected, ITerm term)
+			throws EvaluationException {
 		ITuple expectedTuple = BASIC.createTuple(CONCRETE
 				.createDecimal(expected));
 		ITuple actualTuple = compute(term);
 
 		assertEquals(expectedTuple, actualTuple);
+	}
+
+	private void equals(double expected, ITerm term) throws EvaluationException {
+		equals(new BigDecimal(Double.toString(expected)), term);
 	}
 
 	private void fails(ITerm term) throws EvaluationException {

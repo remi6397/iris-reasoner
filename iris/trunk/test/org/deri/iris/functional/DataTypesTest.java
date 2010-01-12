@@ -66,7 +66,7 @@ public class DataTypesTest extends TestCase
 			"p( _duration( 1970, 1, 1, 23, 15, 30 ) )." +
 			"p( _duration( 1970, 1, 1, 23, 15, 29, 99 ) )." +
 
-			"p( _datetime( 1980, 2, 2, 1, 2, 3 ) )." +
+			"p( _datetime( 1980, 2, 2, 1, 2, 1.337 ) )." +
 			"p( _datetime( 1980, 2, 2, 1, 2, 3, 1, 30 ) )." +
 			"p( _datetime( 1980, 2, 2, 1, 2, 3, 99, 1, 30 ) )." +
 			
@@ -85,6 +85,15 @@ public class DataTypesTest extends TestCase
 			
 			"p( _hexbinary( '0FB7abcd' ) )." +
 			"p( _base64binary( 'QmFycnkgQmlzaG9w' ) )." +
+			
+			"p( _xmlliteral( '<tag>Text</tag>' ) )." +
+			"p( _xmlliteral( '<tag>Text</tag>', 'en' ) )." +
+			
+			"p( _rdftext( 'Good day to you, sir.', 'en' ) )." +
+			"p( _rdftext( 'Guten Tag, mein Herr.', 'de' ) )." +
+			
+			"p( _plainliteral( 'Good day to you, sir.', 'en' ) )." +
+			"p( _plainliteral( 'Guten Tag, mein Herr.', 'de' ) )." +
 			
 			"?- p( ?X ).";
 
