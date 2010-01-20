@@ -39,12 +39,11 @@ public class IsNotDayTimeDurationBuiltinTest extends AbstractBooleanBuiltinTest 
 
 		String iri = "http://www.w3.org/2001/XMLSchema#DayTimeDuration";
 		String builtinName = "org.deri.iris.builtins.datatype.IsNotDayTimeDurationBuiltin";
-		
-		// TODO mp check daytimeduration
-		fail();
-//		ITerm term = CONCRETE.createDayTimeDuration(2342134);
-		
-//		checkBuiltin(iri, term, builtinName);
+
+		ITerm term = CONCRETE.createDayTimeDuration(true, 4, 11, 34, 12.5);
+
+		checkBuiltin(iri, term, builtinName,
+				"org.deri.iris.builtins.datatype.IsNotDurationBuiltin");
 	}
 
 }

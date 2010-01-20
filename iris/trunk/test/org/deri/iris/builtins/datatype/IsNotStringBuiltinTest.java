@@ -22,7 +22,7 @@
  */
 package org.deri.iris.builtins.datatype;
 
-import static org.deri.iris.factory.Factory.CONCRETE;
+import static org.deri.iris.factory.Factory.TERM;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -31,8 +31,7 @@ import org.deri.iris.api.terms.ITerm;
 
 /**
  */
-public class IsNotStringBuiltinTest extends
-		AbstractBooleanBuiltinTest {
+public class IsNotStringBuiltinTest extends AbstractBooleanBuiltinTest {
 
 	public void testBuiltin() throws SecurityException,
 			IllegalArgumentException, EvaluationException,
@@ -42,10 +41,8 @@ public class IsNotStringBuiltinTest extends
 
 		String iri = "http://www.w3.org/2001/XMLSchema#String";
 		String builtinName = "org.deri.iris.builtins.datatype.IsNotStringBuiltin";
-		// TODO mp : string - normalized string
-		ITerm term = CONCRETE.createNormalizedString("String");
+		ITerm term = TERM.createString("String");
 
-		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsNotNormalizedStringBuiltin");
+		checkBuiltin(iri, term, builtinName);
 	}
 }

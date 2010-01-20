@@ -37,13 +37,13 @@ public class IsDayTimeDurationBuiltinTest extends AbstractBooleanBuiltinTest {
 			InstantiationException, IllegalAccessException,
 			InvocationTargetException {
 
-		String iri = "http://www.w3.org/2001/XMLSchema#DateTimeDuration";
-		String builtinName = "org.deri.iris.builtins.datatype.IsDateTimeDurationBuiltin";
-		
-		// TODO mp check daytimeduration
-		fail();
-//		ITerm term = CONCRETE.createDuration((long) 21332423);
+		String iri = "http://www.w3.org/2001/XMLSchema#DayTimeDuration";
+		String builtinName = "org.deri.iris.builtins.datatype.IsDayTimeDurationBuiltin";
 
-//		checkBuiltin(iri, term, builtinName );
+		ITerm term = CONCRETE.createDayTimeDuration(true, 4, 11, 34, 12.5);
+
+		checkBuiltin(iri, term, builtinName,
+				"org.deri.iris.builtins.datatype.IsDurationBuiltin");
 	}
+
 }
