@@ -31,6 +31,10 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.ITerm;
 
 public class IsNegativeIntegerBuiltinTest extends AbstractBooleanBuiltinTest {
+	
+	public IsNegativeIntegerBuiltinTest(String name) {
+		super(name);
+	}
 
 	public void testBuiltin() throws SecurityException,
 			IllegalArgumentException, EvaluationException,

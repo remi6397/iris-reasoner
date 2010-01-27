@@ -27,4 +27,8 @@ import junit.framework.TestCase;
 public class IsIriBuiltinTest extends TestCase {
 
 	// TODO mp : iri testing
+	public void testBuiltin() {
+		// TODO mp test builtin
+		fail();
+	}
 }

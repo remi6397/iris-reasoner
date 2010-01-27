@@ -31,6 +31,10 @@ import org.deri.iris.api.terms.ITerm;
 
 public class IsFloatBuiltinTest extends AbstractBooleanBuiltinTest {
 
+	public IsFloatBuiltinTest(String name) {
+		super(name);
+	}
+	
 	public void testBuiltin() throws SecurityException,
 			IllegalArgumentException, EvaluationException,
 			ClassNotFoundException, NoSuchMethodException,

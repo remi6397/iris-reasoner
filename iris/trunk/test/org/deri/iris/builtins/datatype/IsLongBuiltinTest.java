@@ -30,6 +30,10 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.ITerm;
 
 public class IsLongBuiltinTest extends AbstractBooleanBuiltinTest {
+	
+	public IsLongBuiltinTest(String name) {
+		super(name);
+	}
 
 	public void testBuiltin() throws SecurityException,
 			IllegalArgumentException, EvaluationException,

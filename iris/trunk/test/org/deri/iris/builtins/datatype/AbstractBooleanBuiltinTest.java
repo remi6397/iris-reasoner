@@ -37,6 +37,10 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 
 public abstract class AbstractBooleanBuiltinTest extends TestCase {
+	
+	public AbstractBooleanBuiltinTest(String name) {
+		super(name);
+	}
 
 	private void checkBooleanBuiltin(boolean expected, ITerm term,
 			String datatypeIRI, String builtinName) throws EvaluationException,

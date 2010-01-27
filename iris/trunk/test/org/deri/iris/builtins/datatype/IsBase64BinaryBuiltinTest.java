@@ -31,6 +31,10 @@ import org.deri.iris.api.terms.ITerm;
 
 public class IsBase64BinaryBuiltinTest extends AbstractBooleanBuiltinTest {
 
+	public IsBase64BinaryBuiltinTest(String name) {
+		super(name);
+	}
+
 	public void testBase64() throws SecurityException,
 			IllegalArgumentException, EvaluationException,
 			ClassNotFoundException, NoSuchMethodException,
