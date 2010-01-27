@@ -33,6 +33,10 @@ import org.deri.iris.api.terms.ITerm;
  */
 public class IsNotXMLLiteralBuiltinTest extends AbstractBooleanBuiltinTest {
 
+	public IsNotXMLLiteralBuiltinTest(String name) {
+		super(name);
+	}
+
 	public void testBuiltin() throws SecurityException,
 			IllegalArgumentException, EvaluationException,
 			ClassNotFoundException, NoSuchMethodException,

@@ -30,7 +30,11 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.ITerm;
 
 public class IsByteBuiltinTest extends AbstractBooleanBuiltinTest {
-
+	
+	public IsByteBuiltinTest(String name) {
+		super(name);
+	}
+	
 	public void testByte() throws SecurityException, IllegalArgumentException,
 			EvaluationException, ClassNotFoundException, NoSuchMethodException,
 			InstantiationException, IllegalAccessException,

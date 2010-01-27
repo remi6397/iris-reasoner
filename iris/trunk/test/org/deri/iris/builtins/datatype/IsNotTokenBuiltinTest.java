@@ -33,6 +33,10 @@ import org.deri.iris.api.terms.ITerm;
  */
 public class IsNotTokenBuiltinTest extends AbstractBooleanBuiltinTest {
 
+	public IsNotTokenBuiltinTest(String name) {
+		super(name);
+	}
+
 	public void testBuiltin() throws SecurityException,
 			IllegalArgumentException, EvaluationException,
 			ClassNotFoundException, NoSuchMethodException,

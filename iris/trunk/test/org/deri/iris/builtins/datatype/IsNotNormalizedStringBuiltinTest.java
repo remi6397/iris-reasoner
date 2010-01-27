@@ -34,6 +34,10 @@ import org.deri.iris.api.terms.ITerm;
 public class IsNotNormalizedStringBuiltinTest extends
 		AbstractBooleanBuiltinTest {
 
+	public IsNotNormalizedStringBuiltinTest(String name) {
+		super(name);
+	}
+
 	public void testBuiltin() throws SecurityException,
 			IllegalArgumentException, EvaluationException,
 			ClassNotFoundException, NoSuchMethodException,

@@ -35,6 +35,10 @@ import org.deri.iris.api.terms.ITerm;
 public class IsNotPositiveIntegerBuiltinTest extends
 		AbstractBooleanBuiltinTest {
 
+	public IsNotPositiveIntegerBuiltinTest(String name) {
+		super(name);
+	}
+
 	public void testBuiltin() throws SecurityException,
 			IllegalArgumentException, EvaluationException,
 			ClassNotFoundException, NoSuchMethodException,
