@@ -22,7 +22,6 @@
  */
 package org.deri.iris.builtins.date;
 
-import static org.deri.iris.factory.Factory.TERM;
 import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
@@ -37,7 +36,7 @@ public class YearPartBuiltinTest extends TestCase {
 
 	private static final ITerm X = Factory.TERM.createVariable("X");
 
-	private static final ITerm Y = TERM.createVariable("Y");
+	private static final ITerm Y = Factory.TERM.createVariable("Y");
 
 	public YearPartBuiltinTest(String name) {
 		super(name);
