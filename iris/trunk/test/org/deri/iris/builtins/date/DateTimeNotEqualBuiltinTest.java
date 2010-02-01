@@ -26,36 +26,51 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.factory.Factory;
 
-
-public class DateEqualBuiltinTest extends AbstractDateBuiltinTest {
+/**
+ */
+public class DateTimeNotEqualBuiltinTest extends AbstractDateBuiltinTest {
 	
-	public DateEqualBuiltinTest(String name) {
+	public DateTimeNotEqualBuiltinTest(String name) {
 		super(name);
 	}
 
 	public void testBuiltin() throws EvaluationException {
-		ITerm date1 = Factory.CONCRETE.createDate(2010, 4, 26);
-		ITerm date2 = Factory.CONCRETE.createDate(2010, 4, 26);
-		ITerm date3 = Factory.CONCRETE.createDate(1997, 3, 12);
+		ITerm date1 = Factory.CONCRETE.createDateTime(2001, 2, 12, 14, 34, 23,
+				0, 0);
+		ITerm date2 = Factory.CONCRETE.createDateTime(2001, 2, 12, 14, 34, 23,
+				0, 0);
+		ITerm date3 = Factory.CONCRETE.createDateTime(1965, 4, 1, 10, 6, 29, 0,
+				0);
 
+		// date1 = date1
 		DateEqualBuiltin builtin = new DateEqualBuiltin(date1, date1); 	
 		args = Factory.BASIC.createTuple(X);
 		actual = builtin.evaluate(args);
 		
-		assertEquals(EMPTY_TUPLE, actual );
+		assertEquals(null, actual );
 		
-		
+		// date1 = date2
 		builtin = new DateEqualBuiltin(date1, date2); 	
 		args = Factory.BASIC.createTuple(X);
 		actual = builtin.evaluate(args);
 		
-		assertEquals(EMPTY_TUPLE, actual );
+		assertEquals(null, actual );
 
+		// date1 != date3
 		builtin = new DateEqualBuiltin(date1, date3); 	
 		args = Factory.BASIC.createTuple(X);
 		actual = builtin.evaluate(args);
 		
-		assertEquals(null, actual );
+		// TODO mp: should return an empty Tuple date1 != date3: 
+		assertEquals(EMPTY_TUPLE, actual);
+		
+		// date3 != date2
+		builtin = new DateEqualBuiltin(date3, date2); 	
+		args = Factory.BASIC.createTuple(X);
+		actual = builtin.evaluate(args);
+		
+		// TODO mp: should return an empty Tuple date3 != date2: 
+		assertEquals(EMPTY_TUPLE, actual);
 	}
 
 }
