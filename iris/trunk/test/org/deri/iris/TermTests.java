@@ -42,7 +42,6 @@ public final class TermTests {
 		// prevent subclassing
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void runTestGetMinValue(ITerm small) {
 		Assert.assertTrue("The smallest value of "
 				+ small.getClass().getSimpleName() + " mmst be smaller than "
