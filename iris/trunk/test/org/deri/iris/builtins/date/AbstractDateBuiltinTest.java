@@ -24,15 +24,11 @@ package org.deri.iris.builtins.date;
 
 import junit.framework.TestCase;
 
-import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.AddBuiltin;
-import org.deri.iris.builtins.EqualBuiltin;
-import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
-public class AbstractDateBuiltinTest extends TestCase {
+public abstract class AbstractDateBuiltinTest extends TestCase {
 
 	/*
 	 * http://www.w3.org/TR/rif-dtb/
@@ -55,41 +51,4 @@ public class AbstractDateBuiltinTest extends TestCase {
 	public AbstractDateBuiltinTest(String name) {
 		super(name);
 	}
-
-	protected void checkINT(int expected, ITerm time,
-			FunctionalBuiltin builtin, ITerm... arguments)
-			throws EvaluationException {
-
-		ITuple args = Factory.BASIC.createTuple(arguments);
-		ITuple expectedTuple = Factory.BASIC.createTuple(Factory.CONCRETE
-				.createInteger(expected));
-		ITuple actual = builtin.evaluate(args);
-
-		assertEquals(expectedTuple, actual);
-	}
-
-	protected void checkBOOL(boolean expected, ITerm time,
-			FunctionalBuiltin builtin, ITerm... arguments)
-			throws EvaluationException {
-
-		ITuple args = Factory.BASIC.createTuple(arguments);
-		ITuple expectedTuple = Factory.BASIC.createTuple(Factory.CONCRETE
-				.createBoolean(expected));
-		ITuple actual = builtin.evaluate(args);
-
-		assertEquals(expectedTuple, actual);
-	}
-
-	protected ITuple evaluateAddBuiltin(AddBuiltin builtin, ITerm... arguments)
-			throws EvaluationException {
-		ITuple args = Factory.BASIC.createTuple(arguments);
-		return builtin.evaluate(args);
-	}
-
-	protected ITuple evaluateEqualBuiltin(EqualBuiltin builtin,
-			ITerm... arguments) throws EvaluationException {
-		ITuple args = Factory.BASIC.createTuple(arguments);
-		return builtin.evaluate(args);
-	}
-
 }

@@ -24,37 +24,34 @@ package org.deri.iris.builtins.date;
 
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.builtins.AddBuiltin;
 import org.deri.iris.factory.Factory;
 
+/**
+ */
+public class AddYearMonthDurationToDateTimeBuiltinTest extends
+		AbstractDateBuiltinTest {
 
-public class DateEqualBuiltinTest extends AbstractDateBuiltinTest {
-	
-	public DateEqualBuiltinTest(String name) {
+	public AddYearMonthDurationToDateTimeBuiltinTest(String name) {
 		super(name);
 	}
 
 	public void testBuiltin() throws EvaluationException {
-		ITerm date1 = Factory.CONCRETE.createDate(2010, 4, 26);
-		ITerm date2 = Factory.CONCRETE.createDate(2010, 4, 26);
-		ITerm date3 = Factory.CONCRETE.createDate(1997, 3, 12);
+		ITerm yearMonthDuration = Factory.CONCRETE.createYearMonthDuration(true, 1976,2);
+		ITerm date1 = Factory.CONCRETE.createDateTime(10, 4, 2, 1, 23, 34.5, 0, 0);
+		ITerm result = Factory.CONCRETE.createDateTime(2, 2, 1, 2, 12, 23, 0, 0);
 
-		DateEqualBuiltin builtin = new DateEqualBuiltin(date1, date1); 	
-		args = Factory.BASIC.createTuple(X);
-		actual = builtin.evaluate(args);
-		
-		assertEquals(EMPTY_TUPLE, actual );
-		
-		builtin = new DateEqualBuiltin(date1, date2); 	
-		args = Factory.BASIC.createTuple(X);
-		actual = builtin.evaluate(args);
-		
-		assertEquals(EMPTY_TUPLE, actual );
+		AddBuiltin builtin = new AddYearMonthDurationToDateTimeBuiltin(date1, yearMonthDuration, result);
 
-		builtin = new DateEqualBuiltin(date1, date3); 	
-		args = Factory.BASIC.createTuple(X);
+		System.out.println(date1 + " ; " + yearMonthDuration.getValue() + " ; " + result);
+
+		args = Factory.BASIC.createTuple(X, Y, Z);
 		actual = builtin.evaluate(args);
+
+		System.out.println(date1 + " ; " + yearMonthDuration.getValue() + " ; " + result);
 		
-		assertEquals(null, actual );
+		// TODO mp not right ?
+		assertEquals(null, actual);
+		fail();
 	}
-
 }
