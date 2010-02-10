@@ -577,10 +577,10 @@ public class BuiltinHelperTest extends TestCase {
 		final IDuration y1 = CONCRETE.createDuration(true, 1, 0, 0, 0, 0, 0);
 		final IDuration y1m3 = CONCRETE.createDuration(true, 1, 3, 0, 0, 0, 0);
 		final IDuration d365 = CONCRETE.createDuration(true, 0, 0, 365, 0, 0, 0);
-		final IDuration d366 = CONCRETE.createDuration(true, 0, 0, 366, 0, 0, 0);
+//		final IDuration d366 = CONCRETE.createDuration(true, 0, 0, 366, 0, 0, 0);
 		final IDuration d458 = CONCRETE.createDuration(true, 0, 0, 458, 0, 0, 0);
 		final IDuration m11d30 = CONCRETE.createDuration(true, 0, 11, 30, 0, 0, 0);
-		final IDuration m11d31 = CONCRETE.createDuration(true, 0, 11, 31, 0, 0, 0);
+//		final IDuration m11d31 = CONCRETE.createDuration(true, 0, 11, 31, 0, 0, 0);
 
 		final IDateTerm y2004m2d28 = CONCRETE.createDate(2004, 2, 28);
 		final IDateTerm y2004m2d29 = CONCRETE.createDate(2004, 2, 29);
