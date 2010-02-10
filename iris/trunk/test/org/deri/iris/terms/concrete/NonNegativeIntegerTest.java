@@ -75,6 +75,12 @@ public class NonNegativeIntegerTest extends AbstractConcreteTermTest {
 	
 	public void testValidity() {
 		try {
+			new NonNegativeInteger(0);
+		} catch (IllegalArgumentException e) {
+			fail("0 is a valid value for nonNegativeInteger");
+		}
+		
+		try {
 			new NonNegativeInteger(-1);
 			fail("Did not recognize invalid value");
 		} catch (IllegalArgumentException e) {

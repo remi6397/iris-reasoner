@@ -75,6 +75,11 @@ public class NonPositiveIntegerTest extends AbstractConcreteTermTest {
 
 	public void testValidity() {
 		try {
+			new NonPositiveInteger(0);
+		} catch (IllegalArgumentException e) {
+			fail("0 is a valid value for nonPositiveInteger");
+		}
+		try {
 			new NonPositiveInteger(1);
 			fail("Did not recognize invalid value");
 		} catch (IllegalArgumentException e) {
