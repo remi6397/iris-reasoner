@@ -168,9 +168,6 @@ public class XmlDurationWorkAroundHelper
 		
 		if( b1 && ! b2 )
 			return 1;
-		
-		if( ! b1 && ! b2 )
-			return compare( d2, d1 );
 
 		// Now normalise in case we are running with java 1.5 runtime
 		javax.xml.datatype.Duration n1 = normaliseDays( d1 );
@@ -214,7 +211,7 @@ public class XmlDurationWorkAroundHelper
 		return whole.add( fractional );
 	}
 
-	private static int[] forwardFields = { Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND };
+//	private static int[] forwardFields = { Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND };
 	private static int[] reverseFields = { Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY, Calendar.DAY_OF_MONTH, Calendar.MONTH, Calendar.YEAR };
 	
 	public static Duration subtract( XMLGregorianCalendar x1, XMLGregorianCalendar x2 )
@@ -262,7 +259,7 @@ public class XmlDurationWorkAroundHelper
 						seconds );
 	}
 
-	private static String toString( GregorianCalendar g1 )
+	protected static String toString( GregorianCalendar g1 )
 	{
 		StringBuilder buffer = new StringBuilder();
 		
