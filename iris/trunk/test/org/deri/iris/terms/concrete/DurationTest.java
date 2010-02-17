@@ -93,6 +93,7 @@ public class DurationTest extends TestCase {
 						new Duration(false, 2000, 1, 1, 11, 01, 01),
 						new Duration(false, 2000, 1, 1, 11, 02, 00));
 		
+		// should be correct:  http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/
 		ObjectTests.runTestCompareTo(
 						new Duration(false, 2000, 1, 1, 11, 01, 00),
 						new Duration(false, 2000, 1, 1, 11, 01, 00),
