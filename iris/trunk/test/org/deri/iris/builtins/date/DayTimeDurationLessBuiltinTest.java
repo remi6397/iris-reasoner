@@ -46,6 +46,10 @@ public class DayTimeDurationLessBuiltinTest extends
 				47.3);
 		ITerm date5 = Factory.CONCRETE.createDayTimeDuration(false, 20, 19, 6,
 				3.3);
+		ITerm date6 = Factory.CONCRETE.createDayTimeDuration(false, 0, 0, 0,
+				0);
+		ITerm date7 = Factory.CONCRETE.createDayTimeDuration(false, 0, 0, 0,
+				0);
 
 		DayTimeDurationLessBuiltin builtin = new DayTimeDurationLessBuiltin(
 				date1, date1);
@@ -75,8 +79,19 @@ public class DayTimeDurationLessBuiltinTest extends
 		builtin = new DayTimeDurationLessBuiltin(date4, date5);
 		args = Factory.BASIC.createTuple(X);
 		actual = builtin.evaluate(args);
-		// TODO mp: StackOberflowError why?
-		// (date4 < date5) -> null
+		// (date4 < date5) -> EMPTY_TUPLE
+		assertEquals(EMPTY_TUPLE, actual);
+		
+		builtin = new DayTimeDurationLessBuiltin(date5, date4);
+		args = Factory.BASIC.createTuple(X);
+		actual = builtin.evaluate(args);
+		// (date5 > date4) -> null
+		assertEquals(null, actual);
+		
+		builtin = new DayTimeDurationLessBuiltin(date6, date7);
+		args = Factory.BASIC.createTuple(X);
+		actual = builtin.evaluate(args);
+		// (date6 = date7) -> null
 		assertEquals(null, actual);
 	}
 
