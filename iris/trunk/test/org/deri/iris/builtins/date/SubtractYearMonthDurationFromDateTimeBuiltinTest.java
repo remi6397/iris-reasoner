@@ -22,33 +22,35 @@
  */
 package org.deri.iris.builtins.date;
 
-import java.math.BigInteger;
-
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.factory.Factory;
 
 /**
  */
-public class YearMonthDurationMultiplyBuiltinTest extends AbstractDateBuiltinTest {
+public class SubtractYearMonthDurationFromDateTimeBuiltinTest extends
+		AbstractDateBuiltinTest {
 
-	public YearMonthDurationMultiplyBuiltinTest(String name) {
+	public SubtractYearMonthDurationFromDateTimeBuiltinTest(String name) {
 		super(name);
 	}
 
 	public void testBuiltin() throws EvaluationException {
-		
-		ITerm date1 = Factory.CONCRETE.createDateTime(2000, 10, 30, 6, 12, 0, 0, 0);
-		ITerm date2 = Factory.CONCRETE.createInteger(BigInteger.valueOf((long) 2));
-		ITerm result = Factory.CONCRETE.createDayTimeDuration(true, 0, 0, 0, 0);
 
-		YearMonthDurationMultiplyBuiltin builtin = new  YearMonthDurationMultiplyBuiltin(date1, date2, result);
+		ITerm date1 = Factory.CONCRETE.createYearMonthDuration(true, 2, 2);
+		ITerm date2 = Factory.CONCRETE.createDateTime(1987, 4, 2, 0, 0, 0, 0, 0);
+		ITerm result = Factory.CONCRETE.createDateTime(1, 1, 1, 0, 0, 0, 0, 0);
+
+		SubtractYearMonthDurationFromDateTimeBuiltin builtin = new SubtractYearMonthDurationFromDateTimeBuiltin(
+				date1, date2, result);
+
 		args = Factory.BASIC.createTuple(X, Y, Z);
 		actual = builtin.evaluate(args);
-		ITerm expected = Factory.CONCRETE.createDayTimeDuration(true, 0, 2, 12, 0);
-		
+		ITerm expected = Factory.CONCRETE.createDateTime(1987, 2, 2, 0, 0, 0, 0, 0);
+
 		assertEquals(expected, result.getValue());
 		assertEquals(EMPTY_TUPLE, actual);
 
 	}
+
 }
