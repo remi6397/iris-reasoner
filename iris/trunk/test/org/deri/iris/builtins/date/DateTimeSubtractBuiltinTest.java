@@ -33,17 +33,21 @@ public class DateTimeSubtractBuiltinTest extends AbstractDateBuiltinTest {
 	}
 
 	public void testBuiltin() throws EvaluationException {
-		
-		ITerm date1 = Factory.CONCRETE.createDateTime(2000, 10, 30, 6, 12, 0, 0, 0);
-		ITerm date2 = Factory.CONCRETE.createDateTime(1999, 11, 28, 12, 0, 0, 0, 0);
+
+		ITerm date1 = Factory.CONCRETE.createDateTime(2000, 10, 30, 6, 12, 0,
+				0, 0);
+		ITerm date2 = Factory.CONCRETE.createDateTime(1999, 11, 28, 12, 0, 0,
+				0, 0);
 		ITerm result = Factory.CONCRETE.createDayTimeDuration(true, 0, 0, 0, 0);
 
-		DateTimeSubtractBuiltin builtin = new DateTimeSubtractBuiltin(date1, date2, result); // 3 arguments
+		DateTimeSubtractBuiltin builtin = new DateTimeSubtractBuiltin(X, Y, Z); // 3
+																				// arguments
 
-		args = Factory.BASIC.createTuple(X, Y, Z);
+		args = Factory.BASIC.createTuple(date1, date2, result);
 		actual = builtin.evaluate(args);
-		ITerm expected = Factory.CONCRETE.createDayTimeDuration(true, 337, 2, 12, 0);
-		
+		ITerm expected = Factory.CONCRETE.createDayTimeDuration(true, 337, 2,
+				12, 0);
+
 		assertEquals(expected, result.getValue());
 		assertEquals(EMPTY_TUPLE, actual);
 

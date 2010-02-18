@@ -40,32 +40,27 @@ public class TimeGreaterBuiltinTest extends AbstractDateBuiltinTest {
 		ITerm time3 = Factory.CONCRETE.createTime(6, 34, 20.8, 0, 0);
 
 		// time1 = time1
-		TimeEqualBuiltin builtin = new TimeEqualBuiltin(time1, time1); 	
-		args = Factory.BASIC.createTuple(X);
+		TimeGreaterBuiltin builtin = new TimeGreaterBuiltin(X,Y); 	
+		args = Factory.BASIC.createTuple(time1, time1); 	
 		actual = builtin.evaluate(args);
-		// TODO mp
 		assertEquals(null, actual );
 		
 		// time1 = time2
-		builtin = new TimeEqualBuiltin(time1, time2); 	
-		args = Factory.BASIC.createTuple(X);
+		builtin = new TimeGreaterBuiltin(X,Y); 	
+		args = Factory.BASIC.createTuple(time1, time2); 	
 		actual = builtin.evaluate(args);
-		
 		assertEquals(null, actual );
 		
 		// time1 > time3
-		builtin = new TimeEqualBuiltin(time1, time3); 	
-		args = Factory.BASIC.createTuple(X);
+		builtin = new TimeGreaterBuiltin(X,Y); 	
+		args = Factory.BASIC.createTuple(time1, time3); 	
 		actual = builtin.evaluate(args);
-		
-		// TODO mp
 		assertEquals(EMPTY_TUPLE, actual );
 		
 		// time3 < time2
-		builtin = new TimeEqualBuiltin(time3, time2); 	
-		args = Factory.BASIC.createTuple(X);
+		builtin = new TimeGreaterBuiltin(X,Y); 	
+		args = Factory.BASIC.createTuple(time3, time2); 	
 		actual = builtin.evaluate(args);
-		
 		assertEquals(null, actual );
 	}
 }

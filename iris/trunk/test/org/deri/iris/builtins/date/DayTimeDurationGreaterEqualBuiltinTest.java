@@ -48,32 +48,32 @@ public class DayTimeDurationGreaterEqualBuiltinTest extends
 				3.3);
 
 		DayTimeDurationGreaterEqualBuiltin builtin = new DayTimeDurationGreaterEqualBuiltin(
-				date1, date1);
-		args = Factory.BASIC.createTuple(X);
+				X, Y);
+		args = Factory.BASIC.createTuple(date1, date1);
 		actual = builtin.evaluate(args);
 		// (date1 = date1) -> iTuple()
 		assertEquals(EMPTY_TUPLE, actual);
 
-		builtin = new DayTimeDurationGreaterEqualBuiltin(date1, date2);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DayTimeDurationGreaterEqualBuiltin(X, Y);
+		args = Factory.BASIC.createTuple(date1, date2);
 		actual = builtin.evaluate(args);
 		// (date1 = date2) -> null
 		assertEquals(EMPTY_TUPLE, actual);
 
-		builtin = new DayTimeDurationGreaterEqualBuiltin(date3, date4);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DayTimeDurationGreaterEqualBuiltin(X, Y);
+		args = Factory.BASIC.createTuple(date3, date4);
 		actual = builtin.evaluate(args);
 		// (date3 > date4) -> iTuple()
 		assertEquals(EMPTY_TUPLE, actual);
 
-		builtin = new DayTimeDurationGreaterEqualBuiltin(date4, date3);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DayTimeDurationGreaterEqualBuiltin(X, Y);
+		args = Factory.BASIC.createTuple(date4, date3);
 		actual = builtin.evaluate(args);
 		// (date4 < date3) -> null
 		assertEquals(null, actual);
 
-		builtin = new DayTimeDurationGreaterEqualBuiltin(date4, date5);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DayTimeDurationGreaterEqualBuiltin(X, Y);
+		args = Factory.BASIC.createTuple(date4, date5);
 		actual = builtin.evaluate(args);
 		// TODO mp: StackOberflowError why?
 		// (date4 < date5) -> null

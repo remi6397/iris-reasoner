@@ -40,9 +40,8 @@ public class TimeSubtractBuiltinTest extends AbstractDateBuiltinTest {
 		ITerm date2 = Factory.CONCRETE.createTime(4, 0, 0, 0, 0);
 		ITerm result = Factory.CONCRETE.createDayTimeDuration(true, 0, 0, 0, 0);
 
-		TimeSubtractBuiltin builtin = new TimeSubtractBuiltin(date1, date2, result); // 3 arguments
-
-		args = Factory.BASIC.createTuple(X, Y, Z);
+		TimeSubtractBuiltin builtin = new TimeSubtractBuiltin(X,Y,Z);
+		args = Factory.BASIC.createTuple(date1, date2, result); 
 		actual = builtin.evaluate(args);
 		ITerm expected = Factory.CONCRETE.createDayTimeDuration(true, 0, 2, 12, 0);
 		

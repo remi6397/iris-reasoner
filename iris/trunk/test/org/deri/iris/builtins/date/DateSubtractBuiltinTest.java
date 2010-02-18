@@ -29,37 +29,45 @@ import org.deri.iris.factory.Factory;
 /**
  */
 public class DateSubtractBuiltinTest extends AbstractDateBuiltinTest {
-	
+
 	public DateSubtractBuiltinTest(String name) {
 		super(name);
 	}
 
 	public void testBuiltin() throws EvaluationException {
 		ITerm date1 = Factory.CONCRETE.createDate(2011, 5, 27);
-		ITerm date2 = Factory.CONCRETE.createDate(2010, 4,  1);
-		ITerm date3 = Factory.CONCRETE.createDate(2010, 4,  1);
+		ITerm date2 = Factory.CONCRETE.createDate(2010, 4, 1);
+		ITerm result = Factory.CONCRETE.createDate(2010, 4, 1);
 
-		DateSubtractBuiltin builtin = new DateSubtractBuiltin(date1, date2, X); 	
-		
-		args = Factory.BASIC.createTuple(X, X, X);
+		DateSubtractBuiltin builtin = new DateSubtractBuiltin(X, Y, Z);
+
+		args = Factory.BASIC.createTuple(date1, date2, result);
 		actual = builtin.evaluate(args);
-	    expected = Factory.BASIC.createTuple(Factory.CONCRETE.createDuration(true, 1, 1, 26, 0, 0, 0, 0));
-   
-	    assertEquals(expected, actual);
+		expected = Factory.BASIC.createTuple(Factory.CONCRETE.createDuration(
+				true, 1, 1, 26, 0, 0, 0, 0));
+
 		
-		builtin = new DateSubtractBuiltin(date2, date3, Y); 	
-		args = Factory.BASIC.createTuple(X, X, X);
-		expected = Factory.BASIC.createTuple(Factory.CONCRETE.createDuration(true, 0, 0, 0, 0, 0, 0, 0));
-		actual = builtin.evaluate(args);
 		
-		assertEquals(expected, actual );
-		
-		builtin = new DateSubtractBuiltin(date3, date1, Y); 	
-		args = Factory.BASIC.createTuple(X, X, X);
-		expected = Factory.BASIC.createTuple(Factory.CONCRETE.createDuration(false, 1, 1, 26, 0, 0, 0, 0));
-		actual = builtin.evaluate(args);
-		
-		assertEquals(expected, actual );
+		assertEquals(expected, result);
+		assertEquals(null, actual);
+
+		// builtin = new DateSubtractBuiltin(date2, date3, Y);
+		// args = Factory.BASIC.createTuple(X, X, X);
+		// expected =
+		// Factory.BASIC.createTuple(Factory.CONCRETE.createDuration(true, 0, 0,
+		// 0, 0, 0, 0, 0));
+		// actual = builtin.evaluate(args);
+		//		
+		// assertEquals(expected, actual );
+		//		
+		// builtin = new DateSubtractBuiltin(date3, date1, Y);
+		// args = Factory.BASIC.createTuple(X, Y, Z);
+		// expected =
+		// Factory.BASIC.createTuple(Factory.CONCRETE.createDuration(false, 1,
+		// 1, 26, 0, 0, 0, 0));
+		// actual = builtin.evaluate(args);
+
+		assertEquals(expected, actual);
 	}
 
 }

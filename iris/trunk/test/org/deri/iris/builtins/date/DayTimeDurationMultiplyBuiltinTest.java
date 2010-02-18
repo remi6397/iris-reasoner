@@ -41,14 +41,17 @@ public class DayTimeDurationMultiplyBuiltinTest extends AbstractDateBuiltinTest 
 		ITerm result = Factory.CONCRETE.createDayTimeDuration(true, 10, 3, 2,
 				0.9);
 
-		DayTimeDurationMultiplyBuiltin builtin = new DayTimeDurationMultiplyBuiltin(
-				daytimeduration1, double1, result);
+		DayTimeDurationMultiplyBuiltin builtin = new DayTimeDurationMultiplyBuiltin(X,Y,Z);
+		
 		System.out.println(daytimeduration1.getValue() + " ; " + double1 + " ; " + result);
 		
-		args = Factory.BASIC.createTuple(X, Y, Z);
+		args = Factory.BASIC.createTuple(daytimeduration1, double1, result);
 		actual = builtin.evaluate(args);
 		
+		
 		System.out.println(daytimeduration1.getValue() + " ; " + double1 + " ; " + result);
+		
+		assertEquals(null, actual);
 		// TODO mp : result should be 2 x duration
 		fail();
 		

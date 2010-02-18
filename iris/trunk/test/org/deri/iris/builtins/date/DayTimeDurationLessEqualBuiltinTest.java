@@ -51,45 +51,44 @@ public class DayTimeDurationLessEqualBuiltinTest extends
 		ITerm date7 = Factory.CONCRETE.createDayTimeDuration(false, 0, 0, 0,
 				0);
 
-		DayTimeDurationLessEqualBuiltin builtin = new DayTimeDurationLessEqualBuiltin(
-				date1, date1);
-		args = Factory.BASIC.createTuple(X);
+		DayTimeDurationLessEqualBuiltin builtin = new DayTimeDurationLessEqualBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date1, date1);
 		actual = builtin.evaluate(args);
 		// (date1 = date1) -> EMPTY_TUPLE
 		assertEquals(EMPTY_TUPLE, actual);
 
-		builtin = new DayTimeDurationLessEqualBuiltin(date1, date2);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DayTimeDurationLessEqualBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date1, date2);
 		actual = builtin.evaluate(args);
 		// (date1 = date2) -> EMPTY_TUPLE
 		assertEquals(EMPTY_TUPLE, actual);
 
-		builtin = new DayTimeDurationLessEqualBuiltin(date3, date4);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DayTimeDurationLessEqualBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date3, date4);
 		actual = builtin.evaluate(args);
 		// (date3 > date4) -> null
 		assertEquals("Should be null", null, actual);
 
-		builtin = new DayTimeDurationLessEqualBuiltin(date4, date3);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DayTimeDurationLessEqualBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date4, date3);
 		actual = builtin.evaluate(args);
 		// (date4 < date3) -> EMPTY_TUPLE
 		assertEquals(EMPTY_TUPLE, actual);
 
-		builtin = new DayTimeDurationLessEqualBuiltin(date4, date5);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DayTimeDurationLessEqualBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date4, date5);
 		actual = builtin.evaluate(args);
 		// (date4 < date5) -> EMPTY_TUPLE
 		assertEquals(EMPTY_TUPLE, actual);
 		
-		builtin = new DayTimeDurationLessEqualBuiltin(date5, date4);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DayTimeDurationLessEqualBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date5, date4);
 		actual = builtin.evaluate(args);
 		// (date5 > date4) -> null
 		assertEquals(null, actual);
 		
-		builtin = new DayTimeDurationLessEqualBuiltin(date6, date7);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DayTimeDurationLessEqualBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date6,date7);
 		actual = builtin.evaluate(args);
 		// (date6 = date7) -> EMPTY_TUPLE
 		assertEquals(EMPTY_TUPLE, actual);

@@ -41,11 +41,11 @@ public class AddYearMonthDurationToDateTimeBuiltinTest extends
 		ITerm date1 = Factory.CONCRETE.createDateTime(10, 4, 2, 1, 23, 34.5, 0, 0);
 		ITerm result = Factory.CONCRETE.createDateTime(2, 2, 1, 2, 12, 23, 0, 0);
 
-		AddBuiltin builtin = new AddYearMonthDurationToDateTimeBuiltin(date1, yearMonthDuration, result);
+		AddBuiltin builtin = new AddYearMonthDurationToDateTimeBuiltin(X, Y, Z);
 
 		System.out.println(date1 + " ; " + yearMonthDuration.getValue() + " ; " + result);
 
-		args = Factory.BASIC.createTuple(X, Y, Z);
+		args = Factory.BASIC.createTuple(date1, yearMonthDuration, result);
 		actual = builtin.evaluate(args);
 
 		System.out.println(date1 + " ; " + yearMonthDuration.getValue() + " ; " + result);

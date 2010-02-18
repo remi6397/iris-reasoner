@@ -23,7 +23,6 @@
 package org.deri.iris.builtins.date;
 
 import org.deri.iris.EvaluationException;
-import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.factory.Factory;
 
@@ -40,20 +39,22 @@ public class DateNotEqualBuiltinTest extends AbstractDateBuiltinTest {
 		ITerm date2 = Factory.CONCRETE.createDate(2010, 4, 26);
 		ITerm date3 = Factory.CONCRETE.createDate(1997, 3, 12);
 
-		DateNotEqualBuiltin builtin = new DateNotEqualBuiltin(date1, date2); 	
-		
-		ITuple args = Factory.BASIC.createTuple(X);
-		ITuple actual = builtin.evaluate(args);
-		
-		assertEquals(null, actual );
-
-		builtin = new DateNotEqualBuiltin(date1, date3); 	
-		args = Factory.BASIC.createTuple(Y);
+		DateNotEqualBuiltin builtin = new DateNotEqualBuiltin(X, Y); 	
+		args = Factory.BASIC.createTuple(date1, date1);
 		actual = builtin.evaluate(args);
-		// TODO should give an EMPTY_TUPLE !!!!
 		assertEquals(null, actual );
 		
-		fail();
+		builtin = new DateNotEqualBuiltin(X, Y); 	
+		args = Factory.BASIC.createTuple(date1, date2);
+		actual = builtin.evaluate(args);
+		assertEquals(null, actual );
+		
+
+		builtin = new DateNotEqualBuiltin(X,Y); 	
+		args = Factory.BASIC.createTuple(date1, date3);
+		actual = builtin.evaluate(args);
+		assertEquals(EMPTY_TUPLE, actual );
+
 	}
 
 }

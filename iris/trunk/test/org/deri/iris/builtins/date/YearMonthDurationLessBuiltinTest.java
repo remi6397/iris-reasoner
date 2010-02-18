@@ -41,33 +41,32 @@ public class YearMonthDurationLessBuiltinTest extends AbstractDateBuiltinTest {
 		ITerm date4 = Factory.CONCRETE.createYearMonthDuration(true, 456, 4);
 		ITerm date5 = Factory.CONCRETE.createYearMonthDuration(false, 11, 3);
 
-		YearMonthDurationLessBuiltin builtin = new YearMonthDurationLessBuiltin(
-				date1, date1);
-		args = Factory.BASIC.createTuple(X);
+		YearMonthDurationLessBuiltin builtin = new YearMonthDurationLessBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date1, date1);
 		actual = builtin.evaluate(args);
 		// (date1 = date1) -> null
 		assertEquals(null, actual);
 
-		builtin = new YearMonthDurationLessBuiltin(date1, date2);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new YearMonthDurationLessBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date1, date2);
 		actual = builtin.evaluate(args);
 		// (date1 = date2) -> null
 		assertEquals(null, actual);
 
-		builtin = new YearMonthDurationLessBuiltin(date3, date4);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new YearMonthDurationLessBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date3, date4);
 		actual = builtin.evaluate(args);
 		// (date3 < date4) -> EMPTY_TUPLE
 		assertEquals(EMPTY_TUPLE, actual);
 
-		builtin = new YearMonthDurationLessBuiltin(date4, date3);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new YearMonthDurationLessBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date4, date3);
 		actual = builtin.evaluate(args);
 		// (date4 > date3) -> null
 		assertEquals(null, actual);
 
-		builtin = new YearMonthDurationLessBuiltin(date4, date5);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new YearMonthDurationLessBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date4, date5);
 		actual = builtin.evaluate(args);
 		// (date4 > date5) -> null
 		assertEquals(null, actual);

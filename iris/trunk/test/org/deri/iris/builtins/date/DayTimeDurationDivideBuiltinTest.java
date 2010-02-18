@@ -29,23 +29,25 @@ import org.deri.iris.factory.Factory;
 /**
  */
 public class DayTimeDurationDivideBuiltinTest extends AbstractDateBuiltinTest {
-	
+
 	public DayTimeDurationDivideBuiltinTest(String name) {
 		super(name);
 	}
-	
+
 	public void testBuiltin() throws EvaluationException {
 
 		ITerm date1 = Factory.CONCRETE.createDayTimeDuration(true, 4, 0, 0, 0);
 		ITerm date2 = Factory.CONCRETE.createDayTimeDuration(true, 2, 0, 0, 0);
 		ITerm result = Factory.CONCRETE.createDayTimeDuration(true, 0, 0, 0, 0);
 
-		DayTimeDurationDivideBuiltin builtin = new DayTimeDurationDivideBuiltin(date1, date2, result); 
-		
-		args = Factory.BASIC.createTuple(X, Y, Z);
+		DayTimeDurationDivideBuiltin builtin = new DayTimeDurationDivideBuiltin(
+				X, Y, Z);
+
+		args = Factory.BASIC.createTuple(date1, date2, result);
 		actual = builtin.evaluate(args);
-		ITerm expected = Factory.CONCRETE.createDayTimeDuration(true, 2, 0, 0, 0);
-		
+		ITerm expected = Factory.CONCRETE.createDayTimeDuration(true, 2, 0, 0,
+				0);
+
 		assertEquals(expected, result.getValue());
 		assertEquals(EMPTY_TUPLE, actual);
 

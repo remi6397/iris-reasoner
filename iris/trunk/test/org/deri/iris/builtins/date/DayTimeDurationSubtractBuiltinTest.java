@@ -28,7 +28,7 @@ import org.deri.iris.factory.Factory;
 
 /**
  */
-public class DayTimeDurationSubtractBuiltinTest  extends AbstractDateBuiltinTest {
+public class DayTimeDurationSubtractBuiltinTest extends AbstractDateBuiltinTest {
 
 	public DayTimeDurationSubtractBuiltinTest(String name) {
 		super(name);
@@ -39,20 +39,22 @@ public class DayTimeDurationSubtractBuiltinTest  extends AbstractDateBuiltinTest
 				15, 23, 19, 12.0);
 		ITerm daytimeduration2 = Factory.CONCRETE.createDayTimeDuration(true,
 				15, 23, 19, 12.0);
-		ITerm result = Factory.CONCRETE.createDayTimeDuration(true,
-				15, 23, 19, 12.0);
+		ITerm result = Factory.CONCRETE.createDayTimeDuration(true, 15, 23, 19,
+				12.0);
 
 		DayTimeDurationSubtractBuiltin builtin = new DayTimeDurationSubtractBuiltin(
-				daytimeduration1, daytimeduration2, result);
-		System.out.println(daytimeduration1.getValue() + " ; " + daytimeduration2 + " ; " + result);
-		
-		args = Factory.BASIC.createTuple(X, Y, Z);
+				X, Y, Z);
+		System.out.println(daytimeduration1.getValue() + " ; "
+				+ daytimeduration2 + " ; " + result);
+
+		args = Factory.BASIC.createTuple(daytimeduration1, daytimeduration2,
+				result);
 		actual = builtin.evaluate(args);
-		
-		System.out.println(daytimeduration1.getValue() + " ; " + daytimeduration2 + " ; " + result);
+
+		System.out.println(daytimeduration1.getValue() + " ; "
+				+ daytimeduration2 + " ; " + result);
 		// TODO mp : result should be 2 x duration
 		fail();
-		
 
 	}
 }
