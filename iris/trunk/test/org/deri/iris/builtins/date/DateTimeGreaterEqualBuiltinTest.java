@@ -44,24 +44,23 @@ public class DateTimeGreaterEqualBuiltinTest extends AbstractDateBuiltinTest {
 				0);
 
 		// date1 = date2
-		DateTimeGreaterEqualBuiltin builtin = new DateTimeGreaterEqualBuiltin(
-				date1, date2);
+		DateTimeGreaterEqualBuiltin builtin = new DateTimeGreaterEqualBuiltin(X,Y);
 
-		args = Factory.BASIC.createTuple(X);
+		args = Factory.BASIC.createTuple(date1, date2);
 		actual = builtin.evaluate(args);
 
 		assertEquals(EMPTY_TUPLE, actual);
 
 		// date1 > date3
-		builtin = new DateTimeGreaterEqualBuiltin(date1, date3);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DateTimeGreaterEqualBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date1, date3);
 		actual = builtin.evaluate(args);
 
 		assertEquals(EMPTY_TUPLE, actual);
 
 		// date3 < date1
-		builtin = new DateTimeGreaterEqualBuiltin(date3, date1);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DateTimeGreaterEqualBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(date3, date1);
 		actual = builtin.evaluate(args);
 
 		assertEquals(null, actual);

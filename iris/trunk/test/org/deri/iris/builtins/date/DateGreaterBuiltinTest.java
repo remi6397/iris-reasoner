@@ -40,23 +40,23 @@ public class DateGreaterBuiltinTest extends AbstractDateBuiltinTest {
 		ITerm date3 = Factory.CONCRETE.createDate(2010, 5, 26);
 		ITerm date4 = Factory.CONCRETE.createDate(1997, 3, 12);
 
-		DateGreaterBuiltin builtin = new DateGreaterBuiltin(date1, date2); 
+		DateGreaterBuiltin builtin = new DateGreaterBuiltin(X, Y);
 
-		args = Factory.BASIC.createTuple(X);
+		args = Factory.BASIC.createTuple(date1, date2);
 		actual = builtin.evaluate(args);
-//        (date1 = date2) ->  null
+		// (date1 = date2) -> null
 		assertEquals(null, actual);
 
-		builtin = new DateGreaterBuiltin(date3, date4); 
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DateGreaterBuiltin(X, Y);
+		args = Factory.BASIC.createTuple(date3, date4);
 		actual = builtin.evaluate(args);
-//      (date3 > date4) ->  iTuple()
+		// (date3 > date4) -> iTuple()
 		assertEquals(EMPTY_TUPLE, actual);
-		
-		builtin = new DateGreaterBuiltin(date4, date3); 
-		args = Factory.BASIC.createTuple(X);
+
+		builtin = new DateGreaterBuiltin(X, Y);
+		args = Factory.BASIC.createTuple(date4, date3);
 		actual = builtin.evaluate(args);
-//      (date4 < date3) ->  null
+		// (date4 < date3) -> null
 		assertEquals(null, actual);
 	}
 

@@ -43,33 +43,31 @@ public class DateTimeNotEqualBuiltinTest extends AbstractDateBuiltinTest {
 				0);
 
 		// date1 = date1
-		DateEqualBuiltin builtin = new DateEqualBuiltin(date1, date1); 	
-		args = Factory.BASIC.createTuple(X);
+		DateTimeNotEqualBuiltin builtin = new DateTimeNotEqualBuiltin(X,Y); 	
+		args = Factory.BASIC.createTuple(date1, date1);
 		actual = builtin.evaluate(args);
 		
 		assertEquals(null, actual );
 		
 		// date1 = date2
-		builtin = new DateEqualBuiltin(date1, date2); 	
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DateTimeNotEqualBuiltin(X,Y); 	
+		args = Factory.BASIC.createTuple(date1, date2);
 		actual = builtin.evaluate(args);
 		
 		assertEquals(null, actual );
 
 		// date1 != date3
-		builtin = new DateEqualBuiltin(date1, date3); 	
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DateTimeNotEqualBuiltin(X,Y); 	
+		args = Factory.BASIC.createTuple(date1, date3);
 		actual = builtin.evaluate(args);
 		
-		// TODO mp: should return an empty Tuple date1 != date3: 
 		assertEquals(EMPTY_TUPLE, actual);
 		
 		// date3 != date2
-		builtin = new DateEqualBuiltin(date3, date2); 	
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DateTimeNotEqualBuiltin(X,Y); 	
+		args = Factory.BASIC.createTuple(date3, date2);
 		actual = builtin.evaluate(args);
 		
-		// TODO mp: should return an empty Tuple date3 != date2: 
 		assertEquals(EMPTY_TUPLE, actual);
 	}
 

@@ -41,24 +41,23 @@ public class TimeNotEqualBuiltinTest extends AbstractDateBuiltinTest {
 
 		// time1 = time1
 		TimeNotEqualBuiltin builtin = new TimeNotEqualBuiltin(time1, time1);
-		args = Factory.BASIC.createTuple(X);
+		args = Factory.BASIC.createTuple(X, Y);
 		actual = builtin.evaluate(args);
 
 		assertEquals(null, actual);
 
 		// time1 = time2
 		builtin = new TimeNotEqualBuiltin(time1, time2);
-		args = Factory.BASIC.createTuple(X);
+		args = Factory.BASIC.createTuple(X, Y);
 		actual = builtin.evaluate(args);
 
 		assertEquals(null, actual);
 
 		// time1 != time3
-		builtin = new TimeNotEqualBuiltin(time1, time3);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new TimeNotEqualBuiltin(X, Y);
+		args = Factory.BASIC.createTuple(time1, time3);
 		actual = builtin.evaluate(args);
 
-		//TODO mp ?
 		assertEquals(EMPTY_TUPLE, actual);
 	}
 

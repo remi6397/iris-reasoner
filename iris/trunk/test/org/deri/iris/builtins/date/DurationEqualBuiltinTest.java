@@ -44,33 +44,30 @@ public class DurationEqualBuiltinTest extends AbstractDateBuiltinTest {
 		ITerm duration4 = Factory.CONCRETE.createDuration(false, 1991, 1, 8,
 				12, 56, 23);
 
-		DurationEqualBuiltin builtin = new DurationEqualBuiltin(duration1,
-				duration1);
-		args = Factory.BASIC.createTuple(X);
+		DurationEqualBuiltin builtin = new DurationEqualBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(duration1, duration1);
 		actual = builtin.evaluate(args);
 		// duration1 = duration1
 		assertEquals(EMPTY_TUPLE, actual);
 
-		builtin = new DurationEqualBuiltin(duration1, duration2);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DurationEqualBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(duration1, duration2);
 		actual = builtin.evaluate(args);
 		// duration1 = duration2
 		assertEquals(EMPTY_TUPLE, actual);
 
-		builtin = new DurationEqualBuiltin(duration1, duration3);
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DurationEqualBuiltin(X,Y);
+		args = Factory.BASIC.createTuple(duration4, duration3);
 		actual = builtin.evaluate(args);
 		// duration1 > duration3
 		assertEquals(null, actual);
-		
-		
+
 		builtin = new DurationEqualBuiltin(duration3, duration4);
 		args = Factory.BASIC.createTuple(X);
 		actual = builtin.evaluate(args);
 		// duration3 < duration4
 		assertEquals(null, actual);
-		
-		
+
 	}
 
 }

@@ -40,9 +40,9 @@ public class DayTimeDurationAddBuiltinTest extends AbstractDateBuiltinTest {
 		ITerm date2 = Factory.CONCRETE.createDayTimeDuration(true, 2, 1, 0, 0);
 		ITerm result = Factory.CONCRETE.createDayTimeDuration(true, 0, 0, 0, 0);
 
-		DayTimeDurationAddBuiltin builtin = new DayTimeDurationAddBuiltin(date1, date2, result); 
+		DayTimeDurationAddBuiltin builtin = new DayTimeDurationAddBuiltin(X, Y, Z); 
 		
-		args = Factory.BASIC.createTuple(X, Y, Z);
+		args = Factory.BASIC.createTuple(date1, date2, result);
 		actual = builtin.evaluate(args);
 		ITerm expected = Factory.CONCRETE.createDayTimeDuration(true, 3, 1, 0, 0);
 		

@@ -38,20 +38,20 @@ public class DateEqualBuiltinTest extends AbstractDateBuiltinTest {
 		ITerm date2 = Factory.CONCRETE.createDate(2010, 4, 26);
 		ITerm date3 = Factory.CONCRETE.createDate(1997, 3, 12);
 
-		DateEqualBuiltin builtin = new DateEqualBuiltin(date1, date1); 	
-		args = Factory.BASIC.createTuple(X);
+		DateEqualBuiltin builtin = new DateEqualBuiltin(X, Y); 	
+		args = Factory.BASIC.createTuple(date1, date1);
 		actual = builtin.evaluate(args);
 		
 		assertEquals(EMPTY_TUPLE, actual );
 		
-		builtin = new DateEqualBuiltin(date1, date2); 	
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DateEqualBuiltin(X, Y); 	
+		args = Factory.BASIC.createTuple(date1, date2);
 		actual = builtin.evaluate(args);
 		
 		assertEquals(EMPTY_TUPLE, actual );
 
-		builtin = new DateEqualBuiltin(date1, date3); 	
-		args = Factory.BASIC.createTuple(X);
+		builtin = new DateEqualBuiltin(X, Y); 	
+		args = Factory.BASIC.createTuple(date1, date3);
 		actual = builtin.evaluate(args);
 		
 		assertEquals(null, actual );
