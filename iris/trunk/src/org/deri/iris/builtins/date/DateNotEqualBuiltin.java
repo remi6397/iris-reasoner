@@ -47,7 +47,7 @@ public class DateNotEqualBuiltin extends NotEqualBuiltin {
 	@Override
 	protected boolean computeResult(ITerm[] terms) {
 		if (terms[0] instanceof IDateTerm && terms[1] instanceof IDateTerm) {
-			super.computeResult(terms);
+			return super.computeResult(terms);
 		}
 
 		return false;
