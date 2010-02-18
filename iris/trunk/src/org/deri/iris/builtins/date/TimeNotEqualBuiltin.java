@@ -47,7 +47,7 @@ public class TimeNotEqualBuiltin extends NotEqualBuiltin {
 	@Override
 	protected boolean computeResult(ITerm[] terms) {
 		if (terms[0] instanceof ITime && terms[1] instanceof ITime) {
-			super.computeResult(terms);
+			return super.computeResult(terms);
 		}
 
 		return false;
