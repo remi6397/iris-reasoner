@@ -59,7 +59,7 @@ public class TimeLessEqualBuiltinTest extends AbstractDateBuiltinTest {
 
 		// time3 < time2
 		builtin = new TimeLessEqualBuiltin(X,Y);
-		args = Factory.BASIC.createTuple(time1, time3);
+		args = Factory.BASIC.createTuple(time3, time1);
 		actual = builtin.evaluate(args);
 		assertEquals(EMPTY_TUPLE, actual);
 	}
