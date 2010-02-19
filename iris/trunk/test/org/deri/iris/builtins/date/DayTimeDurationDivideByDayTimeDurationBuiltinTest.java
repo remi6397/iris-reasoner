@@ -39,17 +39,13 @@ public class DayTimeDurationDivideByDayTimeDurationBuiltinTest extends
 
 		ITerm date1 = Factory.CONCRETE.createDayTimeDuration(true, 4, 0, 0, 0);
 		ITerm date2 = Factory.CONCRETE.createDayTimeDuration(true, 2, 0, 0, 0);
-		ITerm result = Factory.CONCRETE.createDayTimeDuration(true, 0, 0, 0, 0);
-
+		ITerm result = Factory.CONCRETE.createDecimal(2.0);
 		DayTimeDurationDivideByDayTimeDurationBuiltin builtin = new DayTimeDurationDivideByDayTimeDurationBuiltin(
 				X, Y, Z);
 
 		args = Factory.BASIC.createTuple(date1, date2, result);
 		actual = builtin.evaluate(args);
-		ITerm expected = Factory.CONCRETE.createDayTimeDuration(true, 2, 0, 0,
-				0);
 
-		assertEquals(expected, result.getValue());
 		assertEquals(EMPTY_TUPLE, actual);
 
 	}

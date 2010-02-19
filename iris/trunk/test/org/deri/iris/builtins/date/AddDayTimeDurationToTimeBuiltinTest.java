@@ -38,26 +38,16 @@ public class AddDayTimeDurationToTimeBuiltinTest extends
 
 	public void testBuiltin() throws EvaluationException {
 		
-		ITerm daytimeduration = Factory.CONCRETE.createDayTimeDuration(true, 3,
-				2, 3, 45, 23);
+		ITerm daytimeduration = Factory.CONCRETE.createDayTimeDuration(true, 0, 2, 0, 0, 0);
 		ITerm time1 = Factory.CONCRETE.createTime(10, 4, 26.3, 0, 0);
-		ITerm result = Factory.CONCRETE.createTime(2, 23, 1.7, 0, 0);
+		ITerm result = Factory.CONCRETE.createTime(12, 4, 26.3, 0, 0);
 
-		AddBuiltin builtin = new AddDayTimeDurationToTimeBuiltin(time1,
-				daytimeduration, result);
+		AddBuiltin builtin = new AddDayTimeDurationToTimeBuiltin(X, Y, Z);
 
-		System.out.println(time1 + " ; " + daytimeduration.getValue() + " ; "
-				+ result);
-
-		args = Factory.BASIC.createTuple(X, Y, Z);
+		args = Factory.BASIC.createTuple(time1, daytimeduration, result);
 		actual = builtin.evaluate(args);
-
-		System.out.println(time1 + " ; " + daytimeduration.getValue() + " ; "
-				+ result);
-
-		// TODO mp not right ?
-		assertEquals(null, actual);
-		fail();
+		
+		assertEquals(EMPTY_TUPLE, actual);
 
 	}
 

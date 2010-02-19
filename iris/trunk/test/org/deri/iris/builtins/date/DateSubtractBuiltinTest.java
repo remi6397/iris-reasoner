@@ -35,39 +35,17 @@ public class DateSubtractBuiltinTest extends AbstractDateBuiltinTest {
 	}
 
 	public void testBuiltin() throws EvaluationException {
-		ITerm date1 = Factory.CONCRETE.createDate(2011, 5, 27);
-		ITerm date2 = Factory.CONCRETE.createDate(2010, 4, 1);
-		ITerm result = Factory.CONCRETE.createDate(2010, 4, 1);
-
+		ITerm date1 = Factory.CONCRETE.createDate(1978, 5, 27);
+		ITerm date2 = Factory.CONCRETE.createDate(1978, 5, 26);
+		ITerm result = Factory.CONCRETE.createDayTimeDuration(true, 1, 0, 0, 0);
+		
 		DateSubtractBuiltin builtin = new DateSubtractBuiltin(X, Y, Z);
 
 		args = Factory.BASIC.createTuple(date1, date2, result);
 		actual = builtin.evaluate(args);
-		expected = Factory.BASIC.createTuple(Factory.CONCRETE.createDuration(
-				true, 1, 1, 26, 0, 0, 0, 0));
 
-		
-		
-		assertEquals(expected, result);
-		assertEquals(null, actual);
+		assertEquals(EMPTY_TUPLE, actual);
 
-		// builtin = new DateSubtractBuiltin(date2, date3, Y);
-		// args = Factory.BASIC.createTuple(X, X, X);
-		// expected =
-		// Factory.BASIC.createTuple(Factory.CONCRETE.createDuration(true, 0, 0,
-		// 0, 0, 0, 0, 0));
-		// actual = builtin.evaluate(args);
-		//		
-		// assertEquals(expected, actual );
-		//		
-		// builtin = new DateSubtractBuiltin(date3, date1, Y);
-		// args = Factory.BASIC.createTuple(X, Y, Z);
-		// expected =
-		// Factory.BASIC.createTuple(Factory.CONCRETE.createDuration(false, 1,
-		// 1, 26, 0, 0, 0, 0));
-		// actual = builtin.evaluate(args);
-
-		assertEquals(expected, actual);
 	}
 
 }

@@ -37,20 +37,17 @@ public class SubtractDayTimeDurationFromTimeBuiltinTest extends
 
 	public void testBuiltin() throws EvaluationException {
 
-		ITerm date1 = Factory.CONCRETE.createDayTimeDuration(true, 1, 0, 0, 0);
+		ITerm date1 = Factory.CONCRETE.createDayTimeDuration(true, 0, 1, 0, 0);
 		ITerm date2 = Factory.CONCRETE.createTime(3, 1, 2, 0, 0);
-		ITerm result = Factory.CONCRETE.createTime(1, 1, 1, 0, 0);
+		ITerm result = Factory.CONCRETE.createTime(2, 1, 2, 0, 0);
 
 		SubtractDayTimeDurationFromTimeBuiltin builtin = new SubtractDayTimeDurationFromTimeBuiltin(
-				date1, date2, result);
+				date2, date1, result);
 
 		args = Factory.BASIC.createTuple(X, Y, Z);
 		actual = builtin.evaluate(args);
-		ITerm expected = Factory.CONCRETE.createTime(2, 1, 1, 0, 0);
 
-		assertEquals(expected, result.getValue());
 		assertEquals(EMPTY_TUPLE, actual);
-
 	}
 
 }

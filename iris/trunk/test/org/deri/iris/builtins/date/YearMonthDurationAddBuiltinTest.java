@@ -37,16 +37,14 @@ public class YearMonthDurationAddBuiltinTest extends AbstractDateBuiltinTest {
 	public void testBuiltin() throws EvaluationException {
 		
 		ITerm date1 = Factory.CONCRETE.createYearMonthDuration(true, 56, 5);
-		ITerm date2 = Factory.CONCRETE.createYearMonthDuration(true, 1787, 1);
-		ITerm result = Factory.CONCRETE.createYearMonthDuration(true, 0, 0);
+		ITerm date2 = Factory.CONCRETE.createYearMonthDuration(true, 12, 1);
+		ITerm result = Factory.CONCRETE.createYearMonthDuration(true, 68, 6);
 
 		YearMonthDurationAddBuiltin builtin = new YearMonthDurationAddBuiltin(date1, date2, result); 
 
 		args = Factory.BASIC.createTuple(X, Y, Z);
 		actual = builtin.evaluate(args);
-		ITerm expected = Factory.CONCRETE.createYearMonthDuration(true, 0, 0);
-		
-		assertEquals(expected, result.getValue());
+
 		assertEquals(EMPTY_TUPLE, actual);
 
 	}

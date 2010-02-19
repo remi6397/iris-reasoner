@@ -38,17 +38,17 @@ public class SubtractYearMonthDurationFromDateTimeBuiltinTest extends
 	public void testBuiltin() throws EvaluationException {
 
 		ITerm date1 = Factory.CONCRETE.createYearMonthDuration(true, 2, 2);
-		ITerm date2 = Factory.CONCRETE.createDateTime(1987, 4, 2, 0, 0, 0, 0, 0);
-		ITerm result = Factory.CONCRETE.createDateTime(1, 1, 1, 0, 0, 0, 0, 0);
+		ITerm date2 = Factory.CONCRETE
+				.createDateTime(1987, 4, 2, 0, 0, 0, 0, 0);
+		ITerm result = Factory.CONCRETE.createDateTime(1985, 2, 2, 0, 0, 0, 0,
+				0);
 
 		SubtractYearMonthDurationFromDateTimeBuiltin builtin = new SubtractYearMonthDurationFromDateTimeBuiltin(
-				date1, date2, result);
+				date2, date1, result);
 
 		args = Factory.BASIC.createTuple(X, Y, Z);
 		actual = builtin.evaluate(args);
-		ITerm expected = Factory.CONCRETE.createDateTime(1987, 2, 2, 0, 0, 0, 0, 0);
 
-		assertEquals(expected, result.getValue());
 		assertEquals(EMPTY_TUPLE, actual);
 
 	}

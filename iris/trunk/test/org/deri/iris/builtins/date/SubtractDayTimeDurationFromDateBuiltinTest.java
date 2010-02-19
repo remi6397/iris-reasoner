@@ -39,16 +39,14 @@ public class SubtractDayTimeDurationFromDateBuiltinTest extends
 
 		ITerm date1 = Factory.CONCRETE.createDayTimeDuration(true, 1, 0, 0, 0);
 		ITerm date2 = Factory.CONCRETE.createDate(3, 1, 2);
-		ITerm result = Factory.CONCRETE.createDate(1, 1, 1);
+		ITerm result = Factory.CONCRETE.createDate(3, 1, 1);
 
 		SubtractDayTimeDurationFromDateBuiltin builtin = new SubtractDayTimeDurationFromDateBuiltin(
-				date1, date2, result);
+				date2, date1, result);
 
 		args = Factory.BASIC.createTuple(X, Y, Z);
 		actual = builtin.evaluate(args);
-		ITerm expected = Factory.CONCRETE.createDate(2, 1, 1);
 
-		assertEquals(expected, result.getValue());
 		assertEquals(EMPTY_TUPLE, actual);
 
 	}

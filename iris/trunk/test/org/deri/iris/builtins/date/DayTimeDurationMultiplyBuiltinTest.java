@@ -35,26 +35,16 @@ public class DayTimeDurationMultiplyBuiltinTest extends AbstractDateBuiltinTest 
 	}
 
 	public void testBuiltin() throws EvaluationException {
-		ITerm daytimeduration1 = Factory.CONCRETE.createDayTimeDuration(true,
-				15, 23, 19, 12.0);
-		ITerm double1 = Factory.CONCRETE.createDouble(2.0);
-		ITerm result = Factory.CONCRETE.createDayTimeDuration(true, 10, 3, 2,
-				0.9);
+		ITerm daytimeduration1 = Factory.CONCRETE.createDayTimeDuration(true, 0, 2, 10, 0.0);
+		ITerm double1 = Factory.CONCRETE.createDouble(2.1);
+		ITerm result = Factory.CONCRETE.createDayTimeDuration(true, 0, 4, 33, 0.0);
 
-		DayTimeDurationMultiplyBuiltin builtin = new DayTimeDurationMultiplyBuiltin(X,Y,Z);
-		
-		System.out.println(daytimeduration1.getValue() + " ; " + double1 + " ; " + result);
+		DayTimeDurationMultiplyBuiltin builtin = new DayTimeDurationMultiplyBuiltin(X, Y, Z);
 		
 		args = Factory.BASIC.createTuple(daytimeduration1, double1, result);
 		actual = builtin.evaluate(args);
-		
-		
-		System.out.println(daytimeduration1.getValue() + " ; " + double1 + " ; " + result);
-		
-		assertEquals(null, actual);
-		// TODO mp : result should be 2 x duration
-		fail();
-		
+
+		assertEquals(EMPTY_TUPLE, actual);
 
 	}
 }
