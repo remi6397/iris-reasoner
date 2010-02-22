@@ -48,7 +48,7 @@ public class NumericNotEqualBuiltin extends NotEqualBuiltin {
 	protected boolean computeResult(ITerm[] terms) {
 		if (terms[0] instanceof INumericTerm
 				&& terms[1] instanceof INumericTerm) {
-			super.computeResult(terms);
+			return super.computeResult(terms);
 		}
 
 		return false;

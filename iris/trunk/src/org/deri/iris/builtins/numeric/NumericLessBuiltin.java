@@ -25,20 +25,20 @@ package org.deri.iris.builtins.numeric;
 import static org.deri.iris.factory.Factory.BASIC;
 
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IBooleanTerm;
 import org.deri.iris.builtins.LessBuiltin;
 
 /**
  * <p>
- * Represents the RIF built-in predicate pred:boolean-less-than.
+ * Represents the RIF built-in predicate pred:numeric-less-than.
  * </p>
  */
 public class NumericLessBuiltin extends LessBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"BOOLEAN_LESS", 2);
+			"NUMERIC_LESS", 2);
 
 	public NumericLessBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -46,8 +46,8 @@ public class NumericLessBuiltin extends LessBuiltin {
 
 	@Override
 	protected boolean computeResult(ITerm[] terms) {
-		if (terms[0] instanceof IBooleanTerm
-				&& terms[1] instanceof IBooleanTerm) {
+		if (terms[0] instanceof INumericTerm
+				&& terms[1] instanceof INumericTerm) {
 			return super.computeResult(terms);
 		}
 
