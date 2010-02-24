@@ -7,6 +7,23 @@
 
 <h2>Release History</h2>
 
+<p><b><a id="v0_6_0" href="https://sourceforge.net/projects/iris-reasoner/files/iris-reasoner/iris%20v0.60/iris-0.60.zip/download">v0.60</a></b> 2010-02-24</p>
+
+<p>New features</p>
+<ul>
+	<li>2958002 Allow equality in rule heads</li>
+</ul>
+
+<p>Bug fixes</p>
+<ul>
+	<li>2182596 Optimised rules lost when more than one optimiser used</li>
+</ul>
+
+<p>Maintenance updates</p>
+<ul>
+	<li>2116115 Parser should support floating point seconds</li>
+</ul>
+
 
 <p><b><a id="v0_5_8" href="https://sourceforge.net/project/showfiles.php?group_id=167309&package_id=190271&release_id=627356">v0.58</a></b> 2008-09-19</p>
  
