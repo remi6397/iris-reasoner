@@ -2,6 +2,19 @@ The IRIS ChangeLog:
 ===================
 
 
+Changes for release 0.60
+========================
+
+New features
+2958002 Allow equality in rule heads
+
+Bug fixes
+2182596 Optimised rules lost when more than one optimiser used.
+
+Maintenance
+2116115 Parser should support floating point seconds.
+
+
 Changes for release 0.58
 ========================
 
