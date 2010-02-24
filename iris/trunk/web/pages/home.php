@@ -7,26 +7,32 @@
 <p>
 	Currently IRIS supports the following features:
 	<ul>
-		<li>Safe or <a href="/saferules">un-safe Datalog</a></li>
+		<li>safe or <a href="/saferules">un-safe Datalog</a></li>
 		<li>with <a href="/stratification">(locally) stratified</a> or well-founded 'negation as failure' </li>
 		<li>function symbols</li>
+		<li>equality in rule heads</li>
 		<li>comprehensive and extensible set of built-in predicates</li>
 		<li>support for all the primitive <a href="http://www.w3.org/TR/xmlschema-2/#built-in-datatypes">XML schema data types</a></li>
 	</ul>
 </p>
 
 <p>
-	The following bottom-up rule evaluation algorithms are currently supported: 
+	The following bottom-up rule evaluation algorithms are supported: 
 	<ul>
 		<li>Naive</li>
 		<li>Semi-naive</li>
 	</ul>
-	The following program evaluation strategies are currently supported: 
+	The following top-down evaluation strategies are supported:
+	<ul>
+		<li>SLDNF</li>
+		<li>OLDT</li>
+	</ul>
+	The following program evaluation strategies are supported: 
 	<ul>
 		<li>Stratified bottom-up</li>
 		<li>Well-founded semantics using alternating fixed point</li>
 	</ul>
-	The following program optimisations are currently supported: 
+	The following program optimisations are supported: 
 	<ul>
 		<li>Rule filtering (removing rules that do not contribute to answering a query)</li>
 		<li>Magic sets and sideways information passing strategy (SIPS)</li>
@@ -43,7 +49,7 @@
 <p>
 	IRIS is a available under the GNU lesser general
 	public licence (LGPL).
-	It has been developed with the aim to support reasoning over
+	It has been developed with the aim of supporting reasoning over
 	<a href="http://www.wsmo.org/wsml/wsml-syntax">WSML</a> ontologies, 
 	but can also be used in many other contexts. See below for the 
 	use cases we know of:
@@ -62,6 +68,23 @@
 <h2>News</h2>
 
 <table>
+	<tr valign=top>
+		<td width=150>
+			<p align=left>
+				24 Feb 2020
+			</p>
+		</td>
+		<td>
+			<p align=left>
+				IRIS <a href="download#v0_6_0">version 0.60</a> released.<br />
+				The important new feature in this release is that rules may have equality in their heads.
+				This permits the ability to infer that two identifiers represent the same object,
+				i.e. that they are aliases.
+				The behaviour is similar to 'owl:sameAs'.
+			</p>
+		</td>
+	</tr>
+
 	<tr valign=top>
 		<td width=150>
 			<p align=left>
