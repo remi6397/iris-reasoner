@@ -89,7 +89,7 @@
 	</target>
 
 	<target name="doc" description="generates the javadoc" depends="init,preparedoc">
-		<javadoc destdir="${dir.javadoc}" link="http://java.sun.com/j2se/1.5.0/docs/api/">
+		<javadoc useexternalfile="yes" destdir="${dir.javadoc}" link="http://java.sun.com/javase/6/docs/api/">
 			<fileset dir="${dir.api}">
 				<include name="**/*.java" />
 			</fileset>
