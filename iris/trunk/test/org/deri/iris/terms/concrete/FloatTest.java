@@ -41,14 +41,17 @@ public class FloatTest extends TestCase {
 		checkEqual( Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY );
 		checkEqual( Float.MAX_VALUE, Float.MAX_VALUE );
 		checkEqual( Float.MIN_VALUE, Float.MIN_VALUE );
-		checkEqual( Float.MIN_NORMAL, Float.MIN_NORMAL );
+//		checkEqual( Float.MIN_NORMAL, Float.MIN_NORMAL );	// MIN_NORMAL does not exist for Java 1.5
+	}
+	
+	public void testNotEqualPositiveAndNegativeZero() {
+		checkNotEqual( +0.0f, -0.0f );
+		checkNotEqual( -0.0f, +0.0f );
 	}
 	
 	public void testNotEquals() {
-		checkNotEqual( +0.0f, -0.0f );
-		checkNotEqual( +0.0f, -0.0f );
-		checkNotEqual( 0.0f, Float.MIN_NORMAL );
-		checkNotEqual( 0.0f, -Float.MIN_NORMAL );
+		checkNotEqual( 0.0f, Float.MIN_VALUE );
+		checkNotEqual( 0.0f, -Float.MIN_VALUE );
 		checkNotEqual( Float.NaN, 0.0f );
 		checkNotEqual( Float.POSITIVE_INFINITY, 0.0f );
 		checkNotEqual( Float.NEGATIVE_INFINITY, 0.0f );
