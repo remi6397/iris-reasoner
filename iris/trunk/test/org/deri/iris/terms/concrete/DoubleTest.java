@@ -41,14 +41,17 @@ public class DoubleTest extends TestCase {
 		checkEqual( Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY );
 		checkEqual( Double.MAX_VALUE, Double.MAX_VALUE );
 		checkEqual( Double.MIN_VALUE, Double.MIN_VALUE );
-		checkEqual( Double.MIN_NORMAL, Double.MIN_NORMAL );
+//		checkEqual( Double.MIN_NORMAL, Double.MIN_NORMAL );	// MIN_NORMAL does not exist for Java 1.5
+	}
+
+	public void testNotEqualPositiveAndNegativeZero() {
+		checkNotEqual( +0.0, -0.0 );
+		checkNotEqual( -0.0, +0.0 );
 	}
 	
 	public void testNotEquals() {
-		checkNotEqual( +0.0, -0.0 );
-		checkNotEqual( +0.0, -0.0 );
-		checkNotEqual( 0.0, Double.MIN_NORMAL );
-		checkNotEqual( 0.0, -Double.MIN_NORMAL );
+		checkNotEqual( 0.0, Double.MIN_VALUE );
+		checkNotEqual( 0.0, -Double.MIN_VALUE );
 		checkNotEqual( Double.NaN, 0.0 );
 		checkNotEqual( Double.POSITIVE_INFINITY, 0.0 );
 		checkNotEqual( Double.NEGATIVE_INFINITY, 0.0 );
