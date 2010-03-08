@@ -36,11 +36,20 @@ if( !file_exists( $filelocation ) ) {
     <!-- ###### Header ###### -->
 
     <div id="header">
-      <a href="/" style="text-decoration:none" class="headerTitle">IRIS Reasoner</a>
-     <!-- <div class="menuBar">
-        <a href="download">download</a>|
-        <a href="source">source code</a>
-      </div>-->
+<!--      <a href="/" style="text-decoration:none" class="headerTitle">IRIS Reasoner</a> -->
+
+	<table width="100%">
+		<tr>
+			<td>
+				<a href="/wsml2reasoner/" style="text-decoration:none" class="headerTitle">IRIS Reasoner</a>
+			</td>
+			<td>
+				<a href="http://www.soa4all.eu/"><img src="images/soa4all_very_small.jpg" alt="SOA4All" vspace="5" align="right" /></a>
+			</td>
+		</tr>
+	</table>     
+
+
     </div>
 
     <!-- ###### Side Boxes ###### -->
