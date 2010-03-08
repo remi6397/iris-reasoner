@@ -43,6 +43,11 @@
 	To learn more about the theoretical results that the reasoner
 	is based upon have a look at the <a href="foundations">theoretical results</a>. 
 </p>
+<p>
+	The continued development of IRIS has been funded in part by
+	<a href="http://www.soa4all.eu/">SOA4All</a>
+	a <a href="http://cordis.europa.eu/fp7/home_en.html">European Framework 7</a> research project. 
+</p>
 	
 <h2>IRIS Applications</h2>
 

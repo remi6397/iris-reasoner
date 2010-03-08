@@ -41,7 +41,7 @@ if( !file_exists( $filelocation ) ) {
 	<table width="100%">
 		<tr>
 			<td>
-				<a href="/wsml2reasoner/" style="text-decoration:none" class="headerTitle">IRIS Reasoner</a>
+				<a href="/" style="text-decoration:none" class="headerTitle">IRIS Reasoner</a>
 			</td>
 			<td>
 				<a href="http://www.soa4all.eu/"><img src="images/soa4all_very_small.jpg" alt="SOA4All" vspace="5" align="right" /></a>
