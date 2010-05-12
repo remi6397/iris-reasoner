@@ -632,7 +632,7 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 
 	public IBuiltinAtom createIsUnsignedByte(ITerm... terms) {
-		return new IsTokenBuiltin(terms);
+		return new IsUnsignedByteBuiltin(terms);
 	}
 
 	public IBuiltinAtom createIsUnsignedInt(ITerm... terms) {
