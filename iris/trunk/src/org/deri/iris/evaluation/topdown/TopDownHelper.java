@@ -49,6 +49,8 @@ import org.deri.iris.factory.Factory;
 import org.deri.iris.rules.RuleManipulator;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.utils.TermMatchingAndSubstitution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Collection of helper functions for top-down evaluation strategies
@@ -59,6 +61,8 @@ import org.deri.iris.utils.TermMatchingAndSubstitution;
 public class TopDownHelper {
 
 	private static RuleManipulator rm = new RuleManipulator();
+	
+	private static Logger logger = LoggerFactory.getLogger(TopDownHelper.class);
 	
 	/**
 	 * Replaces a rule head in a Query with the rule body.
@@ -503,13 +507,15 @@ public class TopDownHelper {
 	public static String getDebugPrefix(int recursionDepth, boolean inNegationAsFailureFlip) {
 		// Debug prefix for proper output
 		String debugPrefix = "";
-		if (System.getenv( OLDTEvaluator.IRIS_DEBUG_FLAG ) != null) {
+		
+		if (logger.isDebugEnabled()) {
 			for (int i = 0; i < recursionDepth; i++)
 				debugPrefix += "  ";
 			
 			if (inNegationAsFailureFlip)
 				debugPrefix += "{NAF} ";
 		}
+		
 		return debugPrefix;
 	}
 
@@ -519,8 +525,7 @@ public class TopDownHelper {
 
 	public static void printDebug(String msg, int recursionDepth, boolean inNegationAsFailureFlip) {
 		String debugPrefix = getDebugPrefix(recursionDepth, inNegationAsFailureFlip);
-		if (System.getenv( OLDTEvaluator.IRIS_DEBUG_FLAG ) != null)
-			System.out.println(debugPrefix + msg);
+		logger.debug(debugPrefix + msg);
 	}
 
 	/**

@@ -52,6 +52,8 @@ import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserException;
 import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedPredicate;
 import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -65,6 +67,9 @@ import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedRule;
  * @version $Revision: 1.12 $
  */
 public class AdornmentsTest extends TestCase {
+	
+	private static Logger logger = LoggerFactory
+			.getLogger(AdornmentsTest.class);
 
 	public static final Comparator<IRule> RC = new RuleComparator();
 
@@ -794,12 +799,12 @@ public class AdornmentsTest extends TestCase {
 	 * @param res the resulting program
 	 */
 	private static void printDebug(final String name, final String prog, final AdornedProgram ap) {
-		System.out.println("---");
-		System.out.println(name);
-		System.out.println("\tinput: ");
-		System.out.println(prog);
-		System.out.println("\tadorned: ");
-		System.out.println(ap);
+		logger.debug("---");
+		logger.debug(name);
+		logger.debug("\tinput: ");
+		logger.debug(prog);
+		logger.debug("\tadorned: ");
+		logger.debug(ap.toString());
 	}
 
 	/**

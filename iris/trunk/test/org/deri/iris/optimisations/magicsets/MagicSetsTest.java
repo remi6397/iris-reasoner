@@ -46,6 +46,8 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -56,6 +58,8 @@ import org.deri.iris.compiler.ParserException;
  */
 public class MagicSetsTest extends TestCase {
 
+	private static Logger logger = LoggerFactory.getLogger(MagicSetsTest.class);
+	
 	/**
 	 * Creates a magic literal.
 	 * 
@@ -863,18 +867,18 @@ public class MagicSetsTest extends TestCase {
 	 */
 	private static void printDebug(final String name, final String prog,
 			final Result expected, final Result result) {
-		System.out.println("---");
-		System.out.println(name);
-		System.out.println("\tinput:");
-		System.out.println(prog);
+		logger.debug("---");
+		logger.debug(name);
+		logger.debug("\tinput:");
+		logger.debug(prog);
 
 		if (expected != null) {
-			System.out.println("\texpected:");
-			System.out.println(resultString(expected));
+			logger.debug("\texpected:");
+			logger.debug(resultString(expected));
 		}
 
-		System.out.println("\tresult:");
-		System.out.println(resultString(result));
+		logger.debug("\tresult:");
+		logger.debug(resultString(result));
 	}
 
 	/**

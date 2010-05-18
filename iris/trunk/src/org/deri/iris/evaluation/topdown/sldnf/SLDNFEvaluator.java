@@ -54,6 +54,8 @@ import org.deri.iris.rules.ordering.SimpleReOrdering;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.storage.simple.SimpleRelationFactory;
 import org.deri.iris.utils.TermMatchingAndSubstitution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of the SLDNF evaluator. Please keep in mind that
@@ -68,14 +70,13 @@ import org.deri.iris.utils.TermMatchingAndSubstitution;
  */
 public class SLDNFEvaluator implements ITopDownEvaluator {
 
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
 	private static final int _MAX_NESTING_LEVEL = 45;
 	
-	/** Debug stuff */
-	private final boolean DEBUG;
 	private IQuery mInitialQuery;
 	private IFacts mFacts;
 	private List<IRule> mRules;
-	private static final String IRIS_DEBUG_FLAG = "IRIS_DEBUG";
 	
 	private static final SimpleRelationFactory srf = new SimpleRelationFactory();
 	static final RuleManipulator rm = new RuleManipulator();
@@ -95,9 +96,6 @@ public class SLDNFEvaluator implements ITopDownEvaluator {
 		}
 		SimpleReOrdering sro = new SimpleReOrdering();
 		mRules = sro.reOrder(mRules);
-		
-		// Check if the debug environment variable is set.
-		DEBUG = System.getenv( IRIS_DEBUG_FLAG ) != null;
 	}
 
 	/**
@@ -108,11 +106,9 @@ public class SLDNFEvaluator implements ITopDownEvaluator {
 		mInitialQuery = query;
 		IRelation relation = findAndSubstitute(query);
 		
-		if (DEBUG) {
-			System.out.println("------------");
-			System.out.println("Relation " + relation);
-			System.out.println("Original Query: " + query);
-		}
+		logger.debug("------------");
+		logger.debug("Relation " + relation);
+		logger.debug("Original Query: " + query);
 		
 		return relation;
 	}
@@ -149,9 +145,8 @@ public class SLDNFEvaluator implements ITopDownEvaluator {
 			throw new MaximumRecursionDepthReachedException("You may ran into an infinite loop. SLDNF evaluation does not support tabling.");
 		
 		String debugPrefix = getDebugPrefix(recursionDepth, inNegationAsFailureFlip);
-		if (DEBUG) {
-			System.out.println(debugPrefix + query);
-		}
+		
+		logger.debug(debugPrefix + query);
 
 		// Selection Rule
 		ILiteralSelector standardSelector = new StandardLiteralSelector();
@@ -160,8 +155,7 @@ public class SLDNFEvaluator implements ITopDownEvaluator {
 		if (selectedLiteral == null)
 			throw new EvaluationException("The selected literal must not be null.");
 		
-		if (DEBUG)
-			System.out.println(debugPrefix + "Selected: " + selectedLiteral);
+		logger.debug(debugPrefix + "Selected: " + selectedLiteral);
 		
 		// The results are stored in this relation
 		IRelation relationReturned;
@@ -181,9 +175,9 @@ public class SLDNFEvaluator implements ITopDownEvaluator {
 				IQuery newQuery = qws.getQuery();
 				Map<IVariable, ITerm> variableMap = qws.getSubstitution();
 				
-				if (DEBUG) {
+				if (logger.isDebugEnabled()) {
 					debugPrefix = getDebugPrefix(recursionDepth, inNegationAsFailureFlip);
-					System.out.println(debugPrefix + "QWS: " + qws);
+					logger.debug(debugPrefix + "QWS: " + qws);
 				}
 				
 				// Success node (empty clause)
@@ -197,18 +191,15 @@ public class SLDNFEvaluator implements ITopDownEvaluator {
 				// Evaluate the new query (walk the subtree)
 				IRelation relationFromSubtree = findAndSubstitute(newQuery, ++recursionDepth, inNegationAsFailureFlip);
 				
-				if (DEBUG) {
-					System.out.println(debugPrefix + "Old query: " + query.getVariables() + query);						
-					System.out.println(debugPrefix + "New query: " + newQuery.getVariables() + newQuery + " | " + variableMap);
-					System.out.println(debugPrefix + "Subtree: " + relationFromSubtree);
-				}
+				logger.debug(debugPrefix + "Old query: " + query.getVariables() + query);						
+				logger.debug(debugPrefix + "New query: " + newQuery.getVariables() + newQuery + " | " + variableMap);
+				logger.debug(debugPrefix + "Subtree: " + relationFromSubtree);
 
 				if (relationFromSubtree.size() == 0) {
 					if (!inNegationAsFailureFlip) {
 						continue; // Failure node (subtree returned false) - try next branch
 					} else {
-						if (DEBUG)
-							System.out.println(debugPrefix + "NAF FAILURE NODE " + relationReturned);
+						logger.debug(debugPrefix + "NAF FAILURE NODE " + relationReturned);
 						break; // Failure node, and we do NAF. So it is a success node
 					}
 				}
@@ -216,15 +207,13 @@ public class SLDNFEvaluator implements ITopDownEvaluator {
 				// Subtree contains success node
 				relationReturned.addAll( getFullSubgoalRelation(query, qws, relationFromSubtree) );
 				
-				if (DEBUG)
-					System.out.println(debugPrefix + "Return: " + relationReturned);
+				logger.debug(debugPrefix + "Return: " + relationReturned);
 			}
 		} else { // Negative query literal - NAF - Negation As Failure			
 			ILiteral queryLiteralNAF = Factory.BASIC.createLiteral(true, selectedLiteral.getAtom());
 			IRelation relationFromNAFSubtree = findAndSubstitute( Factory.BASIC.createQuery( queryLiteralNAF ), ++recursionDepth, !inNegationAsFailureFlip );
 			
-			if (DEBUG)
-				System.out.println(debugPrefix + "NAF Subtree: " + relationFromNAFSubtree);
+			logger.debug(debugPrefix + "NAF Subtree: " + relationFromNAFSubtree);
 			
 			if (relationFromNAFSubtree.size() == 0) {
 				// Subtree is a failure node
@@ -239,8 +228,7 @@ public class SLDNFEvaluator implements ITopDownEvaluator {
 				
 				IQuery queryWithoutNegatedLiteral = Factory.BASIC.createQuery( literalsWithoutNegatedLiteral );
 				
-				if (DEBUG)
-					System.out.println(debugPrefix + "Rest of query: " + queryWithoutNegatedLiteral);
+				logger.debug(debugPrefix + "Rest of query: " + queryWithoutNegatedLiteral);
 				
 				// Evaluate the rest of the query
 				if (!queryWithoutNegatedLiteral.getLiterals().isEmpty()) {
@@ -256,10 +244,7 @@ public class SLDNFEvaluator implements ITopDownEvaluator {
 				relationReturned = srf.createRelation();
 			}
 			
-			if (DEBUG) {
-				System.out.println(debugPrefix + "Return: " + relationReturned);
-			}
-			
+			logger.debug(debugPrefix + "Return: " + relationReturned);
 		}
 		
 		return relationReturned;
@@ -631,13 +616,13 @@ public class SLDNFEvaluator implements ITopDownEvaluator {
 	private String getDebugPrefix(int recursionDepth, boolean inNegationAsFailureFlip) {
 		// Debug prefix for proper output
 		String debugPrefix = "";
-		if (DEBUG) {
-			for (int i = 0; i < recursionDepth; i++)
-				debugPrefix += "  ";
-			
-			if (inNegationAsFailureFlip)
-				debugPrefix += "{NAF} ";
-		}
+		
+		for (int i = 0; i < recursionDepth; i++)
+			debugPrefix += "  ";
+		
+		if (inNegationAsFailureFlip)
+			debugPrefix += "{NAF} ";
+		
 		return debugPrefix;
 	}
 	
