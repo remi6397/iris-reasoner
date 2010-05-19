@@ -23,7 +23,6 @@
 			<groupId>at.sti2.iris</groupId>
 			<artifactId>iris-parser</artifactId>
 			<version>${project.version}</version>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
