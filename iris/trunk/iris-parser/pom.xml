@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>iris</artifactId>
+		<groupId>at.sti2.iris</groupId>
+		<version>0.7.0</version>
+	</parent>
+
+	<groupId>at.sti2.iris</groupId>
+	<artifactId>iris-parser</artifactId>
+	<name>IRIS Parser</name>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sablecc-maven-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<outputDirectory>${project.build.sourceDirectory}</outputDirectory>
+					<sourceDirectory>${basedir}</sourceDirectory>
+					<timestampDirectory>${basedir}/target</timestampDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
