@@ -4,7 +4,7 @@
 
 	<groupId>at.sti2.iris</groupId>
 	<artifactId>iris</artifactId>
-	<version>0.7.0</version>
+	<version>0.7.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>IRIS</name>
 	<description>Integrated Rule Inference System is an extensible reasoning engine for expressive rule-based languages.</description>
@@ -16,7 +16,7 @@
 	</modules>
 
 	<properties>
-		<project.version>0.7.0</project.version>
+		<project.version>0.7.1-SNAPSHOT</project.version>
 		<compiler.version>1.6</compiler.version>
 		<source.encoding>UTF-8</source.encoding>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -77,7 +77,7 @@
 		<snapshotRepository>
 			<id>sti2-archiva-snapshot</id>
 			<name>STI Innsbruck Snapshot Repository</name>
-			<url>http://maven.sti2.at/archiva/repository/snapshot</url>
+			<url>http://maven.sti2.at/archiva/repository/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
