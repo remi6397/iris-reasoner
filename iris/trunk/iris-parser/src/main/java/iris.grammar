@@ -125,7 +125,7 @@ Tokens
 	t_pre_sqname 		= '_sqname';
 	t_pre_time 		= '_time';
 	t_pre_xmlliteral	= '_xmlliteral';
-	t_pre_rdftext		= '_rdftext';
+	t_pre_plainliteral		= '_plainliteral';
 
 /************************************************************
  * Ignored Tokens                                           *
@@ -221,7 +221,7 @@ Productions
                    
                    {xmlliteral} t_pre_xmlliteral t_lpar [string]:t_str t_rpar |
                    {xmlliterallang} t_pre_xmlliteral t_lpar [string]:t_str t_comma [lang]:t_str t_rpar |
-                   {rdftext} t_pre_rdftext t_lpar [string]:t_str t_comma [lang]:t_str t_rpar;
+                   {plainliteral} t_pre_plainliteral t_lpar [string]:t_str t_comma [lang]:t_str t_rpar;
                    
     builtin =		{binary}[first]:term t_bin_op [second]:term |
 				{equals}[first]:term t_eq [second]:term |

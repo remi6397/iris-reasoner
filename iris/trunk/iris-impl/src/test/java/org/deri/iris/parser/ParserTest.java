@@ -257,7 +257,7 @@ public class ParserTest extends TestCase {
 		assertResult("fact(_daytimeduration(1, 2, 5, 6, 500)).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createDayTimeDuration(true, 1, 2, 5, 6, 500))), null);
 		
 		// Testing RDF Text.
-		assertResult("fact(_rdftext('Pwnage', 'en')).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createPlainLiteral("Pwnage", "en"))), null);
+		assertResult("fact(_plainliteral('Pwnage', 'en')).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createPlainLiteral("Pwnage", "en"))), null);
 		
 		// Testing XMLLiteral.
 		assertResult("fact(_xmlliteral('<tag attribute=\\\"value\\\">Text</tag>')).", null, singletonFact(PRED, BASIC.createTuple(CONCRETE.createXMLLiteral("<tag attribute=\"value\">Text</tag>"))), null);
