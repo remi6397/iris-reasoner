@@ -87,9 +87,9 @@ import org.deri.iris.parser.node.ALiteral;
 import org.deri.iris.parser.node.ALitlist;
 import org.deri.iris.parser.node.ANegatedLiteral;
 import org.deri.iris.parser.node.ANegatedbuiltinLiteral;
+import org.deri.iris.parser.node.APlainliteralTerm;
 import org.deri.iris.parser.node.APredicate;
 import org.deri.iris.parser.node.AQuery;
-import org.deri.iris.parser.node.ARdftextTerm;
 import org.deri.iris.parser.node.ARule;
 import org.deri.iris.parser.node.ASqnameTerm;
 import org.deri.iris.parser.node.ASqnamelTerm;
@@ -759,7 +759,7 @@ public class TreeWalker extends DepthFirstAdapter
 	}
 	
 	@Override
-	public void outARdftextTerm(ARdftextTerm node) {
+	public void outAPlainliteralTerm(APlainliteralTerm node) {
 		String string = peeleStr(node.getString().getText().trim());
 		String lang = peeleStr(node.getLang().getText().trim());
 		

@@ -89,9 +89,6 @@ public class DataTypesTest extends TestCase
 			"p( _xmlliteral( '<tag>Text</tag>' ) )." +
 			"p( _xmlliteral( '<tag>Text</tag>', 'en' ) )." +
 			
-			"p( _rdftext( 'Good day to you, sir.', 'en' ) )." +
-			"p( _rdftext( 'Guten Tag, mein Herr.', 'de' ) )." +
-			
 			"p( _plainliteral( 'Good day to you, sir.', 'en' ) )." +
 			"p( _plainliteral( 'Guten Tag, mein Herr.', 'de' ) )." +
 			

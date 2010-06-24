@@ -42,79 +42,79 @@ public class PlainLiteralTest extends TestCase {
 	private static final String LANG_AND_TEXT = "text@de";
 
 	public void testBasic() {
-		PlainLiteral rdfText = new PlainLiteral(STRING, LANG);
+		PlainLiteral plainliteral = new PlainLiteral(STRING, LANG);
 
-		assertEquals(STRING, rdfText.getString());
-		assertEquals(LANG, rdfText.getLang());
+		assertEquals(STRING, plainliteral.getString());
+		assertEquals(LANG, plainliteral.getLang());
 
-		PlainLiteral rdfTextParsing = new PlainLiteral(LANG_AND_TEXT);
+		PlainLiteral plainliteralParsing = new PlainLiteral(LANG_AND_TEXT);
 
-		assertEquals(STRING, rdfTextParsing.getString());
-		assertEquals(LANG, rdfTextParsing.getLang());
+		assertEquals(STRING, plainliteralParsing.getString());
+		assertEquals(LANG, plainliteralParsing.getLang());
 
 		assertEquals("Object not initialized correctly", "foobar",
 				new PlainLiteral("foobar").getValue()[0]);
 	}
 
 	public void testSimpleParsing() {
-		PlainLiteral rdfText = new PlainLiteral("parser-test@home@de-AT");
-		assertEquals("parser-test@home", rdfText.getString());
-		assertEquals("de-AT", rdfText.getLang());
+		PlainLiteral plainliteral = new PlainLiteral("parser-test@home@de-AT");
+		assertEquals("parser-test@home", plainliteral.getString());
+		assertEquals("de-AT", plainliteral.getLang());
 
-		rdfText = new PlainLiteral("some other rdf:text", "de");
-		assertEquals("some other rdf:text", rdfText.getString());
-		assertEquals("de", rdfText.getLang());
+		plainliteral = new PlainLiteral("some other rdf:PlainLiteral", "de");
+		assertEquals("some other rdf:PlainLiteral", plainliteral.getString());
+		assertEquals("de", plainliteral.getLang());
 
-		rdfText = new PlainLiteral("some simple string without any language@");
-		assertEquals("some simple string without any language", rdfText
+		plainliteral = new PlainLiteral("some simple string without any language@");
+		assertEquals("some simple string without any language", plainliteral
 				.getString());
-		assertEquals("", rdfText.getLang());
+		assertEquals("", plainliteral.getLang());
 
-		// rdf:text containing only the @ and a language tag
-		rdfText = new PlainLiteral("@en");
-		assertEquals("", rdfText.getString());
-		assertEquals("en", rdfText.getLang());
+		// rdf:PlainLiteral containing only the @ and a language tag
+		plainliteral = new PlainLiteral("@en");
+		assertEquals("", plainliteral.getString());
+		assertEquals("en", plainliteral.getLang());
 
-		rdfText = new PlainLiteral("@");
-		assertEquals("", rdfText.getString());
-		assertEquals("", rdfText.getLang());
+		plainliteral = new PlainLiteral("@");
+		assertEquals("", plainliteral.getString());
+		assertEquals("", plainliteral.getLang());
 	}
 
 	public void testToString() {
-		PlainLiteral rdfText = new PlainLiteral("");
-		assertEquals("@", rdfText.toString());
+		PlainLiteral plainliteral = new PlainLiteral("");
+		assertEquals("@", plainliteral.toString());
 
-		rdfText = new PlainLiteral("some other rdf:text", "de");
-		assertEquals("some other rdf:text@de", rdfText.toString());
+		plainliteral = new PlainLiteral("some other rdf:PlainLiteral", "de");
+		assertEquals("some other rdf:PlainLiteral@de", plainliteral.toString());
 	}
 
 	public void testCompareTo() {
-		PlainLiteral rdfTextA = new PlainLiteral("rdf:text to compare 1@en");
-		PlainLiteral rdfTextB = new PlainLiteral("rdf:text to compare 2@en");
-		PlainLiteral rdfTextC = new PlainLiteral("rdf:text to compare 1@en");
+		PlainLiteral plainliteralA = new PlainLiteral("rdf:PlainLiteral to compare 1@en");
+		PlainLiteral plainliteralB = new PlainLiteral("rdf:PlainLiteral to compare 2@en");
+		PlainLiteral plainliteralC = new PlainLiteral("rdf:PlainLiteral to compare 1@en");
 
-		ObjectTests.runTestCompareTo(rdfTextA, rdfTextC, rdfTextB);
+		ObjectTests.runTestCompareTo(plainliteralA, plainliteralC, plainliteralB);
 
-		assertEquals(-1, rdfTextA.compareTo(rdfTextB));
-		assertEquals(1, rdfTextB.compareTo(rdfTextA));
+		assertEquals(-1, plainliteralA.compareTo(plainliteralB));
+		assertEquals(1, plainliteralB.compareTo(plainliteralA));
 
-		PlainLiteral rdfTextA2 = new PlainLiteral("rdf:text to compare 1@en");
-		assertEquals(0, rdfTextA.compareTo(rdfTextA2));
+		PlainLiteral plainliteralA2 = new PlainLiteral("rdf:PlainLiteral to compare 1@en");
+		assertEquals(0, plainliteralA.compareTo(plainliteralA2));
 	}
 
 	public void testEquals() {
-		PlainLiteral rdfTextA = new PlainLiteral("rdf:text to compare 1@en");
-		PlainLiteral rdfTextB = new PlainLiteral("rdf:text to compare 1@de");
-		PlainLiteral rdfTextC = new PlainLiteral("rdf:text to compare 2@en");
+		PlainLiteral plainliteralA = new PlainLiteral("rdf:PlainLiteral to compare 1@en");
+		PlainLiteral plainliteralB = new PlainLiteral("rdf:PlainLiteral to compare 1@de");
+		PlainLiteral plainliteralC = new PlainLiteral("rdf:PlainLiteral to compare 2@en");
 
-		ObjectTests.runTestEquals(rdfTextA, rdfTextB, rdfTextC);
+		ObjectTests.runTestEquals(plainliteralA, plainliteralB, plainliteralC);
 	}
 
 	public void testHashCode() {
-		PlainLiteral rdfTextA = new PlainLiteral(STRING, LANG);
-		PlainLiteral rdfTextB = new PlainLiteral(STRING, LANG);
+		PlainLiteral plainliteralA = new PlainLiteral(STRING, LANG);
+		PlainLiteral plainliteralB = new PlainLiteral(STRING, LANG);
 
-		ObjectTests.runTestHashCode(rdfTextA, rdfTextB);
+		ObjectTests.runTestHashCode(plainliteralA, plainliteralB);
 	}
 
 }

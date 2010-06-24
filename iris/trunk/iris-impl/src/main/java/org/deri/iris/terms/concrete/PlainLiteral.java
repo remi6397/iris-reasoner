@@ -142,7 +142,7 @@ public class PlainLiteral implements IPlainLiteral {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/1999/02/22-rdf-syntax-ns#text");
+		return URI.create("http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral");
 	}
 
 	public String toCanonicalString() {
