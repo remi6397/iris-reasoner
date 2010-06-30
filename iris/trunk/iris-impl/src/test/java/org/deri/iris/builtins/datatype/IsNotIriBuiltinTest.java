@@ -22,12 +22,29 @@
  */
 package org.deri.iris.builtins.datatype;
 
-import junit.framework.TestCase;
+import static org.deri.iris.factory.Factory.CONCRETE;
 
-public class IsNotIriBuiltinTest extends TestCase {
-	
-	public void testBuiltin() {
-		// TODO mp test builtin
-		fail();
+import java.lang.reflect.InvocationTargetException;
+
+import org.deri.iris.EvaluationException;
+import org.deri.iris.api.terms.ITerm;
+
+public class IsNotIriBuiltinTest extends AbstractBooleanBuiltinTest {
+
+	public IsNotIriBuiltinTest(String name) {
+		super(name);
+	}
+
+	public void testBuiltin() throws SecurityException,
+			IllegalArgumentException, EvaluationException,
+			ClassNotFoundException, NoSuchMethodException,
+			InstantiationException, IllegalAccessException,
+			InvocationTargetException {
+
+		String iri = "http://www.w3.org/2001/XMLSchema#IRI";
+		String builtinName = "org.deri.iris.builtins.datatype.IsNotIriBuiltin";
+		ITerm term = CONCRETE.createIri("https://sti.iri.com");
+
+		checkBuiltin(iri, term, builtinName);
 	}
 }

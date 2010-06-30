@@ -22,15 +22,55 @@
  */
 package org.deri.iris.builtins.datatype;
 
-import junit.framework.TestCase;
+import static org.deri.iris.factory.Factory.CONCRETE;
+
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
+
+import org.deri.iris.EvaluationException;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  */
-public class SameTypeBuiltinTest extends TestCase {
-	
-	public void testBuiltin() {
-		// TODO mp test builtin
-		fail();
+public class SameTypeBuiltinTest extends AbstractBooleanBuiltinTest {
+
+	public SameTypeBuiltinTest(String name) {
+		super(name);
 	}
 
+	public void testBuiltin() throws SecurityException,
+			IllegalArgumentException, EvaluationException,
+			ClassNotFoundException, NoSuchMethodException,
+			InstantiationException, IllegalAccessException,
+			InvocationTargetException {
+
+		ITerm term_1, term_2;
+		
+		term_1 = CONCRETE.createNMTOKEN("nm Token");
+		term_2 = CONCRETE.createNMTOKEN("nm Token");
+		assertTrue(sameType(term_1, term_2));
+		
+		term_1 = CONCRETE.createNMTOKEN("A Token");
+		term_2 = CONCRETE.createNMTOKEN("Another NM Token");
+		assertTrue(sameType(term_1, term_2));
+		
+		
+		term_1 = CONCRETE.createNMTOKEN("A Token");
+		term_2 = CONCRETE.createSqName("SQ#Name!");
+		assertFalse(sameType(term_1, term_2));
+		
+		term_1 = CONCRETE.createInt(1);
+		term_2 = CONCRETE.createInteger(BigInteger.valueOf(1));
+		assertFalse(sameType(term_1, term_2));
+		
+		term_1 = CONCRETE.createDouble(1.2);
+		term_2 = CONCRETE.createFloat((float) 1.2);
+		assertFalse(sameType(term_1, term_2));
+		
+	}
+	
+	public boolean sameType(ITerm one, ITerm two) {
+		SameTypeBuiltin stb = new SameTypeBuiltin(one, two);
+		return stb.computeResult(new ITerm[]{one, two});
+	}
 }

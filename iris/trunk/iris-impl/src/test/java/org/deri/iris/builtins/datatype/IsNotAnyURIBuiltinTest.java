@@ -22,14 +22,31 @@
  */
 package org.deri.iris.builtins.datatype;
 
-import junit.framework.TestCase;
+import static org.deri.iris.factory.Factory.CONCRETE;
 
-public class IsNotAnyURIBuiltinTest extends TestCase {
+import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-	// TODO mp : test IsnotanyURIBuiltin 
-	public void testBuiltin() {
-		// TODO mp test builtin
-		fail();
+import org.deri.iris.EvaluationException;
+import org.deri.iris.api.terms.ITerm;
+
+public class IsNotAnyURIBuiltinTest extends AbstractBooleanBuiltinTest {
+
+	public IsNotAnyURIBuiltinTest(String name) {
+		super(name);
 	}
 
+	public void testBuiltin() throws SecurityException,
+			IllegalArgumentException, EvaluationException,
+			ClassNotFoundException, NoSuchMethodException,
+			InstantiationException, IllegalAccessException,
+			InvocationTargetException, URISyntaxException {
+
+		String iri = "http://www.w3.org/2001/XMLSchema#AnyURI";
+		String builtinName = IsNotAnyURIBuiltin.class.getName();
+		ITerm term = CONCRETE.createAnyURI(new URI("http://sti.uri.at"));
+
+		checkBuiltin(iri, term, builtinName);
+	}
 }

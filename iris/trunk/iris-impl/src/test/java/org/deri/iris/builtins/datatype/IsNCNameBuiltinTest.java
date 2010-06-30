@@ -22,15 +22,33 @@
  */
 package org.deri.iris.builtins.datatype;
 
-import junit.framework.TestCase;
+import static org.deri.iris.factory.Factory.CONCRETE;
 
-public class IsNCNameBuiltinTest extends TestCase {
-	
-	// TODO mp : NCName testing
+import java.lang.reflect.InvocationTargetException;
 
-	public void testBuiltin() {
-		// TODO mp test builtin
-		fail();
+import org.deri.iris.EvaluationException;
+import org.deri.iris.api.terms.ITerm;
+
+public class IsNCNameBuiltinTest extends AbstractBooleanBuiltinTest {
+
+	public IsNCNameBuiltinTest(String name) {
+		super(name);
 	}
 
+	public void testBuiltin() throws SecurityException,
+			IllegalArgumentException, EvaluationException,
+			ClassNotFoundException, NoSuchMethodException,
+			InstantiationException, IllegalAccessException,
+			InvocationTargetException {
+
+		String iri = "http://www.w3.org/2001/XMLSchema#NCName";
+		String builtinName = IsNCNameBuiltin.class.getName();
+		ITerm term = CONCRETE.createNCName("NC name");
+
+		checkBuiltin(iri, term, builtinName,
+				IsNormalizedStringBuiltin.class.getName(),
+				IsStringBuiltin.class.getName(),
+				IsTokenBuiltin.class.getName(),
+				IsNameBuiltin.class.getName());
+	}
 }

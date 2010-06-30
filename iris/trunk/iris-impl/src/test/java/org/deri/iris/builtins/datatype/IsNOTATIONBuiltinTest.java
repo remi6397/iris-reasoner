@@ -22,15 +22,29 @@
  */
 package org.deri.iris.builtins.datatype;
 
-import junit.framework.TestCase;
+import static org.deri.iris.factory.Factory.CONCRETE;
 
-public class IsNOTATIONBuiltinTest extends TestCase {
-	
-	// TODO mp test NOTATION builtin
-	public void testBuiltin() {
-		// TODO mp test builtin
-		fail();
+import java.lang.reflect.InvocationTargetException;
+
+import org.deri.iris.EvaluationException;
+import org.deri.iris.api.terms.ITerm;
+
+public class IsNOTATIONBuiltinTest extends AbstractBooleanBuiltinTest {
+
+	public IsNOTATIONBuiltinTest(String name) {
+		super(name);
 	}
 
+	public void testBuiltin() throws SecurityException,
+			IllegalArgumentException, EvaluationException,
+			ClassNotFoundException, NoSuchMethodException,
+			InstantiationException, IllegalAccessException,
+			InvocationTargetException{
 
+		String iri = "http://www.w3.org/2001/XMLSchema#NOTATION";
+		String builtinName = IsNOTATIONBuiltin.class.getName();
+		ITerm term = CONCRETE.createNOTATION("namespace", "en_VO");
+
+		checkBuiltin(iri, term, builtinName);
+	}
 }

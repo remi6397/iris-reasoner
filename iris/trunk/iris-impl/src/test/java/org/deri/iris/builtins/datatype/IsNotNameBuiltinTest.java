@@ -46,7 +46,6 @@ public class IsNotNameBuiltinTest extends AbstractBooleanBuiltinTest {
 		ITerm term = CONCRETE.createName("a name");
 
 		checkBuiltin(iri, term, builtinName, 
-				"org.deri.iris.builtins.datatype.IsNotNameBuiltin",
 				"org.deri.iris.builtins.datatype.IsNotNormalizedStringBuiltin",
 				"org.deri.iris.builtins.datatype.IsNotStringBuiltin",
 				"org.deri.iris.builtins.datatype.IsNotTokenBuiltin");

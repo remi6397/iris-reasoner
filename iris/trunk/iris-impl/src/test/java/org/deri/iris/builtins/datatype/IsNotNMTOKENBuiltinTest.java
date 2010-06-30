@@ -22,14 +22,34 @@
  */
 package org.deri.iris.builtins.datatype;
 
-import junit.framework.TestCase;
+import static org.deri.iris.factory.Factory.CONCRETE;
+
+import java.lang.reflect.InvocationTargetException;
+
+import org.deri.iris.EvaluationException;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  */
-public class IsNotNMTOKENBuiltinTest extends TestCase {
+public class IsNotNMTOKENBuiltinTest extends AbstractBooleanBuiltinTest {
 
-	public void testBuiltin() {
-		// TODO mp test builtin
-		fail();
+	public IsNotNMTOKENBuiltinTest(String name) {
+		super(name);
+	}
+
+	public void testBuiltin() throws SecurityException,
+			IllegalArgumentException, EvaluationException,
+			ClassNotFoundException, NoSuchMethodException,
+			InstantiationException, IllegalAccessException,
+			InvocationTargetException {
+
+		String iri = "http://www.w3.org/2001/XMLSchema#NMTOKEN";
+		String builtinName = "org.deri.iris.builtins.datatype.IsNotNMTOKENBuiltin";
+		ITerm term = CONCRETE.createNMTOKEN("NnnnMmmmmTOOOOKEEEEENNNN");
+
+		checkBuiltin(iri, term, builtinName,
+				"org.deri.iris.builtins.datatype.IsNotNormalizedStringBuiltin",
+				"org.deri.iris.builtins.datatype.IsNotStringBuiltin",
+				"org.deri.iris.builtins.datatype.IsNotTokenBuiltin");
 	}
 }
