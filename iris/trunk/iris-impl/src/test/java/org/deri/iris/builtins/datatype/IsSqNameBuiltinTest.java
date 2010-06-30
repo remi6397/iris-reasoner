@@ -22,14 +22,31 @@
  */
 package org.deri.iris.builtins.datatype;
 
-import junit.framework.TestCase;
+import static org.deri.iris.factory.Factory.CONCRETE;
+
+import java.lang.reflect.InvocationTargetException;
+
+import org.deri.iris.EvaluationException;
+import org.deri.iris.api.terms.ITerm;
 
 /**
  */
-public class IsSqNameBuiltinTest extends TestCase {
+public class IsSqNameBuiltinTest extends AbstractBooleanBuiltinTest {
 
-	public void testBuiltin() {
-		// TODO mp test builtin
-		fail();
+	public IsSqNameBuiltinTest(String name) {
+		super(name);
+	}
+
+	public void testBuiltin() throws SecurityException,
+			IllegalArgumentException, EvaluationException,
+			ClassNotFoundException, NoSuchMethodException,
+			InstantiationException, IllegalAccessException,
+			InvocationTargetException {
+
+		String iri = "http://www.w3.org/2001/XMLSchema#SqName";
+		String builtinName = IsSqNameBuiltin.class.getName();
+		ITerm term = CONCRETE.createSqName("Sq#name");
+
+		checkBuiltin(iri, term, builtinName);
 	}
 }

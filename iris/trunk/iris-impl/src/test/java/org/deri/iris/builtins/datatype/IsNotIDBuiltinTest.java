@@ -22,13 +22,34 @@
  */
 package org.deri.iris.builtins.datatype;
 
-import junit.framework.TestCase;
+import static org.deri.iris.factory.Factory.CONCRETE;
 
-public class IsNotIDBuiltinTest extends TestCase {
-	
-	public void testBuiltin() {
-		// TODO mp test builtin
-		fail();
+import java.lang.reflect.InvocationTargetException;
+
+import org.deri.iris.EvaluationException;
+import org.deri.iris.api.terms.ITerm;
+
+public class IsNotIDBuiltinTest extends AbstractBooleanBuiltinTest {
+
+	public IsNotIDBuiltinTest(String name) {
+		super(name);
 	}
 
+	public void testBuiltin() throws SecurityException,
+			IllegalArgumentException, EvaluationException,
+			ClassNotFoundException, NoSuchMethodException,
+			InstantiationException, IllegalAccessException,
+			InvocationTargetException {
+
+		String iri = "http://www.w3.org/2001/XMLSchema#ID";
+		String builtinName = IsNotIDBuiltin.class.getName();
+		ITerm term = CONCRETE.createID(new String("ID name"));
+
+		checkBuiltin(iri, term, builtinName,
+				IsNotNCNameBuiltin.class.getName(),
+				IsNotNormalizedStringBuiltin.class.getName(),
+				IsNotStringBuiltin.class.getName(),
+				IsNotTokenBuiltin.class.getName(),
+				IsNotNameBuiltin.class.getName());
+	}
 }

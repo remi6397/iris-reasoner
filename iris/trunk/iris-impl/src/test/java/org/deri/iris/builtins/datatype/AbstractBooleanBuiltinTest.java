@@ -175,7 +175,7 @@ public abstract class AbstractBooleanBuiltinTest extends TestCase {
 		list.add("org.deri.iris.builtins.datatype.IsIriBuiltin");
 		list.add("org.deri.iris.builtins.datatype.IsLanguageBuiltin");
 		list.add("org.deri.iris.builtins.datatype.IsLongBuiltin");
-		list.add("org.deri.iris.builtins.datatype.IsNameBuiltin");
+//		list.add("org.deri.iris.builtins.datatype.IsNameBuiltin");
 		list.add("org.deri.iris.builtins.datatype.IsNCNameBuiltin");
 		list.add("org.deri.iris.builtins.datatype.IsNegativeIntegerBuiltin");
 		list.add("org.deri.iris.builtins.datatype.IsNMTOKENBuiltin");
