@@ -37,6 +37,7 @@ import org.deri.iris.builtins.date.DateGreaterEqualBuiltin;
 import org.deri.iris.builtins.date.DateLessBuiltin;
 import org.deri.iris.builtins.date.DateLessEqualBuiltin;
 import org.deri.iris.builtins.date.DateNotEqualBuiltin;
+import org.deri.iris.builtins.date.DateSubtractBuiltin;
 import org.deri.iris.builtins.date.DateTimeEqualBuiltin;
 import org.deri.iris.builtins.date.DateTimeGreaterBuiltin;
 import org.deri.iris.builtins.date.DateTimeGreaterEqualBuiltin;
@@ -555,7 +556,7 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 		return new IsStringBuiltin(terms);
 	}
 
-	public IBuiltinAtom createIsText(ITerm... terms) {
+	public IBuiltinAtom createIsPlainLiteral(ITerm... terms) {
 		return new IsPlainLiteralBuiltin(terms);
 	}
 
@@ -760,7 +761,7 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 	}
 
 	public IBuiltinAtom createIsNotNonNegativeInteger(ITerm... terms) {
-		return new IsNonNegativeIntegerBuiltin(terms);
+		return new IsNotNonNegativeIntegerBuiltin(terms);
 	}
 
 	public IBuiltinAtom createIsNotNonPositiveInteger(ITerm... terms) {
@@ -783,7 +784,7 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 		return new IsNotStringBuiltin(terms);
 	}
 
-	public IBuiltinAtom createIsNotText(ITerm... terms) {
+	public IBuiltinAtom createIsNotPlainLiteral(ITerm... terms) {
 		return new IsNotPlainLiteralBuiltin(terms);
 	}
 
@@ -889,6 +890,10 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 
 	public IBuiltinAtom createDateNotEqual(ITerm... terms) {
 		return new DateNotEqualBuiltin(terms);
+	}
+
+	public IBuiltinAtom createDateSubtract(ITerm... terms) {
+		return new DateSubtractBuiltin(terms);
 	}
 
 	public IBuiltinAtom createDateTimeEqual(ITerm... terms) {
