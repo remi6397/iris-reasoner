@@ -45,14 +45,14 @@ public class IsNotShortBuiltinTest extends
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Short";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotShortBuiltin";
+		String builtinName = IsNotShortBuiltin.class.getName();
 		ITerm term = CONCRETE.createShort((short) 12);
 
 		checkBuiltin(iri, term, builtinName, 
-				"org.deri.iris.builtins.datatype.IsNotDecimalBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotIntBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotIntegerBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotLongBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotNumericBuiltin");
+				IsNotDecimalBuiltin.class.getName(),
+				IsNotIntBuiltin.class.getName(),
+				IsNotIntegerBuiltin.class.getName(),
+				IsNotLongBuiltin.class.getName(),
+			    IsNotNumericBuiltin.class.getName());
 	}
 }

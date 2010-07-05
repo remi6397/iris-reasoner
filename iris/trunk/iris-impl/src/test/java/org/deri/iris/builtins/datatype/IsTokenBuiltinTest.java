@@ -44,11 +44,11 @@ public class IsTokenBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Token";
-		String builtinName = "org.deri.iris.builtins.datatype.IsTokenBuiltin";
+		String builtinName = IsTokenBuiltin.class.getName();
 		ITerm term = CONCRETE.createToken("token");
 
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsNormalizedStringBuiltin",
-				"org.deri.iris.builtins.datatype.IsStringBuiltin");
+				IsNormalizedStringBuiltin.class.getName(),
+				IsStringBuiltin.class.getName());
 	}
 }

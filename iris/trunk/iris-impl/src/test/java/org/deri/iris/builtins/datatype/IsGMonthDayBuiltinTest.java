@@ -42,7 +42,7 @@ public class IsGMonthDayBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#GMonthDay";
-		String builtinName = "org.deri.iris.builtins.datatype.IsGMonthDayBuiltin";
+		String builtinName = IsGMonthDayBuiltin.class.getName();
 		ITerm term = CONCRETE.createGMonthDay(10, 16);
 
 		checkBuiltin(iri, term, builtinName);

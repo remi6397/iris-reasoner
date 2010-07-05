@@ -42,7 +42,7 @@ public class IsDurationBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Duration";
-		String builtinName = "org.deri.iris.builtins.datatype.IsDurationBuiltin";
+		String builtinName = IsDurationBuiltin.class.getName();
 		ITerm term = CONCRETE.createDuration((long) 23435432);
 
 		checkBuiltin(iri, term, builtinName);

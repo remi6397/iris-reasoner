@@ -42,7 +42,7 @@ public class IsNotHexBinaryBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Hexbinary";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotHexBinaryBuiltin";
+		String builtinName = IsNotHexBinaryBuiltin.class.getName();
 		ITerm term = CONCRETE.createHexBinary("d5");
 
 		checkBuiltin(iri, term, builtinName);

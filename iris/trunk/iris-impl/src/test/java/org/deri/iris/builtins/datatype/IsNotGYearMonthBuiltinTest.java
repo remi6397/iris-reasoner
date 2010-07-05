@@ -42,7 +42,7 @@ public class IsNotGYearMonthBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#GYearMonth";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotGYearMonthBuiltin";
+		String builtinName = IsNotGYearMonthBuiltin.class.getName();
 		ITerm term = CONCRETE.createGYearMonth(1968, 5);
 
 		checkBuiltin(iri, term, builtinName);

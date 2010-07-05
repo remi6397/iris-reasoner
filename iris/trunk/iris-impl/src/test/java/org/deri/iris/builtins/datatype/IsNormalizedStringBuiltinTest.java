@@ -42,11 +42,11 @@ public class IsNormalizedStringBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#NormalizedString";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNormalizedStringBuiltin";
+		String builtinName = IsNormalizedStringBuiltin.class.getName();
 		ITerm term = CONCRETE.createNormalizedString("String - normalized");
 
 		checkBuiltin(iri, term, builtinName, 
-				"org.deri.iris.builtins.datatype.IsStringBuiltin");
+				IsStringBuiltin.class.getName());
 	}
 
 }

@@ -30,7 +30,7 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.ITerm;
 
 public class IsNotByteBuiltinTest extends AbstractBooleanBuiltinTest {
-	
+
 	public IsNotByteBuiltinTest(String name) {
 		super(name);
 	}
@@ -42,15 +42,15 @@ public class IsNotByteBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Byte";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotByteBuiltin";
+		String builtinName = IsNotByteBuiltin.class.getName();
 		ITerm term = CONCRETE.createByte((byte) 2);
 
-		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsNotDecimalBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotIntBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotIntegerBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotLongBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotNumericBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotShortBuiltin" );
+		checkBuiltin(iri, term, builtinName, 
+				IsNotDecimalBuiltin.class.getName(), 
+				IsNotIntBuiltin.class.getName(),
+				IsNotIntegerBuiltin.class.getName(), 
+				IsNotLongBuiltin.class.getName(), 
+				IsNotNumericBuiltin.class.getName(),
+				IsNotShortBuiltin.class.getName());
 	}
 }

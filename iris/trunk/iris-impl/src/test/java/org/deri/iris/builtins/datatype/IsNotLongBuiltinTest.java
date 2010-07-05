@@ -42,12 +42,12 @@ public class IsNotLongBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Long";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotLongBuiltin";
+		String builtinName = IsNotLongBuiltin.class.getName();
 		ITerm term = CONCRETE.createLong((long) 432532);
 
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsNotDecimalBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotIntegerBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotNumericBuiltin");
+				IsNotDecimalBuiltin.class.getName(),
+				IsNotIntegerBuiltin.class.getName(),
+				IsNotNumericBuiltin.class.getName());
 	}
 }

@@ -42,12 +42,12 @@ public class IsNotNameBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Name";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotNameBuiltin";
+		String builtinName = IsNotNameBuiltin.class.getName();
 		ITerm term = CONCRETE.createName("a name");
 
 		checkBuiltin(iri, term, builtinName, 
-				"org.deri.iris.builtins.datatype.IsNotNormalizedStringBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotStringBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotTokenBuiltin");
+				IsNotNormalizedStringBuiltin.class.getName(),
+				IsNotStringBuiltin.class.getName(),
+				IsNotTokenBuiltin.class.getName());
 	}
 }

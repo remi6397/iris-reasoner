@@ -120,8 +120,8 @@ public class ToBase64BuiltinTest extends TestCase {
 		fails(name);
 	}
 
-	public void testText() throws EvaluationException {
-		fails(CONCRETE.createPlainLiteral("Ein Text@de"));
+	public void testPlainLiteral() throws EvaluationException {
+		fails(CONCRETE.createPlainLiteral("a text@en"));
 	}
 
 	public void testTime() throws EvaluationException {

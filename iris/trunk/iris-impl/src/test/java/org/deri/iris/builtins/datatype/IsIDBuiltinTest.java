@@ -45,11 +45,11 @@ public class IsIDBuiltinTest extends AbstractBooleanBuiltinTest {
 		String builtinName = IsIDBuiltin.class.getName();
 		ITerm term = CONCRETE.createID(new String("ID 0815"));
 
-		checkBuiltin(iri, term, builtinName,
+		checkBuiltin(iri, term, builtinName, 
 				IsNCNameBuiltin.class.getName(),
 				IsNormalizedStringBuiltin.class.getName(),
-				IsStringBuiltin.class.getName(),
+				IsStringBuiltin.class.getName(), 
 				IsTokenBuiltin.class.getName(),
-				IsNameBuiltinTest.class.getName());
+				IsNameBuiltin.class.getName());
 	}
 }

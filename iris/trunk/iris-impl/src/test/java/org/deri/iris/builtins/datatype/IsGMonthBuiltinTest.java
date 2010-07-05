@@ -42,7 +42,7 @@ public class IsGMonthBuiltinTest extends  AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#GMonth";
-		String builtinName = "org.deri.iris.builtins.datatype.IsGMonthBuiltin";
+		String builtinName = IsGMonthBuiltin.class.getName();
 		ITerm term = CONCRETE.createGMonth(10);
 
 		checkBuiltin(iri, term, builtinName);

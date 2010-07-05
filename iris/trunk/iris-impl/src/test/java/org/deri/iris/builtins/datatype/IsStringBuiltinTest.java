@@ -44,7 +44,7 @@ public class IsStringBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#String";
-		String builtinName = "org.deri.iris.builtins.datatype.IsStringBuiltin";
+		String builtinName = IsStringBuiltin.class.getName();
 		ITerm term = TERM.createString("String");
 
 		checkBuiltin(iri, term, builtinName);

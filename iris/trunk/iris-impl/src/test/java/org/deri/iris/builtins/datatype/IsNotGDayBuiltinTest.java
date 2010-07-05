@@ -42,7 +42,7 @@ public class IsNotGDayBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#GDay";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotGDayBuiltin";
+		String builtinName = IsNotGDayBuiltin.class.getName();
 		ITerm term = CONCRETE.createGDay(17);
 
 		checkBuiltin(iri, term, builtinName);

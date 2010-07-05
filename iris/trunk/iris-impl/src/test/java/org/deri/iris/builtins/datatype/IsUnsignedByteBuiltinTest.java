@@ -44,7 +44,7 @@ public class IsUnsignedByteBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#UnsignedByte";
-		String builtinName = "org.deri.iris.builtins.datatype.IsUnsignedByteBuiltin";
+		String builtinName = IsUnsignedByteBuiltin.class.getName();
 		
 		try {
 			CONCRETE.createUnsignedByte((short) -2);
@@ -55,12 +55,12 @@ public class IsUnsignedByteBuiltinTest extends AbstractBooleanBuiltinTest {
 		ITerm term = CONCRETE.createUnsignedByte((short) 2);
 
 		checkBuiltin(iri, term, builtinName, 
-				"org.deri.iris.builtins.datatype.IsDecimalBuiltin",
-				"org.deri.iris.builtins.datatype.IsIntegerBuiltin",
-				"org.deri.iris.builtins.datatype.IsNonNegativeIntegerBuiltin",
-				"org.deri.iris.builtins.datatype.IsNumericBuiltin",
-				"org.deri.iris.builtins.datatype.IsUnsignedIntBuiltin",
-				"org.deri.iris.builtins.datatype.IsUnsignedLongBuiltin",
-				"org.deri.iris.builtins.datatype.IsUnsignedShortBuiltin");
+				IsDecimalBuiltin.class.getName(),
+				IsIntegerBuiltin.class.getName(),
+				IsNonNegativeIntegerBuiltin.class.getName(),
+				IsNumericBuiltin.class.getName(),
+				IsUnsignedIntBuiltin.class.getName(),
+				IsUnsignedLongBuiltin.class.getName(),
+				IsUnsignedShortBuiltin.class.getName());
 	}
 }

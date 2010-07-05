@@ -44,18 +44,18 @@ public class IsNotUnsignedShortBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#UnsignedShort";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotUnsignedShortBuiltin";
+		String builtinName = IsNotUnsignedShortBuiltin.class.getName();
 		ITerm term = CONCRETE.createUnsignedShort((short) 4232);
 
 		checkBuiltin(
 				iri,
 				term,
 				builtinName,
-				"org.deri.iris.builtins.datatype.IsNotDecimalBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotIntegerBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotUnsignedIntBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotUnsignedLongBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotNonNegativeIntegerBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotNumericBuiltin");
+				IsNotDecimalBuiltin.class.getName(),
+				IsNotIntegerBuiltin.class.getName(),
+				IsNotUnsignedIntBuiltin.class.getName(),
+				IsNotUnsignedLongBuiltin.class.getName(),
+				IsNotNonNegativeIntegerBuiltin.class.getName(),
+				IsNotNumericBuiltin.class.getName());
 	}
 }

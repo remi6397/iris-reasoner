@@ -45,7 +45,7 @@ public class IsNotTimeBuiltinTest extends
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Time";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotTimeBuiltin";
+		String builtinName = IsNotTimeBuiltin.class.getName();
 		ITerm term = CONCRETE.createTime(14, 23, 45, 0, 0);
 
 		checkBuiltin(iri, term, builtinName);

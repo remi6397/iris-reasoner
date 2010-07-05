@@ -44,7 +44,7 @@ public class IsXMLLiteralBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#XMLLiteral";
-		String builtinName = "org.deri.iris.builtins.datatype.IsXMLLiteralBuiltin";
+		String builtinName = IsXMLLiteralBuiltin.class.getName();
 		ITerm term = CONCRETE.createXMLLiteral("xml literal");
 
 		checkBuiltin(iri, term, builtinName);

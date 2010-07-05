@@ -43,12 +43,12 @@ public class IsNotIntegerBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Integer";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotIntegerBuiltin";
+		String builtinName = IsNotIntegerBuiltin.class.getName();
 		ITerm term = CONCRETE.createInteger(BigInteger.valueOf(23));
 
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsNotDecimalBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotNumericBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotIntegerBuiltin");
+				IsNotDecimalBuiltin.class.getName(),
+				IsNotNumericBuiltin.class.getName(),
+				IsNotIntegerBuiltin.class.getName());
 	}
 }

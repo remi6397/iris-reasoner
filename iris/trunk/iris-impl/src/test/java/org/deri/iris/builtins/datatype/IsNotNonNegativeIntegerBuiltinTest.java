@@ -45,12 +45,12 @@ public class IsNotNonNegativeIntegerBuiltinTest extends AbstractBooleanBuiltinTe
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#NonNegativeInteger";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotNonNegativeIntegerBuiltin";
+		String builtinName = IsNotNonNegativeIntegerBuiltin.class.getName();
 		ITerm term = CONCRETE.createNonNegativeInteger(BigInteger.ZERO);
 
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsNotDecimalBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotNumericBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotIntegerBuiltin");
+				IsNotDecimalBuiltin.class.getName(),
+				IsNotNumericBuiltin.class.getName(),
+				IsNotIntegerBuiltin.class.getName());
 	}
 }

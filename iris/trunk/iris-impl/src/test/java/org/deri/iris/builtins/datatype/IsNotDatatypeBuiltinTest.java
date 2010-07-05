@@ -179,10 +179,10 @@ public class IsNotDatatypeBuiltinTest extends TestCase {
 		check(false, name, iri);
 	}
 
-	public void testText() throws EvaluationException {
-		String iri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#text";
+	public void testPlainLiteral() throws EvaluationException {
+		String iri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral";
 
-		check(false, CONCRETE.createPlainLiteral("Ein Text@de"), iri);
+		check(false, CONCRETE.createPlainLiteral("a text@en"), iri);
 		check(true, CONCRETE.createInteger(0), iri);
 	}
 

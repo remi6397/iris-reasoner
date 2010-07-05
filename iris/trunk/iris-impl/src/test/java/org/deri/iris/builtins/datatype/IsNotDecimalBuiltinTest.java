@@ -42,10 +42,10 @@ public class IsNotDecimalBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Decimal";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotDecimalBuiltin";
+		String builtinName = IsNotDecimalBuiltin.class.getName();
 		ITerm term = CONCRETE.createDecimal(435234523.45);
 
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsNotNumericBuiltin");
+				IsNotNumericBuiltin.class.getName());
 	}
 }

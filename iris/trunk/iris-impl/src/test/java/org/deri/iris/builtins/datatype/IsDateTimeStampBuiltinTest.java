@@ -42,12 +42,13 @@ public class IsDateTimeStampBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#DateTimeStamp";
-		String builtinName = "org.deri.iris.builtins.datatype.IsDateTimeStampBuiltin";
+		String builtinName = IsDateTimeStampBuiltin.class.getName();
 		
 		// also dateTime is possible
 		ITerm term = CONCRETE.createDateTimeStamp(2010, 10, 6, 3, 23, 0.0, 0, 0);
 
-		checkBuiltin(iri, term, builtinName, "org.deri.iris.builtins.datatype.IsDateTimeBuiltin" );
+		checkBuiltin(iri, term, builtinName, 
+				IsDateTimeBuiltin.class.getName() );
 	}
 
 }

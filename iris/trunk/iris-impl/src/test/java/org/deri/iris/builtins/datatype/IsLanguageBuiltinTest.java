@@ -42,13 +42,13 @@ public class IsLanguageBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Language";
-		String builtinName = "org.deri.iris.builtins.datatype.IsLanguageBuiltin";
+		String builtinName = IsLanguageBuiltin.class.getName();
 		ITerm term = CONCRETE.createLanguage("en");
 
 		// is also String,..
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsNormalizedStringBuiltin",
-				"org.deri.iris.builtins.datatype.IsStringBuiltin",
-				"org.deri.iris.builtins.datatype.IsTokenBuiltin");
+				IsNormalizedStringBuiltin.class.getName(),
+				IsStringBuiltin.class.getName(),
+				IsTokenBuiltin.class.getName());
 	}
 }

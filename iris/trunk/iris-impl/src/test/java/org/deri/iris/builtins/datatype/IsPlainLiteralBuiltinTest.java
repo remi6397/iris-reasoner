@@ -44,10 +44,10 @@ public class IsPlainLiteralBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#PlainLiteral";
-		String builtinName = "org.deri.iris.builtins.datatype.IsPlainLiteralBuiltin";
+		String builtinName = IsPlainLiteralBuiltin.class.getName();
 		ITerm term = CONCRETE.createPlainLiteral("plain literal");
 
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsStringBuiltin");
+				IsStringBuiltin.class.getName());
 	}
 }

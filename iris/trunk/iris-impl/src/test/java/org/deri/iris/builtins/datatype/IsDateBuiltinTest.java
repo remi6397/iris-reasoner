@@ -41,7 +41,7 @@ public class IsDateBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Date";
-		String builtinName = "org.deri.iris.builtins.datatype.IsDateBuiltin";
+		String builtinName = IsDateBuiltin.class.getName();
 		ITerm term = CONCRETE.createDate(2009, 12, 22);
 		
 		checkBuiltin(iri, term, builtinName);

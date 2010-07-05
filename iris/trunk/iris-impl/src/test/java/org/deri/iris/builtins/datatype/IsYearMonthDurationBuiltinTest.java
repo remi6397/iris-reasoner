@@ -44,10 +44,10 @@ public class IsYearMonthDurationBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#YearMonthDuration";
-		String builtinName = "org.deri.iris.builtins.datatype.IsYearMonthDurationBuiltin";
+		String builtinName = IsYearMonthDurationBuiltin.class.getName();
 		ITerm term = CONCRETE.createYearMonthDuration(true, 1889, 4);
 
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsDurationBuiltin");
+				IsDurationBuiltin.class.getName());
 	}
 }

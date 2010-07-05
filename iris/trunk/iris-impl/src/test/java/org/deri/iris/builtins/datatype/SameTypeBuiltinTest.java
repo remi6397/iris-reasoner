@@ -54,7 +54,6 @@ public class SameTypeBuiltinTest extends AbstractBooleanBuiltinTest {
 		term_2 = CONCRETE.createNMTOKEN("Another NM Token");
 		assertTrue(sameType(term_1, term_2));
 		
-		
 		term_1 = CONCRETE.createNMTOKEN("A Token");
 		term_2 = CONCRETE.createSqName("SQ#Name!");
 		assertFalse(sameType(term_1, term_2));
@@ -66,6 +65,8 @@ public class SameTypeBuiltinTest extends AbstractBooleanBuiltinTest {
 		term_1 = CONCRETE.createDouble(1.2);
 		term_2 = CONCRETE.createFloat((float) 1.2);
 		assertFalse(sameType(term_1, term_2));
+		
+		// TODO mp: more Tests ?
 		
 	}
 	
