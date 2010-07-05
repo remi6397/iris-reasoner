@@ -34,7 +34,7 @@ public class IsPlainLiteralBuiltin extends BooleanBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
-			.createPredicate("IS_TEXT", 1);
+			.createPredicate("IS_PLAINLITERAL", 1);
 
 	/**
 	 * Constructor.

@@ -33,7 +33,7 @@ public class IsNotPlainLiteralBuiltin extends BooleanBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = org.deri.iris.factory.Factory.BASIC
-			.createPredicate("IS_NOT_TEXT", 1);
+			.createPredicate("IS_NOT_PLAINLITERAL", 1);
 
 	/**
 	 * Constructor.
