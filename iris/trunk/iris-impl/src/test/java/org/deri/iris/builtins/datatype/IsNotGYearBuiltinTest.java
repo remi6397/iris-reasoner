@@ -42,7 +42,7 @@ public class IsNotGYearBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#GYear";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotGYearBuiltin";
+		String builtinName = IsNotGYearBuiltin.class.getName();
 		ITerm term = CONCRETE.createGYear(1977);
 
 		checkBuiltin(iri, term, builtinName);

@@ -42,10 +42,10 @@ public class IsNotDoubleBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Double";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotDoubleBuiltin";
+		String builtinName = IsNotDoubleBuiltin.class.getName();
 		ITerm term = CONCRETE.createDouble(43523.45);
 
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsNotNumericBuiltin");
+				IsNotNumericBuiltin.class.getName());
 	}
 }

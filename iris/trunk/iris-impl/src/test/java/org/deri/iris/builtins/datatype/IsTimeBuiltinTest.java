@@ -44,7 +44,7 @@ public class IsTimeBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Time";
-		String builtinName = "org.deri.iris.builtins.datatype.IsTimeBuiltin";
+		String builtinName = IsTimeBuiltin.class.getName();
 		ITerm term = CONCRETE.createTime(14, 12, 45.5, 0, 0);
 
 		checkBuiltin(iri, term, builtinName);

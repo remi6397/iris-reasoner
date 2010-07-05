@@ -42,7 +42,7 @@ public class IsNotIriBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#IRI";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotIriBuiltin";
+		String builtinName = IsNotIriBuiltin.class.getName();
 		ITerm term = CONCRETE.createIri("https://sti.iri.com");
 
 		checkBuiltin(iri, term, builtinName);

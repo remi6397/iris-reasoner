@@ -45,10 +45,10 @@ public class IsNotNormalizedStringBuiltinTest extends
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#NormalizedString";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotNormalizedStringBuiltin";
+		String builtinName = IsNotNormalizedStringBuiltin.class.getName();
 		ITerm term = CONCRETE.createNormalizedString("string normalized");
 
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsNotStringBuiltin");
+				IsNotStringBuiltin.class.getName());
 	}
 }

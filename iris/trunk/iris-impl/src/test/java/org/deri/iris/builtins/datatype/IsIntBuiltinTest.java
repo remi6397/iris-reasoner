@@ -42,14 +42,14 @@ public class IsIntBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Int";
-		String builtinName = "org.deri.iris.builtins.datatype.IsIntBuiltin";
+		String builtinName = IsIntBuiltin.class.getName();
 		ITerm term = CONCRETE.createInt(2);
 
 		// also numeric and other builtins
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsDecimalBuiltin",
-				"org.deri.iris.builtins.datatype.IsIntegerBuiltin",
-				"org.deri.iris.builtins.datatype.IsLongBuiltin",
-				"org.deri.iris.builtins.datatype.IsNumericBuiltin");
+				IsDecimalBuiltin.class.getName(),
+				IsIntegerBuiltin.class.getName(),
+				IsLongBuiltin.class.getName(),
+				IsNumericBuiltin.class.getName());
 	}
 }

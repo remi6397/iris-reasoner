@@ -45,10 +45,10 @@ public class IsNotPlainLiteralBuiltinTest extends
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#PlainLiteral";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotPlainLiteralBuiltin";
+		String builtinName = IsNotPlainLiteralBuiltin.class.getName();
 		ITerm term = CONCRETE.createPlainLiteral("String");
 
 		checkBuiltin(iri, term, builtinName, 
-				"org.deri.iris.builtins.datatype.IsNotStringBuiltin");
+				IsNotStringBuiltin.class.getName());
 	}
 }

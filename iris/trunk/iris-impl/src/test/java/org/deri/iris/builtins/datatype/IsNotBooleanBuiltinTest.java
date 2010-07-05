@@ -42,7 +42,7 @@ public class IsNotBooleanBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Boolean";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotBooleanBuiltin";
+		String builtinName = IsNotBooleanBuiltin.class.getName();
 		ITerm term = CONCRETE.createBoolean("true");
 
 		checkBuiltin(iri, term, builtinName);

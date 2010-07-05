@@ -41,19 +41,19 @@ public class IsByteBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#byte";
-		String builtinName = "org.deri.iris.builtins.datatype.IsByteBuiltin";
+		String builtinName = IsByteBuiltin.class.getName();
 		
 		ITerm term = CONCRETE.createByte((byte)1);
 		
 		// is also numeric
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsDecimalBuiltin",
-				"org.deri.iris.builtins.datatype.IsLongBuiltin",
-				"org.deri.iris.builtins.datatype.IsByteBuiltin",
-				"org.deri.iris.builtins.datatype.IsIntBuiltin",
-				"org.deri.iris.builtins.datatype.IsIntegerBuiltin",
-				"org.deri.iris.builtins.datatype.IsNumericBuiltin",
-				"org.deri.iris.builtins.datatype.IsShortBuiltin");
+				IsDecimalBuiltin.class.getName(),
+				IsLongBuiltin.class.getName(),
+				IsByteBuiltin.class.getName(),
+				IsIntBuiltin.class.getName(),
+				IsIntegerBuiltin.class.getName(),
+				IsNumericBuiltin.class.getName(),
+				IsShortBuiltin.class.getName());
 	}
 
 }

@@ -44,14 +44,14 @@ public class IsShortBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Short";
-		String builtinName = "org.deri.iris.builtins.datatype.IsShortBuiltin";
+		String builtinName = IsShortBuiltin.class.getName();
 		ITerm term = CONCRETE.createShort((short)34);
 
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsDecimalBuiltin",
-				"org.deri.iris.builtins.datatype.IsIntBuiltin",
-				"org.deri.iris.builtins.datatype.IsIntegerBuiltin",
-				"org.deri.iris.builtins.datatype.IsLongBuiltin",
-				"org.deri.iris.builtins.datatype.IsNumericBuiltin");
+				IsDecimalBuiltin.class.getName(),
+				IsIntBuiltin.class.getName(),
+				IsIntegerBuiltin.class.getName(),
+				IsLongBuiltin.class.getName(),
+				IsNumericBuiltin.class.getName());
 	}
 }

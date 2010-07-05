@@ -45,11 +45,11 @@ public class IsNumericBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Numeric";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNumericBuiltin";
+		String builtinName = IsNumericBuiltin.class.getName();
 		ITerm term = CONCRETE.createInteger(BigInteger.valueOf((long) 32484));
 
 		checkBuiltin(iri, term, builtinName ,
-				"org.deri.iris.builtins.datatype.IsDecimalBuiltin", 
-				"org.deri.iris.builtins.datatype.IsIntegerBuiltin");
+				IsDecimalBuiltin.class.getName(), 
+				IsIntegerBuiltin.class.getName());
 	}
 }

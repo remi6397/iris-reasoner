@@ -46,11 +46,11 @@ public class IsNotNumericBuiltinTest extends
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Numeric";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotNumericBuiltin";
+		String builtinName = IsNotNumericBuiltin.class.getName();
 		ITerm term = CONCRETE.createInteger(BigInteger.valueOf((long) (2342234)));
 
 		checkBuiltin(iri, term, builtinName, 
-				"org.deri.iris.builtins.datatype.IsNotDecimalBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotIntegerBuiltin");
+				IsNotDecimalBuiltin.class.getName(),
+				IsNotIntegerBuiltin.class.getName());
 	}
 }

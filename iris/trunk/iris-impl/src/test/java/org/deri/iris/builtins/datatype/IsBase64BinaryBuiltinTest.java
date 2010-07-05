@@ -42,7 +42,7 @@ public class IsBase64BinaryBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#base64Binary";
-		String builtinName = "org.deri.iris.builtins.datatype.IsBase64BinaryBuiltin";
+		String builtinName = IsBase64BinaryBuiltin.class.getName();
 		ITerm term = CONCRETE.createBase64Binary("");
 
 		checkBuiltin(iri, term, builtinName);

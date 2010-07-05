@@ -46,13 +46,13 @@ public class IsNotPositiveIntegerBuiltinTest extends
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#PositiveInteger";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotPositiveIntegerBuiltin";
+		String builtinName = IsNotPositiveIntegerBuiltin.class.getName();
 		ITerm term = CONCRETE.createPositiveInteger(BigInteger.valueOf((long) 23424));
 
 		checkBuiltin(iri, term, builtinName, 
-				"org.deri.iris.builtins.datatype.IsNotDecimalBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotIntegerBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotNonNegativeIntegerBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotNumericBuiltin"); 
+				IsNotDecimalBuiltin.class.getName(),
+				IsNotIntegerBuiltin.class.getName(),
+				IsNotNonNegativeIntegerBuiltin.class.getName(),
+				IsNotNumericBuiltin.class.getName()); 
 	}
 }

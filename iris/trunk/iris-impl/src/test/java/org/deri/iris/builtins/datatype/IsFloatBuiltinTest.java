@@ -42,11 +42,11 @@ public class IsFloatBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#Float";
-		String builtinName = "org.deri.iris.builtins.datatype.IsFloatBuiltin";
+		String builtinName = IsFloatBuiltin.class.getName();
 		ITerm term = CONCRETE.createFloat((float) 35.2);
 
 		// is also numeric
 		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsNumericBuiltin");
+				IsNumericBuiltin.class.getName());
 	}
 }
