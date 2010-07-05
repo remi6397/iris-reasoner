@@ -1328,6 +1328,17 @@ public interface IBuiltinsFactory {
 	public IBuiltinAtom createDateNotEqual(ITerm... terms);
 
 	/**
+	 * Creates the DateSubtract built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createDateSubtract(ITerm... terms);
+
+	/**
 	 * Creates the DateLessEqual built-in.
 	 * 
 	 * @param terms The terms.
@@ -2058,7 +2069,7 @@ public interface IBuiltinsFactory {
 	public IBuiltinAtom createIsString(ITerm... terms);
 
 	/**
-	 * Creates the IsText built-in.
+	 * Creates the IsPlainLiteral built-in.
 	 * 
 	 * @param terms The terms.
 	 * @return The builtin.
@@ -2066,7 +2077,7 @@ public interface IBuiltinsFactory {
 	 * @throws IllegalArgumentException If the number of terms submitted is not
 	 *             correct.
 	 */
-	public IBuiltinAtom createIsText(ITerm... terms);
+	public IBuiltinAtom createIsPlainLiteral(ITerm... terms);
 
 	/**
 	 * Creates the IsTime built-in.
@@ -2524,7 +2535,7 @@ public interface IBuiltinsFactory {
 	public IBuiltinAtom createIsNotString(ITerm... terms);
 
 	/**
-	 * Creates the IsNotText built-in.
+	 * Creates the IsPlainLiteral built-in.
 	 * 
 	 * @param terms The terms.
 	 * @return The builtin.
@@ -2532,7 +2543,7 @@ public interface IBuiltinsFactory {
 	 * @throws IllegalArgumentException If the number of terms submitted is not
 	 *             correct.
 	 */
-	public IBuiltinAtom createIsNotText(ITerm... terms);
+	public IBuiltinAtom createIsNotPlainLiteral(ITerm... terms);
 
 	/**
 	 * Creates the IsNotTime built-in.
