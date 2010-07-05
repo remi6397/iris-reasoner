@@ -58,15 +58,41 @@ public class SameTypeBuiltinTest extends AbstractBooleanBuiltinTest {
 		term_2 = CONCRETE.createSqName("SQ#Name!");
 		assertFalse(sameType(term_1, term_2));
 		
-		term_1 = CONCRETE.createInt(1);
+		term_1 = CONCRETE.createToken("A Token");
+		term_2 = CONCRETE.createName("Name!");
+		assertFalse(sameType(term_1, term_2));
+		
+		term_1 = CONCRETE.createDateTime(01, 01, 01, 10, 10, 10, 10, 0, 0);
+		term_2 = CONCRETE.createDateTimeStamp(01, 01, 10, 10, 10, 10, 0, 0);
+		assertFalse(sameType(term_1, term_2));
+		
+		term_1 = CONCRETE.createLong((long) 728213);
 		term_2 = CONCRETE.createInteger(BigInteger.valueOf(1));
+		assertFalse(sameType(term_1, term_2));
+		
+		term_1 = CONCRETE.createShort((short) 5);
+		term_2 = CONCRETE.createByte((byte) 1);
+		assertFalse(sameType(term_1, term_2));
+		
+		term_1 = CONCRETE.createShort((short) 5);
+		term_2 = CONCRETE.createByte((byte) 1);
+		assertFalse(sameType(term_1, term_2));
+		
+		term_1 = CONCRETE.createPositiveInteger(BigInteger.ONE);
+		term_2 = CONCRETE.createUnsignedLong(BigInteger.TEN);
 		assertFalse(sameType(term_1, term_2));
 		
 		term_1 = CONCRETE.createDouble(1.2);
 		term_2 = CONCRETE.createFloat((float) 1.2);
 		assertFalse(sameType(term_1, term_2));
 		
-		// TODO mp: more Tests ?
+		term_1 = CONCRETE.createNormalizedString("normalized String");
+		term_2 = CONCRETE.createName("name");
+		assertFalse(sameType(term_1, term_2));
+		
+		term_1 = CONCRETE.createNCName("bla bla");
+		term_2 = CONCRETE.createEntity("bla bla");
+		assertFalse(sameType(term_1, term_2));
 		
 	}
 	
