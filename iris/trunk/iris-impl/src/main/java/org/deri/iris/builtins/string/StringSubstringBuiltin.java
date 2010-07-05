@@ -26,9 +26,9 @@ import static org.deri.iris.factory.Factory.BASIC;
 
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.api.terms.concrete.IIntegerTerm;
 import org.deri.iris.builtins.FunctionalBuiltin;
 import org.deri.iris.factory.Factory;
 
@@ -40,8 +40,7 @@ import org.deri.iris.factory.Factory;
  */
 public class StringSubstringBuiltin extends FunctionalBuiltin {
 
-	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"STRING_SUBSTRING3", 4);
+	private static final IPredicate PREDICATE = BASIC.createPredicate("STRING_SUBSTRING3", 4);
 
 	/**
 	 * Constructor.
@@ -56,15 +55,20 @@ public class StringSubstringBuiltin extends FunctionalBuiltin {
 	}
 
 	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
-		if (terms[0] instanceof IStringTerm && terms[1] instanceof IIntegerTerm
-				&& terms[2] instanceof IIntegerTerm) {
+		// FIXME value spaces of xs:integer, xs:double, xs:float and xs:decimal for numeric terms
+		
+		if (terms[0] instanceof IStringTerm 
+				&& terms[1] instanceof INumericTerm
+				&& terms[2] instanceof INumericTerm) {
 			IStringTerm string = (IStringTerm) terms[0];
-			IIntegerTerm beginIndex = (IIntegerTerm) terms[1];
-			IIntegerTerm endIndex = (IIntegerTerm) terms[2];
+			INumericTerm beginIndex = (INumericTerm) terms[1];
+			INumericTerm lengthIndex = (INumericTerm) terms[2];
 
+			int start = beginIndex.getValue().intValue();
+			int length = lengthIndex.getValue().intValue();
 			String substring = string.getValue().substring(
-					beginIndex.getValue().intValue(),
-					endIndex.getValue().intValue());
+					start,
+					start + length);
 
 			return Factory.TERM.createString(substring);
 		}
