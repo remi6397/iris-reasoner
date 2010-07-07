@@ -38,9 +38,9 @@ import org.deri.iris.factory.Factory;
  */
 public class StringConcatBuiltin extends FunctionalBuiltin {
 
+	private static final String PREDICATE_STRING = "STRING_CONCAT";
 	/** The predicate defining this built-in. */
-	private static final IPredicate PREDICATE = BASIC.createPredicate(
-			"STRING_CONCAT", 3);
+	private static final IPredicate PREDICATE = BASIC.createPredicate(PREDICATE_STRING, -1);
 
 	/**
 	 * Constructor. Three terms must be passed to the constructor, otherwise an
@@ -53,20 +53,30 @@ public class StringConcatBuiltin extends FunctionalBuiltin {
 	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
 	public StringConcatBuiltin(ITerm... terms) {
-		super(PREDICATE, terms);
+		// FIXME dw2ad: correct?
+		// accept any amount of terms, at least 3
+		super(BASIC.createPredicate(PREDICATE_STRING, terms.length), terms);
+		
+		if (terms.length < 3) {
+			throw new IllegalArgumentException("The amount of terms <" + terms.length + "> must at least 3");
+		}
 	}
 
 	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
-		IStringTerm string1 = ToStringBuiltin.toString(terms[0]);
-		IStringTerm string2 = ToStringBuiltin.toString(terms[1]);
-
-		if (string1 != null && string2 != null) {
-			String result = string1.getValue() + string2.getValue();
-
-			return Factory.TERM.createString(result);
+		
+		StringBuilder buffer = new StringBuilder();
+		
+		int endIndex = terms.length - 1;
+		for (int i = 0; i < endIndex; i++) {
+			IStringTerm string = ToStringBuiltin.toString(terms[i]);
+			
+			if (string == null)
+				return null;
+			
+			buffer.append(string.getValue());
 		}
-
-		return null;
+		
+		return Factory.TERM.createString(buffer.toString());
 	}
 
 }

@@ -38,11 +38,12 @@ import org.deri.iris.factory.Factory;
  */
 public class StringJoinBuiltin extends FunctionalBuiltin {
 
+	private static final String PREDICATE_STRING = "STRING_JOIN";
 	/**
 	 * The predicate defining this built-in. Here special because RIF built-in
 	 * StringJoin can have arity X (RIF: func:string-join<N> string x N).
 	 */
-	private static final IPredicate PREDICATE = BASIC.createPredicate("STRING_JOIN", 4);
+	private static final IPredicate PREDICATE = BASIC.createPredicate(PREDICATE_STRING, -1);
 	
 	// TODO mp : handle arity of N length ! 
 	// private IPredicate predicate = BASIC.createPredicate("STRING_JOIN", 4);
@@ -58,36 +59,36 @@ public class StringJoinBuiltin extends FunctionalBuiltin {
 	 * @throws IllegalArgumentException If terms is <code>null</code>.
 	 */
 	public StringJoinBuiltin(ITerm... terms) {
-		super(PREDICATE, terms);
+		// FIXME dw2ad: correct?
+		super(BASIC.createPredicate(PREDICATE_STRING, terms.length), terms);
+		if (terms.length < 2) {
+			throw new IllegalArgumentException("The amount of terms <" + terms.length + "> must at least 2");
+		}
 	}
-		
-	// mp: should be x strings:
-	// RIF: func:string-join<N> string x N
-	//		super(BASIC.createPredicate("STRING_JOIN", terms.length), terms);
-	//		predicate = BASIC.createPredicate("STRING_JOIN", terms.length);
-	//		if (terms.length < 4) {
-	//			throw new IllegalArgumentException("The amount of terms <" + terms.length + 
-	//					"> must match the arity of the predicate <" + "4" + ">");
-	//		}
 	
 
 	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		StringBuffer buffer = new StringBuffer();
 		String separator = null;
 
-		// the last one of the strings is the separator
-		if (terms[terms.length - 2] instanceof IStringTerm) {
-			separator = ((IStringTerm) terms[terms.length - 2]).getValue();
+		// the second-last one of the strings is the separator
+		int endIndex = terms.length - 2;
+		if (terms[endIndex] instanceof IStringTerm) {
+			separator = ((IStringTerm) terms[endIndex]).getValue();
 		} else {
 			return null;
 		}
 
-		for (int i = 0; i < terms.length - 2; i++) {
+		for (int i = 0; i < endIndex; i++) {
 			if (terms[i] instanceof IStringTerm) {
 				String string = ((IStringTerm) terms[i]).getValue();
 
 				buffer.append(string);
-				buffer.append(separator);
+				
+				// do not append separator after the last string
+				if (i < endIndex - 1) {
+					buffer.append(separator);
+				}
 			} else {
 				return null;
 			}
@@ -96,15 +97,4 @@ public class StringJoinBuiltin extends FunctionalBuiltin {
 		String result = buffer.toString();
 		return Factory.TERM.createString(result);
 	}
-
-	// /**
-	// * String join can have x string parameters
-	// *
-	// * @returns the Predicate with the specific arity.
-	// */
-	// @Override
-	// public IPredicate getPredicate() {
-	// return this.predicate;
-	// }
-
 }
