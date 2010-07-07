@@ -47,7 +47,7 @@ public class XMLLiteralNotEqualBuiltin extends NotEqualBuiltin {
 	@Override
 	protected boolean computeResult(ITerm[] terms) {
 		if (terms[0] instanceof IXMLLiteral && terms[1] instanceof IXMLLiteral) {
-			super.computeResult(terms);
+			return super.computeResult(terms);
 		}
 
 		return false;
