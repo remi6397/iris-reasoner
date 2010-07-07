@@ -45,8 +45,7 @@ public class BooleanEqualBuiltin extends EqualBuiltin {
 
 	@Override
 	protected ITerm computeMissingTerm(int missingTermIndex, ITerm[] terms) {
-		if (terms[0] instanceof IBooleanTerm
-				&& terms[1] instanceof IBooleanTerm) {
+		if (checkTypes(missingTermIndex, terms, IBooleanTerm.class)) {
 			return super.computeMissingTerm(missingTermIndex, terms);
 		}
 

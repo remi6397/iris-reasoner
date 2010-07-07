@@ -46,7 +46,7 @@ public class DateTimeEqualBuiltin extends EqualBuiltin {
 
 	@Override
 	protected ITerm computeMissingTerm(int missingTermIndex, ITerm[] terms) {
-		if (terms[0] instanceof IDateTime && terms[1] instanceof IDateTime) {
+		if (checkTypes(missingTermIndex, terms, IDateTime.class)) {
 			return super.computeMissingTerm(missingTermIndex, terms);
 		}
 
