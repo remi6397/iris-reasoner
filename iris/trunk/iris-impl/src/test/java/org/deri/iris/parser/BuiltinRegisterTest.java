@@ -109,7 +109,7 @@ public class BuiltinRegisterTest extends TestCase {
 		// Datatype check builtins for new datatypes DayTimeDuration, YearMonthDuration, Text and XMLLiteral.
 		checkRegisteredBuiltin("IS_DAYTIMEDURATION", org.deri.iris.builtins.datatype.IsDayTimeDurationBuiltin.class, 1 );
 		checkRegisteredBuiltin("IS_YEARMONTHDURATION", org.deri.iris.builtins.datatype.IsYearMonthDurationBuiltin.class, 1 );
-		checkRegisteredBuiltin("IS_TEXT", org.deri.iris.builtins.datatype.IsPlainLiteralBuiltin.class, 1 );
+		checkRegisteredBuiltin("IS_PLAINLITERAL", org.deri.iris.builtins.datatype.IsPlainLiteralBuiltin.class, 1 );
 		checkRegisteredBuiltin("IS_XMLLITERAL", org.deri.iris.builtins.datatype.IsXMLLiteralBuiltin.class, 1 );		
 		
 		checkRegisteredBuiltin("IS_DATATYPE", org.deri.iris.builtins.datatype.IsDatatypeBuiltin.class, 2 );
