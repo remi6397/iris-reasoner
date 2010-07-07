@@ -22,12 +22,16 @@
  */
 package org.deri.iris.builtins.string;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.factory.Factory;
 
 /**
@@ -35,20 +39,21 @@ import org.deri.iris.factory.Factory;
  */
 public class StringJoinBuiltinTest extends TestCase {
 
-	private static final ITerm X = Factory.TERM.createVariable("X");
+	private static final IVariable X = Factory.TERM.createVariable("X");
 
-	private static final ITerm Y = Factory.TERM.createVariable("Y");
+	private static final IVariable Y = Factory.TERM.createVariable("Y");
 
-	private static final ITerm Z = Factory.TERM.createVariable("Z");
+	private static final IVariable Z = Factory.TERM.createVariable("Z");
 
-	private static final ITerm R = Factory.TERM.createVariable("R");
+	private static final IVariable R = Factory.TERM.createVariable("R");
 
 	public StringJoinBuiltinTest(String name) {
 		super(name);
 	}
 
 	public void testJoin() throws EvaluationException {
-		check("foo,bar,", "foo", "bar", ",");
+		check("foo,bar", "foo", "bar", ",");
+		check("a/*/*c", "a", "", "c", "/*");
 	}
 
 	private void check(String expected, String... actual)
@@ -58,7 +63,14 @@ public class StringJoinBuiltinTest extends TestCase {
 			terms[i] = Factory.TERM.createString(actual[i]);
 		}
 		terms[actual.length] = R;
-		ITuple arguments = Factory.BASIC.createTuple(X, Y, Z, R);
+		
+		List<IVariable> vars = new ArrayList<IVariable>();
+		for (int i = 0; i < actual.length; i++) {
+			vars.add(Factory.TERM.createVariable("var" + i));
+		}
+		vars.add(R);
+		
+		ITuple arguments = Factory.BASIC.createTuple(vars.toArray(new ITerm[] {}));
 
 		StringJoinBuiltin length = new StringJoinBuiltin(terms);
 
