@@ -46,7 +46,7 @@ public class DurationEqualBuiltin extends EqualBuiltin {
 
 	@Override
 	protected ITerm computeMissingTerm(int missingTermIndex, ITerm[] terms) {
-		if (terms[0] instanceof IDuration && terms[1] instanceof IDuration) {
+		if (checkTypes(missingTermIndex, terms, IDuration.class)) {
 			return super.computeMissingTerm(missingTermIndex, terms);
 		}
 

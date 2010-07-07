@@ -25,7 +25,9 @@ package org.deri.iris.builtins;
 import static org.deri.iris.factory.Factory.BASIC;
 
 import org.deri.iris.api.basics.IPredicate;
+import org.deri.iris.api.terms.IConcreteTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.IVariable;
 
 /**
  * Built-in to either: a) compare two terms for equality, OR b) assign a
@@ -66,4 +68,20 @@ public class EqualBuiltin extends ArithmeticBuiltin {
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate("EQUAL",
 			2);
+	
+	protected boolean checkTypes(int missingTermIndex, ITerm[] terms, 
+			Class<? extends IConcreteTerm> expectedClass) {
+		// FIXME dw2ad: is this correct? if yes, apply to all EqualBuilt-ins
+		int numericTermIndex = (missingTermIndex == 0) ? 1 : 0;
+		
+		if (!expectedClass.isInstance(terms[numericTermIndex]))
+			return false;
+		
+		if (expectedClass.isInstance(terms[missingTermIndex]) || 
+				IVariable.class.isInstance(terms[missingTermIndex])) {
+			return true;
+		}
+		
+		return false;
+	}
 }

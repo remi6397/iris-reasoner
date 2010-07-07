@@ -46,11 +46,10 @@ public class NumericEqualBuiltin extends EqualBuiltin {
 
 	@Override
 	protected ITerm computeMissingTerm(int missingTermIndex, ITerm[] terms) {
-		if (terms[0] instanceof INumericTerm
-				&& terms[1] instanceof INumericTerm) {
+		if (checkTypes(missingTermIndex, terms, INumericTerm.class)) {
 			return super.computeMissingTerm(missingTermIndex, terms);
 		}
-
+		
 		return null;
 	}
 

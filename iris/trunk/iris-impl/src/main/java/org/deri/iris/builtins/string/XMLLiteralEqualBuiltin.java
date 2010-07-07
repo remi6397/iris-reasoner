@@ -46,7 +46,7 @@ public class XMLLiteralEqualBuiltin extends EqualBuiltin {
 
 	@Override
 	protected ITerm computeMissingTerm(int missingTermIndex, ITerm[] terms) {
-		if (terms[0] instanceof IXMLLiteral && terms[1] instanceof IXMLLiteral) {
+		if (checkTypes(missingTermIndex, terms, IXMLLiteral.class)) {
 			return super.computeMissingTerm(missingTermIndex, terms);
 		}
 
