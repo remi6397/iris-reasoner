@@ -30,6 +30,7 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 
 import org.deri.iris.api.terms.ITerm;
@@ -188,10 +189,10 @@ public class Duration implements IDuration {
 
 	public double getDecimalSecond() {
 		// The following approach would discard the fractional part
-		// Number seconds = mDuration.getField(DatatypeConstants.SECONDS);
-		// return seconds.doubleValue();
-		
-		return getSecond() + ((double) getMillisecond()) / 1000.0;
+		Number seconds = mDuration.getField(DatatypeConstants.SECONDS);
+		return seconds.doubleValue();
+
+		// return getSecond() + ((double) getMillisecond()) / 1000.0;
 	}
 
 	public int hashCode() {
