@@ -979,10 +979,10 @@ public class BuiltinHelper {
 
 		if (term instanceof ITime) {
 			ITime time = (ITime) term;
-			second = time.getSecond();
+			second = time.getDecimalSecond();
 		} else if (term instanceof IDateTime) {
 			IDateTime dateTime = (IDateTime) term;
-			second = dateTime.getSecond();
+			second = dateTime.getDecimalSecond();
 		} else if (term instanceof IDuration) {
 			/*
 			 * We do not convert to DayTimeDuration here, since we can not
