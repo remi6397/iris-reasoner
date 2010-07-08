@@ -29,7 +29,7 @@ package org.deri.iris.api.terms.concrete;
  * 
  * @author Adrian Marte
  */
-public interface IByteTerm extends IIntegerTerm {
+public interface IByteTerm extends IShortTerm {
 
 	/**
 	 * Defines the XML Schema datatype URI.
