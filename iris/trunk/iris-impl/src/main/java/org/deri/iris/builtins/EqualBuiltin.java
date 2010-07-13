@@ -71,10 +71,9 @@ public class EqualBuiltin extends ArithmeticBuiltin {
 	
 	protected boolean checkTypes(int missingTermIndex, ITerm[] terms, 
 			Class<? extends IConcreteTerm> expectedClass) {
-		// FIXME dw2ad: is this correct? if yes, apply to all EqualBuilt-ins
-		int numericTermIndex = (missingTermIndex == 0) ? 1 : 0;
+		int termIndex = (missingTermIndex == 0) ? 1 : 0;
 		
-		if (!expectedClass.isInstance(terms[numericTermIndex]))
+		if (!expectedClass.isInstance(terms[termIndex]))
 			return false;
 		
 		if (expectedClass.isInstance(terms[missingTermIndex]) || 
