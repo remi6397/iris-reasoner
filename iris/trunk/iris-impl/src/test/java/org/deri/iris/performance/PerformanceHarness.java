@@ -22,8 +22,10 @@
  */
 package org.deri.iris.performance;
 
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
@@ -94,7 +96,9 @@ public class PerformanceHarness
 		{
 			mParser = new Parser();
 			
-			FileReader r = new FileReader( filename );
+			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename);
+			
+			Reader r = new InputStreamReader(inputStream);
 			
 			StringBuilder builder = new StringBuilder();
 			
@@ -254,10 +258,10 @@ public class PerformanceHarness
 	/** The array of logic program files to load. */
 	private static String[] mProgramFilenames =
 	{
-		"app\\org\\deri\\iris\\performance\\cartesian_product.txt",
-		"app\\org\\deri\\iris\\performance\\local_stratification.txt",
-		"app\\org\\deri\\iris\\performance\\multiplicative_congruent.txt",
-		"app\\org\\deri\\iris\\performance\\transitive_closure.txt",
-		"app\\org\\deri\\iris\\performance\\cartesian_product_with_negation.txt",
+		"cartesian_product.txt",
+		"local_stratification.txt",
+		"multiplicative_congruent.txt",
+		"transitive_closure.txt",
+		"cartesian_product_with_negation.txt",
 	};
 }
