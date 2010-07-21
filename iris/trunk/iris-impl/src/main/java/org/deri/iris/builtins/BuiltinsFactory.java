@@ -28,9 +28,11 @@ import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.builtins.datatype.*;
 import org.deri.iris.builtins.date.AddDayTimeDurationToDateBuiltin;
 import org.deri.iris.builtins.date.AddDayTimeDurationToDateTimeBuiltin;
+import org.deri.iris.builtins.date.AddDayTimeDurationsBuiltin;
 import org.deri.iris.builtins.date.AddDayTimeDurationToTimeBuiltin;
 import org.deri.iris.builtins.date.AddYearMonthDurationToDateBuiltin;
 import org.deri.iris.builtins.date.AddYearMonthDurationToDateTimeBuiltin;
+import org.deri.iris.builtins.date.AddYearMonthDurationsBuiltin;
 import org.deri.iris.builtins.date.DateEqualBuiltin;
 import org.deri.iris.builtins.date.DateGreaterBuiltin;
 import org.deri.iris.builtins.date.DateGreaterEqualBuiltin;
@@ -846,6 +848,14 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 
 	public IBuiltinAtom createAddDayTimeDurationToTime(ITerm... terms) {
 		return new AddDayTimeDurationToTimeBuiltin(terms);
+	}
+	
+	public IBuiltinAtom createAddDayTimeDurations(ITerm... terms) {
+		return new AddDayTimeDurationsBuiltin(terms);
+	}
+	
+	public IBuiltinAtom createAddYearMonthDurations(ITerm... terms) {
+		return new AddYearMonthDurationsBuiltin(terms);
 	}
 
 	public IBuiltinAtom createAddYearMonthDurationToDate(ITerm... terms) {

@@ -1005,6 +1005,17 @@ public interface IBuiltinsFactory {
 	 */
 	public IBuiltinAtom createDayTimeDurationDivideByDayTimeDuration(
 			ITerm... terms);
+	
+	/**
+	 * Creates the AddYearMonthDurations built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createAddYearMonthDurations(ITerm... terms);
 
 	/**
 	 * Creates the AddYearMonthDurationToDateTime built-in.
@@ -1028,6 +1039,17 @@ public interface IBuiltinsFactory {
 	 */
 	public IBuiltinAtom createAddYearMonthDurationToDate(ITerm... terms);
 
+	/**
+	 * Creates the AddDayTimeDurations built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The built-in.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createAddDayTimeDurations(ITerm... terms);
+	
 	/**
 	 * Creates the AddDayTimeDurationToDateTime built-in.
 	 * 
