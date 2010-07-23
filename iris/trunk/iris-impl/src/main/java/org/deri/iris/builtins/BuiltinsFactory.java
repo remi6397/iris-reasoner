@@ -1202,4 +1202,69 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 		return new IriStringBuiltin(terms);
 	}
 
+	@Override
+	public IBuiltinAtom createAddBuiltin(ITerm... terms) {
+		return new AddBuiltin(terms);
+	}
+
+	@Override
+	public IBuiltinAtom createDivideBuiltin(ITerm... terms) {
+		return new DivideBuiltin(terms);
+	}
+
+	@Override
+	public IBuiltinAtom createEqual(ITerm... terms) {
+		return new EqualBuiltin(terms);
+	}
+
+	@Override
+	public IBuiltinAtom createExactEqual(ITerm... terms) {
+		return new ExactEqualBuiltin(terms);
+	}
+
+	@Override
+	public IBuiltinAtom createGreater(ITerm... terms) {
+		return new GreaterBuiltin(terms);
+	}
+
+	@Override
+	public IBuiltinAtom createGreaterEqual(ITerm... terms) {
+		return new GreaterEqualBuiltin(terms);
+	}
+
+	@Override
+	public IBuiltinAtom createLess(ITerm... terms) {
+		return new LessBuiltin(terms);
+	}
+
+	@Override
+	public IBuiltinAtom createLessEqual(ITerm... terms) {
+		return new LessEqualBuiltin(terms);
+	}
+
+	@Override
+	public IBuiltinAtom createModulusBuiltin(ITerm... terms) {
+		return new ModulusBuiltin(terms);
+	}
+
+	@Override
+	public IBuiltinAtom createMultiplyBuiltin(ITerm... terms) {
+		return new MultiplyBuiltin(terms);
+	}
+
+	@Override
+	public IBuiltinAtom createNotExactEqual(ITerm... terms) {
+		return new NotExactEqualBuiltin(terms);
+	}
+
+	@Override
+	public IBuiltinAtom createSubtractBuiltin(ITerm... terms) {
+		return new SubtractBuiltin(terms);
+	}
+
+	@Override
+	public IBuiltinAtom createUnequal(ITerm... terms) {
+		return new NotEqualBuiltin(terms);
+	}
+
 }
