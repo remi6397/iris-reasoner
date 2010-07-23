@@ -59,6 +59,16 @@ public interface IBuiltinsFactory {
 			final ITerm t2);
 
 	/**
+	 * Creates an add builtin.
+	 * 
+	 * @param terms The terms, must be three.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if not exactly two three are specified
+	 */
+	public IBuiltinAtom createAddBuiltin(ITerm... terms);
+
+	/**
 	 * Creates a subtract builtin.
 	 * 
 	 * @param t0 the minuend
@@ -69,6 +79,16 @@ public interface IBuiltinsFactory {
 	 */
 	public IBuiltinAtom createSubtractBuiltin(final ITerm t0, final ITerm t1,
 			final ITerm t2);
+
+	/**
+	 * Creates an subtract builtin.
+	 * 
+	 * @param terms The terms, must be three.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if not exactly three terms are specified
+	 */
+	public IBuiltinAtom createSubtractBuiltin(ITerm... terms);
 
 	/**
 	 * Creates a multiply builtin.
@@ -83,6 +103,16 @@ public interface IBuiltinsFactory {
 			final ITerm t2);
 
 	/**
+	 * Creates an multiply builtin.
+	 * 
+	 * @param terms The terms, must be three.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if not exactly three terms are specified
+	 */
+	public IBuiltinAtom createMultiplyBuiltin(ITerm... terms);
+
+	/**
 	 * Creates a divide builtin.
 	 * 
 	 * @param t0 the dividend
@@ -93,6 +123,16 @@ public interface IBuiltinsFactory {
 	 */
 	public IBuiltinAtom createDivideBuiltin(final ITerm t0, final ITerm t1,
 			final ITerm t2);
+
+	/**
+	 * Creates an divide builtin.
+	 * 
+	 * @param terms The terms, must be three.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if not exactly three terms are specified
+	 */
+	public IBuiltinAtom createDivideBuiltin(ITerm... terms);
 
 	/**
 	 * Creates a modulus builtin.
@@ -107,6 +147,16 @@ public interface IBuiltinsFactory {
 			final ITerm t2);
 
 	/**
+	 * Creates an modulus builtin.
+	 * 
+	 * @param terms The terms, must be three.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if not exactly three terms are specified
+	 */
+	public IBuiltinAtom createModulusBuiltin(ITerm... terms);
+
+	/**
 	 * Creates an equal builtin.
 	 * 
 	 * @param t0 the first term
@@ -115,6 +165,16 @@ public interface IBuiltinsFactory {
 	 * @throws NullPointerException if any of the terms is <code>null</code>
 	 */
 	public IBuiltinAtom createEqual(final ITerm t0, final ITerm t1);
+
+	/**
+	 * Creates an equal builtin.
+	 * 
+	 * @param terms The terms, must be two.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if not exactly two terms are specified
+	 */
+	public IBuiltinAtom createEqual(ITerm... terms);
 
 	/**
 	 * Creates an unequal builtin.
@@ -127,6 +187,16 @@ public interface IBuiltinsFactory {
 	public IBuiltinAtom createUnequal(final ITerm t0, final ITerm t1);
 
 	/**
+	 * Creates an unequal builtin.
+	 * 
+	 * @param terms The terms, must be two.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if not exactly two terms are specified
+	 */
+	public IBuiltinAtom createUnequal(ITerm... terms);
+
+	/**
 	 * Create an EXACT_EQUAL built-in.
 	 * 
 	 * @param t0 The first term.
@@ -134,6 +204,16 @@ public interface IBuiltinsFactory {
 	 * @return The built-in instance
 	 */
 	IBuiltinAtom createExactEqual(final ITerm t0, final ITerm t1);
+
+	/**
+	 * Creates an EXACT_EQUAL builtin.
+	 * 
+	 * @param terms The terms, must be two.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if not exactly two terms are specified
+	 */
+	IBuiltinAtom createExactEqual(ITerm... terms);
 
 	/**
 	 * Create a NOT_EXACT_EQUAL built-in.
@@ -146,6 +226,16 @@ public interface IBuiltinsFactory {
 	IBuiltinAtom createNotExactEqual(final ITerm t0, final ITerm t1);
 
 	/**
+	 * Creates an NOT_EXACT_EQUAL builtin.
+	 * 
+	 * @param terms The terms, must be two.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if not exactly two terms are specified
+	 */
+	IBuiltinAtom createNotExactEqual(ITerm... terms);
+
+	/**
 	 * Creates a less builtin.
 	 * 
 	 * @param t0 the first term
@@ -154,6 +244,16 @@ public interface IBuiltinsFactory {
 	 * @throws NullPointerException if any of the terms is <code>null</code>
 	 */
 	public IBuiltinAtom createLess(final ITerm t0, final ITerm t1);
+
+	/**
+	 * Creates an less builtin.
+	 * 
+	 * @param terms The terms, must be two.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if not exactly two terms are specified
+	 */
+	public IBuiltinAtom createLess(ITerm... terms);
 
 	/**
 	 * Creates an less-equal builtin.
@@ -166,6 +266,16 @@ public interface IBuiltinsFactory {
 	public IBuiltinAtom createLessEqual(final ITerm t0, final ITerm t1);
 
 	/**
+	 * Creates an less-equal builtin.
+	 * 
+	 * @param terms The terms, must be two.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if not exactly two terms are specified
+	 */
+	public IBuiltinAtom createLessEqual(ITerm... terms);
+
+	/**
 	 * Creates a greater builtin.
 	 * 
 	 * @param t0 the first term
@@ -176,6 +286,16 @@ public interface IBuiltinsFactory {
 	public IBuiltinAtom createGreater(final ITerm t0, final ITerm t1);
 
 	/**
+	 * Creates an greater builtin.
+	 * 
+	 * @param terms The terms, must be two.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if not exactly two terms are specified
+	 */
+	public IBuiltinAtom createGreater(ITerm... terms);
+
+	/**
 	 * Creates a greater-equal builtin.
 	 * 
 	 * @param t0 the first term
@@ -184,6 +304,16 @@ public interface IBuiltinsFactory {
 	 * @throws NullPointerException if any of the terms is <code>null</code>
 	 */
 	public IBuiltinAtom createGreaterEqual(final ITerm t0, final ITerm t1);
+
+	/**
+	 * Creates an greater-equal builtin.
+	 * 
+	 * @param terms The terms, must be two.
+	 * @return the builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if not exactly two terms are specified
+	 */
+	public IBuiltinAtom createGreaterEqual(ITerm... terms);
 
 	/* Numeric built-ins */
 
