@@ -57,7 +57,11 @@ public class PlainLiteralFromStringLangBuiltin extends FunctionalBuiltin {
 	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		if (terms[0] instanceof IStringTerm && terms[1] instanceof IStringTerm) {
 			String text = ((IStringTerm) terms[0]).getValue();
-			String lang = ((IStringTerm) terms[1]).getValue();
+			
+			// http://www.w3.org/TR/rdf-plain-literal/#plfn:PlainLiteral-from-string-lang
+			// Note that, since in the value space of rdf:PlainLiteral language 
+			// tags are in lowercase, this function converts $arg2 to lowercase
+			String lang = ((IStringTerm) terms[1]).getValue().toLowerCase();
 
 			return CONCRETE.createPlainLiteral(text, lang);
 		}
