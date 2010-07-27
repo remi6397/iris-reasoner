@@ -86,7 +86,7 @@ public abstract class FunctionalBuiltin extends AbstractBuiltin {
 	 *         otherwise.
 	 */
 	protected boolean testForEquality(ITerm term1, ITerm term2) {
-		return BuiltinHelper.equal(term1, term2);
+		return BuiltinHelper.equal(term1, term2, getEquivalenceClasses());
 	}
 
 	/**

@@ -146,7 +146,8 @@ public class Builtin extends RuleElement
 			}
 			
 			ITuple builtinInputTuple = Factory.BASIC.createTuple( terms );
-			
+
+			// FIXME Check if this is still necessary.
 			List<ITuple> combinationsForBuiltin = Utils.createAllCombinations(
 					builtinInputTuple, mEquivalentTerms);
 			

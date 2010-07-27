@@ -33,6 +33,8 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.factory.Factory;
+import org.deri.iris.utils.equivalence.IEquivalentTerms;
+import org.deri.iris.utils.equivalence.IgnoreTermEquivalence;
 
 /**
  * <p>
@@ -49,6 +51,8 @@ public abstract class AbstractBuiltin implements IBuiltinAtom {
 
 	/** Holds the inner atom. */
 	private IAtom a;
+	
+	private IEquivalentTerms equivalenceClasses = new IgnoreTermEquivalence();
 
 	/**
 	 * Constructs the builtin. More precisely it constructs the inner atom. The
@@ -183,6 +187,21 @@ public abstract class AbstractBuiltin implements IBuiltinAtom {
 	public int maxUnknownVariables()
 	{
 		return 0;
+	}
+	
+	@Override
+	public void setEquivalenceClasses(IEquivalentTerms equivalenceClasses) {
+		if (equivalenceClasses == null) {
+			throw new NullPointerException(
+					"The equivalence classes must not be null");
+		}
+		
+		this.equivalenceClasses = equivalenceClasses;
+	}
+	
+	@Override
+	public IEquivalentTerms getEquivalenceClasses() {
+		return equivalenceClasses;
 	}
 
 	/** Something to save creating an an empty tuple every time we just need 'any' tuple. */
