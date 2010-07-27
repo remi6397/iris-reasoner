@@ -36,7 +36,7 @@ import org.deri.iris.api.terms.ITerm;
  * <code>areEquivalent</code> only checks for equality of the two terms
  * using the corresponding <code>equals</code> method.</li>
  * <li><code>findRepresentative</code> returns the term itself.</li>
- * <li><code>getEquivalent</code> returns a singleton set cotaining the term
+ * <li><code>getEquivalent</code> returns a singleton set containing the term
  * itself.</li>
  * <li><code>setEquivalent</code> does nothing.</li>
  * </ul>
