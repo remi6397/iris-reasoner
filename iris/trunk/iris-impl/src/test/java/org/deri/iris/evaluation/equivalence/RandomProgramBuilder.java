@@ -48,6 +48,7 @@ import org.deri.iris.storage.IRelation;
 /**
  * @author Adrian Marte
  */
+// FIXME Make this class "more" deterministic.
 public class RandomProgramBuilder {
 
 	private int numberOfRelations = 20;
