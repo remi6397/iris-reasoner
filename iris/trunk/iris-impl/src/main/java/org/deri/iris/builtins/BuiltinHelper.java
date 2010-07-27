@@ -59,6 +59,8 @@ import org.deri.iris.builtins.datatype.ToYearMonthDurationBuiltin;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.terms.concrete.XmlDurationWorkAroundHelper;
 import org.deri.iris.utils.StandardFloatingPointComparator;
+import org.deri.iris.utils.equivalence.IEquivalentTerms;
+import org.deri.iris.utils.equivalence.IgnoreTermEquivalence;
 
 /**
  * <p>
@@ -211,15 +213,36 @@ public class BuiltinHelper {
 	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 */
 	static boolean equal(final ITerm t0, final ITerm t1) {
+		return equal(t0, t1, new IgnoreTermEquivalence());
+	}
+
+	/**
+	 * Checks whether the values of two terms are the same according to the
+	 * specified equivalence classes.
+	 * 
+	 * @param t0 the first term
+	 * @param t1 the second term
+	 * @param equivalenceClasses The equivalence classes.
+	 * @return <code>true</code> if the terms are comparable and if their values
+	 *         are equal, otherwise <code>false</code>
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 */
+	static boolean equal(final ITerm t0, final ITerm t1, IEquivalentTerms equivalenceClasses) {
 		assert t0 != null;
 		assert t1 != null;
 
+		if (equivalenceClasses.areEquivalent(t0, t1)) {
+			return true;
+		}
+		
 		if ((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm))
 			return numbersEqual((INumericTerm) t0, (INumericTerm) t1);
-
+		
+		// Also take the term equivalence into account, when comparing two terms
+		// for equality.
 		return t0.equals(t1);
 	}
-
+	
 	/**
 	 * Two terms are exactly equal if they:
 	 * <ol>

@@ -162,6 +162,11 @@ public class RuleCompiler {
 				try {
 					if (atom instanceof IBuiltinAtom) {
 						IBuiltinAtom builtinAtom = (IBuiltinAtom) atom;
+						
+						// Tell the builtin atom the term equivalence relation,
+						// so that it can also take the equivalent terms into
+						// account when evaluating. 
+						builtinAtom.setEquivalenceClasses(mEquivalentTerms);
 
 						boolean constructedTerms = false;
 						for (ITerm term : atom.getTuple()) {

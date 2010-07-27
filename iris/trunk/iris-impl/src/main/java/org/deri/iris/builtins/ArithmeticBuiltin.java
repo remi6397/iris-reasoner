@@ -76,7 +76,7 @@ public abstract class ArithmeticBuiltin extends AbstractBuiltin
 	
 	protected boolean testForEquality( ITerm t1, ITerm t2 )
 	{
-		return BuiltinHelper.equal( t1, t2 );
+		return BuiltinHelper.equal( t1, t2, getEquivalenceClasses() );
 	}
 
 	/**
