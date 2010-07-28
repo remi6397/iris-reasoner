@@ -27,7 +27,6 @@ import java.util.List;
 import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.storage.IRelation;
@@ -86,11 +85,9 @@ public class RuleHeadEqualitySubstituter extends HeadSubstituter {
 			ITerm x = tuple.get(0);
 			ITerm y = tuple.get(1);
 
-			if (!(x instanceof INumericTerm) && !(y instanceof INumericTerm)) {
-				// ?X and ?Y are equivalent.
-				equivalentTerms.setEquivalent(x, y);
-				result.add(tuple);
-			}
+			// ?X and ?Y are equivalent.
+			equivalentTerms.setEquivalent(x, y);
+			result.add(tuple);
 		}
 
 		return result;
