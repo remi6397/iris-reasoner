@@ -223,7 +223,7 @@ Productions
                    {xmlliterallang} t_pre_xmlliteral t_lpar [string]:t_str t_comma [lang]:t_str t_rpar |
                    {plainliteral} t_pre_plainliteral t_lpar [string]:t_str t_comma [lang]:t_str t_rpar;
                    
-    builtin =		{binary}[first]:term t_bin_op [second]:term |
-				{equals}[first]:term t_eq [second]:term |
-    				{ternary}[first]:term t_ter_op [second]:term t_eq [third]:term;
+    builtin =	   {binary}[first]:term t_bin_op [second]:term |
+                   {equals}[first]:term t_eq [second]:term |
+                   {ternary}[first]:term t_ter_op [second]:term t_eq [third]:term;
 	
