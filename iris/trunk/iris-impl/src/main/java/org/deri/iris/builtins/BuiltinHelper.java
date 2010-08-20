@@ -69,6 +69,8 @@ import org.deri.iris.utils.equivalence.IgnoreTermEquivalence;
  */
 public class BuiltinHelper {
 
+	private static final GregorianCalendar DEFAULT_START_DATE = new GregorianCalendar(1970, Calendar.JANUARY, 1);
+
 	/**
 	 * Empty tuple (with arity 0) to avoid some timeconsuming creation of
 	 * tuples.
@@ -347,10 +349,60 @@ public class BuiltinHelper {
 	private static IDuration createDuration(final Duration d) {
 		assert d != null : "The duration must not be null";
 
-		return CONCRETE.createDuration(d.getSign() >= 0, d.getYears(), d
-				.getMonths(), d.getDays(), d.getHours(), d.getMinutes(),
+		return CONCRETE.createDuration(
+				d.getSign() >= 0, 
+				d.getYears(), 
+				d.getMonths(), 
+				d.getDays(), 
+				d.getHours(), 
+				d.getMinutes(),
 				((BigDecimal) d.getField(DatatypeConstants.SECONDS))
 						.doubleValue());
+	}
+
+	/**
+	 * Creates a duration object out of a <code>Duration</code>.
+	 * 
+	 * @param dt the <code>Duration</code>
+	 * @return the duration
+	 */
+	private static IDayTimeDuration createDayTimeDuration(final Duration d) {
+		assert d != null : "The duration must not be null";
+		
+		// TODO move this to xml workaround helper?
+		Duration dtd = d.normalizeWith(DEFAULT_START_DATE);
+		
+		assert dtd.getYears() == 0 : "The duration must not have years value set";
+		assert dtd.getMonths() == 0 : "The duration must not have months value set";
+		
+		
+		return CONCRETE.createDayTimeDuration(
+				dtd.getSign() >= 0, 
+				dtd.getDays(),
+				dtd.getHours(),
+				dtd.getMinutes(),
+				((BigDecimal) dtd.getField(DatatypeConstants.SECONDS))
+						.doubleValue());
+	}
+
+	/**
+	 * Creates a duration object out of a <code>Duration</code>.
+	 * 
+	 * @param dt the <code>Duration</code>
+	 * @return the duration
+	 */
+	private static IYearMonthDuration createYearMonthDuration(final Duration d) {
+		assert d != null : "The duration must not be null";
+//		assert d.getDays() == 0 : "The duration must not have days value set";
+//		assert d.getHours() == 0 : "The duration must not have hours value set";
+//		assert d.getMinutes() == 0 : "The duration must not have minutes value set";
+//		assert d.getSeconds() == 0 : "The duration must not have seconds value set";
+		
+		
+		return CONCRETE.createYearMonthDuration(
+				d.getSign() >= 0, 
+				d.getYears(),
+				d.getMonths());
 	}
 
 	/**
@@ -465,78 +517,106 @@ public class BuiltinHelper {
 					((INumericTerm) t1).getValue());
 			return toAppropriateType(result, t0, t1);
 		}
-		// dateTime - dateTime = duration
-		else if ((t0 instanceof IDateTime) && (t1 instanceof IDateTime)) {
-			final XMLGregorianCalendar cal0 = ((IDateTime) t0).getValue();
-			final XMLGregorianCalendar cal1 = ((IDateTime) t1).getValue();
+		else if (t0 instanceof IDateTime) {
+			/*
+			 * op:subtract-dateTimes( $arg1 as xs:dateTime, $arg2 as xs:dateTime) as xs:dayTimeDuration?
+			 */
+			if (t1 instanceof IDateTime) {
+				final XMLGregorianCalendar cal0 = ((IDateTime) t0).getValue();
+				final XMLGregorianCalendar cal1 = ((IDateTime) t1).getValue();
+				
+				return createDayTimeDuration(XmlDurationWorkAroundHelper.subtract(cal0, cal1));
+			}
+			
+			/*
+			 * op:subtract-yearMonthDuration-from-dateTime( $arg1 as xs:dateTime, $arg2 as xs:yearMonthDuration) as
+			 * xs:dateTime
+			 *
+			 * op:subtract-dayTimeDuration-from-dateTime( $arg1 as xs:dateTime, $arg2 as xs:dayTimeDuration) as
+			 * xs:dateTime
+			 */
+			else if (t1 instanceof IDuration) {
+				final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTime) t0)
+				.getValue().clone();
+				cal0.add(((IDuration) t1).getValue().negate());
+				return createDateTime(cal0);
+			}
+			
+			
+		}
+		else if (t0 instanceof IDateTerm) {
+			/*
+			 * op:subtract-dates($arg1 as xs:date, $arg2 as xs:date) as xs:dayTimeDuration?
+			 */
+			if (t1 instanceof IDateTerm) {
+				final XMLGregorianCalendar cal0 = ((IDateTerm) t0).getValue();
+				final XMLGregorianCalendar cal1 = ((IDateTerm) t1).getValue();
+				
+				return createDayTimeDuration(XmlDurationWorkAroundHelper.subtract(cal0, cal1));
+			}
+			
+			/*
+			 * op:subtract-dayTimeDuration-from-date( $arg1 as xs:date, $arg2 as xs:dayTimeDuration) as xs:date
+			 * 
+			 * op:subtract-yearMonthDuration-from-date( $arg1 as xs:date, $arg2 as xs:yearMonthDuration) as xs:date
+			 */
+			else if (t1 instanceof IDuration) {
+				final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTerm) t0)
+				.getValue().clone();
+				cal0.add(((IDuration) t1).getValue().negate());
+				return createDate(cal0);
+			}
+		}
+		
+		else if (t0 instanceof ITime) {
 
-			return createDuration(XmlDurationWorkAroundHelper.subtract(cal0,
-					cal1));
+			/*
+			 * op:subtract-times($arg1 as xs:time, $arg2 as xs:time) as xs:dayTimeDuration
+			 */
+			if ((t0 instanceof ITime) && (t1 instanceof ITime)) {
+				final XMLGregorianCalendar cal0 = ((ITime) t0).getValue();
+				final XMLGregorianCalendar cal1 = ((ITime) t1).getValue();
+				return createDayTimeDuration(XmlDurationWorkAroundHelper.subtract(cal0, cal1));
+			}
 
-			// return
-			// createDuration(cal0.toGregorianCalendar().getTimeInMillis() -
-			// cal1.toGregorianCalendar().getTimeInMillis());
+			/*
+			 * op:subtract-dayTimeDuration-from-time( $arg1 as xs:time, $arg2 as xs:dayTimeDuration) as xs:time
+			 */
+			else if ((t0 instanceof ITime) && (t1 instanceof IDuration)) {
+				final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((ITime) t0)
+				.getValue().clone();
+				cal0.add(((IDuration) t1).getValue().negate());
+				return createTime(cal0);
+			}
 		}
-		// dateTime - duration = dateTime
-		else if ((t0 instanceof IDateTime) && (t1 instanceof IDuration)) {
-			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTime) t0)
-					.getValue().clone();
-			cal0.add(((IDuration) t1).getValue().negate());
-			return createDateTime(cal0);
-		}
-		// date - date = duration
-		else if ((t0 instanceof IDateTerm) && (t1 instanceof IDateTerm)) {
-			final XMLGregorianCalendar cal0 = ((IDateTerm) t0).getValue();
-			final XMLGregorianCalendar cal1 = ((IDateTerm) t1).getValue();
-
-			return createDuration(XmlDurationWorkAroundHelper.subtract(cal0,
-					cal1));
-			// return
-			// createDuration(cal0.toGregorianCalendar().getTimeInMillis() -
-			// cal1.toGregorianCalendar().getTimeInMillis());
-		}
-		// date - duration = date
-		else if ((t0 instanceof IDateTerm) && (t1 instanceof IDuration)) {
-			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTerm) t0)
-					.getValue().clone();
-			cal0.add(((IDuration) t1).getValue().negate());
-			return createDate(cal0);
-		}
-		// time - time = duration
-		else if ((t0 instanceof ITime) && (t1 instanceof ITime)) {
-			final XMLGregorianCalendar cal0 = ((ITime) t0).getValue();
-			final XMLGregorianCalendar cal1 = ((ITime) t1).getValue();
-			return createDuration(cal0.toGregorianCalendar().getTimeInMillis()
-					- cal1.toGregorianCalendar().getTimeInMillis());
-		}
-		// time - duration = time
-		else if ((t0 instanceof ITime) && (t1 instanceof IDuration)) {
-			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((ITime) t0)
-					.getValue().clone();
-			cal0.add(((IDuration) t1).getValue().negate());
-			return createTime(cal0);
-		}
+		
 		// duration - duration = duration
 		else if ((t0 instanceof IDuration) && (t1 instanceof IDuration)) {
+			
+			/*
+			 * not defined!
+			 */
 			final Duration d0 = ((IDuration) t0).getValue();
 			final Duration d1 = ((IDuration) t1).getValue();
-			IDuration result = createDuration(XmlDurationWorkAroundHelper
-					.subtract(d0, d1));
 
-			// yearMonthDuration - yearMonthDuration = yearMonthDuration
+			/*
+			 * op:subtract-yearMonthDurations( $arg1 as xs:yearMonthDuration, $arg2 as xs:yearMonthDuration) as
+			 * xs:yearMonthDuration
+			 */
 			if (t0 instanceof IYearMonthDuration
 					&& t1 instanceof IYearMonthDuration) {
-				return CONCRETE.createYearMonthDuration(result.isPositive(),
-						result.getYear(), result.getMonth());
+				return createYearMonthDuration( XmlDurationWorkAroundHelper.subtract(d0, d1) );
 			}
-			// dayTimeDuration - dayTimeDuration = dayTimeDuration
+
+			/*
+			 * op:subtract-dayTimeDurations( $arg1 as xs:dayTimeDuration, $arg2 as xs:dayTimeDuration) as
+			 * xs:dayTimeDuration
+			 */
 			else if (t0 instanceof IDayTimeDuration
 					&& t1 instanceof IDayTimeDuration) {
-				return CONCRETE.createDayTimeDuration(result.isPositive(),
-						result.getDay(), result.getHour(), result.getMinute(),
-						result.getDecimalSecond());
+				return createDayTimeDuration( XmlDurationWorkAroundHelper.subtract(d0, d1) );
 			} else {
-				return result;
+				return createDuration(XmlDurationWorkAroundHelper.subtract(d0, d1));
 			}
 		}
 
