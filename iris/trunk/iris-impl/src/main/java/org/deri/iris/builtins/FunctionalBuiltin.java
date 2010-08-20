@@ -38,7 +38,7 @@ import org.deri.iris.api.terms.ITerm;
  * .</li>
  * </ol>
  */
-public abstract class FunctionalBuiltin extends AbstractBuiltin {
+public abstract class FunctionalBuiltin extends ArithmeticBuiltin {
 
 	/**
 	 * Creates a new functional builtin.
@@ -73,7 +73,7 @@ public abstract class FunctionalBuiltin extends AbstractBuiltin {
 			assert variableIndexes[0] >= 0;
 			assert variableIndexes[0] == getPredicate().getArity() - 1;
 
-			return computeResult(terms);
+			return computeMissingTerm(variableIndexes[0], terms );
 		}
 	}
 
@@ -102,6 +102,11 @@ public abstract class FunctionalBuiltin extends AbstractBuiltin {
 	protected abstract ITerm computeResult(ITerm[] terms)
 			throws EvaluationException;
 
+	@Override
+	protected ITerm computeMissingTerm( int missingTermIndex, ITerm[] terms ) throws EvaluationException {
+		return computeResult(terms);
+	}
+	
 	@Override
 	public int maxUnknownVariables() {
 		return 1;
