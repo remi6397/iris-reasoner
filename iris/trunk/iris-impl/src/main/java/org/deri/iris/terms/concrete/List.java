@@ -2,6 +2,7 @@ package org.deri.iris.terms.concrete;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -13,11 +14,19 @@ import org.deri.iris.api.terms.concrete.IList;
 public class List implements IList {
 
 	private final java.util.List<IConcreteTerm> items;
-	
+
 	public List() {
 		items = new ArrayList<IConcreteTerm>();
 	}
-	
+
+	public List(java.util.List<IConcreteTerm> terms) {
+		items = new ArrayList<IConcreteTerm>(terms);
+	}
+
+	public List(IConcreteTerm... terms) {
+		this(Arrays.asList(terms));
+	}
+
 	@Override
 	public URI getDatatypeIRI() {
 		return URI.create(IList.DATATYPE_URI);
@@ -26,13 +35,13 @@ public class List implements IList {
 	@Override
 	public String toCanonicalString() {
 		StringBuilder builder = new StringBuilder();
-		
+
 		builder.append("[");
 		for (IConcreteTerm item : items) {
 			builder.append(item.toCanonicalString());
 		}
 		builder.append("]");
-		
+
 		return builder.toString();
 	}
 
@@ -44,7 +53,12 @@ public class List implements IList {
 	@Override
 	public boolean isGround() {
 		// TODO if variables are supported then check for variables.
-		
+
+		// for(IConcreteTerm t : items) {
+		// if (!t.isGround()) {
+		// return false;
+		// }
+		// }
 		return true;
 	}
 
@@ -53,42 +67,43 @@ public class List implements IList {
 		if (!(otherTerm instanceof IList)) {
 			return 1;
 		}
-		
+
 		IList otherList = (IList) otherTerm;
-		
+
 		if (size() != otherList.size())
 			return 1;
-		
+
 		for (int i = 0; i < items.size(); i++) {
 			if (!(this.get(i).equals(otherList.get(i))))
 				return this.get(i).compareTo(otherList.get(i));
 		}
-		
+
 		return 0;
 	}
-	
-	@Override
-	public boolean equals(Object arg0) {
-		if (!(arg0 instanceof IList)) {
-			return false;
-		}
-		
-		IList otherList = (IList) arg0;
-		
-		if (size() != otherList.size())
-			return false;
-		
-		for (int i = 0; i < items.size(); i++) {
-			if (!(this.get(i).equals(otherList.get(i))))
-				return false;
-		}
-		
-		return true;
-	}
-	
+
 	@Override
 	public int hashCode() {
-		return items.hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((items == null) ? 0 : items.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		List other = (List) obj;
+		if (items == null) {
+			if (other.items != null)
+				return false;
+		} else if (!items.equals(other.items))
+			return false;
+		return true;
 	}
 
 	@Override
@@ -122,105 +137,93 @@ public class List implements IList {
 	}
 
 	@Override
-	public boolean containsAll(Collection<?> arg0) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean containsAll(Collection<?> c) {
+		return items.containsAll(c);
 	}
 
 	@Override
-	public IConcreteTerm get(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public IConcreteTerm get(int index) {
+		return items.get(index);
 	}
 
 	@Override
-	public int indexOf(Object arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int indexOf(Object o) {
+		return items.indexOf(o);
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return items.isEmpty();
 	}
 
 	@Override
 	public Iterator<IConcreteTerm> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return items.iterator();
 	}
 
 	@Override
-	public int lastIndexOf(Object arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int lastIndexOf(Object o) {
+		return items.lastIndexOf(o);
 	}
 
 	@Override
 	public ListIterator<IConcreteTerm> listIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return items.listIterator();
 	}
 
 	@Override
-	public ListIterator<IConcreteTerm> listIterator(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public ListIterator<IConcreteTerm> listIterator(int index) {
+		return items.listIterator(index);
 	}
 
 	@Override
-	public boolean remove(Object arg0) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean remove(Object o) {
+		return items.remove(o);
 	}
 
 	@Override
-	public IConcreteTerm remove(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public IConcreteTerm remove(int index) {
+		return items.remove(index);
 	}
 
 	@Override
-	public boolean removeAll(Collection<?> arg0) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean removeAll(Collection<?> c) {
+		return items.removeAll(c);
 	}
 
 	@Override
-	public boolean retainAll(Collection<?> arg0) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean retainAll(Collection<?> c) {
+		return items.retainAll(c);
 	}
 
 	@Override
-	public IConcreteTerm set(int arg0, IConcreteTerm arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public IConcreteTerm set(int index, IConcreteTerm element) {
+		return items.set(index, element);
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return items.size();
 	}
 
 	@Override
-	public java.util.List<IConcreteTerm> subList(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public org.deri.iris.terms.concrete.List subList(int fromIndex, int toIndex) {
+		return new org.deri.iris.terms.concrete.List(items.subList(fromIndex,
+				toIndex));
 	}
 
 	@Override
 	public Object[] toArray() {
-		// TODO Auto-generated method stub
-		return null;
+		return items.toArray();
 	}
 
 	@Override
-	public <T> T[] toArray(T[] arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public <T> T[] toArray(T[] a) {
+		return items.toArray(a);
+	}
+
+	public String toString() {
+		return this.toCanonicalString();
 	}
 
 }
