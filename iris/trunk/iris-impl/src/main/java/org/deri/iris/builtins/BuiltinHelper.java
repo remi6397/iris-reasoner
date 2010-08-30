@@ -69,8 +69,6 @@ import org.deri.iris.utils.equivalence.IgnoreTermEquivalence;
  */
 public class BuiltinHelper {
 
-	private static final GregorianCalendar DEFAULT_START_DATE = new GregorianCalendar(1970, Calendar.JANUARY, 1);
-
 	/**
 	 * Empty tuple (with arity 0) to avoid some timeconsuming creation of
 	 * tuples.
@@ -370,7 +368,7 @@ public class BuiltinHelper {
 		assert d != null : "The duration must not be null";
 		
 		// TODO move this to xml workaround helper?
-		Duration dtd = d.normalizeWith(DEFAULT_START_DATE);
+		Duration dtd = d.normalizeWith(ZERO);
 		
 		assert dtd.getYears() == 0 : "The duration must not have years value set";
 		assert dtd.getMonths() == 0 : "The duration must not have months value set";
@@ -430,7 +428,11 @@ public class BuiltinHelper {
 			return toAppropriateType(sum, t0, t1);
 
 		}
-		// dateTime + duration = dateTime
+		
+		/*
+		 * op:add-yearMonthDuration-to-dateTime( $arg1 as xs:dateTime, $arg2 as xs:yearMonthDuration) as xs:dateTime
+		 * op:add-dayTimeDuration-to-dateTime( $arg1 as xs:dateTime, $arg2 as xs:dayTimeDuration) as xs:dateTime
+		 */
 		else if ((t0 instanceof IDateTime) && (t1 instanceof IDuration)) {
 			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTime) t0)
 					.getValue().clone();
@@ -438,56 +440,68 @@ public class BuiltinHelper {
 			return createDateTime(cal0);
 
 		}
-		// duration + dateTime = datetime
 		else if ((t0 instanceof IDuration) && (t1 instanceof IDateTime)) {
 			final XMLGregorianCalendar cal1 = (XMLGregorianCalendar) ((IDateTime) t1)
 					.getValue().clone();
 			cal1.add(((IDuration) t0).getValue());
 			return createDateTime(cal1);
 		}
-		// date + duration = date
+		
+		/*
+		 * op:add-yearMonthDuration-to-date( $arg1 as xs:date, $arg2 as xs:yearMonthDuration) as xs:date
+		 * op:add-dayTimeDuration-to-date( $arg1 as xs:date, $arg2 as xs:dayTimeDuration) as xs:date
+		 */
 		else if ((t0 instanceof IDateTerm) && (t1 instanceof IDuration)) {
 			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTerm) t0)
 					.getValue().clone();
 			cal0.add(((IDuration) t1).getValue());
 			return createDate(cal0);
 		}
-		// duration + date = date
 		else if ((t0 instanceof IDuration) && (t1 instanceof IDateTerm)) {
 			final XMLGregorianCalendar cal1 = (XMLGregorianCalendar) ((IDateTerm) t1)
 					.getValue().clone();
 			cal1.add(((IDuration) t0).getValue());
 			return createDate(cal1);
 		}
-		// time + duration = time
+		
+		/*
+		 * op:add-dayTimeDuration-to-time( $arg1 as xs:time, $arg2 as xs:dayTimeDuration) as xs:time
+		 */
+		 // TODO yearMonthDuration allowed in implementation, not deterministic?
 		else if ((t0 instanceof ITime) && (t1 instanceof IDuration)) {
 			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((ITime) t0)
 					.getValue().clone();
 			cal0.add(((IDuration) t1).getValue());
 			return createTime(cal0);
 		}
-		// duration + time = time
 		else if ((t0 instanceof IDuration) && (t1 instanceof ITime)) {
 			final XMLGregorianCalendar cal1 = (XMLGregorianCalendar) ((ITime) t1)
 					.getValue().clone();
 			cal1.add(((IDuration) t0).getValue());
 			return createTime(cal1);
 		}
-		// duration + duration = duration
+		
 		else if ((t0 instanceof IDuration) && (t1 instanceof IDuration)) {
 			final Duration d0 = ((IDuration) t0).getValue();
 			final Duration d1 = ((IDuration) t1).getValue();
-			IDuration result = createDuration(XmlDurationWorkAroundHelper.add(
-					d0, d1));
 
-			if (t0 instanceof IYearMonthDuration
-					&& t1 instanceof IYearMonthDuration) {
-				return ToYearMonthDurationBuiltin.toYearMonthDuration(result);
-			} else if (t0 instanceof IDayTimeDuration
-					&& t1 instanceof IDayTimeDuration) {
-				return ToDayTimeDurationBuiltin.toDayTimeDuration(result);
+
+			if (t0 instanceof IYearMonthDuration && t1 instanceof IYearMonthDuration) {
+				/*
+				 * op:add-yearMonthDurations( $arg1 as xs:yearMonthDuration, $arg2 as xs:yearMonthDuration) as xs:yearMonthDuration
+				 */
+				return createYearMonthDuration( XmlDurationWorkAroundHelper.add(d0, d1) );
+			} else if (t0 instanceof IDayTimeDuration && t1 instanceof IDayTimeDuration) {
+				/*
+				 * op:add-dayTimeDurations( $arg1 as xs:dayTimeDuration, $arg2 as xs:dayTimeDuration) as xs:dayTimeDuration
+				 */
+				return createDayTimeDuration( XmlDurationWorkAroundHelper.add(d0, d1) );
 			} else {
-				return result;
+				/*
+				 * TODO not defined; allow?
+				 * duration + duration = duration
+				 */
+				return createDuration(XmlDurationWorkAroundHelper.add(d0, d1));
 			}
 		}
 		return null;
@@ -656,25 +670,25 @@ public class BuiltinHelper {
 			IDuration duration = (IDuration) t0;
 			INumericTerm number = (INumericTerm) t1;
 
-			Duration result = duration.getValue().multiply(
-					new BigDecimal(number.getValue().doubleValue()));
-			IDuration multipliedDuration = CONCRETE.createDuration(result
-					.getSign() > -1, result.getYears(), result.getMonths(),
-					result.getDays(), result.getHours(), result.getMinutes(),
-					result.getSeconds());
-
-			// yearMonthDuration * number = yearMonthDuration
+			Duration result = duration.getValue().multiply(new BigDecimal(number.getValue().doubleValue()));
+			
+			/*
+			 * op:multiply-yearMonthDuration( $arg1 as xs:yearMonthDuration, $arg2 as xs:double) as xs:yearMonthDuration
+			 */
 			if (duration instanceof IYearMonthDuration) {
-				return ToYearMonthDurationBuiltin
-						.toYearMonthDuration(multipliedDuration);
+				return createYearMonthDuration(result);
 			}
-			// dayTimeDuration * number = dayTimeDuration
+			/*
+			 * op:multiply-dayTimeDuration( $arg1 as xs:dayTimeDuration, $arg2 as xs:double) as xs:dayTimeDuration
+			 */
 			else if (duration instanceof IDayTimeDuration) {
-				return ToDayTimeDurationBuiltin
-						.toDayTimeDuration(multipliedDuration);
+				return createDayTimeDuration(result);
 			}
 
-			return multipliedDuration;
+			/*
+			 * not defined!
+			 */
+			return createDuration(result);
 		}
 
 		return null;
@@ -721,7 +735,10 @@ public class BuiltinHelper {
 			}
 		}
 
-		// duration / duration = double
+		/*
+		 * op:divide-yearMonthDuration-by-yearMonthDuration( $arg1 as xs:yearMonthDuration, $arg2 as xs:yearMonthDuration) as xs:decimal
+		 * op:divide-dayTimeDuration-by-dayTimeDuration( $arg1 as xs:dayTimeDuration, $arg2 as xs:dayTimeDuration) as xs:decimal
+		 */
 		if (t0 instanceof IDuration && t1 instanceof IDuration) {
 			Duration duration0 = ((IDuration) t0).getValue();
 			Duration duration1 = ((IDuration) t1).getValue();
@@ -733,7 +750,10 @@ public class BuiltinHelper {
 			return CONCRETE.createDecimal(quotient);
 		}
 
-		// duration / number = duration
+		/*
+		 * op:divide-yearMonthDuration( $arg1 as xs:yearMonthDuration, $arg2 as xs:double) as xs:yearMonthDuration
+		 * op:divide-dayTimeDuration( $arg1 as xs:dayTimeDuration, $arg2 as xs:double) as xs:dayTimeDuration
+		 */
 		if (t0 instanceof IDuration && t1 instanceof INumericTerm) {
 			double number = ((INumericTerm) t1).getValue().doubleValue();
 
