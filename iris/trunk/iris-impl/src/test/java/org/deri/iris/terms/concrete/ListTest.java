@@ -9,13 +9,12 @@ import org.deri.iris.api.terms.IConcreteTerm;
 import org.deri.iris.api.terms.concrete.IList;
 import org.deri.iris.terms.AbstractConcreteTermTest;
 
-
 public class ListTest extends AbstractConcreteTermTest {
-
 
 	@Override
 	protected IConcreteTerm createBasic() {
-		return new org.deri.iris.terms.concrete.List(new IntTerm(2), new IntTerm(3));	 
+		return new org.deri.iris.terms.concrete.List(new IntTerm(2),
+				new IntTerm(3));
 	}
 
 	@Override
@@ -25,7 +24,8 @@ public class ListTest extends AbstractConcreteTermTest {
 
 	@Override
 	protected IConcreteTerm createEqual() {
-		return new org.deri.iris.terms.concrete.List(new IntTerm(2), new IntTerm(3));	 
+		return new org.deri.iris.terms.concrete.List(new IntTerm(2),
+				new IntTerm(3));
 	}
 
 	@Override
@@ -35,12 +35,14 @@ public class ListTest extends AbstractConcreteTermTest {
 
 	@Override
 	protected IConcreteTerm createGreater() {
-		return new org.deri.iris.terms.concrete.List(new IntTerm(3), new IntTerm(3), new org.deri.iris.terms.concrete.List(new IntTerm(4)));
+		return new org.deri.iris.terms.concrete.List(
+				new PlainLiteral("3", "de"), new IntTerm(3),
+				new org.deri.iris.terms.concrete.List(new IntTerm(4)));
 	}
 
 	@Override
 	protected String createGreaterString() {
-		return "[3,3,[4]]";
+		return "[3@de,3,[4]]";
 	}
 
 	@Override
@@ -48,6 +50,33 @@ public class ListTest extends AbstractConcreteTermTest {
 		return URI.create(IList.DATATYPE_URI);
 	}
 
-	
+	public void testCompareTo2() {
+		org.deri.iris.terms.concrete.List list_one = new org.deri.iris.terms.concrete.List(
+				new IntTerm(1), new IntTerm(2));
+		org.deri.iris.terms.concrete.List list_two = new org.deri.iris.terms.concrete.List(
+				new IntTerm(2), new IntTerm(3));
+		org.deri.iris.terms.concrete.List list_three = new org.deri.iris.terms.concrete.List(
+				new IntTerm(1), new IntTerm(2), new IntTerm(3));
+
+		assertFalse(list_one.equals(list_two));
+
+		assertEquals(-1, list_one.compareTo(list_two));
+		assertEquals(1, list_two.compareTo(list_one));
+
+		assertEquals(-1, list_two.compareTo(list_three));
+		assertEquals(1, list_three.compareTo(list_two));
+
+		assertEquals(-1, list_one.compareTo(list_three));
+		assertEquals(1, list_three.compareTo(list_one));
+
+		assertEquals(0, list_one.compareTo(list_one));
+		assertEquals(0, list_two.compareTo(list_two));
+		assertEquals(0, list_three.compareTo(list_three));
+		
+		org.deri.iris.terms.concrete.List list_short = new org.deri.iris.terms.concrete.List(
+				new ShortTerm((short)1), new ShortTerm((short)2));
+		
+		assertEquals(0, list_one.compareTo(list_short));
+	}
 
 }
