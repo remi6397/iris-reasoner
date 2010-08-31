@@ -71,9 +71,11 @@ public class List implements IList {
 
 		IList otherList = (IList) otherTerm;
 
-		if (size() != otherList.size())
+		if (size() < otherList.size())
+			return -1;
+		else if (size() > otherList.size())
 			return 1;
-
+		
 		for (int i = 0; i < items.size(); i++) {
 			if (!(this.get(i).equals(otherList.get(i))))
 				return this.get(i).compareTo(otherList.get(i));
