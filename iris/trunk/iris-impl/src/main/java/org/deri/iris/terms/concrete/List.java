@@ -39,7 +39,9 @@ public class List implements IList {
 		builder.append("[");
 		for (IConcreteTerm item : items) {
 			builder.append(item.toCanonicalString());
+			builder.append(",");
 		}
+		builder.delete(builder.lastIndexOf(","), builder.lastIndexOf(",")+1);
 		builder.append("]");
 
 		return builder.toString();
@@ -53,12 +55,11 @@ public class List implements IList {
 	@Override
 	public boolean isGround() {
 		// TODO if variables are supported then check for variables.
-
-		// for(IConcreteTerm t : items) {
-		// if (!t.isGround()) {
-		// return false;
-		// }
-		// }
+		for (IConcreteTerm t : items) {
+			if (!t.isGround()) {
+				return false;
+			}
+		}
 		return true;
 	}
 
