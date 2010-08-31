@@ -375,11 +375,11 @@ public class BuiltinHelper {
 		
 		
 		return CONCRETE.createDayTimeDuration(
-				dtd.getSign() >= 0, 
+				d.getSign() >= 0, 
 				dtd.getDays(),
-				dtd.getHours(),
-				dtd.getMinutes(),
-				((BigDecimal) dtd.getField(DatatypeConstants.SECONDS))
+				d.getHours(),
+				d.getMinutes(),
+				((BigDecimal) d.getField(DatatypeConstants.SECONDS))
 						.doubleValue());
 	}
 
