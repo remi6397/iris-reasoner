@@ -22,6 +22,11 @@ public class List implements IList {
 	public List(java.util.List<IConcreteTerm> terms) {
 		items = new ArrayList<IConcreteTerm>(terms);
 	}
+	
+	public List(org.deri.iris.terms.concrete.List list){
+		items = new ArrayList<IConcreteTerm>();
+		items.addAll(list.getItems());
+	}
 
 	public List(IConcreteTerm... terms) {
 		this(Arrays.asList(terms));
@@ -50,6 +55,10 @@ public class List implements IList {
 	@Override
 	public Object getValue() {
 		return new ArrayList<IConcreteTerm>(items);
+	}
+	
+	public java.util.List<IConcreteTerm> getItems() {
+		return this.items;
 	}
 
 	@Override
