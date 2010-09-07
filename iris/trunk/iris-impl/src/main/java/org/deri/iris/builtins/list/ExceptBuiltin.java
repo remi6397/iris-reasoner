@@ -62,7 +62,7 @@ public class ExceptBuiltin extends AbstractBuiltin {
 		super(PREDICATE, terms);
 	}
 
-	protected ITerm computeResult(ITerm[] terms) {
+	protected ITerm computeResult(ITerm... terms) {
 		return ListBuiltinHelper.except(terms);
 	}
 

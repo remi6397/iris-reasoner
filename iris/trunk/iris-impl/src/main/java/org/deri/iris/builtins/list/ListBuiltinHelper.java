@@ -66,7 +66,7 @@ public class ListBuiltinHelper {
 			throw new IllegalArgumentException(
 					"The first Argument must be a List");
 		}
-		org.deri.iris.terms.concrete.List list = (org.deri.iris.terms.concrete.List) terms[0];
+		IList list = (org.deri.iris.terms.concrete.List) terms[0];
 		return list.contains(terms[1]);
 	}
 
@@ -83,7 +83,7 @@ public class ListBuiltinHelper {
 		if (!(term instanceof org.deri.iris.api.terms.concrete.IList)) {
 			throw new IllegalArgumentException("The Argument must be a List.");
 		}
-		org.deri.iris.terms.concrete.List list = (org.deri.iris.terms.concrete.List) term;
+		IList list = (org.deri.iris.terms.concrete.List) term;
 		return list.size();
 	}
 
@@ -110,8 +110,13 @@ public class ListBuiltinHelper {
 			throw new IllegalArgumentException(
 					"Second Argument has to be a IntTerm.");
 		}
-		org.deri.iris.terms.concrete.List list = (org.deri.iris.terms.concrete.List) terms[0];
-		return list.get(Integer.parseInt(terms[1].toString()));
+		IList list = (org.deri.iris.terms.concrete.List) terms[0];
+		int pos = Integer.parseInt(terms[1].toString());
+		if (pos < 0) {
+			pos = list.size() + pos;
+		}
+
+		return list.get(pos);
 	}
 
 	/**
@@ -127,7 +132,7 @@ public class ListBuiltinHelper {
 	 *            the position (index) of the item
 	 * @return the item
 	 */
-	public static ITerm subList(ITerm[] terms) {
+	public static IList subList(ITerm[] terms) {
 		if (terms == null)
 			throw new NullPointerException("The Terms must not be null.");
 		if (terms.length < 2) {
@@ -141,14 +146,14 @@ public class ListBuiltinHelper {
 			throw new IllegalArgumentException(
 					"Second Argument has to be a IntTerm.");
 		}
-		org.deri.iris.terms.concrete.List list = (org.deri.iris.terms.concrete.List) terms[0];
+		IList newList = new org.deri.iris.terms.concrete.List((IList) terms[0]);
 		if (terms[2] != null) {
-			return new org.deri.iris.terms.concrete.List(list.subList(Integer
-					.parseInt(terms[1].toString()), list.size()));
+			return new org.deri.iris.terms.concrete.List(newList.subList(
+					Integer.parseInt(terms[1].toString()), newList.size()));
 		} else {
-			return new org.deri.iris.terms.concrete.List(list.subList(Integer
-					.parseInt(terms[1].toString()), Integer.parseInt(terms[2]
-					.toString())));
+			return new org.deri.iris.terms.concrete.List(newList.subList(
+					Integer.parseInt(terms[1].toString()), Integer
+							.parseInt(terms[2].toString())));
 		}
 
 	}
@@ -163,22 +168,24 @@ public class ListBuiltinHelper {
 	 *            the IConcreteTerms to add to the list.
 	 * @return the List with all terms added.
 	 */
-	public static ITerm append(ITerm[] terms) {
+	public static IList append(ITerm[] terms) {
 		if (terms == null)
 			throw new NullPointerException("The Terms must not be null.");
 		if (!(terms[0] instanceof IList)) {
 			throw new IllegalArgumentException("First Argument must be a List.");
 		}
-		org.deri.iris.terms.concrete.List list = (org.deri.iris.terms.concrete.List) terms[0];
+
+		IList newList = new org.deri.iris.terms.concrete.List();
+		newList.addAll((IList) terms[0]);
 		for (int i = 1; i < terms.length; i++) {
 			if (!(terms[i] instanceof IConcreteTerm)) {
 				throw new IllegalArgumentException("Argument " + i
-						+ " must be an ConcreteTerm to be appended to a List.");
+						+ " must be an IConcreteTerm to be appended to a List.");
 			} else {
-				list.add((IConcreteTerm) terms[i]);
+				newList.add((IConcreteTerm) terms[i]);
 			}
 		}
-		return list;
+		return newList;
 	}
 
 	/**
@@ -189,22 +196,24 @@ public class ListBuiltinHelper {
 	 *            [] terms the Lists
 	 * @return a list with all lists concatenated
 	 */
-	public static ITerm concatenate(ITerm[] terms) {
+	public static IList concatenate(ITerm[] terms) {
 		if (terms == null)
 			throw new NullPointerException("The Terms must not be null.");
 		if (!(terms[0] instanceof IList)) {
 			throw new IllegalArgumentException("Arguments must be a List.");
 		}
-		org.deri.iris.terms.concrete.List list = (org.deri.iris.terms.concrete.List) terms[0];
-		for (int i = 1; i < terms.length; i++) {
+
+		IList newList = new org.deri.iris.terms.concrete.List();
+
+		for (int i = 0; i < terms.length; i++) {
 			if (!(terms[i] instanceof IList)) {
 				throw new IllegalArgumentException("Argument " + i
-						+ " must be an List to be concatenated to a List.");
+						+ " must be a List to be concatenated to a List.");
 			} else {
-				list.addAll((org.deri.iris.terms.concrete.List) terms[i]);
+				newList.addAll((IList) terms[i]);
 			}
 		}
-		return list;
+		return newList;
 	}
 
 	/**
@@ -215,13 +224,14 @@ public class ListBuiltinHelper {
 	 *            [] terms
 	 * @return a list with all terms inserted.
 	 */
-	public static ITerm makeList(ITerm[] terms) {
-		if (terms == null)
-			throw new NullPointerException("The Terms must not be null.");
+	public static IList makeList(ITerm[] terms) {
+		if (terms == null || terms.length == 0){
+			return new org.deri.iris.terms.concrete.List();
+		}
 		if ((terms[0] == null)) {
 			throw new NullPointerException("The Terms must not be null.");
 		}
-		org.deri.iris.terms.concrete.List list = new org.deri.iris.terms.concrete.List();
+		IList list = new org.deri.iris.terms.concrete.List();
 		for (int i = 0; i < terms.length; i++) {
 			if (!(terms[i] instanceof IConcreteTerm)) {
 				throw new IllegalArgumentException(
@@ -247,13 +257,14 @@ public class ListBuiltinHelper {
 	 *            the item to insert
 	 * @return list with inserted item
 	 */
-	public static ITerm insertBefore(ITerm[] terms) {
+	public static IList insertBefore(ITerm[] terms) {
 		if (terms == null)
 			throw new NullPointerException("The Terms must not be null.");
 		if (!(terms[0] instanceof IList)) {
 			throw new IllegalArgumentException("First Argument must be a List.");
 		}
-		org.deri.iris.terms.concrete.List list = (org.deri.iris.terms.concrete.List) terms[0];
+		IList list = new org.deri.iris.terms.concrete.List();
+		list.addAll((IList) terms[0]);
 		if (!(terms[1] instanceof IIntTerm)) {
 			throw new IllegalArgumentException(
 					"Second Argument must be a IntTerm.");
@@ -265,12 +276,17 @@ public class ListBuiltinHelper {
 		IntTerm position = (IntTerm) terms[1];
 		IConcreteTerm item = (IConcreteTerm) terms[2];
 		int index = Integer.parseInt(position.toString());
-		index--;
-		if (index < 0 || index > list.size())
+		if (index >= list.size())
 			throw new IllegalArgumentException("Index out of range: " + index
 					+ ".");
+		if(index < 0) {
+			index = list.size()+index;
+		}
+//		if(index < 0) {
+//			throw new IllegalArgumentException("Index out of range: " + index
+//					+ ".");
+//		}
 		list.add(index, item);
-
 		return list;
 	}
 
@@ -284,7 +300,7 @@ public class ListBuiltinHelper {
 	 *            the position of the item to remove
 	 * @return list with removed item.
 	 */
-	public static ITerm remove(ITerm[] terms) {
+	public static IList remove(ITerm[] terms) {
 		if (terms == null)
 			throw new NullPointerException("The Terms must not be null.");
 		if (!(terms[0] instanceof IList)) {
@@ -293,7 +309,8 @@ public class ListBuiltinHelper {
 		if (terms.length != 2) {
 			throw new IllegalArgumentException("There must be 2 Arguments.");
 		}
-		org.deri.iris.terms.concrete.List list = (org.deri.iris.terms.concrete.List) terms[0];
+		IList list = new org.deri.iris.terms.concrete.List();
+		list.addAll((IList) terms[0]);
 		if (!(terms[1] instanceof IIntTerm)) {
 			throw new IllegalArgumentException(
 					"Second Argument must be a IntTerm.");
@@ -315,14 +332,15 @@ public class ListBuiltinHelper {
 	 *            the complete list
 	 * @return list in reverse order.
 	 */
-	public static ITerm reverse(ITerm[] terms) {
+	public static IList reverse(ITerm[] terms) {
 		if (terms == null)
 			throw new NullPointerException("The Terms must not be null.");
 		if (!(terms[0] instanceof IList)) {
 			throw new IllegalArgumentException("First Argument must be a List.");
 		}
-		org.deri.iris.terms.concrete.List list = (org.deri.iris.terms.concrete.List) terms[0];
-		org.deri.iris.terms.concrete.List reverse_list = new org.deri.iris.terms.concrete.List();
+		IList list = new org.deri.iris.terms.concrete.List();
+		list.addAll((IList) terms[0]);
+		IList reverse_list = new org.deri.iris.terms.concrete.List();
 		for (int i = list.size(); i < 0; i--) {
 			reverse_list.add(list.remove(i));
 		}
@@ -339,20 +357,21 @@ public class ListBuiltinHelper {
 	 *            the matchingItem
 	 * @return list with all indices of the occurrence of item.
 	 */
-	public static ITerm indexof(ITerm[] terms) {
+	public static IList indexof(ITerm[] terms) {
 		if (terms == null)
 			throw new NullPointerException("The Terms must not be null.");
 		if (!(terms[0] instanceof IList)) {
 			throw new IllegalArgumentException("First Argument must be a List.");
 		}
-		org.deri.iris.terms.concrete.List list = (org.deri.iris.terms.concrete.List) terms[0];
+		IList list = new org.deri.iris.terms.concrete.List();
+		list.addAll((IList) terms[0]);
 		if (terms[1] == null || !(terms[1] instanceof IConcreteTerm)) {
 			throw new IllegalArgumentException(
 					"Third Argument must be a ConcreteTerm.");
 		}
 
 		IConcreteTerm item = (IConcreteTerm) terms[1];
-		org.deri.iris.terms.concrete.List list2 = new org.deri.iris.terms.concrete.List();
+		IList list2 = new org.deri.iris.terms.concrete.List();
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).equals(item)) {
 				list2.add(new IntTerm(i));
@@ -371,10 +390,10 @@ public class ListBuiltinHelper {
 	 *            lists to union
 	 * @return list with duplicates removed
 	 */
-	public static ITerm union(ITerm[] terms) {
+	public static IList union(ITerm[] terms) {
 		// union = distinct_values(concatenate(terms));
-		distinct_values(concatenate(terms));
-		return null;
+		return distinct_values(concatenate(terms));
+
 	}
 
 	/**
@@ -386,13 +405,14 @@ public class ListBuiltinHelper {
 	 *            the list
 	 * @return list with unique items
 	 */
-	public static ITerm distinct_values(ITerm term) {
+	public static IList distinct_values(ITerm term) {
 		if (term == null)
 			throw new NullPointerException("The Terms must not be null.");
 		if (!(term instanceof IList)) {
 			throw new IllegalArgumentException("Argument must be a List.");
 		}
-		org.deri.iris.terms.concrete.List list = (org.deri.iris.terms.concrete.List) term;
+		IList list = new org.deri.iris.terms.concrete.List();
+		list.addAll((IList) term);
 		java.util.List<IConcreteTerm> uniques = new java.util.ArrayList<IConcreteTerm>();
 		for (int i = 0; i < list.size(); i++) {
 			if (!(uniques.contains(list.get(i)))) {
@@ -410,21 +430,23 @@ public class ListBuiltinHelper {
 	 * @param terms
 	 * @return
 	 */
-	public static ITerm intersect(ITerm[] terms) {
+	public static IList intersect(ITerm[] terms) {
 		if (terms == null)
 			throw new NullPointerException("The Terms must not be null.");
 		if (!(terms[0] instanceof IList)) {
 			throw new IllegalArgumentException("Arguments must be Lists.");
 		}
 
-		org.deri.iris.terms.concrete.List list = (org.deri.iris.terms.concrete.List) terms[0];
-		org.deri.iris.terms.concrete.List intersect_list = new org.deri.iris.terms.concrete.List();
+		IList list = new org.deri.iris.terms.concrete.List();
+		list.addAll((IList) terms[0]);
+		IList intersect_list = new org.deri.iris.terms.concrete.List();
 		for (int i = 1; i < terms.length; i++) {
 			if (!(terms[i] instanceof IList)) {
 				throw new IllegalArgumentException("Arguments must be Lists.");
 			}
-			org.deri.iris.terms.concrete.List list_i = (org.deri.iris.terms.concrete.List) terms[i];
-			for (int k = 0; k < list.size(); i++) {
+			IList list_i = new org.deri.iris.terms.concrete.List();
+			list_i.addAll((IList) terms[i]);
+			for (int k = 0; k < list.size(); k++) {
 				if (list_i.contains(list.get(k))) {
 					intersect_list.add(list.get(k));
 				}
@@ -443,7 +465,7 @@ public class ListBuiltinHelper {
 	 *            list_1 list_2
 	 * @return list
 	 */
-	public static ITerm except(ITerm[] terms) {
+	public static IList except(ITerm[] terms) {
 		if (terms == null)
 			throw new NullPointerException("The Terms must not be null.");
 		if (!(terms[0] instanceof IList)) {
@@ -452,9 +474,11 @@ public class ListBuiltinHelper {
 		if (!(terms[1] instanceof IList)) {
 			throw new IllegalArgumentException("Arguments must be Lists.");
 		}
-		org.deri.iris.terms.concrete.List list_1 = (org.deri.iris.terms.concrete.List) terms[0];
-		org.deri.iris.terms.concrete.List list_2 = (org.deri.iris.terms.concrete.List) terms[1];
-		org.deri.iris.terms.concrete.List list_except = new org.deri.iris.terms.concrete.List();
+		IList list_1 = new org.deri.iris.terms.concrete.List();
+		list_1.addAll((IList) terms[0]);
+		IList list_2 = new org.deri.iris.terms.concrete.List();
+		list_2.addAll((IList) terms[1]);
+		IList list_except = new org.deri.iris.terms.concrete.List();
 		for (ITerm t : list_1) {
 			if (!(list_2.contains(t))) {
 				list_except.add((IConcreteTerm) t);

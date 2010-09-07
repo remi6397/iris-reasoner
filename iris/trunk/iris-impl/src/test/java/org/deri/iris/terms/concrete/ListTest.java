@@ -72,11 +72,38 @@ public class ListTest extends AbstractConcreteTermTest {
 		assertEquals(0, list_one.compareTo(list_one));
 		assertEquals(0, list_two.compareTo(list_two));
 		assertEquals(0, list_three.compareTo(list_three));
-		
+
 		org.deri.iris.terms.concrete.List list_short = new org.deri.iris.terms.concrete.List(
-				new ShortTerm((short)1), new ShortTerm((short)2));
-		
+				new ShortTerm((short) 1), new ShortTerm((short) 2));
+
 		assertEquals(0, list_one.compareTo(list_short));
+	}
+
+	public void testListEquals2() {
+		org.deri.iris.terms.concrete.List list_one = new org.deri.iris.terms.concrete.List(
+				new IntTerm(1), new IntTerm(2));
+		org.deri.iris.terms.concrete.List list_two = new org.deri.iris.terms.concrete.List(
+				new IntTerm(2), list_one, new IntTerm(3));
+		org.deri.iris.terms.concrete.List list_three = new org.deri.iris.terms.concrete.List(
+				new IntTerm(1), new IntTerm(2), new IntTerm(3));
+		org.deri.iris.terms.concrete.List list_four = new org.deri.iris.terms.concrete.List(
+				new IntTerm(2), list_one, new IntTerm(3));
+
+		assertTrue(list_one.equals(list_one));
+		assertTrue(list_two.equals(list_two));
+		assertTrue(list_three.equals(list_three));
+		assertTrue(list_four.equals(list_four));
+		assertTrue(list_two.equals(list_four));
+
+		assertFalse(list_one.equals(list_two));
+		assertFalse(list_two.equals(list_one));
+
+		assertFalse(list_three.equals(list_one));
+		assertFalse(list_one.equals(list_three));
+
+		assertFalse(list_three.equals(list_two));
+		assertFalse(list_two.equals(list_three));
+
 	}
 
 }

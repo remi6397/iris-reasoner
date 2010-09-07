@@ -61,7 +61,7 @@ public class IsListBuiltin extends AbstractBuiltin {
 		super(PREDICATE, terms);
 	}
 
-	protected boolean computeResult(ITerm[] terms) throws EvaluationException {
+	protected boolean computeResult(ITerm... terms) throws EvaluationException {
 		return ListBuiltinHelper.isList(terms[0]);
 	}
 
