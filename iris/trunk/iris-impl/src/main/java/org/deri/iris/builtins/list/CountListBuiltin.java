@@ -61,7 +61,7 @@ public class CountListBuiltin extends AbstractBuiltin {
 		super(PREDICATE, terms);
 	}
 
-	protected ITerm computeResult(ITerm[] terms) {
+	protected ITerm computeResult(ITerm ... terms) {
 		return new IntTerm(ListBuiltinHelper.countList(terms[0]));
 	}
 

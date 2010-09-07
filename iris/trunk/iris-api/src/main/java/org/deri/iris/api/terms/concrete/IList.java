@@ -24,13 +24,11 @@ package org.deri.iris.api.terms.concrete;
 
 import org.deri.iris.api.terms.IConcreteTerm;
 
-
-public interface IList extends IConcreteTerm,  java.util.List<IConcreteTerm> {
+public interface IList extends IConcreteTerm, java.util.List<IConcreteTerm> {
 
 	/**
 	 * Defines the RIF List URI.
 	 */
 	public static String DATATYPE_URI = "http://www.w3.org/2007/rif#List";
 
-	
 }

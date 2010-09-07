@@ -22,8 +22,8 @@ public class List implements IList {
 	public List(java.util.List<IConcreteTerm> terms) {
 		items = new ArrayList<IConcreteTerm>(terms);
 	}
-	
-	public List(org.deri.iris.terms.concrete.List list){
+
+	public List(org.deri.iris.terms.concrete.List list) {
 		items = new ArrayList<IConcreteTerm>();
 		items.addAll(list.getItems());
 	}
@@ -42,11 +42,14 @@ public class List implements IList {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append("[");
+
+		int i = 0;
 		for (IConcreteTerm item : items) {
+			if (i++ > 0) {
+				builder.append(",");
+			}
 			builder.append(item.toCanonicalString());
-			builder.append(",");
 		}
-		builder.delete(builder.lastIndexOf(","), builder.lastIndexOf(",")+1);
 		builder.append("]");
 
 		return builder.toString();
@@ -56,7 +59,7 @@ public class List implements IList {
 	public Object getValue() {
 		return new ArrayList<IConcreteTerm>(items);
 	}
-	
+
 	public java.util.List<IConcreteTerm> getItems() {
 		return this.items;
 	}
@@ -84,7 +87,7 @@ public class List implements IList {
 			return -1;
 		else if (size() > otherList.size())
 			return 1;
-		
+
 		for (int i = 0; i < items.size(); i++) {
 			if (!(this.get(i).equals(otherList.get(i))))
 				return this.get(i).compareTo(otherList.get(i));
@@ -107,14 +110,17 @@ public class List implements IList {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!IList.class.isAssignableFrom(obj.getClass()))
 			return false;
-		List other = (List) obj;
+		IList other = (IList) obj;
 		if (items == null) {
-			if (other.items != null)
+			if (other.getValue() != null)
 				return false;
-		} else if (!items.equals(other.items))
-			return false;
+		} else {
+			java.util.List<?> otherTerms = (java.util.List<?>) ((IList) other)
+					.getValue();
+			return items.equals(otherTerms);
+		}
 		return true;
 	}
 

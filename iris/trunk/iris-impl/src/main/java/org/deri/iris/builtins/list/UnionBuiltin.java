@@ -58,7 +58,7 @@ public class UnionBuiltin extends AbstractBuiltin {
 	 * @throws IllegalArgumentException
 	 *             If the number of terms submitted is not 2 or more.
 	 */
-	public UnionBuiltin(ITerm... terms) {
+	public UnionBuiltin(ITerm ... terms) {
 		super(BASIC.createPredicate(PREDICATE_STRING, terms.length), terms);
 
 		if (terms.length < 2) {

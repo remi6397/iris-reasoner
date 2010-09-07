@@ -61,7 +61,7 @@ public class ListContainsBuiltin extends AbstractBuiltin {
 		super(PREDICATE, terms);
 	}
 
-	protected boolean computeResult(ITerm[] terms) throws EvaluationException {
+	protected boolean computeResult(ITerm... terms) throws EvaluationException {
 		return ListBuiltinHelper.listContains(terms);
 	}
 

@@ -62,7 +62,7 @@ public class DistinctValuesBuiltin extends AbstractBuiltin {
 		super(PREDICATE, terms);
 	}
 
-	protected ITerm computeResult(ITerm[] terms) {
+	protected ITerm computeResult(ITerm... terms) {
 		return ListBuiltinHelper.distinct_values(terms[0]);
 	}
 
