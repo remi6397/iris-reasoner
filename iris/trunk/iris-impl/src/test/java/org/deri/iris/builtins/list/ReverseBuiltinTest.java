@@ -25,41 +25,67 @@ package org.deri.iris.builtins.list;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.concrete.IList;
 
-public class IsListBuiltinTest extends AbstractListBuiltinTest {
+public class ReverseBuiltinTest extends AbstractListBuiltinTest {
 
-	private IsListBuiltin builtin;
+	private ReverseBuiltin builtin;
 
-	private IList list_1, list_2;
+	private IList list_1, list_2, expected;
 
 	public void testBuiltin() throws EvaluationException {
+
 		try {
-			builtin = new IsListBuiltin();
+			builtin = new ReverseBuiltin();
 			System.out.println(builtin.toString());
-			fail("An IllegalArgumentException should be thrown if builtin has the wrong amount of paramenters.");
+			fail("An IllegalArgumentException should be thrown if built-in has the wrong amount of paramenters.");
 		} catch (IllegalArgumentException e) {
 		}
-		builtin = new IsListBuiltin(EMPTY_LIST);
-		assertEquals(true, builtin.computeResult(EMPTY_LIST));
+
+		builtin = new ReverseBuiltin(EMPTY_LIST);
+		//
 		list_1 = new org.deri.iris.terms.concrete.List();
 		list_2 = new org.deri.iris.terms.concrete.List();
-		
-		// External(pred:is-list(1)) will evaluate to f in any interpretation.
-		assertEquals(false, builtin.computeResult(ONE));
-		assertEquals(false, builtin.computeResult(ONE, list_1));
+		expected = new org.deri.iris.terms.concrete.List();
 
+		// External( func:reverse(List()) ) = List()
+		assertEquals(EMPTY_LIST, builtin.computeResult(EMPTY_LIST));
+
+		// External( func:reverse(List(1)) ) = List(1)
 		list_1.add(ONE);
-		assertFalse(list_1.isEmpty());
-		assertEquals(true, builtin.computeResult(list_1));
+		expected.add(ONE);
+		assertEquals(expected, builtin.computeResult(list_1));
 
-		list_2.add(ONE);
-		list_2.add(ONE);
-		list_2.add(TWO);
-		list_2.add(list_1);
+		// External( func:reverse(List(0 1 2 3 4)) ) = List(4 3 2 1 0)
+		list_1.clear();
+		list_1.add(ZERO);
+		list_1.add(ONE);
+		list_1.add(TWO);
+		list_1.add(THREE);
+		list_1.add(FOUR);
 
-		assertEquals(true, builtin.computeResult(list_2));
-		assertFalse(list_2.equals(list_1));
-		assertEquals(builtin.computeResult(list_2), builtin
-				.computeResult(list_1));
+		expected.clear();
+		expected.add(FOUR);
+		expected.add(THREE);
+		expected.add(TWO);
+		expected.add(ONE);
+		expected.add(ZERO);
+
+		list_2.clear();
+		list_2.addAll(list_1);
+
+		assertEquals(list_1, list_2);
+		assertEquals(expected, builtin.computeResult(list_1));
+		assertEquals(list_1, list_2);
+
+		// 
+		list_1.add(list_2);
+		expected.clear();
+		expected.add(list_2);
+		expected.add(FOUR);
+		expected.add(THREE);
+		expected.add(TWO);
+		expected.add(ONE);
+		expected.add(ZERO);
+		assertEquals(expected, builtin.computeResult(list_1));
 
 	}
 }

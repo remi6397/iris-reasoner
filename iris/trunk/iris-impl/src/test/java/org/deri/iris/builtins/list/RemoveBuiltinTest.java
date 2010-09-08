@@ -26,89 +26,73 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.concrete.IList;
 import org.deri.iris.terms.concrete.IntTerm;
 
-public class InsertBeforeBuiltinTest extends AbstractListBuiltinTest {
+public class RemoveBuiltinTest extends AbstractListBuiltinTest {
 
-	private InsertBeforeBuiltin builtin;
+	private RemoveBuiltin builtin;
 
-	private IList list_1, list_2, expected;
+	private IList list_1, expected;
 
 	public void testBuiltin() throws EvaluationException {
+
 		try {
-			builtin = new InsertBeforeBuiltin();
+			builtin = new RemoveBuiltin();
 			System.out.println(builtin.toString());
-			fail("An IllegalArgumentException should be thrown if builtin has the wrong amount of paramenters.");
+			fail("An IllegalArgumentException should be thrown if built-in has the wrong amount of paramenters.");
 		} catch (IllegalArgumentException e) {
 		}
-		builtin = new InsertBeforeBuiltin(EMPTY_LIST, EMPTY_LIST, EMPTY_LIST);
 
+		builtin = new RemoveBuiltin(EMPTY_LIST, EMPTY_LIST);
+
+		//
 		list_1 = new org.deri.iris.terms.concrete.List();
-		list_2 = new org.deri.iris.terms.concrete.List();
 		expected = new org.deri.iris.terms.concrete.List();
+		assertEquals(null, builtin.computeResult(EMPTY_LIST, ONE));
 
-		// External( func:insert-before(List(0 1 2 3 4) 0 99) ) = List(99 0 1 2
-		// 3 4)
+		// External( func:remove(List(0 1 2 3 4) 0) ) = List(1 2 3 4)
 		list_1.add(ZERO);
 		list_1.add(ONE);
 		list_1.add(TWO);
 		list_1.add(THREE);
 		list_1.add(FOUR);
 
-		expected.add(new IntTerm(99));
-		expected.add(ZERO);
 		expected.add(ONE);
 		expected.add(TWO);
 		expected.add(THREE);
 		expected.add(FOUR);
+		assertEquals(expected, builtin.computeResult(list_1, ZERO));
 
-		assertEquals(expected, builtin.computeResult(list_1, ZERO, new IntTerm(
-				99)));
-
-		// External( func:insert-before(List(0 1 2 3 4) 1 99) ) = List(0 99 1 2
-		// 3 4)
+		// External( func:remove(List(0 1 2 3 4) 4) ) = List(0 1 2 3)
 		expected.clear();
-		expected.add(ZERO);
-		expected.add(new IntTerm(99));
-		expected.add(ONE);
-		expected.add(TWO);
-		expected.add(THREE);
-		expected.add(FOUR);
-
-		assertEquals(expected, builtin.computeResult(list_1, ONE, new IntTerm(
-				99)));
-
-		// External( func:insert-before(List(0 1 2 3 4) 5 99) ) = (unspecified)
-		expected.clear();
-		assertEquals(null, builtin.computeResult(list_1, new IntTerm(5),
-				new IntTerm(99)));
-
-		// External( func:insert-before(List(0 1 2 3 4) -5 99) )= List(99 0 1 2
-		// 3 4)
-		expected.clear();
-		expected.add(new IntTerm(99));
 		expected.add(ZERO);
 		expected.add(ONE);
 		expected.add(TWO);
 		expected.add(THREE);
-		expected.add(FOUR);
-		assertEquals(expected, builtin.computeResult(list_1, new IntTerm(-5),
-				new IntTerm(99)));
+		assertEquals(expected, builtin.computeResult(list_1, FOUR));
 
-		// External( func:insert-before(List(0 1 2 3 4) -10 99) ) =
-		// (unspecified)
-		expected.clear();
-		assertEquals(null, builtin.computeResult(list_1, new IntTerm(-10),
-				new IntTerm(99)));
+		// External( func:remove(List(0 1 2 3 4) 5) ) = (unspecified)
+		assertEquals(null, builtin.computeResult(list_1, new IntTerm(5)));
 
-		list_2.clear();
-		list_2.add(ONE);
+		// External( func:remove(List(0 1 2 3 4) 6) ) = (unspecified)
+		assertEquals(null, builtin.computeResult(list_1, new IntTerm(6)));
+
+		// External( func:remove(List(0 1 2 3 4) -1) ) = List(0 1 2 3)
 		expected.clear();
 		expected.add(ZERO);
-		expected.add(list_2);
+		expected.add(ONE);
+		expected.add(TWO);
+		expected.add(THREE);
+		assertEquals(expected, builtin.computeResult(list_1, new IntTerm(-1)));
+
+		// External( func:remove(List(0 1 2 3 4) -5) ) = List(1 2 3 4)
+		expected.clear();
 		expected.add(ONE);
 		expected.add(TWO);
 		expected.add(THREE);
 		expected.add(FOUR);
-		assertEquals(expected, builtin.computeResult(list_1, ONE, list_2));
+		assertEquals(expected, builtin.computeResult(list_1, new IntTerm(-5)));
+
+		// External( func:remove(List(0 1 2 3 4) -6) ) = (unspecified)
+		assertEquals(null, builtin.computeResult(list_1, new IntTerm(-6)));
 
 	}
 }
