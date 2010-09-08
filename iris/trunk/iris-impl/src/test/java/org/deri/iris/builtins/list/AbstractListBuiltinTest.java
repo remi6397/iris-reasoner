@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IConcreteTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.api.terms.concrete.IList;
 import org.deri.iris.factory.Factory;
 import org.deri.iris.terms.concrete.IntTerm;
 
@@ -38,6 +39,8 @@ public abstract class AbstractListBuiltinTest extends TestCase {
 
 	protected static final ITerm Z = Factory.TERM.createVariable("Z");
 
+	protected static final IConcreteTerm ZERO = new IntTerm(0);
+	
 	protected static final IConcreteTerm ONE = new IntTerm(1);
 
 	protected static final IConcreteTerm TWO = new IntTerm(2);
@@ -46,10 +49,12 @@ public abstract class AbstractListBuiltinTest extends TestCase {
 
 	protected static final IConcreteTerm FOUR = new IntTerm(4);
 
-	protected static final IConcreteTerm ZERO = new IntTerm(0);
-
 	protected static final ITuple EMPTY_TUPLE = Factory.BASIC.createTuple();
 
-	protected static final org.deri.iris.terms.concrete.List EMPTY_LIST = new org.deri.iris.terms.concrete.List();
+	protected static final IList EMPTY_LIST = new org.deri.iris.terms.concrete.List();
+	
+	protected ITuple args = null;
+	
+	protected ITuple actual = null;
 
 }

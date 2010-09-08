@@ -146,14 +146,32 @@ public class ListBuiltinHelper {
 			throw new IllegalArgumentException(
 					"Second Argument has to be a IntTerm.");
 		}
-		IList newList = new org.deri.iris.terms.concrete.List((IList) terms[0]);
-		if (terms[2] != null) {
-			return new org.deri.iris.terms.concrete.List(newList.subList(
-					Integer.parseInt(terms[1].toString()), newList.size()));
+		IList newList = new org.deri.iris.terms.concrete.List();
+		newList.addAll((IList) terms[0]);
+		int pos1 = Integer.parseInt(terms[1].toString());
+		if (pos1 < 0) {
+			pos1 = newList.size() + pos1;
+		}
+		if (pos1 < 0) {
+			return null;
+		}
+		if (terms.length != 3) {
+			return new org.deri.iris.terms.concrete.List(newList.subList(pos1,
+					newList.size()));
 		} else {
-			return new org.deri.iris.terms.concrete.List(newList.subList(
-					Integer.parseInt(terms[1].toString()), Integer
-							.parseInt(terms[2].toString())));
+			int pos2 = Integer.parseInt(terms[2].toString());
+			if (pos2 < 0) {
+				pos2 = newList.size() + pos2;
+			}
+			if (pos2 < 0) {
+				return null;
+			}
+			if (pos2 > newList.size()) {
+				return new org.deri.iris.terms.concrete.List(newList.subList(
+						pos1, newList.size()));
+			}
+			return new org.deri.iris.terms.concrete.List(newList.subList(pos1,
+					pos2));
 		}
 
 	}
@@ -225,7 +243,7 @@ public class ListBuiltinHelper {
 	 * @return a list with all terms inserted.
 	 */
 	public static IList makeList(ITerm[] terms) {
-		if (terms == null || terms.length == 0){
+		if (terms == null || terms.length == 0) {
 			return new org.deri.iris.terms.concrete.List();
 		}
 		if ((terms[0] == null)) {
@@ -277,15 +295,13 @@ public class ListBuiltinHelper {
 		IConcreteTerm item = (IConcreteTerm) terms[2];
 		int index = Integer.parseInt(position.toString());
 		if (index >= list.size())
-			throw new IllegalArgumentException("Index out of range: " + index
-					+ ".");
-		if(index < 0) {
-			index = list.size()+index;
+			return null;
+		if (index < 0) {
+			index = list.size() + index;
 		}
-//		if(index < 0) {
-//			throw new IllegalArgumentException("Index out of range: " + index
-//					+ ".");
-//		}
+		if (index < 0) {
+			return null;
+		}
 		list.add(index, item);
 		return list;
 	}
@@ -317,9 +333,14 @@ public class ListBuiltinHelper {
 		}
 		IntTerm position = (IntTerm) terms[1];
 		int index = Integer.parseInt(position.toString());
-		if (index < 0 || index > list.size())
-			throw new IllegalArgumentException("Index out of range: " + index
-					+ ".");
+		if (index >= list.size())
+			return null;
+		if (index < 0) {
+			index = list.size() + index;
+		}
+		if (index < 0) {
+			return null;
+		}
 		list.remove(index);
 		return list;
 	}
@@ -341,8 +362,9 @@ public class ListBuiltinHelper {
 		IList list = new org.deri.iris.terms.concrete.List();
 		list.addAll((IList) terms[0]);
 		IList reverse_list = new org.deri.iris.terms.concrete.List();
-		for (int i = list.size(); i < 0; i--) {
-			reverse_list.add(list.remove(i));
+		int i = list.size();
+		while (!list.isEmpty()) {
+			reverse_list.add(list.remove(--i));
 		}
 		return reverse_list;
 	}

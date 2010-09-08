@@ -26,89 +26,72 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.concrete.IList;
 import org.deri.iris.terms.concrete.IntTerm;
 
-public class InsertBeforeBuiltinTest extends AbstractListBuiltinTest {
+public class SubListToBuiltinTest extends AbstractListBuiltinTest {
 
-	private InsertBeforeBuiltin builtin;
+	private SubListToBuiltin builtin;
 
 	private IList list_1, list_2, expected;
 
 	public void testBuiltin() throws EvaluationException {
+
 		try {
-			builtin = new InsertBeforeBuiltin();
+			builtin = new SubListToBuiltin();
 			System.out.println(builtin.toString());
-			fail("An IllegalArgumentException should be thrown if builtin has the wrong amount of paramenters.");
+			fail("An IllegalArgumentException should be thrown if built-in has the wrong amount of paramenters.");
 		} catch (IllegalArgumentException e) {
 		}
-		builtin = new InsertBeforeBuiltin(EMPTY_LIST, EMPTY_LIST, EMPTY_LIST);
 
+		builtin = new SubListToBuiltin(EMPTY_LIST, new IntTerm(0), new IntTerm(
+				0));
+		//
 		list_1 = new org.deri.iris.terms.concrete.List();
 		list_2 = new org.deri.iris.terms.concrete.List();
 		expected = new org.deri.iris.terms.concrete.List();
 
-		// External( func:insert-before(List(0 1 2 3 4) 0 99) ) = List(99 0 1 2
-		// 3 4)
+		// External( func:sublist(List(0 1 2 3 4) 0 0) ) = List()
+		assertEquals(expected, builtin.computeResult(list_1, ZERO, ZERO));
 		list_1.add(ZERO);
 		list_1.add(ONE);
 		list_1.add(TWO);
 		list_1.add(THREE);
 		list_1.add(FOUR);
+		assertEquals(expected, builtin.computeResult(list_1, ZERO, ZERO));
 
-		expected.add(new IntTerm(99));
-		expected.add(ZERO);
-		expected.add(ONE);
-		expected.add(TWO);
-		expected.add(THREE);
-		expected.add(FOUR);
-
-		assertEquals(expected, builtin.computeResult(list_1, ZERO, new IntTerm(
-				99)));
-
-		// External( func:insert-before(List(0 1 2 3 4) 1 99) ) = List(0 99 1 2
-		// 3 4)
-		expected.clear();
-		expected.add(ZERO);
-		expected.add(new IntTerm(99));
-		expected.add(ONE);
-		expected.add(TWO);
-		expected.add(THREE);
-		expected.add(FOUR);
-
-		assertEquals(expected, builtin.computeResult(list_1, ONE, new IntTerm(
-				99)));
-
-		// External( func:insert-before(List(0 1 2 3 4) 5 99) ) = (unspecified)
-		expected.clear();
-		assertEquals(null, builtin.computeResult(list_1, new IntTerm(5),
-				new IntTerm(99)));
-
-		// External( func:insert-before(List(0 1 2 3 4) -5 99) )= List(99 0 1 2
-		// 3 4)
-		expected.clear();
-		expected.add(new IntTerm(99));
-		expected.add(ZERO);
-		expected.add(ONE);
-		expected.add(TWO);
-		expected.add(THREE);
-		expected.add(FOUR);
-		assertEquals(expected, builtin.computeResult(list_1, new IntTerm(-5),
-				new IntTerm(99)));
-
-		// External( func:insert-before(List(0 1 2 3 4) -10 99) ) =
-		// (unspecified)
-		expected.clear();
-		assertEquals(null, builtin.computeResult(list_1, new IntTerm(-10),
-				new IntTerm(99)));
-
+		// External( func:sublist(List(0 1 2 3 4) 0 1) ) = List(0)
 		list_2.clear();
-		list_2.add(ONE);
+		list_2.add(ZERO);
+		assertEquals(list_2, builtin.computeResult(list_1, ZERO, ONE));
+
+		// External( func:sublist(List(0 1 2 3 4) 0 4) ) = List(0 1 2 3)
 		expected.clear();
 		expected.add(ZERO);
-		expected.add(list_2);
 		expected.add(ONE);
 		expected.add(TWO);
 		expected.add(THREE);
+		assertEquals(expected, builtin.computeResult(list_1, ZERO, FOUR));
+
+		// External( func:sublist(List(0 1 2 3 4) 0 10) ) = List(0 1 2 3 4)
 		expected.add(FOUR);
-		assertEquals(expected, builtin.computeResult(list_1, ONE, list_2));
+		assertEquals(expected, builtin.computeResult(list_1, ZERO, new IntTerm(
+				10)));
+
+		// External( func:sublist(List(0 1 2 3 4) 0 -2) ) = List(0 1 2)
+		expected.clear();
+		expected.add(ZERO);
+		expected.add(ONE);
+		expected.add(TWO);
+		assertEquals(expected, builtin.computeResult(list_1, ZERO, new IntTerm(-2)));
+		
+		// External( func:sublist(List(0 1 2 3 4) 2 4) ) = List(2 3)
+		expected.clear();
+		expected.add(TWO);
+		expected.add(THREE);
+		assertEquals(expected, builtin.computeResult(list_1, TWO, FOUR));
+		
+		// External( func:sublist(List(0 1 2 3 4) 2 -2) ) = List(2)
+		expected.clear();
+		expected.add(TWO);
+		assertEquals(expected, builtin.computeResult(list_1, TWO, new IntTerm(-2)));
 
 	}
 }
