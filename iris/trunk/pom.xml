@@ -15,16 +15,15 @@
 	</modules>
 
 	<properties>
-		<project.version>0.7.2-SNAPSHOT</project.version>
 		<compiler.version>1.6</compiler.version>
 		<source.encoding>UTF-8</source.encoding>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<scm>
-		<connection>scm:svn:https://iris-reasoner.svn.sourceforge.net/svnroot/iris-reasoner/iris/tags/iris-0.7.2</connection>
-		<developerConnection>scm:svn:https://iris-reasoner.svn.sourceforge.net/svnroot/iris-reasoner/iris/tags/iris-0.7.2</developerConnection>
-		<url>http://iris-reasoner.svn.sourceforge.net/viewvc/iris-reasoner/iris/tags/iris-0.7.2</url>
+		<connection>scm:svn:https://iris-reasoner.svn.sourceforge.net/svnroot/iris-reasoner/iris/trunk</connection>
+		<developerConnection>scm:svn:https://iris-reasoner.svn.sourceforge.net/svnroot/iris-reasoner/iris/trunk</developerConnection>
+		<url>http://iris-reasoner.svn.sourceforge.net/viewvc/iris-reasoner/iris/trunk</url>
 	</scm>
 	
 	<build>
