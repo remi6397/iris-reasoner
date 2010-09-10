@@ -3,7 +3,7 @@
 
 	<groupId>at.sti2.iris</groupId>
 	<artifactId>iris</artifactId>
-	<version>0.7.2</version>
+	<version>0.7.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>IRIS</name>
 	<description>Integrated Rule Inference System is an extensible reasoning engine for expressive rule-based languages.</description>
