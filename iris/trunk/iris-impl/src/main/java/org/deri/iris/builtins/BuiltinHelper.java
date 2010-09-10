@@ -96,13 +96,10 @@ public class BuiltinHelper {
 	 * for equality. <b>This method assumes that only numbers are stored in
 	 * <code>INumericTerm</code>.</b>
 	 * 
-	 * @param n0
-	 *            the first number
-	 * @param n1
-	 *            the second number
+	 * @param n0 the first number
+	 * @param n1 the second number
 	 * @return whether the numbers are equal
-	 * @throws NullPointerException
-	 *             if one of the numbers is null
+	 * @throws NullPointerException if one of the numbers is null
 	 * @see Number
 	 */
 	public static boolean numbersEqual(final INumericTerm n0,
@@ -117,15 +114,12 @@ public class BuiltinHelper {
 	 * Compares two numeric terms using the <code>compareTo</code> method of the
 	 * terms. Respects floating point round off errors.
 	 * 
-	 * @param n0
-	 *            the first number
-	 * @param n1
-	 *            the second number
+	 * @param n0 the first number
+	 * @param n1 the second number
 	 * @return <code>0</code> if they are equal, a value <code>&lt; 0</code> if
 	 *         n0 is smaller than n1 and a value <code>&gt; 0</code> if n0 is
 	 *         bigger than n1
-	 * @throws NullPointerException
-	 *             if one of the numbers is null
+	 * @throws NullPointerException if one of the numbers is null
 	 * @see Number
 	 */
 	public static int numbersCompare(final INumericTerm n0,
@@ -149,15 +143,11 @@ public class BuiltinHelper {
 	 * <code>0</code> or <code>&gt;0</code> will be returned, if the first term
 	 * is smaller, equal or greater than the second one.
 	 * 
-	 * @param t0
-	 *            the first term
-	 * @param t1
-	 *            the second term
+	 * @param t0 the first term
+	 * @param t1 the second term
 	 * @return an Integer determining which one of the terms is bigger
-	 * @throws NullPointerException
-	 *             if one of the terms is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the two terms couldn't be compared
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if the two terms couldn't be compared
 	 */
 	public static int compare(final ITerm t0, final ITerm t1) {
 		if ((t0 == null) || (t1 == null)) {
@@ -175,10 +165,8 @@ public class BuiltinHelper {
 	/**
 	 * Evaluate a < operation.
 	 * 
-	 * @param t0
-	 *            A term
-	 * @param t1
-	 *            A term
+	 * @param t0 A term
+	 * @param t1 A term
 	 * @return true if the two terms can be compared and t0 is less than t1
 	 */
 	static boolean less(final ITerm t0, final ITerm t1) {
@@ -197,10 +185,8 @@ public class BuiltinHelper {
 	/**
 	 * Evaluate a <= operation.
 	 * 
-	 * @param t0
-	 *            A term
-	 * @param t1
-	 *            A term
+	 * @param t0 A term
+	 * @param t1 A term
 	 * @return true if the two terms can be compared and t0 is less than or
 	 *         equal to t1
 	 */
@@ -220,14 +206,11 @@ public class BuiltinHelper {
 	/**
 	 * Checks whether the values of two terms are the same.
 	 * 
-	 * @param t0
-	 *            the first term
-	 * @param t1
-	 *            the second term
+	 * @param t0 the first term
+	 * @param t1 the second term
 	 * @return <code>true</code> if the terms are comparable and if their values
 	 *         are equal, otherwise <code>false</code>
-	 * @throws NullPointerException
-	 *             if one of the terms is <code>null</code>
+	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 */
 	static boolean equal(final ITerm t0, final ITerm t1) {
 		return equal(t0, t1, new IgnoreTermEquivalence());
@@ -237,34 +220,29 @@ public class BuiltinHelper {
 	 * Checks whether the values of two terms are the same according to the
 	 * specified equivalence classes.
 	 * 
-	 * @param t0
-	 *            the first term
-	 * @param t1
-	 *            the second term
-	 * @param equivalenceClasses
-	 *            The equivalence classes.
+	 * @param t0 the first term
+	 * @param t1 the second term
+	 * @param equivalenceClasses The equivalence classes.
 	 * @return <code>true</code> if the terms are comparable and if their values
 	 *         are equal, otherwise <code>false</code>
-	 * @throws NullPointerException
-	 *             if one of the terms is <code>null</code>
+	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 */
-	static boolean equal(final ITerm t0, final ITerm t1,
-			IEquivalentTerms equivalenceClasses) {
+	static boolean equal(final ITerm t0, final ITerm t1, IEquivalentTerms equivalenceClasses) {
 		assert t0 != null;
 		assert t1 != null;
 
 		if (equivalenceClasses.areEquivalent(t0, t1)) {
 			return true;
 		}
-
+		
 		if ((t0 instanceof INumericTerm) && (t1 instanceof INumericTerm))
 			return numbersEqual((INumericTerm) t0, (INumericTerm) t1);
-
+		
 		// Also take the term equivalence into account, when comparing two terms
 		// for equality.
 		return t0.equals(t1);
 	}
-
+	
 	/**
 	 * Two terms are exactly equal if they:
 	 * <ol>
@@ -299,19 +277,17 @@ public class BuiltinHelper {
 	/**
 	 * Creates a duration out of a given amount of milliseconds.
 	 * 
-	 * @param millis
-	 *            the milliseconds for which to create the duration
+	 * @param millis the milliseconds for which to create the duration
 	 * @return the duration
 	 */
-	protected static IDuration createDuration(final long millis) {
+	private static IDuration createDuration(final long millis) {
 		return CONCRETE.createDuration(millis);
 	}
 
 	/**
 	 * Creates a datetime object out of a <code>XMLGregorianCalendar</code>.
 	 * 
-	 * @param dt
-	 *            the <code>XMLGregorianCalendar</code>
+	 * @param dt the <code>XMLGregorianCalendar</code>
 	 * @return the datetime
 	 */
 	private static IDateTime createDateTime(final XMLGregorianCalendar dt) {
@@ -326,8 +302,7 @@ public class BuiltinHelper {
 	/**
 	 * Creates a date object out of a <code>XMLGregorianCalendar</code>.
 	 * 
-	 * @param dt
-	 *            the <code>XMLGregorianCalendar</code>
+	 * @param dt the <code>XMLGregorianCalendar</code>
 	 * @return the date
 	 */
 	private static IDateTerm createDate(final XMLGregorianCalendar dt) {
@@ -352,8 +327,7 @@ public class BuiltinHelper {
 	/**
 	 * Creates a time object out of a <code>XMLGregorianCalendar</code>.
 	 * 
-	 * @param dt
-	 *            the <code>XMLGregorianCalendar</code>
+	 * @param dt the <code>XMLGregorianCalendar</code>
 	 * @return the time
 	 */
 	private static ITime createTime(final XMLGregorianCalendar dt) {
@@ -367,15 +341,19 @@ public class BuiltinHelper {
 	/**
 	 * Creates a duration object out of a <code>Duration</code>.
 	 * 
-	 * @param dt
-	 *            the <code>Duration</code>
+	 * @param dt the <code>Duration</code>
 	 * @return the duration
 	 */
 	private static IDuration createDuration(final Duration d) {
 		assert d != null : "The duration must not be null";
 
-		return CONCRETE.createDuration(d.getSign() >= 0, d.getYears(), d
-				.getMonths(), d.getDays(), d.getHours(), d.getMinutes(),
+		return CONCRETE.createDuration(
+				d.getSign() >= 0, 
+				d.getYears(), 
+				d.getMonths(), 
+				d.getDays(), 
+				d.getHours(), 
+				d.getMinutes(),
 				((BigDecimal) d.getField(DatatypeConstants.SECONDS))
 						.doubleValue());
 	}
@@ -383,43 +361,45 @@ public class BuiltinHelper {
 	/**
 	 * Creates a duration object out of a <code>Duration</code>.
 	 * 
-	 * @param dt
-	 *            the <code>Duration</code>
+	 * @param dt the <code>Duration</code>
 	 * @return the duration
 	 */
 	private static IDayTimeDuration createDayTimeDuration(final Duration d) {
 		assert d != null : "The duration must not be null";
-
+		
 		// TODO move this to xml workaround helper?
 		Duration dtd = d.normalizeWith(ZERO);
-
+		
 		assert dtd.getYears() == 0 : "The duration must not have years value set";
 		assert dtd.getMonths() == 0 : "The duration must not have months value set";
-
-		return CONCRETE.createDayTimeDuration(d.getSign() >= 0, dtd.getDays(),
-				d.getHours(), d.getMinutes(), ((BigDecimal) d
-						.getField(DatatypeConstants.SECONDS)).doubleValue());
+		
+		
+		return CONCRETE.createDayTimeDuration(
+				d.getSign() >= 0, 
+				dtd.getDays(),
+				d.getHours(),
+				d.getMinutes(),
+				((BigDecimal) d.getField(DatatypeConstants.SECONDS))
+						.doubleValue());
 	}
 
 	/**
 	 * Creates a duration object out of a <code>Duration</code>.
 	 * 
-	 * @param dt
-	 *            the <code>Duration</code>
+	 * @param dt the <code>Duration</code>
 	 * @return the duration
 	 */
 	private static IYearMonthDuration createYearMonthDuration(final Duration d) {
 		assert d != null : "The duration must not be null";
-		// assert d.getDays() == 0 :
-		// "The duration must not have days value set";
-		// assert d.getHours() == 0 :
-		// "The duration must not have hours value set";
-		// assert d.getMinutes() == 0 :
-		// "The duration must not have minutes value set";
-		// assert d.getSeconds() == 0 :
-		// "The duration must not have seconds value set";
-
-		return CONCRETE.createYearMonthDuration(d.getSign() >= 0, d.getYears(),
+//		assert d.getDays() == 0 : "The duration must not have days value set";
+//		assert d.getHours() == 0 : "The duration must not have hours value set";
+//		assert d.getMinutes() == 0 : "The duration must not have minutes value set";
+//		assert d.getSeconds() == 0 : "The duration must not have seconds value set";
+		
+		
+		return CONCRETE.createYearMonthDuration(
+				d.getSign() >= 0, 
+				d.getYears(),
 				d.getMonths());
 	}
 
@@ -429,15 +409,12 @@ public class BuiltinHelper {
 	 * accurate type of the submitted ones.
 	 * </p>
 	 * 
-	 * @param t0
-	 *            the first summand
-	 * @param t1
-	 *            the second summand
+	 * @param t0 the first summand
+	 * @param t1 the second summand
 	 * @return the sum
-	 * @throws NullPointerException
-	 *             if one of the terms is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the operation couldn't be applied to the terms
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if the operation couldn't be applied to
+	 *             the terms
 	 */
 	public static ITerm add(final ITerm t0, final ITerm t1) {
 		if ((t0 == null) || (t1 == null)) {
@@ -451,12 +428,10 @@ public class BuiltinHelper {
 			return toAppropriateType(sum, t0, t1);
 
 		}
-
+		
 		/*
-		 * op:add-yearMonthDuration-to-dateTime( $arg1 as xs:dateTime, $arg2 as
-		 * xs:yearMonthDuration) as xs:dateTime
-		 * op:add-dayTimeDuration-to-dateTime( $arg1 as xs:dateTime, $arg2 as
-		 * xs:dayTimeDuration) as xs:dateTime
+		 * op:add-yearMonthDuration-to-dateTime( $arg1 as xs:dateTime, $arg2 as xs:yearMonthDuration) as xs:dateTime
+		 * op:add-dayTimeDuration-to-dateTime( $arg1 as xs:dateTime, $arg2 as xs:dayTimeDuration) as xs:dateTime
 		 */
 		else if ((t0 instanceof IDateTime) && (t1 instanceof IDuration)) {
 			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTime) t0)
@@ -464,70 +439,67 @@ public class BuiltinHelper {
 			cal0.add(((IDuration) t1).getValue());
 			return createDateTime(cal0);
 
-		} else if ((t0 instanceof IDuration) && (t1 instanceof IDateTime)) {
+		}
+		else if ((t0 instanceof IDuration) && (t1 instanceof IDateTime)) {
 			final XMLGregorianCalendar cal1 = (XMLGregorianCalendar) ((IDateTime) t1)
 					.getValue().clone();
 			cal1.add(((IDuration) t0).getValue());
 			return createDateTime(cal1);
 		}
-
+		
 		/*
-		 * op:add-yearMonthDuration-to-date( $arg1 as xs:date, $arg2 as
-		 * xs:yearMonthDuration) as xs:date op:add-dayTimeDuration-to-date(
-		 * $arg1 as xs:date, $arg2 as xs:dayTimeDuration) as xs:date
+		 * op:add-yearMonthDuration-to-date( $arg1 as xs:date, $arg2 as xs:yearMonthDuration) as xs:date
+		 * op:add-dayTimeDuration-to-date( $arg1 as xs:date, $arg2 as xs:dayTimeDuration) as xs:date
 		 */
 		else if ((t0 instanceof IDateTerm) && (t1 instanceof IDuration)) {
 			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTerm) t0)
 					.getValue().clone();
 			cal0.add(((IDuration) t1).getValue());
 			return createDate(cal0);
-		} else if ((t0 instanceof IDuration) && (t1 instanceof IDateTerm)) {
+		}
+		else if ((t0 instanceof IDuration) && (t1 instanceof IDateTerm)) {
 			final XMLGregorianCalendar cal1 = (XMLGregorianCalendar) ((IDateTerm) t1)
 					.getValue().clone();
 			cal1.add(((IDuration) t0).getValue());
 			return createDate(cal1);
 		}
-
+		
 		/*
-		 * op:add-dayTimeDuration-to-time( $arg1 as xs:time, $arg2 as
-		 * xs:dayTimeDuration) as xs:time
+		 * op:add-dayTimeDuration-to-time( $arg1 as xs:time, $arg2 as xs:dayTimeDuration) as xs:time
 		 */
-		// TODO yearMonthDuration allowed in implementation, not deterministic?
+		 // TODO yearMonthDuration allowed in implementation, not deterministic?
 		else if ((t0 instanceof ITime) && (t1 instanceof IDuration)) {
 			final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((ITime) t0)
 					.getValue().clone();
 			cal0.add(((IDuration) t1).getValue());
 			return createTime(cal0);
-		} else if ((t0 instanceof IDuration) && (t1 instanceof ITime)) {
+		}
+		else if ((t0 instanceof IDuration) && (t1 instanceof ITime)) {
 			final XMLGregorianCalendar cal1 = (XMLGregorianCalendar) ((ITime) t1)
 					.getValue().clone();
 			cal1.add(((IDuration) t0).getValue());
 			return createTime(cal1);
 		}
-
+		
 		else if ((t0 instanceof IDuration) && (t1 instanceof IDuration)) {
 			final Duration d0 = ((IDuration) t0).getValue();
 			final Duration d1 = ((IDuration) t1).getValue();
 
-			if (t0 instanceof IYearMonthDuration
-					&& t1 instanceof IYearMonthDuration) {
+
+			if (t0 instanceof IYearMonthDuration && t1 instanceof IYearMonthDuration) {
 				/*
-				 * op:add-yearMonthDurations( $arg1 as xs:yearMonthDuration,
-				 * $arg2 as xs:yearMonthDuration) as xs:yearMonthDuration
+				 * op:add-yearMonthDurations( $arg1 as xs:yearMonthDuration, $arg2 as xs:yearMonthDuration) as xs:yearMonthDuration
 				 */
-				return createYearMonthDuration(XmlDurationWorkAroundHelper.add(
-						d0, d1));
-			} else if (t0 instanceof IDayTimeDuration
-					&& t1 instanceof IDayTimeDuration) {
+				return createYearMonthDuration( XmlDurationWorkAroundHelper.add(d0, d1) );
+			} else if (t0 instanceof IDayTimeDuration && t1 instanceof IDayTimeDuration) {
 				/*
-				 * op:add-dayTimeDurations( $arg1 as xs:dayTimeDuration, $arg2
-				 * as xs:dayTimeDuration) as xs:dayTimeDuration
+				 * op:add-dayTimeDurations( $arg1 as xs:dayTimeDuration, $arg2 as xs:dayTimeDuration) as xs:dayTimeDuration
 				 */
-				return createDayTimeDuration(XmlDurationWorkAroundHelper.add(
-						d0, d1));
+				return createDayTimeDuration( XmlDurationWorkAroundHelper.add(d0, d1) );
 			} else {
 				/*
-				 * TODO not defined; allow? duration + duration = duration
+				 * TODO not defined; allow?
+				 * duration + duration = duration
 				 */
 				return createDuration(XmlDurationWorkAroundHelper.add(d0, d1));
 			}
@@ -541,15 +513,12 @@ public class BuiltinHelper {
 	 * most accurate type of the submitted ones.
 	 * </p>
 	 * 
-	 * @param t0
-	 *            the minuend
-	 * @param t1
-	 *            the subtrahend
+	 * @param t0 the minuend
+	 * @param t1 the subtrahend
 	 * @return the differnece
-	 * @throws NullPointerException
-	 *             if one of the terms is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the operation couldn't be applied to the terms
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if the operation couldn't be applied to
+	 *             the terms
 	 */
 	public static ITerm subtract(final ITerm t0, final ITerm t1) {
 		if ((t0 == null) || (t1 == null)) {
@@ -561,89 +530,83 @@ public class BuiltinHelper {
 			BigDecimal result = ((INumericTerm) t0).getValue().subtract(
 					((INumericTerm) t1).getValue());
 			return toAppropriateType(result, t0, t1);
-		} else if (t0 instanceof IDateTime) {
+		}
+		else if (t0 instanceof IDateTime) {
 			/*
-			 * op:subtract-dateTimes( $arg1 as xs:dateTime, $arg2 as
-			 * xs:dateTime) as xs:dayTimeDuration?
+			 * op:subtract-dateTimes( $arg1 as xs:dateTime, $arg2 as xs:dateTime) as xs:dayTimeDuration?
 			 */
 			if (t1 instanceof IDateTime) {
 				final XMLGregorianCalendar cal0 = ((IDateTime) t0).getValue();
 				final XMLGregorianCalendar cal1 = ((IDateTime) t1).getValue();
-
-				return createDayTimeDuration(XmlDurationWorkAroundHelper
-						.subtract(cal0, cal1));
+				
+				return createDayTimeDuration(XmlDurationWorkAroundHelper.subtract(cal0, cal1));
 			}
-
+			
 			/*
-			 * op:subtract-yearMonthDuration-from-dateTime( $arg1 as
-			 * xs:dateTime, $arg2 as xs:yearMonthDuration) as xs:dateTime
-			 * 
-			 * op:subtract-dayTimeDuration-from-dateTime( $arg1 as xs:dateTime,
-			 * $arg2 as xs:dayTimeDuration) as xs:dateTime
+			 * op:subtract-yearMonthDuration-from-dateTime( $arg1 as xs:dateTime, $arg2 as xs:yearMonthDuration) as
+			 * xs:dateTime
+			 *
+			 * op:subtract-dayTimeDuration-from-dateTime( $arg1 as xs:dateTime, $arg2 as xs:dayTimeDuration) as
+			 * xs:dateTime
 			 */
 			else if (t1 instanceof IDuration) {
 				final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTime) t0)
-						.getValue().clone();
+				.getValue().clone();
 				cal0.add(((IDuration) t1).getValue().negate());
 				return createDateTime(cal0);
 			}
-
-		} else if (t0 instanceof IDateTerm) {
+			
+			
+		}
+		else if (t0 instanceof IDateTerm) {
 			/*
-			 * op:subtract-dates($arg1 as xs:date, $arg2 as xs:date) as
-			 * xs:dayTimeDuration?
+			 * op:subtract-dates($arg1 as xs:date, $arg2 as xs:date) as xs:dayTimeDuration?
 			 */
 			if (t1 instanceof IDateTerm) {
 				final XMLGregorianCalendar cal0 = ((IDateTerm) t0).getValue();
 				final XMLGregorianCalendar cal1 = ((IDateTerm) t1).getValue();
-
-				return createDayTimeDuration(XmlDurationWorkAroundHelper
-						.subtract(cal0, cal1));
+				
+				return createDayTimeDuration(XmlDurationWorkAroundHelper.subtract(cal0, cal1));
 			}
-
+			
 			/*
-			 * op:subtract-dayTimeDuration-from-date( $arg1 as xs:date, $arg2 as
-			 * xs:dayTimeDuration) as xs:date
+			 * op:subtract-dayTimeDuration-from-date( $arg1 as xs:date, $arg2 as xs:dayTimeDuration) as xs:date
 			 * 
-			 * op:subtract-yearMonthDuration-from-date( $arg1 as xs:date, $arg2
-			 * as xs:yearMonthDuration) as xs:date
+			 * op:subtract-yearMonthDuration-from-date( $arg1 as xs:date, $arg2 as xs:yearMonthDuration) as xs:date
 			 */
 			else if (t1 instanceof IDuration) {
 				final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((IDateTerm) t0)
-						.getValue().clone();
+				.getValue().clone();
 				cal0.add(((IDuration) t1).getValue().negate());
 				return createDate(cal0);
 			}
 		}
-
+		
 		else if (t0 instanceof ITime) {
 
 			/*
-			 * op:subtract-times($arg1 as xs:time, $arg2 as xs:time) as
-			 * xs:dayTimeDuration
+			 * op:subtract-times($arg1 as xs:time, $arg2 as xs:time) as xs:dayTimeDuration
 			 */
 			if ((t0 instanceof ITime) && (t1 instanceof ITime)) {
 				final XMLGregorianCalendar cal0 = ((ITime) t0).getValue();
 				final XMLGregorianCalendar cal1 = ((ITime) t1).getValue();
-				return createDayTimeDuration(XmlDurationWorkAroundHelper
-						.subtract(cal0, cal1));
+				return createDayTimeDuration(XmlDurationWorkAroundHelper.subtract(cal0, cal1));
 			}
 
 			/*
-			 * op:subtract-dayTimeDuration-from-time( $arg1 as xs:time, $arg2 as
-			 * xs:dayTimeDuration) as xs:time
+			 * op:subtract-dayTimeDuration-from-time( $arg1 as xs:time, $arg2 as xs:dayTimeDuration) as xs:time
 			 */
 			else if ((t0 instanceof ITime) && (t1 instanceof IDuration)) {
 				final XMLGregorianCalendar cal0 = (XMLGregorianCalendar) ((ITime) t0)
-						.getValue().clone();
+				.getValue().clone();
 				cal0.add(((IDuration) t1).getValue().negate());
 				return createTime(cal0);
 			}
 		}
-
+		
 		// duration - duration = duration
 		else if ((t0 instanceof IDuration) && (t1 instanceof IDuration)) {
-
+			
 			/*
 			 * not defined!
 			 */
@@ -651,26 +614,23 @@ public class BuiltinHelper {
 			final Duration d1 = ((IDuration) t1).getValue();
 
 			/*
-			 * op:subtract-yearMonthDurations( $arg1 as xs:yearMonthDuration,
-			 * $arg2 as xs:yearMonthDuration) as xs:yearMonthDuration
+			 * op:subtract-yearMonthDurations( $arg1 as xs:yearMonthDuration, $arg2 as xs:yearMonthDuration) as
+			 * xs:yearMonthDuration
 			 */
 			if (t0 instanceof IYearMonthDuration
 					&& t1 instanceof IYearMonthDuration) {
-				return createYearMonthDuration(XmlDurationWorkAroundHelper
-						.subtract(d0, d1));
+				return createYearMonthDuration( XmlDurationWorkAroundHelper.subtract(d0, d1) );
 			}
 
 			/*
-			 * op:subtract-dayTimeDurations( $arg1 as xs:dayTimeDuration, $arg2
-			 * as xs:dayTimeDuration) as xs:dayTimeDuration
+			 * op:subtract-dayTimeDurations( $arg1 as xs:dayTimeDuration, $arg2 as xs:dayTimeDuration) as
+			 * xs:dayTimeDuration
 			 */
 			else if (t0 instanceof IDayTimeDuration
 					&& t1 instanceof IDayTimeDuration) {
-				return createDayTimeDuration(XmlDurationWorkAroundHelper
-						.subtract(d0, d1));
+				return createDayTimeDuration( XmlDurationWorkAroundHelper.subtract(d0, d1) );
 			} else {
-				return createDuration(XmlDurationWorkAroundHelper.subtract(d0,
-						d1));
+				return createDuration(XmlDurationWorkAroundHelper.subtract(d0, d1));
 			}
 		}
 
@@ -686,15 +646,12 @@ public class BuiltinHelper {
 	 * At the moment only INumericTerms are supported.
 	 * </p>
 	 * 
-	 * @param t0
-	 *            the first factor
-	 * @param t1
-	 *            the second factor
+	 * @param t0 the first factor
+	 * @param t1 the second factor
 	 * @return the product
-	 * @throws NullPointerException
-	 *             if one of the terms is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is not a INumericTerm
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if one of the terms is not a
+	 *             INumericTerm
 	 */
 	public static ITerm multiply(final ITerm t0, final ITerm t1) {
 		if ((t0 == null) || (t1 == null)) {
@@ -713,19 +670,16 @@ public class BuiltinHelper {
 			IDuration duration = (IDuration) t0;
 			INumericTerm number = (INumericTerm) t1;
 
-			Duration result = duration.getValue().multiply(
-					new BigDecimal(number.getValue().doubleValue()));
-
+			Duration result = duration.getValue().multiply(new BigDecimal(number.getValue().doubleValue()));
+			
 			/*
-			 * op:multiply-yearMonthDuration( $arg1 as xs:yearMonthDuration,
-			 * $arg2 as xs:double) as xs:yearMonthDuration
+			 * op:multiply-yearMonthDuration( $arg1 as xs:yearMonthDuration, $arg2 as xs:double) as xs:yearMonthDuration
 			 */
 			if (duration instanceof IYearMonthDuration) {
 				return createYearMonthDuration(result);
 			}
 			/*
-			 * op:multiply-dayTimeDuration( $arg1 as xs:dayTimeDuration, $arg2
-			 * as xs:double) as xs:dayTimeDuration
+			 * op:multiply-dayTimeDuration( $arg1 as xs:dayTimeDuration, $arg2 as xs:double) as xs:dayTimeDuration
 			 */
 			else if (duration instanceof IDayTimeDuration) {
 				return createDayTimeDuration(result);
@@ -749,14 +703,11 @@ public class BuiltinHelper {
 	 * At the moment only INumericTerms are supported.
 	 * </p>
 	 * 
-	 * @param t0
-	 *            the dividend
-	 * @param t1
-	 *            the divisor
+	 * @param t0 the dividend
+	 * @param t1 the divisor
 	 * @return the quotient
 	 * @throws EvaluationException
-	 * @throws NullPointerException
-	 *             if one of the terms is <code>null</code>
+	 * @throws NullPointerException if one of the terms is <code>null</code>
 	 */
 	public static ITerm divide(final ITerm t0, final ITerm t1)
 			throws EvaluationException {
@@ -772,7 +723,7 @@ public class BuiltinHelper {
 				handleDivideByZero();
 				return null;
 			}
-
+			
 			BigDecimal result = ((INumericTerm) t0).getValue().divide(
 					denominator);
 
@@ -785,10 +736,8 @@ public class BuiltinHelper {
 		}
 
 		/*
-		 * op:divide-yearMonthDuration-by-yearMonthDuration( $arg1 as
-		 * xs:yearMonthDuration, $arg2 as xs:yearMonthDuration) as xs:decimal
-		 * op:divide-dayTimeDuration-by-dayTimeDuration( $arg1 as
-		 * xs:dayTimeDuration, $arg2 as xs:dayTimeDuration) as xs:decimal
+		 * op:divide-yearMonthDuration-by-yearMonthDuration( $arg1 as xs:yearMonthDuration, $arg2 as xs:yearMonthDuration) as xs:decimal
+		 * op:divide-dayTimeDuration-by-dayTimeDuration( $arg1 as xs:dayTimeDuration, $arg2 as xs:dayTimeDuration) as xs:decimal
 		 */
 		if (t0 instanceof IDuration && t1 instanceof IDuration) {
 			Duration duration0 = ((IDuration) t0).getValue();
@@ -802,9 +751,8 @@ public class BuiltinHelper {
 		}
 
 		/*
-		 * op:divide-yearMonthDuration( $arg1 as xs:yearMonthDuration, $arg2 as
-		 * xs:double) as xs:yearMonthDuration op:divide-dayTimeDuration( $arg1
-		 * as xs:dayTimeDuration, $arg2 as xs:double) as xs:dayTimeDuration
+		 * op:divide-yearMonthDuration( $arg1 as xs:yearMonthDuration, $arg2 as xs:double) as xs:yearMonthDuration
+		 * op:divide-dayTimeDuration( $arg1 as xs:dayTimeDuration, $arg2 as xs:double) as xs:dayTimeDuration
 		 */
 		if (t0 instanceof IDuration && t1 instanceof INumericTerm) {
 			double number = ((INumericTerm) t1).getValue().doubleValue();
@@ -854,16 +802,13 @@ public class BuiltinHelper {
 	 * At the moment only INumericTerms are supported.
 	 * </p>
 	 * 
-	 * @param t0
-	 *            the first argument
-	 * @param t1
-	 *            the second argument
+	 * @param t0 the first argument
+	 * @param t1 the second argument
 	 * @return the product = t0 % t1
 	 * @throws EvaluationException
-	 * @throws NullPointerException
-	 *             if one of the terms is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if one of the terms is not a INumericTerm
+	 * @throws NullPointerException if one of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if one of the terms is not a
+	 *             INumericTerm
 	 */
 	public static ITerm modulus(final ITerm t0, final ITerm t1)
 			throws EvaluationException {
@@ -921,11 +866,9 @@ public class BuiltinHelper {
 	 * </li>
 	 * </ol>
 	 * 
-	 * @param t0
-	 *            The term which should be promoted depending on the term
+	 * @param t0 The term which should be promoted depending on the term
 	 *            <code>t1</code>.
-	 * @param t1
-	 *            The term according to which the term <code>t0</code> is
+	 * @param t1 The term according to which the term <code>t0</code> is
 	 *            promoted.
 	 * @return The result of the the type promotion.
 	 */
@@ -962,13 +905,10 @@ public class BuiltinHelper {
 	/**
 	 * Constructs a number term with of the most appropriate term type.
 	 * 
-	 * @param n
-	 *            the value for the returned term
-	 * @param t0
-	 *            the first term (only the type of this term will be taken into
+	 * @param n the value for the returned term
+	 * @param t0 the first term (only the type of this term will be taken into
 	 *            account)
-	 * @param t1
-	 *            the first term (only the type of this term will be taken into
+	 * @param t1 the first term (only the type of this term will be taken into
 	 *            account)
 	 * @return a term of the most appropriate type of the submitted ones with
 	 *         the given value.
@@ -1220,11 +1160,9 @@ public class BuiltinHelper {
 	/**
 	 * Determines the indexes of the ground terms in a collection.
 	 * 
-	 * @param t
-	 *            the collection where to search for ground terms
+	 * @param t the collection where to search for ground terms
 	 * @return the indexes of the ground terms (the first term has the index 0)
-	 * @throws NullPointerException
-	 *             if the collection is <code>null</code>
+	 * @throws NullPointerException if the collection is <code>null</code>
 	 */
 	public static int[] determineGround(final Collection<ITerm> t) {
 		if (t == null) {
@@ -1247,18 +1185,13 @@ public class BuiltinHelper {
 	/**
 	 * Returns the terms at a given position in a collection.
 	 * 
-	 * @param t
-	 *            the collection from where to retrieve the terms
-	 * @param pos
-	 *            the positions of the terms to retrieve
+	 * @param t the collection from where to retrieve the terms
+	 * @param pos the positions of the terms to retrieve
 	 * @return the retrieved terms
-	 * @throws NullPointerException
-	 *             if the collection is <code>null</code>
-	 * @throws NullPointerException
-	 *             if the position array is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if ther are more terms requested, than given (pos.length &gt;
-	 *             t.size())
+	 * @throws NullPointerException if the collection is <code>null</code>
+	 * @throws NullPointerException if the position array is <code>null</code>
+	 * @throws IllegalArgumentException if ther are more terms requested, than
+	 *             given (pos.length &gt; t.size())
 	 */
 	public static ITerm[] getIndexes(final Collection<ITerm> t, final int[] pos) {
 		if (pos == null) {
@@ -1286,12 +1219,10 @@ public class BuiltinHelper {
 	/**
 	 * Determines the indexes of the unground terms in a collection.
 	 * 
-	 * @param t
-	 *            the collection where to search for ground terms
+	 * @param t the collection where to search for ground terms
 	 * @return the indexes of the unground terms (the first term has the index
 	 *         0)
-	 * @throws NullPointerException
-	 *             if the collection is <code>null</code>
+	 * @throws NullPointerException if the collection is <code>null</code>
 	 */
 	public static int[] determineUnground(final Collection<ITerm> t) {
 		if (t == null) {
@@ -1320,15 +1251,11 @@ public class BuiltinHelper {
 	 * collection with length 5 we would get <code>[0, 2]</code> as complement.
 	 * </p>
 	 * 
-	 * @param i
-	 *            the array from which to compute the complement
-	 * @param l
-	 *            the length of the collection whe took the index from
+	 * @param i the array from which to compute the complement
+	 * @param l the length of the collection whe took the index from
 	 * @return the complement
-	 * @throws NullPointerException
-	 *             if the index array was <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the lenght was nevative
+	 * @throws NullPointerException if the index array was <code>null</code>
+	 * @throws IllegalArgumentException if the lenght was nevative
 	 * @see #determineGround(Collection<ITerm>)
 	 * @see #determineUnground(Collection<ITerm>)
 	 */
@@ -1361,20 +1288,15 @@ public class BuiltinHelper {
 	 * will get <code>['a', 12, 13, 'b', 'c', 14]</code>.
 	 * </p>
 	 * 
-	 * @param idx0
-	 *            the index array
-	 * @param t0
-	 *            the first array (this terms will be put at he positions of the
+	 * @param idx0 the index array
+	 * @param t0 the first array (this terms will be put at he positions of the
 	 *            index array)
-	 * @param t1
-	 *            the second array (with this terms the gaps will be filled up)
-	 * @throws NullPointerException
-	 *             if the index array is <code>null</code>
-	 * @throws NullPointerException
-	 *             if one of the term arrays is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the lenght of the index and the first term array don't
-	 *             match
+	 * @param t1 the second array (with this terms the gaps will be filled up)
+	 * @throws NullPointerException if the index array is <code>null</code>
+	 * @throws NullPointerException if one of the term arrays is
+	 *             <code>null</code>
+	 * @throws IllegalArgumentException if the lenght of the index and the first
+	 *             term array don't match
 	 * @see #determineGround(Collection<ITerm>)
 	 * @see #determineUnground(Collection<ITerm>)
 	 */
