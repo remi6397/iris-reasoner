@@ -26,72 +26,64 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.terms.concrete.IList;
 import org.deri.iris.terms.concrete.IntTerm;
 
-public class SubListToBuiltinTest extends AbstractListBuiltinTest {
+public class SubListFromBuiltinTest extends AbstractListBuiltinTest {
 
-	private SubListToBuiltin builtin;
+	private SubListFromBuiltin builtin;
 
 	private IList list_1, list_2, expected;
 
 	public void testBuiltin() throws EvaluationException {
 
 		try {
-			builtin = new SubListToBuiltin();
+			builtin = new SubListFromBuiltin();
 			System.out.println(builtin.toString());
 			fail("An IllegalArgumentException should be thrown if built-in has the wrong amount of paramenters.");
 		} catch (IllegalArgumentException e) {
 		}
 
-		builtin = new SubListToBuiltin(EMPTY_LIST, new IntTerm(0), new IntTerm(
-				0));
+		builtin = new SubListFromBuiltin(EMPTY_LIST, new IntTerm(0));
 		//
 		list_1 = new org.deri.iris.terms.concrete.List();
 		list_2 = new org.deri.iris.terms.concrete.List();
 		expected = new org.deri.iris.terms.concrete.List();
 
-		// External( func:sublist(List(0 1 2 3 4) 0 0) ) = List()
-		assertEquals(expected, builtin.computeResult(list_1, ZERO, ZERO));
+		// External( func:sublist(List(0 1 2 3 4) 0) ) = List(0 1 2 3 4)
+		list_1.clear();
 		list_1.add(ZERO);
 		list_1.add(ONE);
 		list_1.add(TWO);
 		list_1.add(THREE);
 		list_1.add(FOUR);
-		assertEquals(expected, builtin.computeResult(list_1, ZERO, ZERO));
 
-		// External( func:sublist(List(0 1 2 3 4) 0 1) ) = List(0)
-		list_2.clear();
-		list_2.add(ZERO);
-		assertEquals(list_2, builtin.computeResult(list_1, ZERO, ONE));
-
-		// External( func:sublist(List(0 1 2 3 4) 0 4) ) = List(0 1 2 3)
 		expected.clear();
 		expected.add(ZERO);
 		expected.add(ONE);
 		expected.add(TWO);
 		expected.add(THREE);
-		assertEquals(expected, builtin.computeResult(list_1, ZERO, FOUR));
-
-		// External( func:sublist(List(0 1 2 3 4) 0 10) ) = List(0 1 2 3 4)
 		expected.add(FOUR);
-		assertEquals(expected, builtin.computeResult(list_1, ZERO, new IntTerm(
-				10)));
 
-		// External( func:sublist(List(0 1 2 3 4) 0 -2) ) = List(0 1 2)
+		assertEquals(expected, builtin.computeResult(list_1, ZERO));
+
+		// External( func:sublist(List(0 1 2 3 4) 3) ) = List(3 4)
 		expected.clear();
-		expected.add(ZERO);
-		expected.add(ONE);
-		expected.add(TWO);
-		assertEquals(expected, builtin.computeResult(list_1, ZERO, new IntTerm(-2)));
-		
-		// External( func:sublist(List(0 1 2 3 4) 2 4) ) = List(2 3)
-		expected.clear();
-		expected.add(TWO);
 		expected.add(THREE);
-		assertEquals(expected, builtin.computeResult(list_1, TWO, FOUR));
-		
-		// External( func:sublist(List(0 1 2 3 4) 2 -2) ) = List(2)
-		expected.clear();
-		expected.add(TWO);
-		assertEquals(expected, builtin.computeResult(list_1, TWO, new IntTerm(-2)));
+		expected.add(FOUR);
+
+		assertEquals(expected, builtin.computeResult(list_1, THREE));
+
+		// External( func:sublist(List(0 1 2 3 4) -2) ) = List(3 4)
+		assertEquals(expected, builtin.computeResult(list_1, new IntTerm(-2)));
+
+		// 
+		assertEquals(null, builtin.computeResult(list_1, new IntTerm(-10)));
+
+		list_2.add(ONE);
+		list_2.add(THREE);
+
+		list_1.add(list_2);
+		expected.add(list_2);
+
+		assertEquals(expected, builtin.computeResult(list_1, new IntTerm(-3)));
 
 	}
 }

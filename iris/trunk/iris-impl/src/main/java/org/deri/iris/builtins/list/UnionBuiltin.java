@@ -66,6 +66,13 @@ public class UnionBuiltin extends AbstractBuiltin {
 					+ terms.length + "> must at least 2");
 		}
 	}
+	
+	protected ITerm evaluateTerms( ITerm[] terms, int[] variableIndexes )
+	{
+		assert variableIndexes.length == 0;
+		return computeResult(terms);
+	}
+
 
 	protected ITerm computeResult(ITerm... terms) {
 		return ListBuiltinHelper.union(terms);

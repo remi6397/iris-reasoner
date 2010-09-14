@@ -22,7 +22,11 @@
  */
 package org.deri.iris.builtins.list;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
 import org.deri.iris.EvaluationException;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IList;
 import org.deri.iris.terms.concrete.IntTerm;
 
@@ -93,6 +97,35 @@ public class RemoveBuiltinTest extends AbstractListBuiltinTest {
 
 		// External( func:remove(List(0 1 2 3 4) -6) ) = (unspecified)
 		assertEquals(null, builtin.computeResult(list_1, new IntTerm(-6)));
+	}
+	
+	public void testTupleBuiltin() throws EvaluationException {
+		list_1 = new org.deri.iris.terms.concrete.List();
+		list_1.add(ONE);
+		list_1.add(TWO);
+		list_1.add(TWO);
+		list_1.add(THREE);
+		list_1.add(FOUR);
 
+		expected = new org.deri.iris.terms.concrete.List();
+		expected.add(ONE);
+		expected.add(TWO);
+		expected.add(THREE);
+		expected.add(FOUR);
+		
+		check(list_1, TWO, expected);
+	}
+
+	private void check(ITerm listOne, ITerm term2, ITerm expectedResult)
+			throws EvaluationException {
+		builtin = new RemoveBuiltin(listOne, term2);
+
+		ITuple arguments = BASIC.createTuple(X, Y, Z);
+
+		ITuple expectedTuple = BASIC.createTuple(expectedResult);
+
+		ITuple actualTuple = builtin.evaluate(arguments);
+
+		assertEquals(expectedTuple, actualTuple);
 	}
 }

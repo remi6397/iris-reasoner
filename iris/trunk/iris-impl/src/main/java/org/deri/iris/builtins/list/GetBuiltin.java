@@ -58,6 +58,12 @@ public class GetBuiltin extends AbstractBuiltin {
 	public GetBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
+	
+	protected ITerm evaluateTerms( ITerm[] terms, int[] variableIndexes )
+	{
+		assert variableIndexes.length == 0;
+		return computeResult(terms);
+	}
 
 	protected ITerm computeResult(ITerm... terms) {
 		return ((ITerm) ListBuiltinHelper.get(terms));

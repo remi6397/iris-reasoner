@@ -22,7 +22,11 @@
  */
 package org.deri.iris.builtins.list;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
 import org.deri.iris.EvaluationException;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IList;
 import org.deri.iris.terms.concrete.IntTerm;
 
@@ -47,13 +51,13 @@ public class MakeListBuiltinTest extends AbstractListBuiltinTest {
 		expected = new org.deri.iris.terms.concrete.List();
 
 		assertEquals(expected, builtin.computeResult());
-		
+
 		list_1.clear();
 		expected.clear();
 		expected.add(EMPTY_LIST);
 
 		assertEquals(expected, builtin.computeResult(EMPTY_LIST));
-		
+
 		// External( func:make-list(0 1 List(20 21))) = List(0 1 List(20 21))
 		list_1.clear();
 		list_1.add(new IntTerm(20));
@@ -62,10 +66,30 @@ public class MakeListBuiltinTest extends AbstractListBuiltinTest {
 		expected.add(ZERO);
 		expected.add(ONE);
 		expected.add(list_1);
-		
+
 		assertEquals(expected, builtin.computeResult(ZERO, ONE, list_1));
-		
-		
-	
+	}
+
+	public void testTupleBuiltin() throws EvaluationException {
+		expected = new org.deri.iris.terms.concrete.List();
+		expected.add(ONE);
+		expected.add(TWO);
+		expected.add(TWO);
+		expected.add(THREE);
+
+		check(expected, ONE, TWO, TWO, THREE);
+	}
+
+	private void check(ITerm expectedResult, ITerm... values)
+			throws EvaluationException {
+		builtin = new MakeListBuiltin(values);
+
+		ITuple arguments = BASIC.createTuple(X, Y, Z);
+
+		ITuple expectedTuple = BASIC.createTuple(expectedResult);
+
+		ITuple actualTuple = builtin.evaluate(arguments);
+
+		assertEquals(expectedTuple, actualTuple);
 	}
 }

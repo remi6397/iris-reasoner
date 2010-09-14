@@ -22,7 +22,11 @@
  */
 package org.deri.iris.builtins.list;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
 import org.deri.iris.EvaluationException;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IList;
 
 public class DistinctValuesBuiltinTest extends AbstractListBuiltinTest {
@@ -90,7 +94,35 @@ public class DistinctValuesBuiltinTest extends AbstractListBuiltinTest {
 		expected.clear();
 		expected.add(THREE);
 		assertEquals(expected, builtin.computeResult(list_1));
-		
 	}
+	
+	public void testTupleBuiltin() throws EvaluationException {
+		list_1 = new org.deri.iris.terms.concrete.List();
+		list_1.add(ONE);
+		list_1.add(TWO);
+		list_1.add(TWO);
+		list_1.add(FOUR);
+		
+		expected = new org.deri.iris.terms.concrete.List();
+		expected.add(ONE);
+		expected.add(TWO);
+		expected.add(FOUR);
+		
+		check(list_1, expected);
+	}
+	
+	
+	private void check(ITerm listOne, ITerm expectedResult) throws EvaluationException {
+		builtin = new DistinctValuesBuiltin(listOne);
+		
+		ITuple arguments = BASIC.createTuple(X, Y, Z);
+		
+		ITuple expectedTuple = BASIC.createTuple(expectedResult);
+
+		ITuple actualTuple = builtin.evaluate(arguments);
+
+		assertEquals(expectedTuple, actualTuple);
+	}
+	
 
 }

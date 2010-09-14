@@ -24,10 +24,9 @@ package org.deri.iris.builtins.list;
 
 import static org.deri.iris.factory.Factory.BASIC;
 
-import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.ITerm;
-import org.deri.iris.builtins.AbstractBuiltin;
+import org.deri.iris.builtins.BooleanBuiltin;
 
 /**
  * <p>
@@ -41,7 +40,7 @@ import org.deri.iris.builtins.AbstractBuiltin;
  * >http://www.w3.org/2005/rules/wiki/DTB#Functions_and_Predicates_on_RIF_Lists
  * 
  */
-public class ListContainsBuiltin extends AbstractBuiltin {
+public class ListContainsBuiltin extends BooleanBuiltin {
 
 	/** The predicate defining this built-in. */
 	private static final IPredicate PREDICATE = BASIC.createPredicate(
@@ -61,7 +60,7 @@ public class ListContainsBuiltin extends AbstractBuiltin {
 		super(PREDICATE, terms);
 	}
 
-	protected boolean computeResult(ITerm... terms) throws EvaluationException {
+	protected boolean computeResult(ITerm [] terms){
 		return ListBuiltinHelper.listContains(terms);
 	}
 

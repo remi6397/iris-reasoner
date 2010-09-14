@@ -22,7 +22,11 @@
  */
 package org.deri.iris.builtins.list;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
 import org.deri.iris.EvaluationException;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IList;
 
 public class IntersectBuiltinTest extends AbstractListBuiltinTest {
@@ -138,6 +142,34 @@ public class IntersectBuiltinTest extends AbstractListBuiltinTest {
 		expected.add(ONE);
 		expected.add(THREE);
 		assertEquals(expected, builtin.computeResult(list_1, list_2));
+	}
 
+	public void testTupleBuiltin() throws EvaluationException {
+		list_1 = new org.deri.iris.terms.concrete.List();
+		list_1.add(ONE);
+		list_1.add(TWO);
+		list_1.add(TWO);
+		list_1.add(THREE);
+
+		list_2 = new org.deri.iris.terms.concrete.List();
+		list_2.add(ONE);
+
+		expected = new org.deri.iris.terms.concrete.List();
+		expected.add(ONE);
+
+		check(list_1, list_2, expected);
+	}
+
+	private void check(ITerm listOne, ITerm term2, ITerm expectedResult)
+			throws EvaluationException {
+		builtin = new IntersectBuiltin(listOne, term2);
+
+		ITuple arguments = BASIC.createTuple(X, Y, Z);
+
+		ITuple expectedTuple = BASIC.createTuple(expectedResult);
+
+		ITuple actualTuple = builtin.evaluate(arguments);
+
+		assertEquals(expectedTuple, actualTuple);
 	}
 }

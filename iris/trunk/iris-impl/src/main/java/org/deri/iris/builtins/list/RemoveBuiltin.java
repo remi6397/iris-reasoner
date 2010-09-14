@@ -60,6 +60,13 @@ public class RemoveBuiltin extends AbstractBuiltin {
 	public RemoveBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
+	
+	protected ITerm evaluateTerms( ITerm[] terms, int[] variableIndexes )
+	{
+		assert variableIndexes.length == 0;
+		return computeResult(terms);
+	}
+
 
 	protected ITerm computeResult(ITerm... terms) {
 		return ListBuiltinHelper.remove(terms);
