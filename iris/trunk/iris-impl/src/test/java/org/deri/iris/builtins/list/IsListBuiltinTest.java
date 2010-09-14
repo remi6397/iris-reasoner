@@ -22,7 +22,11 @@
  */
 package org.deri.iris.builtins.list;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
 import org.deri.iris.EvaluationException;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IList;
 
 public class IsListBuiltinTest extends AbstractListBuiltinTest {
@@ -39,27 +43,60 @@ public class IsListBuiltinTest extends AbstractListBuiltinTest {
 		} catch (IllegalArgumentException e) {
 		}
 		builtin = new IsListBuiltin(EMPTY_LIST);
-		assertEquals(true, builtin.computeResult(EMPTY_LIST));
+		ITerm[] terms = {EMPTY_LIST, null};
+		
+		assertEquals(true, builtin.computeResult(terms));
 		list_1 = new org.deri.iris.terms.concrete.List();
 		list_2 = new org.deri.iris.terms.concrete.List();
-		
+
 		// External(pred:is-list(1)) will evaluate to f in any interpretation.
-		assertEquals(false, builtin.computeResult(ONE));
-		assertEquals(false, builtin.computeResult(ONE, list_1));
+		terms[0] = ONE;
+		assertEquals(false, builtin.computeResult(terms));
+		terms[1] = list_1;
+		assertEquals(false, builtin.computeResult(terms));
 
 		list_1.add(ONE);
 		assertFalse(list_1.isEmpty());
-		assertEquals(true, builtin.computeResult(list_1));
+		terms[0] = list_1;
+		terms[1] = null;
+		assertEquals(true, builtin.computeResult(terms));
 
 		list_2.add(ONE);
 		list_2.add(ONE);
 		list_2.add(TWO);
 		list_2.add(list_1);
+		terms[0] = list_2;
+		terms[1] = null;
 
-		assertEquals(true, builtin.computeResult(list_2));
+		ITerm[] terms2 = {list_2};
+		assertEquals(true, builtin.computeResult(terms));
 		assertFalse(list_2.equals(list_1));
-		assertEquals(builtin.computeResult(list_2), builtin
-				.computeResult(list_1));
+		assertEquals(builtin.computeResult(terms), builtin
+				.computeResult(terms2));
+	}
 
+	public void testTupleBuiltin() throws EvaluationException {
+		list_1 = new org.deri.iris.terms.concrete.List();
+		list_1.add(ONE);
+		list_1.add(TWO);
+		list_1.add(TWO);
+		list_1.add(THREE);
+
+		check(list_1, true);
+	}
+
+	private void check(ITerm listOne, boolean expected)
+			throws EvaluationException {
+		builtin = new IsListBuiltin(listOne);
+
+		ITuple arguments = BASIC.createTuple(X, Y, Z);
+
+		ITuple actualTuple = builtin.evaluate(arguments);
+
+		if (expected) {
+			assertNotNull(actualTuple);
+		} else {
+			assertNull(actualTuple);
+		}
 	}
 }

@@ -44,11 +44,11 @@ import org.deri.iris.builtins.AbstractBuiltin;
  * >http://www.w3.org/2005/rules/wiki/DTB#Functions_and_Predicates_on_RIF_Lists
  * 
  */
-public class SubListToBuiltin extends AbstractBuiltin {
+public class SubListFromBuiltin extends AbstractBuiltin {
 
 	private static final String PREDICATE_STRING = "SUBLIST";
 	/** The predicate defining this built-in. */
-	private static final IPredicate PREDICATE = BASIC.createPredicate(PREDICATE_STRING, 3);
+	private static final IPredicate PREDICATE = BASIC.createPredicate(PREDICATE_STRING, 2);
 
 	/**
 	 * Creates the built-in for the specified terms.
@@ -58,11 +58,18 @@ public class SubListToBuiltin extends AbstractBuiltin {
 	 * @throws NullPointerException
 	 *             If one of the terms is <code>null</code>.
 	 * @throws IllegalArgumentException
-	 *             If the number of terms submitted is not 3.
+	 *             If the number of terms submitted is not 2.
 	 */
-	public SubListToBuiltin(ITerm... terms) {
+	public SubListFromBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
 	}
+	
+	protected ITerm evaluateTerms( ITerm[] terms, int[] variableIndexes )
+	{
+		assert variableIndexes.length == 0;
+		return computeResult(terms);
+	}
+
 
 	protected ITerm computeResult(ITerm... terms) {
 		return ListBuiltinHelper.subList(terms);

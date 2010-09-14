@@ -22,7 +22,11 @@
  */
 package org.deri.iris.builtins.list;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
 import org.deri.iris.EvaluationException;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IList;
 import org.deri.iris.terms.concrete.IntTerm;
 
@@ -89,6 +93,30 @@ public class GetBuiltinTest extends AbstractListBuiltinTest {
 			builtin.computeResult(list_2, new IntTerm(10));
 		} catch (IndexOutOfBoundsException e) {
 		}
+	}
+	
+	public void testTupleBuiltin() throws EvaluationException {
+		list_1 = new org.deri.iris.terms.concrete.List();
+		list_1.add(ONE);
+		list_1.add(TWO);
+		list_1.add(TWO);
+		list_1.add(THREE);
+		list_1.add(FOUR);
+		
+		
+		check(list_1, new IntTerm(3), THREE);
+	}
+	
+	
+	private void check(ITerm listOne, ITerm term2, ITerm expectedResult) throws EvaluationException {
+		builtin = new GetBuiltin(listOne, term2);
+		
+		ITuple arguments = BASIC.createTuple(X, Y, Z);
+		
+		ITuple expectedTuple = BASIC.createTuple(expectedResult);
 
+		ITuple actualTuple = builtin.evaluate(arguments);
+
+		assertEquals(expectedTuple, actualTuple);
 	}
 }

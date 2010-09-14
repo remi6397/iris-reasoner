@@ -22,7 +22,11 @@
  */
 package org.deri.iris.builtins.list;
 
+import static org.deri.iris.factory.Factory.BASIC;
+
 import org.deri.iris.EvaluationException;
+import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IList;
 import org.deri.iris.terms.concrete.IntTerm;
 
@@ -110,5 +114,38 @@ public class InsertBeforeBuiltinTest extends AbstractListBuiltinTest {
 		expected.add(FOUR);
 		assertEquals(expected, builtin.computeResult(list_1, ONE, list_2));
 
+	}
+
+	public void testTupleBuiltin() throws EvaluationException {
+		list_1 = new org.deri.iris.terms.concrete.List();
+		list_1.add(ONE);
+		list_1.add(TWO);
+		list_1.add(TWO);
+		list_1.add(THREE);
+
+		list_2 = new org.deri.iris.terms.concrete.List();
+		list_2.add(ONE);
+
+		expected = new org.deri.iris.terms.concrete.List();
+		expected.add(ONE);
+		expected.add(list_2);
+		expected.add(TWO);
+		expected.add(TWO);
+		expected.add(THREE);
+
+		check(list_1, ONE, list_2, expected);
+	}
+
+	private void check(ITerm listOne, ITerm term2, ITerm term3,
+			ITerm expectedResult) throws EvaluationException {
+		builtin = new InsertBeforeBuiltin(listOne, term2, term3);
+
+		ITuple arguments = BASIC.createTuple(X, Y, Z);
+
+		ITuple expectedTuple = BASIC.createTuple(expectedResult);
+
+		ITuple actualTuple = builtin.evaluate(arguments);
+
+		assertEquals(expectedTuple, actualTuple);
 	}
 }
