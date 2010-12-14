@@ -10,6 +10,8 @@ import java.util.ListIterator;
 import org.deri.iris.api.terms.IConcreteTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IList;
+import org.deri.iris.utils.equivalence.IEquivalentTerms;
+import org.deri.iris.utils.equivalence.IgnoreTermEquivalence;
 
 public class List implements IList {
 
@@ -106,10 +108,16 @@ public class List implements IList {
 
 	@Override
 	public boolean equals(Object obj) {
+		return equals(obj, new IgnoreTermEquivalence());
+	}
+	
+	@Override
+	public boolean equals(Object obj, IEquivalentTerms equivalentTerms) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
+		
 		if (!IList.class.isAssignableFrom(obj.getClass()))
 			return false;
 		IList other = (IList) obj;
@@ -119,8 +127,35 @@ public class List implements IList {
 		} else {
 			java.util.List<?> otherTerms = (java.util.List<?>) ((IList) other)
 					.getValue();
-			return items.equals(otherTerms);
+			boolean termListEqual = items.equals(otherTerms);
+			
+			if (equivalentTerms != null && !termListEqual) {
+				if (otherTerms.size() != items.size()) {
+					return false;
+				}
+
+				boolean areEquivalent = true;
+
+				for (int i = 0; i < items.size(); i++) {
+					IConcreteTerm thisTerm = items.get(i);
+					Object otherObject = otherTerms.get(i);
+
+					if (otherObject instanceof IConcreteTerm) {
+						IConcreteTerm otherTerm = (IConcreteTerm) otherObject;
+						areEquivalent &= equivalentTerms.areEquivalent(
+								thisTerm, otherTerm);
+					} else {
+						areEquivalent = false;
+						break;
+					}
+				}
+				
+				termListEqual = areEquivalent;
+			}
+			
+			return termListEqual;
 		}
+		
 		return true;
 	}
 
