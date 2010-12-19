@@ -675,6 +675,19 @@ public interface IBuiltinsFactory {
 	 * @throws IllegalArgumentException if t is <code>null</code>
 	 */
 	public IBuiltinAtom createStringMatches(ITerm... terms);
+	
+	/**
+	 * Creates the builtin representing RIF built-in func:encode-for-uri.
+	 * 
+	 * @param terms The terms.
+	 * @return The builtin.
+	 * @throws NullPointerException If any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 * @throws IllegalArgumentException If terms is <code>null</code>.
+	 */
+	public IBuiltinAtom createEncodeForUri(ITerm... terms);
 
 	/*
 	 * Date built-ins.
@@ -1752,6 +1765,19 @@ public interface IBuiltinsFactory {
 	public IBuiltinAtom createToDateTime(ITerm... terms);
 
 	/**
+	 * Creates the ToDateTimeStamp builtin.
+	 * 
+	 * @param terms The terms.
+	 * @return The builtin
+	 * @throws NullPointerException if any of the terms is <code>null</code>
+	 * @throws IllegalArgumentException if one of the terms is {@code null}
+	 * @throws IllegalArgumentException if the number of terms submitted is not
+	 *             correct
+	 * @throws IllegalArgumentException if terms is <code>null</code>
+	 */
+	public IBuiltinAtom createToDateTimeStamp(ITerm... terms);
+	
+	/**
 	 * Creates ToDayTimeDuration builtin.
 	 * 
 	 * @param terms The terms.
@@ -2419,6 +2445,17 @@ public interface IBuiltinsFactory {
 	public IBuiltinAtom createIsToken(ITerm... terms);
 
 	/**
+	 * Creates the IsList built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The builtin.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createIsList(ITerm...terms);
+	
+	/**
 	 * Creates the IsLanguage built-in.
 	 * 
 	 * @param terms The terms.
@@ -2895,6 +2932,17 @@ public interface IBuiltinsFactory {
 	 */
 	public IBuiltinAtom createIsNotLanguage(ITerm... terms);
 
+	/**
+	 * Creates the IsNotList built-in.
+	 * 
+	 * @param terms The terms.
+	 * @return The builtin.
+	 * @throws NullPointerException If any of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException If the number of terms submitted is not
+	 *             correct.
+	 */
+	public IBuiltinAtom createIsNotList(ITerm...terms);
+	
 	/**
 	 * Creates the IsNotName built-in.
 	 * 

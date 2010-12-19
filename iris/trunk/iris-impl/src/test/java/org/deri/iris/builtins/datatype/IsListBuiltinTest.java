@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.builtins.list;
+package org.deri.iris.builtins.datatype;
 
 import static org.deri.iris.factory.Factory.BASIC;
 
@@ -28,6 +28,8 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IList;
+import org.deri.iris.builtins.datatype.IsListBuiltin;
+import org.deri.iris.builtins.list.AbstractListBuiltinTest;
 
 public class IsListBuiltinTest extends AbstractListBuiltinTest {
 
