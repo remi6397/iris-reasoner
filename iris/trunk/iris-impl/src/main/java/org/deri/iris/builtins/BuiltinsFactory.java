@@ -337,6 +337,10 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 			return new StringMatchesBuiltin(terms);
 		}
 	}
+	
+	public IBuiltinAtom createEncodeForUri(ITerm...terms) {
+		return new EncodeForUriBuiltin(terms);
+	}
 
 	public IBuiltinAtom createYearPart(ITerm... terms) {
 		return new YearPartBuiltin(terms);
@@ -412,6 +416,10 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 
 	public IBuiltinAtom createToDateTime(ITerm... terms) {
 		return new ToDateTimeBuiltin(terms);
+	}
+	
+	public IBuiltinAtom createToDateTimeStamp(ITerm...terms) {
+		return new ToDateTimeStampBuiltin(terms);
 	}
 
 	public IBuiltinAtom createToDayTimeDuration(ITerm... terms) {
@@ -590,6 +598,10 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 		return new IsLanguageBuiltin(terms);
 	}
 
+	public IBuiltinAtom createIsList(ITerm...terms) {
+		return new IsListBuiltin(terms);
+	}
+	
 	public IBuiltinAtom createIsLong(ITerm... terms) {
 		return new IsLongBuiltin(terms);
 	}
@@ -740,6 +752,10 @@ public class BuiltinsFactory implements IBuiltinsFactory {
 
 	public IBuiltinAtom createIsNotLanguage(ITerm... terms) {
 		return new IsNotLanguageBuiltin(terms);
+	}
+	
+	public IBuiltinAtom createIsNotList(ITerm...terms) {
+		return new IsNotListBuiltin(terms);
 	}
 
 	public IBuiltinAtom createIsNotLong(ITerm... terms) {
