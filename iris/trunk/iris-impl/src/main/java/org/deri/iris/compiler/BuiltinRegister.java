@@ -123,6 +123,7 @@ import org.deri.iris.builtins.numeric.NumericModulusBuiltin;
 import org.deri.iris.builtins.numeric.NumericMultiplyBuiltin;
 import org.deri.iris.builtins.numeric.NumericNotEqualBuiltin;
 import org.deri.iris.builtins.numeric.NumericSubtractBuiltin;
+import org.deri.iris.builtins.string.MatchesLanguageRangeBuiltin;
 import org.deri.iris.builtins.string.XMLLiteralEqualBuiltin;
 import org.deri.iris.builtins.string.XMLLiteralNotEqualBuiltin;
 import org.deri.iris.factory.Factory;
@@ -300,8 +301,10 @@ public final class BuiltinRegister {
 		registerBuiltin( new org.deri.iris.builtins.datatype.SameTypeBuiltin( t1, t2 ) );
 		
 		// Datatype conversion builtins.
+		registerBuiltin(new ToAnyURIBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToBase64Builtin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToBooleanBuiltin(t1, t2));
+		registerBuiltin(new ToByteBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToDateBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToDateTimeBuiltin(t1, t2));
 		registerBuiltin(new ToDateTimeStampBuiltin(t1, t2));
@@ -309,6 +312,7 @@ public final class BuiltinRegister {
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToDecimalBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToDoubleBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToDurationBuiltin(t1, t2));
+		registerBuiltin(new ToENTITYBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToFloatBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToGDayBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToGMonthBuiltin(t1, t2));
@@ -316,12 +320,31 @@ public final class BuiltinRegister {
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToGYearBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToGYearMonthBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToHexBinaryBuiltin(t1, t2));
-		registerBuiltin(new org.deri.iris.builtins.datatype.ToDurationBuiltin(t1, t2));
+		registerBuiltin(new ToIDBuiltin(t1, t2));
+		registerBuiltin(new ToIDREFBuiltin(t1, t2));
+		registerBuiltin(new ToIntBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToIntegerBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToIriBuiltin(t1, t2));
-		registerBuiltin(new org.deri.iris.builtins.datatype.ToStringBuiltin(t1, t2));
+		registerBuiltin(new ToLanguageBuiltin(t1, t2));
+		registerBuiltin(new ToLongBuiltin(t1, t2));
+		registerBuiltin(new ToNameBuiltin(t1, t2));
+		registerBuiltin(new ToNCNameBuiltin(t1, t2));
+		registerBuiltin(new ToNegativeIntegerBuiltin(t1, t2));
+		registerBuiltin(new ToNMTokenBuiltin(t1, t2));
+		registerBuiltin(new ToNonNegativeIntegerBuiltin(t1, t2));
+		registerBuiltin(new ToNonPositiveIntegerBuiltin(t1, t2));
+		registerBuiltin(new ToNormalizedStringBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToPlainLiteralBuiltin(t1, t2));
+		registerBuiltin(new ToPositiveIntegerBuiltin(t1, t2));
+		registerBuiltin(new ToQNameBuiltin(t1, t2));
+		registerBuiltin(new ToShortBuiltin(t1, t2));
+		registerBuiltin(new org.deri.iris.builtins.datatype.ToStringBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToTimeBuiltin(t1, t2));
+		registerBuiltin(new ToTokenBuiltin(t1, t2));
+		registerBuiltin(new ToUnsignedByteBuiltin(t1, t2));
+		registerBuiltin(new ToUnsignedIntBuiltin(t1, t2));
+		registerBuiltin(new ToUnsignedLongBuiltin(t1, t2));
+		registerBuiltin(new ToUnsignedShortBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToXMLLiteralBuiltin(t1, t2));
 		registerBuiltin(new org.deri.iris.builtins.datatype.ToYearMonthDurationBuiltin(t1, t2));
 		
@@ -453,6 +476,7 @@ public final class BuiltinRegister {
 		registerBuiltin(new org.deri.iris.builtins.string.StringUriEncodeBuiltin(t1, t2));
 		registerBuiltin(new XMLLiteralEqualBuiltin(t1, t2));
 		registerBuiltin(new XMLLiteralNotEqualBuiltin(t1, t2));
+		registerBuiltin(new MatchesLanguageRangeBuiltin(t1, t2));
 		
 		// Boolean built-ins.
 		registerBuiltin(new BooleanEqualBuiltin(t1, t2));
