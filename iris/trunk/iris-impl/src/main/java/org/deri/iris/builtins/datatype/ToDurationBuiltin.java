@@ -47,8 +47,8 @@ public class ToDurationBuiltin extends ConversionBuiltin {
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms The term representing the data type instance to be
-	 *            converted.
+	 * @param terms
+	 *            The term representing the data type instance to be converted.
 	 */
 	public ToDurationBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -56,8 +56,20 @@ public class ToDurationBuiltin extends ConversionBuiltin {
 
 	@Override
 	protected ITerm convert(ITerm term) {
+		return toDuration(term);
+	}
+
+	/**
+	 * Converts the specified term to a Duration term, if possible.
+	 * 
+	 * @param term
+	 *            The term to be converted.
+	 * @return A new Duration term representing the result of the conversion, or
+	 *         <code>null</code> if the term can not be converted.
+	 */
+	public static IDuration toDuration(ITerm term) {
 		if (term instanceof IDuration) {
-			return term;
+			return (IDuration) term;
 		} else if (term instanceof IDayTimeDuration) {
 			return toDuration((IDayTimeDuration) term);
 		} else if (term instanceof IYearMonthDuration) {
@@ -70,7 +82,8 @@ public class ToDurationBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a DayTimeDuration term to a Duration term.
 	 * 
-	 * @param term The DayTimeDuration term to be converted.
+	 * @param term
+	 *            The DayTimeDuration term to be converted.
 	 * @return A new Duration term representing the result of the conversion.
 	 */
 	public static IDuration toDuration(IDayTimeDuration term) {
@@ -81,12 +94,13 @@ public class ToDurationBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a YearMonthDuration term to a Duration term.
 	 * 
-	 * @param term The YearMonthDuration term to be converted.
+	 * @param term
+	 *            The YearMonthDuration term to be converted.
 	 * @return A new Duration term representing the result of the conversion.
 	 */
 	public static IDuration toDuration(IYearMonthDuration term) {
-		return CONCRETE.createDuration(term.isPositive(), term.getYear(), term
-				.getMonth(), 0, 0, 0, 0);
+		return CONCRETE.createDuration(term.isPositive(), term.getYear(),
+				term.getMonth(), 0, 0, 0, 0);
 	}
 
 }
