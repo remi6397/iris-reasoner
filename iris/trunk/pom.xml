@@ -3,7 +3,7 @@
 
 	<groupId>at.sti2.iris</groupId>
 	<artifactId>iris</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>0.7.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>IRIS</name>
 	<description>Integrated Rule Inference System is an extensible reasoning engine for expressive rule-based languages.</description>
@@ -21,9 +21,9 @@
 	</properties>
 
 	<scm>
-		<connection>scm:svn:https://iris-reasoner.svn.sourceforge.net/svnroot/iris-reasoner/iris/branches/soa4all-graph</connection>
-		<developerConnection>scm:svn:https://iris-reasoner.svn.sourceforge.net/svnroot/iris-reasoner/iris/branches/soa4all-graph</developerConnection>
-		<url>http://iris-reasoner.svn.sourceforge.net/viewvc/iris-reasoner/iris/branches/soa4all-graph</url>
+		<connection>scm:svn:https://iris-reasoner.svn.sourceforge.net/svnroot/iris-reasoner/iris/trunk</connection>
+		<developerConnection>scm:svn:https://iris-reasoner.svn.sourceforge.net/svnroot/iris-reasoner/iris/trunk</developerConnection>
+		<url>http://iris-reasoner.svn.sourceforge.net/viewvc/iris-reasoner/iris/trunk</url>
 	</scm>
 	
 	<build>
