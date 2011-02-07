@@ -23,7 +23,6 @@
 package org.deri.iris.graph;
 
 import org.deri.iris.api.graph.ILabeledEdge;
-import org.jgrapht.graph.DefaultEdge;
 
 /**
  * <p>
@@ -44,7 +43,7 @@ import org.jgrapht.graph.DefaultEdge;
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  * @version $Revision: 1.2 $
  */
-public class LabeledEdge<V, L> extends DefaultEdge implements ILabeledEdge<V, L> {
+public class LabeledEdge<V, L> implements ILabeledEdge<V, L> {
 
 	/** Label of this edge. */
 	private L label;

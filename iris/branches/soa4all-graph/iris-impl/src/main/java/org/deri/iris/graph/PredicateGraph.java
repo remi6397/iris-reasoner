@@ -35,12 +35,12 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.graph.ILabeledEdge;
 import org.deri.iris.api.graph.IPredicateGraph;
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.EdgeFactory;
-import org.jgrapht.Graphs;
-import org.jgrapht.alg.ConnectivityInspector;
-import org.jgrapht.alg.CycleDetector;
-import org.jgrapht.graph.DirectedMultigraph;
+
+import eu.soa4all.graph.Direction;
+import eu.soa4all.graph.Edge;
+import eu.soa4all.graph.Graph;
+import eu.soa4all.graph.Graphs;
+import eu.soa4all.graph.impl.GraphFactory;
 
 /**
  * <p>
@@ -62,23 +62,13 @@ public class PredicateGraph implements IPredicateGraph {
 	private final PredicateComparator pc = new PredicateComparator();
 
 	/** Graph to represent the dependencies of the predicates. */
-	private final DirectedGraph<IPredicate, LabeledEdge<IPredicate, Boolean>> g = 
-		new DirectedMultigraph<IPredicate, LabeledEdge<IPredicate, Boolean>>(new PredicateEdgeFactory());
-
-	/** Cycle detector, to determine, whether the rules are recursive. */
-	private final CycleDetector<IPredicate, LabeledEdge<IPredicate, Boolean>> cd = 
-		new CycleDetector<IPredicate, LabeledEdge<IPredicate, Boolean>>(g);
-
-	/**
-	 * Connectivity inspector to determine, whether paths between vertices
-	 * exists.
-	 */
-	private final ConnectivityInspector ci = new ConnectivityInspector(g);
+	private final Graph<IPredicate, Boolean> g;
 
 	/**
 	 * Constructs an empty graph object.
 	 */
 	PredicateGraph() {
+		g = Helper.createGraph();
 	}
 
 	/**
@@ -86,45 +76,13 @@ public class PredicateGraph implements IPredicateGraph {
 	 * @param r the rules with which to initialize the graph
 	 */
 	PredicateGraph(final Collection<IRule> r) {
-		if (r != null) {
-			for (final IRule rule : r) {
-				_addRule(rule);
-			}
-		}
+		g = Helper.createGraph(r);
 	}
 
 	public void addRule(final IRule rule) {
-		_addRule(rule);
+		Helper.addRule(g, rule);
 	}
 
-	/**
-	 * Adds a rule to this graph.
-	 * @param rule the rule to add
-	 * @throws NullPointerException if the rule is <code>null</code>
-	 */
-	private void _addRule(final IRule rule) {
-		if (rule == null) {
-			throw new NullPointerException("The rule must not be null");
-		}
-
-		for (final ILiteral h : rule.getHead()) {
-			final IPredicate hp = h.getAtom().getPredicate();
-			g.addVertex(hp);
-
-			for (final ILiteral l : rule.getBody()) {
-				final IPredicate p = l.getAtom().getPredicate();
-				final LabeledEdge<IPredicate, Boolean> e = 
-					new LabeledEdge<IPredicate, Boolean>(p, hp, l.isPositive());
-
-				g.addVertex(p);
-
-				// if there is no such edge, add the new one
-				if (!g.edgeSet().contains(e)) {
-					g.addEdge(p, hp, e);
-				}
-			}
-		}
-	}
 
 	public void addRule(final Collection<IRule> r) {
 		if ((r == null) || r.contains(null)) {
@@ -137,21 +95,28 @@ public class PredicateGraph implements IPredicateGraph {
 	}
 
 	public boolean detectCycles() {
-		return cd.detectCycles();
+		return g.isCyclic();
 	}
 
 	public Set<IPredicate> findVertexesForCycle() {
-		return cd.findCycles();
+		Set<Graph<IPredicate, Boolean>> cycles = Graphs.findCycles(g);
+		if (cycles.size() == 0)
+			throw new AssertionError("There must be at least one cycle");
+		
+		Graph<IPredicate, Boolean> cycle = cycles.iterator().next();
+		
+		return cycle.getVertices();
 	}
 
-	public Set<ILabeledEdge<IPredicate, Boolean>> findEdgesForCycle() {
+	public Set<Edge<IPredicate, Boolean>> findEdgesForCycle() {
 		final Set<IPredicate> cycle = findVertexesForCycle();
-		final Set<ILabeledEdge<IPredicate, Boolean>> edges = 
-			new HashSet<ILabeledEdge<IPredicate, Boolean>>();
+		final Set<Edge<IPredicate, Boolean>> edges = 
+			new HashSet<Edge<IPredicate, Boolean>>();
 		for (final IPredicate v : cycle) {
-			for (final IPredicate p : Graphs.successorListOf(g, v)) {
+			for (final IPredicate p : Graphs.sort(g, v)) {
 				if (cycle.contains(p)) {
-					edges.add(g.getEdge(v, p));
+					Set<Edge<IPredicate, Boolean>> vpEdges = g.getEdges(v, p); // FIXME might be more than one!
+					edges.add(vpEdges.iterator().next());
 					break;
 				}
 			}
@@ -162,8 +127,8 @@ public class PredicateGraph implements IPredicateGraph {
 
 	public int countNegativesForCycle() {
 		int neg = 0;
-		for (final ILabeledEdge<IPredicate, Boolean> e : findEdgesForCycle()) {
-			if (!e.getLabel()) {
+		for (final Edge<IPredicate, Boolean> e : findEdgesForCycle()) {
+			if (!e.getWeight()) {
 				neg++;
 			}
 		}
@@ -182,8 +147,8 @@ public class PredicateGraph implements IPredicateGraph {
 		if (p == null) {
 			throw new NullPointerException("The predicate must not be null");
 		}
-		if (!g.containsVertex(p)) {
-			return Collections.EMPTY_SET;
+		if (!g.getVertices().contains(p)) {
+			return Collections.emptySet();
 		}
 
 		final Set<IPredicate> todo = new HashSet<IPredicate>();
@@ -194,7 +159,7 @@ public class PredicateGraph implements IPredicateGraph {
 			final IPredicate act = todo.iterator().next();
 			todo.remove(act);
 
-			for (final IPredicate depends : Graphs.predecessorListOf(g, act)) {
+			for (final IPredicate depends : Graphs.sort(g, act, Direction.BACKWARD)) {
 				if (deps.add(depends)) {
 					todo.add(depends);
 				}
@@ -222,7 +187,7 @@ public class PredicateGraph implements IPredicateGraph {
 	 */
 	public String toString() {
 		final StringBuilder b = new StringBuilder();
-		for (final LabeledEdge<IPredicate, Boolean> e : g.edgeSet()) {
+		for (final Edge<IPredicate, Boolean> e : g.getEdges()) {
 			b.append(e).append(System.getProperty("line.separator"));
 		}
 		return b.toString();
@@ -286,8 +251,8 @@ public class PredicateGraph implements IPredicateGraph {
 
 			// one of the vertices is not in the graph, or there is no
 			// connection of the vertices -> return 0
-			if (!g.containsVertex(o1) || !g.containsVertex(o2)
-					|| !ci.pathExists(o1, o2)) {
+			if (!g.getVertices().contains(o1) || !g.getVertices().contains(o2)
+					|| !(Graphs.findPath(g, o1, o2) != null)) { // FIXME check return value null
 				return 0;
 			}
 			// determine who depends on who
@@ -295,25 +260,56 @@ public class PredicateGraph implements IPredicateGraph {
 		}
 	}
 
-	/**
-	 * <p>
-	 * The simple factory to create default edges for the PredicateGraph.
-	 * The label of the edge will be <code>true</code>.
-	 * </p>
-	 * <p>
-	 * $Id$
-	 * </p>
-	 * @author Richard Pöttler (richard dot poettler at deri dot org)
-	 * @version $Revision$
-	 * @since 0.3
-	 */
-	private static class PredicateEdgeFactory implements EdgeFactory<IPredicate, LabeledEdge<IPredicate, Boolean>> {
-
-		public LabeledEdge<IPredicate, Boolean> createEdge(final IPredicate s, final IPredicate t) {
+	private static class Helper {
+		private static GraphFactory GRAPH = GraphFactory.getInstance();
+		
+		
+		static Graph<IPredicate, Boolean> createGraph() {
+			return createGraph(Collections.<IRule>emptyList());
+		}
+			
+		static Graph<IPredicate, Boolean> createGraph(final Collection<IRule> r) {
+			Graph<IPredicate, Boolean> graph = GRAPH.createGraph(true);
+			
+			if (r != null) {
+				for (final IRule rule : r) {
+					addRule(graph, rule);
+				}
+			}
+			
+			return graph;
+		}
+		
+		static Edge<IPredicate, Boolean> createEdge(final IPredicate s, final IPredicate t, boolean label) {
 			if ((s == null) || (t == null)) {
 				throw new NullPointerException("The vertices must not be null");
 			}
-			return new LabeledEdge<IPredicate, Boolean>(s, t, true);
+			return GRAPH.createEdge(s, t, label);
 		}
+	
+		static void addRule(final Graph<IPredicate, Boolean> g, final IRule rule) {
+			if (rule == null) {
+				throw new NullPointerException("The rule must not be null");
+			}
+
+			for (final ILiteral h : rule.getHead()) {
+				final IPredicate hp = h.getAtom().getPredicate();
+				g.add(hp);
+
+				for (final ILiteral l : rule.getBody()) {
+					final IPredicate p = l.getAtom().getPredicate();
+					final Edge<IPredicate, Boolean> e = 
+						createEdge(p, hp, l.isPositive());
+
+					g.add(p);
+
+					// if there is no such edge, add the new one
+					if (!g.getEdges().contains(e)) { // FIXME equality by reference
+						g.add(e);
+					}
+				}
+			}
+		}
+
 	}
 }
