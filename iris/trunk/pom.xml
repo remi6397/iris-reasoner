@@ -3,7 +3,7 @@
 
 	<groupId>at.sti2.iris</groupId>
 	<artifactId>iris</artifactId>
-	<version>0.7.4-SNAPSHOT</version>
+	<version>0.8.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>IRIS</name>
 	<description>Integrated Rule Inference System is an extensible reasoning engine for expressive rule-based languages.</description>
@@ -12,6 +12,7 @@
 		<module>iris-api</module>
 		<module>iris-impl</module>
 		<module>iris-parser</module>
+		<module>iris-rdb</module>
 	</modules>
 
 	<properties>
@@ -28,11 +29,6 @@
 	
 	<build>
 		<plugins>
-			<!--
-				Maven dixit: "We are using the verify phase here because it is the
-				phase that comes before the install phase, thus making sure that the
-				sources jar has been created before the install takes place."
-			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -51,14 +47,6 @@
 				</configuration>
 			</plugin>
 
-			<!--
-				Maven dixit: "The Compiler Plugin is used to compile the sources of
-				your project. The default compiler is javac and is used to compile
-				Java sources. The default source setting is 1.3 and the default
-				target setting is 1.1, independently of the JDK you run Maven with.
-				If you want to change these defaults, you should set source and
-				target [...] "
-			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -69,6 +57,19 @@
 					<target>${compiler.version}</target>
 					<verbose>false</verbose>
 					<showWarnings>false</showWarnings>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.7.1</version>
+				<configuration>
+					<skipTests>false</skipTests>
+					<encoding>UTF-8</encoding>
+					<inputEncoding>UTF-8</inputEncoding>
+					<outputEncoding>UTF-8</outputEncoding>
+					<argLine>-Dfile.encoding=utf8</argLine>
 				</configuration>
 			</plugin>
 		</plugins>
