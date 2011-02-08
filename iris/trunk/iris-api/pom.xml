@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>iris</artifactId>
 		<groupId>at.sti2.iris</groupId>
-		<version>0.7.4-SNAPSHOT</version>
+		<version>0.8.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>at.sti2.iris</groupId>
