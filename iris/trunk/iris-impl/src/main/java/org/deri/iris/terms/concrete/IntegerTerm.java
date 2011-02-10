@@ -27,6 +27,7 @@ import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IIntegerTerm;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -45,7 +46,7 @@ public class IntegerTerm extends DecimalTerm implements IIntegerTerm {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(IIntegerTerm.DATATYPE_URI);
+		return XmlSchemaDatatype.INTEGER.toUri();
 	}
 
 }

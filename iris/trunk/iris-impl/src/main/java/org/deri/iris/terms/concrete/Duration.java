@@ -35,6 +35,7 @@ import javax.xml.datatype.DatatypeFactory;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IDuration;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -242,7 +243,7 @@ public class Duration implements IDuration {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/2001/XMLSchema#duration");
+		return XmlSchemaDatatype.DURATION.toUri();
 	}
 
 	public boolean isPositive() {

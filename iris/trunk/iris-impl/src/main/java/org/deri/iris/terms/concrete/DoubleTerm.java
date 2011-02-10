@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IDoubleTerm;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -76,7 +77,7 @@ public class DoubleTerm extends AbstractNumericTerm implements IDoubleTerm {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create(IDoubleTerm.DATATYPE_URI);
+		return XmlSchemaDatatype.DOUBLE.toUri();
 	}
 
 }

@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IHexBinary;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -99,7 +100,7 @@ public class HexBinary implements IHexBinary {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/2001/XMLSchema#hexBinary");
+		return XmlSchemaDatatype.HEXBINARY.toUri();
 	}
 
 	public String toCanonicalString() {

@@ -26,6 +26,7 @@ import java.net.URI;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IAnyURI;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -52,7 +53,7 @@ public class AnyURI implements IAnyURI {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create(IAnyURI.DATATYPE_URI);
+		return URI.create(XmlSchemaDatatype.ANYURI.getUri());
 	}
 
 	public String toCanonicalString() {

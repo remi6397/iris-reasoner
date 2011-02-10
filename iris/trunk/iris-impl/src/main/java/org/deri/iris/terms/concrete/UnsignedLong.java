@@ -26,6 +26,7 @@ import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IUnsignedLong;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -56,7 +57,7 @@ public class UnsignedLong extends NonNegativeInteger implements IUnsignedLong {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(IUnsignedLong.DATATYPE_URI);
+		return XmlSchemaDatatype.UNSIGNED_LONG.toUri();
 	}
 
 }

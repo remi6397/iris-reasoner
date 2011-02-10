@@ -26,6 +26,7 @@ import java.net.URI;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.INOTATION;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -71,7 +72,7 @@ public class NOTATION implements INOTATION {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create(INOTATION.DATATYPE_URI);
+		return XmlSchemaDatatype.NOTATION.toUri();
 	}
 
 	public String toCanonicalString() {

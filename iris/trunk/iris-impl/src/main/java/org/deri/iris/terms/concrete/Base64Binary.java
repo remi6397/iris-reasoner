@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IBase64Binary;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -97,7 +98,7 @@ public class Base64Binary implements IBase64Binary {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/2001/XMLSchema#base64Binary");
+		return XmlSchemaDatatype.BASE64BINARY.toUri();
 	}
 
 	public String toCanonicalString() {

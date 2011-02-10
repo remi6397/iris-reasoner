@@ -25,6 +25,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IIDREF;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -47,7 +48,7 @@ public class IDREF extends NCName implements IIDREF {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(IIDREF.DATATYPE_URI);
+		return XmlSchemaDatatype.IDREF.toUri();
 	}
 
 }

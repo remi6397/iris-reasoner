@@ -25,6 +25,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IDateTimeStamp;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -56,7 +57,7 @@ public class DateTimeStamp extends DateTime implements IDateTimeStamp {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(IDateTimeStamp.DATATYPE_URI);
+		return XmlSchemaDatatype.DATETIMESTAMP.toUri();
 	}
 
 }

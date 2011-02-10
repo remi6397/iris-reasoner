@@ -27,6 +27,7 @@ import java.net.URI;
 import javax.xml.datatype.Duration;
 
 import org.deri.iris.api.terms.concrete.IYearMonthDuration;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /*
  * W3C specification: http://www.w3.org/TR/xpath-functions/#dt-yearMonthDuration
@@ -116,7 +117,7 @@ public class YearMonthDuration extends org.deri.iris.terms.concrete.Duration
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/2001/XMLSchema#yearMonthDuration");
+		return XmlSchemaDatatype.YEARMONTHDURATION.toUri();
 	}
 
 	public String toString() {

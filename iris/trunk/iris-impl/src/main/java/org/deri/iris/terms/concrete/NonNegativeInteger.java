@@ -26,6 +26,7 @@ import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.INonNegativeInteger;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -64,7 +65,7 @@ public class NonNegativeInteger extends IntegerTerm implements
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(INonNegativeInteger.DATATYPE_URI);
+		return XmlSchemaDatatype.NON_NEGATIVE_INTEGER.toUri();
 	}
 
 }

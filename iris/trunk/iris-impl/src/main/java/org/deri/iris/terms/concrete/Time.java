@@ -32,6 +32,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.ITime;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -182,7 +183,7 @@ public class Time implements ITime {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/2001/XMLSchema#time");
+		return XmlSchemaDatatype.TIME.toUri();
 	}
 
 	public String toCanonicalString() {

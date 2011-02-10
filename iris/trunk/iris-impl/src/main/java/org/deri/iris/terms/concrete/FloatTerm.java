@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IFloatTerm;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -78,7 +79,7 @@ public class FloatTerm extends AbstractNumericTerm implements IFloatTerm {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create(IFloatTerm.DATATYPE_URI);
+		return XmlSchemaDatatype.FLOAT.toUri();
 	}
 
 }

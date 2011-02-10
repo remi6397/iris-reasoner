@@ -25,6 +25,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.ILanguage;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -76,7 +77,7 @@ public class Language extends Token implements ILanguage {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(ILanguage.DATATYPE_URI);
+		return XmlSchemaDatatype.LANGUAGE.toUri();
 	}
 
 }

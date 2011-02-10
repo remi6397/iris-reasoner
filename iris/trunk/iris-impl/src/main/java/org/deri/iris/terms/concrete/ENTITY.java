@@ -25,6 +25,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IENTITY;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -47,7 +48,7 @@ public class ENTITY extends NCName implements IENTITY {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(IENTITY.DATATYPE_URI);
+		return XmlSchemaDatatype.ENTITY.toUri();
 	}
 
 }

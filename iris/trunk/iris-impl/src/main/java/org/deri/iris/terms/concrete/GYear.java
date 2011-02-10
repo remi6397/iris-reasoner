@@ -31,6 +31,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IGYear;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -133,7 +134,7 @@ public class GYear implements IGYear {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/2001/XMLSchema#gYear");
+		return XmlSchemaDatatype.GYEAR.toUri();
 	}
 
 	public String toCanonicalString() {

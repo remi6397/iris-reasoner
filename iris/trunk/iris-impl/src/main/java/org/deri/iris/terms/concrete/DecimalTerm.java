@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IDecimalTerm;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -49,7 +50,7 @@ public class DecimalTerm extends AbstractNumericTerm implements IDecimalTerm {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create(IDecimalTerm.DATATYPE_URI);
+		return XmlSchemaDatatype.DECIMAL.toUri();
 	}
 	
 	public boolean isNotANumber() {

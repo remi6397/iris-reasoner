@@ -34,6 +34,4 @@ package org.deri.iris.api.terms.concrete;
  */
 public interface IIntegerTerm extends IDecimalTerm {
 
-	public static final String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#integer";
-
 }
