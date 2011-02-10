@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.rdb.utils.RdbUtils;
 import org.deri.iris.storage.IRelation;
 
 /**

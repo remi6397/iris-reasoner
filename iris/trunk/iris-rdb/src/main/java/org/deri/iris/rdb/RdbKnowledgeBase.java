@@ -46,7 +46,7 @@ import org.deri.iris.rdb.evaluation.RdbSemiNaiveEvaluatorFactory;
 import org.deri.iris.rdb.evaluation.RdbStratifiedBottomUpEvaluationStrategyFactory;
 import org.deri.iris.rdb.facts.IRdbFacts;
 import org.deri.iris.rdb.facts.RdbFacts;
-import org.deri.iris.rdb.storage.RdbUtils;
+import org.deri.iris.rdb.utils.RdbUtils;
 import org.deri.iris.rules.RuleManipulator;
 import org.deri.iris.rules.safety.AugmentingRuleSafetyProcessor;
 import org.deri.iris.storage.IRelation;

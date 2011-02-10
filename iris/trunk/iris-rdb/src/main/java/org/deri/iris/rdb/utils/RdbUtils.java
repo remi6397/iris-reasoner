@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.deri.iris.rdb.storage;
+package org.deri.iris.rdb.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +35,8 @@ import java.util.List;
 
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.rdb.storage.CloseableIterator;
+import org.deri.iris.rdb.storage.IRdbRelation;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.utils.UniqueList;
 import org.slf4j.Logger;

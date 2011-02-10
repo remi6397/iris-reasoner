@@ -30,6 +30,7 @@ import junit.framework.Assert;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.factory.Factory;
+import org.deri.iris.rdb.utils.RdbUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

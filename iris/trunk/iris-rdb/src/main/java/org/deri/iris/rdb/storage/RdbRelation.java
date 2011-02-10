@@ -28,6 +28,7 @@ import java.sql.SQLException;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
+import org.deri.iris.rdb.utils.RdbUtils;
 import org.deri.iris.storage.IRelation;
 
 /**
