@@ -26,7 +26,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.IConcreteTerm;
-import org.deri.iris.api.terms.concrete.ILanguage;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 import org.deri.iris.terms.AbstractConcreteTermTest;
 
 /**
@@ -70,7 +70,7 @@ public class LanguageTest extends AbstractConcreteTermTest {
 
 	@Override
 	protected URI getDatatypeIRI() {
-		return URI.create(ILanguage.DATATYPE_URI);
+		return XmlSchemaDatatype.LANGUAGE.toUri();
 	}
 
 	public void testValidity() {

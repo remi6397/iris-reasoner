@@ -26,7 +26,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.IConcreteTerm;
-import org.deri.iris.api.terms.concrete.INormalizedString;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 import org.deri.iris.terms.AbstractConcreteTermTest;
 
 /**
@@ -70,7 +70,7 @@ public class NormalizedStringTest extends AbstractConcreteTermTest {
 
 	@Override
 	protected URI getDatatypeIRI() {
-		return URI.create(INormalizedString.DATATYPE_URI);
+		return XmlSchemaDatatype.NORMALIZED_STRING.toUri();
 	}
 
 }

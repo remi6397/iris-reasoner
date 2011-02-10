@@ -26,7 +26,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.IConcreteTerm;
-import org.deri.iris.api.terms.concrete.IID;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 import org.deri.iris.terms.AbstractConcreteTermTest;
 
 /**
@@ -70,7 +70,7 @@ public class IDTest extends AbstractConcreteTermTest {
 
 	@Override
 	protected URI getDatatypeIRI() {
-		return URI.create(IID.DATATYPE_URI);
+		return XmlSchemaDatatype.ID.toUri();
 	}
 
 }
