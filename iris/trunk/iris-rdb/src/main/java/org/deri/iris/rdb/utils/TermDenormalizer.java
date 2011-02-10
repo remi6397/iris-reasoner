@@ -26,25 +26,22 @@ import org.deri.iris.api.factory.IConcreteFactory;
 import org.deri.iris.api.factory.ITermFactory;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.factory.Factory;
-
-import at.sti2.rif4j.condition.Constant;
-import at.sti2.rif4j.translator.iris.mapper.RifToIrisConstantMapper;
+import org.deri.iris.terms.concrete.CanonicalFactory;
 
 public class TermDenormalizer {
 
-	private RifToIrisConstantMapper mapper;
+	private CanonicalFactory mapper;
 
 	public TermDenormalizer() {
 		this(Factory.TERM, Factory.CONCRETE);
 	}
 
 	public TermDenormalizer(ITermFactory termFactory, IConcreteFactory factory) {
-		mapper = new RifToIrisConstantMapper(termFactory, factory);
+		mapper = new CanonicalFactory(termFactory, factory);
 	}
 
 	public ITerm createTerm(String value, String type) {
-		Constant constant = new Constant(type, "", value);
-		ITerm term = mapper.toIrisTerm(constant);
+		ITerm term = mapper.createTerm(value, type);
 
 		if (term == null) {
 			term = Factory.TERM.createString(value);
