@@ -170,6 +170,7 @@ public class SimpleRdbRelation extends AbstractRdbRelation {
 			}
 
 			// If an error occurred above, we add the tuples one by one.
+			return addAllOneByOne(otherRelation);
 		}
 
 		logger.debug("Adding tuples one by one");
@@ -196,7 +197,7 @@ public class SimpleRdbRelation extends AbstractRdbRelation {
 						"Arity of source relation ({}) did not match target relation ({})",
 						otherRelation.getTableName(), getTableName());
 			}
-			
+
 			return false;
 		}
 
@@ -230,6 +231,21 @@ public class SimpleRdbRelation extends AbstractRdbRelation {
 							+ " to " + getTableName(), e);
 			throw e;
 		}
+	}
+
+	private boolean addAllOneByOne(IRdbRelation relation) {
+		boolean allAdded = false;
+
+		CloseableIterator<ITuple> iterator = relation.iterator();
+
+		while (iterator.hasNext()) {
+			ITuple tuple = iterator.next();
+			allAdded |= add(tuple);
+		}
+
+		iterator.close();
+
+		return allAdded;
 	}
 
 	private String createSelectJoinClause(IRdbRelation otherRelation) {
