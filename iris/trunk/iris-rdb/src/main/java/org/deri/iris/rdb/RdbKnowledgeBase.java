@@ -366,9 +366,7 @@ public class RdbKnowledgeBase implements IKnowledgeBase {
 			long startTime = System.currentTimeMillis();
 
 			try {
-				if (!connection.isClosed()) {
-					connection.close();
-				}
+				connection.close();
 			} catch (SQLException e) {
 				logger.error("Could not close connection to database", e);
 			}
