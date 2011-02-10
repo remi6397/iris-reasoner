@@ -10,4 +10,13 @@
 	<groupId>at.sti2.iris</groupId>
 	<artifactId>iris-api</artifactId>
 	<name>IRIS API</name>
+	<dependencies>
+		<dependency>
+			<groupId>eu.soa4all</groupId>
+			<artifactId>graphz</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
 </project>
