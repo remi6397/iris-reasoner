@@ -40,7 +40,10 @@ import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
-import org.deri.iris.api.graph.ILabeledEdge;
+import org.deri.iris.utils.EdgeSetEquality;
+
+import eu.soa4all.graph.Edge;
+import eu.soa4all.graph.impl.GraphFactory;
 
 /**
  * <p>
@@ -124,14 +127,16 @@ public class PredicateGraphTest extends TestCase {
 	}
 
 	public void testFindEdgesForCycle() {
-		final Set<ILabeledEdge<IPredicate, Boolean>> reference = new HashSet<ILabeledEdge<IPredicate, Boolean>>();
-		reference.add(new LabeledEdge<IPredicate, Boolean>(a, c, false));
-		reference.add(new LabeledEdge<IPredicate, Boolean>(c, d, true));
-		reference.add(new LabeledEdge<IPredicate, Boolean>(d, e, true));
-		reference.add(new LabeledEdge<IPredicate, Boolean>(e, a, true));
-		final Set<ILabeledEdge<IPredicate, Boolean>> testing = pg0.findEdgesForCycle();
+		GraphFactory gf = GraphFactory.getInstance();
+		
+		final Set<Edge<IPredicate, Boolean>> reference = new HashSet<Edge<IPredicate, Boolean>>();
+		reference.add(gf.createEdge(a, c, false));
+		reference.add(gf.createEdge(c, d, true));
+		reference.add(gf.createEdge(d, e, true));
+		reference.add(gf.createEdge(e, a, true));
+		final Set<Edge<IPredicate, Boolean>> testing = pg0.findEdgesForCycle();
 
-		assertEquals("The edge sets must be equal", reference, testing);
+		EdgeSetEquality.assertEdgeSetEquality("The edge sets must be equal", reference, testing);
 	}
 
 	public void testGetDepends() {

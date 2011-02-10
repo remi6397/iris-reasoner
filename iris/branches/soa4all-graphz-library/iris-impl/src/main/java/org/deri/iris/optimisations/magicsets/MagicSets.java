@@ -43,9 +43,10 @@ import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.graph.LabeledEdge;
 import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedPredicate;
 import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedRule;
+
+import eu.soa4all.graph.Edge;
 
 /**
  * <p>
@@ -272,7 +273,7 @@ public final class MagicSets implements IProgramOptimisation {
 		assert adornedRule.getRule().getHead().size() == 1: 
 			"The head must have a size of 1, but was " + adornedRule.getRule().getHead().size();
 
-		final Set<LabeledEdge<ILiteral, Set<IVariable>>> enteringEdges = 
+		final Set<Edge<ILiteral, Set<IVariable>>> enteringEdges = 
 			adornedRule.getSip().getEdgesEnteringLiteral(literal);
 
 		if (enteringEdges.size() == 1) {
@@ -283,7 +284,7 @@ public final class MagicSets implements IProgramOptimisation {
 			final Set<IRule> rules = new HashSet<IRule>(enteringEdges.size() + 1);
 			// creating the labeled rules
 			int counter = 1;
-			for (final LabeledEdge<ILiteral, Set<IVariable>> e : enteringEdges) {
+			for (final Edge<ILiteral, Set<IVariable>> e : enteringEdges) {
 				rules.add(createLabeledRule(e, adornedRule, counter++));
 			}
 			// computing the body for the magic rule
@@ -307,13 +308,13 @@ public final class MagicSets implements IProgramOptimisation {
 	 * @param rule the adorned rule which contain the literal
 	 * @return the magic rule
 	 */
-	private static IRule createMagicRule(final LabeledEdge<ILiteral, Set<IVariable>> edge,
+	private static IRule createMagicRule(final Edge<ILiteral, Set<IVariable>> edge,
 			final AdornedRule rule) {
 		assert edge != null: "The edge must not be null";
 		assert rule != null: "The rule must not be null";
 
-		return BASIC.createRule(Arrays.asList(createMagicLiteral(true, edge.getTarget())),
-				createRestrictedBody(edge.getSource(), rule));
+		return BASIC.createRule(Arrays.asList(createMagicLiteral(true, edge.getDestination())),
+				createRestrictedBody(edge.getOrigin(), rule));
 	}
 
 	/**
@@ -324,7 +325,7 @@ public final class MagicSets implements IProgramOptimisation {
 	 * @param index the index of this labeled rule
 	 * @return the labeled rule
 	 */
-	private static IRule createLabeledRule(final LabeledEdge<ILiteral, Set<IVariable>> edge,
+	private static IRule createLabeledRule(final Edge<ILiteral, Set<IVariable>> edge,
 			final AdornedRule rule,
 			final int index) {
 		assert edge != null: "The edge must not be null";
@@ -332,10 +333,10 @@ public final class MagicSets implements IProgramOptimisation {
 		assert index > 0: "The index must be greater than 0";
 
 		return BASIC.createRule(Arrays.asList(createLabeledLiteral(true,
-						edge.getTarget(),
-						edge.getLabel(),
+						edge.getDestination(),
+						edge.getWeight(),
 						index)),
-				createRestrictedBody(edge.getSource(), rule));
+				createRestrictedBody(edge.getOrigin(), rule));
 	}
 
 	/**

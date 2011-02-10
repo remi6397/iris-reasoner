@@ -27,7 +27,8 @@ import java.util.Set;
 
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.graph.LabeledEdge;
+
+import eu.soa4all.graph.Edge;
 
 /**
  * <p>
@@ -63,7 +64,7 @@ public interface ISip {
 	 * @return set of edges entering this literal
 	 * @throws IllegalArgumentException if the literal is null
 	 */
-	Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesEnteringLiteral(ILiteral literal);
+	Set<Edge<ILiteral, Set<IVariable>>> getEdgesEnteringLiteral(ILiteral literal);
 
 	/**
 	 * Searches for edges leaving this literal.
@@ -72,7 +73,7 @@ public interface ISip {
 	 * @return set of edges entering this literal
 	 * @throws IllegalArgumentException if the literal is <code>null</code>
 	 */
-	Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesLeavingLiteral(ILiteral literal);
+	Set<Edge<ILiteral, Set<IVariable>>> getEdgesLeavingLiteral(ILiteral literal);
 
 	/**
 	 * Determines the set of variables passed to one literal by one specific
