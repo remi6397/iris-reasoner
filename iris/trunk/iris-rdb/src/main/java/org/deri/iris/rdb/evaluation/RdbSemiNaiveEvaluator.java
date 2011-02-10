@@ -101,9 +101,6 @@ public class RdbSemiNaiveEvaluator implements IRuleEvaluator {
 			}
 		}
 
-		// TODO Check if this gives performance boost.
-		// RdbUtils.analyze(connection);
-
 		// Update the facts.
 		rdbFacts.addAll(deltas);
 

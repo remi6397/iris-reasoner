@@ -186,7 +186,7 @@ public class RdbStratifiedBottomUpEvaluationStrategy implements
 			return new RdbProjectedRelation(connection, result, queryTuple,
 					outputTuple);
 		} catch (SQLException e) {
-			logger.error("Failed to create a projected relation for the query",
+			logger.error("Failed to create a projected relation for the query " + query,
 					e);
 			throw new EvaluationException(
 					"Could not create a selection on the output relation");
