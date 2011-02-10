@@ -26,7 +26,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.INumericTerm;
-import org.deri.iris.api.terms.concrete.IUnsignedInt;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 import org.deri.iris.terms.AbstractConcreteTermTest;
 
 /**
@@ -70,7 +70,7 @@ public class UnsignedIntTest extends AbstractConcreteTermTest {
 
 	@Override
 	protected URI getDatatypeIRI() {
-		return URI.create(IUnsignedInt.DATATYPE_URI);
+		return XmlSchemaDatatype.UNSIGNED_INT.toUri();
 	}
 
 	public void testValidity() {

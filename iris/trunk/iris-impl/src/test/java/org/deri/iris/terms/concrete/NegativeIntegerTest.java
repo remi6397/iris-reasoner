@@ -26,7 +26,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.INumericTerm;
-import org.deri.iris.api.terms.concrete.INegativeInteger;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 import org.deri.iris.terms.AbstractConcreteTermTest;
 
 /**
@@ -70,7 +70,7 @@ public class NegativeIntegerTest extends AbstractConcreteTermTest {
 
 	@Override
 	protected URI getDatatypeIRI() {
-		return URI.create(INegativeInteger.DATATYPE_URI);
+		return XmlSchemaDatatype.NEGATIVE_INTEGER.toUri();
 	}
 	
 	public void testValidity() {

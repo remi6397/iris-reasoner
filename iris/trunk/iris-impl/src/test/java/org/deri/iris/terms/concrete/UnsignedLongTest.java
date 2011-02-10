@@ -27,7 +27,7 @@ import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.INumericTerm;
-import org.deri.iris.api.terms.concrete.IUnsignedLong;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 import org.deri.iris.terms.AbstractConcreteTermTest;
 
 /**
@@ -71,7 +71,7 @@ public class UnsignedLongTest extends AbstractConcreteTermTest {
 
 	@Override
 	protected URI getDatatypeIRI() {
-		return URI.create(IUnsignedLong.DATATYPE_URI);
+		return XmlSchemaDatatype.UNSIGNED_LONG.toUri();
 	}
 
 	public void testValidity() {

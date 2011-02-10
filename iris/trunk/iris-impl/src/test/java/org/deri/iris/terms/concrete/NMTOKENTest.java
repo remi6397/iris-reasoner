@@ -26,7 +26,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.IConcreteTerm;
-import org.deri.iris.api.terms.concrete.INMTOKEN;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 import org.deri.iris.terms.AbstractConcreteTermTest;
 
 /**
@@ -70,7 +70,7 @@ public class NMTOKENTest extends AbstractConcreteTermTest {
 
 	@Override
 	protected URI getDatatypeIRI() {
-		return URI.create(INMTOKEN.DATATYPE_URI);
+		return XmlSchemaDatatype.NMTOKEN.toUri();
 	}
 
 }
