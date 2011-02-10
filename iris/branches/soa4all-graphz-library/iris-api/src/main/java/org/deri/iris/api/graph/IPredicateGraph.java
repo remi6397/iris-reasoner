@@ -29,6 +29,8 @@ import java.util.Set;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
 
+import eu.soa4all.graph.Edge;
+
 /**
  * <p>
  * A graph to determine the dependencies of rules and predicates to each other.
@@ -70,7 +72,7 @@ public interface IPredicateGraph {
 	 * 
 	 * @return a Set containing all the vertexes
 	 */
-	public abstract Set<ILabeledEdge<IPredicate, Boolean>> findEdgesForCycle();
+	public abstract Set<Edge<IPredicate, Boolean>> findEdgesForCycle();
 
 	/**
 	 * Returns the number of negative Literals in the cycle.
