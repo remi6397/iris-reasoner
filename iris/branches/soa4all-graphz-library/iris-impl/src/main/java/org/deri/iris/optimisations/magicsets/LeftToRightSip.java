@@ -41,12 +41,13 @@ import org.deri.iris.api.builtins.IBuiltinAtom;
 import org.deri.iris.api.terms.IConstructedTerm;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
-import org.deri.iris.graph.LabeledEdge;
 import org.deri.iris.optimisations.magicsets.AdornedProgram.AdornedPredicate;
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.EdgeFactory;
-import org.jgrapht.Graphs;
-import org.jgrapht.graph.DefaultDirectedGraph;
+
+import eu.soa4all.graph.Direction;
+import eu.soa4all.graph.Edge;
+import eu.soa4all.graph.Graph;
+import eu.soa4all.graph.Graphs;
+import eu.soa4all.graph.impl.GraphFactory;
 
 /**
  * <p>
@@ -65,9 +66,19 @@ public class LeftToRightSip implements ISip {
 	 */
 	private final Comparator<ILiteral> LITERAL_COMPARATOR = new LiteralComparator();
 
-	/** The graph on which the variables are passed along. */
-	private DirectedGraph<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> sipGraph = 
-		new DefaultDirectedGraph<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>>(new SipEdgeFactory());
+	/**
+	 * Indicator flag since a directed graph is needed
+	 */
+	private final boolean directed = true;
+	
+	/**
+	 * Retrieve graph factory instance
+	 */
+	private GraphFactory gf = GraphFactory.getInstance();
+	
+	/** The (directed) graph on which the variables are passed along. */
+	private Graph<ILiteral, Set<IVariable>> sipGraph = 
+		gf.createGraph(directed);
 
 	/**
 	 * Creates a SIP for the given rule with bindings for the given query.<b>
@@ -276,20 +287,24 @@ public class LeftToRightSip implements ISip {
 		assert target != null: "The target must not be null";
 		assert passedTo != null: "The passed variables must not be null";
 
-		final LabeledEdge<ILiteral, Set<IVariable>> edge = sipGraph.getEdge(source, target);
-		if (edge != null) { // updating the edge
-			edge.getLabel().addAll(passedTo);
-		} else { // adding a new edge with the passings
+		Set<Edge<ILiteral,Set<IVariable>>> edges = sipGraph.getEdges(source, target);
+		
+		// If there exists an edge (or edges) update the weights
+		if (edges.size() > 0) {
+			for (Edge<ILiteral, Set<IVariable>> edge : edges) {
+					// Update the edge
+					edge.getWeight().addAll(passedTo);
+			}
+		} else {
+			// adding a new edge with the passings
 			// adding the the literals as vertices
-			sipGraph.addVertex(source);
-			sipGraph.addVertex(target);
-
-			// add the edge
-			sipGraph.addEdge(source, 
-					target, 
-					new LabeledEdge<ILiteral, Set<IVariable>>(source, 
-						target, 
-						new HashSet<IVariable>(passedTo)));
+			sipGraph.add(source);
+			sipGraph.add(target);
+			
+			Set<IVariable> weight = new HashSet<IVariable>(passedTo);
+			
+			// Create a new edge and add it to the sip graph
+			sipGraph.add(gf.createEdge(source, target, weight));
 		}
 	}
 
@@ -298,14 +313,17 @@ public class LeftToRightSip implements ISip {
 			throw new IllegalArgumentException("The literal must not be null");
 		}
 
-		if (!sipGraph.containsVertex(literal)) {
+		if (!sipGraph.getVertices().contains(literal)) {
 			return Collections.<IVariable>emptySet();
 		}
 
 		final Set<IVariable> variables = new HashSet<IVariable>();
 
-		for (final ILiteral predicate : Graphs.predecessorListOf(sipGraph, literal)) {
-			variables.addAll(sipGraph.getEdge(predicate, literal).getLabel());
+		for (final ILiteral predicate : Graphs.sort(sipGraph, literal, Direction.BACKWARD)) {
+			// Add all labels from all edges to the variables set
+			for (Edge<ILiteral, Set<IVariable>> edge : sipGraph.getEdges(predicate, literal)) {
+				variables.addAll(edge.getWeight());
+			}
 		}
 		return variables;
 	}
@@ -317,7 +335,7 @@ public class LeftToRightSip implements ISip {
 			throw new IllegalArgumentException("The literal must not be null");
 		}
 
-		if (!sipGraph.containsVertex(literal)) {
+		if (!sipGraph.getVertices().contains(literal)) {
 			return Collections.<ILiteral>emptySet();
 		}
 
@@ -326,7 +344,7 @@ public class LeftToRightSip implements ISip {
 			final ILiteral actual = todoDependencies.iterator().next();
 			todoDependencies.remove(actual);
 
-			for (final ILiteral vertex : Graphs.predecessorListOf(sipGraph, actual)) {
+			for (final ILiteral vertex : Graphs.sort(sipGraph, actual, Direction.BACKWARD)) {
 				if (dependencies.add(vertex)) {
 					todoDependencies.add(vertex);
 				}
@@ -336,40 +354,41 @@ public class LeftToRightSip implements ISip {
 		return dependencies;
 	}
 
-	public Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesEnteringLiteral(
+	public Set<Edge<ILiteral, Set<IVariable>>> getEdgesEnteringLiteral(
 			final ILiteral literal) {
 		if (literal == null) {
 			throw new IllegalArgumentException("The literal must not be null");
 		}
 
-		if (!sipGraph.containsVertex(literal)) {
-			return Collections.<LabeledEdge<ILiteral, Set<IVariable>>>emptySet();
+		if (!sipGraph.getVertices().contains(literal)) {
+			return Collections.<Edge<ILiteral, Set<IVariable>>>emptySet();
 		}
 
-		final List<ILiteral> predecessors = Graphs.predecessorListOf(sipGraph, literal);
-		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = 
-			new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>(predecessors.size());
+		final List<ILiteral> predecessors = Graphs.sort(sipGraph, literal, Direction.BACKWARD);
+		final Set<Edge<ILiteral, Set<IVariable>>> edges = 
+			new HashSet<Edge<ILiteral, Set<IVariable>>>(predecessors.size());
 		for (final ILiteral predecessor : predecessors) {
-			edges.add(sipGraph.getEdge(predecessor, literal));
+			// Add all edges to the edges set
+			edges.addAll(sipGraph.getEdges(predecessor, literal));
 		}
 		return edges;
 	}
 
-	public Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdgesLeavingLiteral(
+	public Set<Edge<ILiteral, Set<IVariable>>> getEdgesLeavingLiteral(
 			final ILiteral literal) {
 		if (literal == null) {
 			throw new IllegalArgumentException("The literal must not be null");
 		}
 
-		if (!sipGraph.containsVertex(literal)) {
-			return Collections.<LabeledEdge<ILiteral, Set<IVariable>>>emptySet();
+		if (!sipGraph.getVertices().contains(literal)) {
+			return Collections.<Edge<ILiteral, Set<IVariable>>>emptySet();
 		}
 
-		final List<ILiteral> successors = Graphs.successorListOf(sipGraph, literal);
-		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = 
-			new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>(successors.size());
+		final List<ILiteral> successors = Graphs.sort(sipGraph, literal);
+		final Set<Edge<ILiteral, Set<IVariable>>> edges = 
+			new HashSet<Edge<ILiteral, Set<IVariable>>>(successors.size());
 		for (final ILiteral successor : successors) {
-			edges.add(sipGraph.getEdge(literal, successor));
+			edges.addAll(sipGraph.getEdges(literal, successor));
 		}
 		return edges;
 	}
@@ -381,12 +400,16 @@ public class LeftToRightSip implements ISip {
 					"The source and the target must not be null");
 		}
 
-		if (!sipGraph.containsVertex(source) || !sipGraph.containsVertex(target)) {
+		if (!sipGraph.getVertices().contains(source) || !sipGraph.getVertices().contains(target)) {
 			return Collections.<IVariable>emptySet();
 		}
 
 		final Set<IVariable> variables = new HashSet<IVariable>(getBoundVariables(source));
-		variables.addAll((sipGraph.getEdge(source, target)).getLabel());
+		
+		// Get all variables (weights)
+		for (Edge<ILiteral, Set<IVariable>> edge : sipGraph.getEdges(source, target)) {
+			variables.addAll(edge.getWeight());
+		}
 		return variables;
 	}
 
@@ -400,7 +423,7 @@ public class LeftToRightSip implements ISip {
 	public String toString() {
 		final String NEWLINE = System.getProperty("line.separator");
 		StringBuilder buffer = new StringBuilder();
-		for (LabeledEdge<ILiteral, Set<IVariable>> edge : sipGraph.edgeSet()) {
+		for (Edge<ILiteral, Set<IVariable>> edge : sipGraph.getEdges()) {
 			buffer.append(edge).append(NEWLINE);
 		}
 		return buffer.toString();
@@ -410,13 +433,13 @@ public class LeftToRightSip implements ISip {
 		if (literal == null) {
 			throw new IllegalArgumentException("The literal must not be null");
 		}
-		return sipGraph.containsVertex(literal);
+		return sipGraph.getVertices().contains(literal);
 	}
 
 	public Set<ILiteral> getRootVertices() {
 		final Set<ILiteral> roots = new HashSet<ILiteral>();
-		for (final ILiteral vertex : sipGraph.vertexSet()) {
-			if (Graphs.predecessorListOf(sipGraph, vertex).isEmpty()) {
+		for (final ILiteral vertex : sipGraph.getVertices()) {
+			if (Graphs.sort(sipGraph, vertex, Direction.BACKWARD).isEmpty()) {
 				roots.add(vertex);
 			}
 		}
@@ -425,8 +448,8 @@ public class LeftToRightSip implements ISip {
 
 	public Set<ILiteral> getLeafVertices() {
 		final Set<ILiteral> leaves = new HashSet<ILiteral>();
-		for (final ILiteral vertex : sipGraph.vertexSet()) {
-			if (Graphs.successorListOf(sipGraph, vertex).isEmpty()) {
+		for (final ILiteral vertex : sipGraph.getVertices()) {
+			if (Graphs.sort(sipGraph, vertex).isEmpty()) {
 				leaves.add(vertex);
 			}
 		}
@@ -442,8 +465,8 @@ public class LeftToRightSip implements ISip {
 	 * 
 	 * @return the set of edges.
 	 */
-	public Set<LabeledEdge<ILiteral, Set<IVariable>>> getEdges() {
-		return Collections.unmodifiableSet(sipGraph.edgeSet());
+	public Set<Edge<ILiteral, Set<IVariable>>> getEdges() {
+		return Collections.unmodifiableSet(sipGraph.getEdges());
 	}
 
 	public boolean equals(final Object object) {
@@ -454,12 +477,12 @@ public class LeftToRightSip implements ISip {
 			return false;
 		}
 		final LeftToRightSip sip = (LeftToRightSip) object;
-		return sipGraph.edgeSet().equals(sip.sipGraph.edgeSet());
+		return sipGraph.getEdges().equals(sip.sipGraph.getEdges());
 	}
 
 	public int hashCode() {
 		int res = 17;
-		res = res * 37 + sipGraph.edgeSet().hashCode();
+		res = res * 37 + sipGraph.getEdges().hashCode();
 		return res;
 	}
 
@@ -506,11 +529,11 @@ public class LeftToRightSip implements ISip {
 				throw new IllegalArgumentException("The second literal must not be null");
 			}
 
-			if (!sipGraph.containsVertex(o1) && !sipGraph.containsVertex(o2)) { // none of the literals is in the graph
+			if (!sipGraph.getVertices().contains(o1) && !sipGraph.getVertices().contains(o2)) { // none of the literals is in the graph
 				return 0;
-			} else if (!sipGraph.containsVertex(o1)) { // only o2 is in the graph
+			} else if (!sipGraph.getVertices().contains(o1)) { // only o2 is in the graph
 				return 1;
-			} else if (!sipGraph.containsVertex(o2)) { // only o1 is in the graph
+			} else if (!sipGraph.getVertices().contains(o2)) { // only o1 is in the graph
 				return -1;
 			}
 
@@ -526,28 +549,6 @@ public class LeftToRightSip implements ISip {
 			}
 			// they don't depend on each other
 			return 0;
-		}
-	}
-
-	/**
-	 * <p>
-	 * The simple factory to create default edges for the Sip.
-	 * The label of the edge will be <code>new HashSet<IVariable>()</code>.
-	 * </p>
-	 *
-	 * @author Richard Pöttler (richard dot poettler at sti2 dot at)
-	 * @since 0.3
-	 */
-	private static class SipEdgeFactory implements EdgeFactory<ILiteral, LabeledEdge<ILiteral, Set<IVariable>>> {
-
-		public LabeledEdge<ILiteral, Set<IVariable>> createEdge(final ILiteral source, final ILiteral target) {
-			if (source == null) {
-				throw new IllegalArgumentException("The source must not be null");
-			}
-			if (target == null) {
-				throw new IllegalArgumentException("The target must not be null");
-			}
-			return new LabeledEdge<ILiteral, Set<IVariable>>(source, target, new HashSet<IVariable>());
 		}
 	}
 }

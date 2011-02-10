@@ -28,12 +28,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.deri.iris.api.basics.ILiteral;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IRule;
-import org.deri.iris.api.graph.ILabeledEdge;
 import org.deri.iris.api.graph.IPredicateGraph;
 
 import eu.soa4all.graph.Direction;
@@ -115,9 +115,10 @@ public class PredicateGraph implements IPredicateGraph {
 		for (final IPredicate v : cycle) {
 			for (final IPredicate p : Graphs.sort(g, v)) {
 				if (cycle.contains(p)) {
-					Set<Edge<IPredicate, Boolean>> vpEdges = g.getEdges(v, p); // FIXME might be more than one!
-					edges.add(vpEdges.iterator().next());
-					break;
+					Set<Edge<IPredicate, Boolean>> vpEdges = g.getEdges(v, p);
+					for (Edge<IPredicate, Boolean> edge : vpEdges) {
+						edges.add(edge);
+					}
 				}
 			}
 		}
@@ -153,20 +154,25 @@ public class PredicateGraph implements IPredicateGraph {
 
 		final Set<IPredicate> todo = new HashSet<IPredicate>();
 		todo.add(p);
-		final Set<IPredicate> deps = new HashSet<IPredicate>();
+		final Set<IPredicate> dependencies = new HashSet<IPredicate>();
 
 		while (!todo.isEmpty()) {
 			final IPredicate act = todo.iterator().next();
 			todo.remove(act);
 
-			for (final IPredicate depends : Graphs.sort(g, act, Direction.BACKWARD)) {
-				if (deps.add(depends)) {
-					todo.add(depends);
+			List<IPredicate> topologicalSortedPredicates = Graphs.sort(g, act, Direction.BACKWARD);
+			for (final IPredicate dependentPredicate : topologicalSortedPredicates) {
+				// Do not add the dependent predicate if it is itself
+				// FIXME Check if this is allowed in every circumstance, e.g. Is
+				// it allowed in a very simple cycle, i.e. if the node links to
+				// itself?
+				if (dependentPredicate != act && dependencies.add(dependentPredicate)) {
+					todo.add(dependentPredicate);
 				}
 			}
 		}
 
-		return deps;
+		return dependencies;
 	}
 
 	/**
@@ -251,12 +257,14 @@ public class PredicateGraph implements IPredicateGraph {
 
 			// one of the vertices is not in the graph, or there is no
 			// connection of the vertices -> return 0
-			if (!g.getVertices().contains(o1) || !g.getVertices().contains(o2)
-					|| !(Graphs.findPath(g, o1, o2) != null)) { // FIXME check return value null
+			if (!g.getVertices().contains(o1) 
+					|| !g.getVertices().contains(o2)
+					|| Graphs.findPaths(g, o1, o2) == null) {
 				return 0;
 			}
 			// determine who depends on who
-			return getDepends(o1).contains(o2) ? 1 : -1;
+			Set<IPredicate> dependsSet = getDepends(o1);
+			return dependsSet.contains(o2) ? 1 : -1;
 		}
 	}
 

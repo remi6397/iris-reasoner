@@ -42,7 +42,10 @@ import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserException;
-import org.deri.iris.graph.LabeledEdge;
+import org.deri.iris.utils.EdgeSetEquality;
+
+import eu.soa4all.graph.Edge;
+import eu.soa4all.graph.impl.GraphFactory;
 
 /**
  * <p>
@@ -105,15 +108,17 @@ public class LeftToRightSipTest extends TestCase {
 		final IVariable Z3 = TERM.createVariable("Z3");
 		final IVariable Z4 = TERM.createVariable("Z4");
 
-		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
+		final Set<Edge<ILiteral, Set<IVariable>>> edges = new HashSet<Edge<ILiteral, Set<IVariable>>>();
 		edges.add(createEdge(createLiteral("sg", "X", "Y"), createLiteral("up", "X", "Z1"), X));
 		edges.add(createEdge(createLiteral("up", "X", "Z1"), createLiteral("sg", "Z1", "Z2"), Z1));
 		edges.add(createEdge(createLiteral("sg", "Z1", "Z2"), createLiteral("flat", "Z2", "Z3"), Z2));
 		edges.add(createEdge(createLiteral("flat", "Z2", "Z3"), createLiteral("sg", "Z3", "Z4"), Z3));
 		edges.add(createEdge(createLiteral("sg", "Z3", "Z4"), createLiteral("down", "Z4", "Y"), Z4));
 
-		assertEquals("The edge set does not match.", edges, sip.getEdges());
-	}
+		Set<Edge<ILiteral, Set<IVariable>>> edges2 = sip.getEdges();
+		
+		EdgeSetEquality.assertEdgeSetEquality("The edge set does not match.", edges, edges2);
+	}	
 
 	/**
 	 * Tests whether the sip contains all expected edges.
@@ -127,12 +132,12 @@ public class LeftToRightSipTest extends TestCase {
 		final IVariable X1 = TERM.createVariable("X1");
 		final IVariable Y1 = TERM.createVariable("Y1");
 
-		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
+		final Set<Edge<ILiteral, Set<IVariable>>> edges = new HashSet<Edge<ILiteral, Set<IVariable>>>();
 		edges.add(createEdge(createLiteral("rsg", "X", "Y"), createLiteral("up", "X", "X1"), X));
 		edges.add(createEdge(createLiteral("up", "X", "X1"), createLiteral("rsg", "Y1", "X1"), X1));
 		edges.add(createEdge(createLiteral("rsg", "Y1", "X1"), createLiteral("down", "Y1", "Y"), Y1));
 
-		assertEquals("The edge set does not match.", edges, sip.getEdges());
+		EdgeSetEquality.assertEdgeSetEquality("The edge set does not match.", edges, sip.getEdges());
 	}
 
 	/**
@@ -147,14 +152,15 @@ public class LeftToRightSipTest extends TestCase {
 		final IVariable X1 = TERM.createVariable("X1");
 		final IVariable Y1 = TERM.createVariable("Y1");
 
-		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
+		final Set<Edge<ILiteral, Set<IVariable>>> edges = new HashSet<Edge<ILiteral, Set<IVariable>>>();
 		edges.add(createEdge(createLiteral("rsg", "X", "Y"), createLiteral("up", "X", "X1"), X));
 		edges.add(createEdge(createLiteral("up", "X", "X1"), createLiteral("rsg", "Y1", "X1"), X1));
 		edges.add(createEdge(createLiteral("rsg", "Y1", "X1"), 
 					BASIC.createLiteral(true, BUILTIN.createEqual(TERM.createVariable("Y1"), TERM.createVariable("Y"))),
 					Y1));
 
-		assertEquals("The edge set does not match.", edges, sip.getEdges());
+		EdgeSetEquality.assertEdgeSetEquality("The edge set does not match.", edges, sip.getEdges());
+//		assertEquals("The edge set does not match.", edges, sip.getEdges());
 	}
 
 	/**
@@ -175,10 +181,11 @@ public class LeftToRightSipTest extends TestCase {
 		final IVariable X = TERM.createVariable("X");
 		final ILiteral lit = createLiteral("p", "X");
 
-		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
+		final Set<Edge<ILiteral, Set<IVariable>>> edges = new HashSet<Edge<ILiteral, Set<IVariable>>>();
 		edges.add(createEdge(lit, lit, X));
 
-		assertEquals("The edge set does not match.", edges, sip.getEdges());
+		EdgeSetEquality.assertEdgeSetEquality("The edge set does not match.", edges, sip.getEdges());
+//		assertEquals("The edge set does not match.", edges, sip.getEdges());
 	}
 
 	/**
@@ -195,13 +202,14 @@ public class LeftToRightSipTest extends TestCase {
 		final ILiteral not_a = createLiteral(false, "a", "Y");
 		final ILiteral c = createLiteral("c", "Y", "Z");
 
-		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges = new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
+		final Set<Edge<ILiteral, Set<IVariable>>> edges = new HashSet<Edge<ILiteral, Set<IVariable>>>();
 		// b(?Y) ->( [?Y] )-> !a(?Y)
 		edges.add(createEdge(b, not_a, Y));
 		// b(?Y) ->( [?Y] )-> c(?Y, ?Z)
 		edges.add(createEdge(b, c, Y));
 
-		assertEquals("The edge set does not match.", edges, sip.getEdges());
+		EdgeSetEquality.assertEdgeSetEquality("The edge set does not match.", edges, sip.getEdges());
+//		assertEquals("The edge set does not match.", edges, sip.getEdges());
 	}
 
 	/**
@@ -362,10 +370,10 @@ public class LeftToRightSipTest extends TestCase {
 				Collections.<ILiteral>emptySet(),
 				sip.getDepends(i0x0));
 		assertEquals("getEdgesEnteringLiteral(...) must return an empty set for unconnected literals.",
-				Collections.<LabeledEdge<ILiteral, Set<IVariable>>>emptySet(),
+				Collections.<Edge<ILiteral, Set<IVariable>>>emptySet(),
 				sip.getEdgesEnteringLiteral(i0x0));
 		assertEquals("getEdgesLeavingLiteral(...) must return an empty set for unconnected literals.",
-				Collections.<LabeledEdge<ILiteral, Set<IVariable>>>emptySet(),
+				Collections.<Edge<ILiteral, Set<IVariable>>>emptySet(),
 				sip.getEdgesLeavingLiteral(i0x0));
 		assertFalse("containsVertex(...) must return false for unconnected literals.",
 				sip.containsVertex(i0x0));
@@ -399,13 +407,13 @@ public class LeftToRightSipTest extends TestCase {
 		final ILiteral d = createLiteral("d", "A", "B");
 		final ILiteral e = createLiteral("e", "E", "B");
 
-		final Set<LabeledEdge<ILiteral, Set<IVariable>>> referenceEdges
-			= new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
+		final Set<Edge<ILiteral, Set<IVariable>>> referenceEdges
+			= new HashSet<Edge<ILiteral, Set<IVariable>>>();
 		referenceEdges.add(createEdge(a, d, A));
 		referenceEdges.add(createEdge(c, e, E));
 		referenceEdges.add(createEdge(d, e, B));
 
-		assertEquals("The edge set does not match.", referenceEdges, sip.getEdges());
+		EdgeSetEquality.assertEdgeSetEquality("The edge set does not match.", referenceEdges, sip.getEdges());
 	}
 
 	/**
@@ -416,7 +424,7 @@ public class LeftToRightSipTest extends TestCase {
 			+ "?- i(?X).";
 		final LeftToRightSip sip = parseProgram(prog);
 		assertEquals("There must be not edges created",
-				Collections.<LabeledEdge<ILiteral, Set<IVariable>>>emptySet(),
+				Collections.<Edge<ILiteral, Set<IVariable>>>emptySet(),
 				sip.getEdges());
 	}
 
@@ -435,8 +443,8 @@ public class LeftToRightSipTest extends TestCase {
 		final ILiteral e2 = createLiteral("e2", "Y");
 		final ILiteral less = BASIC.createLiteral(true, BUILTIN.createLess(X, Y));
 
-		final Set<LabeledEdge<ILiteral, Set<IVariable>>> edges
-			= new HashSet<LabeledEdge<ILiteral, Set<IVariable>>>();
+		final Set<Edge<ILiteral, Set<IVariable>>> edges
+			= new HashSet<Edge<ILiteral, Set<IVariable>>>();
 
 		// e1(?Y) ->( [?Y] )-> LESS(?X, ?Y)
 		edges.add(createEdge(e1, less, Y));
@@ -447,7 +455,7 @@ public class LeftToRightSipTest extends TestCase {
 		// LESS(?X, ?Y) ->( [?Y] )-> e2(?Y)
 		edges.add(createEdge(less, e2, Y));
 
-		assertEquals("The edge set does not match.", edges, sip.getEdges());
+		EdgeSetEquality.assertEdgeSetEquality("The edge set does not match.", edges, sip.getEdges());
 	}
 
 	/**
@@ -458,13 +466,14 @@ public class LeftToRightSipTest extends TestCase {
 	 * @param v the passed variables (label)
 	 * @return the edge
 	 */
-	private static LabeledEdge<ILiteral, Set<IVariable>> createEdge(
+	private static Edge<ILiteral, Set<IVariable>> createEdge(
 			final ILiteral s, final ILiteral t, final IVariable... v) {
 		assert s != null: "The source literal must not be null";
 		assert t != null: "The target literal must not be null";
 		assert v != null: "The variables must not be null";
 
-		return new LabeledEdge<ILiteral, Set<IVariable>>(s, t,
-				new HashSet<IVariable>(Arrays.asList(v)));
+		GraphFactory gf = GraphFactory.getInstance();
+		Set<IVariable> weights = new HashSet<IVariable>(Arrays.asList(v));
+		return gf.createEdge(s, t, weights );
 	}
 }
