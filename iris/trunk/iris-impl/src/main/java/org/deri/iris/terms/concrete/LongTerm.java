@@ -26,6 +26,7 @@ import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.ILongTerm;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -47,7 +48,7 @@ public class LongTerm extends IntegerTerm implements ILongTerm {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(ILongTerm.DATATYPE_URI);
+		return XmlSchemaDatatype.LONG.toUri();
 	}
 
 }

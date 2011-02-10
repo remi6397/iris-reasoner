@@ -4,6 +4,7 @@ import java.net.URI;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.ILocal;
+import org.deri.iris.api.terms.concrete.RifDatatype;
 
 /**
  * A term representing a rif:local.
@@ -37,7 +38,7 @@ public class Local implements ILocal {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/2007/rif#local");
+		return RifDatatype.LOCAL.toUri();
 	}
 
 	@Override

@@ -25,6 +25,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IIntTerm;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -46,7 +47,7 @@ public class IntTerm extends LongTerm implements IIntTerm {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(IIntTerm.DATATYPE_URI);
+		return XmlSchemaDatatype.INT.toUri();
 	}
 
 }

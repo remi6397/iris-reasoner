@@ -26,6 +26,7 @@ import java.net.URI;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.INormalizedString;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -65,7 +66,7 @@ public class NormalizedString implements INormalizedString {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create(INormalizedString.DATATYPE_URI);
+		return XmlSchemaDatatype.NORMALIZED_STRING.toUri();
 	}
 
 	public String toCanonicalString() {

@@ -25,6 +25,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IID;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -47,7 +48,7 @@ public class ID extends NCName implements IID {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(IID.DATATYPE_URI);
+		return XmlSchemaDatatype.ID.toUri();
 	}
 
 }

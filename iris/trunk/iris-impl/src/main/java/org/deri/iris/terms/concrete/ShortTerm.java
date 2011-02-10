@@ -25,6 +25,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IShortTerm;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -46,7 +47,7 @@ public class ShortTerm extends IntTerm implements IShortTerm {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(IShortTerm.DATATYPE_URI);
+		return XmlSchemaDatatype.SHORT.toUri();
 	}
 
 }

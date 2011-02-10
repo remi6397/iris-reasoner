@@ -25,6 +25,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IUnsignedShort;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -55,7 +56,7 @@ public class UnsignedShort extends UnsignedInt implements IUnsignedShort {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(IUnsignedShort.DATATYPE_URI);
+		return XmlSchemaDatatype.UNSIGNED_SHORT.toUri();
 	}
 
 }

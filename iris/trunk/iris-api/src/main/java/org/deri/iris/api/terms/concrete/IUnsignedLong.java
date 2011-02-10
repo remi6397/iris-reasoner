@@ -39,9 +39,4 @@ public interface IUnsignedLong extends INonNegativeInteger {
 	public static final BigInteger MAX_INCLUSIVE = new BigInteger(
 			"18446744073709551615");
 
-	/**
-	 * Defines the XML Schema datatype URI.
-	 */
-	public static String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#unsignedLong";
-
 }

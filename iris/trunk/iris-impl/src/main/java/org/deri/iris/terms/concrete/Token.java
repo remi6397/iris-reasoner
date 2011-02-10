@@ -25,6 +25,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IToken;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -63,7 +64,7 @@ public class Token extends NormalizedString implements IToken {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(IToken.DATATYPE_URI);
+		return XmlSchemaDatatype.TOKEN.toUri();
 	}
 
 }

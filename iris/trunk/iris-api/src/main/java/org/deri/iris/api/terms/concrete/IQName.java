@@ -34,11 +34,6 @@ import org.deri.iris.api.terms.IConcreteTerm;
 public interface IQName extends IConcreteTerm {
 
 	/**
-	 * Defines the XML Schema datatype URI.
-	 */
-	public static String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#QName";
-
-	/**
 	 * Returns the namespace name of this QName.
 	 * 
 	 * @return The namespace name of this QName.

@@ -26,6 +26,7 @@ import java.net.URI;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IXMLLiteral;
+import org.deri.iris.api.terms.concrete.RdfDatatype;
 
 /**
  * Implementation of the rdf:XMLLiteral data-type.
@@ -81,8 +82,7 @@ public class XMLLiteral implements IXMLLiteral {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI
-				.create("http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral");
+		return RdfDatatype.XML_LITERAL.toUri();
 	}
 
 	public String getString() {

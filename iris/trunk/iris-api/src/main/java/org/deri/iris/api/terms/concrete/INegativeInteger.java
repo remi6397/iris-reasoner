@@ -31,9 +31,4 @@ package org.deri.iris.api.terms.concrete;
  */
 public interface INegativeInteger extends INonPositiveInteger {
 
-	/**
-	 * Defines the XML Schema datatype URI.
-	 */
-	public static String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#negativeInteger";
-
 }

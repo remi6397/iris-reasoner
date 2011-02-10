@@ -32,11 +32,6 @@ package org.deri.iris.api.terms.concrete;
 public interface IUnsignedByte extends IUnsignedShort {
 
 	/**
-	 * Defines the XML Schema datatype URI.
-	 */
-	public static String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#unsignedByte";
-
-	/**
 	 * The maximal value of an unsigned byte.
 	 */
 	public static int MAX_INCLUSIVE = 255;

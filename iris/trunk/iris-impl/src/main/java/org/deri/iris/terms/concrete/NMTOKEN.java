@@ -25,6 +25,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.INMTOKEN;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -47,7 +48,7 @@ public class NMTOKEN extends Token implements INMTOKEN {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(INMTOKEN.DATATYPE_URI);
+		return XmlSchemaDatatype.NMTOKEN.toUri();
 	}
 
 }

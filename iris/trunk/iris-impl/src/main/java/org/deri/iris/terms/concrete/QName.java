@@ -26,6 +26,7 @@ import java.net.URI;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IQName;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -70,7 +71,7 @@ public class QName implements IQName {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create(IQName.DATATYPE_URI);
+		return XmlSchemaDatatype.QNAME.toUri();
 	}
 
 	public String toCanonicalString() {

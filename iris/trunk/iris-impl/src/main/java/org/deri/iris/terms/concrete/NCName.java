@@ -25,6 +25,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.INCName;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -47,7 +48,7 @@ public class NCName extends Name implements INCName {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(INCName.DATATYPE_URI);
+		return XmlSchemaDatatype.NCNAME.toUri();
 	}
 
 }

@@ -35,6 +35,4 @@ import org.deri.iris.api.terms.INumericTerm;
  */
 public interface IDoubleTerm extends INumericTerm {
 	
-	public static final String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#double";
-	
 }

@@ -26,6 +26,7 @@ import java.net.URI;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IPlainLiteral;
+import org.deri.iris.api.terms.concrete.RdfDatatype;
 
 /**
  * A term representing a rdf:PlainLiteral, former known as rdf:text.
@@ -142,7 +143,7 @@ public class PlainLiteral implements IPlainLiteral {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral");
+		return RdfDatatype.PLAIN_LITERAL.toUri();
 	}
 
 	public String toCanonicalString() {

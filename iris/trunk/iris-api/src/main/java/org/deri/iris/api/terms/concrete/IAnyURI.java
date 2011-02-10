@@ -43,11 +43,6 @@ import org.deri.iris.api.terms.IConcreteTerm;
 public interface IAnyURI extends IConcreteTerm {
 
 	/**
-	 * Defines the XML Schema datatype URI.
-	 */
-	public static String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#anyURI";
-
-	/**
 	 * Returns the URI representing this anyURI.
 	 * 
 	 * @return The URI representing this anyURI.

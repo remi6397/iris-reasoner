@@ -31,6 +31,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IGMonthDay;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -140,7 +141,7 @@ public class GMonthDay implements IGMonthDay {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/2001/XMLSchema#gMonthDay");
+		return XmlSchemaDatatype.GMONTHDAY.toUri();
 	}
 
 	public String toCanonicalString() {

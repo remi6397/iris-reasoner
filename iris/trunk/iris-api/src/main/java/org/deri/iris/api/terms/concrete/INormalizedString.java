@@ -38,11 +38,6 @@ import org.deri.iris.api.terms.IStringTerm;
 public interface INormalizedString extends IStringTerm {
 
 	/**
-	 * Defines the XML Schema datatype URI.
-	 */
-	public static String DATATYPE_URI = "http://www.w3.org/2001/XMLSchema#normalizedString";
-
-	/**
 	 * Returns the string representing this xsd:normalizedString.
 	 * 
 	 * @return The string representing this xsd:normalizedString.

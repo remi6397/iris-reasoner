@@ -25,6 +25,7 @@ package org.deri.iris.terms.concrete;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IByteTerm;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -46,7 +47,7 @@ public class ByteTerm extends ShortTerm implements IByteTerm {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(IByteTerm.DATATYPE_URI);
+		return XmlSchemaDatatype.BYTE.toUri();
 	}
 
 }

@@ -27,6 +27,7 @@ import java.net.URISyntaxException;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IIri;
+import org.deri.iris.api.terms.concrete.RifDatatype;
 
 /**
  * <p>
@@ -126,7 +127,7 @@ public class Iri implements IIri {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/2007/rif#iri");
+		return RifDatatype.IRI.toUri();
 	}
 
 	public String toCanonicalString() {

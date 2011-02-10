@@ -26,6 +26,7 @@ import java.net.URI;
 
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.concrete.IBooleanTerm;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -129,7 +130,7 @@ public class BooleanTerm implements IBooleanTerm {
 	}
 
 	public URI getDatatypeIRI() {
-		return URI.create("http://www.w3.org/2001/XMLSchema#boolean");
+		return XmlSchemaDatatype.BOOLEAN.toUri();
 	}
 
 	public String toCanonicalString() {

@@ -26,6 +26,7 @@ import java.math.BigInteger;
 import java.net.URI;
 
 import org.deri.iris.api.terms.concrete.IPositiveInteger;
+import org.deri.iris.api.terms.concrete.XmlSchemaDatatype;
 
 /**
  * <p>
@@ -63,7 +64,7 @@ public class PositiveInteger extends IntegerTerm implements IPositiveInteger {
 
 	@Override
 	public URI getDatatypeIRI() {
-		return URI.create(IPositiveInteger.DATATYPE_URI);
+		return XmlSchemaDatatype.POSITIVE_INTEGER.toUri();
 	}
 
 }
