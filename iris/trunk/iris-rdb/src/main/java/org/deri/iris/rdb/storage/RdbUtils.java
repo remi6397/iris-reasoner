@@ -122,7 +122,7 @@ public class RdbUtils {
 	public static Connection createConnection(File directory)
 			throws IOException, ClassNotFoundException, SQLException {
 		String url = "jdbc:h2:file:" + directory.getAbsolutePath()
-				+ "/test;FILE_LOCK=FS";
+				+ "/iris-rdb;";
 		Class.forName("org.h2.Driver");
 
 		return DriverManager.getConnection(url);
