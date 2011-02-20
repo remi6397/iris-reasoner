@@ -30,27 +30,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.deri.iris.Configuration;
-import org.deri.iris.KnowledgeBase;
+import org.deri.iris.EvaluationException;
 import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.facts.Facts;
-import org.deri.iris.facts.IFacts;
-import org.deri.iris.optimisations.magicsets.MagicSets;
-import org.deri.iris.optimisations.rulefilter.RuleFilter;
-import org.deri.iris.rdb.RdbKnowledgeBase;
 import org.deri.iris.storage.IRelation;
 
-public class OpenRuleBench {
-
-	private IrisSystem system;
-
-	private OpenRuleBench(IrisSystem system) {
-		this.system = system;
-	}
+/**
+ * Executes the LargeJoin tests of the OpenRuleBench.
+ */
+public abstract class LargeJoin {
 
 	public void join1(Join1Query query, Join1Data data) throws Exception {
 		File program = null;
@@ -86,42 +77,6 @@ public class OpenRuleBench {
 		}
 	}
 
-	// public void dblp() throws Exception {
-	// File program = null;
-	//
-	// ClassLoader loader = getClass().getClassLoader();
-	//
-	// URL dataUrl = loader
-	// .getResource("openrulebench/dblp_test/dblp_data.iris");
-	// URL programUrl = loader
-	// .getResource("openrulebench/dblp_test/dblp_program.iris");
-	//
-	// try {
-	// program = File.createTempFile("dbplProgram", ".iris");
-	// program.createNewFile();
-	//
-	// FileUtils.copyURLToFile(dataUrl, program);
-	// File queryFile = new File(programUrl.toURI());
-	//
-	// List<String> lines = FileUtils.readLines(queryFile);
-	//
-	// FileWriter writer = new FileWriter(program, true);
-	// for (String line : lines) {
-	// writer.write(line);
-	// writer.write(System.getProperty("line.separator"));
-	// }
-	//
-	// writer.flush();
-	// writer.close();
-	//
-	// execute(program);
-	// } finally {
-	// if (program != null) {
-	// program.delete();
-	// }
-	// }
-	// }
-
 	public void join2() throws Exception {
 		ClassLoader loader = getClass().getClassLoader();
 
@@ -132,11 +87,6 @@ public class OpenRuleBench {
 	}
 
 	private void execute(File program) throws Exception {
-		Configuration config = new Configuration();
-
-		config.programOptmimisers.add(new RuleFilter());
-		config.programOptmimisers.add(new MagicSets());
-
 		FileReader reader = new FileReader(program);
 
 		Parser parser = new Parser();
@@ -152,14 +102,7 @@ public class OpenRuleBench {
 		List<IRule> rules = parser.getRules();
 		List<IQuery> queries = parser.getQueries();
 
-		IKnowledgeBase kb = null;
-
-		if (system == IrisSystem.ORIGINAL) {
-			kb = new KnowledgeBase(rawFacts, rules, config);
-		} else if (system == IrisSystem.RDB) {
-			IFacts facts = new Facts(parser.getFacts(), config.relationFactory);
-			kb = new RdbKnowledgeBase(facts, rules, config);
-		}
+		IKnowledgeBase kb = createKnowledgeBase(rawFacts, rules);
 
 		for (IQuery query : queries) {
 			start = System.currentTimeMillis();
@@ -174,28 +117,17 @@ public class OpenRuleBench {
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
-		OpenRuleBench bench = new OpenRuleBench(IrisSystem.RDB);
+	protected abstract IKnowledgeBase createKnowledgeBase(
+			Map<IPredicate, IRelation> rawFacts, List<IRule> rules)
+			throws EvaluationException;
 
-		bench.join1(Join1Query.A, Join1Data.DATA1);
-		// bench.join2();
-	}
+	public static enum Join1Data {
 
-	private static enum IrisSystem {
+		DATA0("openrulebench/join1/join1_50000.iris"),
 
-		ORIGINAL,
+		DATA1("openrulebench/join1/join1_250000.iris"),
 
-		RDB;
-
-	}
-
-	private static enum Join1Data {
-
-		DATA0("openrulebench/data/join1_50000.iris"),
-
-		DATA1("openrulebench/data/join1_250000.iris"),
-
-		DATA2("openrulebench/data/join1_1250000.iris");
+		DATA2("openrulebench/join1/join1_1250000.iris");
 
 		private String fileName;
 
@@ -209,7 +141,7 @@ public class OpenRuleBench {
 
 	}
 
-	private static enum Join1Query {
+	public static enum Join1Query {
 
 		A("openrulebench/join1/join_a.iris"),
 
