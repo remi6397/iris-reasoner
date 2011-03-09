@@ -57,6 +57,9 @@ public class ProgramExecutor
 	/** Flag for how to format the output. */
 	public static final boolean SHOW_ROW_COUNT = true;
 	
+	/** Flag for how to format the output. */
+	public static final boolean SHOW_RELATION = true;
+	
 	/**
 	 * Constructor.
 	 * This is where the program is actually evaluated.
@@ -122,7 +125,9 @@ public class ProgramExecutor
 					output.append( NEW_LINE );
 				}
 			
-				formatResults( output, results );
+				if (SHOW_RELATION) {
+					formatResults( output, results );
+				}
 			}
 			
 			mOutput = output.toString();
