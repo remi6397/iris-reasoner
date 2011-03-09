@@ -58,11 +58,13 @@ import org.deri.iris.rules.stratification.GlobalStratifier;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.storage.Relations;
 import org.deri.iris.storage.simple.SimpleRelationFactory;
+import org.junit.Ignore;
 
 /**
  * Generate random logic programs and compare the evaluation results using
  * different evaluation criterion.
  */
+@Ignore
 public class EvaluationComparisonStressTest extends TestCase
 {
 	public static boolean SHOW_FAILURE_PROGRAMS = true;
