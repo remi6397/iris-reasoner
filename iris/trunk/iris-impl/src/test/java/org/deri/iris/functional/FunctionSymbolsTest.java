@@ -82,6 +82,21 @@ public class FunctionSymbolsTest extends TestCase
 		Helper.evaluateWithAllStrategies( program, expectedResults );
 	}	
 
+	public void testFunctionSymbolsInRuleHeadEquality() throws Exception
+	{
+		String program =
+			"a(?X) = b(?X) :- c(?X)." +
+			
+			"c('A')." +
+			
+			"?- a('A') = b('A').";
+		
+		String expectedResults = 
+			"dummy().";
+
+		Helper.evaluateWithAllStrategies( program, expectedResults );
+	}	
+	
 	public void testSubstitution() throws Exception
 	{
 		String program =
@@ -476,6 +491,7 @@ public class FunctionSymbolsTest extends TestCase
 			"dummy( 2, h(3) ).";
 	
 		Helper.evaluateWithAllStrategies( program, expectedResults );
-	}	
+	}
+	
 }
 
