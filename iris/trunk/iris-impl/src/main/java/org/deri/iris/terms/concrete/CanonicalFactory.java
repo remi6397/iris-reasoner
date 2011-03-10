@@ -269,18 +269,19 @@ public class CanonicalFactory {
 			case PLAIN_LITERAL:
 				int position = value.lastIndexOf("@");
 
+				String text = value;
+				String lang = "";
+
 				if (position >= 0) {
-					String text = value.substring(0, position);
-					String lang = "";
+					text = value.substring(0, position);
+					lang = "";
 
 					if (position < (value.length() - 1)) {
 						lang = value.substring(position + 1);
 					}
-
-					return factory.createPlainLiteral(text, lang);
 				}
 
-				break;
+				return factory.createPlainLiteral(text, lang);
 			case XML_LITERAL:
 				// TODO What about the language?
 				return factory.createXMLLiteral(value);
