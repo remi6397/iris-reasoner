@@ -28,6 +28,7 @@ import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.terms.IConcreteTerm;
 import org.deri.iris.api.terms.IStringTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.factory.Factory;
 import org.deri.iris.utils.equivalence.IEquivalentTerms;
 
 /**
@@ -44,10 +45,12 @@ public class IriStringBuiltin extends BooleanBuiltin {
 	/**
 	 * Creates the built-in for the specified terms.
 	 * 
-	 * @param terms The terms.
-	 * @throws NullPointerException If one of the terms is <code>null</code>.
-	 * @throws IllegalArgumentException If the number of terms submitted is not
-	 *             2 .
+	 * @param terms
+	 *            The terms.
+	 * @throws NullPointerException
+	 *             If one of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException
+	 *             If the number of terms submitted is not 2 .
 	 */
 	public IriStringBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -56,21 +59,35 @@ public class IriStringBuiltin extends BooleanBuiltin {
 	@Override
 	protected boolean computeResult(ITerm[] terms) {
 		IEquivalentTerms equivalentTerms = getEquivalenceClasses();
-		
+
 		// Check if the two terms are equivalent.
 		if (equivalentTerms != null) {
 			if (equivalentTerms.areEquivalent(terms[0], terms[1])) {
 				return true;
 			}
 		}
-		
+
 		// Assuming the IRI is represented by some concrete term.
 		if (terms[0] instanceof IConcreteTerm
 				&& terms[1] instanceof IStringTerm) {
 			IConcreteTerm iri = (IConcreteTerm) terms[0];
 			IStringTerm string = (IStringTerm) terms[1];
 
-			return iri.toCanonicalString().equals(string.toCanonicalString());
+			try {
+				// Create an IRI for the string.
+				IConcreteTerm stringIri = Factory.CONCRETE.createIri(string
+						.toCanonicalString());
+
+				// Check if the two IRIs are equivalent.
+				if (equivalentTerms.areEquivalent(iri, stringIri)) {
+					return true;
+				}
+
+				// Check if the two IRIs are equal.
+				return iri.equals(stringIri);
+			} catch (IllegalArgumentException e) {
+				return false;
+			}
 		}
 
 		return false;
