@@ -1328,5 +1328,33 @@ public class BuiltinHelper {
 		}
 		return res.toArray(new ITerm[res.size()]);
 	}
+	
+
+	/**
+	 * Checks if all the specified terms, except the term with the index
+	 * <code>exception</code>, are instances of {@link INumericTerm}.
+	 * 
+	 * @param terms
+	 *            The terms to check.
+	 * @param exception
+	 *            The index of the term to ignore. -1 if all terms should be
+	 *            checked.
+	 * @return <code>true</code> if all the specified terms, except the term
+	 *         with the index <code>exception</code>, are instances of
+	 *         {@link INumericTerm}, <code>false</code> otherwise.
+	 */
+	public static boolean areNumeric(ITerm[] terms, int exception) {
+		for (int i = 0; i < terms.length; i++) {
+			if (i == exception) {
+				continue;
+			}
+
+			if (!(terms[i] instanceof INumericTerm)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 }
