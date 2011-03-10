@@ -25,8 +25,8 @@ package org.deri.iris.builtins.numeric;
 import static org.deri.iris.factory.Factory.BASIC;
 
 import org.deri.iris.api.basics.IPredicate;
-import org.deri.iris.api.terms.INumericTerm;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.builtins.BuiltinHelper;
 import org.deri.iris.builtins.SubtractBuiltin;
 
 /**
@@ -46,12 +46,11 @@ public class NumericSubtractBuiltin extends SubtractBuiltin {
 
 	@Override
 	protected ITerm computeMissingTerm(int missingTermIndex, ITerm[] terms) {
-		if (terms[0] instanceof INumericTerm
-				&& terms[1] instanceof INumericTerm) {
-			return super.computeMissingTerm(missingTermIndex, terms);
+		if (!BuiltinHelper.areNumeric(terms, missingTermIndex)) {
+			return null;
 		}
 
-		return null;
+		return super.computeMissingTerm(missingTermIndex, terms);
 	}
 
 }
