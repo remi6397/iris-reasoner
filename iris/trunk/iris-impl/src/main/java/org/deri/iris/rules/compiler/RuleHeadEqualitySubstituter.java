@@ -29,6 +29,7 @@ import org.deri.iris.EvaluationException;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.api.terms.concrete.IList;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.utils.equivalence.IEquivalentTerms;
 
@@ -85,6 +86,20 @@ public class RuleHeadEqualitySubstituter extends HeadSubstituter {
 			ITerm x = tuple.get(0);
 			ITerm y = tuple.get(1);
 
+			// If both terms are lists, we also set the elements of the lists as
+			// equivalent.
+			if (x instanceof IList && y instanceof IList) {
+				IList list1 = (IList) x;
+				IList list2 = (IList) y;
+
+				if (list1.size() == list2.size()) {
+					for (int j = 0; i < list1.size(); i++) {
+						equivalentTerms.setEquivalent(list1.get(j),
+								list2.get(j));
+					}
+				}
+			}
+
 			// ?X and ?Y are equivalent.
 			equivalentTerms.setEquivalent(x, y);
 			result.add(tuple);
@@ -92,5 +107,4 @@ public class RuleHeadEqualitySubstituter extends HeadSubstituter {
 
 		return result;
 	}
-
 }
