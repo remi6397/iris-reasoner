@@ -46,6 +46,8 @@ import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.api.terms.ITerm;
+import org.deri.iris.facts.Facts;
+import org.deri.iris.facts.IFacts;
 import org.deri.iris.parser.analysis.DepthFirstAdapter;
 import org.deri.iris.parser.node.ABase64binaryTerm;
 import org.deri.iris.parser.node.ABinaryBuiltin;
@@ -122,7 +124,7 @@ public class TreeWalker extends DepthFirstAdapter
 
 	/** Pattern to match Unicode escapes. */
 	private static final Pattern unicodePattern = Pattern.compile("\\\\u([0-9a-fA-F]{4})");
-
+	
 	static {
 		// construction of the pattern:
 		// in the java string construction '\\' boils down to a single '\'
@@ -141,12 +143,29 @@ public class TreeWalker extends DepthFirstAdapter
 
     public TreeWalker( BuiltinRegister builtinRegister )
     {
+    	this(null, builtinRegister);
+    }
+    
+    public TreeWalker( IFacts facts, BuiltinRegister builtinRegister )
+    {
+    	if (facts == null) {
+    		mFacts = new Facts(new SimpleRelationFactory());
+    	} else {
+    		mFacts = facts;
+    	}
+    	
     	mBuiltinRegister = builtinRegister;
     }
 
     public Map<IPredicate,IRelation> getFacts()
     {
-    	return mFacts;
+    	Map<IPredicate, IRelation> rawFacts = new HashMap<IPredicate, IRelation>();
+    	
+    	for (IPredicate predicate : mFacts.getPredicates()) {
+    		rawFacts.put(predicate, mFacts.get(predicate));
+    	}
+    	
+    	return rawFacts;
     }
 
     public List<IRule> getRuleBase()
@@ -241,13 +260,6 @@ public class TreeWalker extends DepthFirstAdapter
     private void addFact( IPredicate predicate, ITuple tuple )
     {
     	IRelation relation = mFacts.get( predicate );
-    	
-    	if( relation == null )
-    	{
-    		relation = new SimpleRelationFactory().createRelation();
-    		mFacts.put( predicate, relation );
-    	}
-    	
     	relation.add( tuple );
     }
 
@@ -911,8 +923,9 @@ public class TreeWalker extends DepthFirstAdapter
 
 	private List<ILiteral> literals;
 	
-    private Map<IPredicate,IRelation> mFacts = new HashMap<IPredicate,IRelation>();
-    private List<IRule> mRules = new ArrayList<IRule>();
+	private IFacts mFacts;
+    
+	private List<IRule> mRules = new ArrayList<IRule>();
 
     private List<IQuery> mQueries = new ArrayList<IQuery>();
     
