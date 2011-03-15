@@ -27,16 +27,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.IKnowledgeBase;
-import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.compiler.Parser;
-import org.deri.iris.storage.IRelation;
+import org.deri.iris.facts.IFacts;
 
 /**
  * Executes the LargeJoin tests of the OpenRuleBench.
@@ -74,21 +72,66 @@ public abstract class LargeJoin {
 			if (program != null) {
 				program.delete();
 			}
+
+			dispose();
 		}
 	}
 
 	public void join2() throws Exception {
+		try {
+			ClassLoader loader = getClass().getClassLoader();
+
+			URL join1Url = loader.getResource("openrulebench/join2/join2.iris");
+
+			File program = new File(join1Url.toURI());
+			execute(program);
+		} finally {
+			dispose();
+		}
+	}
+
+	public void dblp() throws Exception {
+		File program = null;
+
 		ClassLoader loader = getClass().getClassLoader();
 
-		URL join1Url = loader.getResource("openrulebench/join2/join2.iris");
+		URL dataUrl = loader
+				.getResource("openrulebench/dblp_test/dblp_data.iris");
+		URL programUrl = loader
+				.getResource("openrulebench/dblp_test/dblp_program.iris");
 
-		File program = new File(join1Url.toURI());
-		execute(program);
+		try {
+			program = File.createTempFile("join1program", ".iris");
+			program.createNewFile();
+
+			FileUtils.copyURLToFile(dataUrl, program);
+			File queryFile = new File(programUrl.toURI());
+
+			List<String> lines = FileUtils.readLines(queryFile);
+
+			FileWriter writer = new FileWriter(program, true);
+			for (String line : lines) {
+				writer.write(line);
+				writer.write(System.getProperty("line.separator"));
+			}
+
+			writer.flush();
+			writer.close();
+
+			execute(program);
+		} finally {
+			if (program != null) {
+				program.delete();
+			}
+
+			dispose();
+		}
 	}
 
 	private void execute(File program) throws Exception {
 		FileReader reader = new FileReader(program);
 
+		IFacts facts = createFacts();
 		Parser parser = new Parser();
 
 		long start = System.currentTimeMillis();
@@ -98,11 +141,10 @@ public abstract class LargeJoin {
 
 		System.out.println("Parsing program took " + duration + "s");
 
-		Map<IPredicate, IRelation> rawFacts = parser.getFacts();
 		List<IRule> rules = parser.getRules();
 		List<IQuery> queries = parser.getQueries();
 
-		IKnowledgeBase kb = createKnowledgeBase(rawFacts, rules);
+		IKnowledgeBase kb = createKnowledgeBase(facts, rules);
 
 		for (IQuery query : queries) {
 			start = System.currentTimeMillis();
@@ -117,9 +159,12 @@ public abstract class LargeJoin {
 		}
 	}
 
-	protected abstract IKnowledgeBase createKnowledgeBase(
-			Map<IPredicate, IRelation> rawFacts, List<IRule> rules)
-			throws EvaluationException;
+	protected abstract IFacts createFacts();
+
+	protected abstract IKnowledgeBase createKnowledgeBase(IFacts facts,
+			List<IRule> rules) throws EvaluationException;
+
+	protected abstract void dispose();
 
 	public static enum Join1Data {
 
