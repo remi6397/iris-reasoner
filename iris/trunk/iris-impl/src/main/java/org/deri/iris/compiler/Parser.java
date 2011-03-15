@@ -32,6 +32,7 @@ import java.util.Map;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.facts.IFacts;
 import org.deri.iris.parser.lexer.Lexer;
 import org.deri.iris.parser.lexer.LexerException;
 import org.deri.iris.parser.parser.ParserException;
@@ -48,7 +49,7 @@ public class Parser
 	 */
 	public Parser()
 	{
-		mBuiltinRegister = new BuiltinRegister();
+		this(new BuiltinRegister());
 	}
 	
 	/**
@@ -57,6 +58,26 @@ public class Parser
 	 */
 	public Parser( BuiltinRegister builtinRegister )
 	{
+		this(null, builtinRegister);
+	}
+	
+	/**
+	 * Constructor for custom BuitinRegister.
+	 * @param facts The {@link IFacts} to store the facts in.
+	 */
+	public Parser( IFacts facts )
+	{
+		this(facts, new BuiltinRegister());
+	}
+	
+	/**
+	 * Constructor for custom BuitinRegister.
+	 * @param facts The {@link IFacts} to store the facts in.
+	 * @param builtinRegister The built-in register to use.
+	 */
+	public Parser( IFacts facts, BuiltinRegister builtinRegister )
+	{
+		mFacts = facts;
 		mBuiltinRegister = builtinRegister;
 	}
 	
@@ -116,7 +137,7 @@ public class Parser
 		if (r == null)
 			throw new IllegalArgumentException("The reader must not be null");
 		
-		mTreeWalker = new TreeWalker( mBuiltinRegister );
+		mTreeWalker = new TreeWalker(mFacts, mBuiltinRegister );
 
 		try
 		{
@@ -148,4 +169,5 @@ public class Parser
 	
 	private TreeWalker mTreeWalker;
 	private final BuiltinRegister mBuiltinRegister;
+	private IFacts mFacts;
 }
