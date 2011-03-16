@@ -22,10 +22,13 @@
  */
 package org.deri.iris.rdb.evaluation.orb;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -34,6 +37,7 @@ import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.compiler.Parser;
+import org.deri.iris.compiler.ParserException;
 import org.deri.iris.facts.IFacts;
 
 /**
@@ -129,20 +133,16 @@ public abstract class LargeJoin {
 	}
 
 	private void execute(File program) throws Exception {
-		FileReader reader = new FileReader(program);
-
 		IFacts facts = createFacts();
-		Parser parser = new Parser();
+		List<IRule> rules = new ArrayList<IRule>();
+		List<IQuery> queries = new ArrayList<IQuery>();
 
 		long start = System.currentTimeMillis();
-		parser.parse(reader);
+		parse(program, facts, rules, queries);
 		long end = System.currentTimeMillis();
 		double duration = (end - start) / 1000.0;
 
 		System.out.println("Parsing program took " + duration + "s");
-
-		List<IRule> rules = parser.getRules();
-		List<IQuery> queries = parser.getQueries();
 
 		IKnowledgeBase kb = createKnowledgeBase(facts, rules);
 
@@ -157,6 +157,25 @@ public abstract class LargeJoin {
 
 			System.out.println(query + " took " + duration + "s");
 		}
+	}
+
+	private void parse(File program, IFacts facts, List<IRule> rules,
+			List<IQuery> queries) throws ParserException, IOException {
+		Parser parser = new Parser(facts);
+		BufferedReader reader = new BufferedReader(new FileReader(program),
+				1024 * 1024);
+
+		String line;
+		long i = 0;
+		while ((line = reader.readLine()) != null) {
+			System.err.println("" + (i++));
+
+			parser.parse(line);
+			rules.addAll(parser.getRules());
+			queries.addAll(parser.getQueries());
+		}
+
+		reader.close();
 	}
 
 	protected abstract IFacts createFacts();
