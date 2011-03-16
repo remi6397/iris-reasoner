@@ -11,12 +11,14 @@ import org.deri.iris.Configuration;
 import org.deri.iris.EvaluationException;
 import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IRule;
+import org.deri.iris.facts.Facts;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.optimisations.magicsets.MagicSets;
 import org.deri.iris.optimisations.rulefilter.RuleFilter;
 import org.deri.iris.rdb.RdbKnowledgeBase;
 import org.deri.iris.rdb.facts.RdbFacts;
 import org.deri.iris.rdb.utils.RdbUtils;
+import org.deri.iris.storage.simple.SimpleRelationFactory;
 
 public class IrisRdbLargeJoin extends LargeJoin {
 
@@ -38,7 +40,8 @@ public class IrisRdbLargeJoin extends LargeJoin {
 			tempDirectory = RdbUtils.createTempDirectory();
 			connection = RdbUtils.createConnection(tempDirectory);
 
-			return new RdbFacts(connection);
+//			return new RdbFacts(connection);
+			return new Facts(new SimpleRelationFactory());
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
