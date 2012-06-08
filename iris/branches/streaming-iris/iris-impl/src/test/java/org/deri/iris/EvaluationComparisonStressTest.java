@@ -65,12 +65,11 @@ import org.junit.Ignore;
  * different evaluation criterion.
  */
 @Ignore
-public class EvaluationComparisonStressTest extends TestCase
-{
+public class EvaluationComparisonStressTest extends TestCase {
 	public static boolean SHOW_FAILURE_PROGRAMS = true;
-	
+
 	public static final int NUM_KNOWLEDGEBASES = 120;
-	
+
 	public static final int NUM_FACTS_PER_PREDICATE = 6;
 	public static final int MAX_ARITY = 5;
 	public static final int MAX_TERM_VALUE = 5;
@@ -93,374 +92,353 @@ public class EvaluationComparisonStressTest extends TestCase
 	public static final int PERCENT_EDB_PREDICATES_IN_QUERY = 70;
 	public static final int PERCENT_VARIABLES_IN_QUERY = 70;
 	public static final int PERCENT_BUILTINS_IN_QUERY = 20;
-	
+
 	public static final String IDB = "i";
 	public static final String EDB = "e";
 	public static final String VARIABLE = "v";
-	
+
 	// ========================================================================
-	
+
 	private boolean mGenerateSafeRulesOnly;
-	
+
 	private Random mRandom;
-	
+
 	private int mNumPrograms;
 	private int mNumValidPrograms;
 	private int mNumValidProgramsWithOutput;
 	private int mNumTotalFailures;
-	
+
 	enum Strategy {
-		SemiNaive,
-		WellFounded,
-		OLDT
+		SemiNaive, WellFounded, OLDT
 	}
-	
+
 	private List<Config> mConfigs;
-	
-	class Config
-	{
-		Config( Configuration configuration, String name )
-		{
+
+	class Config {
+		Config(Configuration configuration, String name) {
 			this.configuration = configuration;
 			this.name = name;
 		}
-		
+
 		final Configuration configuration;
 		final String name;
 		int comparisonFailures = 0;
 		int evaluationFailures = 0;
 	}
-	
+
 	@Override
-    protected void setUp() throws Exception
-    {
-		// Always the same seed in order to be deterministic, i.e always generate the same number sequence
-		mRandom = new Random( 0 );
-		
+	protected void setUp() throws Exception {
+		// Always the same seed in order to be deterministic, i.e always
+		// generate the same number sequence
+		mRandom = new Random(0);
+
 		mNumPrograms = 0;
 		mNumValidPrograms = 0;
 		mNumValidProgramsWithOutput = 0;
 		mNumTotalFailures = 0;
-		
+
 		mGenerateSafeRulesOnly = false;
-		
+
 		mConfigs = new ArrayList<Config>();
-    }
+	}
 
-	private Map<IPredicate,IRelation> createFacts()
-	{
-		Map<IPredicate,IRelation> facts = new HashMap<IPredicate,IRelation>();
+	private Map<IPredicate, IRelation> createFacts() {
+		Map<IPredicate, IRelation> facts = new HashMap<IPredicate, IRelation>();
 
-		for( int arity = 0; arity <= MAX_ARITY; ++arity )
-		{
+		for (int arity = 0; arity <= MAX_ARITY; ++arity) {
 			IRelation relation = new SimpleRelationFactory().createRelation();
-			
-			ITerm[] terms = new ITerm[ arity ];
-			
-			for( int fact = 0; fact < NUM_FACTS_PER_PREDICATE; ++fact )
-			{
-				for( int t = 0; t < arity; ++t )
-				{
-					terms[ t ] = getTerm();
+
+			ITerm[] terms = new ITerm[arity];
+
+			for (int fact = 0; fact < NUM_FACTS_PER_PREDICATE; ++fact) {
+				for (int t = 0; t < arity; ++t) {
+					terms[t] = getTerm();
 				}
-				
-				relation.add( BASIC.createTuple( terms ) );
+
+				relation.add(BASIC.createTuple(terms));
 			}
-			
-			IPredicate predicate = predicate( false, arity );
-			facts.put( predicate, relation );
+
+			IPredicate predicate = predicate(false, arity);
+			facts.put(predicate, relation);
 		}
-		
+
 		return facts;
 	}
-	
-	private int random( int limit )
-	{
-		return mRandom.nextInt( limit );
-	}
-	
-	private int percentage()
-	{
-		return random( 100 );
-	}
-	
-	private String idbName( int arity )
-	{
-		return IDB + arity;
-	}
-	
-	private String edbName( int arity )
-	{
-		return EDB + arity;
-	}
-	
-	private IPredicate predicate( boolean edb, int arity )
-	{
-		return BASIC.createPredicate( edb ? edbName( arity ) : idbName( arity ), arity );
-	}
-	
-	private String variableName( int index )
-	{
-		return VARIABLE + index;
-	}
-	
-	private ITerm getTerm()
-	{
-		return CONCRETE.createInteger( random( MAX_TERM_VALUE + 1 ) );
-	}
-	
-	private IVariable getVariable( int index )
-	{
-		return TERM.createVariable( variableName( index ) );
+
+	private int random(int limit) {
+		return mRandom.nextInt(limit);
 	}
 
-	private List<IRule> createRules()
-	{
+	private int percentage() {
+		return random(100);
+	}
+
+	private String idbName(int arity) {
+		return IDB + arity;
+	}
+
+	private String edbName(int arity) {
+		return EDB + arity;
+	}
+
+	private IPredicate predicate(boolean edb, int arity) {
+		return BASIC.createPredicate(edb ? edbName(arity) : idbName(arity),
+				arity);
+	}
+
+	private String variableName(int index) {
+		return VARIABLE + index;
+	}
+
+	private ITerm getTerm() {
+		return CONCRETE.createInteger(random(MAX_TERM_VALUE + 1));
+	}
+
+	private IVariable getVariable(int index) {
+		return TERM.createVariable(variableName(index));
+	}
+
+	private List<IRule> createRules() {
 		boolean generateSafeRulesOnly = mGenerateSafeRulesOnly;
 		int numUnsafeRules = 0;
 
 		List<IRule> rules = new ArrayList<IRule>();
-		
-		int numRules = random( MAX_RULES ) + 1;
-		
-		for( int r = 0; r < numRules; ++r )
-		{
+
+		int numRules = random(MAX_RULES) + 1;
+
+		for (int r = 0; r < numRules; ++r) {
 			// Head
-			int headArity = random( MAX_ARITY + 1 );
+			int headArity = random(MAX_ARITY + 1);
 
 			List<ILiteral> headLiterals = new ArrayList<ILiteral>();
-			ILiteral headLiteral = literal( true, headArity, true, PERCENT_VARIABLES_IN_RULE_HEAD, MAX_RULE_VARIABLES );
-			headLiterals.add( headLiteral );
-			
+			ILiteral headLiteral = literal(true, headArity, true,
+					PERCENT_VARIABLES_IN_RULE_HEAD, MAX_RULE_VARIABLES);
+			headLiterals.add(headLiteral);
+
 			// Body
-			int numLiterals = random( MAX_RULE_BODY_LITERALS ) + 1;
+			int numLiterals = random(MAX_RULE_BODY_LITERALS) + 1;
 			List<ILiteral> bodyLiterals = new ArrayList<ILiteral>();
-			
-			for( int l = 0; l < numLiterals; ++l )
-			{
+
+			for (int l = 0; l < numLiterals; ++l) {
 				boolean positive = percentage() < 100 - PERCENT_NEGATED_LITERALS_IN_RULE;
 
-				if( percentage() < PERCENT_BUILTINS_IN_RULE_BODY )
-				{
-					bodyLiterals.add( builtinLiteral( positive, PERCENT_VARIABLES_IN_RULE_BODY, MAX_RULE_VARIABLES ) );
-				}
-				else
-				{
+				if (percentage() < PERCENT_BUILTINS_IN_RULE_BODY) {
+					bodyLiterals
+							.add(builtinLiteral(positive,
+									PERCENT_VARIABLES_IN_RULE_BODY,
+									MAX_RULE_VARIABLES));
+				} else {
 					boolean edb = percentage() < PERCENT_EDB_PREDICATES_IN_RULE;
-					int arity = random( MAX_ARITY ) + 1;
-					
-					bodyLiterals.add( literal( edb, arity, positive, PERCENT_VARIABLES_IN_RULE_BODY, MAX_RULE_VARIABLES ) );
+					int arity = random(MAX_ARITY) + 1;
+
+					bodyLiterals
+							.add(literal(edb, arity, positive,
+									PERCENT_VARIABLES_IN_RULE_BODY,
+									MAX_RULE_VARIABLES));
 				}
 			}
-			
+
 			IRule rule;
-			
-			rule = BASIC.createRule( headLiterals, bodyLiterals );
-			
-			RuleValidator rv = new RuleValidator( rule, true, true );
+
+			rule = BASIC.createRule(headLiterals, bodyLiterals);
+
+			RuleValidator rv = new RuleValidator(rule, true, true);
 
 			List<IVariable> unlimitedVariables = rv.getAllUnlimitedVariables();
 
 			// Check if we have an unsafe rule
-			if( unlimitedVariables.size() > 0 )
+			if (unlimitedVariables.size() > 0)
 				++numUnsafeRules;
-			
-			if( numUnsafeRules > MAX_UNSAFE_RULES )
+
+			if (numUnsafeRules > MAX_UNSAFE_RULES)
 				generateSafeRulesOnly = true;
-			
-			if( ! generateSafeRulesOnly )
-			{
-//				if( unlimitedVariables.size() > MAX_UNLIMITED_VARIABLES )
-				for( int i = 0; i < MAX_UNLIMITED_VARIABLES; ++i )
-					if( unlimitedVariables.size() > 0 )
-						unlimitedVariables.remove( 0 );
+
+			if (!generateSafeRulesOnly) {
+				// if( unlimitedVariables.size() > MAX_UNLIMITED_VARIABLES )
+				for (int i = 0; i < MAX_UNLIMITED_VARIABLES; ++i)
+					if (unlimitedVariables.size() > 0)
+						unlimitedVariables.remove(0);
 			}
-			
-			if( unlimitedVariables.size() > 0 )
-			{
+
+			if (unlimitedVariables.size() > 0) {
 				List<ITerm> terms = new ArrayList<ITerm>();
-				
-				for( IVariable variable : unlimitedVariables )
-					terms.add( variable );
-				
-				ITuple tuple = BASIC.createTuple( terms );
-				
-				ILiteral literal = BASIC.createLiteral( true, predicate( false, terms.size() ), tuple );
-				bodyLiterals.add( literal );
+
+				for (IVariable variable : unlimitedVariables)
+					terms.add(variable);
+
+				ITuple tuple = BASIC.createTuple(terms);
+
+				ILiteral literal = BASIC.createLiteral(true,
+						predicate(false, terms.size()), tuple);
+				bodyLiterals.add(literal);
 			}
-			
-//			while( unlimitedVariables.size() > MAX_UNLIMITED_VARIABLES || 
-//							( mGenerateSafeRulesOnly && unlimitedVariables.size() > 0 ) )
-//			{
-//				IVariable variable = unlimitedVariables.remove( 0 );
-//
-//				IPredicate predicate = predicate( false, 1 );
-//				
-//				ITerm[] terms = new ITerm[ 1 ];
-//				terms[ 0 ] = variable;
-//				
-//				ITuple tuple = BASIC.createTuple( terms );
-//				
-//				ILiteral literal = BASIC.createLiteral( true, predicate, tuple );
-//				bodyLiterals.add( literal );
-//			}
-			
-			rule = BASIC.createRule( headLiterals, bodyLiterals );
-			
-			rules.add( rule );
+
+			// while( unlimitedVariables.size() > MAX_UNLIMITED_VARIABLES ||
+			// ( mGenerateSafeRulesOnly && unlimitedVariables.size() > 0 ) )
+			// {
+			// IVariable variable = unlimitedVariables.remove( 0 );
+			//
+			// IPredicate predicate = predicate( false, 1 );
+			//
+			// ITerm[] terms = new ITerm[ 1 ];
+			// terms[ 0 ] = variable;
+			//
+			// ITuple tuple = BASIC.createTuple( terms );
+			//
+			// ILiteral literal = BASIC.createLiteral( true, predicate, tuple );
+			// bodyLiterals.add( literal );
+			// }
+
+			rule = BASIC.createRule(headLiterals, bodyLiterals);
+
+			rules.add(rule);
 		}
-		
+
 		return rules;
 	}
-	
-	private ITuple tuple( int arity, int percentVariables, int maxVariables )
-	{
-		ITerm[] terms = new ITerm[ arity ];
 
-		for( int t = 0; t < arity; ++t )
-		{
+	private ITuple tuple(int arity, int percentVariables, int maxVariables) {
+		ITerm[] terms = new ITerm[arity];
+
+		for (int t = 0; t < arity; ++t) {
 			ITerm term;
 
-			if( percentage() < percentVariables )
-				term = getVariable( random( maxVariables ) );
+			if (percentage() < percentVariables)
+				term = getVariable(random(maxVariables));
 			else
 				term = getTerm();
-			
-			terms[ t ] = term;
+
+			terms[t] = term;
 		}
-		
-		return BASIC.createTuple( terms );
+
+		return BASIC.createTuple(terms);
 	}
-	
-	private ILiteral literal( boolean edb, int arity, boolean positive, int percentVariables, int maxVariables )
-	{
-		IPredicate predicate = predicate( edb, arity );
-		
-		ITuple tuple = tuple( arity, percentVariables, maxVariables );
-		
-		return BASIC.createLiteral( positive, predicate, tuple );
+
+	private ILiteral literal(boolean edb, int arity, boolean positive,
+			int percentVariables, int maxVariables) {
+		IPredicate predicate = predicate(edb, arity);
+
+		ITuple tuple = tuple(arity, percentVariables, maxVariables);
+
+		return BASIC.createLiteral(positive, predicate, tuple);
 	}
-	
-	private ILiteral builtinLiteral( boolean positive, int percentVariables, int maxVariables )
-	{
-		ITuple tuple = tuple( 2, percentVariables, maxVariables );
+
+	private ILiteral builtinLiteral(boolean positive, int percentVariables,
+			int maxVariables) {
+		ITuple tuple = tuple(2, percentVariables, maxVariables);
 
 		IAtom builtinAtom;
-		if( percentage() < 50 ) 
-			builtinAtom = BUILTIN.createEqual( tuple.get( 0 ), tuple.get( 1 ) );
+		if (percentage() < 50)
+			builtinAtom = BUILTIN.createEqual(tuple.get(0), tuple.get(1));
 		else
-			builtinAtom = BUILTIN.createUnequal( tuple.get( 0 ), tuple.get( 1 ) );
-		
-		return BASIC.createLiteral( positive, builtinAtom );
+			builtinAtom = BUILTIN.createUnequal(tuple.get(0), tuple.get(1));
+
+		return BASIC.createLiteral(positive, builtinAtom);
 	}
-	
-	private IQuery createQueryFromRuleHead( IRule rule ) {
-		ILiteral ruleHead = rule.getHead().get( 0 );
-		
+
+	private IQuery createQueryFromRuleHead(IRule rule) {
+		ILiteral ruleHead = rule.getHead().get(0);
+
 		IPredicate predicate = ruleHead.getAtom().getPredicate();
 		int arity = predicate.getArity();
-		ITerm[] terms = new ITerm[ arity ];
-		for( int a = 0; a < arity; ++a )
-			terms[ a ] = getVariable( a );
-		ITuple tuple = BASIC.createTuple( terms );
-		ILiteral queryLiteral = BASIC.createLiteral( true, predicate, tuple );
+		ITerm[] terms = new ITerm[arity];
+		for (int a = 0; a < arity; ++a)
+			terms[a] = getVariable(a);
+		ITuple tuple = BASIC.createTuple(terms);
+		ILiteral queryLiteral = BASIC.createLiteral(true, predicate, tuple);
 
 		List<ILiteral> queryLiterals = new ArrayList<ILiteral>();
-		queryLiterals.add( queryLiteral );
-		
-		return BASIC.createQuery( queryLiterals );
+		queryLiterals.add(queryLiteral);
+
+		return BASIC.createQuery(queryLiterals);
 	}
-	
-	private IQuery createQuery()
-	{
-		int numLiterals = random( MAX_QUERY_LITERALS ) + 1;
+
+	private IQuery createQuery() {
+		int numLiterals = random(MAX_QUERY_LITERALS) + 1;
 		List<ILiteral> literals = new ArrayList<ILiteral>();
-		
-		for( int l = 0; l < numLiterals; ++l )
-		{
+
+		for (int l = 0; l < numLiterals; ++l) {
 			boolean positive = percentage() < 100 - PERCENT_NEGATED_LITERALS_IN_QUERY;
-			
-			if( percentage() < PERCENT_BUILTINS_IN_QUERY )
-			{
-				ILiteral literal = builtinLiteral( positive, PERCENT_VARIABLES_IN_QUERY, MAX_QUERY_VARIABLES );
-				literals.add( literal );
-				
+
+			if (percentage() < PERCENT_BUILTINS_IN_QUERY) {
+				ILiteral literal = builtinLiteral(positive,
+						PERCENT_VARIABLES_IN_QUERY, MAX_QUERY_VARIABLES);
+				literals.add(literal);
+
 				// Ensure that all variables of built-in are bound
-				if( mGenerateSafeRulesOnly )
-				{
-					for( ITerm term : literal.getAtom().getTuple() )
-					{
-						if( term instanceof IVariable )
-						{
-							IPredicate predicate = predicate( false, 1 );
-							
-							ITuple tuple = BASIC.createTuple( term );
-							
-							literals.add( 0, BASIC.createLiteral( true, predicate, tuple ) );
+				if (mGenerateSafeRulesOnly) {
+					for (ITerm term : literal.getAtom().getTuple()) {
+						if (term instanceof IVariable) {
+							IPredicate predicate = predicate(false, 1);
+
+							ITuple tuple = BASIC.createTuple(term);
+
+							literals.add(0,
+									BASIC.createLiteral(true, predicate, tuple));
 						}
 					}
 				}
-			}
-			else
-			{
+			} else {
 				boolean edb = percentage() < PERCENT_EDB_PREDICATES_IN_QUERY;
-				int arity = random( MAX_ARITY ) + 1;
-				
-				ILiteral literal = literal( edb, arity, positive, PERCENT_VARIABLES_IN_QUERY, MAX_QUERY_VARIABLES );
-				literals.add( literal );
+				int arity = random(MAX_ARITY) + 1;
+
+				ILiteral literal = literal(edb, arity, positive,
+						PERCENT_VARIABLES_IN_QUERY, MAX_QUERY_VARIABLES);
+				literals.add(literal);
 			}
 		}
-		
-		return BASIC.createQuery( literals );
+
+		return BASIC.createQuery(literals);
 	}
-	
-	public void testCompareWithDefault() throws Exception
-	{
+
+	public void testCompareWithDefault() throws Exception {
 		mGenerateSafeRulesOnly = true;
-		
-		makeConfiguration( Strategy.SemiNaive, false, false );
-		makeConfiguration( Strategy.SemiNaive, true, false );
-		makeConfiguration( Strategy.WellFounded, false, false );
-		makeConfiguration( Strategy.WellFounded, true, false );
-		
+
+		makeConfiguration(Strategy.SemiNaive, false, false);
+		makeConfiguration(Strategy.SemiNaive, true, false);
+		makeConfiguration(Strategy.WellFounded, false, false);
+		makeConfiguration(Strategy.WellFounded, true, false);
+
 		doComparisons();
 		outputResults();
-		
-		assertEquals( 0, mNumTotalFailures );
+
+		assertEquals(0, mNumTotalFailures);
 	}
 
-	public void testCompareWithDefaultUnsafeRules() throws Exception
-	{
+	public void testCompareWithDefaultUnsafeRules() throws Exception {
 		mGenerateSafeRulesOnly = false;
-		
-		makeConfiguration( Strategy.SemiNaive, false, true );
-		makeConfiguration( Strategy.SemiNaive, true, true );
-		makeConfiguration( Strategy.WellFounded, false, true );
-		makeConfiguration( Strategy.WellFounded, true, true );
-		
+
+		makeConfiguration(Strategy.SemiNaive, false, true);
+		makeConfiguration(Strategy.SemiNaive, true, true);
+		makeConfiguration(Strategy.WellFounded, false, true);
+		makeConfiguration(Strategy.WellFounded, true, true);
+
 		doComparisons();
 		outputResults();
-		
-		assertEquals( 0, mNumTotalFailures );
-	}
-	
-	private void makeConfiguration( Strategy strategy, boolean magicSets, boolean unsafeRules )
-	{
-		Configuration configuration = KnowledgeBaseFactory.getDefaultConfiguration();
 
-		// ***** TEMPORARY UNTIL THE LOCAL STRATIFIER INFINITE LOOP BUG IS FIXED ***** 
+		assertEquals(0, mNumTotalFailures);
+	}
+
+	private void makeConfiguration(Strategy strategy, boolean magicSets,
+			boolean unsafeRules) {
+		Configuration configuration = KnowledgeBaseFactory
+				.getDefaultConfiguration();
+
+		// ***** TEMPORARY UNTIL THE LOCAL STRATIFIER INFINITE LOOP BUG IS FIXED
+		// *****
 		configuration.stratifiers.clear();
-		configuration.stratifiers.add( new GlobalStratifier() );
+		configuration.stratifiers.add(new GlobalStratifier());
 		// ***************************************************************************
-		
+
 		String name = "";
 
-		switch( strategy ) {
+		switch (strategy) {
 		case SemiNaive:
-			configuration.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory( new SemiNaiveEvaluatorFactory() );
+			configuration.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory(
+					new SemiNaiveEvaluatorFactory());
 			name += "Semi-naive bottom-up";
 			break;
-			
+
 		case WellFounded:
 			configuration.evaluationStrategyFactory = new WellFoundedEvaluationStrategyFactory();
 			configuration.stratifiers.clear();
@@ -472,170 +450,157 @@ public class EvaluationComparisonStressTest extends TestCase
 			name += "OLDT";
 			break;
 		}
-		
-		if( magicSets )
-		{
-			configuration.programOptmimisers.add( new RuleFilter() );
-			configuration.programOptmimisers.add( new MagicSets() );
+
+		if (magicSets) {
+			configuration.programOptmimisers.add(new RuleFilter());
+			configuration.programOptmimisers.add(new MagicSets());
 			name += ", Magic sets";
 		}
-		
-		if( unsafeRules )
-		{
+
+		if (unsafeRules) {
 			configuration.ruleSafetyProcessor = new AugmentingRuleSafetyProcessor();
 			name += ", Unsafe Rules";
 		}
-		
-		mConfigs.add( new Config( configuration, name ) );
+
+		mConfigs.add(new Config(configuration, name));
 	}
 
-	public void testCompareWithWellFounded() throws Exception
-	{
+	public void testCompareWithWellFounded() throws Exception {
 		mGenerateSafeRulesOnly = true;
-		
-		makeConfiguration( Strategy.WellFounded, false, false );
-		makeConfiguration( Strategy.WellFounded, true, false );
-		
+
+		makeConfiguration(Strategy.WellFounded, false, false);
+		makeConfiguration(Strategy.WellFounded, true, false);
+
 		doComparisons();
 		outputResults();
-		
-		assertEquals( 0, mNumTotalFailures );
+
+		assertEquals(0, mNumTotalFailures);
 	}
 
-	public void testCompareWithWellFoundedUnsafeRules() throws Exception
-	{
+	public void testCompareWithWellFoundedUnsafeRules() throws Exception {
 		mGenerateSafeRulesOnly = false;
-		
-		makeConfiguration( Strategy.WellFounded, false, true );
-		makeConfiguration( Strategy.WellFounded, true, true );
-		
+
+		makeConfiguration(Strategy.WellFounded, false, true);
+		makeConfiguration(Strategy.WellFounded, true, true);
+
 		doComparisons();
 		outputResults();
-		
-		assertEquals( 0, mNumTotalFailures );
+
+		assertEquals(0, mNumTotalFailures);
 	}
 
-	public void testCompareSemiNaiveAndOLDT() throws Exception
-	{
+	public void testCompareSemiNaiveAndOLDT() throws Exception {
 		mGenerateSafeRulesOnly = false;
-		
-		makeConfiguration( Strategy.SemiNaive, false, false );
-		makeConfiguration( Strategy.OLDT, false, false );
-		
+
+		makeConfiguration(Strategy.SemiNaive, false, false);
+		makeConfiguration(Strategy.OLDT, false, false);
+
 		doComparisons();
 		outputResults();
-		
-		assertEquals( 0, mNumTotalFailures );
+
+		assertEquals(0, mNumTotalFailures);
 	}
 
-	private void outputResults()
-	{
-		System.out.println( "Number of programs generated:         " + mNumPrograms );
-		System.out.println( "Number of valid programs:             " + mNumValidPrograms );
-		System.out.println( "Number of valid programs with output: " + mNumValidProgramsWithOutput );
-		
-		System.out.println( "Comparing with: " + mConfigs.get( 0 ).name );
+	private void outputResults() {
+		System.out.println("Number of programs generated:         "
+				+ mNumPrograms);
+		System.out.println("Number of valid programs:             "
+				+ mNumValidPrograms);
+		System.out.println("Number of valid programs with output: "
+				+ mNumValidProgramsWithOutput);
+
+		System.out.println("Comparing with: " + mConfigs.get(0).name);
 
 		mNumTotalFailures = 0;
-		for( int c = 1; c < mConfigs.size(); ++c  )
-		{
-			Config config = mConfigs.get( c );
-			
+		for (int c = 1; c < mConfigs.size(); ++c) {
+			Config config = mConfigs.get(c);
+
 			mNumTotalFailures += config.comparisonFailures;
 			mNumTotalFailures += config.evaluationFailures;
-				
-			System.out.println( c + ") " + config.name + ": " +
-							config.comparisonFailures + " comparison failure(s), " +
-							config.evaluationFailures + " evaluation failure(s)" );
+
+			System.out.println(c + ") " + config.name + ": "
+					+ config.comparisonFailures + " comparison failure(s), "
+					+ config.evaluationFailures + " evaluation failure(s)");
 		}
 	}
-	
-	private void doComparisons()
-	{
-		for( int r = 0; r < NUM_KNOWLEDGEBASES; ++r )
-		{
+
+	private void doComparisons() {
+		for (int r = 0; r < NUM_KNOWLEDGEBASES; ++r) {
 			List<IRule> rules = createRules();
-			
-			Map<IPredicate,IRelation> facts = createFacts();
+
+			Map<IPredicate, IRelation> facts = createFacts();
 
 			// Do random conjunctive queries
-			for( int q = 0; q < NUM_QUERIES; ++q )
-			{
+			for (int q = 0; q < NUM_QUERIES; ++q) {
 				IQuery query = createQuery();
-				
-				compareEvaluations( query, rules, facts );
+
+				compareEvaluations(query, rules, facts);
 			}
-			
+
 			// And query every rule head as well
 			Set<IQuery> ruleHeadQueries = new HashSet<IQuery>();
-			for( IRule rule : rules )
-				ruleHeadQueries.add( createQueryFromRuleHead( rule ) );
-			
-			for( IQuery query : ruleHeadQueries )
-				compareEvaluations( query, rules, facts );
+			for (IRule rule : rules)
+				ruleHeadQueries.add(createQueryFromRuleHead(rule));
+
+			for (IQuery query : ruleHeadQueries)
+				compareEvaluations(query, rules, facts);
 		}
 	}
-	
-	private void compareEvaluations( IQuery query, List<IRule> rules, Map<IPredicate,IRelation> facts )
-	{
+
+	private void compareEvaluations(IQuery query, List<IRule> rules,
+			Map<IPredicate, IRelation> facts) {
 		// ==================================
 		// Normal
 		IRelation reference;
-		
+
 		assert mConfigs.size() > 1;
-		
+
 		++mNumPrograms;
-		try
-		{
-			reference = evaluate( query, rules, facts, mConfigs.get( 0 ).configuration );
+		try {
+			reference = evaluate(query, rules, facts,
+					mConfigs.get(0).configuration);
 			++mNumValidPrograms;
-			
-			if( reference.size() > 0 )
+
+			if (reference.size() > 0)
 				++mNumValidProgramsWithOutput;
-		}
-		catch( Exception e )
-		{
+		} catch (Exception e) {
 			return;
 		}
-		
-		for( int c = 1; c < mConfigs.size(); ++c  )
-		{
-			Config config = mConfigs.get( c );
-			try
-			{
-				IRelation output = evaluate( query, rules, facts, config.configuration );
-				
-				if( ! same( reference, output ) )
-				{
+
+		for (int c = 1; c < mConfigs.size(); ++c) {
+			Config config = mConfigs.get(c);
+			try {
+				IRelation output = evaluate(query, rules, facts,
+						config.configuration);
+
+				if (!same(reference, output)) {
 					++config.comparisonFailures;
-					outputProgram( query, rules, facts, config.name, "Different query results" );
+					outputProgram(query, rules, facts, config.name,
+							"Different query results");
 				}
-			}
-			catch( Exception e )
-			{
+			} catch (Exception e) {
 				++config.evaluationFailures;
-				outputProgram( query, rules, facts, config.name, e.toString() );
+				outputProgram(query, rules, facts, config.name, e.toString());
 			}
 		}
 	}
 
-	private void outputProgram( IQuery query, List<IRule> rules, Map<IPredicate,IRelation> facts, String evaluation, String message )
-	{
-		System.out.println( "=============================================" );
-		System.out.println( evaluation );
-		System.out.println( message );
-		
-		if( SHOW_FAILURE_PROGRAMS )
-		{
+	private void outputProgram(IQuery query, List<IRule> rules,
+			Map<IPredicate, IRelation> facts, String evaluation, String message) {
+		System.out.println("=============================================");
+		System.out.println(evaluation);
+		System.out.println(message);
+
+		if (SHOW_FAILURE_PROGRAMS) {
 			System.out.println();
-			System.out.println( toString( query, rules, facts ) );
+			System.out.println(toString(query, rules, facts));
 		}
 	}
-	
-	private String toString( IQuery query, List<IRule> rules, Map<IPredicate,IRelation> facts )
-	{
+
+	private String toString(IQuery query, List<IRule> rules,
+			Map<IPredicate, IRelation> facts) {
 		String lineFeed = System.getProperty("line.separator");
-		
+
 		final StringBuilder buffer = new StringBuilder();
 
 		buffer.append(query).append(lineFeed).append(lineFeed);
@@ -644,11 +609,9 @@ public class EvaluationComparisonStressTest extends TestCase
 			buffer.append(rule).append(lineFeed);
 		buffer.append(lineFeed);
 
-		for (final Map.Entry<IPredicate, List<ITuple>> entry
-				: Relations.toPredicateListMapping(facts).entrySet())
-		{
-			for (final ITuple tuple : entry.getValue())
-			{
+		for (final Map.Entry<IPredicate, List<ITuple>> entry : Relations
+				.toPredicateListMapping(facts).entrySet()) {
+			for (final ITuple tuple : entry.getValue()) {
 				buffer.append(entry.getKey()).append(tuple).append(".");
 				buffer.append(lineFeed);
 			}
@@ -657,16 +620,19 @@ public class EvaluationComparisonStressTest extends TestCase
 
 		return buffer.toString();
 	}
-	
-	private boolean same( IRelation a, IRelation b )
-	{
-		return Relations.asSet( a ).equals( Relations.asSet( b ) );
+
+	private boolean same(IRelation a, IRelation b) {
+		return Relations.asSet(a).equals(Relations.asSet(b));
 	}
 
-	private IRelation evaluate( IQuery query, List<IRule> rules, Map<IPredicate,IRelation> facts, Configuration configuration ) throws Exception
-	{
-		IKnowledgeBase kb = KnowledgeBaseFactory.createKnowledgeBase( facts, rules, configuration );
-		
-		return kb.execute( query );
+	private IRelation evaluate(IQuery query, List<IRule> rules,
+			Map<IPredicate, IRelation> facts, Configuration configuration)
+			throws Exception {
+		IKnowledgeBase kb = KnowledgeBaseFactory.createKnowledgeBase(facts,
+				rules, configuration);
+
+		IRelation result = kb.execute(query);
+
+		return result;
 	}
 }

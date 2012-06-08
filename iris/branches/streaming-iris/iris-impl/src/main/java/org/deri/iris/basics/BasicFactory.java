@@ -41,6 +41,7 @@ import org.deri.iris.api.terms.ITerm;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
  * @version $Revision$
@@ -61,8 +62,7 @@ public class BasicFactory implements IBasicFactory {
 		return new Literal(isPositive, atom);
 	}
 
-	public ILiteral createLiteral(boolean positive, IPredicate p,
-			ITuple tuple) {
+	public ILiteral createLiteral(boolean positive, IPredicate p, ITuple tuple) {
 		return createLiteral(positive, createAtom(p, tuple));
 	}
 
@@ -79,13 +79,13 @@ public class BasicFactory implements IBasicFactory {
 	}
 
 	public IRule createRule(List<ILiteral> head, List<ILiteral> body) {
-		return new Rule(head, body); 
+		return new Rule(head, body);
 	}
 
 	public ITuple createTuple(ITerm... terms) {
 		return createTuple(Arrays.asList(terms));
 	}
-	
+
 	public ITuple createTuple(List<ITerm> terms) {
 		return new Tuple(terms);
 	}
@@ -95,7 +95,8 @@ public class BasicFactory implements IBasicFactory {
 			throw new NullPointerException("The atom must not be null");
 		}
 		if (a.isBuiltin()) {
-			throw new IllegalArgumentException("The atom must not be a builtin atom");
+			throw new IllegalArgumentException(
+					"The atom must not be a builtin atom");
 		}
 		return createAtom(a.getPredicate(), createTuple(a.getTuple()));
 	}

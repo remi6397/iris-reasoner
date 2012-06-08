@@ -1,0 +1,28 @@
+package org.deri.iris;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ExecutionThread extends Thread {
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	private KnowledgeBase knowledgeBase;
+	private long executionIntervall;
+
+	public ExecutionThread(KnowledgeBase knowledgeBase,
+			long executionIntervallMilliseconds) {
+		this.knowledgeBase = knowledgeBase;
+		this.executionIntervall = executionIntervallMilliseconds;
+	}
+
+	public void run() {
+		try {
+			while (true) {
+				Thread.sleep(executionIntervall);
+				knowledgeBase.execute();
+			}
+		} catch (InterruptedException e) {
+			logger.debug("Execution thread shut down!");
+		}
+	}
+}

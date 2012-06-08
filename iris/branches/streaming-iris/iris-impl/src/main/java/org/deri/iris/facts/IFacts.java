@@ -22,26 +22,38 @@
  */
 package org.deri.iris.facts;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.storage.IRelation;
 
-public interface IFacts
-{
+public interface IFacts {
 
 	/**
-	 * Get the relation associated with the given predicate and create one
-	 * if one does not already exist.
-	 * @param predicate The predicate identifying the relation.
+	 * Get the relation associated with the given predicate and create one if
+	 * one does not already exist.
+	 * 
+	 * @param predicate
+	 *            The predicate identifying the relation.
 	 * @return The relation associated with the given predicate.
 	 */
-	IRelation get( IPredicate predicate );
+	IRelation get(IPredicate predicate);
 
 	/**
-	 * Get the set of predicate identifying all relations known to this facts object.
+	 * Get the set of predicate identifying all relations known to this facts
+	 * object.
+	 * 
 	 * @return
 	 */
 	Set<IPredicate> getPredicates();
+
+	/**
+	 * Add new facts to the IFacts object.
+	 * 
+	 * @param newFacts
+	 *            The new facts to be added.
+	 */
+	void addFacts(Map<IPredicate, IRelation> newFacts, long timestamp);
 
 }

@@ -7,7 +7,6 @@
 		<version>0.8.2-SNAPSHOT</version>
 	</parent>
 
-	<groupId>at.sti2.iris</groupId>
 	<artifactId>iris-impl</artifactId>
 	<name>IRIS Reference Implementation</name>
 

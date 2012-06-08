@@ -23,10 +23,12 @@
 package org.deri.iris.api;
 
 import java.util.List;
+import java.util.Map;
 
 import org.deri.iris.EvaluationException;
 import org.deri.iris.ProgramNotStratifiedException;
 import org.deri.iris.RuleUnsafeException;
+import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.basics.IRule;
 import org.deri.iris.api.terms.IVariable;
@@ -35,34 +37,105 @@ import org.deri.iris.storage.IRelation;
 /**
  * The interface of a knowledge-base as seen by a user of IRIS.
  */
-public interface IKnowledgeBase
-{
-	/**
-	 * Execute a query over this knowledge-base.
-	 * @param query The query to evaluate.
-	 * @return The relation of results.
-	 * @throws ProgramNotStratifiedException If the program (knowledge-base)can not be stratified
-	 * @throws RuleUnsafeException If the program (knowledge-base) contains an unsafe rule.
-	 * @throws EvaluationException If the execution of a query fails for any other reason.
-	 */
-	IRelation execute( IQuery query ) throws ProgramNotStratifiedException, RuleUnsafeException, EvaluationException;
+public interface IKnowledgeBase {
 
 	/**
-	 * Evaluate a query and optionally return the variable bindings.
-	 * @param query The query to evaluate.
-	 * @param outputVariables If this is not null, it will be filled with the variable bindings
-	 * of the result relation, i.e. there will be one variable instance for each term
-	 * (in one row) of the results set
-	 * @return The relation of results.
-	 * @throws ProgramNotStratifiedException If the program (knowledge-base)can not be stratified
-	 * @throws RuleUnsafeException If the program (knowledge-base) contains an unsafe rule.
-	 * @throws EvaluationException If the execution of a query fails for any other reason.
+	 * Executes all queries against the knowledge base and publishes the results
+	 * to all registered listeners.
 	 */
-	IRelation execute( IQuery query, List<IVariable> variableBindings ) throws ProgramNotStratifiedException, RuleUnsafeException, EvaluationException;
-	
+	void execute();
+
+	/**
+	 * Execute a query over this knowledge-base. The results are not published.
+	 * 
+	 * @param query
+	 *            The query to evaluate.
+	 * @return The relation of results.
+	 * @throws ProgramNotStratifiedException
+	 *             If the program (knowledge-base)can not be stratified
+	 * @throws RuleUnsafeException
+	 *             If the program (knowledge-base) contains an unsafe rule.
+	 * @throws EvaluationException
+	 *             If the execution of a query fails for any other reason.
+	 */
+	IRelation execute(IQuery query) throws ProgramNotStratifiedException,
+			RuleUnsafeException, EvaluationException;
+
+	/**
+	 * Evaluate a query and optionally return the variable bindings. The results
+	 * are not published.
+	 * 
+	 * @param query
+	 *            The query to evaluate.
+	 * @param outputVariables
+	 *            If this is not null, it will be filled with the variable
+	 *            bindings of the result relation, i.e. there will be one
+	 *            variable instance for each term (in one row) of the results
+	 *            set
+	 * @return The relation of results.
+	 * @throws ProgramNotStratifiedException
+	 *             If the program (knowledge-base)can not be stratified
+	 * @throws RuleUnsafeException
+	 *             If the program (knowledge-base) contains an unsafe rule.
+	 * @throws EvaluationException
+	 *             If the execution of a query fails for any other reason.
+	 */
+	IRelation execute(IQuery query, List<IVariable> variableBindings)
+			throws ProgramNotStratifiedException, RuleUnsafeException,
+			EvaluationException;
+
+	/**
+	 * Register a query at this knowledge-base. This query will then be
+	 * periodically executed and the results get published.
+	 * 
+	 * @param query
+	 *            The query to evaluate.
+	 * @throws ProgramNotStratifiedException
+	 *             If the program (knowledge-base)can not be stratified
+	 * @throws RuleUnsafeException
+	 *             If the program (knowledge-base) contains an unsafe rule.
+	 * @throws EvaluationException
+	 *             If the execution of a query fails for any other reason.
+	 */
+	void registerQuery(IQuery query) throws ProgramNotStratifiedException,
+			RuleUnsafeException, EvaluationException;
+
+	/**
+	 * Deregister a query at this knowledge-base.
+	 * 
+	 * @param query
+	 *            The query to evaluate.
+	 */
+	void deregisterQuery(IQuery query);
+
 	/**
 	 * Get the rules hidden within the knowledge-base.
+	 * 
 	 * @return The unmodifiable list of rules.
 	 */
 	List<IRule> getRules();
+
+	/**
+	 * This method adds facts to the knowledge base during IRIS is running.
+	 * 
+	 * @param newFacts
+	 *            The new facts to be added
+	 */
+	void addFacts(Map<IPredicate, IRelation> newFacts);
+
+	/**
+	 * Adds a listener (socket) to the knowledge base who will receive the
+	 * results.
+	 * 
+	 * @param address
+	 *            The address of the socket.
+	 * @param port
+	 *            The port of the socket.
+	 */
+	void addListener(String address, int port);
+
+	/**
+	 * Shuts down the Knowledge Base and terminates all corresponding threads.
+	 */
+	void shutdown();
 }

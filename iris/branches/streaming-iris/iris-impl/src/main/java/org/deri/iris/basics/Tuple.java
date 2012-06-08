@@ -42,6 +42,7 @@ import org.deri.iris.api.terms.IVariable;
  * <p>
  * $Id: Tuple.java,v 1.20 2007-11-07 16:14:44 nathaliest Exp $
  * </p>
+ * 
  * @author Darko Anicic, DERI Innsbruck
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision: 1.20 $
@@ -50,32 +51,35 @@ public class Tuple extends AbstractList<ITerm> implements ITuple {
 
 	/** The terms stored in this tuple. */
 	private final ITerm[] terms;
-	
+
 	/**
 	 * Creates a tuple defined by the list of terms.
 	 * 
-	 * @param terms list of terms that create a tuple
-	 * @throws NullPointerException if terms is <code>null</code>
+	 * @param terms
+	 *            list of terms that create a tuple
+	 * @throws NullPointerException
+	 *             if terms is <code>null</code>
 	 */
-	Tuple(final Collection<ITerm> t){
+	Tuple(final Collection<ITerm> t) {
 		if (t == null) {
 			throw new NullPointerException("Input argument must not be null");
 		}
 		terms = t.toArray(new ITerm[t.size()]);
 	}
-	
+
 	public int size() {
 		return terms.length;
 	}
 
 	public ITerm get(final int i) {
 		if (i < 0) {
-			throw new IllegalArgumentException("The index must be positive, but was " + i);
+			throw new IllegalArgumentException(
+					"The index must be positive, but was " + i);
 		}
 		if (i >= terms.length) {
 			throw new IllegalArgumentException(
-					"The index must not be greater or equal to the size (" + 
-					size() + "), but was " + i);
+					"The index must not be greater or equal to the size ("
+							+ size() + "), but was " + i);
 		}
 		return terms[i];
 	}
@@ -97,15 +101,15 @@ public class Tuple extends AbstractList<ITerm> implements ITuple {
 	}
 
 	public boolean isGround() {
-		for (final ITerm t : terms){
-			if(!t.isGround()) {
+		for (final ITerm t : terms) {
+			if (!t.isGround()) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	public String toString(){
+	public String toString() {
 		if (terms.length <= 0) {
 			return "()";
 		}
@@ -113,7 +117,7 @@ public class Tuple extends AbstractList<ITerm> implements ITuple {
 		buffer.append('(');
 		boolean first = true;
 		for (final ITerm t : terms) {
-			if( first )
+			if (first)
 				first = false;
 			else
 				buffer.append(", ");
@@ -127,7 +131,7 @@ public class Tuple extends AbstractList<ITerm> implements ITuple {
 		if (t == null) {
 			throw new NullPointerException("Cannot compare with null");
 		}
-		
+
 		int res = 0;
 		for (int i = 0; i < Math.min(terms.length, t.size()); i++) {
 			if ((res = terms[i].compareTo(t.get(i))) != 0) {
@@ -147,25 +151,25 @@ public class Tuple extends AbstractList<ITerm> implements ITuple {
 	public Set<IVariable> getVariables() {
 		final Set<IVariable> variables = new HashSet<IVariable>();
 		for (final ITerm term : terms) {
-			if(term instanceof IVariable) {
+			if (term instanceof IVariable) {
 				variables.add((IVariable) term);
 			}
-			if(term instanceof IConstructedTerm) {
+			if (term instanceof IConstructedTerm) {
 				variables.addAll(getVariables((IConstructedTerm) term));
 			}
 		}
 		return variables;
 	}
-	
+
 	private Set<IVariable> getVariables(final IConstructedTerm t) {
-		assert t != null: "The conscructed term must not be null";
+		assert t != null : "The conscructed term must not be null";
 
 		final Set<IVariable> variables = new HashSet<IVariable>();
 		for (final ITerm term : t.getValue()) {
-			if(term instanceof IVariable) {
+			if (term instanceof IVariable) {
 				variables.add((IVariable) term);
 			}
-			if(term instanceof IConstructedTerm) {
+			if (term instanceof IConstructedTerm) {
 				variables.addAll(getVariables((IConstructedTerm) term));
 			}
 		}
@@ -184,12 +188,12 @@ public class Tuple extends AbstractList<ITerm> implements ITuple {
 		}
 		return variables;
 	}
-	
+
 	private List<IVariable> getAllVariables(final IConstructedTerm t) {
-		assert t != null: "The conscructed term must not be null";
+		assert t != null : "The conscructed term must not be null";
 
 		final List<IVariable> variables = new ArrayList<IVariable>();
-		for(final ITerm term : t.getValue()){
+		for (final ITerm term : t.getValue()) {
 			if (term instanceof IVariable) {
 				variables.add((IVariable) term);
 			}
