@@ -49,219 +49,211 @@ import org.deri.iris.compiler.ParserException;
  * 4. A report is output to stdout.
  * </pre>
  */
-public class PerformanceHarness
-{
+public class PerformanceHarness {
 	/**
 	 * Entry point.
-	 * @param args If any argument is 'show' then the contents of
-	 * the test programs is added to the report.
+	 * 
+	 * @param args
+	 *            If any argument is 'show' then the contents of the test
+	 *            programs is added to the report.
 	 */
-	public static void main( String[] args )
-	{
+	public static void main(String[] args) {
 		boolean showPrograms = false;
-		
-		for( String arg : args )
-		{
-			if( arg.equalsIgnoreCase( "show" ) )
+
+		for (String arg : args) {
+			if (arg.equalsIgnoreCase("show"))
 				showPrograms = true;
 		}
-		
-		try
-		{
-			new PerformanceHarness( showPrograms );
-		}
-		catch( Exception e )
-		{
-			System.out.println( "Performance testing failed: " + e.getMessage() );
+
+		try {
+			new PerformanceHarness(showPrograms);
+		} catch (Exception e) {
+			System.out.println("Performance testing failed: " + e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * A logic program. This class loads the program, parses it
-	 * and initialises a knowledge base with it.
+	 * A logic program. This class loads the program, parses it and initialises
+	 * a knowledge base with it.
 	 */
-	class Program
-	{
+	class Program {
 		/**
-		 * Constructor.
-		 * Load the file identified with 'filename',
-		 * initialise a knowledge base object and
-		 * store the query.
-		 * @param filename The file containing the logic program.
+		 * Constructor. Load the file identified with 'filename', initialise a
+		 * knowledge base object and store the query.
+		 * 
+		 * @param filename
+		 *            The file containing the logic program.
 		 * @throws IOException
 		 * @throws ParserException
-		 * @throws EvaluationException 
+		 * @throws EvaluationException
 		 */
-		Program( String filename ) throws IOException, ParserException, EvaluationException
-		{
+		Program(String filename) throws IOException, ParserException,
+				EvaluationException {
 			mParser = new Parser();
-			
-			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename);
-			
+
+			InputStream inputStream = getClass().getClassLoader()
+					.getResourceAsStream(filename);
+
 			Reader r = new InputStreamReader(inputStream);
-			
+
 			StringBuilder builder = new StringBuilder();
-			
+
 			int ch = -1;
-			while( ( ch = r.read() ) >= 0 )
-			{
-				builder.append( (char) ch );
+			while ((ch = r.read()) >= 0) {
+				builder.append((char) ch);
 			}
 			mProgram = builder.toString();
-			
-			mParser.parse( mProgram );
+
+			mParser.parse(mProgram);
 		}
-		
+
 		/**
-		 * Execute the query against the knowledge base and return the
-		 * execution time in milliseconds.
+		 * Execute the query against the knowledge base and return the execution
+		 * time in milliseconds.
+		 * 
 		 * @return The time in milliseconds.
-		 * @throws EvaluationException If the evaluation fails for any reason.
+		 * @throws EvaluationException
+		 *             If the evaluation fails for any reason.
 		 */
-		long execute() throws EvaluationException
-		{
+		long execute() throws EvaluationException {
 			List<IQuery> queries = mParser.getQueries();
-			
-			if( queries.size() != 1 )
-				throw new RuntimeException( "The input program must contain exactly one query." );
-			
-			IQuery query = queries.get( 0 );
+
+			if (queries.size() != 1)
+				throw new RuntimeException(
+						"The input program must contain exactly one query.");
+
+			IQuery query = queries.get(0);
 			long elapsedTime = -System.currentTimeMillis();
-			final IKnowledgeBase mKB = KnowledgeBaseFactory.createKnowledgeBase( mParser.getFacts(), mParser.getRules() );
-			mKB.execute( query );
+			final IKnowledgeBase mKB = KnowledgeBaseFactory
+					.createKnowledgeBase(mParser.getFacts(), mParser.getRules());
+			mKB.execute(query);
 			elapsedTime += System.currentTimeMillis();
 
 			return elapsedTime;
 		}
-		
+
 		/**
 		 * Get the human readable program.
+		 * 
 		 * @return The logic program.
 		 */
-		String getProgram()
-		{
+		String getProgram() {
 			return mProgram;
 		}
-		
+
 		/** The program in human-readable form. */
 		private final String mProgram;
-		
+
 		private final Parser mParser;
-		
+
 		/** The knowledge base. */
-//		private final IKnowledgeBase mKB;
-		
+		// private final IKnowledgeBase mKB;
+
 		/** The query to run against the knowledge base. */
-//		private final IQuery mQuery;
+		// private final IQuery mQuery;
 	}
-	
+
 	/**
-	 * Constructor.
-	 * All the work is done here!
-	 * Create 'Program' objects for each logic program and run them once.
-	 * Then with gaps (to let the garbage collector catch up) run them again,
-	 * but this time record the execution times.
-	 * Output the report to stdout.
-	 * @param showPrograms true, to add the contents of the test programs to the report.
+	 * Constructor. All the work is done here! Create 'Program' objects for each
+	 * logic program and run them once. Then with gaps (to let the garbage
+	 * collector catch up) run them again, but this time record the execution
+	 * times. Output the report to stdout.
+	 * 
+	 * @param showPrograms
+	 *            true, to add the contents of the test programs to the report.
 	 * @throws IOException
 	 * @throws ParserException
 	 * @throws EvaluationException
 	 */
-	public PerformanceHarness( boolean showPrograms ) throws IOException, ParserException, EvaluationException
-	{
+	public PerformanceHarness(boolean showPrograms) throws IOException,
+			ParserException, EvaluationException {
 		// Ensure all the class files are loaded, memory allocated etc
-		for( String filename : mProgramFilenames )
-			mPrograms.add( new Program( filename ) );
-		
-		pause1();		
-		for( Program program : mPrograms )
-		{
+		for (String filename : mProgramFilenames)
+			mPrograms.add(new Program(filename));
+
+		pause1();
+		for (Program program : mPrograms) {
 			program.execute();
 			pause1();
 		}
-		
+
 		// Clear everything out
 		mPrograms.clear();
 		pause1();
 
 		// Reload
-		for( String filename : mProgramFilenames )
-			mPrograms.add( new Program( filename ) );
+		for (String filename : mProgramFilenames)
+			mPrograms.add(new Program(filename));
 
 		// Prepare the report header
 		StringBuilder output = new StringBuilder();
-		
-		output.append( "IRIS Performance Harness" ).append( NEW_LINE );
-		output.append( "========================" ).append( NEW_LINE );
+
+		output.append("IRIS Performance Harness").append(NEW_LINE);
+		output.append("========================").append(NEW_LINE);
 		InetAddress localHost = InetAddress.getLocalHost();
-		output.append( "At time:    " ).append( new Date() ).append( NEW_LINE );
-		output.append( "On machine: " ).append( localHost.getHostName() ).append( " (" ).append( localHost ).append( ")" ).append( NEW_LINE );
-		
-		if( showPrograms )
-		{
-			for( int p = 0; p < mPrograms.size(); ++p )
-			{
+		output.append("At time:    ").append(new Date()).append(NEW_LINE);
+		output.append("On machine: ").append(localHost.getHostName())
+				.append(" (").append(localHost).append(")").append(NEW_LINE);
+
+		if (showPrograms) {
+			for (int p = 0; p < mPrograms.size(); ++p) {
 				pause(1);
-				output.append( THIN_LINE );
-				output.append( "Program " ).append( p ).append( " is:" ).append( NEW_LINE );
-				output.append( mPrograms.get( p ).getProgram() ).append( NEW_LINE ).append( NEW_LINE );
+				output.append(THIN_LINE);
+				output.append("Program ").append(p).append(" is:")
+						.append(NEW_LINE);
+				output.append(mPrograms.get(p).getProgram()).append(NEW_LINE)
+						.append(NEW_LINE);
 			}
 		}
-		
-		output.append( THICK_LINE );
 
-		pause1();		
-		for( int p = 0; p < mPrograms.size(); ++p )
-		{
-			output.append( "Program " ).append( p ).append( ": " ).append( mPrograms.get( p ).execute() ).append( NEW_LINE );
+		output.append(THICK_LINE);
+
+		pause1();
+		for (int p = 0; p < mPrograms.size(); ++p) {
+			output.append("Program ").append(p).append(": ")
+					.append(mPrograms.get(p).execute()).append(NEW_LINE);
 			pause1();
 		}
-		
-		System.out.println( output.toString() );
+
+		System.out.println(output.toString());
 	}
-	
+
 	/**
 	 * Helper. Pause the calling thread for 1 second.
 	 */
-	private static void pause1()
-	{
-		pause( 1000 );
+	private static void pause1() {
+		pause(1000);
 	}
 
 	/**
 	 * Pause the calling thread for the given time period.
-	 * @param milliseconds The length of time to suspend the thread in milliseconds.
+	 * 
+	 * @param milliseconds
+	 *            The length of time to suspend the thread in milliseconds.
 	 */
-	private static void pause( int milliseconds )
-	{
-		try
-		{
-			Thread.sleep( milliseconds );
-		}
-		catch( InterruptedException e )
-		{
+	private static void pause(int milliseconds) {
+		try {
+			Thread.sleep(milliseconds);
+		} catch (InterruptedException e) {
 		}
 	}
-	
+
 	/** The list of programs. */
 	private final List<Program> mPrograms = new ArrayList<Program>();
-	
+
 	/** Useful constant. */
 	private static String NEW_LINE = "\r\n";
 
 	/** Useful constant. */
-	private static String THICK_LINE = "============================================================" + NEW_LINE;
+	private static String THICK_LINE = "============================================================"
+			+ NEW_LINE;
 
 	/** Useful constant. */
-	private static String THIN_LINE = "============================================================" + NEW_LINE;
+	private static String THIN_LINE = "============================================================"
+			+ NEW_LINE;
 
 	/** The array of logic program files to load. */
-	private static String[] mProgramFilenames =
-	{
-		"cartesian_product.txt",
-		"local_stratification.txt",
-		"multiplicative_congruent.txt",
-		"transitive_closure.txt",
-		"cartesian_product_with_negation.txt",
-	};
+	private static String[] mProgramFilenames = { "cartesian_product.txt",
+			"local_stratification.txt", "multiplicative_congruent.txt",
+			"transitive_closure.txt", "cartesian_product_with_negation.txt", };
 }

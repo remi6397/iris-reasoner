@@ -41,6 +41,7 @@ import org.deri.iris.storage.IRelation;
  * <p>
  * Tests the functionality of the data sources.
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at sti2 dot at)
  */
 public class DataSourceTest extends TestCase {
@@ -52,12 +53,16 @@ public class DataSourceTest extends TestCase {
 	private static final ITuple T_A = BASIC.createTuple(TERM.createString("a"));
 
 	public static Test suite() {
-		return new TestSuite(DataSourceTest.class, DataSourceTest.class.getSimpleName());
+		return new TestSuite(DataSourceTest.class,
+				DataSourceTest.class.getSimpleName());
 	}
 
 	/**
 	 * Tests the handling of a simple data source.
-	 * @see <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1846034&group_id=167309&atid=842437">maintenance #1846034: Create a interface to plug in external datasources</a>
+	 * 
+	 * @see <a
+	 *      href="http://sourceforge.net/tracker/index.php?func=detail&aid=1846034&group_id=167309&atid=842437">maintenance
+	 *      #1846034: Create a interface to plug in external datasources</a>
 	 */
 	public void testSimpleSource() throws Exception {
 		final String prog = "?- a(?X).";
@@ -68,11 +73,13 @@ public class DataSourceTest extends TestCase {
 		final IQuery q = p.getQueries().iterator().next();
 
 		// setting up the configuration
-		final Configuration conf = KnowledgeBaseFactory.getDefaultConfiguration();
+		final Configuration conf = KnowledgeBaseFactory
+				.getDefaultConfiguration();
 		conf.externalDataSources.add(new SimpleSource());
 
 		// setting up the knowledge base
-		IKnowledgeBase kb = KnowledgeBaseFactory.createKnowledgeBase(null, null, conf);
+		IKnowledgeBase kb = KnowledgeBaseFactory.createKnowledgeBase(null,
+				null, conf);
 
 		// executing the query
 		final IRelation result = kb.execute(q);
@@ -87,7 +94,8 @@ public class DataSourceTest extends TestCase {
 	 */
 	private static class SimpleSource implements IDataSource {
 
-		public void get(final IPredicate p, final ITuple from, final ITuple To, final IRelation r) {
+		public void get(final IPredicate p, final ITuple from, final ITuple To,
+				final IRelation r) {
 			if (p.equals(A1)) {
 				r.add(T_A);
 			}

@@ -34,74 +34,81 @@ import org.deri.iris.storage.IRelationFactory;
 /**
  * A manager for all facts stored in a knowledge-base.
  */
-public class Facts implements IFacts
-{
-	/**
-	 * Constructor.
-	 */
-	public Facts( IRelationFactory relationFactory )
-	{
-		mRelationFactory = relationFactory;
-	}
-	
-	/**
-	 * Construct a Facts object from a predicate-relation map. 
-	 * @param rawFacts The facts to add.
-	 */
-	public Facts( Map<IPredicate,IRelation> rawFacts, IRelationFactory relationFactory )
-	{
-		mRelationFactory = relationFactory;
-		mPredicateRelationMap.putAll( rawFacts );
-	}
-	
-	/* (non-Javadoc)
-     * @see org.deri.iris.new_stuff.facts.IFacts#get(org.deri.iris.api.basics.IPredicate)
-     */
-	public IRelation get( IPredicate predicate )
-	{
-		IRelation relation = mPredicateRelationMap.get( predicate );
-		
-		if( relation == null )
-		{
-			relation = mRelationFactory.createRelation();
-			mPredicateRelationMap.put( predicate, relation );
-		}
-		
-		return relation;
-	}
-	
-	/* (non-Javadoc)
-     * @see org.deri.iris.new_stuff.facts.IFacts#getPredicates()
-     */
-	public Set<IPredicate> getPredicates()
-	{
-		return mPredicateRelationMap.keySet();
-	}
-	
-	@Override
-    public String toString()
-    {
-		StringBuilder result = new StringBuilder();
-		
-		for( Map.Entry<IPredicate, IRelation> entry : mPredicateRelationMap.entrySet() )
-		{
-			IRelation relation = entry.getValue();
-			IPredicate predicate = entry.getKey();
-			
-			for( int t = 0; t < relation.size(); ++t )
-			{
-				ITuple tuple = relation.get( t );
-				result.append( predicate.getPredicateSymbol() );
-				result.append( tuple );
-				result.append( '.' );
-			}
-		}
-
-	    return result.toString();
-    }
+public class Facts implements IFacts {
 
 	/** The map storing the predicate-relation relationship. */
 	protected final Map<IPredicate, IRelation> mPredicateRelationMap = new HashMap<IPredicate, IRelation>();
-	
+
 	protected final IRelationFactory mRelationFactory;
+
+	/**
+	 * Constructor.
+	 */
+	public Facts(IRelationFactory relationFactory) {
+		mRelationFactory = relationFactory;
+	}
+
+	/**
+	 * Construct a Facts object from a predicate-relation map.
+	 * 
+	 * @param rawFacts
+	 *            The facts to add.
+	 */
+	public Facts(Map<IPredicate, IRelation> rawFacts,
+			IRelationFactory relationFactory) {
+		mRelationFactory = relationFactory;
+		mPredicateRelationMap.putAll(rawFacts);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.deri.iris.new_stuff.facts.IFacts#get(org.deri.iris.api.basics.IPredicate
+	 * )
+	 */
+	public IRelation get(IPredicate predicate) {
+		IRelation relation = mPredicateRelationMap.get(predicate);
+
+		if (relation == null) {
+			relation = mRelationFactory.createRelation();
+			mPredicateRelationMap.put(predicate, relation);
+		}
+
+		return relation;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.deri.iris.new_stuff.facts.IFacts#getPredicates()
+	 */
+	public Set<IPredicate> getPredicates() {
+		return mPredicateRelationMap.keySet();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+
+		for (Map.Entry<IPredicate, IRelation> entry : mPredicateRelationMap
+				.entrySet()) {
+			IRelation relation = entry.getValue();
+			IPredicate predicate = entry.getKey();
+
+			for (int t = 0; t < relation.size(); ++t) {
+				ITuple tuple = relation.get(t);
+				result.append(predicate.getPredicateSymbol());
+				result.append(tuple);
+				result.append('.');
+			}
+		}
+
+		return result.toString();
+	}
+
+	@Override
+	public void addFacts(Map<IPredicate, IRelation> newFacts, long timestamp) {
+		mPredicateRelationMap.putAll(newFacts);
+	}
 }

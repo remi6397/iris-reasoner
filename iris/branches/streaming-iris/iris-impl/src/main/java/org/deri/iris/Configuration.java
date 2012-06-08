@@ -54,89 +54,107 @@ import org.deri.iris.utils.equivalence.TermEquivalenceFactory;
 /**
  * This class holds all configuration data for a knowledge base.
  */
-public class Configuration
-{
+public class Configuration {
 	/** The evaluation strategy to use. */
-	public IEvaluationStrategyFactory evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory( new SemiNaiveEvaluatorFactory() );
+	public IEvaluationStrategyFactory evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory(
+			new SemiNaiveEvaluatorFactory());
+
+	/** The port number of the socket where IRIS is listening for new data. */
+	public int inputPort = 8080;
+
+	/** The port number of the socket where IRIS is sending the results to. */
+	public int outputPort = 8081;
 
 	/** The evaluation timeout in milliseconds. Zero means no timeout. */
 	public int evaluationTimeoutMilliseconds = 0;
 
 	/**
-	 * The maximum number of tuples that are allowed to be generated during evaluation
-	 * before evaluation is terminated.
-	 * Zero means that there is no maximum.
+	 * The time window in milliseconds when facts become obsolete. Default is 1
+	 * hour.
+	 */
+	public int timeWindowMilliseconds = 3600000;
+
+	/**
+	 * The time window in milliseconds when queries get periodically executed.
+	 * Default is 10 seconds.
+	 */
+	public long executionIntervallMilliseconds = 10000;
+
+	/**
+	 * The maximum number of tuples that are allowed to be generated during
+	 * evaluation before evaluation is terminated. Zero means that there is no
+	 * maximum.
 	 */
 	public int evaluationMaxTuples = 0;
-	
+
 	/**
-	 * The maximum complexity (tree depth) of inferred constructed terms.
-	 * This is a constraint that can avoid the non-convergence problem
-	 * for knowledge-bases containing rules such as:
-	 * p( f(X) ) :- p( X )
+	 * The maximum complexity (tree depth) of inferred constructed terms. This
+	 * is a constraint that can avoid the non-convergence problem for
+	 * knowledge-bases containing rules such as: p( f(X) ) :- p( X )
 	 */
 	public int evaluationMaxComplexity = 0;
 
 	/**
-	 * The different options for handling divide by zero in arithmetic built-ins during evaluation.
+	 * The different options for handling divide by zero in arithmetic built-ins
+	 * during evaluation.
 	 */
-	public static enum DivideByZeroBehaviour
-	{
-		STOP,
-		DISCARD_AND_IGNORE
+	public static enum DivideByZeroBehaviour {
+		STOP, DISCARD_AND_IGNORE
 	}
-	
+
 	/** The desired divide-by-zero behaviour. */
 	public DivideByZeroBehaviour evaluationDivideByZeroBehaviour = DivideByZeroBehaviour.DISCARD_AND_IGNORE;
 
 	/** The factory for creating relations required during evaluation. */
 	public IRelationFactory relationFactory = new SimpleRelationFactory();
-	
+
 	/** The factory for creating indexes required during evaluation. */
 	public IIndexFactory indexFactory = new SimpleIndexFactory();
 
-	/** The number of bits of precision to use for comparing double term values. */ 
+	/** The number of bits of precision to use for comparing double term values. */
 	public int floatingPointDoublePrecision = 42;
 
-	/** The number of bits of precision to use for comparing float term values. */ 
+	/** The number of bits of precision to use for comparing float term values. */
 	public int floatingPointFloatPrecision = 19;
-	
+
 	/** Add external data sources here. */
 	public final List<IDataSource> externalDataSources = new ArrayList<IDataSource>();
-	
+
 	/** The collection of rule set stratifiers. */
 	public final List<IRuleStratifier> stratifiers = new ArrayList<IRuleStratifier>();
-	
+
 	/** The collection of rule optimisers. */
 	public final List<IRuleOptimiser> ruleOptimisers = new ArrayList<IRuleOptimiser>();
-	
+
 	/** The collection of rule-reordering optimisers. */
 	public IRuleReOrderingOptimiser reOrderingOptimiser = new SimpleReOrdering();
-	
+
 	/** Collection of program optimisations. */
 	public final List<IProgramOptimisation> programOptmimisers = new ArrayList<IProgramOptimisation>();
-	
-	/** Rule safety processors (e.g. standard rule-safety check and augmented-unsafe-rule modifier). */
+
+	/**
+	 * Rule safety processors (e.g. standard rule-safety check and
+	 * augmented-unsafe-rule modifier).
+	 */
 	public IRuleSafetyProcessor ruleSafetyProcessor = new StandardRuleSafetyProcessor();
-	
-	/**	The rule head equality pre-processor. */
+
+	/** The rule head equality pre-processor. */
 	public IRuleHeadEqualityPreProcessor ruleHeadEqualityPreProcessor = new IgnoreRuleHeadEquality();
-	
+
 	/** The equivalent terms factory to use. */
 	public IEquivalentTermsFactory equivalentTermsFactory = new TermEquivalenceFactory();
-	
+
 	/**
 	 * Constructor.
 	 */
-	public Configuration()
-	{
-		stratifiers.add( new GlobalStratifier() );
-		stratifiers.add( new LocalStratifier( true ) );
-		stratifiers.add( new LocalStratifier( false ) );
-		
-		ruleOptimisers.add( new JoinConditionOptimiser() );
-		ruleOptimisers.add( new ReplaceVariablesWithConstantsOptimiser() );
-		ruleOptimisers.add( new ReOrderLiteralsOptimiser() );
-		ruleOptimisers.add( new RemoveDuplicateLiteralOptimiser() );
+	public Configuration() {
+		stratifiers.add(new GlobalStratifier());
+		stratifiers.add(new LocalStratifier(true));
+		stratifiers.add(new LocalStratifier(false));
+
+		ruleOptimisers.add(new JoinConditionOptimiser());
+		ruleOptimisers.add(new ReplaceVariablesWithConstantsOptimiser());
+		ruleOptimisers.add(new ReOrderLiteralsOptimiser());
+		ruleOptimisers.add(new RemoveDuplicateLiteralOptimiser());
 	}
 }

@@ -12,7 +12,7 @@
 		<module>iris-api</module>
 		<module>iris-impl</module>
 		<module>iris-parser</module>
-		<module>iris-rdb</module>
+<!-- 		<module>iris-rdb</module> -->
 	</modules>
 
 	<properties>
