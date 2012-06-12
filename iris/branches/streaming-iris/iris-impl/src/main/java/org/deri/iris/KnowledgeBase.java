@@ -198,7 +198,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 			// mEvaluationStrategy = mConfiguration.evaluationStrategyFactory
 			// .createEvaluator(mFacts, mRules, mConfiguration);
 
-			// TODO logging
+			// TODO Norbert: logging
 			// if (logger.isDebugEnabled()) {
 			// for (IPredicate f : newFacts.keySet()) {
 			// IRelation relation = newFacts.get(f);
@@ -210,10 +210,11 @@ public class KnowledgeBase implements IKnowledgeBase {
 			// }
 			// }
 
-			// FIXME does only work with StratifiedBottomUpEvaluationStrategy
+			// FIXME Norbert: does only work with
+			// StratifiedBottomUpEvaluationStrategy
 			mEvaluationStrategy.evaluateRules(mFacts, timestamp);
 
-			// TODO logging
+			// TODO Norbert: logging
 			logger.debug("Current knowledge-base:");
 			logger.debug("-----------------------");
 			Set<IPredicate> predicates = mFacts.getPredicates();
@@ -344,7 +345,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 	@Override
 	public void cleanKnowledgeBase() {
 		synchronized (mFacts) {
-			// FIXME implement
+			// FIXME Norbert: implement
 		}
 	}
 }

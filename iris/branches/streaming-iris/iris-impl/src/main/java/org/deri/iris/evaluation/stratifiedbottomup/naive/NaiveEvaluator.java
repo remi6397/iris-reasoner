@@ -55,7 +55,7 @@ public class NaiveEvaluator implements IRuleEvaluator {
 					if (facts.get(predicate).addAll(delta, timestamp))
 						cont = true;
 
-					// TODO logging
+					// TODO Norbert: logging
 					// if (logger.isDebugEnabled()) {
 					// for (int i = 0; i < delta.size(); i++) {
 					// logger.debug("Created fact [" + timestamp + "]: "

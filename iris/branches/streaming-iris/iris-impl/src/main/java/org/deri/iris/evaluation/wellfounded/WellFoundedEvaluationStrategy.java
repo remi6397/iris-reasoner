@@ -299,6 +299,6 @@ public class WellFoundedEvaluationStrategy implements IEvaluationStrategy {
 	@Override
 	public void evaluateRules(IFacts facts, long timestamp)
 			throws EvaluationException {
-		// FIXME not implemented
+		// FIXME Norbert: not implemented
 	}
 }
