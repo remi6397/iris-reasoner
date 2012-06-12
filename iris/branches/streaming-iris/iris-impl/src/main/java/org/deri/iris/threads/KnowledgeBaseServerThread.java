@@ -54,7 +54,8 @@ public class KnowledgeBaseServerThread extends Thread {
 			Parser parser = new Parser();
 			while (!Thread.interrupted()
 					&& (factLine = streamReader.readLine()) != null) {
-				// TODO maybe limit it to read max number of lines and then
+				// TODO Norbert: maybe limit it to read max number of lines and
+				// then
 				// start again
 				sb.append(factLine);
 			}

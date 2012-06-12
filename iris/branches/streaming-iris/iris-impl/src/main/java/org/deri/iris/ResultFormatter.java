@@ -21,7 +21,7 @@ public class ResultFormatter {
 	 */
 	public static String format(IQuery query, List<IVariable> variableBindings,
 			IRelation result) {
-		// FIXME implement formatter.
+		// FIXME Norbert: implement formatter.
 		StringBuilder results = new StringBuilder();
 
 		for (int i = 0; i < result.size(); i++) {
