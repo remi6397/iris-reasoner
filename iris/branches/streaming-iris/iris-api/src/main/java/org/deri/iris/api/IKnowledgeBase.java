@@ -143,6 +143,8 @@ public interface IKnowledgeBase {
 
 	/**
 	 * Deletes obsolete facts from the knowledge base.
+	 * 
+	 * @throws EvaluationException
 	 */
-	void cleanKnowledgeBase();
+	void cleanKnowledgeBase() throws EvaluationException;
 }

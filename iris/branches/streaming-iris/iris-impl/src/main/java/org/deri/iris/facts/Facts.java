@@ -125,4 +125,11 @@ public class Facts implements IFacts {
 			}
 		}
 	}
+
+	@Override
+	public void clean(long timestamp) {
+		for (IRelation entry : mPredicateRelationMap.values()) {
+			entry.clean(timestamp);
+		}
+	}
 }

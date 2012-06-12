@@ -87,4 +87,9 @@ public class FactsWithExternalData implements IFacts {
 	public void addFacts(Map<IPredicate, IRelation> newFacts, long timestamp) {
 		mFacts.addFacts(newFacts, timestamp);
 	}
+
+	@Override
+	public void clean(long timestamp) {
+		mFacts.clean(timestamp);
+	}
 }

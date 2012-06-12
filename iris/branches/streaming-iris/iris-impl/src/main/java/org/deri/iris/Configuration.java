@@ -69,10 +69,10 @@ public class Configuration {
 	public int evaluationTimeoutMilliseconds = 0;
 
 	/**
-	 * The time window in milliseconds when facts become obsolete. Default is 1
-	 * hour.
+	 * The time window in milliseconds when facts become obsolete. Default is 30
+	 * seconds.
 	 */
-	public int timeWindowMilliseconds = 3600000;
+	public int timeWindowMilliseconds = 30000;
 
 	/**
 	 * The time window in milliseconds when queries get periodically executed.

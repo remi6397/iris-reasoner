@@ -261,6 +261,13 @@ public class FiniteUniverseFacts implements IFacts {
 
 			return mChild.getTimestamp(tuple);
 		}
+
+		@Override
+		public void clean(long timestamp) {
+			assert mChild != null;
+
+			mChild.clean(timestamp);
+		}
 	}
 
 	public IRelation get(IPredicate predicate) {
@@ -336,4 +343,10 @@ public class FiniteUniverseFacts implements IFacts {
 	public void addFacts(Map<IPredicate, IRelation> newFacts, long timestamp) {
 		mFacts.addFacts(newFacts, timestamp);
 	}
+
+	@Override
+	public void clean(long timestamp) {
+		mFacts.clean(timestamp);
+	}
+
 }

@@ -103,5 +103,20 @@ public interface IRelation {
 	 */
 	long getTimestamp(ITuple tuple);
 
+	/**
+	 * Returns if the given tuple exists in this relation.
+	 * 
+	 * @param tuple
+	 *            The tuple.
+	 * @return true if the tuple exists, false otherwise.
+	 */
 	boolean contains(ITuple tuple);
+
+	/**
+	 * Deletes all obsolete tuples in this relation.
+	 * 
+	 * @param timestamp
+	 *            The current time.
+	 */
+	void clean(long timestamp);
 }
