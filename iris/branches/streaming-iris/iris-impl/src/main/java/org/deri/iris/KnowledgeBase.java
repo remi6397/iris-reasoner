@@ -175,6 +175,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 	public void shutdown() {
 		inputThread.shutdown();
 		executionThread.interrupt();
+		garbageCollectorThread.interrupt();
 		for (IIrisOutputStreamer streamer : mIrisOutputStreamers) {
 			streamer.shutdown();
 		}
@@ -345,7 +346,31 @@ public class KnowledgeBase implements IKnowledgeBase {
 	@Override
 	public void cleanKnowledgeBase() {
 		synchronized (mFacts) {
-			// FIXME Norbert: implement
+			long currentTime = System.currentTimeMillis();
+
+			mFacts.clean(currentTime);
+
+			try {
+				// FIXME Norbert: does only work with
+				// StratifiedBottomUpEvaluationStrategy
+				mEvaluationStrategy.evaluateRules(mFacts, currentTime);
+			} catch (EvaluationException e) {
+				logger.error("Evaluation exception occured: {}", e.getMessage());
+			}
+
+			// TODO Norbert: logging
+			logger.debug("Current knowledge-base [{}]:", currentTime);
+			logger.debug("----------------------------");
+			Set<IPredicate> predicates = mFacts.getPredicates();
+			for (IPredicate predicate : predicates) {
+				IRelation relation = mFacts.get(predicate);
+				for (int i = 0; i < relation.size(); i++) {
+					ITuple tuple = relation.get(i);
+					logger.debug("[" + relation.getTimestamp(tuple) + "]: "
+							+ predicate + " " + tuple);
+				}
+
+			}
 		}
 	}
 }

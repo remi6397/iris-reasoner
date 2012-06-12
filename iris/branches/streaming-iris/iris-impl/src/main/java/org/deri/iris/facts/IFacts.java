@@ -56,4 +56,9 @@ public interface IFacts {
 	 */
 	void addFacts(Map<IPredicate, IRelation> newFacts, long timestamp);
 
+	/**
+	 * Deletes all obsolete facts.
+	 */
+	void clean(long timestamp);
+
 }

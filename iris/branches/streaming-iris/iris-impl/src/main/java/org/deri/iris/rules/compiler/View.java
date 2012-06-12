@@ -317,6 +317,13 @@ public class View implements IRelation {
 		return mViewTuples.toString();
 	}
 
+	@Override
+	public void clean(long timestamp) {
+		if (!mSimple)
+			update();
+		mViewTuples.clean(timestamp);
+	}
+
 	/** The equivalent terms. */
 	private IEquivalentTerms mEquivalentTerms;
 
@@ -342,4 +349,5 @@ public class View implements IRelation {
 	private final boolean mSimple;
 
 	private final IRelationFactory mRelationFactory;
+
 }

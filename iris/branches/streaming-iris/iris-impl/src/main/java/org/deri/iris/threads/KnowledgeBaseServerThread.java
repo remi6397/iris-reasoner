@@ -75,7 +75,7 @@ public class KnowledgeBaseServerThread extends Thread {
 			logger.error("Parse exception occured!", e);
 			e.printStackTrace();
 		} catch (EvaluationException e) {
-			// TODO Auto-generated catch block
+			logger.error("Evaluation exception occured", e);
 			e.printStackTrace();
 		}
 	}

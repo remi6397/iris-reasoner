@@ -22,6 +22,9 @@
  */
 package org.deri.iris.storage.simple;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.utils.UniqueList;
@@ -98,5 +101,21 @@ public class SimpleRelation implements IRelation {
 	@Override
 	public long getTimestamp(ITuple tuple) {
 		return mTuples.getTimestamp(tuple);
+	}
+
+	@Override
+	public void clean(long timestamp) {
+		long tupleTimestamp;
+		List<ITuple> remove = new ArrayList<ITuple>();
+		for (ITuple tuple : mTuples) {
+			tupleTimestamp = getTimestamp(tuple);
+			if (tupleTimestamp != 0 && tupleTimestamp < timestamp) {
+				remove.add(tuple);
+			}
+		}
+
+		for (ITuple tuple : remove) {
+			mTuples.remove(tuple);
+		}
 	}
 }

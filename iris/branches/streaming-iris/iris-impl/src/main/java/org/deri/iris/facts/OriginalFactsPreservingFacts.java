@@ -89,6 +89,10 @@ public class OriginalFactsPreservingFacts implements IFacts {
 	 * Original preserving relation adaptor.
 	 */
 	private class OriginalPreservingAdaptor implements IRelation {
+
+		private final IRelation mOriginal;
+		private final IRelation mAddedFacts;
+
 		OriginalPreservingAdaptor(IRelation original) {
 			mOriginal = original;
 			mAddedFacts = mRelationFactory.createRelation();
@@ -158,8 +162,11 @@ public class OriginalFactsPreservingFacts implements IFacts {
 			}
 		}
 
-		private final IRelation mOriginal;
-		private final IRelation mAddedFacts;
+		@Override
+		public void clean(long timestamp) {
+			// TODO Norbert: also for added facts?
+			mAddedFacts.clean(timestamp);
+		}
 	}
 
 	/** The map storing the predicate-relation relationship. */
@@ -175,4 +182,10 @@ public class OriginalFactsPreservingFacts implements IFacts {
 	public void addFacts(Map<IPredicate, IRelation> newFacts, long timestamp) {
 		mOriginalFacts.addFacts(newFacts, timestamp);
 	}
+
+	@Override
+	public void clean(long timestamp) {
+		mOriginalFacts.clean(timestamp);
+	}
+
 }
