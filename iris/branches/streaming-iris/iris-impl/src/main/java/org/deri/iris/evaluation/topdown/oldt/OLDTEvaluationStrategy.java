@@ -40,34 +40,47 @@ public class OLDTEvaluationStrategy implements IEvaluationStrategy {
 
 	/**
 	 * Constructor
-	 * @param facts Given facts.
-	 * @param rules Given rules.
-	 * @param configuration Configuration
+	 * 
+	 * @param facts
+	 *            Given facts.
+	 * @param rules
+	 *            Given rules.
+	 * @param configuration
+	 *            Configuration
 	 * @throws EvaluationException
 	 */
-	public OLDTEvaluationStrategy(IFacts facts, List<IRule> rules, Configuration configuration ) throws EvaluationException {
+	public OLDTEvaluationStrategy(IFacts facts, List<IRule> rules,
+			Configuration configuration) throws EvaluationException {
 		mFacts = facts;
 		mRules = rules;
 		mConfiguration = configuration;
 	}
-	
+
 	/**
 	 * Evaluate the query
 	 */
-	public IRelation evaluateQuery(IQuery query, List<IVariable> outputVariables) throws ProgramNotStratifiedException, RuleUnsafeException, EvaluationException {
-		if( query == null )
-			throw new IllegalArgumentException( "SLDEvaluationStrategy.evaluateQuery() - query must not be null." ); 
-		
-		
-		ITopDownEvaluator evaluator = new OLDTEvaluator( mFacts, mRules );
-		IRelation relation = evaluator.evaluate( query );
-		outputVariables = evaluator.getOutputVariables();		
-		
+	public IRelation evaluateQuery(IQuery query, List<IVariable> outputVariables)
+			throws ProgramNotStratifiedException, RuleUnsafeException,
+			EvaluationException {
+		if (query == null)
+			throw new IllegalArgumentException(
+					"SLDEvaluationStrategy.evaluateQuery() - query must not be null.");
+
+		ITopDownEvaluator evaluator = new OLDTEvaluator(mFacts, mRules);
+		IRelation relation = evaluator.evaluate(query);
+		outputVariables = evaluator.getOutputVariables();
+
 		return relation;
 	}
-	
+
 	protected final IFacts mFacts;
 	protected final List<IRule> mRules;
 	protected final Configuration mConfiguration;
+
+	@Override
+	public void evaluateRules(IFacts facts, long timestamp)
+			throws EvaluationException {
+		// FIXME not implemented
+	}
 
 }

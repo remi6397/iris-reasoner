@@ -41,9 +41,9 @@ import org.deri.iris.utils.equivalence.IgnoreTermEquivalence;
  * interprets a relation.
  * </p>
  * <p>
- * Essentially, this class is an adaptor accepts tuples from a relation
- * and attempts to term match every term in the relation with the
- * corresponding term in the tuple in the sub-goal.
+ * Essentially, this class is an adaptor accepts tuples from a relation and
+ * attempts to term match every term in the relation with the corresponding term
+ * in the tuple in the sub-goal.
  * </p>
  * <p>
  * Therefore, the relation and the viewCriteria tuple must have the same arity.
@@ -69,10 +69,10 @@ import org.deri.iris.utils.equivalence.IgnoreTermEquivalence;
  * would filter and produce a view that appears as:
  * </p>
  * <p>
- * X  Y
+ * X Y
  * </p>
  * <p>
- * =  =
+ * = =
  * </p>
  * <p>
  * 1, 4
@@ -82,62 +82,84 @@ import org.deri.iris.utils.equivalence.IgnoreTermEquivalence;
  * </p>
  * <p>
  */
-public class View implements IRelation
-{
+public class View implements IRelation {
 	/**
 	 * Constructor.
-	 * @param relation The relation to create the view over.
-	 * @param viewCriteria The criteria to filter with.
+	 * 
+	 * @param relation
+	 *            The relation to create the view over.
+	 * @param viewCriteria
+	 *            The criteria to filter with.
 	 */
-	public View( IRelation relation, ITuple viewCriteria, IRelationFactory relationFactory )
-	{
-		this(relation, viewCriteria, new IgnoreTermEquivalence(), relationFactory);
+	public View(IRelation relation, ITuple viewCriteria,
+			IRelationFactory relationFactory) {
+		this(relation, viewCriteria, new IgnoreTermEquivalence(),
+				relationFactory);
 	}
 
 	/**
 	 * Constructor.
-	 * @param relation The relation to create the view over.
-	 * @param viewCriteria The criteria to filter with.
-	 * @param equivalentTerms The equivalent terms.
+	 * 
+	 * @param relation
+	 *            The relation to create the view over.
+	 * @param viewCriteria
+	 *            The criteria to filter with.
+	 * @param equivalentTerms
+	 *            The equivalent terms.
 	 */
-	public View( IRelation relation, ITuple viewCriteria, IEquivalentTerms equivalentTerms, IRelationFactory relationFactory ) {
+	public View(IRelation relation, ITuple viewCriteria,
+			IEquivalentTerms equivalentTerms, IRelationFactory relationFactory) {
 		mViewCriteria = viewCriteria;
-		mVariables = TermMatchingAndSubstitution.getVariables( mViewCriteria, true );
+		mVariables = TermMatchingAndSubstitution.getVariables(mViewCriteria,
+				true);
 		mInputRelation = relation;
 		mRelationFactory = relationFactory;
 		mEquivalentTerms = equivalentTerms;
 
 		// Check if simple view, i.e. only unique variables
-		mSimple = isSimpleView( viewCriteria );
-		if( mSimple )
+		mSimple = isSimpleView(viewCriteria);
+		if (mSimple)
 			mViewTuples = relation;
 		else
 			mViewTuples = relationFactory.createRelation();
 	}
-	
+
 	/**
 	 * Kind of copy constructor.
-	 * @param relation The viewed relation.
-	 * @param viewCriteria The view criteria.
-	 * @param variables The computed output variables.
-	 * @param simple Indicates of the view is simple (pass thorugh)
+	 * 
+	 * @param relation
+	 *            The viewed relation.
+	 * @param viewCriteria
+	 *            The view criteria.
+	 * @param variables
+	 *            The computed output variables.
+	 * @param simple
+	 *            Indicates of the view is simple (pass thorugh)
 	 */
-	public View( IRelation relation, ITuple viewCriteria, List<IVariable> variables, boolean simple, IRelationFactory relationFactory )
-	{
-		this(relation, viewCriteria, variables, simple, new IgnoreTermEquivalence(), relationFactory);
+	public View(IRelation relation, ITuple viewCriteria,
+			List<IVariable> variables, boolean simple,
+			IRelationFactory relationFactory) {
+		this(relation, viewCriteria, variables, simple,
+				new IgnoreTermEquivalence(), relationFactory);
 	}
-	
+
 	/**
 	 * Kind of copy constructor.
-	 * @param relation The viewed relation.
-	 * @param viewCriteria The view criteria.
-	 * @param variables The computed output variables.
-	 * @param simple Indicates of the view is simple (pass thorugh)
-	 * @param equivalentTerms The equivalent terms.
+	 * 
+	 * @param relation
+	 *            The viewed relation.
+	 * @param viewCriteria
+	 *            The view criteria.
+	 * @param variables
+	 *            The computed output variables.
+	 * @param simple
+	 *            Indicates of the view is simple (pass thorugh)
+	 * @param equivalentTerms
+	 *            The equivalent terms.
 	 */
-	public View( IRelation relation, ITuple viewCriteria, List<IVariable> variables, boolean simple, 
-			IEquivalentTerms equivalentTerms, IRelationFactory relationFactory )
-	{
+	public View(IRelation relation, ITuple viewCriteria,
+			List<IVariable> variables, boolean simple,
+			IEquivalentTerms equivalentTerms, IRelationFactory relationFactory) {
 		mViewCriteria = viewCriteria;
 		mVariables = variables;
 		mInputRelation = relation;
@@ -145,156 +167,179 @@ public class View implements IRelation
 		mRelationFactory = relationFactory;
 		mEquivalentTerms = equivalentTerms;
 
-		if( mSimple )
+		if (mSimple)
 			mViewTuples = relation;
 		else
 			mViewTuples = mRelationFactory.createRelation();
 	}
-	
+
 	/**
-	 * Determine of the view is simple.
-	 * The view is simple if no filtering occurs.
-	 * This only happens if every term of the view criteria is a plain variable and unique, e.g.
-	 * p( ?X, ?Y, ?Z ) is simple, but p(?X, ?X ) is not.
-	 * @param viewCriteria The vew criteria.
+	 * Determine of the view is simple. The view is simple if no filtering
+	 * occurs. This only happens if every term of the view criteria is a plain
+	 * variable and unique, e.g. p( ?X, ?Y, ?Z ) is simple, but p(?X, ?X ) is
+	 * not.
+	 * 
+	 * @param viewCriteria
+	 *            The vew criteria.
 	 * @return true, if the view is simple.
 	 */
-	public static boolean isSimpleView( ITuple viewCriteria )
-	{
+	public static boolean isSimpleView(ITuple viewCriteria) {
 		Set<IVariable> vars = new HashSet<IVariable>();
-		
-		for( ITerm term : viewCriteria )
-		{
-			if( term instanceof IVariable )
-			{
+
+		for (ITerm term : viewCriteria) {
+			if (term instanceof IVariable) {
 				IVariable variable = (IVariable) term;
 
-				if( ! vars.add( variable ) )
+				if (!vars.add(variable))
 					return false;
-			}
-			else
+			} else
 				return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Indicates if the view is simple.
+	 * 
 	 * @return true, if the view is simple.
 	 */
-	public boolean isSimple()
-	{
+	public boolean isSimple() {
 		return mSimple;
 	}
-	
+
 	/**
 	 * Get the output variables in order.
+	 * 
 	 * @return
 	 */
-	public List<IVariable> variables()
-	{
+	public List<IVariable> variables() {
 		return mVariables;
 	}
 
 	/**
 	 * Adding to a View does not make sense.
-	 * @throws RuntimeException if this method is called.
+	 * 
+	 * @throws RuntimeException
+	 *             if this method is called.
 	 */
-	public boolean add( ITuple tuple )
-    {
-		throw new RuntimeException( "add() has been called on a View object." );
-    }
+	public boolean add(ITuple tuple) {
+		throw new RuntimeException("add() has been called on a View object.");
+	}
 
 	/**
 	 * Adding to a View does not make sense.
-	 * @throws RuntimeException if this method is called.
+	 * 
+	 * @throws RuntimeException
+	 *             if this method is called.
 	 */
-	public boolean addAll( IRelation relation )
-    {
-		throw new RuntimeException( "addAll() has been called on a View object." );
-    }
-
-	public boolean contains( ITuple tuple )
-    {
-		if( ! mSimple )
-			update();
-	    return mViewTuples.contains( tuple );
-    }
-
-	public ITuple get( int index )
-    {
-		if( ! mSimple )
-			update();
-		return mViewTuples.get( index );
-    }
-
-	public int size()
-    {
-		if( ! mSimple )
-			update();
-		return mViewTuples.size();
-    }
+	public boolean add(ITuple tuple, long timestamp) {
+		throw new RuntimeException("add() has been called on a View object.");
+	}
 
 	/**
-	 * Update the view with previously unseen tuples from the underlying relation.
+	 * Adding to a View does not make sense.
+	 * 
+	 * @throws RuntimeException
+	 *             if this method is called.
 	 */
-	private void update()
-	{
-		// The matching tuples may increase due to a change in the equivalence relation,
+	public boolean addAll(IRelation relation) {
+		throw new RuntimeException("addAll() has been called on a View object.");
+	}
+
+	/**
+	 * Adding to a View does not make sense.
+	 * 
+	 * @throws RuntimeException
+	 *             if this method is called.
+	 */
+	public boolean addAll(IRelation relation, long timestamp) {
+		throw new RuntimeException("addAll() has been called on a View object.");
+	}
+
+	public boolean contains(ITuple tuple) {
+		if (!mSimple)
+			update();
+		return mViewTuples.contains(tuple);
+	}
+
+	public ITuple get(int index) {
+		if (!mSimple)
+			update();
+		return mViewTuples.get(index);
+	}
+
+	public int size() {
+		if (!mSimple)
+			update();
+		return mViewTuples.size();
+	}
+
+	/**
+	 * Update the view with previously unseen tuples from the underlying
+	 * relation.
+	 */
+	private void update() {
+		// The matching tuples may increase due to a change in the equivalence
+		// relation,
 		// therefore we have to check all tuples again if any change to the term
 		// equivalence relation has been done.
 		int hashCode = mEquivalentTerms.hashCode();
-		
+
 		if (hashCode != mPreviousHashCode) {
 			mLastIndex = 0;
-			
+
 			mPreviousHashCode = hashCode;
 		}
-		
-		for( ; mLastIndex < mInputRelation.size(); ++mLastIndex )
-		{
-			ITuple tuple = mInputRelation.get( mLastIndex );
-			
+
+		for (; mLastIndex < mInputRelation.size(); ++mLastIndex) {
+			ITuple tuple = mInputRelation.get(mLastIndex);
+
 			// When matching terms we also use the equivalent terms.
-			ITuple viewTuple = TermMatchingAndSubstitution.matchTuple( mViewCriteria, 
-					tuple, mEquivalentTerms );
-			
-			if( viewTuple != null ) {
-				mViewTuples.add( viewTuple );
+			ITuple viewTuple = TermMatchingAndSubstitution.matchTuple(
+					mViewCriteria, tuple, mEquivalentTerms);
+
+			if (viewTuple != null) {
+				mViewTuples.add(viewTuple);
 			}
 		}
 	}
-	
+
 	@Override
-    public String toString()
-    {
+	public long getTimestamp(ITuple tuple) {
+		if (!mSimple)
+			update();
+		return mViewTuples.getTimestamp(tuple);
+	}
+
+	@Override
+	public String toString() {
 		return mViewTuples.toString();
-    }
+	}
 
 	/** The equivalent terms. */
 	private IEquivalentTerms mEquivalentTerms;
-	
+
 	/** The hash code of the previous equivalent terms. */
 	private int mPreviousHashCode = 0;
-	
+
 	/** The filtered view of the relation. */
 	private final IRelation mViewTuples;
-	
+
 	/** The last index in the underlying relation seen by this view. */
 	private int mLastIndex = 0;
-	
+
 	/** The criteria used to filter the underlying relation. */
 	private final ITuple mViewCriteria;
-	
+
 	/** The underlying relation being viewed. */
 	private final IRelation mInputRelation;
-	
+
 	/** The list of output variables. */
 	private final List<IVariable> mVariables;
-	
+
 	/** Simple view indicator. */
 	private final boolean mSimple;
-	
+
 	private final IRelationFactory mRelationFactory;
 }

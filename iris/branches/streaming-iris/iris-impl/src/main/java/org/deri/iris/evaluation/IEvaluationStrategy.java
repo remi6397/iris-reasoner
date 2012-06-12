@@ -29,23 +29,44 @@ import org.deri.iris.ProgramNotStratifiedException;
 import org.deri.iris.RuleUnsafeException;
 import org.deri.iris.api.basics.IQuery;
 import org.deri.iris.api.terms.IVariable;
+import org.deri.iris.facts.IFacts;
 import org.deri.iris.storage.IRelation;
 
 /**
  * Interface for all evaluation strategy implementations.
  */
-public interface IEvaluationStrategy
-{
+public interface IEvaluationStrategy {
 	/**
 	 * Evaluate a query and optionally return the variable bindings.
-	 * @param query The query to evaluate.
-	 * @param outputVariables If this is not null, it will be filled with the variable bindings
-	 * of the result relation, i.e. there will be one variable instance for each term
-	 * (in one row) of the results set
+	 * 
+	 * @param query
+	 *            The query to evaluate.
+	 * @param outputVariables
+	 *            If this is not null, it will be filled with the variable
+	 *            bindings of the result relation, i.e. there will be one
+	 *            variable instance for each term (in one row) of the results
+	 *            set
 	 * @return The relation of results.
-	 * @throws ProgramNotStratifiedException If the program (knowledge-base)can not be stratified
-	 * @throws RuleUnsafeException If the program (knowledge-base) contains an unsafe rule.
-	 * @throws EvaluationException If the evaluation fails for any other reason.
+	 * @throws ProgramNotStratifiedException
+	 *             If the program (knowledge-base)can not be stratified
+	 * @throws RuleUnsafeException
+	 *             If the program (knowledge-base) contains an unsafe rule.
+	 * @throws EvaluationException
+	 *             If the evaluation fails for any other reason.
 	 */
-	IRelation evaluateQuery( IQuery query, List<IVariable> outputVariables ) throws ProgramNotStratifiedException, RuleUnsafeException, EvaluationException;
+	IRelation evaluateQuery(IQuery query, List<IVariable> outputVariables)
+			throws ProgramNotStratifiedException, RuleUnsafeException,
+			EvaluationException;
+
+	/**
+	 * Evaluates all rules against the currently available facts.
+	 * 
+	 * @param facts
+	 *            New facts to be added.
+	 * @param timestamp
+	 *            The timestamp when the facts become obsolete.
+	 * @throws EvaluationException
+	 *             If an evaluation exception occurs.
+	 */
+	void evaluateRules(IFacts facts, long timestamp) throws EvaluationException;
 }

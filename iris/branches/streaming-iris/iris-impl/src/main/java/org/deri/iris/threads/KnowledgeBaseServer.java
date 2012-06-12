@@ -1,10 +1,11 @@
-package org.deri.iris;
+package org.deri.iris.threads;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+import org.deri.iris.KnowledgeBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

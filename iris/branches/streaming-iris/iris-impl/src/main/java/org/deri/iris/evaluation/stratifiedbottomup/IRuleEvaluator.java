@@ -32,14 +32,21 @@ import org.deri.iris.rules.compiler.ICompiledRule;
 /**
  * Interface for compiled rule evaluators.
  */
-public interface IRuleEvaluator
-{
+public interface IRuleEvaluator {
 	/**
 	 * Evaluate rules.
-	 * @param rules The collection of compiled rules.
-	 * @param facts Where to store the newly deduced tuples.
-	 * @param configuration The knowledge-base configuration object.
-	 * @throws EvaluationException 
+	 * 
+	 * @param rules
+	 *            The collection of compiled rules.
+	 * @param facts
+	 *            Where to store the newly deduced tuples.
+	 * @param configuration
+	 *            The knowledge-base configuration object.
+	 * @param timestamp
+	 *            The time when the new facts become obsolete.
+	 * @throws EvaluationException
 	 */
-	void evaluateRules( List<ICompiledRule> rules, IFacts facts, Configuration configuration ) throws EvaluationException;
+	void evaluateRules(List<ICompiledRule> rules, IFacts facts,
+			Configuration configuration, long timestamp)
+			throws EvaluationException;
 }

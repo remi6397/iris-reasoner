@@ -22,13 +22,11 @@
  */
 package org.deri.iris.demo;
 
-import java.net.ServerSocket;
 import java.util.List;
 import java.util.Map;
 
 import org.deri.iris.Configuration;
 import org.deri.iris.KnowledgeBaseFactory;
-import org.deri.iris.ListenerThread;
 import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -79,10 +77,11 @@ public class ProgramExecutor {
 			IKnowledgeBase knowledgeBase = KnowledgeBaseFactory
 					.createKnowledgeBase(facts, rules, configuration);
 
-			int port = 9456;
-			ServerSocket server = new ServerSocket(port);
-			new ListenerThread(server);
-			knowledgeBase.addListener("localhost", server.getLocalPort());
+			// Add a listener to the IRIS reasoner
+			// int port = 9456;
+			// ServerSocket server = new ServerSocket(port);
+			// new ListenerThread(server);
+			// knowledgeBase.addListener("localhost", server.getLocalPort());
 
 			// duration += System.currentTimeMillis();
 

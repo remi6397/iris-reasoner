@@ -59,6 +59,23 @@ import org.deri.iris.storage.simple.SimpleRelationFactory;
  * each rule
  */
 public class FiniteUniverseFacts implements IFacts {
+
+	/** The underlying facts object. */
+	private final IFacts mFacts;
+
+	/** The predicate name that identifies the universe relation. */
+	private final IRelation mUniverse;
+
+	/**
+	 * The suffix to append to variables in rules in order to give them a
+	 * 'unique' value.
+	 */
+	private static final String UNIQUE_VARIABLE_SUFFIX = "_$UNIQUE$";
+
+	/** The universe predicate. */
+	public static final IPredicate UNIVERSE = Factory.BASIC.createPredicate(
+			"$UNIVERSE$", 1);
+
 	/**
 	 * Constructor. Extract all ground terms from starting facts and rules.
 	 * 
@@ -175,6 +192,19 @@ public class FiniteUniverseFacts implements IFacts {
 			return result;
 		}
 
+		public boolean add(ITuple tuple, long timestamp) {
+			assert tuple != null;
+
+			boolean result = mChild.add(tuple, timestamp);
+
+			// If this is a tuple not seen before then it might have new terms
+			// in it.
+			if (!result)
+				addToUniverse(tuple);
+
+			return result;
+		}
+
 		public boolean addAll(IRelation relation) {
 			assert relation != null;
 
@@ -183,6 +213,20 @@ public class FiniteUniverseFacts implements IFacts {
 			for (int t = 0; t < relation.size(); ++t) {
 				ITuple tuple = relation.get(t);
 				if (add(tuple))
+					added = true;
+			}
+
+			return added;
+		}
+
+		public boolean addAll(IRelation relation, long timestamp) {
+			assert relation != null;
+
+			boolean added = false;
+
+			for (int t = 0; t < relation.size(); ++t) {
+				ITuple tuple = relation.get(t);
+				if (add(tuple, timestamp))
 					added = true;
 			}
 
@@ -209,6 +253,14 @@ public class FiniteUniverseFacts implements IFacts {
 		}
 
 		private final IRelation mChild;
+
+		@Override
+		public long getTimestamp(ITuple tuple) {
+			assert tuple != null;
+			assert mChild != null;
+
+			return mChild.getTimestamp(tuple);
+		}
 	}
 
 	public IRelation get(IPredicate predicate) {
@@ -279,22 +331,6 @@ public class FiniteUniverseFacts implements IFacts {
 		assert mFacts != null;
 		return mFacts.toString();
 	}
-
-	/** The underlying facts object. */
-	private final IFacts mFacts;
-
-	/** The predicate name that identifies the universe relation. */
-	private final IRelation mUniverse;
-
-	/**
-	 * The suffix to append to variables in rules in order to give them a
-	 * 'unique' value.
-	 */
-	private static final String UNIQUE_VARIABLE_SUFFIX = "_$UNIQUE$";
-
-	/** The universe predicate. */
-	public static final IPredicate UNIVERSE = Factory.BASIC.createPredicate(
-			"$UNIVERSE$", 1);
 
 	@Override
 	public void addFacts(Map<IPredicate, IRelation> newFacts, long timestamp) {

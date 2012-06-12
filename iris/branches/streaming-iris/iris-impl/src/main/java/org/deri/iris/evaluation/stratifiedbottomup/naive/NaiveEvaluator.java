@@ -35,25 +35,33 @@ import org.deri.iris.storage.IRelation;
 /**
  * Naive evaluation. see Ullman, Vol. 1
  */
-public class NaiveEvaluator implements IRuleEvaluator
-{
-	public void evaluateRules( List<ICompiledRule> rules, IFacts facts, Configuration configuration ) throws EvaluationException
-	{
+public class NaiveEvaluator implements IRuleEvaluator {
+	// private Logger logger = LoggerFactory.getLogger(getClass());
+
+	public void evaluateRules(List<ICompiledRule> rules, IFacts facts,
+			Configuration configuration, long timestamp)
+			throws EvaluationException {
 		boolean cont = true;
-		while( cont )
-		{
+		while (cont) {
 			cont = false;
-			
+
 			// For each rule in the collection (stratum)
-			for (final ICompiledRule rule : rules )
-			{
+			for (final ICompiledRule rule : rules) {
 				IRelation delta = rule.evaluate();
 
-				if( delta != null && delta.size() > 0 )
-				{
+				if (delta != null && delta.size() > 0) {
 					IPredicate predicate = rule.headPredicate();
-					if( facts.get( predicate ).addAll( delta ) )
+
+					if (facts.get(predicate).addAll(delta, timestamp))
 						cont = true;
+
+					// TODO logging
+					// if (logger.isDebugEnabled()) {
+					// for (int i = 0; i < delta.size(); i++) {
+					// logger.debug("Created fact [" + timestamp + "]: "
+					// + predicate + " " + delta.get(i));
+					// }
+					// }
 				}
 			}
 		}
