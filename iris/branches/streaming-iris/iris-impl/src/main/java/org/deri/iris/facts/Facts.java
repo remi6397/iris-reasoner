@@ -24,12 +24,14 @@ package org.deri.iris.facts;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.storage.IRelationFactory;
+import org.deri.iris.storage.simple.SimpleRelationFactory;
 
 /**
  * A manager for all facts stored in a knowledge-base.
@@ -109,6 +111,18 @@ public class Facts implements IFacts {
 
 	@Override
 	public void addFacts(Map<IPredicate, IRelation> newFacts, long timestamp) {
-		mPredicateRelationMap.putAll(newFacts);
+		for (Entry<IPredicate, IRelation> entry : newFacts.entrySet()) {
+			IPredicate predicate = entry.getKey();
+			IRelation relation = entry.getValue();
+			if (!mPredicateRelationMap.containsKey(predicate)) {
+				mPredicateRelationMap.put(predicate,
+						new SimpleRelationFactory().createRelation());
+				mPredicateRelationMap.get(predicate)
+						.addAll(relation, timestamp);
+			} else {
+				mPredicateRelationMap.get(predicate)
+						.addAll(relation, timestamp);
+			}
+		}
 	}
 }

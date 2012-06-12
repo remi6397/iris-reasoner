@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IPredicate;
@@ -42,6 +43,9 @@ import org.deri.iris.facts.FactsWithExternalData;
 import org.deri.iris.facts.IFacts;
 import org.deri.iris.rules.RuleManipulator;
 import org.deri.iris.storage.IRelation;
+import org.deri.iris.threads.ExecutionThread;
+import org.deri.iris.threads.GarbageCollectorThread;
+import org.deri.iris.threads.KnowledgeBaseServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +78,9 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 	/** The thread that starts the periodically execution of the queries. */
 	private ExecutionThread executionThread;
+
+	/** The thread that deletes obsolete facts from the knowledge-base. */
+	private GarbageCollectorThread garbageCollectorThread;
 
 	/**
 	 * Constructor.
@@ -141,12 +148,27 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 		}
 
+		// Store the configuration object against the current thread.
+		ConfigurationThreadLocalStorage.setConfiguration(mConfiguration);
+
+		// initialize the evaluation strategy with the updated facts.
+		if (mConfiguration.programOptmimisers.size() > 0)
+			mEvaluationStrategy = new OptimisedProgramStrategyAdaptor(mFacts,
+					mRules, mConfiguration);
+		else
+			mEvaluationStrategy = mConfiguration.evaluationStrategyFactory
+					.createEvaluator(mFacts, mRules, mConfiguration);
+
 		inputThread = new KnowledgeBaseServer(this, mConfiguration.inputPort);
 		inputThread.start();
 
 		executionThread = new ExecutionThread(this,
 				mConfiguration.executionIntervallMilliseconds);
 		executionThread.start();
+
+		garbageCollectorThread = new GarbageCollectorThread(this,
+				mConfiguration.executionIntervallMilliseconds);
+		garbageCollectorThread.start();
 	}
 
 	@Override
@@ -160,16 +182,49 @@ public class KnowledgeBase implements IKnowledgeBase {
 	}
 
 	@Override
-	public void addFacts(Map<IPredicate, IRelation> newFacts) {
-		long timestamp = System.currentTimeMillis();
+	public void addFacts(Map<IPredicate, IRelation> newFacts)
+			throws EvaluationException {
+		synchronized (mFacts) {
+			long timestamp = System.currentTimeMillis()
+					+ mConfiguration.timeWindowMilliseconds;
 
-		mFacts.addFacts(newFacts, timestamp);
+			mFacts.addFacts(newFacts, timestamp);
 
-		for (IPredicate f : newFacts.keySet()) {
-			IRelation relation = newFacts.get(f);
-			for (int i = 0; i < relation.size(); i++) {
-				ITuple tuple = relation.get(i);
-				logger.debug("Added fact: {} {}", f, tuple);
+			// // initialize the evaluation strategy with the updated facts.
+			// if (mConfiguration.programOptmimisers.size() > 0)
+			// mEvaluationStrategy = new OptimisedProgramStrategyAdaptor(mFacts,
+			// mRules, mConfiguration);
+			// else
+			// mEvaluationStrategy = mConfiguration.evaluationStrategyFactory
+			// .createEvaluator(mFacts, mRules, mConfiguration);
+
+			// TODO logging
+			// if (logger.isDebugEnabled()) {
+			// for (IPredicate f : newFacts.keySet()) {
+			// IRelation relation = newFacts.get(f);
+			// for (int i = 0; i < relation.size(); i++) {
+			// ITuple tuple = relation.get(i);
+			// logger.debug("Added fact [" + timestamp + "]: " + f + " "
+			// + tuple);
+			// }
+			// }
+			// }
+
+			// FIXME does only work with StratifiedBottomUpEvaluationStrategy
+			mEvaluationStrategy.evaluateRules(mFacts, timestamp);
+
+			// TODO logging
+			logger.debug("Current knowledge-base:");
+			logger.debug("-----------------------");
+			Set<IPredicate> predicates = mFacts.getPredicates();
+			for (IPredicate predicate : predicates) {
+				IRelation relation = mFacts.get(predicate);
+				for (int i = 0; i < relation.size(); i++) {
+					ITuple tuple = relation.get(i);
+					logger.debug("[" + relation.getTimestamp(tuple) + "]: "
+							+ predicate + " " + tuple);
+				}
+
 			}
 		}
 	}
@@ -192,17 +247,6 @@ public class KnowledgeBase implements IKnowledgeBase {
 		if (variableBindings == null)
 			variableBindings = new ArrayList<IVariable>();
 
-		// Store the configuration object against the current thread.
-		ConfigurationThreadLocalStorage.setConfiguration(mConfiguration);
-
-		// initialize the evaluation strategy with the updated facts.
-		if (mConfiguration.programOptmimisers.size() > 0)
-			mEvaluationStrategy = new OptimisedProgramStrategyAdaptor(mFacts,
-					mRules, mConfiguration);
-		else
-			mEvaluationStrategy = mConfiguration.evaluationStrategyFactory
-					.createEvaluator(mFacts, mRules, mConfiguration);
-
 		logger.debug("IRIS query");
 		logger.debug("==========");
 		logger.debug(query.toString());
@@ -221,17 +265,6 @@ public class KnowledgeBase implements IKnowledgeBase {
 	public void execute() {
 		try {
 			ArrayList<IVariable> variableBindings = new ArrayList<IVariable>();
-
-			// Store the configuration object against the current thread.
-			ConfigurationThreadLocalStorage.setConfiguration(mConfiguration);
-
-			// initialize the evaluation strategy with the updated facts.
-			if (mConfiguration.programOptmimisers.size() > 0)
-				mEvaluationStrategy = new OptimisedProgramStrategyAdaptor(
-						mFacts, mRules, mConfiguration);
-			else
-				mEvaluationStrategy = mConfiguration.evaluationStrategyFactory
-						.createEvaluator(mFacts, mRules, mConfiguration);
 
 			for (IQuery query : mQueries) {
 				IRelation result = mEvaluationStrategy.evaluateQuery(
@@ -291,7 +324,9 @@ public class KnowledgeBase implements IKnowledgeBase {
 		for (IRule rule : mRules)
 			result.append(rule.toString());
 
-		result.append(mFacts.toString());
+		synchronized (mFacts) {
+			result.append(mFacts.toString());
+		}
 
 		return result.toString();
 	}
@@ -304,5 +339,12 @@ public class KnowledgeBase implements IKnowledgeBase {
 		irisOutputStreamer.connect();
 		mIrisOutputStreamers.add(irisOutputStreamer);
 		logger.debug("Added listener [{}, {}]", host, port);
+	}
+
+	@Override
+	public void cleanKnowledgeBase() {
+		synchronized (mFacts) {
+			// FIXME implement
+		}
 	}
 }

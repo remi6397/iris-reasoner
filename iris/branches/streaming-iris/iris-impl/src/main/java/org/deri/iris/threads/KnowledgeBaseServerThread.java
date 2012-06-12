@@ -1,4 +1,4 @@
-package org.deri.iris;
+package org.deri.iris.threads;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Map;
 
+import org.deri.iris.EvaluationException;
+import org.deri.iris.KnowledgeBase;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.compiler.Parser;
 import org.deri.iris.compiler.ParserException;
@@ -70,6 +72,9 @@ public class KnowledgeBaseServerThread extends Thread {
 			e.printStackTrace();
 		} catch (ParserException e) {
 			logger.error("Parse exception occured!", e);
+			e.printStackTrace();
+		} catch (EvaluationException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

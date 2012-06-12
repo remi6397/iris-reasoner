@@ -1,0 +1,5 @@
+man('ned').
+hasDaughter('marge','lisa').
+hasDaughter('homer','maggie').
+hasSon('ned','todd').
+hasSon('ned','rod').

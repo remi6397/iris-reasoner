@@ -1,5 +1,6 @@
-package org.deri.iris;
+package org.deri.iris.threads;
 
+import org.deri.iris.KnowledgeBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

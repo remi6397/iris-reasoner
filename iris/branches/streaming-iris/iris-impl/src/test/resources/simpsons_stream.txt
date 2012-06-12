@@ -1,5 +1,6 @@
-man('ned').
-hasDaughter('marge','lisa').
-hasDaughter('homer','maggie').
-hasSon('ned','todd').
-hasSon('ned','rod').
+woman('maude').
+hasSon('maude','todd').
+hasSon('maude','rod').
+
+man('abraham').
+hasSon('abraham','homer').

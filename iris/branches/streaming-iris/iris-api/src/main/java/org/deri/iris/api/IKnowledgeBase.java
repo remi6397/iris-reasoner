@@ -120,8 +120,10 @@ public interface IKnowledgeBase {
 	 * 
 	 * @param newFacts
 	 *            The new facts to be added
+	 * @throws EvaluationException
 	 */
-	void addFacts(Map<IPredicate, IRelation> newFacts);
+	void addFacts(Map<IPredicate, IRelation> newFacts)
+			throws EvaluationException;
 
 	/**
 	 * Adds a listener (socket) to the knowledge base who will receive the
@@ -138,4 +140,9 @@ public interface IKnowledgeBase {
 	 * Shuts down the Knowledge Base and terminates all corresponding threads.
 	 */
 	void shutdown();
+
+	/**
+	 * Deletes obsolete facts from the knowledge base.
+	 */
+	void cleanKnowledgeBase();
 }

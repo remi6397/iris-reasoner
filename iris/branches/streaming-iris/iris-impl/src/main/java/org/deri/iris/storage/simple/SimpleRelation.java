@@ -22,8 +22,6 @@
  */
 package org.deri.iris.storage.simple;
 
-import java.util.List;
-
 import org.deri.iris.api.basics.ITuple;
 import org.deri.iris.storage.IRelation;
 import org.deri.iris.utils.UniqueList;
@@ -31,58 +29,74 @@ import org.deri.iris.utils.UniqueList;
 /**
  * A simple, in-memory, array-based relation.
  */
-public class SimpleRelation implements IRelation
-{
+public class SimpleRelation implements IRelation {
+
+	/** The array list (or unique list) of tuples. */
+	private final UniqueList<ITuple> mTuples;
+
 	/**
-	 * Constructor.
-	 * For performance reasons where the user of the class can enforce uniqueness
-	 * (or does not require it), uniqueness enforcement can be turned off.
-	 * @param forceUniqueness true, if this object should enforce uniqueness.
+	 * Constructor. For performance reasons where the user of the class can
+	 * enforce uniqueness (or does not require it), uniqueness enforcement can
+	 * be turned off.
+	 * 
+	 * @param forceUniqueness
+	 *            true, if this object should enforce uniqueness.
 	 */
-	SimpleRelation()
-	{
+	SimpleRelation() {
 		mTuples = new UniqueList<ITuple>();
 	}
 
-	public boolean add( ITuple tuple )
-	{
-		assert mTuples.isEmpty() || ( mTuples.get( 0 ).size() == tuple.size() );
-		
-		return mTuples.add( tuple );
+	public boolean add(ITuple tuple) {
+		assert mTuples.isEmpty() || (mTuples.get(0).size() == tuple.size());
+
+		return mTuples.add(tuple);
 	}
 
-	public boolean addAll( IRelation relation )
-	{
+	public boolean add(ITuple tuple, long timestamp) {
+		assert mTuples.isEmpty() || (mTuples.get(0).size() == tuple.size());
+
+		return mTuples.add(tuple, timestamp);
+	}
+
+	public boolean addAll(IRelation relation) {
 		boolean added = false;
-		
-		for( int i = 0; i < relation.size(); ++i )
-			if( add( relation.get( i ) ) )
+
+		for (int i = 0; i < relation.size(); ++i)
+			if (add(relation.get(i)))
 				added = true;
-		
+
 		return added;
 	}
 
-	public ITuple get( int index )
-	{
-		return mTuples.get( index );
+	public boolean addAll(IRelation relation, long timestamp) {
+		boolean added = false;
+
+		for (int i = 0; i < relation.size(); ++i)
+			if (add(relation.get(i), timestamp))
+				added = true;
+
+		return added;
 	}
 
-	public int size()
-	{
+	public ITuple get(int index) {
+		return mTuples.get(index);
+	}
+
+	public int size() {
 		return mTuples.size();
 	}
-	
-	public boolean contains( ITuple tuple )
-	{
-		return mTuples.contains( tuple );
+
+	public boolean contains(ITuple tuple) {
+		return mTuples.contains(tuple);
 	}
 
 	@Override
-    public String toString()
-    {
+	public String toString() {
 		return mTuples.toString();
-    }
+	}
 
-	/** The array list (or unique list) of tuples. */
-	private final List<ITuple> mTuples;
+	@Override
+	public long getTimestamp(ITuple tuple) {
+		return mTuples.getTimestamp(tuple);
+	}
 }

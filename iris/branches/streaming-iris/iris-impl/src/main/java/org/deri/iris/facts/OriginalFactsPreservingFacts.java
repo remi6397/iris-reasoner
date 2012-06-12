@@ -101,10 +101,27 @@ public class OriginalFactsPreservingFacts implements IFacts {
 			return mAddedFacts.add(tuple);
 		}
 
+		public boolean add(ITuple tuple, long timestamp) {
+			if (mOriginal.contains(tuple))
+				return false;
+
+			return mAddedFacts.add(tuple, timestamp);
+		}
+
 		public boolean addAll(IRelation relation) {
 			boolean changed = false;
 			for (int t = 0; t < relation.size(); ++t) {
 				if (add(relation.get(t)))
+					changed = true;
+			}
+
+			return changed;
+		}
+
+		public boolean addAll(IRelation relation, long timestamp) {
+			boolean changed = false;
+			for (int t = 0; t < relation.size(); ++t) {
+				if (add(relation.get(t), timestamp))
 					changed = true;
 			}
 
@@ -129,6 +146,16 @@ public class OriginalFactsPreservingFacts implements IFacts {
 		@Override
 		public String toString() {
 			return mOriginal.toString() + mAddedFacts.toString();
+		}
+
+		@Override
+		public long getTimestamp(ITuple tuple) {
+			long timestamp = mOriginal.getTimestamp(tuple);
+			if (timestamp != -1) {
+				return timestamp;
+			} else {
+				return mAddedFacts.getTimestamp(tuple);
+			}
 		}
 
 		private final IRelation mOriginal;

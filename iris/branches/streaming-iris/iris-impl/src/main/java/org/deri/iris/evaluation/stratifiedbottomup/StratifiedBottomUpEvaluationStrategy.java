@@ -61,23 +61,21 @@ public class StratifiedBottomUpEvaluationStrategy implements
 		if (mConfiguration.ruleSafetyProcessor instanceof AugmentingRuleSafetyProcessor)
 			facts = new FiniteUniverseFacts(facts, allRules);
 
-		EvaluationUtilities utils = new EvaluationUtilities(mConfiguration);
+		utils = new EvaluationUtilities(mConfiguration);
 
 		// Rule safety processing
 		List<IRule> safeRules = utils.applyRuleSafetyProcessor(allRules);
 
-		// Stratify
-		List<List<IRule>> stratifiedRules = utils.stratify(safeRules);
+		stratifiedRules = utils.stratify(safeRules);
 
-		RuleCompiler rc = new RuleCompiler(facts, mEquivalentTerms,
-				mConfiguration);
+		rc = new RuleCompiler(facts, mEquivalentTerms, mConfiguration);
 
 		int stratumNumber = 0;
 		for (List<IRule> stratum : stratifiedRules) {
 			// Re-order stratum
 			List<IRule> reorderedRules = utils.reOrderRules(stratum);
 
-			// Rule optimisation
+			// Rule optimization
 			List<IRule> optimisedRules = utils
 					.applyRuleOptimisers(reorderedRules);
 
@@ -88,11 +86,42 @@ public class StratifiedBottomUpEvaluationStrategy implements
 			}
 
 			// TODO Enable rule head equality support for semi-naive evaluation.
-			// Choose the correct evaluation technique for the specified rules and stratum.
+			// Choose the correct evaluation technique for the specified rules
+			// and stratum.
 			IRuleEvaluator evaluator = chooseEvaluator(stratumNumber,
 					optimisedRules, mRuleEvaluatorFactory);
 
-			evaluator.evaluateRules(compiledRules, facts, configuration);
+			evaluator.evaluateRules(compiledRules, facts, configuration, 0);
+
+			stratumNumber++;
+		}
+	}
+
+	public void evaluateRules(IFacts facts, long timestamp)
+			throws EvaluationException {
+		int stratumNumber = 0;
+		for (List<IRule> stratum : stratifiedRules) {
+			// Re-order stratum
+			List<IRule> reorderedRules = utils.reOrderRules(stratum);
+
+			// Rule optimization
+			List<IRule> optimisedRules = utils
+					.applyRuleOptimisers(reorderedRules);
+
+			List<ICompiledRule> compiledRules = new ArrayList<ICompiledRule>();
+
+			for (IRule rule : optimisedRules) {
+				compiledRules.add(rc.compile(rule));
+			}
+
+			// TODO Enable rule head equality support for semi-naive evaluation.
+			// Choose the correct evaluation technique for the specified rules
+			// and stratum.
+			IRuleEvaluator evaluator = chooseEvaluator(stratumNumber,
+					optimisedRules, mRuleEvaluatorFactory);
+
+			evaluator.evaluateRules(compiledRules, facts, mConfiguration,
+					timestamp);
 
 			stratumNumber++;
 		}
@@ -142,4 +171,10 @@ public class StratifiedBottomUpEvaluationStrategy implements
 	protected final IFacts mFacts;
 
 	protected final IRuleEvaluatorFactory mRuleEvaluatorFactory;
+
+	private RuleCompiler rc;
+
+	private List<List<IRule>> stratifiedRules;
+
+	private EvaluationUtilities utils;
 }
