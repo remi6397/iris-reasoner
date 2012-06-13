@@ -162,13 +162,13 @@ public class KnowledgeBase implements IKnowledgeBase {
 		inputThread = new KnowledgeBaseServer(this, mConfiguration.inputPort);
 		inputThread.start();
 
-		executionThread = new ExecutionThread(this,
-				mConfiguration.executionIntervallMilliseconds);
-		executionThread.start();
-
 		garbageCollectorThread = new GarbageCollectorThread(this,
 				mConfiguration.executionIntervallMilliseconds);
 		garbageCollectorThread.start();
+
+		executionThread = new ExecutionThread(this,
+				mConfiguration.executionIntervallMilliseconds);
+		executionThread.start();
 	}
 
 	@Override
@@ -179,7 +179,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 		for (IIrisOutputStreamer streamer : mIrisOutputStreamers) {
 			streamer.shutdown();
 		}
-		logger.debug("Knowledge-Base shut down!");
+		logger.info("Knowledge-Base shut down!");
 	}
 
 	@Override
@@ -191,43 +191,33 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 			mFacts.addFacts(newFacts, timestamp);
 
-			// // initialize the evaluation strategy with the updated facts.
-			// if (mConfiguration.programOptmimisers.size() > 0)
-			// mEvaluationStrategy = new OptimisedProgramStrategyAdaptor(mFacts,
-			// mRules, mConfiguration);
-			// else
-			// mEvaluationStrategy = mConfiguration.evaluationStrategyFactory
-			// .createEvaluator(mFacts, mRules, mConfiguration);
-
-			// TODO Norbert: logging
-			// if (logger.isDebugEnabled()) {
-			// for (IPredicate f : newFacts.keySet()) {
-			// IRelation relation = newFacts.get(f);
-			// for (int i = 0; i < relation.size(); i++) {
-			// ITuple tuple = relation.get(i);
-			// logger.debug("Added fact [" + timestamp + "]: " + f + " "
-			// + tuple);
-			// }
-			// }
-			// }
+			Set<IPredicate> predicates = newFacts.keySet();
+			for (IPredicate predicate : predicates) {
+				IRelation relation = newFacts.get(predicate);
+				for (int i = 0; i < relation.size(); i++) {
+					ITuple tuple = relation.get(i);
+					logger.debug("Added [" + timestamp + "]: " + predicate
+							+ " " + tuple);
+				}
+			}
 
 			// FIXME Norbert: does only work with
 			// StratifiedBottomUpEvaluationStrategy
 			mEvaluationStrategy.evaluateRules(mFacts, timestamp);
 
 			// TODO Norbert: logging
-			logger.debug("Current knowledge-base:");
-			logger.debug("-----------------------");
-			Set<IPredicate> predicates = mFacts.getPredicates();
-			for (IPredicate predicate : predicates) {
-				IRelation relation = mFacts.get(predicate);
-				for (int i = 0; i < relation.size(); i++) {
-					ITuple tuple = relation.get(i);
-					logger.debug("[" + relation.getTimestamp(tuple) + "]: "
-							+ predicate + " " + tuple);
-				}
-
-			}
+			// logger.debug("Current knowledge-base:");
+			// logger.debug("-----------------------");
+			// Set<IPredicate> predicates = mFacts.getPredicates();
+			// for (IPredicate predicate : predicates) {
+			// IRelation relation = mFacts.get(predicate);
+			// for (int i = 0; i < relation.size(); i++) {
+			// ITuple tuple = relation.get(i);
+			// logger.debug("[" + relation.getTimestamp(tuple) + "]: "
+			// + predicate + " " + tuple);
+			// }
+			//
+			// }
 		}
 	}
 
@@ -287,16 +277,21 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 	@Override
 	public void registerQuery(IQuery query) throws EvaluationException {
-		mQueries.add(query);
-		logger.debug("Query registered: {}", query);
-		// execute();
+		synchronized (mQueries) {
+			mQueries.add(query);
+		}
+		logger.info("Query registered: {}", query);
 	}
 
 	@Override
 	public void deregisterQuery(IQuery query) {
-		if (mQueries.contains(query)) {
-			mQueries.remove(query);
-			logger.debug("Query deregistered: {}", query);
+		synchronized (mQueries) {
+			if (mQueries.contains(query)) {
+				mQueries.remove(query);
+				logger.info("Query deregistered: {}", query);
+			} else {
+				logger.info("Query does not exist!");
+			}
 		}
 	}
 
@@ -340,7 +335,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 				port);
 		irisOutputStreamer.connect();
 		mIrisOutputStreamers.add(irisOutputStreamer);
-		logger.debug("Added listener [{}, {}]", host, port);
+		logger.info("Added listener [{}, {}]", host, port);
 	}
 
 	@Override
@@ -359,18 +354,18 @@ public class KnowledgeBase implements IKnowledgeBase {
 			}
 
 			// TODO Norbert: logging
-			logger.debug("Current knowledge-base [{}]:", currentTime);
-			logger.debug("----------------------------");
-			Set<IPredicate> predicates = mFacts.getPredicates();
-			for (IPredicate predicate : predicates) {
-				IRelation relation = mFacts.get(predicate);
-				for (int i = 0; i < relation.size(); i++) {
-					ITuple tuple = relation.get(i);
-					logger.debug("[" + relation.getTimestamp(tuple) + "]: "
-							+ predicate + " " + tuple);
-				}
-
-			}
+			// logger.debug("Current knowledge-base [{}]:", currentTime);
+			// logger.debug("----------------------------");
+			// Set<IPredicate> predicates = mFacts.getPredicates();
+			// for (IPredicate predicate : predicates) {
+			// IRelation relation = mFacts.get(predicate);
+			// for (int i = 0; i < relation.size(); i++) {
+			// ITuple tuple = relation.get(i);
+			// logger.debug("[" + relation.getTimestamp(tuple) + "]: "
+			// + predicate + " " + tuple);
+			// }
+			//
+			// }
 		}
 	}
 }
