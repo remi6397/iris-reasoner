@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import junit.framework.Assert;
+
 import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IPredicate;
 import org.deri.iris.api.basics.IQuery;
@@ -71,10 +73,10 @@ public class KnowledgeBase implements IKnowledgeBase {
 	private List<IQuery> mQueries;
 
 	/** The sockets to output the results of the executed queries. */
-	private List<IIrisOutputStreamer> mIrisOutputStreamers;
+	private Map<HostPortPair, IIrisOutputStreamer> mIrisOutputStreamers;
 
 	/** The thread that handles incoming facts. */
-	private KnowledgeBaseServer inputThread;
+	private KnowledgeBaseServer inputServerThread;
 
 	/** The thread that starts the periodically execution of the queries. */
 	private ExecutionThread executionThread;
@@ -98,7 +100,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 			List<IRule> rules, Configuration configuration)
 			throws EvaluationException {
 		mQueries = new ArrayList<IQuery>();
-		mIrisOutputStreamers = new ArrayList<IIrisOutputStreamer>();
+		mIrisOutputStreamers = new HashMap<HostPortPair, IIrisOutputStreamer>();
 
 		if (inputFacts == null)
 			inputFacts = new HashMap<IPredicate, IRelation>();
@@ -159,8 +161,9 @@ public class KnowledgeBase implements IKnowledgeBase {
 			mEvaluationStrategy = mConfiguration.evaluationStrategyFactory
 					.createEvaluator(mFacts, mRules, mConfiguration);
 
-		inputThread = new KnowledgeBaseServer(this, mConfiguration.inputPort);
-		inputThread.start();
+		inputServerThread = new KnowledgeBaseServer(this,
+				mConfiguration.inputPort);
+		inputServerThread.start();
 
 		garbageCollectorThread = new GarbageCollectorThread(this,
 				mConfiguration.executionIntervallMilliseconds);
@@ -173,13 +176,13 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 	@Override
 	public void shutdown() {
-		inputThread.shutdown();
+		logger.info("Knowledge-Base shutting down ...");
+		Assert.assertTrue(inputServerThread.shutdown());
 		executionThread.interrupt();
 		garbageCollectorThread.interrupt();
-		for (IIrisOutputStreamer streamer : mIrisOutputStreamers) {
-			streamer.shutdown();
+		for (IIrisOutputStreamer streamer : mIrisOutputStreamers.values()) {
+			Assert.assertTrue(streamer.shutdown());
 		}
-		logger.info("Knowledge-Base shut down!");
 	}
 
 	@Override
@@ -302,7 +305,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 	 *            The results of the query.
 	 */
 	private void sendResults(String results) {
-		for (IIrisOutputStreamer streamer : mIrisOutputStreamers) {
+		for (IIrisOutputStreamer streamer : mIrisOutputStreamers.values()) {
 			streamer.stream(results);
 		}
 	}
@@ -334,8 +337,21 @@ public class KnowledgeBase implements IKnowledgeBase {
 		IIrisOutputStreamer irisOutputStreamer = new IrisOutputStreamer(host,
 				port);
 		irisOutputStreamer.connect();
-		mIrisOutputStreamers.add(irisOutputStreamer);
+		mIrisOutputStreamers.put(new HostPortPair(host, port),
+				irisOutputStreamer);
 		logger.info("Added listener [{}, {}]", host, port);
+	}
+
+	@Override
+	public void deleteListener(String host, int port) {
+		HostPortPair pair = new HostPortPair(host, port);
+		for (HostPortPair entry : mIrisOutputStreamers.keySet()) {
+			if (pair.equals(entry)) {
+				mIrisOutputStreamers.get(entry).shutdown();
+				logger.info("Deleted listener [{}, {}]", host, port);
+				break;
+			}
+		}
 	}
 
 	@Override

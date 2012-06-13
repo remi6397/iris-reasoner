@@ -56,33 +56,31 @@ import org.deri.iris.storage.simple.SimpleRelationFactory;
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @date   10.05.2007 10:23:07
+ * @date 10.05.2007 10:23:07
  */
 public class MultiplyBuiltinEvaluationTest extends TestCase {
 
 	public static Test suite() {
-		return new TestSuite(MultiplyBuiltinEvaluationTest.class, MultiplyBuiltinEvaluationTest.class
-				.getSimpleName());
+		return new TestSuite(MultiplyBuiltinEvaluationTest.class,
+				MultiplyBuiltinEvaluationTest.class.getSimpleName());
 	}
 
-	public void testEvaluate0() throws Exception{
+	public void testEvaluate0() throws Exception {
 		// constructing the rules
 		List<IRule> rules = new ArrayList<IRule>(1);
 		// p(?S,?K) :- p1(?S,?I), less(?I, 10), multiply(?I,?I,?K), p2(?S).
 		List<ILiteral> h = Arrays.asList(createLiteral("p", "S", "K"));
-		List<ILiteral> b = Arrays.asList(
-				createLiteral("p1", "S", "I"),
-				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
-				createLess(
-						TERM.createVariable("I"),
-						CONCRETE.createInteger(10))),
-				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
-						createMultiplyBuiltin(
+		List<ILiteral> b = Arrays.asList(createLiteral("p1", "S", "I"),
+				Factory.BASIC.createLiteral(true, Factory.BUILTIN.createLess(
+						TERM.createVariable("I"), CONCRETE.createInteger(10))),
+				Factory.BASIC.createLiteral(
+						true,
+						Factory.BUILTIN.createMultiplyBuiltin(
 								TERM.createVariable("I"),
 								TERM.createVariable("I"),
 								TERM.createVariable("K"))),
 				createLiteral("p2", "S"));
-		
+
 		IRule r = Factory.BASIC.createRule(h, b);
 		rules.add(r);
 
@@ -91,10 +89,14 @@ public class MultiplyBuiltinEvaluationTest extends TestCase {
 		// p1(a,1), p1(b,2), p1(c,3), p1(d,12)
 		IPredicate p = Factory.BASIC.createPredicate("p1", 2);
 		IRelation rel = new SimpleRelationFactory().createRelation();
-		rel.add(BASIC.createTuple(TERM.createString("a"), CONCRETE.createInteger(1)));
-		rel.add(BASIC.createTuple(TERM.createString("b"), CONCRETE.createInteger(2)));
-		rel.add(BASIC.createTuple(TERM.createString("c"), CONCRETE.createInteger(3)));
-		rel.add(BASIC.createTuple(TERM.createString("d"), CONCRETE.createInteger(12)));
+		rel.add(BASIC.createTuple(TERM.createString("a"),
+				CONCRETE.createInteger(1)));
+		rel.add(BASIC.createTuple(TERM.createString("b"),
+				CONCRETE.createInteger(2)));
+		rel.add(BASIC.createTuple(TERM.createString("c"),
+				CONCRETE.createInteger(3)));
+		rel.add(BASIC.createTuple(TERM.createString("d"),
+				CONCRETE.createInteger(12)));
 		facts.put(p, rel);
 
 		// p2(b)
@@ -102,21 +104,25 @@ public class MultiplyBuiltinEvaluationTest extends TestCase {
 		rel = new SimpleRelationFactory().createRelation();
 		rel.add(BASIC.createTuple(TERM.createString("b")));
 		facts.put(p, rel);
-		
+
 		// p(?S,?K)
 		IQuery q = Factory.BASIC.createQuery(createLiteral("p", "S", "K"));
 		Set<IQuery> queries = new HashSet<IQuery>(1);
 		queries.add(q);
-		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
-		
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase(
+				facts, rules);
+
 		// Result: p(b,4)
 		IRelation res = new SimpleRelationFactory().createRelation();
-		res.add(BASIC.createTuple(TERM.createString("b"), CONCRETE.createInteger(4)));
-		
+		res.add(BASIC.createTuple(TERM.createString("b"),
+				CONCRETE.createInteger(4)));
+
 		System.out.println("******** TEST 0: ********");
 		ExecutionHelper.executeTest(pr, q, res);
+
+		pr.shutdown();
 	}
-	
+
 	/**
 	 * Creates a positive literal out of a predicate name and a set of variable
 	 * strings.
@@ -148,9 +154,9 @@ public class MultiplyBuiltinEvaluationTest extends TestCase {
 			throw new NullPointerException("The vars must not contain null");
 		}
 
-		return BASIC.createLiteral(true, BASIC.createPredicate(pred,
-				vars.length), BASIC.createTuple(new ArrayList<ITerm>(
-				createVarList(vars))));
+		return BASIC.createLiteral(true,
+				BASIC.createPredicate(pred, vars.length),
+				BASIC.createTuple(new ArrayList<ITerm>(createVarList(vars))));
 	}
 
 	/**

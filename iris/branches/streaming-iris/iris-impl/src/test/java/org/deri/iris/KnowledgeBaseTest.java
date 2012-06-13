@@ -18,12 +18,10 @@ import org.deri.iris.compiler.ParserException;
 import org.deri.iris.storage.IRelation;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Ignore
 public class KnowledgeBaseTest {
 
 	private IKnowledgeBase knowledgeBase = null;
@@ -108,8 +106,6 @@ public class KnowledgeBaseTest {
 		knowledgeBase.addListener("localhost", server.getLocalPort());
 
 		testRegisterQuery();
-
-		listenerThread.interrupt();
 	}
 
 	@Test

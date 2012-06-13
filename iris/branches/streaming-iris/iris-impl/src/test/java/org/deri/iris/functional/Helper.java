@@ -205,6 +205,8 @@ public class Helper {
 
 		timer.show(evaluationName + " evaluation");
 
+		kb.shutdown();
+
 		checkResults(expected, actualResults);
 	}
 
@@ -360,6 +362,8 @@ public class Helper {
 					rules, configuration);
 
 			kb.execute(query, null);
+
+			kb.shutdown();
 
 			Assert.fail(evaluation
 					+ " evaluation did not throw the correct exception.");

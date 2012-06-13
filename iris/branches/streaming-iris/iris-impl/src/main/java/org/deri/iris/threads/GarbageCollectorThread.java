@@ -17,14 +17,15 @@ public class GarbageCollectorThread extends Thread {
 	}
 
 	public void run() {
-		try {
-			while (true) {
+		while (!Thread.interrupted()) {
+			try {
 				Thread.sleep(garbageCollectionIntervall);
-				logger.debug("Garbage collector ...");
-				knowledgeBase.cleanKnowledgeBase();
+			} catch (InterruptedException e) {
+				break;
 			}
-		} catch (InterruptedException e) {
-			logger.debug("Garbage collector thread shut down!");
+			logger.debug("Garbage collector ...");
+			knowledgeBase.cleanKnowledgeBase();
 		}
+		logger.debug("Garbage collector thread shut down!");
 	}
 }

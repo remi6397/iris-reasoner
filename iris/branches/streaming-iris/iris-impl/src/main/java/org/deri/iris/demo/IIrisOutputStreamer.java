@@ -18,6 +18,6 @@ public interface IIrisOutputStreamer {
 	/**
 	 * Shutdown the output streamer.
 	 */
-	public abstract void shutdown();
+	public abstract boolean shutdown();
 
 }

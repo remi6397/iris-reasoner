@@ -17,13 +17,14 @@ public class ExecutionThread extends Thread {
 	}
 
 	public void run() {
-		try {
-			while (true) {
+		while (!Thread.interrupted()) {
+			try {
 				Thread.sleep(executionIntervall);
-				knowledgeBase.execute();
+			} catch (InterruptedException e) {
+				break;
 			}
-		} catch (InterruptedException e) {
-			logger.debug("Execution thread shut down!");
+			knowledgeBase.execute();
 		}
+		logger.debug("Execution thread shut down!");
 	}
 }

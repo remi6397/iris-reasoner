@@ -55,28 +55,25 @@ import org.deri.iris.storage.simple.SimpleRelationFactory;
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @date   04.05.2007 12:416:07
+ * @date 04.05.2007 12:416:07
  */
 
 public class EqualBuiltinEvaluationTest extends TestCase {
 	public static Test suite() {
-		return new TestSuite(EqualBuiltinEvaluationTest.class, EqualBuiltinEvaluationTest.class
-				.getSimpleName());
+		return new TestSuite(EqualBuiltinEvaluationTest.class,
+				EqualBuiltinEvaluationTest.class.getSimpleName());
 	}
 
-	public void testEvaluate0() throws Exception{
+	public void testEvaluate0() throws Exception {
 		// constructing the rules
 		List<IRule> rules = new ArrayList<IRule>(3);
-		
+
 		// p(U,V,W) :- r(V,W), EQ(U, 'a').
 		List<ILiteral> h = Arrays.asList(createLiteral("p", "U", "V", "W"));
-		List<ILiteral> b = Arrays.asList(
-				createLiteral("r", "V", "W"),
-				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
-					createEqual(
-						TERM.createVariable("U"),
-						TERM.createString("a"))));
-		
+		List<ILiteral> b = Arrays.asList(createLiteral("r", "V", "W"),
+				Factory.BASIC.createLiteral(true, Factory.BUILTIN.createEqual(
+						TERM.createVariable("U"), TERM.createString("a"))));
+
 		IRule r = Factory.BASIC.createRule(h, b);
 		rules.add(r);
 
@@ -85,37 +82,41 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		// r(b,b), r(c,c).
 		IPredicate p = Factory.BASIC.createPredicate("r", 2);
 		IRelation rel = new SimpleRelationFactory().createRelation();
-		rel.add(BASIC.createTuple(TERM.createString("b"),TERM.createString("b")));
-		rel.add(BASIC.createTuple(TERM.createString("c"),TERM.createString("c")));
+		rel.add(BASIC.createTuple(TERM.createString("b"),
+				TERM.createString("b")));
+		rel.add(BASIC.createTuple(TERM.createString("c"),
+				TERM.createString("c")));
 		facts.put(p, rel);
 
 		IQuery q = Factory.BASIC.createQuery(createLiteral("p", "U", "V", "W"));
 		Set<IQuery> queries = new HashSet<IQuery>(1);
 		queries.add(q);
-		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
-		
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase(
+				facts, rules);
+
 		// Result: p(b,b,a),p(c,c,a)
 		IRelation res = new SimpleRelationFactory().createRelation();
-		res.add(BASIC.createTuple(TERM.createString("a"),TERM.createString("b"),TERM.createString("b")));
-		res.add(BASIC.createTuple(TERM.createString("a"),TERM.createString("c"),TERM.createString("c")));
-		
+		res.add(BASIC.createTuple(TERM.createString("a"),
+				TERM.createString("b"), TERM.createString("b")));
+		res.add(BASIC.createTuple(TERM.createString("a"),
+				TERM.createString("c"), TERM.createString("c")));
+
 		System.out.println("******** TEST 0: ********");
 		ExecutionHelper.executeTest(pr, q, res);
+
+		pr.shutdown();
 	}
-	
-	public void testEvaluate1() throws Exception{
+
+	public void testEvaluate1() throws Exception {
 		// constructing the rules
 		List<IRule> rules = new ArrayList<IRule>(3);
-		
+
 		// p(U,V,W) :- r(V,W), EQ(W, U).
 		List<ILiteral> h = Arrays.asList(createLiteral("p", "U", "V", "W"));
-		List<ILiteral> b = Arrays.asList(
-				createLiteral("r", "V", "W"),
-				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
-					createEqual(
-						TERM.createVariable("W"),
-						TERM.createVariable("U"))));
-		
+		List<ILiteral> b = Arrays.asList(createLiteral("r", "V", "W"),
+				Factory.BASIC.createLiteral(true, Factory.BUILTIN.createEqual(
+						TERM.createVariable("W"), TERM.createVariable("U"))));
+
 		IRule r = Factory.BASIC.createRule(h, b);
 		rules.add(r);
 
@@ -124,37 +125,41 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		// r(b,b), r(c,c).
 		IPredicate p = Factory.BASIC.createPredicate("r", 2);
 		IRelation rel = new SimpleRelationFactory().createRelation();
-		rel.add(BASIC.createTuple(TERM.createString("b"),TERM.createString("b")));
-		rel.add(BASIC.createTuple(TERM.createString("c"),TERM.createString("c")));
+		rel.add(BASIC.createTuple(TERM.createString("b"),
+				TERM.createString("b")));
+		rel.add(BASIC.createTuple(TERM.createString("c"),
+				TERM.createString("c")));
 		facts.put(p, rel);
 
 		IQuery q = Factory.BASIC.createQuery(createLiteral("p", "U", "V", "W"));
 		Set<IQuery> queries = new HashSet<IQuery>(1);
 		queries.add(q);
-		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
-		
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase(
+				facts, rules);
+
 		// Result: p(b,b,b),p(c,c,c)
 		IRelation res = new SimpleRelationFactory().createRelation();
-		res.add(BASIC.createTuple(TERM.createString("b"),TERM.createString("b"),TERM.createString("b")));
-		res.add(BASIC.createTuple(TERM.createString("c"),TERM.createString("c"),TERM.createString("c")));
-		
+		res.add(BASIC.createTuple(TERM.createString("b"),
+				TERM.createString("b"), TERM.createString("b")));
+		res.add(BASIC.createTuple(TERM.createString("c"),
+				TERM.createString("c"), TERM.createString("c")));
+
 		System.out.println("******** TEST 1: ********");
 		ExecutionHelper.executeTest(pr, q, res);
+
+		pr.shutdown();
 	}
-	
-	public void testEvaluate2() throws Exception{
+
+	public void testEvaluate2() throws Exception {
 		// constructing the rules
 		List<IRule> rules = new ArrayList<IRule>(3);
-		
+
 		// p(V,W) :- r(V,W), EQ('a', V).
 		List<ILiteral> h = Arrays.asList(createLiteral("p", "V", "W"));
-		List<ILiteral> b = Arrays.asList(
-				createLiteral("r", "V", "W"),
-				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
-					createEqual(
-							TERM.createString("a"),
-							TERM.createVariable("V"))));
-		
+		List<ILiteral> b = Arrays.asList(createLiteral("r", "V", "W"),
+				Factory.BASIC.createLiteral(true, Factory.BUILTIN.createEqual(
+						TERM.createString("a"), TERM.createVariable("V"))));
+
 		IRule r = Factory.BASIC.createRule(h, b);
 		rules.add(r);
 
@@ -163,24 +168,31 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		// r(a,a), r(b,b), r(c,c).
 		IPredicate p = Factory.BASIC.createPredicate("r", 2);
 		IRelation rel = new SimpleRelationFactory().createRelation();
-		rel.add(BASIC.createTuple(TERM.createString("a"),TERM.createString("a")));
-		rel.add(BASIC.createTuple(TERM.createString("b"),TERM.createString("b")));
-		rel.add(BASIC.createTuple(TERM.createString("c"),TERM.createString("c")));
+		rel.add(BASIC.createTuple(TERM.createString("a"),
+				TERM.createString("a")));
+		rel.add(BASIC.createTuple(TERM.createString("b"),
+				TERM.createString("b")));
+		rel.add(BASIC.createTuple(TERM.createString("c"),
+				TERM.createString("c")));
 		facts.put(p, rel);
 
 		IQuery q = Factory.BASIC.createQuery(createLiteral("p", "V", "W"));
 		Set<IQuery> queries = new HashSet<IQuery>(1);
 		queries.add(q);
-		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
-		
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase(
+				facts, rules);
+
 		// Result: p(a,a)
 		IRelation res = new SimpleRelationFactory().createRelation();
-		res.add(BASIC.createTuple(TERM.createString("a"),TERM.createString("a")));
-		
+		res.add(BASIC.createTuple(TERM.createString("a"),
+				TERM.createString("a")));
+
 		System.out.println("******** TEST 2: ********");
 		ExecutionHelper.executeTest(pr, q, res);
+
+		pr.shutdown();
 	}
-	
+
 	/**
 	 * Creates a positive literal out of a predicate name and a set of variable
 	 * strings.
@@ -212,9 +224,9 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 			throw new NullPointerException("The vars must not contain null");
 		}
 
-		return BASIC.createLiteral(true, BASIC.createPredicate(pred,
-				vars.length), BASIC.createTuple(new ArrayList<ITerm>(
-				createVarList(vars))));
+		return BASIC.createLiteral(true,
+				BASIC.createPredicate(pred, vars.length),
+				BASIC.createTuple(new ArrayList<ITerm>(createVarList(vars))));
 	}
 
 	/**
@@ -238,4 +250,3 @@ public class EqualBuiltinEvaluationTest extends TestCase {
 		return v;
 	}
 }
-

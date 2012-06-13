@@ -129,6 +129,8 @@ public class PerformanceHarness {
 			mKB.execute(query);
 			elapsedTime += System.currentTimeMillis();
 
+			mKB.shutdown();
+
 			return elapsedTime;
 		}
 

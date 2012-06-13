@@ -107,7 +107,8 @@ public class IrisOutputStreamer implements IIrisOutputStreamer {
 	 * @see org.deri.iris.demo.IIrisOutputStreamer#shutdown()
 	 */
 	@Override
-	public void shutdown() {
+	public boolean shutdown() {
+		boolean result;
 		try {
 			streamWriter.close();
 			socket.close();
@@ -115,6 +116,9 @@ public class IrisOutputStreamer implements IIrisOutputStreamer {
 		} catch (IOException e) {
 			logger.error("IO exception occured!", e);
 			e.printStackTrace();
+		} finally {
+			result = true;
 		}
+		return result;
 	}
 }

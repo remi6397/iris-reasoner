@@ -99,5 +99,7 @@ public class MagicSetsTest extends TestCase {
 		// Execute the query
 		if (query != null)
 			kb.execute(query);
+
+		kb.shutdown();
 	}
 }
