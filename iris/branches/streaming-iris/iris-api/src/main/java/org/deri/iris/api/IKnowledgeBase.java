@@ -147,4 +147,14 @@ public interface IKnowledgeBase {
 	 * @throws EvaluationException
 	 */
 	void cleanKnowledgeBase() throws EvaluationException;
+
+	/**
+	 * Deletes a listener (socket) from the knowledge base.
+	 * 
+	 * @param host
+	 *            The address of the socket.
+	 * @param port
+	 *            The port of the socket.
+	 */
+	void deleteListener(String host, int port);
 }

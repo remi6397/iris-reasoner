@@ -3,7 +3,8 @@ package org.deri.iris.threads;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.deri.iris.KnowledgeBase;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ public class KnowledgeBaseServer extends Thread {
 	private KnowledgeBase knowledgeBase;
 	private int port;
 	private ServerSocket server;
+	private List<Thread> inputThreads;
 
 	/**
 	 * Constructor.
@@ -34,39 +36,42 @@ public class KnowledgeBaseServer extends Thread {
 	public KnowledgeBaseServer(KnowledgeBase knowledgeBase, int port) {
 		this.knowledgeBase = knowledgeBase;
 		this.port = port;
+		this.inputThreads = new ArrayList<Thread>();
 	}
 
 	public void run() {
 		try {
 			server = new ServerSocket(port);
-			Thread inputThread = null;
 			logger.info("Server: " + server);
 
+			Thread inputThread;
 			while (!Thread.interrupted()) {
 				logger.info("Waiting for connection...");
 				Socket sock = server.accept();
-				logger.info("Connected: " + sock);
 				inputThread = new Thread(new KnowledgeBaseServerThread(
 						knowledgeBase, sock), "Input thread");
 				inputThread.start();
+				inputThreads.add(inputThread);
+				logger.info("Connected: " + sock);
 			}
-			if (inputThread != null) {
-				inputThread.interrupt();
-			}
-		} catch (SocketException e) {
-			logger.debug(e.getMessage());
-			logger.info("KnowledgeBaseServer shut down!");
 		} catch (IOException e) {
-			e.printStackTrace();
+			// for (Thread thread : inputThreads) {
+			// thread.interrupt();
+			// }
+			// logger.info("KnowledgeBaseServer shut down!");
 		}
 	}
 
-	public void shutdown() {
+	public boolean shutdown() {
 		try {
 			server.close();
+			for (Thread thread : inputThreads) {
+				thread.interrupt();
+			}
+			logger.info("KnowledgeBaseServer shut down!");
+			return true;
 		} catch (IOException e) {
-			logger.error("IO exception occured!", e);
-			e.printStackTrace();
+			return false;
 		}
 	}
 }

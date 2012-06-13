@@ -54,31 +54,34 @@ import org.deri.iris.storage.simple.SimpleRelationFactory;
  * </p>
  * 
  * @author Darko Anicic, DERI Innsbruck
- * @date   12.04.2007 09:58:07
+ * @date 12.04.2007 09:58:07
  */
 public class AddBuiltinEvaluationTest extends TestCase {
 
 	public static Test suite() {
-		return new TestSuite(AddBuiltinEvaluationTest.class, AddBuiltinEvaluationTest.class
-				.getSimpleName());
+		return new TestSuite(AddBuiltinEvaluationTest.class,
+				AddBuiltinEvaluationTest.class.getSimpleName());
 	}
 
-	public void testEvaluate0() throws Exception{
+	public void testEvaluate0() throws Exception {
 		// constructing the rules
 		List<IRule> rules = new ArrayList<IRule>(3);
 		// p(X) :- r(X)
-		IRule r = Factory.BASIC.createRule(Arrays.asList(createLiteral(
-				"p", "X")), Arrays.asList(createLiteral("r", "X")));
+		IRule r = Factory.BASIC.createRule(
+				Arrays.asList(createLiteral("p", "X")),
+				Arrays.asList(createLiteral("r", "X")));
 		rules.add(r);
 		// p(X) :- s(X), add(3, 4, X)
 		List<ILiteral> h = Arrays.asList(createLiteral("p", "X"));
-		List<ILiteral> b = Arrays.asList(createLiteral("s", "X"),
-				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
-						createAddBuiltin(
+		List<ILiteral> b = Arrays.asList(
+				createLiteral("s", "X"),
+				Factory.BASIC.createLiteral(
+						true,
+						Factory.BUILTIN.createAddBuiltin(
 								CONCRETE.createInteger(3),
 								CONCRETE.createInteger(4),
 								TERM.createVariable("X"))));
-		
+
 		r = Factory.BASIC.createRule(h, b);
 		rules.add(r);
 
@@ -100,36 +103,40 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(1)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(2)));
 		facts.put(p, rel);
-		
+
 		IQuery q = Factory.BASIC.createQuery(createLiteral("p", "X"));
 
-		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
-		
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase(
+				facts, rules);
+
 		// Result: p(1), p(2), p(7)
 		IRelation res = new SimpleRelationFactory().createRelation();
 		res.add(BASIC.createTuple(CONCRETE.createInteger(1)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(2)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(7)));
-		
+
 		System.out.println("******** TEST 0: ********");
 		ExecutionHelper.executeTest(pr, q, res);
+
+		pr.shutdown();
 	}
-	
-	public void testEvaluate1() throws Exception{
+
+	public void testEvaluate1() throws Exception {
 		// constructing the rules
 		List<IRule> rules = new ArrayList<IRule>(3);
-		
+
 		// q(X, Y, Z) :- s(X), p(Y), add(X, Y, Z)
 		List<ILiteral> h = Arrays.asList(createLiteral("q", "X", "Y", "Z"));
 		List<ILiteral> b = Arrays.asList(
 				createLiteral("s", "X"),
 				createLiteral("p", "Y"),
-				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
-						createAddBuiltin(
+				Factory.BASIC.createLiteral(
+						true,
+						Factory.BUILTIN.createAddBuiltin(
 								TERM.createVariable("X"),
 								TERM.createVariable("Y"),
 								TERM.createVariable("Z"))));
-		
+
 		IRule r = Factory.BASIC.createRule(h, b);
 		rules.add(r);
 
@@ -143,41 +150,45 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(7)));
 		facts.put(p, rel);
 
-		/// p(1), p(2)
+		// / p(1), p(2)
 		p = Factory.BASIC.createPredicate("p", 1);
 		rel = new SimpleRelationFactory().createRelation();
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(1)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(2)));
 		facts.put(p, rel);
-		
+
 		IQuery q = Factory.BASIC.createQuery(createLiteral("q", "X", "Y", "Z"));
 
-		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
-		
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase(
+				facts, rules);
+
 		// Result: q(3,1,4), q(3,2,5), q(7,1,8), q(7,2,9)
 		IRelation res = new SimpleRelationFactory().createRelation();
-		res.add(BASIC.createTuple(CONCRETE.createInteger(3),CONCRETE.createInteger(1),CONCRETE.createInteger(4)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(3),CONCRETE.createInteger(2),CONCRETE.createInteger(5)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(7),CONCRETE.createInteger(1),CONCRETE.createInteger(8)));
-		res.add(BASIC.createTuple(CONCRETE.createInteger(7),CONCRETE.createInteger(2),CONCRETE.createInteger(9)));
-		
+		res.add(BASIC.createTuple(CONCRETE.createInteger(3),
+				CONCRETE.createInteger(1), CONCRETE.createInteger(4)));
+		res.add(BASIC.createTuple(CONCRETE.createInteger(3),
+				CONCRETE.createInteger(2), CONCRETE.createInteger(5)));
+		res.add(BASIC.createTuple(CONCRETE.createInteger(7),
+				CONCRETE.createInteger(1), CONCRETE.createInteger(8)));
+		res.add(BASIC.createTuple(CONCRETE.createInteger(7),
+				CONCRETE.createInteger(2), CONCRETE.createInteger(9)));
+
 		System.out.println("******** TEST 1: ********");
 		ExecutionHelper.executeTest(pr, q, res);
+
+		pr.shutdown();
 	}
 
-	public void testEvaluate2() throws Exception{
+	public void testEvaluate2() throws Exception {
 		// constructing the rules
 		List<IRule> rules = new ArrayList<IRule>(3);
-		
+
 		// p(X) :- add(3, 4, X)
 		List<ILiteral> h = Arrays.asList(createLiteral("p", "X"));
-		List<ILiteral> b = Arrays.asList(
-				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
-						createAddBuiltin(
-								CONCRETE.createInteger(3),
-								CONCRETE.createInteger(4),
-								TERM.createVariable("X"))));
-		
+		List<ILiteral> b = Arrays.asList(Factory.BASIC.createLiteral(true,
+				Factory.BUILTIN.createAddBuiltin(CONCRETE.createInteger(3),
+						CONCRETE.createInteger(4), TERM.createVariable("X"))));
+
 		IRule r = Factory.BASIC.createRule(h, b);
 		rules.add(r);
 
@@ -189,41 +200,46 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(3)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(9)));
 		facts.put(p, rel);
-		
+
 		IQuery q = Factory.BASIC.createQuery(createLiteral("p", "X"));
 
-		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
-		
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase(
+				facts, rules);
+
 		// Result: p(3), p(7), p(9)
 		IRelation res = new SimpleRelationFactory().createRelation();
 		res.add(BASIC.createTuple(CONCRETE.createInteger(3)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(7)));
 		res.add(BASIC.createTuple(CONCRETE.createInteger(9)));
-		
+
 		System.out.println("******** TEST 2: ********");
 		ExecutionHelper.executeTest(pr, q, res);
+
+		pr.shutdown();
 	}
-	
-	public void testEvaluate3() throws Exception{
+
+	public void testEvaluate3() throws Exception {
 		// constructing the rules
 		List<IRule> rules = new ArrayList<IRule>(3);
-		
+
 		// q(X, Y, Z) :- add(X, 4, Z), s(X), p(Y), add(X, Y, 10)
 		List<ILiteral> h = Arrays.asList(createLiteral("q", "X", "Y", "Z"));
 		List<ILiteral> b = Arrays.asList(
-				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
-						createAddBuiltin(
+				Factory.BASIC.createLiteral(
+						true,
+						Factory.BUILTIN.createAddBuiltin(
 								TERM.createVariable("X"),
 								CONCRETE.createInteger(4),
 								TERM.createVariable("Z"))),
 				createLiteral("s", "X"),
 				createLiteral("p", "Y"),
-				Factory.BASIC.createLiteral(true, Factory.BUILTIN.
-						createAddBuiltin(
+				Factory.BASIC.createLiteral(
+						true,
+						Factory.BUILTIN.createAddBuiltin(
 								TERM.createVariable("X"),
 								TERM.createVariable("Y"),
 								CONCRETE.createInteger(10))));
-		
+
 		IRule r = Factory.BASIC.createRule(h, b);
 		rules.add(r);
 
@@ -236,26 +252,30 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(6)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(9)));
 		facts.put(p, rel);
-		
+
 		// p(2), p(4)
 		p = Factory.BASIC.createPredicate("p", 1);
 		rel = new SimpleRelationFactory().createRelation();
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(2)));
 		rel.add(BASIC.createTuple(CONCRETE.createInteger(4)));
 		facts.put(p, rel);
-		
+
 		IQuery q = Factory.BASIC.createQuery(createLiteral("q", "X", "Y", "Z"));
 
-		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase( facts, rules );
-		
+		final IKnowledgeBase pr = KnowledgeBaseFactory.createKnowledgeBase(
+				facts, rules);
+
 		// Result: q(6,4,10)
 		IRelation res = new SimpleRelationFactory().createRelation();
-		res.add(BASIC.createTuple(CONCRETE.createInteger(6),CONCRETE.createInteger(4),CONCRETE.createInteger(10)));
-		
+		res.add(BASIC.createTuple(CONCRETE.createInteger(6),
+				CONCRETE.createInteger(4), CONCRETE.createInteger(10)));
+
 		System.out.println("******** TEST 3: ********");
 		ExecutionHelper.executeTest(pr, q, res);
+
+		pr.shutdown();
 	}
-	
+
 	/**
 	 * Creates a positive literal out of a predicate name and a set of variable
 	 * strings.
@@ -287,9 +307,9 @@ public class AddBuiltinEvaluationTest extends TestCase {
 			throw new NullPointerException("The vars must not contain null");
 		}
 
-		return BASIC.createLiteral(true, BASIC.createPredicate(pred,
-				vars.length), BASIC.createTuple(new ArrayList<ITerm>(
-				createVarList(vars))));
+		return BASIC.createLiteral(true,
+				BASIC.createPredicate(pred, vars.length),
+				BASIC.createTuple(new ArrayList<ITerm>(createVarList(vars))));
 	}
 
 	/**
@@ -312,5 +332,5 @@ public class AddBuiltinEvaluationTest extends TestCase {
 		}
 		return v;
 	}
-	
+
 }

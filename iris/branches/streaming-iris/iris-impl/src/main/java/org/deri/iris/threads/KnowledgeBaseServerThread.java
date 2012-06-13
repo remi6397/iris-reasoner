@@ -50,22 +50,16 @@ public class KnowledgeBaseServerThread extends Thread {
 
 			String factLine = null;
 
-			// StringBuilder sb = new StringBuilder();
 			Parser parser = new Parser();
 			while (!Thread.interrupted()
 					&& (factLine = streamReader.readLine()) != null) {
-				// TODO Norbert: maybe limit it to read max number of lines and
-				// then start again
-				// sb.append(factLine);
+				// TODO Norbert: maybe buffer input lines before parse
 				parser.parse(factLine);
 				Map<IPredicate, IRelation> newFacts = parser.getFacts();
 				if (newFacts != null && newFacts.size() != 0) {
 					knowledgeBase.addFacts(newFacts);
 				}
 			}
-
-			// if (!Thread.interrupted()) {
-			// }
 
 			streamReader.close();
 			socket.close();

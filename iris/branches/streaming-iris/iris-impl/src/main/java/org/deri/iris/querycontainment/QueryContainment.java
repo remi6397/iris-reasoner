@@ -121,6 +121,9 @@ public class QueryContainment implements IQueryContainment {
 		// run query 2 against the knowledge base to be evaluated
 		mVariableBindings = new ArrayList<IVariable>();
 		result = knowledgebase.execute(query2, mVariableBindings);
+
+		knowledgebase.shutdown();
+
 		return result.size() > 0;
 	}
 

@@ -87,6 +87,8 @@ public class DataSourceTest extends TestCase {
 		// asserting the result
 		assertEquals("There must be exactly one fact", 1, result.size());
 		assertEquals("Couldn't find the correct fact", T_A, result.get(0));
+
+		kb.shutdown();
 	}
 
 	/**

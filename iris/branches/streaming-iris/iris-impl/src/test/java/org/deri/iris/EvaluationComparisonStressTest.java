@@ -633,6 +633,8 @@ public class EvaluationComparisonStressTest extends TestCase {
 
 		IRelation result = kb.execute(query);
 
+		kb.shutdown();
+
 		return result;
 	}
 }
