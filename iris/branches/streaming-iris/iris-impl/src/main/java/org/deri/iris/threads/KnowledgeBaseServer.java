@@ -65,7 +65,7 @@ public class KnowledgeBaseServer extends Thread {
 		try {
 			server.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			logger.error("IO exception occured!", e);
 			e.printStackTrace();
 		}
 	}

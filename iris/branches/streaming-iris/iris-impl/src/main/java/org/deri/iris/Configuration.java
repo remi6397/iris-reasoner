@@ -78,7 +78,7 @@ public class Configuration {
 	 * The time window in milliseconds when queries get periodically executed.
 	 * Default is 10 seconds.
 	 */
-	public long executionIntervallMilliseconds = 10000;
+	public long executionIntervallMilliseconds = 5000;
 
 	/**
 	 * The maximum number of tuples that are allowed to be generated during

@@ -82,9 +82,13 @@ public class IrisInputStreamer {
 			while ((factLine = bufferedReader.readLine()) != null) {
 				streamWriter.println(factLine);
 				factCounter++;
+				streamWriter.flush();
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					continue;
+				}
 			}
-
-			streamWriter.flush();
 
 			logger.info("End of streaming.");
 			logger.info("Streamed " + factCounter + " facts.");

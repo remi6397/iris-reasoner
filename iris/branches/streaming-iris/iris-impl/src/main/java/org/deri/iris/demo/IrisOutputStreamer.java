@@ -113,7 +113,7 @@ public class IrisOutputStreamer implements IIrisOutputStreamer {
 			socket.close();
 			logger.info("Disconnected.");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			logger.error("IO exception occured!", e);
 			e.printStackTrace();
 		}
 	}
