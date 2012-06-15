@@ -2,17 +2,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>at.sti2.iris</groupId>
-	<artifactId>iris</artifactId>
-	<version>0.8.2-SNAPSHOT</version>
+	<artifactId>streaming-iris</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>IRIS</name>
+	<name>Streaming IRIS</name>
 	<description>Integrated Rule Inference System is an extensible reasoning engine for expressive rule-based languages.</description>
 
 	<modules>
-		<module>iris-api</module>
-		<module>iris-impl</module>
-		<module>iris-parser</module>
-<!-- 		<module>iris-rdb</module> -->
+		<module>streaming-iris-api</module>
+		<module>streaming-iris-impl</module>
+		<module>streaming-iris-parser</module>
 	</modules>
 
 	<properties>

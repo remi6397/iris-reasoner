@@ -1,7 +1,7 @@
 package org.deri.iris;
 
+import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
@@ -34,12 +34,11 @@ public class KnowledgeBaseTest {
 			Configuration configuration = KnowledgeBaseFactory
 					.getDefaultConfiguration();
 
-			String filename = "D:\\workspaces\\workspace_iris\\iris\\iris-impl\\src\\test\\resources\\simpsons.txt";
-			FileReader r;
-			r = new FileReader(filename);
+			BufferedInputStream in = new BufferedInputStream(getClass()
+					.getResourceAsStream("/simpsons.txt"));
 			StringBuilder builder = new StringBuilder();
 			int ch = -1;
-			while ((ch = r.read()) >= 0) {
+			while ((ch = in.read()) >= 0) {
 				builder.append((char) ch);
 			}
 			String program = builder.toString();
@@ -101,7 +100,7 @@ public class KnowledgeBaseTest {
 		ServerSocket server = new ServerSocket(port);
 		logger.info("Server: " + server);
 
-		ListenerThread listenerThread = new ListenerThread(server);
+		new ListenerThread(server);
 
 		knowledgeBase.addListener("localhost", server.getLocalPort());
 
