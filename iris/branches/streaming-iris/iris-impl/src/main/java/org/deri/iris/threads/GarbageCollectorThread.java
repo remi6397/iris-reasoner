@@ -8,24 +8,13 @@ public class GarbageCollectorThread extends Thread {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private KnowledgeBase knowledgeBase;
-	private long garbageCollectionIntervall;
 
-	public GarbageCollectorThread(KnowledgeBase knowledgeBase,
-			long executionIntervallMilliseconds) {
+	public GarbageCollectorThread(KnowledgeBase knowledgeBase) {
 		this.knowledgeBase = knowledgeBase;
-		this.garbageCollectionIntervall = executionIntervallMilliseconds;
 	}
 
 	public void run() {
-		while (!Thread.interrupted()) {
-			try {
-				Thread.sleep(garbageCollectionIntervall);
-			} catch (InterruptedException e) {
-				break;
-			}
-			logger.debug("Garbage collector ...");
-			knowledgeBase.cleanKnowledgeBase();
-		}
-		logger.debug("Garbage collector thread shut down!");
+		logger.debug("Garbage collector ...");
+		knowledgeBase.cleanKnowledgeBase();
 	}
 }

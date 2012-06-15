@@ -239,6 +239,20 @@ public class UniqueList<E> extends ArrayList<E> {
 		}
 	}
 
+	/**
+	 * Sets the timestamp of the element, if the element exists.
+	 * 
+	 * @param element
+	 *            The element.
+	 * @param timestamp
+	 *            The new timestamp for the element.
+	 */
+	public void setTimestamp(E element, long timestamp) {
+		if (mMap.containsKey(element)) {
+			mMap.put(element, new Long(timestamp));
+		}
+	}
+
 	public int getIndex(E element) {
 		return super.indexOf(element);
 	}

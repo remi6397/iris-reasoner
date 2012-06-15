@@ -163,6 +163,14 @@ public class OriginalFactsPreservingFacts implements IFacts {
 		}
 
 		@Override
+		public void setTimestamp(ITuple tuple, long timestamp) {
+			if (mOriginal.contains(tuple))
+				mOriginal.setTimestamp(tuple, timestamp);
+			else if (mAddedFacts.contains(tuple))
+				mAddedFacts.setTimestamp(tuple, timestamp);
+		}
+
+		@Override
 		public void clean(long timestamp) {
 			// TODO Norbert: also for added facts?
 			mAddedFacts.clean(timestamp);

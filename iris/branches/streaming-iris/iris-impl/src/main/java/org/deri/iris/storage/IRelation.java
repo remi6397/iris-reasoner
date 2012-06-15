@@ -104,6 +104,16 @@ public interface IRelation {
 	long getTimestamp(ITuple tuple);
 
 	/**
+	 * Set the timestamp of a specific tuple.
+	 * 
+	 * @param tuple
+	 *            The tuple.
+	 * @param timestamp
+	 *            The new timestamp for the tuple.
+	 */
+	void setTimestamp(ITuple tuple, long timestamp);
+
+	/**
 	 * Returns if the given tuple exists in this relation.
 	 * 
 	 * @param tuple
