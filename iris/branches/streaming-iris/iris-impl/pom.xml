@@ -2,24 +2,24 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>iris</artifactId>
+		<artifactId>streaming-iris</artifactId>
 		<groupId>at.sti2.iris</groupId>
-		<version>0.8.2-SNAPSHOT</version>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>iris-impl</artifactId>
+	<artifactId>streaming-iris-impl</artifactId>
 	<name>IRIS Reference Implementation</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>at.sti2.iris</groupId>
-			<artifactId>iris-api</artifactId>
+			<artifactId>streaming-iris-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>at.sti2.iris</groupId>
-			<artifactId>iris-parser</artifactId>
+			<artifactId>streaming-iris-parser</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
