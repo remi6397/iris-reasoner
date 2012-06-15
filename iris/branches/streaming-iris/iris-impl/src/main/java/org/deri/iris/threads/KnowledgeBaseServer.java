@@ -64,7 +64,8 @@ public class KnowledgeBaseServer extends Thread {
 
 	public boolean shutdown() {
 		try {
-			server.close();
+			if (server != null)
+				server.close();
 			for (Thread thread : inputThreads) {
 				thread.interrupt();
 			}

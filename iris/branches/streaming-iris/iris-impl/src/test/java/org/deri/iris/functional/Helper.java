@@ -81,9 +81,9 @@ public class Helper {
 		// evaluateNotOptimised( program, expectedResults );
 		evaluateNaive(program, expectedResults);
 		evaluateSemiNaive(program, expectedResults);
-		evaluateUnsafeRules(program, expectedResults);
-		evaluateWellFounded(program, expectedResults);
-		evaluateSemiNaiveAndOptimisations(program, expectedResults);
+		// evaluateUnsafeRules(program, expectedResults);
+		// evaluateWellFounded(program, expectedResults);
+		// evaluateSemiNaiveAndOptimisations(program, expectedResults);
 
 		// evaluateOLDT( program, expectedResults );
 		// evaluateSLDNF( program, expectedResults );

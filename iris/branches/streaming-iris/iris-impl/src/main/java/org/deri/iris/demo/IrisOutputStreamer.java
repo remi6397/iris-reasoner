@@ -110,8 +110,10 @@ public class IrisOutputStreamer implements IIrisOutputStreamer {
 	public boolean shutdown() {
 		boolean result;
 		try {
-			streamWriter.close();
-			socket.close();
+			if (streamWriter != null)
+				streamWriter.close();
+			if (socket != null)
+				socket.close();
 			logger.info("Disconnected.");
 		} catch (IOException e) {
 			logger.error("IO exception occured!", e);

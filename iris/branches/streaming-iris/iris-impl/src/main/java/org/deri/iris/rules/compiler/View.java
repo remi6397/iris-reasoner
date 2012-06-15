@@ -313,6 +313,11 @@ public class View implements IRelation {
 	}
 
 	@Override
+	public void setTimestamp(ITuple tuple, long timestamp) {
+		mViewTuples.setTimestamp(tuple, timestamp);
+	}
+
+	@Override
 	public String toString() {
 		return mViewTuples.toString();
 	}

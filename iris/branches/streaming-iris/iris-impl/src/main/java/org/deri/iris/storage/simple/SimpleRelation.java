@@ -104,6 +104,11 @@ public class SimpleRelation implements IRelation {
 	}
 
 	@Override
+	public void setTimestamp(ITuple tuple, long timestamp) {
+		mTuples.setTimestamp(tuple, timestamp);
+	}
+
+	@Override
 	public void clean(long timestamp) {
 		long tupleTimestamp;
 		List<ITuple> remove = new ArrayList<ITuple>();
@@ -118,4 +123,5 @@ public class SimpleRelation implements IRelation {
 			mTuples.remove(tuple);
 		}
 	}
+
 }

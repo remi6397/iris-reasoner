@@ -27,8 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import junit.framework.Assert;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.deri.iris.api.IKnowledgeBase;
 import org.deri.iris.api.basics.IPredicate;
@@ -79,10 +80,10 @@ public class KnowledgeBase implements IKnowledgeBase {
 	private KnowledgeBaseServer inputServerThread;
 
 	/** The thread that starts the periodically execution of the queries. */
-	private ExecutionThread executionThread;
+	private ScheduledExecutorService executionExecutor;
 
 	/** The thread that deletes obsolete facts from the knowledge-base. */
-	private GarbageCollectorThread garbageCollectorThread;
+	private ScheduledExecutorService garbageCollectorExecutor;
 
 	/**
 	 * Constructor.
@@ -165,62 +166,84 @@ public class KnowledgeBase implements IKnowledgeBase {
 				mConfiguration.inputPort);
 		inputServerThread.start();
 
-		garbageCollectorThread = new GarbageCollectorThread(this,
-				mConfiguration.executionIntervallMilliseconds);
-		garbageCollectorThread.start();
+		garbageCollectorExecutor = Executors.newSingleThreadScheduledExecutor();
+		garbageCollectorExecutor.scheduleAtFixedRate(
+				new GarbageCollectorThread(this),
+				mConfiguration.executionIntervallMilliseconds,
+				mConfiguration.executionIntervallMilliseconds,
+				TimeUnit.MILLISECONDS);
 
-		executionThread = new ExecutionThread(this,
-				mConfiguration.executionIntervallMilliseconds);
-		executionThread.start();
+		executionExecutor = Executors.newSingleThreadScheduledExecutor();
+		executionExecutor.scheduleAtFixedRate(new ExecutionThread(this),
+				mConfiguration.executionIntervallMilliseconds / 2,
+				mConfiguration.executionIntervallMilliseconds,
+				TimeUnit.MILLISECONDS);
 	}
 
 	@Override
 	public void shutdown() {
-		logger.info("Knowledge-Base shutting down ...");
-		Assert.assertTrue(inputServerThread.shutdown());
-		executionThread.interrupt();
-		garbageCollectorThread.interrupt();
-		for (IIrisOutputStreamer streamer : mIrisOutputStreamers.values()) {
-			Assert.assertTrue(streamer.shutdown());
+		try {
+			logger.info("Knowledge-Base shutting down ...");
+
+			// Shut down the input streamer.
+			if (!inputServerThread.shutdown())
+				logger.error("InputStream could not be shut down!");
+
+			// Shut down the executor.
+			executionExecutor.shutdownNow();
+			try {
+				executionExecutor.awaitTermination(10, TimeUnit.SECONDS);
+				logger.info("Execution thread shut down!");
+			} catch (InterruptedException e) {
+				logger.error("Execution thread could not be shut down!");
+
+			}
+
+			// Shut down the garbage collector.
+			garbageCollectorExecutor.shutdownNow();
+			try {
+				garbageCollectorExecutor.awaitTermination(10, TimeUnit.SECONDS);
+				logger.info("Garbage collector thread shut down!");
+			} catch (InterruptedException e) {
+				logger.error("Garbage collector thread could not be shut down!");
+
+			}
+
+			// Shut down the output streamer.
+			for (IIrisOutputStreamer streamer : mIrisOutputStreamers.values()) {
+				if (!streamer.shutdown())
+					logger.error("IIrisOutputStreamer could not be shut down!");
+				else
+					logger.info("IIrisOutputStreamer shut down!");
+			}
+		} catch (Exception le) {
+			logger.error("Exception occured!", le);
 		}
 	}
 
 	@Override
 	public void addFacts(Map<IPredicate, IRelation> newFacts)
 			throws EvaluationException {
+		long timestamp;
 		synchronized (mFacts) {
-			long timestamp = System.currentTimeMillis()
+			timestamp = System.currentTimeMillis()
 					+ mConfiguration.timeWindowMilliseconds;
 
 			mFacts.addFacts(newFacts, timestamp);
 
-			Set<IPredicate> predicates = newFacts.keySet();
-			for (IPredicate predicate : predicates) {
-				IRelation relation = newFacts.get(predicate);
-				for (int i = 0; i < relation.size(); i++) {
-					ITuple tuple = relation.get(i);
-					logger.debug("Added [" + timestamp + "]: " + predicate
-							+ " " + tuple);
-				}
-			}
-
 			// FIXME Norbert: does only work with
 			// StratifiedBottomUpEvaluationStrategy
 			mEvaluationStrategy.evaluateRules(mFacts, timestamp);
+		}
 
-			// TODO Norbert: logging
-			// logger.debug("Current knowledge-base:");
-			// logger.debug("-----------------------");
-			// Set<IPredicate> predicates = mFacts.getPredicates();
-			// for (IPredicate predicate : predicates) {
-			// IRelation relation = mFacts.get(predicate);
-			// for (int i = 0; i < relation.size(); i++) {
-			// ITuple tuple = relation.get(i);
-			// logger.debug("[" + relation.getTimestamp(tuple) + "]: "
-			// + predicate + " " + tuple);
-			// }
-			//
-			// }
+		Set<IPredicate> predicates = newFacts.keySet();
+		for (IPredicate predicate : predicates) {
+			IRelation relation = newFacts.get(predicate);
+			for (int i = 0; i < relation.size(); i++) {
+				ITuple tuple = relation.get(i);
+				logger.debug("Added [" + timestamp + "]: " + predicate + " "
+						+ tuple);
+			}
 		}
 	}
 
@@ -242,36 +265,32 @@ public class KnowledgeBase implements IKnowledgeBase {
 		if (variableBindings == null)
 			variableBindings = new ArrayList<IVariable>();
 
-		logger.debug("IRIS query");
-		logger.debug("==========");
-		logger.debug(query.toString());
+		synchronized (mFacts) {
+			IRelation result = mEvaluationStrategy.evaluateQuery(
+					RuleManipulator.removeDuplicateLiterals(query),
+					variableBindings);
 
-		IRelation result = mEvaluationStrategy.evaluateQuery(
-				RuleManipulator.removeDuplicateLiterals(query),
-				variableBindings);
-
-		logger.debug("------------");
-		logger.debug(result.toString());
-
-		return result;
+			return result;
+		}
 	}
 
 	@Override
 	public void execute() {
 		try {
 			ArrayList<IVariable> variableBindings = new ArrayList<IVariable>();
+			synchronized (mFacts) {
+				for (IQuery query : mQueries) {
+					IRelation result = mEvaluationStrategy.evaluateQuery(
+							RuleManipulator.removeDuplicateLiterals(query),
+							variableBindings);
 
-			for (IQuery query : mQueries) {
-				IRelation result = mEvaluationStrategy.evaluateQuery(
-						RuleManipulator.removeDuplicateLiterals(query),
-						variableBindings);
+					// format the results.
+					String results = ResultFormatter.format(query,
+							variableBindings, result);
 
-				// format the results.
-				String results = ResultFormatter.format(query,
-						variableBindings, result);
-
-				// send results to listeners.
-				sendResults(results);
+					// send results to listeners.
+					sendResults(results);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("Evaluation error occured: {}", e.getMessage());

@@ -83,11 +83,11 @@ public class SemiNaiveEvaluator implements IRuleEvaluator {
 
 				// FIXME keep tuples with new timestamp
 				// Remove already known tuples
-				// if (delta != null && delta.size() > 0) {
-				// IRelation programFacts = facts.get(predicate);
-				// delta = removeDeducedTuples(predicate, delta, programFacts,
-				// configuration);
-				// }
+				if (delta != null && delta.size() > 0) {
+					IRelation programFacts = facts.get(predicate);
+					delta = removeDeducedTuples(predicate, delta, programFacts,
+							configuration, timestamp);
+				}
 
 				if (delta != null && delta.size() > 0) {
 					newTuples = true;
@@ -136,7 +136,8 @@ public class SemiNaiveEvaluator implements IRuleEvaluator {
 	 * @return
 	 */
 	private static IRelation removeDeducedTuples(IPredicate predicate,
-			IRelation delta, IRelation programFacts, Configuration configuration) {
+			IRelation delta, IRelation programFacts,
+			Configuration configuration, long timestamp) {
 		// If there is nothing to take away from, or just nothing to
 		// take-away...
 		if (delta.size() == 0 || programFacts.size() == 0)
@@ -148,6 +149,8 @@ public class SemiNaiveEvaluator implements IRuleEvaluator {
 			ITuple tuple = delta.get(t);
 			if (!programFacts.contains(tuple))
 				result.add(tuple);
+			else
+				programFacts.setTimestamp(tuple, timestamp);
 		}
 
 		return result;

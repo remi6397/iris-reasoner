@@ -263,6 +263,14 @@ public class FiniteUniverseFacts implements IFacts {
 		}
 
 		@Override
+		public void setTimestamp(ITuple tuple, long timestamp) {
+			assert tuple != null;
+			assert mChild != null;
+
+			mChild.setTimestamp(tuple, timestamp);
+		}
+
+		@Override
 		public void clean(long timestamp) {
 			assert mChild != null;
 
