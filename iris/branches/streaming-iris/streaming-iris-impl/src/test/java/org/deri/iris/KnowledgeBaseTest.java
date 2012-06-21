@@ -27,6 +27,7 @@ public class KnowledgeBaseTest {
 	private IKnowledgeBase knowledgeBase = null;
 	private Parser parser;
 	private Logger logger = LoggerFactory.getLogger(getClass());
+	private ServerSocket server;
 
 	@Before
 	public void setUp() {
@@ -48,11 +49,14 @@ public class KnowledgeBaseTest {
 			Map<IPredicate, IRelation> facts = parser.getFacts();
 			List<IRule> rules = parser.getRules();
 
+			server = new ServerSocket(0);
+
 			knowledgeBase = KnowledgeBaseFactory.createKnowledgeBase(facts,
 					rules, configuration);
 
 			for (IQuery query : parser.getQueries()) {
-				knowledgeBase.registerQuery(query);
+				knowledgeBase.registerQuery(query, "localhost",
+						server.getLocalPort());
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -74,6 +78,11 @@ public class KnowledgeBaseTest {
 		if (knowledgeBase != null) {
 			knowledgeBase.shutdown();
 		}
+		try {
+			server.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Test
@@ -87,29 +96,8 @@ public class KnowledgeBaseTest {
 		Assert.assertEquals(1, queries.size());
 
 		for (IQuery query : queries) {
-			knowledgeBase.registerQuery(query);
+			knowledgeBase.registerQuery(query, "localhost",
+					server.getLocalPort());
 		}
-	}
-
-	@Test
-	public void testAddListener() throws IOException,
-			ProgramNotStratifiedException, RuleUnsafeException,
-			ParserException, EvaluationException, InterruptedException {
-		int port = 9456;
-
-		ServerSocket server = new ServerSocket(port);
-		logger.info("Server: " + server);
-
-		new ListenerThread(server);
-
-		knowledgeBase.addListener("localhost", server.getLocalPort());
-
-		testRegisterQuery();
-	}
-
-	@Test
-	public void testStreamFacts() {
-		// initialize IrisInputStreamer
-		// check results
 	}
 }
