@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -76,6 +77,12 @@ public class KnowledgeBase implements IKnowledgeBase {
 	/** The sockets to output the results of the executed queries. */
 	private Map<HostPortPair, IIrisOutputStreamer> mIrisOutputStreamers;
 
+	/**
+	 * The map containing the information which listener is registered for which
+	 * query.
+	 */
+	private Map<HostPortPair, List<IQuery>> mListenerQueryMap;
+
 	/** The thread that handles incoming facts. */
 	private KnowledgeBaseServer inputServerThread;
 
@@ -102,6 +109,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 			throws EvaluationException {
 		mQueries = new ArrayList<IQuery>();
 		mIrisOutputStreamers = new HashMap<HostPortPair, IIrisOutputStreamer>();
+		mListenerQueryMap = new HashMap<HostPortPair, List<IQuery>>();
 
 		if (inputFacts == null)
 			inputFacts = new HashMap<IPredicate, IRelation>();
@@ -298,21 +306,57 @@ public class KnowledgeBase implements IKnowledgeBase {
 	}
 
 	@Override
-	public void registerQuery(IQuery query) throws EvaluationException {
+	public void registerQuery(IQuery query, String host, int port)
+			throws EvaluationException {
 		synchronized (mQueries) {
 			mQueries.add(query);
 		}
+
+		synchronized (mIrisOutputStreamers) {
+			synchronized (mListenerQueryMap) {
+				HostPortPair pair = new HostPortPair(host, port);
+				if (!mIrisOutputStreamers.containsKey(pair)) {
+					addListener(host, port);
+					ArrayList<IQuery> queryList = new ArrayList<IQuery>();
+					queryList.add(query);
+					mListenerQueryMap.put(pair, queryList);
+				} else {
+					mListenerQueryMap.get(pair).add(query);
+				}
+			}
+		}
+
 		logger.info("Query registered: {}", query);
 	}
 
 	@Override
 	public void deregisterQuery(IQuery query) {
+		List<HostPortPair> remove = new ArrayList<HostPortPair>();
 		synchronized (mQueries) {
-			if (mQueries.contains(query)) {
-				mQueries.remove(query);
-				logger.info("Query deregistered: {}", query);
-			} else {
-				logger.info("Query does not exist!");
+			synchronized (mIrisOutputStreamers) {
+				synchronized (mListenerQueryMap) {
+
+					if (mQueries.contains(query)) {
+						mQueries.remove(query);
+						for (Entry<HostPortPair, List<IQuery>> entry : mListenerQueryMap
+								.entrySet()) {
+							if (entry.getValue().contains(query)) {
+								entry.getValue().remove(query);
+								if (entry.getValue().size() == 0) {
+									remove.add(entry.getKey());
+								}
+							}
+						}
+
+						for (HostPortPair entry : remove) {
+							mIrisOutputStreamers.get(entry).shutdown();
+							mIrisOutputStreamers.remove(entry);
+						}
+						logger.info("Query deregistered: {}", query);
+					} else {
+						logger.info("Query does not exist!");
+					}
+				}
 			}
 		}
 	}
@@ -350,8 +394,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 		return result.toString();
 	}
 
-	@Override
-	public void addListener(String host, int port) {
+	private void addListener(String host, int port) {
 		// Start the knowledge base output thread
 		IIrisOutputStreamer irisOutputStreamer = new IrisOutputStreamer(host,
 				port);
@@ -361,17 +404,17 @@ public class KnowledgeBase implements IKnowledgeBase {
 		logger.info("Added listener [{}, {}]", host, port);
 	}
 
-	@Override
-	public void deleteListener(String host, int port) {
-		HostPortPair pair = new HostPortPair(host, port);
-		for (HostPortPair entry : mIrisOutputStreamers.keySet()) {
-			if (pair.equals(entry)) {
-				mIrisOutputStreamers.get(entry).shutdown();
-				logger.info("Deleted listener [{}, {}]", host, port);
-				break;
-			}
-		}
-	}
+	// @Override
+	// public void deleteListener(String host, int port) {
+	// HostPortPair pair = new HostPortPair(host, port);
+	// for (HostPortPair entry : mIrisOutputStreamers.keySet()) {
+	// if (pair.equals(entry)) {
+	// mIrisOutputStreamers.get(entry).shutdown();
+	// logger.info("Deleted listener [{}, {}]", host, port);
+	// break;
+	// }
+	// }
+	// }
 
 	@Override
 	public void cleanKnowledgeBase() {

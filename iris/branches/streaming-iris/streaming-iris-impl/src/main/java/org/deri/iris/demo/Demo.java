@@ -194,8 +194,7 @@ public class Demo {
 
 		// @Override
 		public void run() {
-			ProgramExecutor executor = new ProgramExecutor(program,
-					configuration);
+			new ProgramExecutor(program, configuration);
 			// System.out.println(executor.getOutput());
 		}
 

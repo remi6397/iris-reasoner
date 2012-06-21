@@ -80,10 +80,8 @@ public class ProgramExecutor {
 					.createKnowledgeBase(facts, rules, configuration);
 
 			// Add a listener to the IRIS reasoner
-			int port = 9456;
-			ServerSocket server = new ServerSocket(port);
+			ServerSocket server = new ServerSocket(0);
 			new ListenerThread(server);
-			knowledgeBase.addListener("localhost", server.getLocalPort());
 
 			// duration += System.currentTimeMillis();
 
@@ -97,7 +95,8 @@ public class ProgramExecutor {
 			for (IQuery query : parser.getQueries()) {
 				// Execute the query
 				// duration = -System.currentTimeMillis();
-				knowledgeBase.registerQuery(query);
+				knowledgeBase.registerQuery(query, "localhost",
+						server.getLocalPort());
 				// IRelation results = knowledgeBase.execute( query,
 				// variableBindings );
 				// duration += System.currentTimeMillis();

@@ -86,10 +86,15 @@ public interface IKnowledgeBase {
 
 	/**
 	 * Register a query at this knowledge-base. This query will then be
-	 * periodically executed and the results get published.
+	 * periodically executed and the results get streamed to the socket with
+	 * this host and port.
 	 * 
 	 * @param query
 	 *            The query to evaluate.
+	 * @param host
+	 *            The host of the socket that listens to this query.
+	 * @param port
+	 *            The port of the socket that listens to this query.
 	 * @throws ProgramNotStratifiedException
 	 *             If the program (knowledge-base)can not be stratified
 	 * @throws RuleUnsafeException
@@ -97,8 +102,9 @@ public interface IKnowledgeBase {
 	 * @throws EvaluationException
 	 *             If the execution of a query fails for any other reason.
 	 */
-	void registerQuery(IQuery query) throws ProgramNotStratifiedException,
-			RuleUnsafeException, EvaluationException;
+	void registerQuery(IQuery query, String host, int port)
+			throws ProgramNotStratifiedException, RuleUnsafeException,
+			EvaluationException;
 
 	/**
 	 * Deregister a query at this knowledge-base.
@@ -126,17 +132,6 @@ public interface IKnowledgeBase {
 			throws EvaluationException;
 
 	/**
-	 * Adds a listener (socket) to the knowledge base who will receive the
-	 * results.
-	 * 
-	 * @param address
-	 *            The address of the socket.
-	 * @param port
-	 *            The port of the socket.
-	 */
-	void addListener(String address, int port);
-
-	/**
 	 * Shuts down the Knowledge Base and terminates all corresponding threads.
 	 */
 	void shutdown();
@@ -147,14 +142,4 @@ public interface IKnowledgeBase {
 	 * @throws EvaluationException
 	 */
 	void cleanKnowledgeBase() throws EvaluationException;
-
-	/**
-	 * Deletes a listener (socket) from the knowledge base.
-	 * 
-	 * @param host
-	 *            The address of the socket.
-	 * @param port
-	 *            The port of the socket.
-	 */
-	void deleteListener(String host, int port);
 }
