@@ -62,9 +62,6 @@ public class Configuration {
 	/** The port number of the socket where IRIS is listening for new data. */
 	public int inputPort = 8080;
 
-	/** The port number of the socket where IRIS is sending the results to. */
-	public int outputPort = 8081;
-
 	/** The evaluation timeout in milliseconds. Zero means no timeout. */
 	public int evaluationTimeoutMilliseconds = 0;
 
@@ -123,13 +120,13 @@ public class Configuration {
 	/** The collection of rule set stratifiers. */
 	public final List<IRuleStratifier> stratifiers = new ArrayList<IRuleStratifier>();
 
-	/** The collection of rule optimisers. */
+	/** The collection of rule optimizers. */
 	public final List<IRuleOptimiser> ruleOptimisers = new ArrayList<IRuleOptimiser>();
 
-	/** The collection of rule-reordering optimisers. */
+	/** The collection of rule-reordering optimizers. */
 	public IRuleReOrderingOptimiser reOrderingOptimiser = new SimpleReOrdering();
 
-	/** Collection of program optimisations. */
+	/** Collection of program optimizations. */
 	public final List<IProgramOptimisation> programOptmimisers = new ArrayList<IProgramOptimisation>();
 
 	/**

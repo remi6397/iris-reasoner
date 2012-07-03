@@ -95,7 +95,7 @@ public class ProgramExecutor {
 			for (IQuery query : parser.getQueries()) {
 				// Execute the query
 				// duration = -System.currentTimeMillis();
-				knowledgeBase.registerQuery(query, "localhost",
+				knowledgeBase.registerQueryListener(query, "localhost",
 						server.getLocalPort());
 				// IRelation results = knowledgeBase.execute( query,
 				// variableBindings );
