@@ -26,7 +26,6 @@ import static at.sti2.streamingiris.factory.Factory.CONCRETE;
 
 import java.lang.reflect.InvocationTargetException;
 
-
 import at.sti2.streamingiris.EvaluationException;
 import at.sti2.streamingiris.api.terms.ITerm;
 
@@ -45,12 +44,15 @@ public class IsNotNMTOKENBuiltinTest extends AbstractBooleanBuiltinTest {
 			InvocationTargetException {
 
 		String iri = "http://www.w3.org/2001/XMLSchema#NMTOKEN";
-		String builtinName = "org.deri.iris.builtins.datatype.IsNotNMTOKENBuiltin";
+		String builtinName = "at.sti2.streamingiris.builtins.datatype.IsNotNMTOKENBuiltin";
 		ITerm term = CONCRETE.createNMTOKEN("NnnnMmmmmTOOOOKEEEEENNNN");
 
-		checkBuiltin(iri, term, builtinName,
-				"org.deri.iris.builtins.datatype.IsNotNormalizedStringBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotStringBuiltin",
-				"org.deri.iris.builtins.datatype.IsNotTokenBuiltin");
+		checkBuiltin(
+				iri,
+				term,
+				builtinName,
+				"at.sti2.streamingiris.builtins.datatype.IsNotNormalizedStringBuiltin",
+				"at.sti2.streamingiris.builtins.datatype.IsNotStringBuiltin",
+				"at.sti2.streamingiris.builtins.datatype.IsNotTokenBuiltin");
 	}
 }
