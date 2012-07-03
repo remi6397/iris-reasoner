@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -71,17 +70,14 @@ public class KnowledgeBase implements IKnowledgeBase {
 	/** The evaluation strategy for the knowledge-base. */
 	private IEvaluationStrategy mEvaluationStrategy;
 
-	/** The queries registered at the knowledge-base. */
-	private List<IQuery> mQueries;
-
 	/** The sockets to output the results of the executed queries. */
 	private Map<HostPortPair, IIrisOutputStreamer> mIrisOutputStreamers;
 
 	/**
-	 * The map containing the information which listener is registered for which
-	 * query.
+	 * The map containing the information which query is registered for which
+	 * listeners.
 	 */
-	private Map<HostPortPair, List<IQuery>> mListenerQueryMap;
+	private Map<IQuery, List<HostPortPair>> mQueryListenerMap;
 
 	/** The thread that handles incoming facts. */
 	private KnowledgeBaseServer inputServerThread;
@@ -107,9 +103,8 @@ public class KnowledgeBase implements IKnowledgeBase {
 	public KnowledgeBase(Map<IPredicate, IRelation> inputFacts,
 			List<IRule> rules, Configuration configuration)
 			throws EvaluationException {
-		mQueries = new ArrayList<IQuery>();
 		mIrisOutputStreamers = new HashMap<HostPortPair, IIrisOutputStreamer>();
-		mListenerQueryMap = new HashMap<HostPortPair, List<IQuery>>();
+		mQueryListenerMap = new HashMap<IQuery, List<HostPortPair>>();
 
 		if (inputFacts == null)
 			inputFacts = new HashMap<IPredicate, IRelation>();
@@ -287,7 +282,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 		try {
 			ArrayList<IVariable> variableBindings = new ArrayList<IVariable>();
 			synchronized (mFacts) {
-				for (IQuery query : mQueries) {
+				for (IQuery query : mQueryListenerMap.keySet()) {
 					IRelation result = mEvaluationStrategy.evaluateQuery(
 							RuleManipulator.removeDuplicateLiterals(query),
 							variableBindings);
@@ -297,7 +292,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 							variableBindings, result);
 
 					// send results to listeners.
-					sendResults(results);
+					sendResults(query, results);
 				}
 			}
 		} catch (Exception e) {
@@ -306,22 +301,24 @@ public class KnowledgeBase implements IKnowledgeBase {
 	}
 
 	@Override
-	public void registerQuery(IQuery query, String host, int port)
+	public void registerQueryListener(IQuery query, String host, int port)
 			throws EvaluationException {
-		synchronized (mQueries) {
-			mQueries.add(query);
-		}
+		HostPortPair pair = new HostPortPair(host, port);
 
 		synchronized (mIrisOutputStreamers) {
-			synchronized (mListenerQueryMap) {
-				HostPortPair pair = new HostPortPair(host, port);
+			synchronized (mQueryListenerMap) {
 				if (!mIrisOutputStreamers.containsKey(pair)) {
-					addListener(host, port);
-					ArrayList<IQuery> queryList = new ArrayList<IQuery>();
-					queryList.add(query);
-					mListenerQueryMap.put(pair, queryList);
+					IIrisOutputStreamer outputStreamer = createListener(host, port);
+					mIrisOutputStreamers.put(new HostPortPair(host, port),
+							outputStreamer);
+				}
+
+				if (mQueryListenerMap.containsKey(query)) {
+					mQueryListenerMap.get(query).add(pair);
 				} else {
-					mListenerQueryMap.get(pair).add(query);
+					ArrayList<HostPortPair> hostPortPairList = new ArrayList<HostPortPair>();
+					hostPortPairList.add(pair);
+					mQueryListenerMap.put(query, hostPortPairList);
 				}
 			}
 		}
@@ -330,33 +327,21 @@ public class KnowledgeBase implements IKnowledgeBase {
 	}
 
 	@Override
-	public void deregisterQuery(IQuery query) {
-		List<HostPortPair> remove = new ArrayList<HostPortPair>();
-		synchronized (mQueries) {
-			synchronized (mIrisOutputStreamers) {
-				synchronized (mListenerQueryMap) {
+	public void deregisterQueryListener(IQuery query, String host, int port) {
+		HostPortPair pair = new HostPortPair(host, port);
 
-					if (mQueries.contains(query)) {
-						mQueries.remove(query);
-						for (Entry<HostPortPair, List<IQuery>> entry : mListenerQueryMap
-								.entrySet()) {
-							if (entry.getValue().contains(query)) {
-								entry.getValue().remove(query);
-								if (entry.getValue().size() == 0) {
-									remove.add(entry.getKey());
-								}
-							}
-						}
-
-						for (HostPortPair entry : remove) {
-							mIrisOutputStreamers.get(entry).shutdown();
-							mIrisOutputStreamers.remove(entry);
-						}
-						logger.info("Query deregistered: {}", query);
-					} else {
-						logger.info("Query does not exist!");
-					}
+		synchronized (mIrisOutputStreamers) {
+			if (mQueryListenerMap.containsKey(query)) {
+				List<HostPortPair> list = mQueryListenerMap.get(query);
+				if (list.contains(pair)) {
+					list.remove(pair);
 				}
+				if (list.size() == 0) {
+					mQueryListenerMap.remove(query);
+				}
+				logger.info("Query deregistered: {}", query);
+			} else {
+				logger.info("Query does not exist!");
 			}
 		}
 	}
@@ -364,12 +349,16 @@ public class KnowledgeBase implements IKnowledgeBase {
 	/**
 	 * This method writes the result of a query to the output sockets.
 	 * 
+	 * @param query
+	 *            The query that has been executed.
 	 * @param results
 	 *            The results of the query.
 	 */
-	private void sendResults(String results) {
-		for (IIrisOutputStreamer streamer : mIrisOutputStreamers.values()) {
-			streamer.stream(results);
+	private void sendResults(IQuery query, String results) {
+		List<HostPortPair> list = mQueryListenerMap.get(query);
+
+		for (HostPortPair pair : list) {
+			mIrisOutputStreamers.get(pair).stream(results);
 		}
 	}
 
@@ -394,27 +383,14 @@ public class KnowledgeBase implements IKnowledgeBase {
 		return result.toString();
 	}
 
-	private void addListener(String host, int port) {
+	private IIrisOutputStreamer createListener(String host, int port) {
 		// Start the knowledge base output thread
 		IIrisOutputStreamer irisOutputStreamer = new IrisOutputStreamer(host,
 				port);
 		irisOutputStreamer.connect();
-		mIrisOutputStreamers.put(new HostPortPair(host, port),
-				irisOutputStreamer);
 		logger.info("Added listener [{}, {}]", host, port);
+		return irisOutputStreamer;
 	}
-
-	// @Override
-	// public void deleteListener(String host, int port) {
-	// HostPortPair pair = new HostPortPair(host, port);
-	// for (HostPortPair entry : mIrisOutputStreamers.keySet()) {
-	// if (pair.equals(entry)) {
-	// mIrisOutputStreamers.get(entry).shutdown();
-	// logger.info("Deleted listener [{}, {}]", host, port);
-	// break;
-	// }
-	// }
-	// }
 
 	@Override
 	public void cleanKnowledgeBase() {

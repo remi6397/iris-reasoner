@@ -102,17 +102,22 @@ public interface IKnowledgeBase {
 	 * @throws EvaluationException
 	 *             If the execution of a query fails for any other reason.
 	 */
-	void registerQuery(IQuery query, String host, int port)
+	void registerQueryListener(IQuery query, String host, int port)
 			throws ProgramNotStratifiedException, RuleUnsafeException,
 			EvaluationException;
 
 	/**
-	 * Deregister a query at this knowledge-base.
+	 * Deregister a query at this knowledge-base for the given socket defined by
+	 * host and port.
 	 * 
 	 * @param query
 	 *            The query to evaluate.
+	 * @param host
+	 *            The host of the socket.
+	 * @param port
+	 *            The port of the socket.
 	 */
-	void deregisterQuery(IQuery query);
+	void deregisterQueryListener(IQuery query, String host, int port);
 
 	/**
 	 * Get the rules hidden within the knowledge-base.

@@ -55,7 +55,7 @@ public class KnowledgeBaseTest {
 					rules, configuration);
 
 			for (IQuery query : parser.getQueries()) {
-				knowledgeBase.registerQuery(query, "localhost",
+				knowledgeBase.registerQueryListener(query, "localhost",
 						server.getLocalPort());
 			}
 		} catch (FileNotFoundException e) {
@@ -96,7 +96,7 @@ public class KnowledgeBaseTest {
 		Assert.assertEquals(1, queries.size());
 
 		for (IQuery query : queries) {
-			knowledgeBase.registerQuery(query, "localhost",
+			knowledgeBase.registerQueryListener(query, "localhost",
 					server.getLocalPort());
 		}
 	}
