@@ -1,0 +1,6 @@
+woman('maude flanders').
+hasSon('maude flanders','todd flanders').
+hasSon('maude flanders','rod flanders').
+
+man('abraham simpson').
+hasSon('abraham simpson','homer simpson').
