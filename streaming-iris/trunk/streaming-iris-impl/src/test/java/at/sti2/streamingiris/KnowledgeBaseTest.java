@@ -1,9 +1,12 @@
 package at.sti2.streamingiris;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 
@@ -12,14 +15,7 @@ import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import at.sti2.streamingiris.Configuration;
-import at.sti2.streamingiris.EvaluationException;
-import at.sti2.streamingiris.KnowledgeBaseFactory;
-import at.sti2.streamingiris.ProgramNotStratifiedException;
-import at.sti2.streamingiris.RuleUnsafeException;
 import at.sti2.streamingiris.api.IKnowledgeBase;
 import at.sti2.streamingiris.api.basics.IPredicate;
 import at.sti2.streamingiris.api.basics.IQuery;
@@ -32,7 +28,6 @@ public class KnowledgeBaseTest {
 
 	private IKnowledgeBase knowledgeBase = null;
 	private Parser parser;
-	private Logger logger = LoggerFactory.getLogger(getClass());
 	private ServerSocket server;
 
 	@Before
@@ -65,16 +60,12 @@ public class KnowledgeBaseTest {
 						server.getLocalPort());
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParserException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (EvaluationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -101,9 +92,41 @@ public class KnowledgeBaseTest {
 
 		Assert.assertEquals(1, queries.size());
 
-		for (IQuery query : queries) {
-			knowledgeBase.registerQueryListener(query, "localhost",
-					server.getLocalPort());
+		try {
+			ServerSocket serverSocket = new ServerSocket(0);
+
+			for (IQuery query : queries) {
+				knowledgeBase.registerQueryListener(query, "localhost",
+						serverSocket.getLocalPort());
+			}
+
+			Socket socket = serverSocket.accept();
+			BufferedReader bufferedReader = new BufferedReader(
+					new InputStreamReader(socket.getInputStream()));
+			String factLine = bufferedReader.readLine();
+			Assert.assertNotNull(factLine);
+			Assert.assertEquals("isFemale('marge simpson').", factLine);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
+
+	@Test
+	public void testDeregisterQuery() {
+		parser = new Parser();
+		try {
+			parser.parse("?- isMale(?x).");
+			List<IQuery> queries = parser.getQueries();
+
+			Assert.assertEquals(1, queries.size());
+
+			for (IQuery query : queries) {
+				knowledgeBase.deregisterQueryListener(query, "localhost",
+						server.getLocalPort());
+			}
+		} catch (ParserException e) {
+			e.printStackTrace();
+		}
+	}
+
 }
