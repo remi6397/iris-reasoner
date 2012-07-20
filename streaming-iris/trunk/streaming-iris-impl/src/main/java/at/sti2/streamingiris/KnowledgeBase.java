@@ -34,9 +34,6 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.sti2.streamingiris.EvaluationException;
-import at.sti2.streamingiris.ProgramNotStratifiedException;
-import at.sti2.streamingiris.RuleUnsafeException;
 import at.sti2.streamingiris.api.IKnowledgeBase;
 import at.sti2.streamingiris.api.basics.IPredicate;
 import at.sti2.streamingiris.api.basics.IQuery;
@@ -75,13 +72,13 @@ public class KnowledgeBase implements IKnowledgeBase {
 	private IEvaluationStrategy mEvaluationStrategy;
 
 	/** The sockets to output the results of the executed queries. */
-	private Map<HostPortPair, IIrisOutputStreamer> mIrisOutputStreamers;
+	private Map<String, IIrisOutputStreamer> mIrisOutputStreamers;
 
 	/**
 	 * The map containing the information which query is registered for which
 	 * listeners.
 	 */
-	private Map<IQuery, List<HostPortPair>> mQueryListenerMap;
+	private Map<IQuery, List<String>> mQueryListenerMap;
 
 	/** The thread that handles incoming facts. */
 	private KnowledgeBaseServer inputServerThread;
@@ -107,8 +104,8 @@ public class KnowledgeBase implements IKnowledgeBase {
 	public KnowledgeBase(Map<IPredicate, IRelation> inputFacts,
 			List<IRule> rules, Configuration configuration)
 			throws EvaluationException {
-		mIrisOutputStreamers = new HashMap<HostPortPair, IIrisOutputStreamer>();
-		mQueryListenerMap = new HashMap<IQuery, List<HostPortPair>>();
+		mIrisOutputStreamers = new HashMap<String, IIrisOutputStreamer>();
+		mQueryListenerMap = new HashMap<IQuery, List<String>>();
 
 		if (inputFacts == null)
 			inputFacts = new HashMap<IPredicate, IRelation>();
@@ -168,6 +165,8 @@ public class KnowledgeBase implements IKnowledgeBase {
 		else
 			mEvaluationStrategy = mConfiguration.evaluationStrategyFactory
 					.createEvaluator(mFacts, mRules, mConfiguration);
+
+		mEvaluationStrategy.evaluateRules(mFacts, 0);
 
 		inputServerThread = new KnowledgeBaseServer(this,
 				mConfiguration.inputPort);
@@ -300,45 +299,46 @@ public class KnowledgeBase implements IKnowledgeBase {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Evaluation error occured: {}", e.getMessage());
+			logger.error("Evaluation error occured: {}", e.toString());
 		}
 	}
 
 	@Override
 	public void registerQueryListener(IQuery query, String host, int port)
 			throws EvaluationException {
-		HostPortPair pair = new HostPortPair(host, port);
+		String hostPortString = host + ":" + port;
 
 		synchronized (mIrisOutputStreamers) {
 			synchronized (mQueryListenerMap) {
-				if (!mIrisOutputStreamers.containsKey(pair)) {
-					IIrisOutputStreamer outputStreamer = createListener(host, port);
-					mIrisOutputStreamers.put(new HostPortPair(host, port),
-							outputStreamer);
+				if (!mIrisOutputStreamers.containsKey(hostPortString)) {
+					IIrisOutputStreamer outputStreamer = createListener(host,
+							port);
+					mIrisOutputStreamers.put(hostPortString, outputStreamer);
 				}
 
 				if (mQueryListenerMap.containsKey(query)) {
-					mQueryListenerMap.get(query).add(pair);
+					mQueryListenerMap.get(query).add(hostPortString);
 				} else {
-					ArrayList<HostPortPair> hostPortPairList = new ArrayList<HostPortPair>();
-					hostPortPairList.add(pair);
+					ArrayList<String> hostPortPairList = new ArrayList<String>();
+					hostPortPairList.add(hostPortString);
 					mQueryListenerMap.put(query, hostPortPairList);
 				}
 			}
 		}
 
-		logger.info("Query registered: {}", query);
+		logger.info("Query registered: " + query + " [" + host + ", " + port
+				+ "]");
 	}
 
 	@Override
 	public void deregisterQueryListener(IQuery query, String host, int port) {
-		HostPortPair pair = new HostPortPair(host, port);
+		String hostPortString = host + ":" + port;
 
 		synchronized (mIrisOutputStreamers) {
 			if (mQueryListenerMap.containsKey(query)) {
-				List<HostPortPair> list = mQueryListenerMap.get(query);
-				if (list.contains(pair)) {
-					list.remove(pair);
+				List<String> list = mQueryListenerMap.get(query);
+				if (list.contains(hostPortString)) {
+					list.remove(hostPortString);
 				}
 				if (list.size() == 0) {
 					mQueryListenerMap.remove(query);
@@ -359,9 +359,9 @@ public class KnowledgeBase implements IKnowledgeBase {
 	 *            The results of the query.
 	 */
 	private void sendResults(IQuery query, String results) {
-		List<HostPortPair> list = mQueryListenerMap.get(query);
+		List<String> list = mQueryListenerMap.get(query);
 
-		for (HostPortPair pair : list) {
+		for (String pair : list) {
 			mIrisOutputStreamers.get(pair).stream(results);
 		}
 	}

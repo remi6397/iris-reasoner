@@ -93,7 +93,8 @@ public class IrisOutputStreamer implements IIrisOutputStreamer {
 			streamWriter.flush();
 
 			logger.info("End of streaming.");
-			logger.info("Streamed " + factCounter + " facts.");
+			logger.info("Streamed " + factCounter + " fact(s) to " + host + ":"
+					+ port + ".");
 
 			bufferedReader.close();
 		} catch (IOException e) {
