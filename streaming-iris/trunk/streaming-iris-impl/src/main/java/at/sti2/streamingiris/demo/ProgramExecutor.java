@@ -29,7 +29,6 @@ import java.util.Map;
 
 import at.sti2.streamingiris.Configuration;
 import at.sti2.streamingiris.KnowledgeBaseFactory;
-import at.sti2.streamingiris.ListenerThread;
 import at.sti2.streamingiris.api.IKnowledgeBase;
 import at.sti2.streamingiris.api.basics.IPredicate;
 import at.sti2.streamingiris.api.basics.IQuery;

@@ -40,8 +40,6 @@ import at.sti2.streamingiris.api.basics.IQuery;
 import at.sti2.streamingiris.api.basics.IRule;
 import at.sti2.streamingiris.api.basics.ITuple;
 import at.sti2.streamingiris.api.terms.IVariable;
-import at.sti2.streamingiris.demo.IIrisOutputStreamer;
-import at.sti2.streamingiris.demo.IrisOutputStreamer;
 import at.sti2.streamingiris.evaluation.IEvaluationStrategy;
 import at.sti2.streamingiris.evaluation.OptimisedProgramStrategyAdaptor;
 import at.sti2.streamingiris.facts.Facts;
@@ -60,25 +58,25 @@ public class KnowledgeBase implements IKnowledgeBase {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	/** The facts of the knowledge-base. */
-	private final IFacts mFacts;
+	private final IFacts facts;
 
 	/** The rules of the knowledge-base. */
-	private final List<IRule> mRules;
+	private final List<IRule> rules;
 
 	/** The configuration object for the knowledge-base. */
-	private final Configuration mConfiguration;
+	private final Configuration configuration;
 
 	/** The evaluation strategy for the knowledge-base. */
-	private IEvaluationStrategy mEvaluationStrategy;
+	private IEvaluationStrategy evaluationStrategy;
 
 	/** The sockets to output the results of the executed queries. */
-	private Map<String, IIrisOutputStreamer> mIrisOutputStreamers;
+	private Map<String, IIrisOutputStreamer> irisOutputStreamers;
 
 	/**
 	 * The map containing the information which query is registered for which
 	 * listeners.
 	 */
-	private Map<IQuery, List<String>> mQueryListenerMap;
+	private Map<IQuery, List<String>> queryListenerMap;
 
 	/** The thread that handles incoming facts. */
 	private KnowledgeBaseServer inputServerThread;
@@ -94,57 +92,57 @@ public class KnowledgeBase implements IKnowledgeBase {
 	 * 
 	 * @param facts
 	 *            The starting facts for the knowledge-base.
-	 * @param rules
+	 * @param ruleList
 	 *            The rules of the knowledge-base.
-	 * @param configuration
+	 * @param config
 	 *            The configuration object for the knowledge-base.
 	 * @throws EvaluationException
 	 * @throws EvaluationException
 	 */
 	public KnowledgeBase(Map<IPredicate, IRelation> inputFacts,
-			List<IRule> rules, Configuration configuration)
+			List<IRule> ruleList, Configuration config)
 			throws EvaluationException {
-		mIrisOutputStreamers = new HashMap<String, IIrisOutputStreamer>();
-		mQueryListenerMap = new HashMap<IQuery, List<String>>();
+		irisOutputStreamers = new HashMap<String, IIrisOutputStreamer>();
+		queryListenerMap = new HashMap<IQuery, List<String>>();
 
 		if (inputFacts == null)
 			inputFacts = new HashMap<IPredicate, IRelation>();
 
-		if (rules == null)
-			rules = new ArrayList<IRule>();
+		if (ruleList == null)
+			ruleList = new ArrayList<IRule>();
 
-		if (configuration == null)
-			configuration = new Configuration();
+		if (config == null)
+			config = new Configuration();
 
-		mConfiguration = configuration;
+		configuration = config;
 
 		// Store the configuration object against the current thread.
-		ConfigurationThreadLocalStorage.setConfiguration(mConfiguration);
+		ConfigurationThreadLocalStorage.setConfiguration(configuration);
 
 		// Set up the rule-base
-		mRules = rules;
+		rules = ruleList;
 
 		// Set up the facts object(s)
-		IFacts facts = new Facts(inputFacts, mConfiguration.relationFactory);
+		IFacts newFacts = new Facts(inputFacts, configuration.relationFactory);
 
-		if (mConfiguration.externalDataSources.size() > 0)
-			facts = new FactsWithExternalData(facts,
-					mConfiguration.externalDataSources);
+		if (configuration.externalDataSources.size() > 0)
+			newFacts = new FactsWithExternalData(newFacts,
+					configuration.externalDataSources);
 
-		mFacts = facts;
+		facts = newFacts;
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("IRIS knowledge-base init");
 			logger.debug("========================");
 
-			for (IRule rule : rules) {
+			for (IRule rule : ruleList) {
 				logger.debug(rule.toString());
 			}
 
 			logger.debug("------------------------");
 
-			for (IPredicate f : mFacts.getPredicates()) {
-				IRelation relation = mFacts.get(f);
+			for (IPredicate f : facts.getPredicates()) {
+				IRelation relation = facts.get(f);
 				for (int i = 0; i < relation.size(); i++) {
 					ITuple tuple = relation.get(i);
 					logger.debug("{} {}", f, tuple);
@@ -156,33 +154,33 @@ public class KnowledgeBase implements IKnowledgeBase {
 		}
 
 		// Store the configuration object against the current thread.
-		ConfigurationThreadLocalStorage.setConfiguration(mConfiguration);
+		ConfigurationThreadLocalStorage.setConfiguration(configuration);
 
 		// initialize the evaluation strategy with the updated facts.
-		if (mConfiguration.programOptmimisers.size() > 0)
-			mEvaluationStrategy = new OptimisedProgramStrategyAdaptor(mFacts,
-					mRules, mConfiguration);
+		if (configuration.programOptmimisers.size() > 0)
+			evaluationStrategy = new OptimisedProgramStrategyAdaptor(facts,
+					rules, configuration);
 		else
-			mEvaluationStrategy = mConfiguration.evaluationStrategyFactory
-					.createEvaluator(mFacts, mRules, mConfiguration);
+			evaluationStrategy = configuration.evaluationStrategyFactory
+					.createEvaluator(facts, rules, configuration);
 
-		mEvaluationStrategy.evaluateRules(mFacts, 0);
+		evaluationStrategy.evaluateRules(facts, 0);
 
 		inputServerThread = new KnowledgeBaseServer(this,
-				mConfiguration.inputPort);
+				configuration.inputPort);
 		inputServerThread.start();
 
 		garbageCollectorExecutor = Executors.newSingleThreadScheduledExecutor();
 		garbageCollectorExecutor.scheduleAtFixedRate(
 				new GarbageCollectorThread(this),
-				mConfiguration.executionIntervallMilliseconds,
-				mConfiguration.executionIntervallMilliseconds,
+				configuration.executionIntervallMilliseconds,
+				configuration.executionIntervallMilliseconds,
 				TimeUnit.MILLISECONDS);
 
 		executionExecutor = Executors.newSingleThreadScheduledExecutor();
 		executionExecutor.scheduleAtFixedRate(new ExecutionThread(this),
-				mConfiguration.executionIntervallMilliseconds / 2,
-				mConfiguration.executionIntervallMilliseconds,
+				configuration.executionIntervallMilliseconds / 2,
+				configuration.executionIntervallMilliseconds,
 				TimeUnit.MILLISECONDS);
 	}
 
@@ -216,7 +214,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 			}
 
 			// Shut down the output streamer.
-			for (IIrisOutputStreamer streamer : mIrisOutputStreamers.values()) {
+			for (IIrisOutputStreamer streamer : irisOutputStreamers.values()) {
 				if (!streamer.shutdown())
 					logger.error("IIrisOutputStreamer could not be shut down!");
 				else
@@ -231,15 +229,15 @@ public class KnowledgeBase implements IKnowledgeBase {
 	public void addFacts(Map<IPredicate, IRelation> newFacts)
 			throws EvaluationException {
 		long timestamp;
-		synchronized (mFacts) {
+		synchronized (facts) {
 			timestamp = System.currentTimeMillis()
-					+ mConfiguration.timeWindowMilliseconds;
+					+ configuration.timeWindowMilliseconds;
 
-			mFacts.addFacts(newFacts, timestamp);
+			facts.addFacts(newFacts, timestamp);
 
 			// FIXME Norbert: does only work with
 			// StratifiedBottomUpEvaluationStrategy
-			mEvaluationStrategy.evaluateRules(mFacts, timestamp);
+			evaluationStrategy.evaluateRules(facts, timestamp);
 		}
 
 		Set<IPredicate> predicates = newFacts.keySet();
@@ -271,8 +269,8 @@ public class KnowledgeBase implements IKnowledgeBase {
 		if (variableBindings == null)
 			variableBindings = new ArrayList<IVariable>();
 
-		synchronized (mFacts) {
-			IRelation result = mEvaluationStrategy.evaluateQuery(
+		synchronized (facts) {
+			IRelation result = evaluationStrategy.evaluateQuery(
 					RuleManipulator.removeDuplicateLiterals(query),
 					variableBindings);
 
@@ -284,9 +282,9 @@ public class KnowledgeBase implements IKnowledgeBase {
 	public void execute() {
 		try {
 			ArrayList<IVariable> variableBindings = new ArrayList<IVariable>();
-			synchronized (mFacts) {
-				for (IQuery query : mQueryListenerMap.keySet()) {
-					IRelation result = mEvaluationStrategy.evaluateQuery(
+			synchronized (facts) {
+				for (IQuery query : queryListenerMap.keySet()) {
+					IRelation result = evaluationStrategy.evaluateQuery(
 							RuleManipulator.removeDuplicateLiterals(query),
 							variableBindings);
 
@@ -308,20 +306,20 @@ public class KnowledgeBase implements IKnowledgeBase {
 			throws EvaluationException {
 		String hostPortString = host + ":" + port;
 
-		synchronized (mIrisOutputStreamers) {
-			synchronized (mQueryListenerMap) {
-				if (!mIrisOutputStreamers.containsKey(hostPortString)) {
+		synchronized (irisOutputStreamers) {
+			synchronized (queryListenerMap) {
+				if (!irisOutputStreamers.containsKey(hostPortString)) {
 					IIrisOutputStreamer outputStreamer = createListener(host,
 							port);
-					mIrisOutputStreamers.put(hostPortString, outputStreamer);
+					irisOutputStreamers.put(hostPortString, outputStreamer);
 				}
 
-				if (mQueryListenerMap.containsKey(query)) {
-					mQueryListenerMap.get(query).add(hostPortString);
+				if (queryListenerMap.containsKey(query)) {
+					queryListenerMap.get(query).add(hostPortString);
 				} else {
 					ArrayList<String> hostPortPairList = new ArrayList<String>();
 					hostPortPairList.add(hostPortString);
-					mQueryListenerMap.put(query, hostPortPairList);
+					queryListenerMap.put(query, hostPortPairList);
 				}
 			}
 		}
@@ -334,14 +332,14 @@ public class KnowledgeBase implements IKnowledgeBase {
 	public void deregisterQueryListener(IQuery query, String host, int port) {
 		String hostPortString = host + ":" + port;
 
-		synchronized (mIrisOutputStreamers) {
-			if (mQueryListenerMap.containsKey(query)) {
-				List<String> list = mQueryListenerMap.get(query);
+		synchronized (irisOutputStreamers) {
+			if (queryListenerMap.containsKey(query)) {
+				List<String> list = queryListenerMap.get(query);
 				if (list.contains(hostPortString)) {
 					list.remove(hostPortString);
 				}
 				if (list.size() == 0) {
-					mQueryListenerMap.remove(query);
+					queryListenerMap.remove(query);
 				}
 				logger.info("Query deregistered: {}", query);
 			} else {
@@ -359,10 +357,10 @@ public class KnowledgeBase implements IKnowledgeBase {
 	 *            The results of the query.
 	 */
 	private void sendResults(IQuery query, String results) {
-		List<String> list = mQueryListenerMap.get(query);
+		List<String> list = queryListenerMap.get(query);
 
 		for (String pair : list) {
-			mIrisOutputStreamers.get(pair).stream(results);
+			irisOutputStreamers.get(pair).stream(results);
 		}
 	}
 
@@ -370,18 +368,18 @@ public class KnowledgeBase implements IKnowledgeBase {
 	 * Returns all rules of this Knowledge Base.
 	 */
 	public List<IRule> getRules() {
-		return mRules;
+		return rules;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 
-		for (IRule rule : mRules)
+		for (IRule rule : rules)
 			result.append(rule.toString());
 
-		synchronized (mFacts) {
-			result.append(mFacts.toString());
+		synchronized (facts) {
+			result.append(facts.toString());
 		}
 
 		return result.toString();
@@ -398,15 +396,15 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 	@Override
 	public void cleanKnowledgeBase() {
-		synchronized (mFacts) {
+		synchronized (facts) {
 			long currentTime = System.currentTimeMillis();
 
-			mFacts.clean(currentTime);
+			facts.clean(currentTime);
 
 			try {
 				// FIXME Norbert: does only work with
 				// StratifiedBottomUpEvaluationStrategy
-				mEvaluationStrategy.evaluateRules(mFacts, currentTime);
+				evaluationStrategy.evaluateRules(facts, currentTime);
 			} catch (EvaluationException e) {
 				logger.error("Evaluation exception occured: {}", e.getMessage());
 			}
