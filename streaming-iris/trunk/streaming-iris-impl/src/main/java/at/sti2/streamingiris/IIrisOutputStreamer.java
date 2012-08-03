@@ -1,4 +1,4 @@
-package at.sti2.streamingiris.demo;
+package at.sti2.streamingiris;
 
 public interface IIrisOutputStreamer {
 

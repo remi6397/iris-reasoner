@@ -1,4 +1,4 @@
-package at.sti2.streamingiris;
+package at.sti2.streamingiris.demo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
