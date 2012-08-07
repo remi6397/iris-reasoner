@@ -230,14 +230,17 @@ public class KnowledgeBase implements IKnowledgeBase {
 			throws EvaluationException {
 		long timestamp;
 		synchronized (facts) {
-			timestamp = System.currentTimeMillis()
+			long currentTimeMillis = System.currentTimeMillis();
+			logger.info("Current time: {}", currentTimeMillis);
+			timestamp = currentTimeMillis
 					+ configuration.timeWindowMilliseconds;
+			logger.info("Timestamp: {}", timestamp);
 
 			facts.addFacts(newFacts, timestamp);
 
 			// FIXME Norbert: does only work with
 			// StratifiedBottomUpEvaluationStrategy
-			evaluationStrategy.evaluateRules(facts, timestamp);
+			evaluationStrategy.evaluateRules(facts, -1);
 		}
 
 		Set<IPredicate> predicates = newFacts.keySet();
@@ -245,7 +248,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 			IRelation relation = newFacts.get(predicate);
 			for (int i = 0; i < relation.size(); i++) {
 				ITuple tuple = relation.get(i);
-				logger.debug("Added [" + timestamp + "]: " + predicate + " "
+				logger.info("ADDED [" + timestamp + "]: " + predicate + " "
 						+ tuple);
 			}
 		}
@@ -398,30 +401,33 @@ public class KnowledgeBase implements IKnowledgeBase {
 	public void cleanKnowledgeBase() {
 		synchronized (facts) {
 			long currentTime = System.currentTimeMillis();
+			logger.info("Current time: {}", currentTime);
 
 			facts.clean(currentTime);
 
 			try {
 				// FIXME Norbert: does only work with
 				// StratifiedBottomUpEvaluationStrategy
-				evaluationStrategy.evaluateRules(facts, currentTime);
+				// using -1 so inferred facts get deleted before next execution
+				evaluationStrategy.evaluateRules(facts, -1);
 			} catch (EvaluationException e) {
 				logger.error("Evaluation exception occured: {}", e.getMessage());
 			}
 
 			// TODO Norbert: logging
-			// logger.debug("Current knowledge-base [{}]:", currentTime);
-			// logger.debug("----------------------------");
-			// Set<IPredicate> predicates = mFacts.getPredicates();
+			// logger.info("Current knowledge-base [{}]:", currentTime);
+			// logger.info("----------------------------");
+			// Set<IPredicate> predicates = facts.getPredicates();
 			// for (IPredicate predicate : predicates) {
-			// IRelation relation = mFacts.get(predicate);
+			// IRelation relation = facts.get(predicate);
 			// for (int i = 0; i < relation.size(); i++) {
 			// ITuple tuple = relation.get(i);
-			// logger.debug("[" + relation.getTimestamp(tuple) + "]: "
+			// logger.info("[" + relation.getTimestamp(tuple) + "]: "
 			// + predicate + " " + tuple);
 			// }
 			//
 			// }
+			// logger.info("============================");
 		}
 	}
 }

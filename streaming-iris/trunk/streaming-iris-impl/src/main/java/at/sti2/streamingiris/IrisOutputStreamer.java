@@ -82,7 +82,7 @@ public class IrisOutputStreamer implements IIrisOutputStreamer {
 			BufferedReader bufferedReader = new BufferedReader(
 					new StringReader(output));
 			String factLine = null;
-			logger.info("Beginning of streaming.");
+			logger.info("Start of streaming.");
 
 			while ((factLine = bufferedReader.readLine()) != null) {
 				streamWriter.println(factLine);
