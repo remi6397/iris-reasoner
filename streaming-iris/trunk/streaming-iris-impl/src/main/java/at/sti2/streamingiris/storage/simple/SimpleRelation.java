@@ -25,6 +25,8 @@ package at.sti2.streamingiris.storage.simple;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.sti2.streamingiris.api.basics.ITuple;
 import at.sti2.streamingiris.storage.IRelation;
@@ -34,6 +36,7 @@ import at.sti2.streamingiris.utils.UniqueList;
  * A simple, in-memory, array-based relation.
  */
 public class SimpleRelation implements IRelation {
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	/** The array list (or unique list) of tuples. */
 	private final UniqueList<ITuple> mTuples;
@@ -115,8 +118,11 @@ public class SimpleRelation implements IRelation {
 		List<ITuple> remove = new ArrayList<ITuple>();
 		for (ITuple tuple : mTuples) {
 			tupleTimestamp = getTimestamp(tuple);
+			logger.info("CHECKING [" + tupleTimestamp + "]" + " [" + timestamp
+					+ "]: " + tuple);
 			if (tupleTimestamp != 0 && tupleTimestamp < timestamp) {
 				remove.add(tuple);
+				logger.info("REMOVED");
 			}
 		}
 

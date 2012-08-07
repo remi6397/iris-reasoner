@@ -24,9 +24,6 @@ package at.sti2.streamingiris.evaluation.stratifiedbottomup.seminaive;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import at.sti2.streamingiris.Configuration;
 import at.sti2.streamingiris.EvaluationException;
 import at.sti2.streamingiris.api.basics.IPredicate;
@@ -41,7 +38,7 @@ import at.sti2.streamingiris.storage.IRelation;
  * Semi-naive evaluation. see Ullman, Vol. 1
  */
 public class SemiNaiveEvaluator implements IRuleEvaluator {
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	// private Logger logger = LoggerFactory.getLogger(getClass());
 
 	public void evaluateRules(List<ICompiledRule> rules, IFacts facts,
 			Configuration configuration, long timestamp)
@@ -152,7 +149,7 @@ public class SemiNaiveEvaluator implements IRuleEvaluator {
 			ITuple tuple = delta.get(t);
 			if (!programFacts.contains(tuple)) {
 				result.add(tuple);
-			} else if (programFacts.getTimestamp(tuple) != 0) {
+			} else if (programFacts.getTimestamp(tuple) < 0) {
 				programFacts.setTimestamp(tuple, timestamp);
 			}
 		}

@@ -25,7 +25,6 @@ package at.sti2.streamingiris;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import at.sti2.streamingiris.api.IProgramOptimisation;
 import at.sti2.streamingiris.evaluation.IEvaluationStrategyFactory;
 import at.sti2.streamingiris.evaluation.stratifiedbottomup.StratifiedBottomUpEvaluationStrategyFactory;
@@ -76,7 +75,7 @@ public class Configuration {
 	 * The time window in milliseconds when queries get periodically executed.
 	 * Default is 10 seconds.
 	 */
-	public long executionIntervallMilliseconds = 5000;
+	public long executionIntervallMilliseconds = 10000;
 
 	/**
 	 * The maximum number of tuples that are allowed to be generated during
