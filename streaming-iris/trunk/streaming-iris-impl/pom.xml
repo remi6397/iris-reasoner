@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>streaming-iris</artifactId>
 		<groupId>at.sti2.streamingiris</groupId>
-		<version>0.1.0</version>
+		<version>0.1.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>streaming-iris-impl</artifactId>
