@@ -8,4 +8,4 @@ isMale(?y) :- hasSon(?x,?y).
 isFemale(?y) :- hasDaughter(?x,?y).
 isAnimal(?y) :- hasPet(?x,?y).
 
-?- isMale(?x). 
+?- isMale(?x).

@@ -26,10 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,8 +43,6 @@ import at.sti2.streamingiris.facts.FactsWithExternalData;
 import at.sti2.streamingiris.facts.IFacts;
 import at.sti2.streamingiris.rules.RuleManipulator;
 import at.sti2.streamingiris.storage.IRelation;
-import at.sti2.streamingiris.threads.ExecutionThread;
-import at.sti2.streamingiris.threads.GarbageCollectorThread;
 import at.sti2.streamingiris.threads.KnowledgeBaseServer;
 
 /**
@@ -82,10 +76,10 @@ public class KnowledgeBase implements IKnowledgeBase {
 	private KnowledgeBaseServer inputServerThread;
 
 	/** The thread that starts the periodically execution of the queries. */
-	private ScheduledExecutorService executionExecutor;
+	// private ScheduledExecutorService executionExecutor;
 
 	/** The thread that deletes obsolete facts from the knowledge-base. */
-	private ScheduledExecutorService garbageCollectorExecutor;
+	// private ScheduledExecutorService garbageCollectorExecutor;
 
 	/**
 	 * Constructor.
@@ -170,18 +164,19 @@ public class KnowledgeBase implements IKnowledgeBase {
 				configuration.inputPort);
 		inputServerThread.start();
 
-		garbageCollectorExecutor = Executors.newSingleThreadScheduledExecutor();
-		garbageCollectorExecutor.scheduleAtFixedRate(
-				new GarbageCollectorThread(this),
-				configuration.executionIntervallMilliseconds,
-				configuration.executionIntervallMilliseconds,
-				TimeUnit.MILLISECONDS);
+		// garbageCollectorExecutor =
+		// Executors.newSingleThreadScheduledExecutor();
+		// garbageCollectorExecutor.scheduleAtFixedRate(
+		// new GarbageCollectorThread(this),
+		// configuration.executionIntervallMilliseconds,
+		// configuration.executionIntervallMilliseconds,
+		// TimeUnit.MILLISECONDS);
 
-		executionExecutor = Executors.newSingleThreadScheduledExecutor();
-		executionExecutor.scheduleAtFixedRate(new ExecutionThread(this),
-				configuration.executionIntervallMilliseconds / 2,
-				configuration.executionIntervallMilliseconds,
-				TimeUnit.MILLISECONDS);
+		// executionExecutor = Executors.newSingleThreadScheduledExecutor();
+		// executionExecutor.scheduleAtFixedRate(new ExecutionThread(this),
+		// configuration.executionIntervallMilliseconds / 2,
+		// configuration.executionIntervallMilliseconds,
+		// TimeUnit.MILLISECONDS);
 	}
 
 	@Override
@@ -194,24 +189,22 @@ public class KnowledgeBase implements IKnowledgeBase {
 				logger.error("InputStream could not be shut down!");
 
 			// Shut down the executor.
-			executionExecutor.shutdownNow();
-			try {
-				executionExecutor.awaitTermination(10, TimeUnit.SECONDS);
-				logger.info("Execution thread shut down!");
-			} catch (InterruptedException e) {
-				logger.error("Execution thread could not be shut down!");
-
-			}
+			// executionExecutor.shutdownNow();
+			// try {
+			// executionExecutor.awaitTermination(10, TimeUnit.SECONDS);
+			// logger.info("Execution thread shut down!");
+			// } catch (InterruptedException e) {
+			// logger.error("Execution thread could not be shut down!");
+			// }
 
 			// Shut down the garbage collector.
-			garbageCollectorExecutor.shutdownNow();
-			try {
-				garbageCollectorExecutor.awaitTermination(10, TimeUnit.SECONDS);
-				logger.info("Garbage collector thread shut down!");
-			} catch (InterruptedException e) {
-				logger.error("Garbage collector thread could not be shut down!");
-
-			}
+			// garbageCollectorExecutor.shutdownNow();
+			// try {
+			// garbageCollectorExecutor.awaitTermination(10, TimeUnit.SECONDS);
+			// logger.info("Garbage collector thread shut down!");
+			// } catch (InterruptedException e) {
+			// logger.error("Garbage collector thread could not be shut down!");
+			// }
 
 			// Shut down the output streamer.
 			for (IIrisOutputStreamer streamer : irisOutputStreamers.values()) {
@@ -231,10 +224,12 @@ public class KnowledgeBase implements IKnowledgeBase {
 		long timestamp;
 		synchronized (facts) {
 			long currentTimeMillis = System.currentTimeMillis();
-			logger.info("Current time: {}", currentTimeMillis);
+			// logger.info("Current time: {}", currentTimeMillis);
 			timestamp = currentTimeMillis
 					+ configuration.timeWindowMilliseconds;
-			logger.info("Timestamp: {}", timestamp);
+			// logger.info("Timestamp: {}", timestamp);
+
+			facts.clean(currentTimeMillis);
 
 			facts.addFacts(newFacts, timestamp);
 
@@ -243,15 +238,17 @@ public class KnowledgeBase implements IKnowledgeBase {
 			evaluationStrategy.evaluateRules(facts, -1);
 		}
 
-		Set<IPredicate> predicates = newFacts.keySet();
-		for (IPredicate predicate : predicates) {
-			IRelation relation = newFacts.get(predicate);
-			for (int i = 0; i < relation.size(); i++) {
-				ITuple tuple = relation.get(i);
-				logger.info("ADDED [" + timestamp + "]: " + predicate + " "
-						+ tuple);
-			}
-		}
+		execute();
+
+		// Set<IPredicate> predicates = newFacts.keySet();
+		// for (IPredicate predicate : predicates) {
+		// IRelation relation = newFacts.get(predicate);
+		// for (int i = 0; i < relation.size(); i++) {
+		// ITuple tuple = relation.get(i);
+		// logger.info("ADDED [" + timestamp + "]: " + predicate + " "
+		// + tuple);
+		// }
+		// }
 	}
 
 	@Override
@@ -392,7 +389,6 @@ public class KnowledgeBase implements IKnowledgeBase {
 		// Start the knowledge base output thread
 		IIrisOutputStreamer irisOutputStreamer = new IrisOutputStreamer(host,
 				port);
-		irisOutputStreamer.connect();
 		logger.info("Added listener [{}, {}]", host, port);
 		return irisOutputStreamer;
 	}
@@ -401,7 +397,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 	public void cleanKnowledgeBase() {
 		synchronized (facts) {
 			long currentTime = System.currentTimeMillis();
-			logger.info("Current time: {}", currentTime);
+			// logger.info("Current time: {}", currentTime);
 
 			facts.clean(currentTime);
 
@@ -414,7 +410,6 @@ public class KnowledgeBase implements IKnowledgeBase {
 				logger.error("Evaluation exception occured: {}", e.getMessage());
 			}
 
-			// TODO Norbert: logging
 			// logger.info("Current knowledge-base [{}]:", currentTime);
 			// logger.info("----------------------------");
 			// Set<IPredicate> predicates = facts.getPredicates();

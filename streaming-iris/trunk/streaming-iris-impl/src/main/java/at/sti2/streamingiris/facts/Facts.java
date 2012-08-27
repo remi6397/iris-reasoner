@@ -27,9 +27,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import at.sti2.streamingiris.api.basics.IPredicate;
 import at.sti2.streamingiris.api.basics.ITuple;
 import at.sti2.streamingiris.storage.IRelation;
@@ -40,7 +37,7 @@ import at.sti2.streamingiris.storage.simple.SimpleRelationFactory;
  * A manager for all facts stored in a knowledge-base.
  */
 public class Facts implements IFacts {
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	// private Logger logger = LoggerFactory.getLogger(getClass());
 
 	/** The map storing the predicate-relation relationship. */
 	protected final Map<IPredicate, IRelation> mPredicateRelationMap = new HashMap<IPredicate, IRelation>();
@@ -127,8 +124,8 @@ public class Facts implements IFacts {
 				mPredicateRelationMap.get(predicate)
 						.addAll(relation, timestamp);
 			}
-			logger.debug("ADDED: " + predicate + " " + relation + "["
-					+ timestamp + "]");
+			// logger.debug("ADDED: " + predicate + " " + relation + "["
+			// + timestamp + "]");
 		}
 	}
 

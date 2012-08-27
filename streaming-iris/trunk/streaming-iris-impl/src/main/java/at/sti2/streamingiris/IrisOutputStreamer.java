@@ -56,47 +56,26 @@ public class IrisOutputStreamer implements IIrisOutputStreamer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.deri.iris.demo.IIrisOutputStreamer#connect()
-	 */
-	@Override
-	public void connect() {
-		try {
-			socket = new Socket(host, port);
-			logger.info("Connected.");
-		} catch (IOException e) {
-			logger.debug("Cannot connect to server.");
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.deri.iris.demo.IIrisOutputStreamer#stream(java.lang.String)
 	 */
 	@Override
 	public void stream(String output) {
-		long factCounter = 0;
-
 		try {
+			socket = new Socket(host, port);
 			streamWriter = new PrintWriter(socket.getOutputStream());
 			BufferedReader bufferedReader = new BufferedReader(
 					new StringReader(output));
 			String factLine = null;
-			logger.info("Start of streaming.");
 
 			while ((factLine = bufferedReader.readLine()) != null) {
 				streamWriter.println(factLine);
-				logger.debug(factLine);
-				factCounter++;
 			}
 
 			streamWriter.flush();
-
-			logger.info("End of streaming.");
-			logger.info("Streamed " + factCounter + " fact(s) to " + host + ":"
-					+ port + ".");
+			streamWriter.close();
 
 			bufferedReader.close();
+			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -115,7 +94,6 @@ public class IrisOutputStreamer implements IIrisOutputStreamer {
 				streamWriter.close();
 			if (socket != null)
 				socket.close();
-			logger.info("Disconnected.");
 		} catch (IOException e) {
 			logger.error("IO exception occured!", e);
 			e.printStackTrace();

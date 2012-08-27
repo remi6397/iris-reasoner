@@ -3,11 +3,6 @@ package at.sti2.streamingiris;
 public interface IIrisOutputStreamer {
 
 	/**
-	 * Connect to the output streamer.
-	 */
-	public abstract void connect();
-
-	/**
 	 * Streams the output.
 	 * 
 	 * @param output
