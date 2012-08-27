@@ -29,9 +29,6 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Modified array list implementation that enforces uniqueness, but maintains
  * ordering.
@@ -40,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *            The type of the elements of this collection.
  */
 public class UniqueList<E> extends ArrayList<E> {
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	// private Logger logger = LoggerFactory.getLogger(getClass());
 
 	/** Serialisation ID */
 	private static final long serialVersionUID = 1L;
@@ -174,7 +171,7 @@ public class UniqueList<E> extends ArrayList<E> {
 		boolean result = super.remove(o);
 
 		if (result) {
-			logger.debug("REMOVED: {}", o);
+			// logger.debug("REMOVED: {}", o);
 			mMap.remove(o);
 		}
 

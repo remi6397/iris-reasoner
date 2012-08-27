@@ -24,7 +24,6 @@ package at.sti2.streamingiris.evaluation.stratifiedbottomup.naive;
 
 import java.util.List;
 
-
 import at.sti2.streamingiris.Configuration;
 import at.sti2.streamingiris.EvaluationException;
 import at.sti2.streamingiris.api.basics.IPredicate;
@@ -56,7 +55,6 @@ public class NaiveEvaluator implements IRuleEvaluator {
 					if (facts.get(predicate).addAll(delta, timestamp))
 						cont = true;
 
-					// TODO Norbert: logging
 					// if (logger.isDebugEnabled()) {
 					// for (int i = 0; i < delta.size(); i++) {
 					// logger.debug("Created fact [" + timestamp + "]: "

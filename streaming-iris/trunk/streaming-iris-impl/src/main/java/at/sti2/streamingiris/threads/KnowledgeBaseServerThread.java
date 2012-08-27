@@ -49,13 +49,18 @@ public class KnowledgeBaseServerThread extends Thread {
 			BufferedReader streamReader = new BufferedReader(
 					new InputStreamReader(socket.getInputStream()));
 
-			String factLine = null;
-
 			Parser parser = new Parser();
-			while (!Thread.interrupted()
-					&& (factLine = streamReader.readLine()) != null) {
-				// TODO Norbert: maybe buffer input lines before parse
-				parser.parse(factLine);
+
+			while (!Thread.interrupted()) {
+				StringBuffer buffer = new StringBuffer();
+
+				String factLine = streamReader.readLine();
+				while (factLine != null) {
+					buffer.append(factLine);
+					factLine = streamReader.readLine();
+				}
+
+				parser.parse(buffer.toString());
 				Map<IPredicate, IRelation> newFacts = parser.getFacts();
 				if (newFacts != null && newFacts.size() != 0) {
 					knowledgeBase.addFacts(newFacts);

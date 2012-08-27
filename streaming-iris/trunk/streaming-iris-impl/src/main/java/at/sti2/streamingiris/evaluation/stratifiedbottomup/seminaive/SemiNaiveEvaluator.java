@@ -54,7 +54,6 @@ public class SemiNaiveEvaluator implements IRuleEvaluator {
 				IPredicate predicate = rule.headPredicate();
 				deltas.get(predicate).addAll(delta, timestamp);
 
-				// TODO Norbert: logging
 				// if (logger.isDebugEnabled()) {
 				// for (int i = 0; i < delta.size(); i++) {
 				// logger.debug("Created fact [" + timestamp + "]: "
@@ -81,7 +80,6 @@ public class SemiNaiveEvaluator implements IRuleEvaluator {
 
 				IRelation delta = rule.evaluateIteratively(previousDeltas);
 
-				// FIXME keep tuples with new timestamp
 				// Remove already known tuples
 				if (delta != null && delta.size() > 0) {
 					IRelation programFacts = facts.get(predicate);
@@ -93,7 +91,6 @@ public class SemiNaiveEvaluator implements IRuleEvaluator {
 					newTuples = true;
 					deltas.get(predicate).addAll(delta);
 
-					// TODO Norbert: logging
 					// if (logger.isDebugEnabled()) {
 					// for (int i = 0; i < delta.size(); i++) {
 					// logger.debug("Created fact [" + timestamp + "]: "
