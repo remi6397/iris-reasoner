@@ -9,8 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.sti2.streamingiris.EvaluationException;
-import at.sti2.streamingiris.KnowledgeBase;
+import at.sti2.streamingiris.InputBuffer;
 import at.sti2.streamingiris.api.basics.IPredicate;
 import at.sti2.streamingiris.compiler.Parser;
 import at.sti2.streamingiris.compiler.ParserException;
@@ -27,19 +26,19 @@ public class KnowledgeBaseServerThread extends Thread {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
-	private KnowledgeBase knowledgeBase = null;
+	private InputBuffer inputBuffer = null;
 	private Socket socket = null;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param knowledgeBase
+	 * @param inputBuffer
 	 *            The Knowledge Base where to give the new data.
 	 * @param socket
 	 *            The socket where the new data is read from.
 	 */
-	public KnowledgeBaseServerThread(KnowledgeBase knowledgeBase, Socket socket) {
-		this.knowledgeBase = knowledgeBase;
+	public KnowledgeBaseServerThread(InputBuffer inputBuffer, Socket socket) {
+		this.inputBuffer = inputBuffer;
 		this.socket = socket;
 	}
 
@@ -51,20 +50,18 @@ public class KnowledgeBaseServerThread extends Thread {
 
 			Parser parser = new Parser();
 
-			while (!Thread.interrupted()) {
-				StringBuffer buffer = new StringBuffer();
+			StringBuffer buffer = new StringBuffer();
 
-				String factLine = streamReader.readLine();
-				while (factLine != null) {
-					buffer.append(factLine);
-					factLine = streamReader.readLine();
-				}
+			String factLine = streamReader.readLine();
+			while (factLine != null) {
+				buffer.append(factLine);
+				factLine = streamReader.readLine();
+			}
 
-				parser.parse(buffer.toString());
-				Map<IPredicate, IRelation> newFacts = parser.getFacts();
-				if (newFacts != null && newFacts.size() != 0) {
-					knowledgeBase.addFacts(newFacts);
-				}
+			parser.parse(buffer.toString());
+			Map<IPredicate, IRelation> newFacts = parser.getFacts();
+			if (newFacts != null && newFacts.size() != 0) {
+				inputBuffer.addFacts(newFacts);
 			}
 
 			streamReader.close();
@@ -74,9 +71,6 @@ public class KnowledgeBaseServerThread extends Thread {
 			e.printStackTrace();
 		} catch (ParserException e) {
 			logger.error("Parse exception occured!", e);
-			e.printStackTrace();
-		} catch (EvaluationException e) {
-			logger.error("Evaluation exception occured", e);
 			e.printStackTrace();
 		}
 	}

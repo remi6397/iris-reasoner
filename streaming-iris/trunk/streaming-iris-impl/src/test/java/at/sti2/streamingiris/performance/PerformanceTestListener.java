@@ -32,13 +32,13 @@ public class PerformanceTestListener extends Thread {
 
 	public void run() {
 		try {
+			int i = 0;
 			Socket sock = null;
 			while (!Thread.interrupted()) {
 				sock = server.accept();
 
-				i++;
 				time = System.currentTimeMillis();
-				program.addEndTime(i, time);
+				// program.addEndTime(i, time);
 
 				BufferedReader streamReader = new BufferedReader(
 						new InputStreamReader(sock.getInputStream()));
@@ -46,10 +46,11 @@ public class PerformanceTestListener extends Thread {
 				String factLine = null;
 
 				while ((factLine = streamReader.readLine()) != null) {
-					logger.debug(factLine);
+					logger.debug("{}: {}", i, factLine);
 				}
 
 				streamReader.close();
+				i++;
 			}
 
 			if (sock != null) {

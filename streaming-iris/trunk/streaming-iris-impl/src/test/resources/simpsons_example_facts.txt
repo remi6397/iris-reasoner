@@ -1,0 +1,5 @@
+man('?x').
+woman('?x').
+hasSon('?x', '?y').
+hasDaughter('?x', '?y').
+hasPet('?x', '?y').
