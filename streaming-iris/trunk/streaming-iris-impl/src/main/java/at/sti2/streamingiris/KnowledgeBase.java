@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,11 +77,8 @@ public class KnowledgeBase implements IKnowledgeBase {
 	/** The thread that handles incoming facts. */
 	private KnowledgeBaseServer inputServerThread;
 
-	/** The thread that starts the periodically execution of the queries. */
-	// private ScheduledExecutorService executionExecutor;
-
-	/** The thread that deletes obsolete facts from the knowledge-base. */
-	// private ScheduledExecutorService garbageCollectorExecutor;
+	/** Buffers the input until the evaluation is finished. */
+	private InputBuffer inputBuffer;
 
 	/**
 	 * Constructor.
@@ -160,23 +159,11 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 		evaluationStrategy.evaluateRules(facts, 0);
 
-		inputServerThread = new KnowledgeBaseServer(this,
+		inputBuffer = new InputBuffer(this);
+
+		inputServerThread = new KnowledgeBaseServer(inputBuffer,
 				configuration.inputPort);
 		inputServerThread.start();
-
-		// garbageCollectorExecutor =
-		// Executors.newSingleThreadScheduledExecutor();
-		// garbageCollectorExecutor.scheduleAtFixedRate(
-		// new GarbageCollectorThread(this),
-		// configuration.executionIntervallMilliseconds,
-		// configuration.executionIntervallMilliseconds,
-		// TimeUnit.MILLISECONDS);
-
-		// executionExecutor = Executors.newSingleThreadScheduledExecutor();
-		// executionExecutor.scheduleAtFixedRate(new ExecutionThread(this),
-		// configuration.executionIntervallMilliseconds / 2,
-		// configuration.executionIntervallMilliseconds,
-		// TimeUnit.MILLISECONDS);
 	}
 
 	@Override
@@ -188,23 +175,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 			if (!inputServerThread.shutdown())
 				logger.error("InputStream could not be shut down!");
 
-			// Shut down the executor.
-			// executionExecutor.shutdownNow();
-			// try {
-			// executionExecutor.awaitTermination(10, TimeUnit.SECONDS);
-			// logger.info("Execution thread shut down!");
-			// } catch (InterruptedException e) {
-			// logger.error("Execution thread could not be shut down!");
-			// }
-
-			// Shut down the garbage collector.
-			// garbageCollectorExecutor.shutdownNow();
-			// try {
-			// garbageCollectorExecutor.awaitTermination(10, TimeUnit.SECONDS);
-			// logger.info("Garbage collector thread shut down!");
-			// } catch (InterruptedException e) {
-			// logger.error("Garbage collector thread could not be shut down!");
-			// }
+			inputBuffer.shutdown();
 
 			// Shut down the output streamer.
 			for (IIrisOutputStreamer streamer : irisOutputStreamers.values()) {
@@ -221,24 +192,33 @@ public class KnowledgeBase implements IKnowledgeBase {
 	@Override
 	public void addFacts(Map<IPredicate, IRelation> newFacts)
 			throws EvaluationException {
-		long timestamp;
-		synchronized (facts) {
-			long currentTimeMillis = System.currentTimeMillis();
-			// logger.info("Current time: {}", currentTimeMillis);
-			timestamp = currentTimeMillis
-					+ configuration.timeWindowMilliseconds;
-			// logger.info("Timestamp: {}", timestamp);
+		inputBuffer.setKbWorking();
+		try {
+			logger.debug("Added single facts!");
+			long timestamp;
+			synchronized (facts) {
+				long currentTimeMillis = System.currentTimeMillis();
+				// logger.info("Current time: {}", currentTimeMillis);
+				timestamp = currentTimeMillis
+						+ configuration.timeWindowMilliseconds;
+				// logger.info("Timestamp: {}", timestamp);
 
-			facts.clean(currentTimeMillis);
+				facts.clean(currentTimeMillis);
 
-			facts.addFacts(newFacts, timestamp);
+				facts.addFacts(newFacts, timestamp);
 
-			// FIXME Norbert: does only work with
-			// StratifiedBottomUpEvaluationStrategy
-			evaluationStrategy.evaluateRules(facts, -1);
+				// FIXME Norbert: does only work with
+				// StratifiedBottomUpEvaluationStrategy
+				evaluationStrategy.evaluateRules(facts, -1);
+			}
+
+			execute();
+
+		} catch (EvaluationException e) {
+			throw e;
 		}
 
-		execute();
+		inputBuffer.setKbReady();
 
 		// Set<IPredicate> predicates = newFacts.keySet();
 		// for (IPredicate predicate : predicates) {
@@ -249,6 +229,46 @@ public class KnowledgeBase implements IKnowledgeBase {
 		// + tuple);
 		// }
 		// }
+	}
+
+	public synchronized void addMultipleFacts(
+			Map<Long, Map<IPredicate, IRelation>> newFacts)
+			throws EvaluationException {
+		inputBuffer.setKbWorking();
+		logger.debug("Added multiple facts!");
+		long timestamp;
+		synchronized (facts) {
+			for (Entry<Long, Map<IPredicate, IRelation>> entry : newFacts
+					.entrySet()) {
+				long time = entry.getKey();
+				timestamp = time + configuration.timeWindowMilliseconds;
+				facts.addFacts(entry.getValue(), timestamp);
+
+				Set<IPredicate> predicates = entry.getValue().keySet();
+				for (IPredicate predicate : predicates) {
+					IRelation relation = entry.getValue().get(predicate);
+					for (int i = 0; i < relation.size(); i++) {
+						ITuple tuple = relation.get(i);
+						logger.info("ADDED: [" + time + "] " + predicate + " "
+								+ tuple);
+					}
+				}
+			}
+
+			facts.clean(System.currentTimeMillis());
+
+			try {
+				// FIXME Norbert: does only work with
+				// StratifiedBottomUpEvaluationStrategy
+				evaluationStrategy.evaluateRules(facts, -1);
+			} catch (EvaluationException e) {
+				throw e;
+			}
+		}
+
+		execute();
+
+		inputBuffer.setKbReady();
 	}
 
 	@Override
@@ -281,9 +301,10 @@ public class KnowledgeBase implements IKnowledgeBase {
 	@Override
 	public void execute() {
 		try {
-			ArrayList<IVariable> variableBindings = new ArrayList<IVariable>();
+			ArrayList<IVariable> variableBindings;
 			synchronized (facts) {
 				for (IQuery query : queryListenerMap.keySet()) {
+					variableBindings = new ArrayList<IVariable>();
 					IRelation result = evaluationStrategy.evaluateQuery(
 							RuleManipulator.removeDuplicateLiterals(query),
 							variableBindings);

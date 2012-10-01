@@ -9,7 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.sti2.streamingiris.KnowledgeBase;
+import at.sti2.streamingiris.InputBuffer;
 
 /**
  * This thread waits for a connection to a specified port and starts a new
@@ -21,7 +21,7 @@ import at.sti2.streamingiris.KnowledgeBase;
 public class KnowledgeBaseServer extends Thread {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
-	private KnowledgeBase knowledgeBase;
+	private InputBuffer inputBuffer;
 	private int port;
 	private ServerSocket server;
 	private List<Thread> inputThreads;
@@ -34,8 +34,8 @@ public class KnowledgeBaseServer extends Thread {
 	 * @param port
 	 *            The port of the socket to listen on.
 	 */
-	public KnowledgeBaseServer(KnowledgeBase knowledgeBase, int port) {
-		this.knowledgeBase = knowledgeBase;
+	public KnowledgeBaseServer(InputBuffer inputBuffer, int port) {
+		this.inputBuffer = inputBuffer;
 		this.port = port;
 		this.inputThreads = new ArrayList<Thread>();
 	}
@@ -50,7 +50,7 @@ public class KnowledgeBaseServer extends Thread {
 				logger.info("Waiting for connection...");
 				Socket sock = server.accept();
 				inputThread = new Thread(new KnowledgeBaseServerThread(
-						knowledgeBase, sock), "Input thread");
+						inputBuffer, sock), "Input thread");
 				inputThread.start();
 				inputThreads.add(inputThread);
 				logger.info("Connected: " + sock);
