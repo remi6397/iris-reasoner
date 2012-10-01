@@ -1,0 +1,245 @@
+man('homer simpson').
+
+woman('marge simpson').
+
+hasSon('homer simpson','bart simpson').
+
+woman('maude flanders').
+
+hasSon('maude flanders','todd flanders').
+
+hasSon('maude flanders','rod flanders').
+man('abraham simpson').
+
+hasSon('abraham simpson','homer simpson').
+
+man('ned flanders').
+
+hasDaughter('marge simpson','lisa simpson').
+
+hasDaughter('homer simpson','maggie simpson').
+
+hasSon('ned flanders','todd flanders').
+
+hasSon('ned flanders','rod flanders').
+
+hasSon('abraham simpson','herbert simpson').
+
+hasDaughter('abraham simpson','abbie simpson').
+
+woman('mona simpson').
+
+hasSon('mona simpson','homer simpson').
+
+woman('agnes skinner').
+
+man('seymor skinner').
+
+hasSon('agnes skinner','seymor skinner').
+
+man('apu nahasapeemapetilon').
+
+woman('manjula nahasapeemapetilon').
+
+man('chief clancy wiggum').
+
+hasSon('ralph wiggum').
+
+woman('sarah wiggum').
+
+hasSon('sarah wiggum','ralph wiggum').
+
+woman('luann van houten').
+
+hasSon('luann van houten','milhouse van houten').
+
+man('kirk van houten').
+
+hasSon('kirk van houten','milhouse van houten').
+
+hasPet('bart simpson', 'knecht ruprecht').
+
+man('homer simpson').
+
+woman('marge simpson').
+
+hasSon('homer simpson','bart simpson').
+
+woman('maude flanders').
+
+hasSon('maude flanders','todd flanders').
+
+hasSon('maude flanders','rod flanders').
+
+man('abraham simpson').
+
+hasSon('abraham simpson','homer simpson').
+
+man('ned flanders').
+
+hasDaughter('marge simpson','lisa simpson').
+
+hasDaughter('homer simpson','maggie simpson').
+
+hasSon('ned flanders','todd flanders').
+
+hasSon('ned flanders','rod flanders').
+
+hasSon('abraham simpson','herbert simpson').
+
+hasDaughter('abraham simpson','abbie simpson').
+
+woman('mona simpson').
+
+hasSon('mona simpson','homer simpson').
+
+woman('agnes skinner').
+
+man('seymor skinner').
+
+hasSon('agnes skinner','seymor skinner').
+
+man('apu nahasapeemapetilon').
+
+woman('manjula nahasapeemapetilon').
+
+man('chief clancy wiggum').
+
+hasSon('ralph wiggum').
+
+woman('sarah wiggum').
+
+hasSon('sarah wiggum','ralph wiggum').
+
+woman('luann van houten').
+
+hasSon('luann van houten','milhouse van houten').
+
+man('kirk van houten').
+
+hasSon('kirk van houten','milhouse van houten').
+
+hasPet('bart simpson', 'knecht ruprecht').
+
+man('homer simpson').
+
+woman('marge simpson').
+
+hasSon('homer simpson','bart simpson').
+
+woman('maude flanders').
+
+hasSon('maude flanders','todd flanders').
+
+hasSon('maude flanders','rod flanders').
+man('abraham simpson').
+
+hasSon('abraham simpson','homer simpson').
+
+man('ned flanders').
+
+hasDaughter('marge simpson','lisa simpson').
+
+hasDaughter('homer simpson','maggie simpson').
+
+hasSon('ned flanders','todd flanders').
+
+hasSon('ned flanders','rod flanders').
+
+hasSon('abraham simpson','herbert simpson').
+
+hasDaughter('abraham simpson','abbie simpson').
+
+woman('mona simpson').
+
+hasSon('mona simpson','homer simpson').
+
+woman('agnes skinner').
+
+man('seymor skinner').
+
+hasSon('agnes skinner','seymor skinner').
+
+man('apu nahasapeemapetilon').
+
+woman('manjula nahasapeemapetilon').
+
+man('chief clancy wiggum').
+
+hasSon('ralph wiggum').
+
+woman('sarah wiggum').
+
+hasSon('sarah wiggum','ralph wiggum').
+
+woman('luann van houten').
+
+hasSon('luann van houten','milhouse van houten').
+
+man('kirk van houten').
+
+hasSon('kirk van houten','milhouse van houten').
+
+hasPet('bart simpson', 'knecht ruprecht').
+
+man('homer simpson').
+
+woman('marge simpson').
+
+hasSon('homer simpson','bart simpson').
+
+woman('maude flanders').
+
+hasSon('maude flanders','todd flanders').
+
+hasSon('maude flanders','rod flanders').
+
+man('abraham simpson').
+
+hasSon('abraham simpson','homer simpson').
+
+man('ned flanders').
+
+hasDaughter('marge simpson','lisa simpson').
+
+hasDaughter('homer simpson','maggie simpson').
+
+hasSon('ned flanders','todd flanders').
+
+hasSon('ned flanders','rod flanders').
+
+hasSon('abraham simpson','herbert simpson').
+
+hasDaughter('abraham simpson','abbie simpson').
+
+woman('mona simpson').
+
+hasSon('mona simpson','homer simpson').
+
+woman('agnes skinner').
+
+man('seymor skinner').
+
+hasSon('agnes skinner','seymor skinner').
+
+man('apu nahasapeemapetilon').
+
+woman('manjula nahasapeemapetilon').
+
+man('chief clancy wiggum').
+
+hasSon('ralph wiggum').
+
+woman('sarah wiggum').
+
+hasSon('sarah wiggum','ralph wiggum').
+
+woman('luann van houten').
+
+hasSon('luann van houten','milhouse van houten').
+
+man('kirk van houten').
+
+hasSon('kirk van houten','milhouse van houten').
+
+hasPet('bart simpson', 'knecht ruprecht').
