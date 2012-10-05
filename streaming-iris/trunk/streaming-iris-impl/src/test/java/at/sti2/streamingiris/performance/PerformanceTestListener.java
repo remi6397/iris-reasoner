@@ -12,9 +12,6 @@ import org.slf4j.LoggerFactory;
 public class PerformanceTestListener extends Thread {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private ServerSocket server;
-	private PerformanceTest program;
-	private long time;
-	private int i;
 
 	/**
 	 * Constructor.
@@ -24,10 +21,8 @@ public class PerformanceTestListener extends Thread {
 	 * @param port
 	 *            The port of the socket to listen on.
 	 */
-	public PerformanceTestListener(ServerSocket server, PerformanceTest program) {
+	public PerformanceTestListener(ServerSocket server) {
 		this.server = server;
-		this.program = program;
-		this.i = 0;
 	}
 
 	public void run() {
@@ -37,16 +32,13 @@ public class PerformanceTestListener extends Thread {
 			while (!Thread.interrupted()) {
 				sock = server.accept();
 
-				time = System.currentTimeMillis();
-				// program.addEndTime(i, time);
-
 				BufferedReader streamReader = new BufferedReader(
 						new InputStreamReader(sock.getInputStream()));
 
 				String factLine = null;
 
 				while ((factLine = streamReader.readLine()) != null) {
-					logger.debug("{}: {}", i, factLine);
+					// logger.debug("{}: {}", i, factLine);
 				}
 
 				streamReader.close();

@@ -33,7 +33,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.ServerSocket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +44,7 @@ import at.sti2.streamingiris.api.basics.IQuery;
 import at.sti2.streamingiris.compiler.Parser;
 import at.sti2.streamingiris.compiler.ParserException;
 
-public class InputStreamsTest implements PerformanceTest {
+public class InputStreamsTest {
 
 	private static final String PROGRAM = "program";
 	private static final String DELAY = "delay";
@@ -56,16 +55,13 @@ public class InputStreamsTest implements PerformanceTest {
 	private Parser parser;
 	private String program;
 	private IKnowledgeBase knowledgeBase;
-	private Map<Integer, Long> times;
 	private PerformanceTestListener performanceTestListener;
 
 	public InputStreamsTest() {
 	}
 
-	public Map<Integer, Long> start(String datalogProgramFileName,
-			String exampleFileName) throws IOException, ParserException,
-			EvaluationException {
-		times = new HashMap<Integer, Long>();
+	public void start(String datalogProgramFileName, String exampleFileName)
+			throws IOException, ParserException, EvaluationException {
 		parser = new Parser();
 
 		InputStream inputStream = new FileInputStream(datalogProgramFileName);
@@ -93,7 +89,7 @@ public class InputStreamsTest implements PerformanceTest {
 		ServerSocket server;
 		for (IQuery query : queries) {
 			server = new ServerSocket(0);
-			performanceTestListener = new PerformanceTestListener(server, this);
+			performanceTestListener = new PerformanceTestListener(server);
 			performanceTestListener.start();
 			knowledgeBase.registerQueryListener(query, "localhost",
 					server.getLocalPort());
@@ -116,7 +112,7 @@ public class InputStreamsTest implements PerformanceTest {
 		for (int i = 0; i < inputStreams; i++) {
 			// create an input streamer
 			inputStreamer = new PerformanceTestEndlessInputStreamer(8080,
-					delay, 120000, this, examples);
+					delay, 120000, examples);
 
 			try {
 				Thread.sleep(10);
@@ -132,30 +128,11 @@ public class InputStreamsTest implements PerformanceTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
-		return times;
 	}
 
 	public void shutdown() {
 		knowledgeBase.shutdown();
 		performanceTestListener.shutdown();
-	}
-
-	public void addStartTime(int count, long currentTimeMillis) {
-		synchronized (times) {
-			times.put(new Integer(count), new Long(-currentTimeMillis));
-		}
-	}
-
-	public void addEndTime(int count, long currentTimeMillis) {
-		Integer i = new Integer(count);
-		synchronized (times) {
-			Long startTime = times.get(i);
-			if (startTime != null) {
-				long time = startTime + currentTimeMillis;
-				times.put(i, new Long(time));
-			}
-		}
 	}
 
 	private static boolean startsWith(String argument, String token) {
@@ -233,9 +210,7 @@ public class InputStreamsTest implements PerformanceTest {
 
 			for (int i = 0; i < runs; i++) {
 				InputStreamsTest test = new InputStreamsTest();
-				Map<Integer, Long> times = test.start(datalogProgramFileName,
-						exampleFileName);
-				timesList.add(times);
+				test.start(datalogProgramFileName, exampleFileName);
 				test.shutdown();
 			}
 

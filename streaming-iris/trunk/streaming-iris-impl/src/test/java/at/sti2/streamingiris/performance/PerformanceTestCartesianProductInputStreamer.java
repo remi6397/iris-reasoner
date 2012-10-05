@@ -25,21 +25,18 @@ package at.sti2.streamingiris.performance;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Random;
 
 import org.apache.log4j.Logger;
 
-public class PerformanceTestEndlessInputStreamer extends Thread {
+public class PerformanceTestCartesianProductInputStreamer extends Thread {
 
 	static Logger logger = Logger
-			.getLogger(PerformanceTestEndlessInputStreamer.class);
+			.getLogger(PerformanceTestCartesianProductInputStreamer.class);
 
 	private int port = 0;
 	private Socket sock = null;
 	private long delay;
-	private long time;
-	private String[] facts;
+	private long elements;
 
 	/**
 	 * Constructor.
@@ -49,14 +46,11 @@ public class PerformanceTestEndlessInputStreamer extends Thread {
 	 * @param fileName
 	 *            The file name of the datalog program.
 	 */
-	public PerformanceTestEndlessInputStreamer(int port, long delay, long time,
-			ArrayList<String> factExamples) {
+	public PerformanceTestCartesianProductInputStreamer(int port, long delay,
+			long elements) {
 		this.port = port;
 		this.delay = delay;
-		this.time = time;
-
-		this.facts = new String[factExamples.size()];
-		this.facts = factExamples.toArray(this.facts);
+		this.elements = elements;
 	}
 
 	public void run() {
@@ -64,28 +58,18 @@ public class PerformanceTestEndlessInputStreamer extends Thread {
 		int i = 0;
 
 		try {
-			long endtime = System.currentTimeMillis() + time;
-			int randomInt;
 			String factString;
-			int count = 0;
 
 			logger.info("Beginning of streaming.");
 
-			while (System.currentTimeMillis() < endtime) {
+			while (i < elements) {
 				i++;
 				sock = new Socket("localhost", port);
 				PrintWriter streamWriter = new PrintWriter(
 						sock.getOutputStream());
 
 				// generate new fact
-				Random randomGenerator = new Random();
-				randomInt = randomGenerator.nextInt(facts.length);
-				factString = facts[randomInt];
-
-				while (factString.contains("?")) {
-					factString = factString.replaceFirst("\\?+", "" + count);
-					count++;
-				}
+				factString = "p(" + i + ").";
 
 				streamWriter.println(factString);
 

@@ -3,24 +3,25 @@ package at.sti2.streamingiris;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import at.sti2.streamingiris.api.basics.IPredicate;
 import at.sti2.streamingiris.storage.IRelation;
 
 public class InputBuffer {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	// private Logger logger = LoggerFactory.getLogger(getClass());
 
 	private KnowledgeBase knowledgeBase;
 	private Map<Long, Map<IPredicate, IRelation>> factMap;
 	private boolean kbReady;
 
 	private ExecutorService executor;
+
+	// TODO profiling
+	private final Map<Long, UUID> tmpMap = new HashMap<Long, UUID>();
 
 	public InputBuffer(KnowledgeBase knowledgeBase) {
 		this.knowledgeBase = knowledgeBase;
@@ -32,12 +33,22 @@ public class InputBuffer {
 	public void addFacts(final Map<IPredicate, IRelation> facts) {
 		long currentTimeMillis = System.currentTimeMillis();
 
+		// TODO profiling
+		final UUID uuid = UUID.randomUUID();
+		tmpMap.put(new Long(currentTimeMillis), uuid);
+		Profiler.addStartTime(uuid, currentTimeMillis);
+
 		if (kbReady) {
 			executor.execute(new Runnable() {
 				@Override
 				public void run() {
 					try {
 						knowledgeBase.addFacts(facts);
+
+						// TODO profiling
+						long currentTime = System.currentTimeMillis();
+						Profiler.addEndTime(uuid, currentTime);
+
 					} catch (EvaluationException e) {
 						e.printStackTrace();
 					}
@@ -46,7 +57,6 @@ public class InputBuffer {
 		} else {
 			synchronized (factMap) {
 				factMap.put(new Long(currentTimeMillis), facts);
-				logger.debug("MAP: {}", factMap);
 			}
 		}
 	}
@@ -85,6 +95,14 @@ public class InputBuffer {
 			public void run() {
 				try {
 					knowledgeBase.addMultipleFacts(facts);
+
+					// TODO profiling
+					long currentTime = System.currentTimeMillis();
+					for (Entry<Long, Map<IPredicate, IRelation>> entry : facts
+							.entrySet()) {
+						Profiler.addEndTime(tmpMap.get(entry.getKey()),
+								currentTime);
+					}
 				} catch (EvaluationException e) {
 					e.printStackTrace();
 				}

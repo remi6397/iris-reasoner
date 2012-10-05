@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -194,7 +193,6 @@ public class KnowledgeBase implements IKnowledgeBase {
 			throws EvaluationException {
 		inputBuffer.setKbWorking();
 		try {
-			logger.debug("Added single facts!");
 			long timestamp;
 			synchronized (facts) {
 				long currentTimeMillis = System.currentTimeMillis();
@@ -235,7 +233,6 @@ public class KnowledgeBase implements IKnowledgeBase {
 			Map<Long, Map<IPredicate, IRelation>> newFacts)
 			throws EvaluationException {
 		inputBuffer.setKbWorking();
-		logger.debug("Added multiple facts!");
 		long timestamp;
 		synchronized (facts) {
 			for (Entry<Long, Map<IPredicate, IRelation>> entry : newFacts
@@ -243,16 +240,6 @@ public class KnowledgeBase implements IKnowledgeBase {
 				long time = entry.getKey();
 				timestamp = time + configuration.timeWindowMilliseconds;
 				facts.addFacts(entry.getValue(), timestamp);
-
-				Set<IPredicate> predicates = entry.getValue().keySet();
-				for (IPredicate predicate : predicates) {
-					IRelation relation = entry.getValue().get(predicate);
-					for (int i = 0; i < relation.size(); i++) {
-						ITuple tuple = relation.get(i);
-						logger.info("ADDED: [" + time + "] " + predicate + " "
-								+ tuple);
-					}
-				}
 			}
 
 			facts.clean(System.currentTimeMillis());
