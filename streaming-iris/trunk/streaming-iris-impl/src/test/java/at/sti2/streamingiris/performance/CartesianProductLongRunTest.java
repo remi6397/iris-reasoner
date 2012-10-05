@@ -39,7 +39,7 @@ import at.sti2.streamingiris.api.basics.IQuery;
 import at.sti2.streamingiris.compiler.Parser;
 import at.sti2.streamingiris.compiler.ParserException;
 
-public class TimeTest {
+public class CartesianProductLongRunTest {
 
 	private static final String PROGRAM = "program";
 	private static final String DELAY = "delay";
@@ -51,7 +51,7 @@ public class TimeTest {
 	private IKnowledgeBase knowledgeBase;
 	private PerformanceTestListener performanceTestListener;
 
-	public TimeTest() {
+	public CartesianProductLongRunTest() {
 	}
 
 	public void start() throws IOException, ParserException,
@@ -90,14 +90,14 @@ public class TimeTest {
 		}
 
 		// create an input streamer
-		PerformanceTestFileInputStreamer inputStreamer = new PerformanceTestFileInputStreamer(
-				8080, inputStreamFileName, delay);
+		PerformanceTestCartesianProductInputStreamer inputStreamer = new PerformanceTestCartesianProductInputStreamer(
+				8080, delay, 18000);
 
 		// stream the facts
-		inputStreamer.stream();
+		inputStreamer.start();
 
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(delay * 50);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -128,19 +128,11 @@ public class TimeTest {
 	}
 
 	// Configuration
-	private static long delay = 1000;
-	private static String datalogProgramFileName = "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance.txt";
+	private static long delay = 100;
+	private static String datalogProgramFileName = "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance_cartesian_product.txt";
 	private static String inputStreamFileName = "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance_stream.txt";
-	// private static String datalogProgramFileName =
-	// "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance_cartesian_product.txt";
-	// private static String inputStreamFileName =
-	// "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance_stream.txt";
-	// private static String datalogProgramFileName =
-	// "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\simpsons.txt";
-	// private static String inputStreamFileName =
-	// "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\simpsons_stream_big.txt";
-	private static int timeWindow = 10000;
-	private static int runs = 10;
+	private static int timeWindow = 300000;
+	private static int runs = 1;
 
 	/**
 	 * Entry point.
@@ -169,11 +161,11 @@ public class TimeTest {
 
 		try {
 			for (int i = 0; i < runs; i++) {
-				TimeTest test = new TimeTest();
+				CartesianProductLongRunTest test = new CartesianProductLongRunTest();
 				test.start();
 
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(3600000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

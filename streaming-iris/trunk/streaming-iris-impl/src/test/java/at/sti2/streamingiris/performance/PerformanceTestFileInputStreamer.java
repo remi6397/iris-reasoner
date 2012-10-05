@@ -43,8 +43,6 @@ public class PerformanceTestFileInputStreamer implements
 
 	private long delay;
 
-	private PerformanceTest program;
-
 	/**
 	 * Constructor.
 	 * 
@@ -54,11 +52,10 @@ public class PerformanceTestFileInputStreamer implements
 	 *            The file name of the datalog program.
 	 */
 	public PerformanceTestFileInputStreamer(int port, String fileName,
-			long delay, PerformanceTest program) {
+			long delay) {
 		this.port = port;
 		this.fileName = fileName;
 		this.delay = delay;
-		this.program = program;
 	}
 
 	public boolean stream() {
@@ -82,7 +79,6 @@ public class PerformanceTestFileInputStreamer implements
 					factLine = bufferedReader.readLine();
 				}
 				streamWriter.flush();
-				// program.addStartTime(i, System.currentTimeMillis());
 				streamWriter.close();
 				sock.close();
 				try {
