@@ -131,14 +131,6 @@ public class TimeTest {
 	private static long delay = 1000;
 	private static String datalogProgramFileName = "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance.txt";
 	private static String inputStreamFileName = "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance_stream.txt";
-	// private static String datalogProgramFileName =
-	// "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance_cartesian_product.txt";
-	// private static String inputStreamFileName =
-	// "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance_stream.txt";
-	// private static String datalogProgramFileName =
-	// "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\simpsons.txt";
-	// private static String inputStreamFileName =
-	// "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\simpsons_stream_big.txt";
 	private static int timeWindow = 10000;
 	private static int runs = 10;
 
