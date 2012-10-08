@@ -25,8 +25,6 @@ package at.sti2.streamingiris.performance;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -39,7 +37,8 @@ public class PerformanceTestEndlessInputStreamer extends Thread {
 	private Socket sock = null;
 	private long delay;
 	private long time;
-	private String[] facts;
+
+	private int startNumber;
 
 	/**
 	 * Constructor.
@@ -50,24 +49,20 @@ public class PerformanceTestEndlessInputStreamer extends Thread {
 	 *            The file name of the datalog program.
 	 */
 	public PerformanceTestEndlessInputStreamer(int port, long delay, long time,
-			ArrayList<String> factExamples) {
+			int startNumber) {
 		this.port = port;
 		this.delay = delay;
 		this.time = time;
-
-		this.facts = new String[factExamples.size()];
-		this.facts = factExamples.toArray(this.facts);
+		this.startNumber = startNumber;
 	}
 
 	public void run() {
 
-		int i = 0;
+		int i = startNumber;
 
 		try {
 			long endtime = System.currentTimeMillis() + time;
-			int randomInt;
 			String factString;
-			int count = 0;
 
 			logger.info("Beginning of streaming.");
 
@@ -78,14 +73,7 @@ public class PerformanceTestEndlessInputStreamer extends Thread {
 						sock.getOutputStream());
 
 				// generate new fact
-				Random randomGenerator = new Random();
-				randomInt = randomGenerator.nextInt(facts.length);
-				factString = facts[randomInt];
-
-				while (factString.contains("?")) {
-					factString = factString.replaceFirst("\\?+", "" + count);
-					count++;
-				}
+				factString = "p(" + i + ").";
 
 				streamWriter.println(factString);
 

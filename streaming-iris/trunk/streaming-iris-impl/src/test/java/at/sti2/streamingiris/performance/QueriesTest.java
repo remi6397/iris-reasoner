@@ -39,7 +39,7 @@ import at.sti2.streamingiris.api.basics.IQuery;
 import at.sti2.streamingiris.compiler.Parser;
 import at.sti2.streamingiris.compiler.ParserException;
 
-public class InputStreamsTest {
+public class QueriesTest {
 
 	private static final String PROGRAM = "program";
 	private static final String DELAY = "delay";
@@ -51,66 +51,53 @@ public class InputStreamsTest {
 	private IKnowledgeBase knowledgeBase;
 	private PerformanceTestListener performanceTestListener;
 
-	public InputStreamsTest() {
+	public QueriesTest() {
 	}
 
 	public void start() throws IOException, ParserException,
 			EvaluationException {
+		parser = new Parser();
+
+		InputStream inputStream = new FileInputStream(datalogProgramFileName);
+
+		Reader r = new InputStreamReader(inputStream);
+
+		StringBuilder builder = new StringBuilder();
+
+		int ch = -1;
+		while ((ch = r.read()) >= 0) {
+			builder.append((char) ch);
+		}
+		program = builder.toString();
+
+		parser.parse(program);
+
+		Configuration configuration = KnowledgeBaseFactory
+				.getDefaultConfiguration();
+		configuration.timeWindowMilliseconds = timeWindow;
+
+		knowledgeBase = KnowledgeBaseFactory.createKnowledgeBase(
+				parser.getFacts(), parser.getRules(), configuration);
+
+		List<IQuery> queries = parser.getQueries();
+		ServerSocket server;
+		for (IQuery query : queries) {
+			server = new ServerSocket(0);
+			performanceTestListener = new PerformanceTestListener(server);
+			performanceTestListener.start();
+			knowledgeBase.registerQueryListener(query, "localhost",
+					server.getLocalPort());
+		}
+
+		// create an input streamer
+		PerformanceTestFileInputStreamer inputStreamer = new PerformanceTestFileInputStreamer(
+				8080, inputStreamFileName, delay);
+
+		// stream the facts
+		inputStreamer.stream();
+
 		try {
-			parser = new Parser();
-
-			InputStream inputStream = new FileInputStream(
-					datalogProgramFileName);
-
-			Reader r = new InputStreamReader(inputStream);
-
-			StringBuilder builder = new StringBuilder();
-
-			int ch = -1;
-			while ((ch = r.read()) >= 0) {
-				builder.append((char) ch);
-			}
-			program = builder.toString();
-
-			parser.parse(program);
-
-			Configuration configuration = KnowledgeBaseFactory
-					.getDefaultConfiguration();
-			configuration.timeWindowMilliseconds = timeWindow;
-
-			knowledgeBase = KnowledgeBaseFactory.createKnowledgeBase(
-					parser.getFacts(), parser.getRules(), configuration);
-
-			List<IQuery> queries = parser.getQueries();
-			ServerSocket server;
-			for (IQuery query : queries) {
-				server = new ServerSocket(0);
-				performanceTestListener = new PerformanceTestListener(server);
-				performanceTestListener.start();
-				knowledgeBase.registerQueryListener(query, "localhost",
-						server.getLocalPort());
-			}
-
-			// create multiple input streamer
-			PerformanceTestEndlessInputStreamer inputStreamer1 = new PerformanceTestEndlessInputStreamer(
-					8080, delay, streamTime, 0);
-			PerformanceTestEndlessInputStreamer inputStreamer2 = new PerformanceTestEndlessInputStreamer(
-					8080, delay, streamTime, 1000);
-			PerformanceTestEndlessInputStreamer inputStreamer3 = new PerformanceTestEndlessInputStreamer(
-					8080, delay, streamTime, 2000);
-			PerformanceTestEndlessInputStreamer inputStreamer4 = new PerformanceTestEndlessInputStreamer(
-					8080, delay, streamTime, 3000);
-
-			// stream the facts
-			inputStreamer1.start();
-			Thread.sleep(100);
-			inputStreamer2.start();
-			Thread.sleep(100);
-			inputStreamer3.start();
-			Thread.sleep(100);
-			inputStreamer4.start();
-
-			Thread.sleep(600000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -142,19 +129,10 @@ public class InputStreamsTest {
 
 	// Configuration
 	private static long delay = 1000;
-	private static String datalogProgramFileName = "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance.txt";
+	private static String datalogProgramFileName = "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance_queries.txt";
 	private static String inputStreamFileName = "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance_stream.txt";
-	// private static String datalogProgramFileName =
-	// "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance_cartesian_product.txt";
-	// private static String inputStreamFileName =
-	// "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance_stream.txt";
-	// private static String datalogProgramFileName =
-	// "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\simpsons.txt";
-	// private static String inputStreamFileName =
-	// "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\simpsons_stream_big.txt";
 	private static int timeWindow = 10000;
-	private static int runs = 1;
-	private static long streamTime = 300000;
+	private static int runs = 10;
 
 	/**
 	 * Entry point.
@@ -183,7 +161,7 @@ public class InputStreamsTest {
 
 		try {
 			for (int i = 0; i < runs; i++) {
-				InputStreamsTest test = new InputStreamsTest();
+				QueriesTest test = new QueriesTest();
 				test.start();
 
 				try {
