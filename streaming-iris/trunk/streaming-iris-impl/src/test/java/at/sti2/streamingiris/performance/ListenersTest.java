@@ -39,11 +39,10 @@ import at.sti2.streamingiris.api.basics.IQuery;
 import at.sti2.streamingiris.compiler.Parser;
 import at.sti2.streamingiris.compiler.ParserException;
 
-public class InputStreamsTest {
+public class ListenersTest {
 
 	private static final String PROGRAM = "program";
 	private static final String DELAY = "delay";
-	private static final String STREAM = "stream";
 	private static final String RUNS = "runs";
 
 	private Parser parser;
@@ -51,7 +50,7 @@ public class InputStreamsTest {
 	private IKnowledgeBase knowledgeBase;
 	private PerformanceTestListener performanceTestListener;
 
-	public InputStreamsTest() {
+	public ListenersTest() {
 	}
 
 	public void start() throws IOException, ParserException,
@@ -84,31 +83,22 @@ public class InputStreamsTest {
 			List<IQuery> queries = parser.getQueries();
 			ServerSocket server;
 			for (IQuery query : queries) {
-				server = new ServerSocket(0);
-				performanceTestListener = new PerformanceTestListener(server);
-				performanceTestListener.start();
-				knowledgeBase.registerQueryListener(query, "localhost",
-						server.getLocalPort());
+				for (int i = 0; i < listenerCount; i++) {
+					server = new ServerSocket(0);
+					performanceTestListener = new PerformanceTestListener(
+							server);
+					performanceTestListener.start();
+					knowledgeBase.registerQueryListener(query, "localhost",
+							server.getLocalPort());
+				}
 			}
 
 			// create multiple input streamer
-			PerformanceTestEndlessInputStreamer inputStreamer1 = new PerformanceTestEndlessInputStreamer(
+			PerformanceTestEndlessInputStreamer inputStreamer = new PerformanceTestEndlessInputStreamer(
 					8080, delay, streamTime, 0);
-			PerformanceTestEndlessInputStreamer inputStreamer2 = new PerformanceTestEndlessInputStreamer(
-					8080, delay, streamTime, 10000);
-			PerformanceTestEndlessInputStreamer inputStreamer3 = new PerformanceTestEndlessInputStreamer(
-					8080, delay, streamTime, 20000);
-			PerformanceTestEndlessInputStreamer inputStreamer4 = new PerformanceTestEndlessInputStreamer(
-					8080, delay, streamTime, 30000);
 
 			// stream the facts
-			inputStreamer1.start();
-			Thread.sleep(500);
-			inputStreamer2.start();
-			// Thread.sleep(200);
-			// inputStreamer3.start();
-			// Thread.sleep(200);
-			// inputStreamer4.start();
+			inputStreamer.start();
 
 			Thread.sleep(70000);
 		} catch (InterruptedException e) {
@@ -146,6 +136,7 @@ public class InputStreamsTest {
 	private static int timeWindow = 10000;
 	private static int runs = 10;
 	private static long streamTime = 60000;
+	private static int listenerCount = 3;
 
 	/**
 	 * Entry point.
@@ -171,7 +162,7 @@ public class InputStreamsTest {
 
 		try {
 			for (int i = 0; i < runs; i++) {
-				InputStreamsTest test = new InputStreamsTest();
+				ListenersTest test = new ListenersTest();
 				test.start();
 
 				try {

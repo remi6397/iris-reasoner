@@ -9,6 +9,8 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.sti2.streamingiris.CountProfiler;
+
 public class PerformanceTestListener extends Thread {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private ServerSocket server;
@@ -31,6 +33,8 @@ public class PerformanceTestListener extends Thread {
 			Socket sock = null;
 			while (!Thread.interrupted()) {
 				sock = server.accept();
+
+				CountProfiler.receivedResult();
 
 				BufferedReader streamReader = new BufferedReader(
 						new InputStreamReader(sock.getInputStream()));

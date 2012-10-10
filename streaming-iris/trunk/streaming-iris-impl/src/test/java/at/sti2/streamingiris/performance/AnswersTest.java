@@ -31,19 +31,18 @@ import java.net.ServerSocket;
 import java.util.List;
 
 import at.sti2.streamingiris.Configuration;
+import at.sti2.streamingiris.CountProfiler;
 import at.sti2.streamingiris.EvaluationException;
 import at.sti2.streamingiris.KnowledgeBaseFactory;
-import at.sti2.streamingiris.Profiler;
 import at.sti2.streamingiris.api.IKnowledgeBase;
 import at.sti2.streamingiris.api.basics.IQuery;
 import at.sti2.streamingiris.compiler.Parser;
 import at.sti2.streamingiris.compiler.ParserException;
 
-public class InputStreamsTest {
+public class AnswersTest {
 
 	private static final String PROGRAM = "program";
 	private static final String DELAY = "delay";
-	private static final String STREAM = "stream";
 	private static final String RUNS = "runs";
 
 	private Parser parser;
@@ -51,7 +50,7 @@ public class InputStreamsTest {
 	private IKnowledgeBase knowledgeBase;
 	private PerformanceTestListener performanceTestListener;
 
-	public InputStreamsTest() {
+	public AnswersTest() {
 	}
 
 	public void start() throws IOException, ParserException,
@@ -94,23 +93,11 @@ public class InputStreamsTest {
 			// create multiple input streamer
 			PerformanceTestEndlessInputStreamer inputStreamer1 = new PerformanceTestEndlessInputStreamer(
 					8080, delay, streamTime, 0);
-			PerformanceTestEndlessInputStreamer inputStreamer2 = new PerformanceTestEndlessInputStreamer(
-					8080, delay, streamTime, 10000);
-			PerformanceTestEndlessInputStreamer inputStreamer3 = new PerformanceTestEndlessInputStreamer(
-					8080, delay, streamTime, 20000);
-			PerformanceTestEndlessInputStreamer inputStreamer4 = new PerformanceTestEndlessInputStreamer(
-					8080, delay, streamTime, 30000);
 
 			// stream the facts
 			inputStreamer1.start();
-			Thread.sleep(500);
-			inputStreamer2.start();
-			// Thread.sleep(200);
-			// inputStreamer3.start();
-			// Thread.sleep(200);
-			// inputStreamer4.start();
 
-			Thread.sleep(70000);
+			Thread.sleep(streamTime + 5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -141,11 +128,11 @@ public class InputStreamsTest {
 	}
 
 	// Configuration
-	private static long delay = 1000;
-	private static String datalogProgramFileName = "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance.txt";
-	private static int timeWindow = 10000;
-	private static int runs = 10;
-	private static long streamTime = 60000;
+	private static long delay = 2500;
+	private static String datalogProgramFileName = "D:\\workspaces\\workspace_iris\\streaming-iris\\streaming-iris-impl\\src\\test\\resources\\performance_simple.txt";
+	private static int timeWindow = 25000;
+	private static int runs = 1;
+	private static long streamTime = 600000;
 
 	/**
 	 * Entry point.
@@ -167,11 +154,11 @@ public class InputStreamsTest {
 				usage();
 		}
 
-		Profiler.createFile(datalogProgramFileName, "", delay, timeWindow);
+		CountProfiler.createFile(datalogProgramFileName, "", delay, timeWindow);
 
 		try {
 			for (int i = 0; i < runs; i++) {
-				InputStreamsTest test = new InputStreamsTest();
+				AnswersTest test = new AnswersTest();
 				test.start();
 
 				try {
@@ -181,7 +168,7 @@ public class InputStreamsTest {
 					e.printStackTrace();
 				}
 
-				Profiler.nextRun();
+				CountProfiler.nextRun();
 
 				test.shutdown();
 			}

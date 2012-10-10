@@ -3,7 +3,6 @@ package at.sti2.streamingiris;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,7 +20,7 @@ public class InputBuffer {
 	private ExecutorService executor;
 
 	// TODO profiling
-	private final Map<Long, UUID> tmpMap = new HashMap<Long, UUID>();
+	// private final Map<Long, UUID> tmpMap = new HashMap<Long, UUID>();
 
 	public InputBuffer(KnowledgeBase knowledgeBase) {
 		this.knowledgeBase = knowledgeBase;
@@ -34,9 +33,9 @@ public class InputBuffer {
 		long currentTimeMillis = System.currentTimeMillis();
 
 		// TODO profiling
-		final UUID uuid = UUID.randomUUID();
-		tmpMap.put(new Long(currentTimeMillis), uuid);
-		Profiler.addStartTime(uuid, currentTimeMillis);
+		// final UUID uuid = UUID.randomUUID();
+		// tmpMap.put(new Long(currentTimeMillis), uuid);
+		// Profiler.addStartTime(uuid, currentTimeMillis);
 
 		if (kbReady) {
 			executor.execute(new Runnable() {
@@ -46,8 +45,8 @@ public class InputBuffer {
 						knowledgeBase.addFacts(facts);
 
 						// TODO profiling
-						long currentTime = System.currentTimeMillis();
-						Profiler.addEndTime(uuid, currentTime);
+						// long currentTime = System.currentTimeMillis();
+						// Profiler.addEndTime(uuid, currentTime);
 
 					} catch (EvaluationException e) {
 						e.printStackTrace();
@@ -97,12 +96,13 @@ public class InputBuffer {
 					knowledgeBase.addMultipleFacts(facts);
 
 					// TODO profiling
-					long currentTime = System.currentTimeMillis();
-					for (Entry<Long, Map<IPredicate, IRelation>> entry : facts
-							.entrySet()) {
-						Profiler.addEndTime(tmpMap.get(entry.getKey()),
-								currentTime);
-					}
+					// long currentTime = System.currentTimeMillis();
+					// for (Entry<Long, Map<IPredicate, IRelation>> entry :
+					// facts
+					// .entrySet()) {
+					// Profiler.addEndTime(tmpMap.get(entry.getKey()),
+					// currentTime);
+					// }
 				} catch (EvaluationException e) {
 					e.printStackTrace();
 				}
