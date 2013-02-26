@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.basics;
 
 import at.sti2.streamingiris.api.basics.IAtom;
@@ -33,7 +11,7 @@ import at.sti2.streamingiris.api.basics.ITuple;
  * <p>
  * $Id$
  * </p>
- *
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @author Darko Anicic, DERI Innsbruck
  * @version $Revision$
@@ -41,16 +19,17 @@ import at.sti2.streamingiris.api.basics.ITuple;
 public class Atom implements IAtom {
 
 	private final IPredicate predicate;
-	
+
 	private final ITuple tuple;
 
 	Atom(final IPredicate predicate, final ITuple tuple) {
 		if (predicate == null || tuple == null) {
-			throw new IllegalArgumentException("The parameters must not be null");
+			throw new IllegalArgumentException(
+					"The parameters must not be null");
 		}
 		if (predicate.getArity() != tuple.size()) {
-			throw new IllegalArgumentException("Cannot create an atom when" +
-					" a tuple's arity does not match the predicate's arity.");
+			throw new IllegalArgumentException("Cannot create an atom when"
+					+ " a tuple's arity does not match the predicate's arity.");
 		}
 		this.predicate = predicate;
 		this.tuple = tuple;
@@ -59,7 +38,7 @@ public class Atom implements IAtom {
 	public IPredicate getPredicate() {
 		return predicate;
 	}
-	
+
 	public ITuple getTuple() {
 		return this.tuple;
 	}
@@ -83,7 +62,7 @@ public class Atom implements IAtom {
 		int result = 17;
 		result = result * 37 + this.predicate.hashCode();
 		result = result * 37 + this.tuple.hashCode();
-		
+
 		return result;
 	}
 
@@ -95,16 +74,16 @@ public class Atom implements IAtom {
 			return false;
 		}
 		Atom a = (Atom) o;
-		
-		return (this.predicate.equals(a.predicate)) && 
-				this.tuple.equals(a.getTuple());
+
+		return (this.predicate.equals(a.predicate))
+				&& this.tuple.equals(a.getTuple());
 	}
 
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(this.predicate);
 		buffer.append(this.tuple);
-		
+
 		return buffer.toString();
 	}
 

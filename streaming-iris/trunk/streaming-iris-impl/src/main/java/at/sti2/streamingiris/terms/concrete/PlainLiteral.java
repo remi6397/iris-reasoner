@@ -1,29 +1,6 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.terms.concrete;
 
 import java.net.URI;
-
 
 import at.sti2.streamingiris.api.terms.ITerm;
 import at.sti2.streamingiris.api.terms.concrete.IPlainLiteral;
@@ -41,10 +18,13 @@ public class PlainLiteral implements IPlainLiteral {
 	/**
 	 * Constructs a new term representing a rdf:text.
 	 * 
-	 * @param string The string.
-	 * @param lang The language.
-	 * @throws NullPointerException If the value of <code>string</code> or
-	 *             <code>lang</code> is <code>null</code>.
+	 * @param string
+	 *            The string.
+	 * @param lang
+	 *            The language.
+	 * @throws NullPointerException
+	 *             If the value of <code>string</code> or <code>lang</code> is
+	 *             <code>null</code>.
 	 */
 	PlainLiteral(String string, String lang) {
 		if (string == null) {
@@ -64,10 +44,11 @@ public class PlainLiteral implements IPlainLiteral {
 	 * this constructor is of the form "text@lang", the value of lang will be
 	 * used as the language tag.
 	 * 
-	 * @param string The string value. May be of the form "text@lang", where
-	 *            "lang" is the language of the text.
-	 * @throws NullPointerException If the value of <code>string</code> is
-	 *             <code>null</code>.
+	 * @param string
+	 *            The string value. May be of the form "text@lang", where "lang"
+	 *            is the language of the text.
+	 * @throws NullPointerException
+	 *             If the value of <code>string</code> is <code>null</code>.
 	 */
 	PlainLiteral(String string) {
 		if (string == null) {

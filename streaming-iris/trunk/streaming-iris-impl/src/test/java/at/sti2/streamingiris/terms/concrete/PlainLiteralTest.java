@@ -1,33 +1,7 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
-
 package at.sti2.streamingiris.terms.concrete;
 
 import junit.framework.TestCase;
-
-
 import at.sti2.streamingiris.ObjectTests;
-import at.sti2.streamingiris.terms.concrete.PlainLiteral;
 
 /**
  * Test the implementation of the PlainLiteral data-type. Specification is
@@ -67,9 +41,10 @@ public class PlainLiteralTest extends TestCase {
 		assertEquals("some other rdf:PlainLiteral", plainliteral.getString());
 		assertEquals("de", plainliteral.getLang());
 
-		plainliteral = new PlainLiteral("some simple string without any language@");
-		assertEquals("some simple string without any language", plainliteral
-				.getString());
+		plainliteral = new PlainLiteral(
+				"some simple string without any language@");
+		assertEquals("some simple string without any language",
+				plainliteral.getString());
 		assertEquals("", plainliteral.getLang());
 
 		// rdf:PlainLiteral containing only the @ and a language tag
@@ -91,23 +66,31 @@ public class PlainLiteralTest extends TestCase {
 	}
 
 	public void testCompareTo() {
-		PlainLiteral plainliteralA = new PlainLiteral("rdf:PlainLiteral to compare 1@en");
-		PlainLiteral plainliteralB = new PlainLiteral("rdf:PlainLiteral to compare 2@en");
-		PlainLiteral plainliteralC = new PlainLiteral("rdf:PlainLiteral to compare 1@en");
+		PlainLiteral plainliteralA = new PlainLiteral(
+				"rdf:PlainLiteral to compare 1@en");
+		PlainLiteral plainliteralB = new PlainLiteral(
+				"rdf:PlainLiteral to compare 2@en");
+		PlainLiteral plainliteralC = new PlainLiteral(
+				"rdf:PlainLiteral to compare 1@en");
 
-		ObjectTests.runTestCompareTo(plainliteralA, plainliteralC, plainliteralB);
+		ObjectTests.runTestCompareTo(plainliteralA, plainliteralC,
+				plainliteralB);
 
 		assertEquals(-1, plainliteralA.compareTo(plainliteralB));
 		assertEquals(1, plainliteralB.compareTo(plainliteralA));
 
-		PlainLiteral plainliteralA2 = new PlainLiteral("rdf:PlainLiteral to compare 1@en");
+		PlainLiteral plainliteralA2 = new PlainLiteral(
+				"rdf:PlainLiteral to compare 1@en");
 		assertEquals(0, plainliteralA.compareTo(plainliteralA2));
 	}
 
 	public void testEquals() {
-		PlainLiteral plainliteralA = new PlainLiteral("rdf:PlainLiteral to compare 1@en");
-		PlainLiteral plainliteralB = new PlainLiteral("rdf:PlainLiteral to compare 1@de");
-		PlainLiteral plainliteralC = new PlainLiteral("rdf:PlainLiteral to compare 2@en");
+		PlainLiteral plainliteralA = new PlainLiteral(
+				"rdf:PlainLiteral to compare 1@en");
+		PlainLiteral plainliteralB = new PlainLiteral(
+				"rdf:PlainLiteral to compare 1@de");
+		PlainLiteral plainliteralC = new PlainLiteral(
+				"rdf:PlainLiteral to compare 2@en");
 
 		ObjectTests.runTestEquals(plainliteralA, plainliteralB, plainliteralC);
 	}

@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris;
 
 import java.lang.reflect.InvocationTargetException;
@@ -34,6 +12,7 @@ import junit.framework.Assert;
  * <p>
  * $Id: ObjectTests.java,v 1.1 2007-07-17 10:12:55 poettler_ric Exp $
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  * @version $Revision: 1.1 $
  */
@@ -65,8 +44,8 @@ public final class ObjectTests {
 		Assert.assertEquals("The objects are equal", e0, e1);
 		Assert.assertEquals("The objects are equal", e1, e0);
 		Assert.assertFalse("The objects are unequal", e0.equals(ue0));
-		Assert.assertFalse("The object must be unequal to null", e0
-				.equals(null));
+		Assert.assertFalse("The object must be unequal to null",
+				e0.equals(null));
 	}
 
 	/**
@@ -83,8 +62,8 @@ public final class ObjectTests {
 		}
 		Assert.assertNotSame("Clone must not return the same object reference",
 				o, runClone(o));
-		Assert.assertEquals("Cloned objects must have the same classes", o
-				.getClass(), runClone(o).getClass());
+		Assert.assertEquals("Cloned objects must have the same classes",
+				o.getClass(), runClone(o).getClass());
 		Assert.assertEquals("Cloned objects must be equal", o, runClone(o));
 	}
 
@@ -114,28 +93,28 @@ public final class ObjectTests {
 			throw new NullPointerException("The objects must not be null");
 		}
 		Assert.assertTrue("Something wrong with compareTo (" + basic
-				+ " should be smaller than " + more + ")", basic
-				.compareTo(more) < 0);
+				+ " should be smaller than " + more + ")",
+				basic.compareTo(more) < 0);
 		Assert.assertTrue("Something wrong with compareTo (" + more
-				+ " should be smaller than " + evenMore + ")", more
-				.compareTo(evenMore) < 0);
+				+ " should be smaller than " + evenMore + ")",
+				more.compareTo(evenMore) < 0);
 		Assert.assertTrue("Something wrong with compareTo (" + basic
-				+ " should be smaller than " + evenMore + ")", basic
-				.compareTo(evenMore) < 0);
+				+ " should be smaller than " + evenMore + ")",
+				basic.compareTo(evenMore) < 0);
 
 		Assert.assertTrue("Something wrong with compareTo (" + basic
 				+ " should be equal to " + equal + ")",
 				basic.compareTo(equal) == 0);
 
 		Assert.assertTrue("Something wrong with compareTo (" + evenMore
-				+ " should be greater than " + more + ")", evenMore
-				.compareTo(more) > 0);
+				+ " should be greater than " + more + ")",
+				evenMore.compareTo(more) > 0);
 		Assert.assertTrue("Something wrong with compareTo (" + more
-				+ " should be greater than " + basic + ")", more
-				.compareTo(basic) > 0);
+				+ " should be greater than " + basic + ")",
+				more.compareTo(basic) > 0);
 		Assert.assertTrue("Something wrong with compareTo (" + evenMore
-				+ " should be greater than " + basic + ")", evenMore
-				.compareTo(basic) > 0);
+				+ " should be greater than " + basic + ")",
+				evenMore.compareTo(basic) > 0);
 	}
 
 	/**
@@ -160,20 +139,23 @@ public final class ObjectTests {
 		if ((basic == null) || (equal == null) || (more == null)) {
 			throw new NullPointerException("The objects must not be null");
 		}
-		Assert.assertTrue("Something wrong with compareTo: (basic).compareTo(greater) !< 0 !", basic
-				.compareTo(more) < 0);
+		Assert.assertTrue(
+				"Something wrong with compareTo: (basic).compareTo(greater) !< 0 !",
+				basic.compareTo(more) < 0);
 
-		Assert.assertTrue("Something wrong with compareTo: (basic).compareTo(equal) != 0 !", basic
-				.compareTo(equal) == 0);
+		Assert.assertTrue(
+				"Something wrong with compareTo: (basic).compareTo(equal) != 0 !",
+				basic.compareTo(equal) == 0);
 
-		Assert.assertTrue("Something wrong with compareTo: (greater).compareTo(basic) !> 0 !", more
-				.compareTo(basic) > 0);
+		Assert.assertTrue(
+				"Something wrong with compareTo: (greater).compareTo(basic) !> 0 !",
+				more.compareTo(basic) > 0);
 	}
 
 	public static void runTestHashCode(final Object basic, final Object equal) {
 		Assert.assertEquals(
-				"Two equal object should produce the same hashCode", basic
-						.hashCode(), equal.hashCode());
+				"Two equal object should produce the same hashCode",
+				basic.hashCode(), equal.hashCode());
 	}
 
 	/**
@@ -192,8 +174,8 @@ public final class ObjectTests {
 		}
 		Object clone = null;
 		try {
-			clone = o.getClass().getMethod("clone", (Class[]) null).invoke(o,
-					(Object[]) null);
+			clone = o.getClass().getMethod("clone", (Class[]) null)
+					.invoke(o, (Object[]) null);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (SecurityException e) {

@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.rules;
 
 import static at.sti2.streamingiris.factory.Factory.BASIC;
@@ -33,7 +11,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 
 import at.sti2.streamingiris.api.basics.IAtom;
 import at.sti2.streamingiris.api.basics.ILiteral;
@@ -124,14 +101,15 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 	 * rules with rule head equality and rewrites given rules only if rules with
 	 * rule head equality are present.
 	 * 
-	 * @param checkForOccurrence If set to <code>true</code> this rewriter
-	 *            creates new rules for given rules if and only if given rules
-	 *            contain rules with rule head equality. If set to
-	 *            <code>false</code> this rewriter will create new rules no
-	 *            matter what.
-	 * @param useUnsafeRules If set to <code>true</code> this rewriter creates
-	 *            unsafe rules. If set to <code>false</code> this rewriter will
-	 *            only create safe rules, and therefore may be incomplete.
+	 * @param checkForOccurrence
+	 *            If set to <code>true</code> this rewriter creates new rules
+	 *            for given rules if and only if given rules contain rules with
+	 *            rule head equality. If set to <code>false</code> this rewriter
+	 *            will create new rules no matter what.
+	 * @param useUnsafeRules
+	 *            If set to <code>true</code> this rewriter creates unsafe
+	 *            rules. If set to <code>false</code> this rewriter will only
+	 *            create safe rules, and therefore may be incomplete.
 	 */
 	public RuleHeadEqualityRewriter(boolean checkForOccurrence,
 			boolean useUnsafeRules) {
@@ -143,8 +121,10 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 	 * Creates a positive literal representing rule head equality, e.g. ?X = ?Y
 	 * where ?X is <code>x</code> and ?Y is <code>y</code>.
 	 * 
-	 * @param x The first term.
-	 * @param y The second term.
+	 * @param x
+	 *            The first term.
+	 * @param y
+	 *            The second term.
 	 * @return A positive literal representing rule head equality.
 	 */
 	protected static ILiteral createLiteral(ITerm x, ITerm y) {
@@ -155,10 +135,13 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 	 * Creates a literal representing rule head equality, e.g. ?X = ?Y where ?X
 	 * is <code>x</code> and ?Y is <code>y</code>.
 	 * 
-	 * @param isPositive <code>true</code> if the literal is positive,
+	 * @param isPositive
+	 *            <code>true</code> if the literal is positive,
 	 *            <code>false</code> otherwise.
-	 * @param x The first term.
-	 * @param y The second term.
+	 * @param x
+	 *            The first term.
+	 * @param y
+	 *            The second term.
 	 * @return A positive literal representing rule head equality.
 	 */
 	protected static ILiteral createLiteral(boolean isPositive, ITerm x, ITerm y) {
@@ -169,9 +152,11 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 	 * Creates a positive literal representing rule head equality, e.g. ?X = ?Y
 	 * where ?X is the first and ?Y is second element of the tuple.
 	 * 
-	 * @param tuple The tuple.
+	 * @param tuple
+	 *            The tuple.
 	 * @return A positive literal representing rule head equality.
-	 * @throws IllegalArgumentException If the size of the tuple is not 2.
+	 * @throws IllegalArgumentException
+	 *             If the size of the tuple is not 2.
 	 */
 	protected static ILiteral createLiteral(ITuple tuple)
 			throws IllegalArgumentException {
@@ -182,11 +167,14 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 	 * Creates a literal representing rule head equality, e.g. ?X = ?Y where ?X
 	 * is the first and ?Y is second element of the tuple.
 	 * 
-	 * @param isPositive <code>true</code> if the literal is positive,
+	 * @param isPositive
+	 *            <code>true</code> if the literal is positive,
 	 *            <code>false</code> otherwise.
-	 * @param tuple The tuple.
+	 * @param tuple
+	 *            The tuple.
 	 * @return A positive literal representing rule head equality.
-	 * @throws IllegalArgumentException If the size of the tuple is not 2.
+	 * @throws IllegalArgumentException
+	 *             If the size of the tuple is not 2.
 	 */
 	protected static ILiteral createLiteral(boolean isPositive, ITuple tuple)
 			throws IllegalArgumentException {
@@ -203,7 +191,8 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 	 * value of <code>checkForOccurence</code>. Note that the specified
 	 * collection of rules is <b>not</b> added to the resulting collection.
 	 * 
-	 * @param rules The rules for which new rules should be created.
+	 * @param rules
+	 *            The rules for which new rules should be created.
 	 * @return The new rules without the specified collection of rules, or an
 	 *         empty set if no new rules have been created.
 	 */
@@ -217,8 +206,10 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 	 * specified collection of rules is <b>not</b> added to the resulting
 	 * collection.
 	 * 
-	 * @param rules The rules for which new rules should be created.
-	 * @param facts The facts for which new rules should be created.
+	 * @param rules
+	 *            The rules for which new rules should be created.
+	 * @param facts
+	 *            The facts for which new rules should be created.
 	 * @return The new rules without the specified collection of rules, or an
 	 *         empty collection if no new rules have been created.
 	 */
@@ -251,7 +242,8 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 	/**
 	 * Creates new rules for the specified predicate.
 	 * 
-	 * @param predicate The predicate.
+	 * @param predicate
+	 *            The predicate.
 	 * @return A collection of new rules for the specified predicate.
 	 */
 	public Collection<IRule> rewrite(IPredicate predicate) {
@@ -261,7 +253,8 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 	/**
 	 * Creates new rules for the specified predicates.
 	 * 
-	 * @param predicates The collection of predicates.
+	 * @param predicates
+	 *            The collection of predicates.
 	 * @return A collection of new rules for the specified collection of
 	 *         predicates.
 	 */
@@ -328,7 +321,8 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 	 * Creates new rules for the specified rule. Note that the specified rule is
 	 * not added to the resulting collection of new rules.
 	 * 
-	 * @param rule The rule.
+	 * @param rule
+	 *            The rule.
 	 * @return A collection of new rules for the specified rule.
 	 */
 	public Collection<IRule> rewrite(IRule rule) {
@@ -340,7 +334,8 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 	 * specified collection of rules is not added to the resulting collection of
 	 * new rules.
 	 * 
-	 * @param rules The collection of rules.
+	 * @param rules
+	 *            The collection of rules.
 	 * @return A collection of new rules for the specified rule.
 	 */
 	private Collection<IRule> rewriteRules(Collection<IRule> rules) {
@@ -359,7 +354,8 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 	/**
 	 * Extracts all predicates occurring in the specified collection of rules.
 	 * 
-	 * @param rules The collection of rules.
+	 * @param rules
+	 *            The collection of rules.
 	 * @return A set of all predicates occurring in the specified collection of
 	 *         rules.
 	 */
@@ -395,8 +391,10 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 	 * Note that the specified collection of rules is not added to the resulting
 	 * collection of new rules.
 	 * 
-	 * @param rules The collection of rules.
-	 * @param facts The facts.
+	 * @param rules
+	 *            The collection of rules.
+	 * @param facts
+	 *            The facts.
 	 * @return A collection of new rules for the specified facts and collection
 	 *         of rules.
 	 */
@@ -472,8 +470,8 @@ public class RuleHeadEqualityRewriter implements IRuleHeadEqualityPreProcessor {
 		// equivalent(?X, ?Y) :- ?X = ?Y. This is an unsafe rule.
 		// This rule may be optimized to "equivalent(?Y, ?Y)." Useless?
 		if (isUsingUnsafeRules) {
-			body = Arrays.asList(BASIC.createLiteral(true, Factory.BUILTIN
-					.createEqual(x, y)));
+			body = Arrays.asList(BASIC.createLiteral(true,
+					Factory.BUILTIN.createEqual(x, y)));
 			head = Arrays.asList(createLiteral(x, y));
 			rule = BASIC.createRule(head, body);
 			newRules.add(rule);

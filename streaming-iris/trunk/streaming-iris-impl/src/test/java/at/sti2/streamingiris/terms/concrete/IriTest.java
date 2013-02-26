@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.terms.concrete;
 
 import java.net.URI;
@@ -28,11 +6,8 @@ import java.net.URISyntaxException;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-
 import at.sti2.streamingiris.ObjectTests;
 import at.sti2.streamingiris.TermTests;
-import at.sti2.streamingiris.terms.concrete.Iri;
 
 public class IriTest extends TestCase {
 	private static final URI REFERENCE;
@@ -57,25 +32,24 @@ public class IriTest extends TestCase {
 		Iri test = new Iri(URISTR);
 
 		assertEquals("Something wrong with getUri", REFERENCE, fix.getURI());
-		assertEquals("Something wrong with The toString", URISTR, fix
-				.getValue());
+		assertEquals("Something wrong with The toString", URISTR,
+				fix.getValue());
 
 		assertEquals("Something wrong with parsing", fix, test);
 
 		assertEquals("Something wrong with the creation", fix, new Iri(
 				REFERENCE));
-		assertEquals("Something wrong with the creation", fix, new Iri(
-				URISTR));
+		assertEquals("Something wrong with the creation", fix, new Iri(URISTR));
 	}
 
 	public void testEquals() {
-		ObjectTests.runTestEquals(new Iri(URISTR), new Iri(URISTR),
-				new Iri(URISTRMORE));
+		ObjectTests.runTestEquals(new Iri(URISTR), new Iri(URISTR), new Iri(
+				URISTRMORE));
 	}
 
 	public void testCompareTo() {
-		ObjectTests.runTestCompareTo(new Iri(URISTR), new Iri(URISTR),
-				new Iri(URISTRMORE), new Iri(URISTRMORE1));
+		ObjectTests.runTestCompareTo(new Iri(URISTR), new Iri(URISTR), new Iri(
+				URISTRMORE), new Iri(URISTRMORE1));
 	}
 
 	public void testHashCode() {
@@ -85,7 +59,7 @@ public class IriTest extends TestCase {
 	public static Test suite() {
 		return new TestSuite(IriTest.class, IriTest.class.getSimpleName());
 	}
-	
+
 	public void testGetMinValue() {
 		TermTests.runTestGetMinValue(new Iri("a"));
 	}

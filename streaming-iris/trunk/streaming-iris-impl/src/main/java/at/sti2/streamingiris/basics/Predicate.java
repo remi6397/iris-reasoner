@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.basics;
 
 import at.sti2.streamingiris.api.basics.IPredicate;
@@ -34,25 +12,26 @@ import at.sti2.streamingiris.api.basics.IPredicate;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class Predicate implements IPredicate {
 
 	private final String symbol;
-	
+
 	/** A (unique) string containing the predicate name and arity. */
 	private final String symbolPlusArity;
 
 	private final int arity;
-	
+
 	Predicate(final String symbol, final int arity) {
 		this.symbol = symbol;
 		this.arity = arity;
-		
+
 		StringBuilder b = new StringBuilder();
-		
-		b.append( symbol ).append( '$' ).append( arity );
+
+		b.append(symbol).append('$').append(arity);
 		symbolPlusArity = b.toString();
 	}
 
@@ -81,7 +60,7 @@ public class Predicate implements IPredicate {
 
 	public int compareTo(IPredicate o) {
 		Predicate predicate = (Predicate) o;
-		return symbolPlusArity.compareTo( predicate.symbolPlusArity );
+		return symbolPlusArity.compareTo(predicate.symbolPlusArity);
 	}
 
 	public String toString() {

@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.basics;
 
 import java.util.ArrayList;
@@ -36,16 +14,16 @@ import at.sti2.streamingiris.api.basics.IRule;
  * <p>
  * $Id$
  * </p>
- *
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
 public class Rule implements IRule {
-	
+
 	private final List<ILiteral> head;
 
 	private final List<ILiteral> body;
-	
+
 	Rule(final List<ILiteral> head, final List<ILiteral> body) {
 		if (head == null) {
 			throw new IllegalArgumentException("The head must not be null");
@@ -62,13 +40,12 @@ public class Rule implements IRule {
 		this.head = Collections.unmodifiableList(new ArrayList<ILiteral>(head));
 		this.body = Collections.unmodifiableList(new ArrayList<ILiteral>(body));
 	}
-	
+
 	public List<ILiteral> getHead() {
 		return head;
 	}
-	
-	public List<ILiteral> getBody()
-	{
+
+	public List<ILiteral> getBody() {
 		return body;
 	}
 
@@ -83,7 +60,7 @@ public class Rule implements IRule {
 		result = result * 17 + head.hashCode();
 		return result;
 	}
-	
+
 	public boolean equals(final Object o) {
 		if (o == this) {
 			return true;
@@ -94,15 +71,15 @@ public class Rule implements IRule {
 		IRule r = (IRule) o;
 		return body.equals(r.getBody()) && head.equals(r.getHead());
 	}
-	
+
 	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
 		boolean first = true;
 		for (final ILiteral l : head) {
-			if( first )
+			if (first)
 				first = false;
 			else
-				buffer.append( ", " );
+				buffer.append(", ");
 			buffer.append(l);
 		}
 
@@ -110,7 +87,7 @@ public class Rule implements IRule {
 
 		first = true;
 		for (final ILiteral l : body) {
-			if( first )
+			if (first)
 				first = false;
 			else
 				buffer.append(", ");

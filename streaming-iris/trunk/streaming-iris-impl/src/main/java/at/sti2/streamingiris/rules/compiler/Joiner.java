@@ -1,30 +1,7 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.rules.compiler;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 import at.sti2.streamingiris.api.basics.IPredicate;
 import at.sti2.streamingiris.api.basics.ITuple;
@@ -46,12 +23,17 @@ class Joiner extends RuleElement {
 	/**
 	 * Constructor.
 	 * 
-	 * @param inputVariables The variable bindings from previous rule elements.
-	 * @param predicate The predicate of this literal.
-	 * @param thisLiteralsRelation The relation to use for this literal.
-	 * @param viewCriteria The view criteria (tuple in the sub-goal instance in
-	 *            the rule).
-	 * @param equivalentTerms The equivalent terms.
+	 * @param inputVariables
+	 *            The variable bindings from previous rule elements.
+	 * @param predicate
+	 *            The predicate of this literal.
+	 * @param thisLiteralsRelation
+	 *            The relation to use for this literal.
+	 * @param viewCriteria
+	 *            The view criteria (tuple in the sub-goal instance in the
+	 *            rule).
+	 * @param equivalentTerms
+	 *            The equivalent terms.
 	 */
 	public Joiner(List<IVariable> inputVariables, IPredicate predicate,
 			IRelation thisLiteralsRelation, ITuple viewCriteria,
@@ -137,19 +119,29 @@ class Joiner extends RuleElement {
 	/**
 	 * Constructor used for iterative evaluation.
 	 * 
-	 * @param predicate The predicate of this literal.
-	 * @param thisLiteralsRelation The relation to use for this literal.
-	 * @param viewCriteria The view criteria (tuple in the sub-goal instance in
-	 *            the rule).
-	 * @param viewVariables The variables of the view.
-	 * @param simple Indicates if the view is a simple one.
-	 * @param joinIndicesInput Join indices from input tuples.
-	 * @param joinIndicesThisLiteral Join indices for this literal's relation.
-	 * @param remainderIndicesInput Indices of those terms not used in joining.
-	 * @param remainderIndicesThisLiteral Indices of those terms not used in
-	 *            joining.
-	 * @param outputVariables The output variable bindings for this literal.
-	 * @param equivalentTerms The equivalent terms.
+	 * @param predicate
+	 *            The predicate of this literal.
+	 * @param thisLiteralsRelation
+	 *            The relation to use for this literal.
+	 * @param viewCriteria
+	 *            The view criteria (tuple in the sub-goal instance in the
+	 *            rule).
+	 * @param viewVariables
+	 *            The variables of the view.
+	 * @param simple
+	 *            Indicates if the view is a simple one.
+	 * @param joinIndicesInput
+	 *            Join indices from input tuples.
+	 * @param joinIndicesThisLiteral
+	 *            Join indices for this literal's relation.
+	 * @param remainderIndicesInput
+	 *            Indices of those terms not used in joining.
+	 * @param remainderIndicesThisLiteral
+	 *            Indices of those terms not used in joining.
+	 * @param outputVariables
+	 *            The output variable bindings for this literal.
+	 * @param equivalentTerms
+	 *            The equivalent terms.
 	 */
 	public Joiner(IPredicate predicate, IRelation thisLiteralsRelation,
 			ITuple viewCriteria, List<IVariable> viewVariables, boolean simple,
@@ -186,7 +178,7 @@ class Joiner extends RuleElement {
 		assert leftRelation != null;
 
 		IRelation result = mRelationFactory.createRelation();
-		
+
 		for (int f = 0; f < leftRelation.size(); ++f) {
 			ITuple leftTuple = leftRelation.get(f);
 
@@ -206,8 +198,10 @@ class Joiner extends RuleElement {
 	/**
 	 * Join two tuples using join and remainder indices.
 	 * 
-	 * @param first The input tuple
-	 * @param second The tuple from this literal's relation
+	 * @param first
+	 *            The input tuple
+	 * @param second
+	 *            The tuple from this literal's relation
 	 * @return The concatenated tuple.
 	 */
 	protected ITuple concatenate(ITuple first, ITuple second) {

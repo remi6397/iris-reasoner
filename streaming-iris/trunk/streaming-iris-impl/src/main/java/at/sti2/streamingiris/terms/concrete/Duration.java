@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.terms.concrete;
 
 import java.math.BigDecimal;
@@ -32,7 +10,6 @@ import java.util.TimeZone;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
-
 
 import at.sti2.streamingiris.api.terms.ITerm;
 import at.sti2.streamingiris.api.terms.concrete.IDuration;
@@ -145,8 +122,8 @@ public class Duration implements IDuration {
 		}
 
 		mDuration = FACTORY.newDuration(positive, BigInteger.valueOf(year),
-				BigInteger.valueOf(month), BigInteger.valueOf(day), BigInteger
-						.valueOf(hour), BigInteger.valueOf(minute),
+				BigInteger.valueOf(month), BigInteger.valueOf(day),
+				BigInteger.valueOf(hour), BigInteger.valueOf(minute),
 				new BigDecimal(Double.toString(second)));
 	}
 

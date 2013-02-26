@@ -1,36 +1,10 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.builtins;
-
 
 import static at.sti2.streamingiris.factory.Factory.CONCRETE;
 import static at.sti2.streamingiris.factory.Factory.TERM;
 import junit.framework.TestCase;
-
-
 import at.sti2.streamingiris.api.basics.ITuple;
 import at.sti2.streamingiris.api.terms.ITerm;
-import at.sti2.streamingiris.builtins.MaxBuiltin;
 import at.sti2.streamingiris.factory.Factory;
 
 /**
@@ -50,42 +24,41 @@ public class MaxBuiltinTest extends TestCase {
 
 		// max(1,5) = 5
 		MaxBuiltin maxBuiltin = new MaxBuiltin(T_1, T_5, T_5);
-		ITuple result = maxBuiltin.evaluate( Factory.BASIC.createTuple(T_1, T_5, T_5) );
-		assertNotNull( result );
+		ITuple result = maxBuiltin.evaluate(Factory.BASIC.createTuple(T_1, T_5,
+				T_5));
+		assertNotNull(result);
 
 		// max(5,1) = 5
 		maxBuiltin = new MaxBuiltin(T_5, T_1, T_5);
-		result = maxBuiltin.evaluate( Factory.BASIC.createTuple(T_5, T_1, T_5) );
-		assertNotNull( result );
+		result = maxBuiltin.evaluate(Factory.BASIC.createTuple(T_5, T_1, T_5));
+		assertNotNull(result);
 
-		// max(1,5) != 1 
+		// max(1,5) != 1
 		maxBuiltin = new MaxBuiltin(T_1, T_5, T_1);
-		result = maxBuiltin.evaluate( Factory.BASIC.createTuple(T_1, T_5, T_1) );
-		assertNull( result );
+		result = maxBuiltin.evaluate(Factory.BASIC.createTuple(T_1, T_5, T_1));
+		assertNull(result);
 
 		// max(5,1) != 1
 		maxBuiltin = new MaxBuiltin(T_5, T_1, T_1);
-		result = maxBuiltin.evaluate( Factory.BASIC.createTuple(T_5, T_1, T_1) );
-		assertNull( result );
+		result = maxBuiltin.evaluate(Factory.BASIC.createTuple(T_5, T_1, T_1));
+		assertNull(result);
 
 		maxBuiltin = new MaxBuiltin(X, Y, Z);
 		result = maxBuiltin.evaluate(Factory.BASIC.createTuple(T_1, T_5, Z));
-		assertEquals( Factory.BASIC.createTuple( T_5 ), result );
+		assertEquals(Factory.BASIC.createTuple(T_5), result);
 	}
-	
+
 	public void testWrongNumberOfArgument() throws Exception {
-		
+
 		try {
 			new MaxBuiltin(T_1, T_5);
-		}
-		catch( IllegalArgumentException e ) {
+		} catch (IllegalArgumentException e) {
 			// Failed correctly
 		}
 
 		try {
 			new MaxBuiltin(T_1, T_5, T_1, T_5);
-		}
-		catch( IllegalArgumentException e ) {
+		} catch (IllegalArgumentException e) {
 			// Failed correctly
 		}
 	}

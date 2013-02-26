@@ -1,30 +1,6 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.builtins.string;
 
 import static at.sti2.streamingiris.factory.Factory.BASIC;
-
-
 import at.sti2.streamingiris.EvaluationException;
 import at.sti2.streamingiris.api.basics.IPredicate;
 import at.sti2.streamingiris.api.terms.IStringTerm;
@@ -44,29 +20,33 @@ public class StringJoinBuiltin extends FunctionalBuiltin {
 	 * The predicate defining this built-in. Here special because RIF built-in
 	 * StringJoin can have arity X (RIF: func:string-join<N> string x N).
 	 */
-	private static final IPredicate PREDICATE = BASIC.createPredicate(PREDICATE_STRING, -1);
-	
-	// TODO mp : handle arity of N length ! 
+	private static final IPredicate PREDICATE = BASIC.createPredicate(
+			PREDICATE_STRING, -1);
+
+	// TODO mp : handle arity of N length !
 	// private IPredicate predicate = BASIC.createPredicate("STRING_JOIN", 4);
 
 	/**
 	 * Constructor. Four terms must be passed to the constructor, otherwise an
 	 * exception will be thrown.
 	 * 
-	 * @param terms The terms.
-	 * @throws IllegalArgumentException If one of the terms is {@code null}.
-	 * @throws IllegalArgumentException If the number of terms submitted is not
-	 *             4.
-	 * @throws IllegalArgumentException If terms is <code>null</code>.
+	 * @param terms
+	 *            The terms.
+	 * @throws IllegalArgumentException
+	 *             If one of the terms is {@code null}.
+	 * @throws IllegalArgumentException
+	 *             If the number of terms submitted is not 4.
+	 * @throws IllegalArgumentException
+	 *             If terms is <code>null</code>.
 	 */
 	public StringJoinBuiltin(ITerm... terms) {
 		// FIXME dw2ad: correct?
 		super(BASIC.createPredicate(PREDICATE_STRING, terms.length), terms);
 		if (terms.length < 2) {
-			throw new IllegalArgumentException("The amount of terms <" + terms.length + "> must at least 2");
+			throw new IllegalArgumentException("The amount of terms <"
+					+ terms.length + "> must at least 2");
 		}
 	}
-	
 
 	protected ITerm computeResult(ITerm[] terms) throws EvaluationException {
 		StringBuffer buffer = new StringBuffer();
@@ -85,7 +65,7 @@ public class StringJoinBuiltin extends FunctionalBuiltin {
 				String string = ((IStringTerm) terms[i]).getValue();
 
 				buffer.append(string);
-				
+
 				// do not append separator after the last string
 				if (i < endIndex - 1) {
 					buffer.append(separator);

@@ -1,17 +1,10 @@
-/**
- * 
- */
 package at.sti2.streamingiris.terms.concrete;
 
 import java.net.URI;
 
-
 import at.sti2.streamingiris.api.terms.IConcreteTerm;
 import at.sti2.streamingiris.api.terms.concrete.IList;
 import at.sti2.streamingiris.terms.AbstractConcreteTermTest;
-import at.sti2.streamingiris.terms.concrete.IntTerm;
-import at.sti2.streamingiris.terms.concrete.PlainLiteral;
-import at.sti2.streamingiris.terms.concrete.ShortTerm;
 
 public class ListTest extends AbstractConcreteTermTest {
 
@@ -39,8 +32,8 @@ public class ListTest extends AbstractConcreteTermTest {
 
 	@Override
 	protected IConcreteTerm createGreater() {
-		return new at.sti2.streamingiris.terms.concrete.List(
-				new PlainLiteral("3", "de"), new IntTerm(3),
+		return new at.sti2.streamingiris.terms.concrete.List(new PlainLiteral(
+				"3", "de"), new IntTerm(3),
 				new at.sti2.streamingiris.terms.concrete.List(new IntTerm(4)));
 	}
 

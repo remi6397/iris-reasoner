@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris;
 
 import static at.sti2.streamingiris.factory.Factory.BASIC;
@@ -33,7 +11,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 
 import at.sti2.streamingiris.api.basics.IAtom;
 import at.sti2.streamingiris.api.basics.ILiteral;
@@ -68,12 +45,12 @@ public final class MiscHelper {
 	public static ITuple createTuple(final String... s) {
 		List<ITerm> termList = new LinkedList<ITerm>();
 		for (String str : s) {
-			if(str != null){
+			if (str != null) {
 				termList.add(TERM.createString(str));
 			} else {
 				termList.add(null);
 			}
-		
+
 		}
 		return BASIC.createTuple(termList);
 	}
@@ -112,8 +89,9 @@ public final class MiscHelper {
 	 * Creates a positive literal out of a predicate name and a set of variable
 	 * names.
 	 * 
-	 * @param pos <code>true</code> if the literal should be positive,
-	 * otherwise <code>false</code>
+	 * @param pos
+	 *            <code>true</code> if the literal should be positive, otherwise
+	 *            <code>false</code>
 	 * @param pred
 	 *            the predicate name
 	 * @param vars
@@ -141,9 +119,9 @@ public final class MiscHelper {
 			throw new NullPointerException("The vars must not contain null");
 		}
 
-		return BASIC.createLiteral(pos, BASIC.createPredicate(pred,
-				vars.length), BASIC.createTuple(new ArrayList<ITerm>(
-				createVarList(vars))));
+		return BASIC.createLiteral(pos,
+				BASIC.createPredicate(pred, vars.length),
+				BASIC.createTuple(new ArrayList<ITerm>(createVarList(vars))));
 	}
 
 	/**
@@ -200,16 +178,23 @@ public final class MiscHelper {
 
 	/**
 	 * Compares two Collections according to a comparator.
-	 * @param c0 the first collection
-	 * @param c1 the second collection
-	 * @param c the comparator
-	 * @return <code>true</code> if the two collections are equal according
-	 * to the comparator, otherwise <code>false</code>
-	 * @throws NullPointerException if one collection is <code>null</code>
-	 * @throws NullPointerException if the comparator is <code>null</code>
+	 * 
+	 * @param c0
+	 *            the first collection
+	 * @param c1
+	 *            the second collection
+	 * @param c
+	 *            the comparator
+	 * @return <code>true</code> if the two collections are equal according to
+	 *         the comparator, otherwise <code>false</code>
+	 * @throws NullPointerException
+	 *             if one collection is <code>null</code>
+	 * @throws NullPointerException
+	 *             if the comparator is <code>null</code>
 	 * @since 0.3
 	 */
-	public static <Type> boolean compare(final Collection<? extends Type> c0, final Collection<? extends Type> c1, final Comparator<Type> c) {
+	public static <Type> boolean compare(final Collection<? extends Type> c0,
+			final Collection<? extends Type> c1, final Comparator<Type> c) {
 		if ((c0 == null) || (c1 == null)) {
 			throw new NullPointerException("The collections must not be null");
 		}
@@ -226,7 +211,8 @@ public final class MiscHelper {
 		Collections.sort(l0, c);
 		Collections.sort(l1, c);
 
-		for (final Iterator<Type> i0 = l0.iterator(), i1 = l1.iterator(); i0.hasNext(); ) {
+		for (final Iterator<Type> i0 = l0.iterator(), i1 = l1.iterator(); i0
+				.hasNext();) {
 			if (c.compare(i0.next(), i1.next()) != 0) {
 				return false;
 			}
@@ -235,16 +221,22 @@ public final class MiscHelper {
 	}
 
 	/**
-	 * Behaves like Perl's join function. Concats all elements of the
-	 * colleciton separated by the given delimiter.
-	 * @param d the delimiter to put between the elements
-	 * @param c the collection from where to take the elements
+	 * Behaves like Perl's join function. Concats all elements of the colleciton
+	 * separated by the given delimiter.
+	 * 
+	 * @param d
+	 *            the delimiter to put between the elements
+	 * @param c
+	 *            the collection from where to take the elements
 	 * @return the constructed string
-	 * @throws NullPointerException if the delimiter is <code>null</code>
-	 * @throws NullPointerException if the collection is <code>null</code>
+	 * @throws NullPointerException
+	 *             if the delimiter is <code>null</code>
+	 * @throws NullPointerException
+	 *             if the collection is <code>null</code>
 	 * @since 0.3
 	 */
-	public static String join(final String d, final Collection<? extends Object> c) {
+	public static String join(final String d,
+			final Collection<? extends Object> c) {
 		if (d == null) {
 			throw new NullPointerException("The delimiter must not be null");
 		}
@@ -259,10 +251,10 @@ public final class MiscHelper {
 		final StringBuilder b = new StringBuilder();
 		boolean first = true;
 		for (final Object o : c) {
-			if( first )
+			if (first)
 				first = false;
 			else
-				b.append( d );
+				b.append(d);
 			b.append(o);
 		}
 		return b.toString();

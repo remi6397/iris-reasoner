@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.terms.concrete;
 
 import java.math.BigDecimal;
@@ -27,11 +5,8 @@ import java.math.BigDecimal;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-
 import at.sti2.streamingiris.ObjectTests;
 import at.sti2.streamingiris.TermTests;
-import at.sti2.streamingiris.terms.concrete.DecimalTerm;
 
 /**
  * <p>
@@ -53,15 +28,15 @@ public class DecimalTest extends TestCase {
 	private final static BigDecimal MORE1 = new BigDecimal(0.3d);
 
 	public static Test suite() {
-		return new TestSuite(DecimalTest.class, DecimalTest.class
-				.getSimpleName());
+		return new TestSuite(DecimalTest.class,
+				DecimalTest.class.getSimpleName());
 	}
 
 	public void testBasic() {
 		DecimalTerm basic = new DecimalTerm(BASIC);
 
-		assertEquals("object not initialized correctly", BASIC, basic
-				.getValue());
+		assertEquals("object not initialized correctly", BASIC,
+				basic.getValue());
 	}
 
 	public void testEquals() {
@@ -75,9 +50,9 @@ public class DecimalTest extends TestCase {
 	}
 
 	public void testEqualsPositiveNegativeZero() {
-		ObjectTests.runTestCompareTo(new DecimalTerm(+0.0),
-				new DecimalTerm(-0.0), new DecimalTerm(0.000000001), new DecimalTerm(
-								0.000000002));
+		ObjectTests.runTestCompareTo(new DecimalTerm(+0.0), new DecimalTerm(
+				-0.0), new DecimalTerm(0.000000001), new DecimalTerm(
+				0.000000002));
 	}
 
 	public void testHashCode() {
@@ -86,6 +61,7 @@ public class DecimalTest extends TestCase {
 	}
 
 	public void testGetMinValue() {
-		TermTests.runTestGetMinValue(new DecimalTerm(Double.MIN_VALUE + 0.0001));
+		TermTests
+				.runTestGetMinValue(new DecimalTerm(Double.MIN_VALUE + 0.0001));
 	}
 }

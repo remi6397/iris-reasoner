@@ -24,7 +24,7 @@ public class KnowledgeBaseServer extends Thread {
 	private InputBuffer inputBuffer;
 	private int port;
 	private ServerSocket server;
-	private List<Thread> inputThreads;
+	private List<KnowledgeBaseServerThread> inputThreads;
 
 	/**
 	 * Constructor.
@@ -37,7 +37,7 @@ public class KnowledgeBaseServer extends Thread {
 	public KnowledgeBaseServer(InputBuffer inputBuffer, int port) {
 		this.inputBuffer = inputBuffer;
 		this.port = port;
-		this.inputThreads = new ArrayList<Thread>();
+		this.inputThreads = new ArrayList<KnowledgeBaseServerThread>();
 	}
 
 	public void run() {
@@ -45,12 +45,11 @@ public class KnowledgeBaseServer extends Thread {
 			server = new ServerSocket(port);
 			logger.info("Server: " + server);
 
-			Thread inputThread;
+			KnowledgeBaseServerThread inputThread;
 			while (!Thread.interrupted()) {
 				logger.info("Waiting for connection...");
 				Socket sock = server.accept();
-				inputThread = new Thread(new KnowledgeBaseServerThread(
-						inputBuffer, sock), "Input thread");
+				inputThread = new KnowledgeBaseServerThread(inputBuffer, sock);
 				inputThread.start();
 				inputThreads.add(inputThread);
 				logger.info("Connected: " + sock);

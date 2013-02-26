@@ -1,31 +1,8 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.terms.concrete;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
-
 
 import at.sti2.streamingiris.api.factory.IConcreteFactory;
 import at.sti2.streamingiris.api.terms.IConcreteTerm;
@@ -141,7 +118,7 @@ public class ConcreteFactory implements IConcreteFactory {
 	public IDecimalTerm createDecimal(double d) {
 		return new DecimalTerm(d);
 	}
-	
+
 	public IDecimalTerm createDecimal(BigDecimal value) {
 		return new DecimalTerm(value);
 	}
@@ -196,7 +173,7 @@ public class ConcreteFactory implements IConcreteFactory {
 	public IIntegerTerm createInteger(int i) {
 		return new IntegerTerm(i);
 	}
-	
+
 	public IIntegerTerm createInteger(BigInteger i) {
 		return new IntegerTerm(i);
 	}
@@ -269,7 +246,7 @@ public class ConcreteFactory implements IConcreteFactory {
 	public ILanguage createLanguage(String language) {
 		return new Language(language);
 	}
-	
+
 	public IList createList(IConcreteTerm... terms) {
 		if (terms == null) {
 			return new List();
@@ -281,7 +258,7 @@ public class ConcreteFactory implements IConcreteFactory {
 	public ILocal createLocal(String value, Object context) {
 		return new Local(value, context);
 	}
-	
+
 	public ILongTerm createLong(long value) {
 		return new LongTerm(value);
 	}
@@ -337,7 +314,7 @@ public class ConcreteFactory implements IConcreteFactory {
 	public IUnsignedLong createUnsignedLong(long value) {
 		return new UnsignedLong(BigInteger.valueOf(value));
 	}
-	
+
 	public IUnsignedLong createUnsignedLong(BigInteger value) {
 		return new UnsignedLong(value);
 	}

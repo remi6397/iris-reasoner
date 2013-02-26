@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.evaluation.equivalence;
 
 import static at.sti2.streamingiris.factory.Factory.BASIC;
@@ -31,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
 
 import at.sti2.streamingiris.Configuration;
 import at.sti2.streamingiris.api.basics.ILiteral;
@@ -237,8 +214,8 @@ public class RandomProgramBuilder {
 		}
 
 		Collections.shuffle(shuffledVariables);
-		List<ITerm> headVariables = shuffledVariables.subList(0, predicate
-				.getArity());
+		List<ITerm> headVariables = shuffledVariables.subList(0,
+				predicate.getArity());
 
 		ITuple headTuple = BASIC.createTuple(headVariables);
 		ILiteral headLiteral = BASIC.createLiteral(true, predicate, headTuple);
@@ -262,7 +239,8 @@ public class RandomProgramBuilder {
 		return numberOfFactsPerRelation;
 	}
 
-	public RandomProgramBuilder setNumberOfFactsPerRelation(int numberOfFactsPerRelation) {
+	public RandomProgramBuilder setNumberOfFactsPerRelation(
+			int numberOfFactsPerRelation) {
 		this.numberOfFactsPerRelation = numberOfFactsPerRelation;
 		return this;
 	}
@@ -343,7 +321,8 @@ public class RandomProgramBuilder {
 		return numberOfEqualityRules;
 	}
 
-	public RandomProgramBuilder setNumberOfEqualityRules(int numberOfEqualityRules) {
+	public RandomProgramBuilder setNumberOfEqualityRules(
+			int numberOfEqualityRules) {
 		this.numberOfEqualityRules = numberOfEqualityRules;
 		return this;
 	}

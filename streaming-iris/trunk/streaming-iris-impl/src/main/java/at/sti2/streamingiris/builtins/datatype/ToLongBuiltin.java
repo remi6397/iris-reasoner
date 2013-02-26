@@ -1,31 +1,7 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.builtins.datatype;
 
 import static at.sti2.streamingiris.factory.Factory.BASIC;
 import static at.sti2.streamingiris.factory.Factory.CONCRETE;
-
-
 import at.sti2.streamingiris.api.basics.IPredicate;
 import at.sti2.streamingiris.api.terms.INumericTerm;
 import at.sti2.streamingiris.api.terms.IStringTerm;
@@ -51,14 +27,17 @@ public class ToLongBuiltin extends ConversionBuiltin {
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms An array of terms, where first one is the term to convert
-	 *            and the last term represents the result of this data type
+	 * @param terms
+	 *            An array of terms, where first one is the term to convert and
+	 *            the last term represents the result of this data type
 	 *            conversion.
-	 * @throws NullPointerException If <code>terms</code> is <code>null</code>.
-	 * @throws NullPointerException If the terms contain a <code>null</code>
-	 *             value.
-	 * @throws IllegalArgumentException If the length of the terms and the arity
-	 *             of the predicate do not match.
+	 * @throws NullPointerException
+	 *             If <code>terms</code> is <code>null</code>.
+	 * @throws NullPointerException
+	 *             If the terms contain a <code>null</code> value.
+	 * @throws IllegalArgumentException
+	 *             If the length of the terms and the arity of the predicate do
+	 *             not match.
 	 */
 	public ToLongBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -86,7 +65,8 @@ public class ToLongBuiltin extends ConversionBuiltin {
 	 * representing the value "False" is converted to a {@link ILongTerm} term
 	 * representing "0".
 	 * 
-	 * @param term The {@link IBooleanTerm} term to be converted.
+	 * @param term
+	 *            The {@link IBooleanTerm} term to be converted.
 	 * @return A new {@link ILongTerm} term representing the result of the
 	 *         conversion.
 	 */
@@ -101,7 +81,8 @@ public class ToLongBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a {@link INumericTerm} term to an {@link ILongTerm} term.
 	 * 
-	 * @param term The {@link INumericTerm} term to be converted.
+	 * @param term
+	 *            The {@link INumericTerm} term to be converted.
 	 * @return A new {@link ILongTerm} term representing the result of the
 	 *         conversion.
 	 */
@@ -112,7 +93,8 @@ public class ToLongBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a {@link IStringTerm} term to an {@link ILongTerm} term.
 	 * 
-	 * @param term The {@link IStringTerm} term to be converted.
+	 * @param term
+	 *            The {@link IStringTerm} term to be converted.
 	 * @return A new {@link ILongTerm} term representing the result of the
 	 *         conversion, or <code>null</code> if the conversion fails.
 	 */

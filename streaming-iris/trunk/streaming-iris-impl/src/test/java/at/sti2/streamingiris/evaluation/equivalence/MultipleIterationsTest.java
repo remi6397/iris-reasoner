@@ -1,30 +1,7 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.evaluation.equivalence;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 
 import at.sti2.streamingiris.evaluation.ProgramEvaluationTest;
 import at.sti2.streamingiris.rules.compiler.Helper;
@@ -77,18 +54,18 @@ public class MultipleIterationsTest extends ProgramEvaluationTest {
 
 		IRelation relation = evaluate("?- r(?X).");
 
-		assertTrue("A not in relation.", relation.contains(Helper
-				.createConstantTuple("A")));
-		assertTrue("B not in relation.", relation.contains(Helper
-				.createConstantTuple("B")));
-		assertTrue("C not in relation.", relation.contains(Helper
-				.createConstantTuple("C")));
-		assertTrue("D not in relation.", relation.contains(Helper
-				.createConstantTuple("D")));
-		assertTrue("E not in relation.", relation.contains(Helper
-				.createConstantTuple("E")));
-		assertTrue("F not in relation.", relation.contains(Helper
-				.createConstantTuple("F")));
+		assertTrue("A not in relation.",
+				relation.contains(Helper.createConstantTuple("A")));
+		assertTrue("B not in relation.",
+				relation.contains(Helper.createConstantTuple("B")));
+		assertTrue("C not in relation.",
+				relation.contains(Helper.createConstantTuple("C")));
+		assertTrue("D not in relation.",
+				relation.contains(Helper.createConstantTuple("D")));
+		assertTrue("E not in relation.",
+				relation.contains(Helper.createConstantTuple("E")));
+		assertTrue("F not in relation.",
+				relation.contains(Helper.createConstantTuple("F")));
 
 		assertEquals("Relation does not have correct size", 6, relation.size());
 	}
@@ -98,31 +75,31 @@ public class MultipleIterationsTest extends ProgramEvaluationTest {
 		// (C, C), (D, C), (E, F), (F, F), (E, E), (F, E)
 
 		IRelation relation = evaluate("?- s(?X, ?Y).");
-		
-		assertTrue("(A, B) not in relation.", relation.contains(Helper
-				.createConstantTuple("A", "B")));
-		assertTrue("(B, B) not in relation.", relation.contains(Helper
-				.createConstantTuple("B", "B")));
-		assertTrue("(A, A) not in relation.", relation.contains(Helper
-				.createConstantTuple("A", "A")));
-		assertTrue("(B, B) not in relation.", relation.contains(Helper
-				.createConstantTuple("B", "A")));
-		assertTrue("(C, D) not in relation.", relation.contains(Helper
-				.createConstantTuple("C", "D")));
-		assertTrue("(D, D) not in relation.", relation.contains(Helper
-				.createConstantTuple("D", "D")));
-		assertTrue("(C, C) not in relation.", relation.contains(Helper
-				.createConstantTuple("C", "C")));
-		assertTrue("(D, C) not in relation.", relation.contains(Helper
-				.createConstantTuple("D", "C")));
-		assertTrue("(E, F) not in relation.", relation.contains(Helper
-				.createConstantTuple("E", "F")));
-		assertTrue("(F, F) not in relation.", relation.contains(Helper
-				.createConstantTuple("F", "F")));
-		assertTrue("(E, E) not in relation.", relation.contains(Helper
-				.createConstantTuple("E", "E")));
-		assertTrue("(F, E) not in relation.", relation.contains(Helper
-				.createConstantTuple("F", "E")));
+
+		assertTrue("(A, B) not in relation.",
+				relation.contains(Helper.createConstantTuple("A", "B")));
+		assertTrue("(B, B) not in relation.",
+				relation.contains(Helper.createConstantTuple("B", "B")));
+		assertTrue("(A, A) not in relation.",
+				relation.contains(Helper.createConstantTuple("A", "A")));
+		assertTrue("(B, B) not in relation.",
+				relation.contains(Helper.createConstantTuple("B", "A")));
+		assertTrue("(C, D) not in relation.",
+				relation.contains(Helper.createConstantTuple("C", "D")));
+		assertTrue("(D, D) not in relation.",
+				relation.contains(Helper.createConstantTuple("D", "D")));
+		assertTrue("(C, C) not in relation.",
+				relation.contains(Helper.createConstantTuple("C", "C")));
+		assertTrue("(D, C) not in relation.",
+				relation.contains(Helper.createConstantTuple("D", "C")));
+		assertTrue("(E, F) not in relation.",
+				relation.contains(Helper.createConstantTuple("E", "F")));
+		assertTrue("(F, F) not in relation.",
+				relation.contains(Helper.createConstantTuple("F", "F")));
+		assertTrue("(E, E) not in relation.",
+				relation.contains(Helper.createConstantTuple("E", "E")));
+		assertTrue("(F, E) not in relation.",
+				relation.contains(Helper.createConstantTuple("F", "E")));
 
 		assertEquals("Relation does not have correct size", 12, relation.size());
 	}
