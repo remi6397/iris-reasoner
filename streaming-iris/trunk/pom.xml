@@ -3,7 +3,7 @@
 
 	<groupId>at.sti2.streamingiris</groupId>
 	<artifactId>streaming-iris</artifactId>
-	<version>0.1.2</version>
+	<version>0.1.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Streaming IRIS</name>
 	<description>Integrated Rule Inference System is an extensible reasoning engine for expressive rule-based languages.</description>
