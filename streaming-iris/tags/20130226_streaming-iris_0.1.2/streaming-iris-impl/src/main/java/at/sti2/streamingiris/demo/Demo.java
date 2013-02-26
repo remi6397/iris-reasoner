@@ -1,0 +1,182 @@
+package at.sti2.streamingiris.demo;
+
+import java.io.FileReader;
+import java.io.IOException;
+
+import at.sti2.streamingiris.Configuration;
+import at.sti2.streamingiris.KnowledgeBaseFactory;
+import at.sti2.streamingiris.evaluation.stratifiedbottomup.StratifiedBottomUpEvaluationStrategyFactory;
+import at.sti2.streamingiris.evaluation.stratifiedbottomup.naive.NaiveEvaluatorFactory;
+import at.sti2.streamingiris.evaluation.stratifiedbottomup.seminaive.SemiNaiveEvaluatorFactory;
+import at.sti2.streamingiris.evaluation.wellfounded.WellFoundedEvaluationStrategyFactory;
+import at.sti2.streamingiris.optimisations.magicsets.MagicSets;
+import at.sti2.streamingiris.optimisations.rulefilter.RuleFilter;
+import at.sti2.streamingiris.rules.safety.AugmentingRuleSafetyProcessor;
+import at.sti2.streamingiris.rules.safety.StandardRuleSafetyProcessor;
+
+/**
+ * A command line demonstrator for IRIS.
+ */
+public class Demo {
+	public static final String WELL_FOUNDED = "well-founded";
+
+	public static final String NAIVE = "naive";
+	public static final String SEMI_NAIVE = "semi-naive";
+
+	public static final String SAFE_RULES = "safe-rules";
+	public static final String UNSAFE_RULES = "unsafe-rules";
+
+	public static final String MAGIC_SETS = "magic-sets";
+
+	public static final String TIMEOUT = "timeout";
+
+	public static final String PROGRAM = "program";
+	public static final String PROGRAM_FILE = "program-file";
+
+	private static void usage() {
+		String space = "    ";
+
+		System.out.println();
+		System.out.println("Usage: java org.deri.iris.Demo <ARGUMENTS>");
+		System.out.println();
+		System.out.println("where <ARGUMENTS> is made up of:");
+		System.out.println(space + PROGRAM + "=<datalog program>");
+		System.out.println(space + PROGRAM_FILE
+				+ "=<filename containing datalog program>");
+		System.out.println(space + TIMEOUT
+				+ "=<timeout in miliseconds> (default is to run forever)");
+		System.out.println(space + WELL_FOUNDED
+				+ " (to use the well-founded evaluation strategy)");
+		System.out.println(space + NAIVE + " (to use naive rule evaluation)");
+		System.out.println(space + SEMI_NAIVE
+				+ "* (to use semi-naive rule evaluation)");
+		System.out.println(space + SAFE_RULES + "* (to allow only safe rules)");
+		System.out.println(space + UNSAFE_RULES + " (to process unsafe rules)");
+		System.out.println(space + MAGIC_SETS
+				+ " (to use magic sets and rule-filtering optimisations)");
+		System.out.println("(*=default)");
+
+		System.exit(1);
+	}
+
+	private static boolean startsWith(String argument, String token) {
+		if (argument.length() < token.length())
+			return false;
+
+		String start = argument.substring(0, token.length());
+
+		return start.equalsIgnoreCase(token);
+	}
+
+	private static String getParameter(String argument) {
+		int equals = argument.indexOf('=');
+
+		if (equals >= 0) {
+			return argument.substring(equals + 1);
+		}
+
+		return null;
+	}
+
+	private static final String loadFile(String filename) throws IOException {
+		FileReader r = new FileReader(filename);
+
+		StringBuilder builder = new StringBuilder();
+
+		int ch = -1;
+		while ((ch = r.read()) >= 0) {
+			builder.append((char) ch);
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * Entry point.
+	 * 
+	 * @param args
+	 *            program evaluation_method
+	 * @throws Exception
+	 */
+	public static void main(String[] args) {
+		String program = null;
+
+		Configuration configuration = KnowledgeBaseFactory
+				.getDefaultConfiguration();
+
+		for (String argument : args) {
+			if (startsWith(argument, PROGRAM_FILE)) {
+				String filename = getParameter(argument);
+				try {
+					program = loadFile(filename);
+				} catch (Exception e) {
+					System.out.println("Unable to load input file '" + filename
+							+ "': " + e.getMessage());
+					System.exit(2);
+				}
+			} else if (startsWith(argument, PROGRAM))
+				program = getParameter(argument);
+			else if (startsWith(argument, TIMEOUT))
+				configuration.evaluationTimeoutMilliseconds = Integer
+						.parseInt(getParameter(argument));
+			else if (startsWith(argument, WELL_FOUNDED))
+				configuration.evaluationStrategyFactory = new WellFoundedEvaluationStrategyFactory();
+			else if (startsWith(argument, NAIVE))
+				configuration.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory(
+						new NaiveEvaluatorFactory());
+			else if (startsWith(argument, SEMI_NAIVE))
+				configuration.evaluationStrategyFactory = new StratifiedBottomUpEvaluationStrategyFactory(
+						new SemiNaiveEvaluatorFactory());
+			else if (startsWith(argument, SAFE_RULES))
+				configuration.ruleSafetyProcessor = new StandardRuleSafetyProcessor();
+			else if (startsWith(argument, UNSAFE_RULES))
+				configuration.ruleSafetyProcessor = new AugmentingRuleSafetyProcessor();
+			else if (startsWith(argument, MAGIC_SETS)) {
+				configuration.programOptmimisers.add(new RuleFilter());
+				configuration.programOptmimisers.add(new MagicSets());
+			} else
+				usage();
+		}
+
+		if (program == null)
+			usage();
+
+		System.out.println();
+
+		execute(program, configuration);
+	}
+
+	public static void execute(String program, Configuration configuration) {
+		Thread t = new Thread(new ExecutionTask(program, configuration),
+				"Evaluation thread");
+
+		t.setPriority(Thread.MIN_PRIORITY);
+		t.start();
+
+		try {
+			t.join(configuration.evaluationTimeoutMilliseconds);
+		} catch (InterruptedException e) {
+		}
+
+		if (t.isAlive()) {
+			t.stop();
+			System.out.println("Timeout exceeded: "
+					+ configuration.evaluationTimeoutMilliseconds + "ms");
+		}
+	}
+
+	static class ExecutionTask implements Runnable {
+		ExecutionTask(String program, Configuration configuration) {
+			this.program = program;
+			this.configuration = configuration;
+		}
+
+		// @Override
+		public void run() {
+			new ProgramExecutor(program, configuration);
+			// System.out.println(executor.getOutput());
+		}
+
+		private String program;
+		private Configuration configuration;
+	}
+}

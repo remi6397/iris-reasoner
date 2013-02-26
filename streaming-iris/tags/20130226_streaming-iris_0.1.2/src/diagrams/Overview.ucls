@@ -1,0 +1,113 @@
+<class-diagram version="1.0.9" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <interface id="1" corner="BOTTOM_RIGHT" language="java" name="at.sti2.streamingiris.api.IKnowledgeBase" 
+    project="streaming-iris-api" file="/streaming-iris-api/src/main/java/at/sti2/streamingiris/api/IKnowledgeBase.java" 
+    binary="false">    
+    <position height="52" width="203" x="417" y="54"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="at.sti2.streamingiris.KnowledgeBase" 
+    project="streaming-iris-impl" file="/streaming-iris-impl/src/main/java/at/sti2/streamingiris/KnowledgeBase.java" 
+    binary="false">    
+    <position height="52" width="251" x="393" y="149"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="at.sti2.streamingiris.Configuration" 
+    project="streaming-iris-impl" file="/streaming-iris-impl/src/main/java/at/sti2/streamingiris/Configuration.java" 
+    binary="false">    
+    <position height="52" width="159" x="735" y="150"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="at.sti2.streamingiris.threads.KnowledgeBaseServer" 
+    project="streaming-iris-impl" 
+    file="/streaming-iris-impl/src/main/java/at/sti2/streamingiris/threads/KnowledgeBaseServer.java" binary="false">    
+    <position height="52" width="212" x="114" y="87"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <interface id="5" corner="BOTTOM_RIGHT" language="java" name="at.sti2.streamingiris.IIrisOutputStreamer" 
+    project="streaming-iris-impl" 
+    file="/streaming-iris-impl/src/main/java/at/sti2/streamingiris/IIrisOutputStreamer.java" binary="false">    
+    <position height="52" width="147" x="444" y="248"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <class id="6" corner="BOTTOM_RIGHT" language="java" name="at.sti2.streamingiris.IrisOutputStreamer" 
+    project="streaming-iris-impl" 
+    file="/streaming-iris-impl/src/main/java/at/sti2/streamingiris/IrisOutputStreamer.java" binary="false">    
+    <position height="52" width="164" x="436" y="340"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="7" corner="BOTTOM_RIGHT" language="java" name="at.sti2.streamingiris.threads.KnowledgeBaseServerThread" 
+    project="streaming-iris-impl" 
+    file="/streaming-iris-impl/src/main/java/at/sti2/streamingiris/threads/KnowledgeBaseServerThread.java" 
+    binary="false">    
+    <position height="52" width="232" x="104" y="210"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <association id="8">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="9" name="inputServerThread"/>      
+      <multiplicity id="10" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="11">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="12" name="irisOutputStreamers"/>      
+      <multiplicity id="13" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="14">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </realization>  
+  <realization id="15">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="5"/>  
+  </realization>  
+  <association id="16">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="17" name="inputThreads"/>      
+      <multiplicity id="18" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="19">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="20" name="configuration"/>      
+      <multiplicity id="21" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true"/>    
+    <operations public="true" package="true" protected="true" private="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

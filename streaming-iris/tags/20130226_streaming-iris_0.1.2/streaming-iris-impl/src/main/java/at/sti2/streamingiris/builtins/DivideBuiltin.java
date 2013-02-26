@@ -1,0 +1,72 @@
+package at.sti2.streamingiris.builtins;
+
+import static at.sti2.streamingiris.factory.Factory.BASIC;
+import at.sti2.streamingiris.EvaluationException;
+import at.sti2.streamingiris.api.basics.IPredicate;
+import at.sti2.streamingiris.api.terms.ITerm;
+
+/**
+ * <p>
+ * Represents a multiply operation. In at the evaluation time there must be only
+ * one variable be left for computation, otherwise an exception will be thrown.
+ * </p>
+ * <p>
+ * $Id: DivideBuiltin.java,v 1.15 2007-10-12 12:40:58 bazbishop237 Exp $
+ * </p>
+ * 
+ * @author Richard Pöttler, richard dot poettler at deri dot org
+ * @version $Revision: 1.15 $
+ */
+public class DivideBuiltin extends ArithmeticBuiltin {
+
+	/** The predicate defining this builtin. */
+	private static final IPredicate PREDICATE = BASIC.createPredicate("DIVIDE",
+			3);
+
+	/**
+	 * Construct a new DivideBuiltin for the specific predicate and terms.
+	 * 
+	 * @param predicate
+	 *            The predicate of the built-in.
+	 * @param terms
+	 *            The terms.
+	 * @throws NullPointerException
+	 *             If the predicate or one of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException
+	 *             If the length of the terms and the arity of the predicate do
+	 *             not match.
+	 */
+	protected DivideBuiltin(IPredicate predicate, ITerm... terms) {
+		super(predicate, terms);
+	}
+
+	/**
+	 * Constructs a builtin. Three terms must be passed to the constructor,
+	 * otherwise an exception will be thrown.
+	 * 
+	 * @param t
+	 *            the terms
+	 * @throws NullPointerException
+	 *             If the predicate or one of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException
+	 *             If the length of the terms and the arity of the predicate do
+	 *             not match.
+	 */
+	public DivideBuiltin(final ITerm... t) {
+		super(PREDICATE, t);
+	}
+
+	protected ITerm computeMissingTerm(int missingTermIndex, ITerm[] terms)
+			throws EvaluationException {
+		switch (missingTermIndex) {
+		case 0:
+			return BuiltinHelper.multiply(terms[2], terms[1]);
+
+		case 1:
+			return BuiltinHelper.divide(terms[0], terms[2]);
+
+		default:
+			return BuiltinHelper.divide(terms[0], terms[1]);
+		}
+	}
+}

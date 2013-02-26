@@ -1,0 +1,78 @@
+package at.sti2.streamingiris.threads;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import at.sti2.streamingiris.InputBuffer;
+
+/**
+ * This thread waits for a connection to a specified port and starts a new
+ * thread as soon as the connection is established.
+ * 
+ * @author norlan
+ * 
+ */
+public class KnowledgeBaseServer extends Thread {
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	private InputBuffer inputBuffer;
+	private int port;
+	private ServerSocket server;
+	private List<KnowledgeBaseServerThread> inputThreads;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param knowledgeBase
+	 *            The knowledge base that processes the incoming data.
+	 * @param port
+	 *            The port of the socket to listen on.
+	 */
+	public KnowledgeBaseServer(InputBuffer inputBuffer, int port) {
+		this.inputBuffer = inputBuffer;
+		this.port = port;
+		this.inputThreads = new ArrayList<KnowledgeBaseServerThread>();
+	}
+
+	public void run() {
+		try {
+			server = new ServerSocket(port);
+			logger.info("Server: " + server);
+
+			KnowledgeBaseServerThread inputThread;
+			while (!Thread.interrupted()) {
+				logger.info("Waiting for connection...");
+				Socket sock = server.accept();
+				inputThread = new KnowledgeBaseServerThread(inputBuffer, sock);
+				inputThread.start();
+				inputThreads.add(inputThread);
+				logger.info("Connected: " + sock);
+			}
+		} catch (IOException e) {
+			// for (Thread thread : inputThreads) {
+			// thread.interrupt();
+			// }
+			// logger.info("KnowledgeBaseServer shut down!");
+		}
+	}
+
+	public boolean shutdown() {
+		try {
+			if (server != null)
+				server.close();
+			for (Thread thread : inputThreads) {
+				thread.interrupt();
+			}
+			logger.info("KnowledgeBaseServer shut down!");
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
+	}
+}
