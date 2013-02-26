@@ -1,0 +1,5 @@
+man('ned flanders').
+hasDaughter('marge simpson','lisa simpson').
+hasDaughter('homer simpson','maggie simpson').
+hasSon('ned flanders','todd flanders').
+hasSon('ned flanders','rod flanders').

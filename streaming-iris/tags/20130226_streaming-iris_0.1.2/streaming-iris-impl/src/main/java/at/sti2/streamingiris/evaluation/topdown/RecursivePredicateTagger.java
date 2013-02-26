@@ -1,0 +1,108 @@
+package at.sti2.streamingiris.evaluation.topdown;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import at.sti2.streamingiris.api.basics.ILiteral;
+import at.sti2.streamingiris.api.basics.IPredicate;
+import at.sti2.streamingiris.api.basics.IQuery;
+import at.sti2.streamingiris.api.basics.IRule;
+
+public class RecursivePredicateTagger implements IPredicateTagger {
+
+	private List<IRule> mRules;
+	private Set<IPredicate> mMemoPredicates;
+
+	public RecursivePredicateTagger(List<IRule> rules, IQuery query) {
+		mRules = rules;
+		mMemoPredicates = tagMemoPredicates(query);
+	}
+
+	private Set<IPredicate> tagMemoPredicates(IQuery query) {
+		Set<IPredicate> headPredicates = new HashSet<IPredicate>();
+		Set<IPredicate> memoPredicates = new HashSet<IPredicate>();
+
+		for (ILiteral queryLiteral : query.getLiterals()) {
+			headPredicates.add(queryLiteral.getAtom().getPredicate());
+		}
+
+		for (IPredicate hp : headPredicates) {
+			Set<IPredicate> allPredicatesForThisRule = new HashSet<IPredicate>();
+			getBodyPredicates(hp, allPredicatesForThisRule, memoPredicates);
+		}
+
+		return memoPredicates;
+	}
+
+	/**
+	 * Get body predicates of all rules that match the given predicate.
+	 * 
+	 * @param headPredicate
+	 *            predicate
+	 * @return list of predicates that depend on <code>headPredicate</code>
+	 */
+	private Set<IPredicate> getBodyPredicates(IPredicate headPredicate) {
+		HashSet<IPredicate> bodyPredicates = new HashSet<IPredicate>();
+		for (IRule rule : mRules) {
+			if (getHeadPredicate(rule).equals(headPredicate)) { // Matching rule
+				for (ILiteral bodyLiteral : rule.getBody()) { // Add predicates
+					bodyPredicates.add(bodyLiteral.getAtom().getPredicate());
+				}
+			}
+		}
+		return bodyPredicates;
+	}
+
+	/**
+	 * Get body predicates recursively, until an already expanded node is
+	 * visited
+	 * 
+	 * @param headPredicate
+	 *            predicate
+	 * @param visitedPredicates
+	 *            set of already expanded predicates
+	 * @param memoPredicates
+	 *            set that holds 'memo predicates' (predicates with circular
+	 *            dependencies)
+	 * 
+	 * @return set of expanded predicates
+	 */
+	private Set<IPredicate> getBodyPredicates(IPredicate headPredicate,
+			Set<IPredicate> visitedPredicates, Set<IPredicate> memoPredicates) {
+		Set<IPredicate> bodyPredicates = getBodyPredicates(headPredicate);
+
+		visitedPredicates.add(headPredicate);
+
+		for (IPredicate p : bodyPredicates) {
+			if (visitedPredicates.contains(p)) { // predicate is somewhere in
+													// the tree
+				memoPredicates.add(p); // add it to memo
+			}
+		}
+
+		// TODO gigi: correctly implement recursive predicate tagger
+
+		for (IPredicate p : bodyPredicates) {
+			if (!visitedPredicates.contains(p)) {
+				getBodyPredicates(p, visitedPredicates, memoPredicates); // keep
+																			// expanding
+			}
+		}
+
+		return visitedPredicates;
+	}
+
+	private IPredicate getHeadPredicate(IRule rule) {
+		return rule.getHead().get(0).getAtom().getPredicate();
+	}
+
+	public List<IRule> getRules() {
+		return mRules;
+	}
+
+	public Set<IPredicate> getMemoPredicates() {
+		return mMemoPredicates;
+	}
+
+}

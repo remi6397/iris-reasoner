@@ -1,0 +1,45 @@
+package at.sti2.streamingiris.builtins.date;
+
+import static at.sti2.streamingiris.factory.Factory.BASIC;
+import at.sti2.streamingiris.api.basics.IPredicate;
+import at.sti2.streamingiris.api.terms.ITerm;
+import at.sti2.streamingiris.api.terms.concrete.IDateTerm;
+import at.sti2.streamingiris.api.terms.concrete.IDayTimeDuration;
+import at.sti2.streamingiris.builtins.SubtractBuiltin;
+
+/**
+ * <p>
+ * Represents the RIF built-in function func:subtract-dayTimeDuration-from-date.
+ * </p>
+ */
+public class SubtractDayTimeDurationFromDateBuiltin extends SubtractBuiltin {
+
+	/** The predicate defining this built-in. */
+	private static final IPredicate PREDICATE = BASIC.createPredicate(
+			"SUBTRACT_DAYTIMEDURATION_FROM_DATE", 3);
+
+	/**
+	 * Creates the built-in for the specified terms.
+	 * 
+	 * @param terms
+	 *            The terms.
+	 * @throws NullPointerException
+	 *             If one of the terms is <code>null</code>.
+	 * @throws IllegalArgumentException
+	 *             If the number of terms submitted is not 3.
+	 */
+	public SubtractDayTimeDurationFromDateBuiltin(ITerm... terms) {
+		super(PREDICATE, terms);
+	}
+
+	@Override
+	protected ITerm computeMissingTerm(int missingTermIndex, ITerm[] terms) {
+		if (terms[0] instanceof IDateTerm
+				&& terms[1] instanceof IDayTimeDuration) {
+			return super.computeMissingTerm(missingTermIndex, terms);
+		}
+
+		return null;
+	}
+
+}
