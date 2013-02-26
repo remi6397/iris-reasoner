@@ -1,27 +1,4 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.builtins.list;
-
 
 import at.sti2.streamingiris.api.terms.IConcreteTerm;
 import at.sti2.streamingiris.api.terms.ITerm;
@@ -157,8 +134,8 @@ public class ListBuiltinHelper {
 			return null;
 		}
 		if (terms.length != 3) {
-			return new at.sti2.streamingiris.terms.concrete.List(newList.subList(pos1,
-					newList.size()));
+			return new at.sti2.streamingiris.terms.concrete.List(
+					newList.subList(pos1, newList.size()));
 		} else {
 			int pos2 = Integer.parseInt(terms[2].toString());
 			if (pos2 < 0) {
@@ -168,11 +145,11 @@ public class ListBuiltinHelper {
 				return null;
 			}
 			if (pos2 > newList.size()) {
-				return new at.sti2.streamingiris.terms.concrete.List(newList.subList(
-						pos1, newList.size()));
+				return new at.sti2.streamingiris.terms.concrete.List(
+						newList.subList(pos1, newList.size()));
 			}
-			return new at.sti2.streamingiris.terms.concrete.List(newList.subList(pos1,
-					pos2));
+			return new at.sti2.streamingiris.terms.concrete.List(
+					newList.subList(pos1, pos2));
 		}
 
 	}

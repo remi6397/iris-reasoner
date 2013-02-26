@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.terms.concrete;
 
 import java.net.URI;
@@ -28,7 +6,6 @@ import java.util.TimeZone;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-
 
 import at.sti2.streamingiris.api.terms.ITerm;
 import at.sti2.streamingiris.api.terms.concrete.IDateTerm;
@@ -41,6 +18,7 @@ import at.sti2.streamingiris.api.terms.concrete.XmlSchemaDatatype;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision$
  */
@@ -66,29 +44,42 @@ public class DateTerm implements IDateTerm {
 
 	/**
 	 * Constructs a new date within the given timezone.
-	 * @param year the year
-	 * @param month the month (1-12)
-	 * @param day the day
-	 * @param tzHour the timezone hours
-	 * @param tzMinute the timezone minutes
-	 * @throws IllegalArgumentException if the tzHour and tzMinute
-	 * wheren't both positive, or negative
+	 * 
+	 * @param year
+	 *            the year
+	 * @param month
+	 *            the month (1-12)
+	 * @param day
+	 *            the day
+	 * @param tzHour
+	 *            the timezone hours
+	 * @param tzMinute
+	 *            the timezone minutes
+	 * @throws IllegalArgumentException
+	 *             if the tzHour and tzMinute wheren't both positive, or
+	 *             negative
 	 */
-	DateTerm(final int year, final int month, final int day, 
-			final int tzHour, final int tzMinute) {
+	DateTerm(final int year, final int month, final int day, final int tzHour,
+			final int tzMinute) {
 
-		DateTime.checkTimeZone( tzHour, tzMinute );
+		DateTime.checkTimeZone(tzHour, tzMinute);
 
-		date = FACTORY.newXMLGregorianCalendarDate(year, month, day, tzHour * 60 + tzMinute);
+		date = FACTORY.newXMLGregorianCalendarDate(year, month, day, tzHour
+				* 60 + tzMinute);
 	}
 
 	/**
 	 * Constructs a new date within the GMT timezone.
-	 * @param year the year
-	 * @param month the month (1-12)
-	 * @param day the day
-	 * @throws IllegalArgumentException if the tzHour and tzMinute
-	 * wheren't both positive, or negative
+	 * 
+	 * @param year
+	 *            the year
+	 * @param month
+	 *            the month (1-12)
+	 * @param day
+	 *            the day
+	 * @throws IllegalArgumentException
+	 *             if the tzHour and tzMinute wheren't both positive, or
+	 *             negative
 	 */
 	DateTerm(final int year, final int month, final int day) {
 		this(year, month, day, 0, 0);
@@ -118,7 +109,7 @@ public class DateTerm implements IDateTerm {
 		if (o == null || !(o instanceof IDateTerm)) {
 			return 1;
 		}
-		
+
 		IDateTerm dt = (IDateTerm) o;
 		return date.compare(dt.getValue());
 	}

@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.graph;
 
 // TODO: implement equals, hashCode an clone.
@@ -63,12 +41,12 @@ public class PredicateGraph implements IPredicateGraph {
 	private final PredicateComparator pc = new PredicateComparator();
 
 	/** Graph to represent the dependencies of the predicates. */
-	private final DirectedGraph<IPredicate, LabeledEdge<IPredicate, Boolean>> g = 
-		new DirectedMultigraph<IPredicate, LabeledEdge<IPredicate, Boolean>>(new PredicateEdgeFactory());
+	private final DirectedGraph<IPredicate, LabeledEdge<IPredicate, Boolean>> g = new DirectedMultigraph<IPredicate, LabeledEdge<IPredicate, Boolean>>(
+			new PredicateEdgeFactory());
 
 	/** Cycle detector, to determine, whether the rules are recursive. */
-	private final CycleDetector<IPredicate, LabeledEdge<IPredicate, Boolean>> cd = 
-		new CycleDetector<IPredicate, LabeledEdge<IPredicate, Boolean>>(g);
+	private final CycleDetector<IPredicate, LabeledEdge<IPredicate, Boolean>> cd = new CycleDetector<IPredicate, LabeledEdge<IPredicate, Boolean>>(
+			g);
 
 	/**
 	 * Connectivity inspector to determine, whether paths between vertices
@@ -84,7 +62,9 @@ public class PredicateGraph implements IPredicateGraph {
 
 	/**
 	 * Constructs a new graph with a given set of rules.
-	 * @param r the rules with which to initialize the graph
+	 * 
+	 * @param r
+	 *            the rules with which to initialize the graph
 	 */
 	PredicateGraph(final Collection<IRule> r) {
 		if (r != null) {
@@ -100,8 +80,11 @@ public class PredicateGraph implements IPredicateGraph {
 
 	/**
 	 * Adds a rule to this graph.
-	 * @param rule the rule to add
-	 * @throws NullPointerException if the rule is <code>null</code>
+	 * 
+	 * @param rule
+	 *            the rule to add
+	 * @throws NullPointerException
+	 *             if the rule is <code>null</code>
 	 */
 	private void _addRule(final IRule rule) {
 		if (rule == null) {
@@ -114,8 +97,8 @@ public class PredicateGraph implements IPredicateGraph {
 
 			for (final ILiteral l : rule.getBody()) {
 				final IPredicate p = l.getAtom().getPredicate();
-				final LabeledEdge<IPredicate, Boolean> e = 
-					new LabeledEdge<IPredicate, Boolean>(p, hp, l.isPositive());
+				final LabeledEdge<IPredicate, Boolean> e = new LabeledEdge<IPredicate, Boolean>(
+						p, hp, l.isPositive());
 
 				g.addVertex(p);
 
@@ -147,8 +130,7 @@ public class PredicateGraph implements IPredicateGraph {
 
 	public Set<ILabeledEdge<IPredicate, Boolean>> findEdgesForCycle() {
 		final Set<IPredicate> cycle = findVertexesForCycle();
-		final Set<ILabeledEdge<IPredicate, Boolean>> edges = 
-			new HashSet<ILabeledEdge<IPredicate, Boolean>>();
+		final Set<ILabeledEdge<IPredicate, Boolean>> edges = new HashSet<ILabeledEdge<IPredicate, Boolean>>();
 		for (final IPredicate v : cycle) {
 			for (final IPredicate p : Graphs.successorListOf(g, v)) {
 				if (cycle.contains(p)) {
@@ -214,11 +196,16 @@ public class PredicateGraph implements IPredicateGraph {
 	 * And example return string could be:
 	 * </p>
 	 * <p>
-	 * <pre><code>
+	 * 
+	 * <pre>
+	 * <code>
 	 * a-&gt;(false)-&gt;b
 	 * b-&gt;(true)-&gt;c
-	 * </code></pre>
+	 * </code>
+	 * </pre>
+	 * 
 	 * </p>
+	 * 
 	 * @return the string description
 	 */
 	public String toString() {
@@ -228,7 +215,6 @@ public class PredicateGraph implements IPredicateGraph {
 		}
 		return b.toString();
 	}
-			
 
 	/**
 	 * <p>
@@ -255,8 +241,8 @@ public class PredicateGraph implements IPredicateGraph {
 				throw new IllegalArgumentException(
 						"Only rules with a headlength of 1 are allowed.");
 			}
-			return pc.compare(o1.getHead().get(0).getAtom().getPredicate(), 
-					o2.getHead().get(0).getAtom().getPredicate());
+			return pc.compare(o1.getHead().get(0).getAtom().getPredicate(), o2
+					.getHead().get(0).getAtom().getPredicate());
 		}
 	}
 
@@ -298,19 +284,22 @@ public class PredicateGraph implements IPredicateGraph {
 
 	/**
 	 * <p>
-	 * The simple factory to create default edges for the PredicateGraph.
-	 * The label of the edge will be <code>true</code>.
+	 * The simple factory to create default edges for the PredicateGraph. The
+	 * label of the edge will be <code>true</code>.
 	 * </p>
 	 * <p>
 	 * $Id$
 	 * </p>
+	 * 
 	 * @author Richard Pöttler (richard dot poettler at deri dot org)
 	 * @version $Revision$
 	 * @since 0.3
 	 */
-	private static class PredicateEdgeFactory implements EdgeFactory<IPredicate, LabeledEdge<IPredicate, Boolean>> {
+	private static class PredicateEdgeFactory implements
+			EdgeFactory<IPredicate, LabeledEdge<IPredicate, Boolean>> {
 
-		public LabeledEdge<IPredicate, Boolean> createEdge(final IPredicate s, final IPredicate t) {
+		public LabeledEdge<IPredicate, Boolean> createEdge(final IPredicate s,
+				final IPredicate t) {
 			if ((s == null) || (t == null)) {
 				throw new NullPointerException("The vertices must not be null");
 			}

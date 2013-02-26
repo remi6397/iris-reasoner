@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.compiler;
 
 import java.io.IOException;
@@ -28,7 +6,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
-
 
 import at.sti2.streamingiris.api.basics.IPredicate;
 import at.sti2.streamingiris.api.basics.IQuery;
@@ -42,132 +19,135 @@ import at.sti2.streamingiris.storage.IRelation;
 /**
  * Parses a datalog program in human readable form in to an IRIS object model.
  */
-public class Parser
-{
+public class Parser {
 	/**
-	 * Default constructor.
-	 * Uses a default BuiltinRegister.
+	 * Default constructor. Uses a default BuiltinRegister.
 	 */
-	public Parser()
-	{
+	public Parser() {
 		this(new BuiltinRegister());
 	}
-	
+
 	/**
 	 * Constructor for custom BuitinRegister.
-	 * @param builtinRegister The built-in register to use.
+	 * 
+	 * @param builtinRegister
+	 *            The built-in register to use.
 	 */
-	public Parser( BuiltinRegister builtinRegister )
-	{
+	public Parser(BuiltinRegister builtinRegister) {
 		this(null, builtinRegister);
 	}
-	
+
 	/**
 	 * Constructor for custom BuitinRegister.
-	 * @param facts The {@link IFacts} to store the facts in.
+	 * 
+	 * @param facts
+	 *            The {@link IFacts} to store the facts in.
 	 */
-	public Parser( IFacts facts )
-	{
+	public Parser(IFacts facts) {
 		this(facts, new BuiltinRegister());
 	}
-	
+
 	/**
 	 * Constructor for custom BuitinRegister.
-	 * @param facts The {@link IFacts} to store the facts in.
-	 * @param builtinRegister The built-in register to use.
+	 * 
+	 * @param facts
+	 *            The {@link IFacts} to store the facts in.
+	 * @param builtinRegister
+	 *            The built-in register to use.
 	 */
-	public Parser( IFacts facts, BuiltinRegister builtinRegister )
-	{
+	public Parser(IFacts facts, BuiltinRegister builtinRegister) {
 		mFacts = facts;
 		mBuiltinRegister = builtinRegister;
 	}
-	
+
 	/**
 	 * Get the built-in register instance for adding or removing built-ins.
+	 * 
 	 * @return The built-in register instance
 	 */
-	public BuiltinRegister getBuiltinRegister()
-	{
+	public BuiltinRegister getBuiltinRegister() {
 		return mBuiltinRegister;
 	}
-	
+
 	/**
 	 * Parses a datalog program.
-	 * @param program The program to parse. This must not be null.
+	 * 
+	 * @param program
+	 *            The program to parse. This must not be null.
 	 * @return a newly created program represented the parsed one.
 	 * @throws at.sti2.streamingiris.compiler.ParserException
 	 */
-	public void parse( String program ) throws at.sti2.streamingiris.compiler.ParserException
-	{
-		if ( program == null )
+	public void parse(String program)
+			throws at.sti2.streamingiris.compiler.ParserException {
+		if (program == null)
 			throw new IllegalArgumentException("The reader must not be null");
-		
-		parse(new StringReader(program) );
+
+		parse(new StringReader(program));
 	}
-	
-	public List<IRule> getRules()
-	{
+
+	public List<IRule> getRules() {
 		return mTreeWalker.getRuleBase();
 	}
-	
-	public Map<IPredicate,IRelation> getFacts()
-	{
+
+	public Map<IPredicate, IRelation> getFacts() {
 		return mTreeWalker.getFacts();
 	}
-	
-	public List<IQuery> getQueries()
-	{
+
+	public List<IQuery> getQueries() {
 		return mTreeWalker.getQueries();
 	}
 
 	/**
-	 * Parses a datalog string. The parsed object will be add to the
-	 * submitted program.
-	 * @param r the reader from where to read the program
-	 * @param p the program where to add the objects. Might be
-	 * <code>null</code>
-	 * @return the input program, or a newly created one (if the input
-	 * program was <code>null</code>) containing all the objects of the
-	 * parsed one.
-	 * @throws at.sti2.streamingiris.compiler.ParserException if something went wrong while
-	 * parsing
-	 * @throws IllegalArgumentException if the reader is <code>null</code>
+	 * Parses a datalog string. The parsed object will be add to the submitted
+	 * program.
+	 * 
+	 * @param r
+	 *            the reader from where to read the program
+	 * @param p
+	 *            the program where to add the objects. Might be
+	 *            <code>null</code>
+	 * @return the input program, or a newly created one (if the input program
+	 *         was <code>null</code>) containing all the objects of the parsed
+	 *         one.
+	 * @throws at.sti2.streamingiris.compiler.ParserException
+	 *             if something went wrong while parsing
+	 * @throws IllegalArgumentException
+	 *             if the reader is <code>null</code>
 	 */
-	public void parse(final Reader r) throws at.sti2.streamingiris.compiler.ParserException
-	{
+	public void parse(final Reader r)
+			throws at.sti2.streamingiris.compiler.ParserException {
 		if (r == null)
 			throw new IllegalArgumentException("The reader must not be null");
-		
-		mTreeWalker = new TreeWalker(mFacts, mBuiltinRegister );
 
-		try
-		{
-			at.sti2.streamingiris.parser.parser.Parser parser = new at.sti2.streamingiris.parser.parser.Parser( new Lexer( new PushbackReader(r, 1024) ) );
+		mTreeWalker = new TreeWalker(mFacts, mBuiltinRegister);
 
-			parser.parse().apply( mTreeWalker );
-		}
-		catch (ParserException e)
-		{
-			throw new at.sti2.streamingiris.compiler.ParserException( "Parser error: " + e.getMessage() );
-		}
-		catch (LexerException e)
-		{
-			throw new at.sti2.streamingiris.compiler.ParserException( "Lexer error: " + e.getMessage() );
-		}
-		catch (IOException e)
-		{
-			// This error condition is intentionally hidden, since it is considered very unlikely
-			// to occur. Usually library users will pass a String containing the logic program, in
+		try {
+			at.sti2.streamingiris.parser.parser.Parser parser = new at.sti2.streamingiris.parser.parser.Parser(
+					new Lexer(new PushbackReader(r, 1024)));
+
+			parser.parse().apply(mTreeWalker);
+		} catch (ParserException e) {
+			throw new at.sti2.streamingiris.compiler.ParserException(
+					"Parser error: " + e.getMessage());
+		} catch (LexerException e) {
+			throw new at.sti2.streamingiris.compiler.ParserException(
+					"Lexer error: " + e.getMessage());
+		} catch (IOException e) {
+			// This error condition is intentionally hidden, since it is
+			// considered very unlikely
+			// to occur. Usually library users will pass a String containing the
+			// logic program, in
 			// which case this exception type can not be thrown.
-			throw new at.sti2.streamingiris.compiler.ParserException( "I/O error: " + e.getMessage() );
-		}
-		catch( IllegalArgumentException e )
-		{
-			// Some errors (such as wrong number of arguments for a type) manifest themselves as IllegalArgumentExceptions.
-			throw new at.sti2.streamingiris.compiler.ParserException( e.getMessage() );
+			throw new at.sti2.streamingiris.compiler.ParserException(
+					"I/O error: " + e.getMessage());
+		} catch (IllegalArgumentException e) {
+			// Some errors (such as wrong number of arguments for a type)
+			// manifest themselves as IllegalArgumentExceptions.
+			throw new at.sti2.streamingiris.compiler.ParserException(
+					e.getMessage());
 		}
 	}
-	
+
 	private TreeWalker mTreeWalker;
 	private final BuiltinRegister mBuiltinRegister;
 	private IFacts mFacts;

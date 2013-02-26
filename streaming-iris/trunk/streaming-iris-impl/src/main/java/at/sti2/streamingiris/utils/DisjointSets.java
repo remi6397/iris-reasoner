@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.utils;
 
 import java.util.Collection;
@@ -70,7 +48,8 @@ public class DisjointSets<T> {
 	 * new element corresponds to a new singleton set consisting only of the
 	 * given object.
 	 * 
-	 * @param element The new element.
+	 * @param element
+	 *            The new element.
 	 * @return <code>true</code> if this disjoint-set did not already contain
 	 *         the specified element, <code>false</code> otherwise.
 	 */
@@ -89,7 +68,8 @@ public class DisjointSets<T> {
 	 * Removes an element from the disjoint-set. The element is removed from all
 	 * sets.
 	 * 
-	 * @param element The element.
+	 * @param element
+	 *            The element.
 	 * @returns <code>true</code> if this disjoint-set contained the specified
 	 *          element, <code>false</code> otherwise.
 	 */
@@ -102,8 +82,10 @@ public class DisjointSets<T> {
 	 * corresponding <code>equals</code> method is used to determine the
 	 * equality of elements of the given type.
 	 * 
-	 * @param x The first object.
-	 * @param y The second object.
+	 * @param x
+	 *            The first object.
+	 * @param y
+	 *            The second object.
 	 * @return <code>true</code> if the two given objects are in the same set,
 	 *         <code>false</code> otherwise.
 	 */
@@ -123,8 +105,10 @@ public class DisjointSets<T> {
 	 * Creates a new singleton set for elements which have not been added
 	 * before.
 	 * 
-	 * @param x The first element.
-	 * @param y The second element.
+	 * @param x
+	 *            The first element.
+	 * @param y
+	 *            The second element.
 	 * @return The representative object of the set that represents the merge of
 	 *         the element's sets.
 	 */
@@ -153,7 +137,8 @@ public class DisjointSets<T> {
 	 * Retrieves the representative element of the set in which the given
 	 * element resides.
 	 * 
-	 * @param element The element.
+	 * @param element
+	 *            The element.
 	 * @return The representative object for the set containing the specified
 	 *         element, or <code>null</code> if the specified element has not
 	 *         been added yet, i.e. there is no set containing the element.
@@ -205,7 +190,8 @@ public class DisjointSets<T> {
 	/**
 	 * Returns the set of elements in which the specified element resides.
 	 * 
-	 * @param element The element.
+	 * @param element
+	 *            The element.
 	 * @return The set of elements in which the specified element resides or an
 	 *         empty set if has not been added to this disjoint-set yet.
 	 */

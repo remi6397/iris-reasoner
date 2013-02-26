@@ -1,31 +1,7 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.utils;
 
 import java.util.Collection;
 import java.util.Set;
-
-import at.sti2.streamingiris.utils.DisjointSets;
 
 import junit.framework.TestCase;
 
@@ -61,6 +37,7 @@ public class DisjointSetsTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
@@ -91,18 +68,19 @@ public class DisjointSetsTest extends TestCase {
 
 	/**
 	 * Test method for
-	 * {@link at.sti2.streamingiris.utils.DisjointSets#remove(java.lang.Object)}.
+	 * {@link at.sti2.streamingiris.utils.DisjointSets#remove(java.lang.Object)}
+	 * .
 	 */
 	public void testRemove() {
 		relation.remove(element2);
-		
+
 		assertFalse(relation.areInSameSet(element2, element2Equiv1));
-		
+
 		relation.remove(element2Equiv1);
 		relation.remove(element2Equiv2);
 		relation.remove(element2Equiv3);
 		relation.remove(element2Equiv4);
-		
+
 		assertEquals(1, relation.getNumberOfSets());
 	}
 
@@ -125,7 +103,7 @@ public class DisjointSetsTest extends TestCase {
 		relation.putInSameSet(element1, element2);
 		assertTrue(relation.areInSameSet(element1, element2Equiv2));
 		assertTrue(relation.areInSameSet(element2, element1Equiv3));
-		
+
 		// Should return false here.
 		assertFalse(relation.areInSameSet(element2, element3));
 
@@ -141,17 +119,14 @@ public class DisjointSetsTest extends TestCase {
 
 	/**
 	 * Test method for
-	 * {@link at.sti2.streamingiris.utils.DisjointSets#find(java.lang.Object)}
-	 * .
+	 * {@link at.sti2.streamingiris.utils.DisjointSets#find(java.lang.Object)} .
 	 */
 	public void testFind() {
 		assertEquals(element1Equiv1, relation.find(element1));
-		assertEquals(element1Equiv1, relation
-				.find(element1Equiv4));
+		assertEquals(element1Equiv1, relation.find(element1Equiv4));
 
 		assertEquals(element2Equiv1, relation.find(element2));
-		assertEquals(element2Equiv1, relation
-				.find(element2Equiv2));
+		assertEquals(element2Equiv1, relation.find(element2Equiv2));
 
 		assertNull(relation.find(invalid));
 	}
@@ -245,8 +220,7 @@ public class DisjointSetsTest extends TestCase {
 
 	/**
 	 * Test method for
-	 * {@link at.sti2.streamingiris.utils.DisjointSets#getNumberOfSets()}
-	 * .
+	 * {@link at.sti2.streamingiris.utils.DisjointSets#getNumberOfSets()} .
 	 */
 	public void testGetNumberOfSets() {
 		assertEquals(2, relation.getNumberOfSets());

@@ -1,39 +1,13 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.rules.stratification;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
-
-
 import at.sti2.streamingiris.api.basics.IRule;
 import at.sti2.streamingiris.compiler.Parser;
 import at.sti2.streamingiris.compiler.ParserException;
 import at.sti2.streamingiris.rules.IRuleStratifier;
-import at.sti2.streamingiris.rules.stratification.GlobalStratifier;
-import at.sti2.streamingiris.rules.stratification.LocalStratifier;
 
 /**
  * A test for correct stratificiation of rules with head equality.
@@ -41,20 +15,20 @@ import at.sti2.streamingiris.rules.stratification.LocalStratifier;
  * @author Adrian Marte
  */
 public class RuleHeadEqualityStratificationTest extends TestCase {
-	
+
 	private Parser parser;
-	
+
 	private List<IRule> rules;
-	
- 	public RuleHeadEqualityStratificationTest(String name) {
+
+	public RuleHeadEqualityStratificationTest(String name) {
 		super(name);
 	}
-	
+
 	public void setUp() {
 		parser = new Parser();
 		rules = new ArrayList<IRule>();
 	}
-	
+
 	public void testSuccessful() throws ParserException {
 		String program = "";
 		program += "q(?X) :- r(?X), t(?X).";
@@ -63,10 +37,10 @@ public class RuleHeadEqualityStratificationTest extends TestCase {
 
 		parser.parse(program);
 		rules = parser.getRules();
-		
+
 		stratify(rules, true);
 	}
-	
+
 	public void testUnsuccessful() throws ParserException {
 		String program = "";
 		program += "q(?X) :- r(?X), t(?X).";
@@ -75,16 +49,16 @@ public class RuleHeadEqualityStratificationTest extends TestCase {
 
 		parser.parse(program);
 		rules = parser.getRules();
-		
+
 		stratify(rules, false);
 	}
-	
+
 	public void testNegatedLiteral() throws ParserException {
 		String program = "?X = ?Y :- not c(?X), a(?X), b(?Y).";
 
 		parser.parse(program);
 		rules = parser.getRules();
-		
+
 		stratify(rules, false);
 	}
 
@@ -116,5 +90,5 @@ public class RuleHeadEqualityStratificationTest extends TestCase {
 			assertNull(result);
 		}
 	}
-	
+
 }

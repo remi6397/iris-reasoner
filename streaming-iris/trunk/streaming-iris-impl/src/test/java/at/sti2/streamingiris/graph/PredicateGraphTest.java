@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.graph;
 
 import static at.sti2.streamingiris.factory.Factory.BASIC;
@@ -35,15 +13,11 @@ import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-
 import at.sti2.streamingiris.api.basics.ILiteral;
 import at.sti2.streamingiris.api.basics.IPredicate;
 import at.sti2.streamingiris.api.basics.IRule;
 import at.sti2.streamingiris.api.basics.ITuple;
 import at.sti2.streamingiris.api.graph.ILabeledEdge;
-import at.sti2.streamingiris.graph.LabeledEdge;
-import at.sti2.streamingiris.graph.PredicateGraph;
 
 /**
  * <p>
@@ -52,6 +26,7 @@ import at.sti2.streamingiris.graph.PredicateGraph;
  * <p>
  * $Id$
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  * @version $Revision$
  */
@@ -102,8 +77,8 @@ public class PredicateGraphTest extends TestCase {
 	private static final ILiteral ne = BASIC.createLiteral(false, e, t);
 
 	public static Test suite() {
-		return new TestSuite(PredicateGraphTest.class, PredicateGraphTest.class
-				.getSimpleName());
+		return new TestSuite(PredicateGraphTest.class,
+				PredicateGraphTest.class.getSimpleName());
 	}
 
 	public void testDetectCycles() {
@@ -111,8 +86,8 @@ public class PredicateGraphTest extends TestCase {
 	}
 
 	public void testCountNegativesForCycle() {
-		assertEquals("The negative edges aren't calculated correctly", 1, pg0
-				.countNegativesForCycle());
+		assertEquals("The negative edges aren't calculated correctly", 1,
+				pg0.countNegativesForCycle());
 	}
 
 	public void testFindVertexesForCycle() {
@@ -132,7 +107,8 @@ public class PredicateGraphTest extends TestCase {
 		reference.add(new LabeledEdge<IPredicate, Boolean>(c, d, true));
 		reference.add(new LabeledEdge<IPredicate, Boolean>(d, e, true));
 		reference.add(new LabeledEdge<IPredicate, Boolean>(e, a, true));
-		final Set<ILabeledEdge<IPredicate, Boolean>> testing = pg0.findEdgesForCycle();
+		final Set<ILabeledEdge<IPredicate, Boolean>> testing = pg0
+				.findEdgesForCycle();
 
 		assertEquals("The edge sets must be equal", reference, testing);
 	}
@@ -145,19 +121,19 @@ public class PredicateGraphTest extends TestCase {
 		for_d.addAll(for_b);
 		for_d.add(b);
 
-		assertEquals("Something wrong with the depends calculation", for_b, pg1
-				.getDepends(b));
-		assertEquals("Something wrong with the depends calculation", for_d, pg1
-				.getDepends(d));
+		assertEquals("Something wrong with the depends calculation", for_b,
+				pg1.getDepends(b));
+		assertEquals("Something wrong with the depends calculation", for_d,
+				pg1.getDepends(d));
 	}
 
 	public void testPredicateComparator() {
-		final List<IPredicate> reference = new ArrayList<IPredicate>(Arrays
-				.asList(new IPredicate[] { e, c, b, d, a }));
-		final List<IPredicate> testing = new ArrayList<IPredicate>(Arrays
-				.asList(new IPredicate[] { a, b, c, d, e }));
+		final List<IPredicate> reference = new ArrayList<IPredicate>(
+				Arrays.asList(new IPredicate[] { e, c, b, d, a }));
+		final List<IPredicate> testing = new ArrayList<IPredicate>(
+				Arrays.asList(new IPredicate[] { a, b, c, d, e }));
 		Collections.sort(testing, pg1.getPredicateComparator());
-		
+
 		assertEquals("The sort order isn't correct", reference, testing);
 	}
 
@@ -166,9 +142,7 @@ public class PredicateGraphTest extends TestCase {
 		// a(X) :- e(X)
 		r0.add(BASIC.createRule(Arrays.asList(pa), Arrays.asList(pe)));
 		// b(X) :- a(X), -c(X)
-		r0
-				.add(BASIC.createRule(Arrays.asList(pb), Arrays.asList(
-						pa, nc)));
+		r0.add(BASIC.createRule(Arrays.asList(pb), Arrays.asList(pa, nc)));
 		// c(X) :- -a(X)
 		r0.add(BASIC.createRule(Arrays.asList(pc), Arrays.asList(na)));
 		// d(X) :- c(X)

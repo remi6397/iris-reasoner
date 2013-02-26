@@ -1,31 +1,7 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.builtins.list;
-
 
 import at.sti2.streamingiris.EvaluationException;
 import at.sti2.streamingiris.api.terms.concrete.IList;
-import at.sti2.streamingiris.builtins.list.SubListFromToBuiltin;
 import at.sti2.streamingiris.terms.concrete.IntTerm;
 
 public class SubListFromToBuiltinTest extends AbstractListBuiltinTest {
@@ -43,8 +19,8 @@ public class SubListFromToBuiltinTest extends AbstractListBuiltinTest {
 		} catch (IllegalArgumentException e) {
 		}
 
-		builtin = new SubListFromToBuiltin(EMPTY_LIST, new IntTerm(0), new IntTerm(
-				0));
+		builtin = new SubListFromToBuiltin(EMPTY_LIST, new IntTerm(0),
+				new IntTerm(0));
 		//
 		list_1 = new at.sti2.streamingiris.terms.concrete.List();
 		list_2 = new at.sti2.streamingiris.terms.concrete.List();
@@ -74,26 +50,28 @@ public class SubListFromToBuiltinTest extends AbstractListBuiltinTest {
 
 		// External( func:sublist(List(0 1 2 3 4) 0 10) ) = List(0 1 2 3 4)
 		expected.add(FOUR);
-		assertEquals(expected, builtin.computeResult(list_1, ZERO, new IntTerm(
-				10)));
+		assertEquals(expected,
+				builtin.computeResult(list_1, ZERO, new IntTerm(10)));
 
 		// External( func:sublist(List(0 1 2 3 4) 0 -2) ) = List(0 1 2)
 		expected.clear();
 		expected.add(ZERO);
 		expected.add(ONE);
 		expected.add(TWO);
-		assertEquals(expected, builtin.computeResult(list_1, ZERO, new IntTerm(-2)));
-		
+		assertEquals(expected,
+				builtin.computeResult(list_1, ZERO, new IntTerm(-2)));
+
 		// External( func:sublist(List(0 1 2 3 4) 2 4) ) = List(2 3)
 		expected.clear();
 		expected.add(TWO);
 		expected.add(THREE);
 		assertEquals(expected, builtin.computeResult(list_1, TWO, FOUR));
-		
+
 		// External( func:sublist(List(0 1 2 3 4) 2 -2) ) = List(2)
 		expected.clear();
 		expected.add(TWO);
-		assertEquals(expected, builtin.computeResult(list_1, TWO, new IntTerm(-2)));
+		assertEquals(expected,
+				builtin.computeResult(list_1, TWO, new IntTerm(-2)));
 
 	}
 }

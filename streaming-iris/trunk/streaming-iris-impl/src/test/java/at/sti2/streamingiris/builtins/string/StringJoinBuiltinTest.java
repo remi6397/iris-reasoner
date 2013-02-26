@@ -1,39 +1,14 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.builtins.string;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
-
-
 import at.sti2.streamingiris.EvaluationException;
 import at.sti2.streamingiris.api.basics.ITuple;
 import at.sti2.streamingiris.api.terms.IStringTerm;
 import at.sti2.streamingiris.api.terms.ITerm;
 import at.sti2.streamingiris.api.terms.IVariable;
-import at.sti2.streamingiris.builtins.string.StringJoinBuiltin;
 import at.sti2.streamingiris.factory.Factory;
 
 /**
@@ -65,14 +40,15 @@ public class StringJoinBuiltinTest extends TestCase {
 			terms[i] = Factory.TERM.createString(actual[i]);
 		}
 		terms[actual.length] = R;
-		
+
 		List<IVariable> vars = new ArrayList<IVariable>();
 		for (int i = 0; i < actual.length; i++) {
 			vars.add(Factory.TERM.createVariable("var" + i));
 		}
 		vars.add(R);
-		
-		ITuple arguments = Factory.BASIC.createTuple(vars.toArray(new ITerm[] {}));
+
+		ITuple arguments = Factory.BASIC.createTuple(vars
+				.toArray(new ITerm[] {}));
 
 		StringJoinBuiltin length = new StringJoinBuiltin(terms);
 

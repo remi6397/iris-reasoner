@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.builtins.string;
 
 import java.util.HashSet;
@@ -73,8 +51,8 @@ public class PercentEncoder {
 	/**
 	 * Puts the given code point in the set of reserved characters.
 	 * 
-	 * @param codePoint The code point to be put in the set of reserved
-	 *            characters.
+	 * @param codePoint
+	 *            The code point to be put in the set of reserved characters.
 	 */
 	public void reserve(int codePoint) {
 		if (unreserved.remove(codePoint)) {
@@ -85,8 +63,8 @@ public class PercentEncoder {
 	/**
 	 * Puts the given character in the set of reserved characters.
 	 * 
-	 * @param character The character to be put in the set of reserved
-	 *            characters.
+	 * @param character
+	 *            The character to be put in the set of reserved characters.
 	 */
 	public void reserve(char character) {
 		reserve((int) character);
@@ -96,8 +74,9 @@ public class PercentEncoder {
 	 * Puts all character in the given array of characters in the set of
 	 * reserved characters.
 	 * 
-	 * @param characters The array of characters to be put in the set of
-	 *            reserved characters.
+	 * @param characters
+	 *            The array of characters to be put in the set of reserved
+	 *            characters.
 	 */
 	public void reserve(char[] characters) {
 		for (char character : characters) {
@@ -117,8 +96,8 @@ public class PercentEncoder {
 	/**
 	 * Puts the given code point in the set of unreserved characters.
 	 * 
-	 * @param codePoint The code point to be put in the set of unreserved
-	 *            characters.
+	 * @param codePoint
+	 *            The code point to be put in the set of unreserved characters.
 	 */
 	public void unreserve(int codePoint) {
 		unreserved.add(codePoint);
@@ -127,8 +106,8 @@ public class PercentEncoder {
 	/**
 	 * Puts the given character in the set of unreserved characters.
 	 * 
-	 * @param codePoint The character to be put in the set of unreserved
-	 *            characters.
+	 * @param codePoint
+	 *            The character to be put in the set of unreserved characters.
 	 */
 	public void unreserve(char character) {
 		unreserve((int) character);
@@ -138,8 +117,9 @@ public class PercentEncoder {
 	 * Puts all character in the given array of characters in the set of
 	 * unreserved characters.
 	 * 
-	 * @param characters The array of characters to be put in the set of
-	 *            unreserved characters.
+	 * @param characters
+	 *            The array of characters to be put in the set of unreserved
+	 *            characters.
 	 */
 	public void unreserve(char[] characters) {
 		for (char character : characters) {
@@ -159,7 +139,8 @@ public class PercentEncoder {
 	 * Percent-encodes the given string according to the sets of reserved and
 	 * unreserved characters.
 	 * 
-	 * @param string The String to be percent-encoded.
+	 * @param string
+	 *            The String to be percent-encoded.
 	 * @return The percent-encoded String.
 	 */
 	public String encode(String string) {

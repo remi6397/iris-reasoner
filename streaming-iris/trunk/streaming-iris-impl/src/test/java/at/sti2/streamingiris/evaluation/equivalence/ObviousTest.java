@@ -1,30 +1,7 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.evaluation.equivalence;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 
 import at.sti2.streamingiris.evaluation.ProgramEvaluationTest;
 import at.sti2.streamingiris.rules.compiler.Helper;
@@ -75,13 +52,13 @@ public class ObviousTest extends ProgramEvaluationTest {
 		// are equal according to rule1. Therefore B2 is also in the relation.
 
 		IRelation relation = evaluate("?- atOffsite(?X).");
-		
-		assertTrue("A1 not in relation.", relation.contains(Helper
-				.createConstantTuple("A1")));
-		assertTrue("B1 not in relation.", relation.contains(Helper
-				.createConstantTuple("B1")));
-		assertTrue("B2 not in relation.", relation.contains(Helper
-				.createConstantTuple("B2")));
+
+		assertTrue("A1 not in relation.",
+				relation.contains(Helper.createConstantTuple("A1")));
+		assertTrue("B1 not in relation.",
+				relation.contains(Helper.createConstantTuple("B1")));
+		assertTrue("B2 not in relation.",
+				relation.contains(Helper.createConstantTuple("B2")));
 
 		assertEquals("Relation does not have correct size", 3, relation.size());
 	}
@@ -94,10 +71,10 @@ public class ObviousTest extends ProgramEvaluationTest {
 
 		IRelation relation = evaluate("?- atOffsite(?X), atEswc(?X).");
 
-		assertTrue("B1 not in relation.", relation.contains(Helper
-				.createConstantTuple("B1")));
-		assertTrue("B2 not in relation.", relation.contains(Helper
-				.createConstantTuple("B2")));
+		assertTrue("B1 not in relation.",
+				relation.contains(Helper.createConstantTuple("B1")));
+		assertTrue("B2 not in relation.",
+				relation.contains(Helper.createConstantTuple("B2")));
 
 		assertEquals("Relation does not have correct size", 2, relation.size());
 	}

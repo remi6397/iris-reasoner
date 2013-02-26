@@ -1,27 +1,4 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.api.builtins;
-
 
 import at.sti2.streamingiris.EvaluationException;
 import at.sti2.streamingiris.api.basics.IAtom;
@@ -66,12 +43,15 @@ public abstract interface IBuiltinAtom extends IAtom {
 	 * <code>3 &lt; 2</code> you will get back <code>null</code>.
 	 * </p>
 	 * 
-	 * @param t the substitutes for the variables of the builtin
+	 * @param t
+	 *            the substitutes for the variables of the builtin
 	 * @return the calculated constants or <code>null</code> if the built-in
 	 *         isn't evaluable
 	 * @throws EvaluationException
-	 * @throws IllegalArgumentException if the built-in couldn't be evaluated
-	 * @throws NullPointerException if the collection was <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the built-in couldn't be evaluated
+	 * @throws NullPointerException
+	 *             if the collection was <code>null</code>
 	 */
 	public ITuple evaluate(final ITuple t) throws EvaluationException;
 
@@ -87,8 +67,10 @@ public abstract interface IBuiltinAtom extends IAtom {
 	 * Sets the equivalence classes, which can be used for the evaluation of the
 	 * built-in.
 	 * 
-	 * @param equivalenceClasses The equivalence classes.
-	 * @throws NullPointerException If equivalenceClasses is <code>null</code>.
+	 * @param equivalenceClasses
+	 *            The equivalence classes.
+	 * @throws NullPointerException
+	 *             If equivalenceClasses is <code>null</code>.
 	 */
 	public void setEquivalenceClasses(IEquivalentTerms equivalenceClasses);
 

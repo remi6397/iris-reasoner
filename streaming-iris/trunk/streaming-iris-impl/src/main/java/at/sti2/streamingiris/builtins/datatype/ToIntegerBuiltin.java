@@ -1,32 +1,9 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.builtins.datatype;
 
 import static at.sti2.streamingiris.factory.Factory.BASIC;
 import static at.sti2.streamingiris.factory.Factory.CONCRETE;
 
 import java.math.BigInteger;
-
 
 import at.sti2.streamingiris.api.basics.IPredicate;
 import at.sti2.streamingiris.api.terms.INumericTerm;
@@ -54,8 +31,8 @@ public class ToIntegerBuiltin extends ConversionBuiltin {
 	/**
 	 * Creates a new instance of this builtin.
 	 * 
-	 * @param terms The term representing the data type instance to be
-	 *            converted.
+	 * @param terms
+	 *            The term representing the data type instance to be converted.
 	 */
 	public ToIntegerBuiltin(ITerm... terms) {
 		super(PREDICATE, terms);
@@ -82,7 +59,8 @@ public class ToIntegerBuiltin extends ConversionBuiltin {
 	 * Boolean term representing the value "False" is converted to an Integer
 	 * term representing "0".
 	 * 
-	 * @param term The Boolean term to be converted.
+	 * @param term
+	 *            The Boolean term to be converted.
 	 * @return A new Integer term representing the result of the conversion.
 	 */
 	public static IIntegerTerm toInteger(IBooleanTerm term) {
@@ -96,7 +74,8 @@ public class ToIntegerBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a Numeric term to an Integer term.
 	 * 
-	 * @param term The Numeric term to be converted.
+	 * @param term
+	 *            The Numeric term to be converted.
 	 * @return A new Integer term representing the result of the conversion.
 	 */
 	public static IIntegerTerm toInteger(INumericTerm term) {
@@ -106,7 +85,8 @@ public class ToIntegerBuiltin extends ConversionBuiltin {
 	/**
 	 * Converts a String term to an Integer term.
 	 * 
-	 * @param term The String term to be converted.
+	 * @param term
+	 *            The String term to be converted.
 	 * @return A new Integer term representing the result of the conversion, or
 	 *         <code>null</code> if the conversion fails.
 	 */

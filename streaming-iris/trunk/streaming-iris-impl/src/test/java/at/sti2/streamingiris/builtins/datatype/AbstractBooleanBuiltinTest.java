@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.builtins.datatype;
 
 import static at.sti2.streamingiris.factory.Factory.BASIC;
@@ -31,110 +9,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
-
-
 import at.sti2.streamingiris.EvaluationException;
 import at.sti2.streamingiris.api.basics.ITuple;
 import at.sti2.streamingiris.api.terms.ITerm;
-import at.sti2.streamingiris.builtins.datatype.IsAnyURIBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsBase64BinaryBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsBooleanBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsByteBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsDateBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsDateTimeBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsDateTimeStampBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsDayTimeDurationBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsDecimalBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsDoubleBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsDurationBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsFloatBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsGDayBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsGMonthBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsGMonthDayBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsGYearMonthBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsHexBinaryBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsIDBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsIDREFBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsIntBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsIntegerBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsIriBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsLanguageBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsListBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsLongBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNCNameBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNMTOKENBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNameBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNegativeIntegerBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNonNegativeIntegerBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNonPositiveIntegerBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNormalizedStringBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotAnyURIBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotBase64BinaryBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotBooleanBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotByteBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotDateBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotDateTimeBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotDateTimeStampBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotDayTimeDurationBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotDecimalBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotDoubleBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotDurationBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotFloatBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotGDayBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotGMonthBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotGMonthDayBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotGYearBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotGYearMonthBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotHexBinaryBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotIDBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotIDREFBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotIntBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotIntegerBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotIriBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotLanguageBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotListBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotLongBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotNCNameBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotNMTOKENBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotNOTATIONBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotNameBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotNegativeIntegerBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotNonNegativeIntegerBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotNonPositiveIntegerBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotNormalizedStringBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotNumericBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotPlainLiteralBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotPositiveIntegerBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotQNameBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotShortBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotSqNameBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotStringBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotTimeBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotTokenBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotUnsignedByteBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotUnsignedIntBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotUnsignedLongBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotUnsignedShortBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotXMLLiteralBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNotYearMonthDurationBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsNumericBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsPlainLiteralBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsPositiveIntegerBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsQNameBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsShortBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsSqNameBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsStringBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsTimeBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsTokenBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsUnsignedByteBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsUnsignedIntBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsUnsignedLongBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsUnsignedShortBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsXMLLiteralBuiltin;
-import at.sti2.streamingiris.builtins.datatype.IsYearMonthDurationBuiltin;
 
 public abstract class AbstractBooleanBuiltinTest extends TestCase {
-	
+
 	public AbstractBooleanBuiltinTest(String name) {
 		super(name);
 	}
@@ -175,8 +55,9 @@ public abstract class AbstractBooleanBuiltinTest extends TestCase {
 	 * 
 	 * @param iri
 	 * @param builtin
-	 * @param builtinNames the first builtinName is the of the testing class -
-	 *            the additional ones for classes which also match (numeric,..)
+	 * @param builtinNames
+	 *            the first builtinName is the of the testing class - the
+	 *            additional ones for classes which also match (numeric,..)
 	 * @throws SecurityException
 	 * @throws IllegalArgumentException
 	 * @throws EvaluationException
@@ -303,9 +184,9 @@ public abstract class AbstractBooleanBuiltinTest extends TestCase {
 
 	private ArrayList<String> getISNotBuiltins() {
 		ArrayList<String> list = new ArrayList<String>();
-		
+
 		list.add(IsNotAnyURIBuiltin.class.getName());
-//		list.add(IsNOTATIONBuiltin.class.getName());
+		// list.add(IsNOTATIONBuiltin.class.getName());
 		list.add(IsNotBase64BinaryBuiltin.class.getName());
 		list.add(IsNotBooleanBuiltin.class.getName());
 		list.add(IsNotByteBuiltin.class.getName());
@@ -335,12 +216,9 @@ public abstract class AbstractBooleanBuiltinTest extends TestCase {
 		list.add(IsNotNCNameBuiltin.class.getName());
 		list.add(IsNotNegativeIntegerBuiltin.class.getName());
 		list.add(IsNotNMTOKENBuiltin.class.getName());
-		list
-				.add(IsNotNonNegativeIntegerBuiltin.class.getName());
-		list
-				.add(IsNotNonPositiveIntegerBuiltin.class.getName());
-		list
-				.add(IsNotNormalizedStringBuiltin.class.getName());
+		list.add(IsNotNonNegativeIntegerBuiltin.class.getName());
+		list.add(IsNotNonPositiveIntegerBuiltin.class.getName());
+		list.add(IsNotNormalizedStringBuiltin.class.getName());
 		list.add(IsNotNOTATIONBuiltin.class.getName());
 		list.add(IsNotNumericBuiltin.class.getName());
 		list.add(IsNotPlainLiteralBuiltin.class.getName());
@@ -356,8 +234,7 @@ public abstract class AbstractBooleanBuiltinTest extends TestCase {
 		list.add(IsNotUnsignedLongBuiltin.class.getName());
 		list.add(IsNotUnsignedShortBuiltin.class.getName());
 		list.add(IsNotXMLLiteralBuiltin.class.getName());
-		list
-				.add(IsNotYearMonthDurationBuiltin.class.getName());
+		list.add(IsNotYearMonthDurationBuiltin.class.getName());
 
 		return list;
 

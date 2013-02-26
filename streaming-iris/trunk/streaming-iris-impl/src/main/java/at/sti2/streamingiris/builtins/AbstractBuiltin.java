@@ -1,31 +1,8 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.builtins;
 
 import static at.sti2.streamingiris.factory.Factory.BASIC;
 
 import java.util.Arrays;
-
 
 import at.sti2.streamingiris.EvaluationException;
 import at.sti2.streamingiris.api.basics.IAtom;
@@ -52,7 +29,7 @@ public abstract class AbstractBuiltin implements IBuiltinAtom {
 
 	/** Holds the inner atom. */
 	private IAtom a;
-	
+
 	private IEquivalentTerms equivalenceClasses = new IgnoreTermEquivalence();
 
 	/**
@@ -81,8 +58,9 @@ public abstract class AbstractBuiltin implements IBuiltinAtom {
 			throw new NullPointerException("The terms must not contain null");
 		}
 		if (t.length != p.getArity()) {
-			throw new IllegalArgumentException("The amount of terms <" + t.length + 
-					"> must match the arity of the predicate <" + p.getArity() + ">");
+			throw new IllegalArgumentException("The amount of terms <"
+					+ t.length + "> must match the arity of the predicate <"
+					+ p.getArity() + ">");
 		}
 		this.a = Factory.BASIC.createAtom(p, Factory.BASIC.createTuple(t));
 	}
@@ -136,75 +114,82 @@ public abstract class AbstractBuiltin implements IBuiltinAtom {
 	public boolean isBuiltin() {
 		return true;
 	}
-	
-	public ITuple evaluate(final ITuple t) throws EvaluationException
-	{
-		if(t == null)
+
+	public ITuple evaluate(final ITuple t) throws EvaluationException {
+		if (t == null)
 			throw new NullPointerException("The collection must not be null");
 
 		// calculating the needed term indexes from the submitted tuple
 		int[] outstanding = BuiltinHelper.determineUnground(getTuple());
-		
+
 		// retrieving the constants of this builtin
-		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple(), 
+		final ITerm[] bCons = BuiltinHelper.getIndexes(getTuple(),
 				BuiltinHelper.complement(outstanding, getTuple().size()));
 
 		// putting the term from this builtin and the submitted tuple together
-		final ITerm[] complete = BuiltinHelper.concat(outstanding, 
+		final ITerm[] complete = BuiltinHelper.concat(outstanding,
 				BuiltinHelper.getIndexes(t, outstanding), bCons);
-		
-		// determining the remaining vars of the terms
-		final int[] vars = BuiltinHelper.determineUnground(Arrays.asList(complete));
-		
-		if( vars.length > maxUnknownVariables() )
-			throw new IllegalArgumentException( "Can not evaluate " + getPredicate().toString() +
-							" with more than " + maxUnknownVariables() + " unbound variables (had " + vars.length + ")." );
-			
-		ITerm result = evaluateTerms( complete, vars );
 
-		if( result == null )
+		// determining the remaining vars of the terms
+		final int[] vars = BuiltinHelper.determineUnground(Arrays
+				.asList(complete));
+
+		if (vars.length > maxUnknownVariables())
+			throw new IllegalArgumentException("Can not evaluate "
+					+ getPredicate().toString() + " with more than "
+					+ maxUnknownVariables() + " unbound variables (had "
+					+ vars.length + ").");
+
+		ITerm result = evaluateTerms(complete, vars);
+
+		if (result == null)
 			return null;
-		
-		if( result == EMPTY_TERM )
+
+		if (result == EMPTY_TERM)
 			return BuiltinHelper.EMPTY_TUPLE;
-		
-		return BASIC.createTuple( result );
+
+		return BASIC.createTuple(result);
 	}
-	
+
 	/**
-	 * Evaluate the predicate once the terms and variable indexes have been found.
+	 * Evaluate the predicate once the terms and variable indexes have been
+	 * found.
 	 * 
-	 * @param terms The array of all terms for this evaluation.
-	 * @param variableIndexes the indexes of the terms which should be
-	 * computed (starting at 0)
+	 * @param terms
+	 *            The array of all terms for this evaluation.
+	 * @param variableIndexes
+	 *            the indexes of the terms which should be computed (starting at
+	 *            0)
 	 * @return The result of the evaluation.
-	 * @throws EvaluationException 
+	 * @throws EvaluationException
 	 */
-	protected ITerm evaluateTerms( ITerm[] terms, int[] variableIndexes ) throws EvaluationException
-	{
+	protected ITerm evaluateTerms(ITerm[] terms, int[] variableIndexes)
+			throws EvaluationException {
 		return null;
 	}
-	
-	public int maxUnknownVariables()
-	{
+
+	public int maxUnknownVariables() {
 		return 0;
 	}
-	
+
 	@Override
 	public void setEquivalenceClasses(IEquivalentTerms equivalenceClasses) {
 		if (equivalenceClasses == null) {
 			throw new NullPointerException(
 					"The equivalence classes must not be null");
 		}
-		
+
 		this.equivalenceClasses = equivalenceClasses;
 	}
-	
+
 	@Override
 	public IEquivalentTerms getEquivalenceClasses() {
 		return equivalenceClasses;
 	}
 
-	/** Something to save creating an an empty tuple every time we just need 'any' tuple. */
-	protected static final ITerm EMPTY_TERM = Factory.TERM.createString( "" );
+	/**
+	 * Something to save creating an an empty tuple every time we just need
+	 * 'any' tuple.
+	 */
+	protected static final ITerm EMPTY_TERM = Factory.TERM.createString("");
 }

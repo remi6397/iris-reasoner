@@ -1,35 +1,10 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.builtins.datatype;
 
 import static at.sti2.streamingiris.factory.Factory.BASIC;
-
-
 import at.sti2.streamingiris.EvaluationException;
 import at.sti2.streamingiris.api.basics.ITuple;
 import at.sti2.streamingiris.api.terms.ITerm;
 import at.sti2.streamingiris.api.terms.concrete.IList;
-import at.sti2.streamingiris.builtins.datatype.IsListBuiltin;
 import at.sti2.streamingiris.builtins.list.AbstractListBuiltinTest;
 
 public class IsListBuiltinTest extends AbstractListBuiltinTest {
@@ -46,8 +21,8 @@ public class IsListBuiltinTest extends AbstractListBuiltinTest {
 		} catch (IllegalArgumentException e) {
 		}
 		builtin = new IsListBuiltin(EMPTY_LIST);
-		ITerm[] terms = {EMPTY_LIST, null};
-		
+		ITerm[] terms = { EMPTY_LIST, null };
+
 		assertEquals(true, builtin.computeResult(terms));
 		list_1 = new at.sti2.streamingiris.terms.concrete.List();
 		list_2 = new at.sti2.streamingiris.terms.concrete.List();
@@ -71,11 +46,11 @@ public class IsListBuiltinTest extends AbstractListBuiltinTest {
 		terms[0] = list_2;
 		terms[1] = null;
 
-		ITerm[] terms2 = {list_2};
+		ITerm[] terms2 = { list_2 };
 		assertEquals(true, builtin.computeResult(terms));
 		assertFalse(list_2.equals(list_1));
-		assertEquals(builtin.computeResult(terms), builtin
-				.computeResult(terms2));
+		assertEquals(builtin.computeResult(terms),
+				builtin.computeResult(terms2));
 	}
 
 	public void testTupleBuiltin() throws EvaluationException {

@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.evaluation.topdown.oldt;
 
 import java.util.HashMap;
@@ -400,8 +378,8 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 						List<ILiteral> newQueryLiterals = new LinkedList<ILiteral>();
 						newQueryLiterals.addAll(newQuery.getLiterals());
 						int indexOfLiteralToRemove = this.getQuery()
-								.getLiterals().indexOf(
-										this.getSelectedLiteral());
+								.getLiterals()
+								.indexOf(this.getSelectedLiteral());
 
 						newQueryLiterals.remove(indexOfLiteralToRemove);
 
@@ -490,8 +468,8 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 			if (inputMap == null || this.getSelectedLiteral() == null)
 				return;
 
-			ITuple tupleToAddToRelation = TopDownHelper.resolveTuple(this
-					.getSelectedLiteral(), inputMap);
+			ITuple tupleToAddToRelation = TopDownHelper.resolveTuple(
+					this.getSelectedLiteral(), inputMap);
 			IAtom atom = this.getSelectedLiteral().getAtom();
 
 			if (this.isAnswerNode()) {
@@ -511,8 +489,8 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 			}
 
 			if (this.getSubstitution() != null)
-				inputMap = TopDownHelper.mergeSubstitutions(inputMap, this
-						.getSubstitution());
+				inputMap = TopDownHelper.mergeSubstitutions(inputMap,
+						this.getSubstitution());
 
 			if (this.getPredecessor() != null)
 				this.getPredecessor().soloRefutation(inputMap); // Push the
@@ -531,8 +509,8 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 		 */
 		private void pushTupleUp(Map<IVariable, ITerm> inputMap) {
 
-			ITuple tupleToAddToRelation = TopDownHelper.resolveTuple(this
-					.getQuery(), inputMap);
+			ITuple tupleToAddToRelation = TopDownHelper.resolveTuple(
+					this.getQuery(), inputMap);
 
 			logger.debug("\t ...adding " + tupleToAddToRelation + " to "
 					+ this.getQuery() + " by reverse substituting "
@@ -547,8 +525,8 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 				this.addToEvaluation(tupleToAddToRelation);
 
 			if (this.getSubstitution() != null)
-				inputMap = TopDownHelper.mergeSubstitutions(inputMap, this
-						.getSubstitution());
+				inputMap = TopDownHelper.mergeSubstitutions(inputMap,
+						this.getSubstitution());
 
 			if (this.getPredecessor() != null)
 				this.getPredecessor().pushTupleUp(inputMap); // Push the tuple
@@ -657,9 +635,7 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 
 			// Update numbers of literals left for solo refutation
 			if (this.isAnswerNode())
-				this
-						.setNumLiteralsLeft(this.getQuery().getLiterals()
-								.size() - 1);
+				this.setNumLiteralsLeft(this.getQuery().getLiterals().size() - 1);
 
 			ILiteral selectedLiteral = this.getSelectedLiteral();
 
@@ -731,8 +707,8 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 				// UNIFICATION
 
 				assert builtinTuple.size() == 2;
-				unifyable = TermMatchingAndSubstitution.unify(builtinTuple
-						.get(0), builtinTuple.get(1), varMapCTarg);
+				unifyable = TermMatchingAndSubstitution.unify(
+						builtinTuple.get(0), builtinTuple.get(1), varMapCTarg);
 
 			} else {
 				// EVALUATION - every builtin except EqualBuiltin
@@ -841,8 +817,8 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 					// Replace all variables of the rule head with unused ones
 					// (variables that are not in the query)
 					Map<IVariable, ITerm> variableRenaming = TopDownHelper
-							.getVariableMapForVariableRenaming(rule, this
-									.getQuery());
+							.getVariableMapForVariableRenaming(rule,
+									this.getQuery());
 					IRule ruleAfterVariableRenaming = TopDownHelper
 							.replaceVariablesInRule(rule, variableRenaming);
 					ITuple ruleHeadTuple = ruleAfterVariableRenaming.getHead()
@@ -978,8 +954,8 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 				Map<IVariable, ITerm> memoTupleVarMap = TopDownHelper
 						.createVariableMapFromTupleAndQuery(this.getQuery(),
 								tuple);
-				ITuple memoTuple = TopDownHelper.resolveTuple(this
-						.getSelectedLiteral(), memoTupleVarMap);
+				ITuple memoTuple = TopDownHelper.resolveTuple(
+						this.getSelectedLiteral(), memoTupleVarMap);
 				mMemoTable.add(this.getSelectedLiteral().getAtom(), memoTuple);
 			}
 		}
@@ -1001,8 +977,8 @@ public class OLDTEvaluator implements ITopDownEvaluator {
 					Map<IVariable, ITerm> nodeVarMap = TopDownHelper
 							.createVariableMapFromTupleAndQuery(
 									this.getQuery(), tuple);
-					ITuple nodeMemoTuple = TopDownHelper.resolveTuple(this
-							.getSelectedLiteral(), nodeVarMap);
+					ITuple nodeMemoTuple = TopDownHelper.resolveTuple(
+							this.getSelectedLiteral(), nodeVarMap);
 
 					if (!mMemoTable.get(atom).contains(nodeMemoTuple)) {
 						mMemoTable.add(atom, nodeMemoTuple);

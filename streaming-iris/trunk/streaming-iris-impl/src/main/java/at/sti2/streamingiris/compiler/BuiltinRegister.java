@@ -1,30 +1,7 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.compiler;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 import at.sti2.streamingiris.api.basics.IPredicate;
 import at.sti2.streamingiris.api.builtins.IBuiltinAtom;
@@ -131,28 +108,29 @@ import at.sti2.streamingiris.factory.Factory;
 
 /**
  * <p>
- * Holds the registry of built-in atoms that the parser can use to translate predicates
- * to built-ins as the logic program is parsed.
+ * Holds the registry of built-in atoms that the parser can use to translate
+ * predicates to built-ins as the logic program is parsed.
  * </p>
  * <p>
- * Before a built-in can be recognized by the parser it must first be
- * registered with the associated BuiltinRegister.
- * The BuiltinRegister uses instances of the built-ins to get their predicate names
- * and their class instances.
- * The BuiltinRegister basically holds a map between predicate symbol and class instance.
- * This class initialises itself with all the standard IRIS built-ins.
+ * Before a built-in can be recognized by the parser it must first be registered
+ * with the associated BuiltinRegister. The BuiltinRegister uses instances of
+ * the built-ins to get their predicate names and their class instances. The
+ * BuiltinRegister basically holds a map between predicate symbol and class
+ * instance. This class initialises itself with all the standard IRIS built-ins.
  * </p>
  * <p>
- * To add more, simply call registerBuiltin() with an instance of the new built-in type.
+ * To add more, simply call registerBuiltin() with an instance of the new
+ * built-in type.
  * </p>
  * <p>
- * To unregister a built-in call unregisterBuiltin(). However, beware that unregistering
- * any of the standard built-ins can lead to undefined behaviour.
+ * To unregister a built-in call unregisterBuiltin(). However, beware that
+ * unregistering any of the standard built-ins can lead to undefined behaviour.
  * </p>
  */
 public final class BuiltinRegister {
 
-	/** Holding all the information about the built-ins.
+	/**
+	 * Holding all the information about the built-ins.
 	 * <ul>
 	 * <li>key: the name (predicate symbol of the built-in)</li>
 	 * <li>value: the RegisterEntry containing the information about the
@@ -162,39 +140,53 @@ public final class BuiltinRegister {
 	private final Map<String, RegisterEntry> reg = new HashMap<String, RegisterEntry>();
 
 	/**
-	 * Constructs a new built-in register and register all the standard IRIS built-ins.
+	 * Constructs a new built-in register and register all the standard IRIS
+	 * built-ins.
 	 */
 	public BuiltinRegister() {
-		ITerm t1 = Factory.TERM.createVariable( "a" );
-		ITerm t2 = Factory.TERM.createVariable( "b" );
-		ITerm t3 = Factory.TERM.createVariable( "c" );
-		ITerm t4 = Factory.TERM.createVariable( "d" );
-		ITerm t5 = Factory.TERM.createVariable( "e" );
-		
-		registerBuiltin( new at.sti2.streamingiris.builtins.AddBuiltin( t1, t2, t3 ) );
-		registerBuiltin( new at.sti2.streamingiris.builtins.SubtractBuiltin( t1, t2, t3 ) );
-		registerBuiltin( new at.sti2.streamingiris.builtins.MultiplyBuiltin( t1, t2, t3 ) );
-		registerBuiltin( new at.sti2.streamingiris.builtins.DivideBuiltin( t1, t2, t3 ) );
-		registerBuiltin( new at.sti2.streamingiris.builtins.ModulusBuiltin( t1, t2, t3 ) );
+		ITerm t1 = Factory.TERM.createVariable("a");
+		ITerm t2 = Factory.TERM.createVariable("b");
+		ITerm t3 = Factory.TERM.createVariable("c");
+		ITerm t4 = Factory.TERM.createVariable("d");
+		ITerm t5 = Factory.TERM.createVariable("e");
 
-		registerBuiltin( new at.sti2.streamingiris.builtins.MaxBuiltin( t1, t2, t3 ) );
+		registerBuiltin(new at.sti2.streamingiris.builtins.AddBuiltin(t1, t2,
+				t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.SubtractBuiltin(t1,
+				t2, t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.MultiplyBuiltin(t1,
+				t2, t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.DivideBuiltin(t1,
+				t2, t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.ModulusBuiltin(t1,
+				t2, t3));
 
-		registerBuiltin( new at.sti2.streamingiris.builtins.EqualBuiltin( t1, t2 ) );
-		registerBuiltin( new at.sti2.streamingiris.builtins.NotEqualBuiltin( t1, t2 ) );
-		registerBuiltin( new at.sti2.streamingiris.builtins.ExactEqualBuiltin( t1, t2 ) );
-		registerBuiltin( new at.sti2.streamingiris.builtins.NotExactEqualBuiltin( t1, t2 ) );
+		registerBuiltin(new at.sti2.streamingiris.builtins.MaxBuiltin(t1, t2,
+				t3));
 
-		registerBuiltin( new at.sti2.streamingiris.builtins.LessBuiltin( t1, t2 ) );
-		registerBuiltin( new at.sti2.streamingiris.builtins.LessEqualBuiltin( t1, t2 ) );
-		registerBuiltin( new at.sti2.streamingiris.builtins.GreaterBuiltin( t1, t2 ) );
-		registerBuiltin( new at.sti2.streamingiris.builtins.GreaterEqualBuiltin( t1, t2 ) );
+		registerBuiltin(new at.sti2.streamingiris.builtins.EqualBuiltin(t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.NotEqualBuiltin(t1,
+				t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.ExactEqualBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.NotExactEqualBuiltin(
+				t1, t2));
 
-		registerBuiltin( new at.sti2.streamingiris.builtins.TrueBuiltin() );
-		registerBuiltin( new at.sti2.streamingiris.builtins.FalseBuiltin() );
+		registerBuiltin(new at.sti2.streamingiris.builtins.LessBuiltin(t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.LessEqualBuiltin(t1,
+				t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.GreaterBuiltin(t1,
+				t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.GreaterEqualBuiltin(
+				t1, t2));
 
-		registerBuiltin( new at.sti2.streamingiris.builtins.RegexBuiltin( t1, Factory.TERM.createString( "" ) ) );
+		registerBuiltin(new at.sti2.streamingiris.builtins.TrueBuiltin());
+		registerBuiltin(new at.sti2.streamingiris.builtins.FalseBuiltin());
+
+		registerBuiltin(new at.sti2.streamingiris.builtins.RegexBuiltin(t1,
+				Factory.TERM.createString("")));
 		registerBuiltin(new IriStringBuiltin(t1, t2));
-		
+
 		// Datatype check built-ins.
 		registerBuiltin(new IsAnyURIBuiltin(t1));
 		registerBuiltin(new IsBase64BinaryBuiltin(t1));
@@ -245,7 +237,7 @@ public final class BuiltinRegister {
 		registerBuiltin(new IsUnsignedShortBuiltin(t1));
 		registerBuiltin(new IsXMLLiteralBuiltin(t1));
 		registerBuiltin(new IsYearMonthDurationBuiltin(t1));
-		
+
 		// Negated datatype check built-ins.
 		registerBuiltin(new IsNotAnyURIBuiltin(t1));
 		registerBuiltin(new IsNotBase64BinaryBuiltin(t1));
@@ -296,36 +288,56 @@ public final class BuiltinRegister {
 		registerBuiltin(new IsNotUnsignedShortBuiltin(t1));
 		registerBuiltin(new IsNotXMLLiteralBuiltin(t1));
 		registerBuiltin(new IsNotYearMonthDurationBuiltin(t1));
-		
-		registerBuiltin( new at.sti2.streamingiris.builtins.datatype.IsDatatypeBuiltin( t1, t2 ) );
-		registerBuiltin( new at.sti2.streamingiris.builtins.datatype.IsNotDatatypeBuiltin( t1, t2 ) );
-		registerBuiltin( new at.sti2.streamingiris.builtins.datatype.SameTypeBuiltin( t1, t2 ) );
-		
+
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.IsDatatypeBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.IsNotDatatypeBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.SameTypeBuiltin(
+				t1, t2));
+
 		// Datatype conversion builtins.
 		registerBuiltin(new ToAnyURIBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToBase64Builtin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToBooleanBuiltin(t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToBase64Builtin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToBooleanBuiltin(
+				t1, t2));
 		registerBuiltin(new ToByteBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToDateBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToDateTimeBuiltin(t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToDateBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToDateTimeBuiltin(
+				t1, t2));
 		registerBuiltin(new ToDateTimeStampBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToDayTimeDurationBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToDecimalBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToDoubleBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToDurationBuiltin(t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToDayTimeDurationBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToDecimalBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToDoubleBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToDurationBuiltin(
+				t1, t2));
 		registerBuiltin(new ToENTITYBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToFloatBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToGDayBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToGMonthBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToGMonthDayBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToGYearBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToGYearMonthBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToHexBinaryBuiltin(t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToFloatBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToGDayBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToGMonthBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToGMonthDayBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToGYearBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToGYearMonthBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToHexBinaryBuiltin(
+				t1, t2));
 		registerBuiltin(new ToIDBuiltin(t1, t2));
 		registerBuiltin(new ToIDREFBuiltin(t1, t2));
 		registerBuiltin(new ToIntBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToIntegerBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToIriBuiltin(t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToIntegerBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToIriBuiltin(
+				t1, t2));
 		registerBuiltin(new ToLanguageBuiltin(t1, t2));
 		registerBuiltin(new ToLongBuiltin(t1, t2));
 		registerBuiltin(new ToNameBuiltin(t1, t2));
@@ -335,20 +347,25 @@ public final class BuiltinRegister {
 		registerBuiltin(new ToNonNegativeIntegerBuiltin(t1, t2));
 		registerBuiltin(new ToNonPositiveIntegerBuiltin(t1, t2));
 		registerBuiltin(new ToNormalizedStringBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToPlainLiteralBuiltin(t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToPlainLiteralBuiltin(
+				t1, t2));
 		registerBuiltin(new ToPositiveIntegerBuiltin(t1, t2));
 		registerBuiltin(new ToQNameBuiltin(t1, t2));
 		registerBuiltin(new ToShortBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToStringBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToTimeBuiltin(t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToStringBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToTimeBuiltin(
+				t1, t2));
 		registerBuiltin(new ToTokenBuiltin(t1, t2));
 		registerBuiltin(new ToUnsignedByteBuiltin(t1, t2));
 		registerBuiltin(new ToUnsignedIntBuiltin(t1, t2));
 		registerBuiltin(new ToUnsignedLongBuiltin(t1, t2));
 		registerBuiltin(new ToUnsignedShortBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToXMLLiteralBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToYearMonthDurationBuiltin(t1, t2));
-		
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToXMLLiteralBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.datatype.ToYearMonthDurationBuiltin(
+				t1, t2));
+
 		// Date builtins.
 		registerBuiltin(new AddDayTimeDurationToDateBuiltin(t1, t2, t3));
 		registerBuiltin(new AddDayTimeDurationToDateTimeBuiltin(t1, t2, t3));
@@ -374,7 +391,8 @@ public final class BuiltinRegister {
 		registerBuiltin(new DaysFromDurationBuiltin(t1, t2));
 		registerBuiltin(new DayTimeDurationAddBuiltin(t1, t2, t3));
 		registerBuiltin(new DayTimeDurationDivideBuiltin(t1, t2, t3));
-		registerBuiltin(new DayTimeDurationDivideByDayTimeDurationBuiltin(t1, t2, t3));
+		registerBuiltin(new DayTimeDurationDivideByDayTimeDurationBuiltin(t1,
+				t2, t3));
 		registerBuiltin(new DayTimeDurationGreaterBuiltin(t1, t2));
 		registerBuiltin(new DayTimeDurationGreaterEqualBuiltin(t1, t2));
 		registerBuiltin(new DayTimeDurationLessBuiltin(t1, t2));
@@ -399,10 +417,12 @@ public final class BuiltinRegister {
 		registerBuiltin(new SecondsFromDateTimeBuiltin(t1, t2));
 		registerBuiltin(new SecondsFromTimeBuiltin(t1, t2));
 		registerBuiltin(new SubtractDayTimeDurationFromDateBuiltin(t1, t2, t3));
-		registerBuiltin(new SubtractDayTimeDurationFromDateTimeBuiltin(t1, t2, t3));
+		registerBuiltin(new SubtractDayTimeDurationFromDateTimeBuiltin(t1, t2,
+				t3));
 		registerBuiltin(new SubtractDayTimeDurationFromTimeBuiltin(t1, t2, t3));
 		registerBuiltin(new SubtractYearMonthDurationFromDateBuiltin(t1, t2, t3));
-		registerBuiltin(new SubtractYearMonthDurationFromDateTimeBuiltin(t1, t2, t3));
+		registerBuiltin(new SubtractYearMonthDurationFromDateTimeBuiltin(t1,
+				t2, t3));
 		registerBuiltin(new TimeEqualBuiltin(t1, t2));
 		registerBuiltin(new TimeGreaterBuiltin(t1, t2));
 		registerBuiltin(new TimeGreaterEqualBuiltin(t1, t2));
@@ -417,7 +437,8 @@ public final class BuiltinRegister {
 		registerBuiltin(new YearFromDateBuiltin(t1, t2));
 		registerBuiltin(new YearMonthDurationAddBuiltin(t1, t2, t3));
 		registerBuiltin(new YearMonthDurationDivideBuiltin(t1, t2, t3));
-		registerBuiltin(new YearMonthDurationDivideByYearMonthDurationBuiltin(t1, t2, t3));
+		registerBuiltin(new YearMonthDurationDivideByYearMonthDurationBuiltin(
+				t1, t2, t3));
 		registerBuiltin(new YearMonthDurationGreaterBuiltin(t1, t2));
 		registerBuiltin(new YearMonthDurationGreaterEqualBuiltin(t1, t2));
 		registerBuiltin(new YearMonthDurationLessBuiltin(t1, t2));
@@ -426,7 +447,7 @@ public final class BuiltinRegister {
 		registerBuiltin(new YearMonthDurationSubtractBuiltin(t1, t2, t3));
 		registerBuiltin(new YearPartBuiltin(t1, t2));
 		registerBuiltin(new YearsFromDurationBuiltin(t1, t2));
-		
+
 		// Numeric built-ins.
 		registerBuiltin(new NumericAddBuiltin(t1, t2, t3));
 		registerBuiltin(new NumericDivideBuiltin(t1, t2, t3));
@@ -440,45 +461,76 @@ public final class BuiltinRegister {
 		registerBuiltin(new NumericMultiplyBuiltin(t1, t2, t3));
 		registerBuiltin(new NumericNotEqualBuiltin(t1, t2));
 		registerBuiltin(new NumericSubtractBuiltin(t1, t2, t3));
-		
+
 		registerBuiltin(new EncodeForUriBuiltin(t1, t2));
-		
+
 		// String built-ins.
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.LangFromPlainLiteralBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.PlainLiteralCompareBuiltin(t1, t2, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.PlainLiteralFromStringBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.PlainLiteralFromStringLangBuiltin(t1, t2, t3));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.PlainLiteralLengthBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringCompareBuiltin(t1, t2, t3));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringConcatBuiltin(t1, t2, t3));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringContainsBuiltin(t1, t2, t3));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringContainsWithoutCollationBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringEndsWithBuiltin(t1, t2, t3));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringEndsWithWithoutCollationBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringEscapeHtmlUriBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringFromPlainLiteralBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringIriToUriBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringJoinBuiltin(t1, t2, t3, t4));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringLengthBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringMatchesBuiltin(t1, t2, t3));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringMatchesWithoutFlagsBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringReplaceBuiltin(t1, t2, t3, t4, t5));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringReplaceWithoutFlagsBuiltin(t1, t2, t3, t4));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringStartsWithBuiltin(t1, t2, t3));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringStartsWithWithoutCollationBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringSubstringAfterBuiltin(t1, t2, t3, t4));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringSubstringAfterWithoutCollationBuiltin(t1, t2, t3));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringSubstringBeforeBuiltin(t1, t2, t3, t4));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringSubstringBeforeWithoutCollationBuiltin(t1, t2, t3));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringSubstringBuiltin(t1, t2, t3, t4));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringSubstringUntilEndBuiltin(t1, t2, t3));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringToLowerBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringToUpperBuiltin(t1, t2));
-		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringUriEncodeBuiltin(t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.LangFromPlainLiteralBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.PlainLiteralCompareBuiltin(
+				t1, t2, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.PlainLiteralFromStringBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.PlainLiteralFromStringLangBuiltin(
+				t1, t2, t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.PlainLiteralLengthBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringCompareBuiltin(
+				t1, t2, t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringConcatBuiltin(
+				t1, t2, t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringContainsBuiltin(
+				t1, t2, t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringContainsWithoutCollationBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringEndsWithBuiltin(
+				t1, t2, t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringEndsWithWithoutCollationBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringEscapeHtmlUriBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringFromPlainLiteralBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringIriToUriBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringJoinBuiltin(
+				t1, t2, t3, t4));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringLengthBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringMatchesBuiltin(
+				t1, t2, t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringMatchesWithoutFlagsBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringReplaceBuiltin(
+				t1, t2, t3, t4, t5));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringReplaceWithoutFlagsBuiltin(
+				t1, t2, t3, t4));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringStartsWithBuiltin(
+				t1, t2, t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringStartsWithWithoutCollationBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringSubstringAfterBuiltin(
+				t1, t2, t3, t4));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringSubstringAfterWithoutCollationBuiltin(
+				t1, t2, t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringSubstringBeforeBuiltin(
+				t1, t2, t3, t4));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringSubstringBeforeWithoutCollationBuiltin(
+				t1, t2, t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringSubstringBuiltin(
+				t1, t2, t3, t4));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringSubstringUntilEndBuiltin(
+				t1, t2, t3));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringToLowerBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringToUpperBuiltin(
+				t1, t2));
+		registerBuiltin(new at.sti2.streamingiris.builtins.string.StringUriEncodeBuiltin(
+				t1, t2));
 		registerBuiltin(new XMLLiteralEqualBuiltin(t1, t2));
 		registerBuiltin(new XMLLiteralNotEqualBuiltin(t1, t2));
 		registerBuiltin(new MatchesLanguageRangeBuiltin(t1, t2));
-		
+
 		// Boolean built-ins.
 		registerBuiltin(new BooleanEqualBuiltin(t1, t2));
 		registerBuiltin(new BooleanGreaterBuiltin(t1, t2));
@@ -487,36 +539,46 @@ public final class BuiltinRegister {
 	}
 
 	/**
-	 * Registers a single built-in.
-	 * Already registered built-ins will be overwritten.
-	 * @param builtin an instance of the built-in to register
-	 * @throws IllegalArgumentException if the class is <code>null</code>
+	 * Registers a single built-in. Already registered built-ins will be
+	 * overwritten.
+	 * 
+	 * @param builtin
+	 *            an instance of the built-in to register
+	 * @throws IllegalArgumentException
+	 *             if the class is <code>null</code>
 	 */
-	public void registerBuiltin( IBuiltinAtom builtin ) {
-		if( builtin == null )
-			throw new IllegalArgumentException( "The builtin atom must not be null" );
+	public void registerBuiltin(IBuiltinAtom builtin) {
+		if (builtin == null)
+			throw new IllegalArgumentException(
+					"The builtin atom must not be null");
 
 		final Class<?> c = builtin.getClass();
-		
+
 		final RegisterEntry ent = new RegisterEntry(c, builtin.getPredicate());
 		reg.put(ent.getName(), ent);
 	}
 
 	/**
 	 * De-registers a single built-in.
-	 * @param builtin an instance of the built-in to de-register
-	 * @throws IllegalArgumentException if the class is <code>null</code>
+	 * 
+	 * @param builtin
+	 *            an instance of the built-in to de-register
+	 * @throws IllegalArgumentException
+	 *             if the class is <code>null</code>
 	 */
 	public void unregisterBuiltin(IBuiltinAtom builtin) {
-		if( builtin == null )
-			throw new IllegalArgumentException( "The builtin atom must not be null" );
-		
-		reg.remove( builtin.getPredicate() );
+		if (builtin == null)
+			throw new IllegalArgumentException(
+					"The builtin atom must not be null");
+
+		reg.remove(builtin.getPredicate());
 	}
 
 	/**
 	 * Returns the arity of a registered built-in.
-	 * @param s the name (predicate symbol) of the built-in
+	 * 
+	 * @param s
+	 *            the name (predicate symbol) of the built-in
 	 * @return the arity, or -1 if such a built-in hasn't been registered yet
 	 */
 	public int getBuiltinArity(final String s) {
@@ -526,8 +588,11 @@ public final class BuiltinRegister {
 
 	/**
 	 * Returns the class of a registered built-in.
-	 * @param s the name (predicate symbol) of the built-in
-	 * @return the class, or <code>null</code> if such a built-in hasn't been registered yet
+	 * 
+	 * @param s
+	 *            the name (predicate symbol) of the built-in
+	 * @return the class, or <code>null</code> if such a built-in hasn't been
+	 *         registered yet
 	 */
 	public Class<?> getBuiltinClass(final String s) {
 		final RegisterEntry re = reg.get(s);
@@ -536,14 +601,15 @@ public final class BuiltinRegister {
 
 	/**
 	 * <p>
-	 * Returns a short description of this object. <b>The format of
-	 * the returned string is undocumented and subject to change.</b>
+	 * Returns a short description of this object. <b>The format of the returned
+	 * string is undocumented and subject to change.</b>
 	 * </p>
 	 * <p>
 	 * An example return string could be: <code>[ADD[3,
 	 * org.deri.iris.builtins.AddBuiltin],SUBTRACT[3,
 	 * org.deri.builtins.SubtractBuiltin]]</code>
 	 * </p>
+	 * 
 	 * @return the description
 	 */
 	public String toString() {
@@ -574,10 +640,15 @@ public final class BuiltinRegister {
 
 		/**
 		 * Constructs a registry entry.
-		 * @param c the class of the built-in
-		 * @param p the predicate of the built-in
-		 * @throws NullPointerException if the class is <code>null</code>
-		 * @throws NullPointerException if the predicate is <code>null</code>
+		 * 
+		 * @param c
+		 *            the class of the built-in
+		 * @param p
+		 *            the predicate of the built-in
+		 * @throws NullPointerException
+		 *             if the class is <code>null</code>
+		 * @throws NullPointerException
+		 *             if the predicate is <code>null</code>
 		 */
 		public RegisterEntry(final Class<?> c, final IPredicate p) {
 			if (c == null) {
@@ -592,6 +663,7 @@ public final class BuiltinRegister {
 
 		/**
 		 * Returns the class of the built-in.
+		 * 
 		 * @return the class
 		 */
 		public Class<?> getBuiltinClass() {
@@ -600,6 +672,7 @@ public final class BuiltinRegister {
 
 		/**
 		 * Returns the arity of the built-in.
+		 * 
 		 * @return the arity
 		 */
 		public int getArity() {
@@ -608,6 +681,7 @@ public final class BuiltinRegister {
 
 		/**
 		 * Returns the name (predicate symbol) of the built-in.
+		 * 
 		 * @return the name
 		 */
 		public String getName() {
@@ -616,17 +690,19 @@ public final class BuiltinRegister {
 
 		/**
 		 * <p>
-		 * Returns a short description of this object. <b>The format of
-		 * the returned string is undocumented and subject to change.</b>
+		 * Returns a short description of this object. <b>The format of the
+		 * returned string is undocumented and subject to change.</b>
 		 * </p>
 		 * <p>
 		 * An example return string could be: <code>ADD[3,
 		 * org.deri.iris.builtins.AddBuiltin)</code>
 		 * </p>
+		 * 
 		 * @return the description
 		 */
 		public String toString() {
-			return getName() + "[" + getArity() + ", " + getBuiltinClass() + "]";
+			return getName() + "[" + getArity() + ", " + getBuiltinClass()
+					+ "]";
 		}
 
 		public boolean equals(final Object o) {

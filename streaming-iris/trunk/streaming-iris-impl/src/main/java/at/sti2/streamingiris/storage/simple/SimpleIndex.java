@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.storage.simple;
 
 import java.util.ArrayList;
@@ -29,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 
 import at.sti2.streamingiris.api.basics.ITuple;
 import at.sti2.streamingiris.api.terms.ITerm;
@@ -46,10 +23,12 @@ public class SimpleIndex implements IIndex {
 	/**
 	 * Creates an index on the given relation, on the specified term indices.
 	 * 
-	 * @param relation The relation to index.
-	 * @param indices The term indices using zero-based indexing. Each index
-	 *            value must be greater than or equal to zero and less than the
-	 *            arity if the relation.
+	 * @param relation
+	 *            The relation to index.
+	 * @param indices
+	 *            The term indices using zero-based indexing. Each index value
+	 *            must be greater than or equal to zero and less than the arity
+	 *            if the relation.
 	 */
 	SimpleIndex(IRelation relation, int... indices) {
 		this(relation, new IgnoreTermEquivalence(), indices);
@@ -58,11 +37,14 @@ public class SimpleIndex implements IIndex {
 	/**
 	 * Creates an index on the given relation, on the specified term indices.
 	 * 
-	 * @param relation The relation to index.
-	 * @param indices The term indices using zero-based indexing. Each index
-	 *            value must be greater than or equal to zero and less than the
-	 *            arity if the relation.
-	 * @param equivalentTerms The equivalent terms.
+	 * @param relation
+	 *            The relation to index.
+	 * @param indices
+	 *            The term indices using zero-based indexing. Each index value
+	 *            must be greater than or equal to zero and less than the arity
+	 *            if the relation.
+	 * @param equivalentTerms
+	 *            The equivalent terms.
 	 */
 	SimpleIndex(IRelation relation, IEquivalentTerms equivalentTerms,
 			int... indices) {
@@ -98,11 +80,11 @@ public class SimpleIndex implements IIndex {
 		// to check all keys and update them if any change to the term
 		// equivalence relation has been applied.
 		int hashCode = mEquivalentTerms.hashCode();
-		
+
 		if (hashCode != mPreviousHashCode) {
 			// Update the keys in the map.
 			updateKeys();
-			
+
 			// Reset the index of the last checked tuple.
 			mLastIndexOfView = 0;
 
@@ -170,7 +152,8 @@ public class SimpleIndex implements IIndex {
 	/**
 	 * Make a key from the given tuples and the known term index positions.
 	 * 
-	 * @param tuple The tuples
+	 * @param tuple
+	 *            The tuples
 	 * @return
 	 */
 	private List<ITerm> makeKey(ITuple tuple) {

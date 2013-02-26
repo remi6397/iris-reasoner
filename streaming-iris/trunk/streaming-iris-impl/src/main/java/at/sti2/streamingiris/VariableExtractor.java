@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris;
 
 import java.util.ArrayList;
@@ -29,7 +7,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 
 import at.sti2.streamingiris.api.basics.ILiteral;
 import at.sti2.streamingiris.api.basics.ITuple;
@@ -44,6 +21,7 @@ import at.sti2.streamingiris.api.terms.IVariable;
  * <p>
  * $Id: VariableExtractor.java,v 1.1 2007-10-30 09:29:25 poettler_ric Exp $
  * </p>
+ * 
  * @author Richard Pöttler (richard dot poettler at deri dot at)
  * @version $Revision: 1.1 $
  */
@@ -55,18 +33,23 @@ public class VariableExtractor {
 
 	/**
 	 * Retrieves the variables out of a collection of terms.
-	 * @param from the terms
-	 * @param to the collection where to add the variables to
+	 * 
+	 * @param from
+	 *            the terms
+	 * @param to
+	 *            the collection where to add the variables to
 	 * @return the reference to <code>to</code>
-	 * @throws IllegalArgumentException if <code>t</code> is
-	 * <code>null</code>
-	 * @throws IllegalArgumentException if <code>to</code> is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if <code>t</code> is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if <code>to</code> is <code>null</code>
 	 */
-	public static Collection<IVariable> getTermVariables(final Collection<? extends ITerm> from, 
+	public static Collection<IVariable> getTermVariables(
+			final Collection<? extends ITerm> from,
 			final Collection<IVariable> to) {
 		if (from == null) {
-			throw new IllegalArgumentException("The term collection must not be null");
+			throw new IllegalArgumentException(
+					"The term collection must not be null");
 		}
 
 		for (final ITerm term : from) {
@@ -81,18 +64,23 @@ public class VariableExtractor {
 
 	/**
 	 * Retrieves the variables out of a collection of tuples.
-	 * @param from the tuples
-	 * @param to the collection where to add the variables to
+	 * 
+	 * @param from
+	 *            the tuples
+	 * @param to
+	 *            the collection where to add the variables to
 	 * @return the reference to <code>to</code>
-	 * @throws IllegalArgumentException if <code>t</code> is
-	 * <code>null</code>
-	 * @throws IllegalArgumentException if <code>to</code> is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if <code>t</code> is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if <code>to</code> is <code>null</code>
 	 */
-	public static Collection<IVariable> getTupleVariables(final Collection<? extends ITuple> from, 
+	public static Collection<IVariable> getTupleVariables(
+			final Collection<? extends ITuple> from,
 			final Collection<IVariable> to) {
 		if (from == null) {
-			throw new IllegalArgumentException("The tuple collection must not be null");
+			throw new IllegalArgumentException(
+					"The tuple collection must not be null");
 		}
 
 		for (final ITuple tuple : from) {
@@ -103,36 +91,46 @@ public class VariableExtractor {
 
 	/**
 	 * Retrieves the variables out of a collection of literals.
-	 * @param from the literals
-	 * @param to the collection where to add the variables to
+	 * 
+	 * @param from
+	 *            the literals
+	 * @param to
+	 *            the collection where to add the variables to
 	 * @return the reference to <code>to</code>
-	 * @throws IllegalArgumentException if <code>t</code> is
-	 * <code>null</code>
-	 * @throws IllegalArgumentException if <code>to</code> is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if <code>t</code> is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if <code>to</code> is <code>null</code>
 	 */
-	public static Collection<IVariable> getLiteralVariables(final Collection<? extends ILiteral> from, 
+	public static Collection<IVariable> getLiteralVariables(
+			final Collection<? extends ILiteral> from,
 			final Collection<IVariable> to) {
 		if (from == null) {
-			throw new IllegalArgumentException("The literal collection must not be null");
+			throw new IllegalArgumentException(
+					"The literal collection must not be null");
 		}
 
 		for (final ILiteral literal : from) {
-			getTupleVariables(Collections.singleton(literal.getAtom().getTuple()), to);
+			getTupleVariables(
+					Collections.singleton(literal.getAtom().getTuple()), to);
 		}
 		return to;
 	}
 
 	/**
 	 * Retrieves the variables out of a collection of terms.
-	 * @param t the terms
+	 * 
+	 * @param t
+	 *            the terms
 	 * @return the list of variables
-	 * @throws IllegalArgumentException if the collection is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the collection is <code>null</code>
 	 */
-	public static List<IVariable> getTermVariablesList(final Collection<? extends ITerm> t) {
+	public static List<IVariable> getTermVariablesList(
+			final Collection<? extends ITerm> t) {
 		if (t == null) {
-			throw new IllegalArgumentException("The term collection must not be null");
+			throw new IllegalArgumentException(
+					"The term collection must not be null");
 		}
 
 		return (List<IVariable>) getTermVariables(t, new ArrayList<IVariable>());
@@ -140,44 +138,58 @@ public class VariableExtractor {
 
 	/**
 	 * Retrieves the variables out of a collection of tuples.
-	 * @param t the tuples
+	 * 
+	 * @param t
+	 *            the tuples
 	 * @return the list of variables
-	 * @throws IllegalArgumentException if the collection is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the collection is <code>null</code>
 	 */
-	public static List<IVariable> getTupleVariablesList(final Collection<? extends ITuple> t) {
+	public static List<IVariable> getTupleVariablesList(
+			final Collection<? extends ITuple> t) {
 		if (t == null) {
-			throw new IllegalArgumentException("The tuple collection must not be null");
+			throw new IllegalArgumentException(
+					"The tuple collection must not be null");
 		}
 
-		return (List<IVariable>) getTupleVariables(t, new ArrayList<IVariable>());
+		return (List<IVariable>) getTupleVariables(t,
+				new ArrayList<IVariable>());
 	}
 
 	/**
 	 * Retrieves the variables out of a collection of literals.
-	 * @param t the literals
+	 * 
+	 * @param t
+	 *            the literals
 	 * @return the list of variables
-	 * @throws IllegalArgumentException if the collection is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the collection is <code>null</code>
 	 */
-	public static List<IVariable> getLiteralVariablesList(final Collection<? extends ILiteral> l) {
+	public static List<IVariable> getLiteralVariablesList(
+			final Collection<? extends ILiteral> l) {
 		if (l == null) {
-			throw new IllegalArgumentException("The literal collection must not be null");
+			throw new IllegalArgumentException(
+					"The literal collection must not be null");
 		}
 
-		return (List<IVariable>) getLiteralVariables(l, new ArrayList<IVariable>());
+		return (List<IVariable>) getLiteralVariables(l,
+				new ArrayList<IVariable>());
 	}
 
 	/**
 	 * Retrieves the variables out of a collection of terms.
-	 * @param t the terms
+	 * 
+	 * @param t
+	 *            the terms
 	 * @return the list of variables
-	 * @throws IllegalArgumentException if the collection is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the collection is <code>null</code>
 	 */
-	public static Set<IVariable> getTermVariables(final Collection<? extends ITerm> t) {
+	public static Set<IVariable> getTermVariables(
+			final Collection<? extends ITerm> t) {
 		if (t == null) {
-			throw new IllegalArgumentException("The term collection must not be null");
+			throw new IllegalArgumentException(
+					"The term collection must not be null");
 		}
 
 		return (Set<IVariable>) getTermVariables(t, new HashSet<IVariable>());
@@ -185,14 +197,18 @@ public class VariableExtractor {
 
 	/**
 	 * Retrieves the variables out of a collection of tuples.
-	 * @param t the tuples
+	 * 
+	 * @param t
+	 *            the tuples
 	 * @return the list of variables
-	 * @throws IllegalArgumentException if the collection is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the collection is <code>null</code>
 	 */
-	public static Set<IVariable> getTupleVariables(final Collection<? extends ITuple> t) {
+	public static Set<IVariable> getTupleVariables(
+			final Collection<? extends ITuple> t) {
 		if (t == null) {
-			throw new IllegalArgumentException("The tuple collection must not be null");
+			throw new IllegalArgumentException(
+					"The tuple collection must not be null");
 		}
 
 		return (Set<IVariable>) getTupleVariables(t, new HashSet<IVariable>());
@@ -200,14 +216,18 @@ public class VariableExtractor {
 
 	/**
 	 * Retrieves the variables out of a collection of literals.
-	 * @param t the literals
+	 * 
+	 * @param t
+	 *            the literals
 	 * @return the list of variables
-	 * @throws IllegalArgumentException if the collection is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the collection is <code>null</code>
 	 */
-	public static Set<IVariable> getLiteralVariables(final Collection<? extends ILiteral> l) {
+	public static Set<IVariable> getLiteralVariables(
+			final Collection<? extends ILiteral> l) {
 		if (l == null) {
-			throw new IllegalArgumentException("The literal collection must not be null");
+			throw new IllegalArgumentException(
+					"The literal collection must not be null");
 		}
 
 		return (Set<IVariable>) getLiteralVariables(l, new HashSet<IVariable>());
@@ -215,14 +235,17 @@ public class VariableExtractor {
 
 	/**
 	 * Retrieves the variables out of a array of terms.
-	 * @param t the terms
+	 * 
+	 * @param t
+	 *            the terms
 	 * @return the list of variables
-	 * @throws IllegalArgumentException if the collection is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the collection is <code>null</code>
 	 */
 	public static List<IVariable> getVariablesList(final ITerm... t) {
 		if (t == null) {
-			throw new IllegalArgumentException("The term array must not be null");
+			throw new IllegalArgumentException(
+					"The term array must not be null");
 		}
 
 		return getTermVariablesList(Arrays.asList(t));
@@ -230,14 +253,17 @@ public class VariableExtractor {
 
 	/**
 	 * Retrieves the variables out of a array of tuples.
-	 * @param t the tuples
+	 * 
+	 * @param t
+	 *            the tuples
 	 * @return the list of variables
-	 * @throws IllegalArgumentException if the collection is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the collection is <code>null</code>
 	 */
 	public static List<IVariable> getVariablesList(final ITuple... t) {
 		if (t == null) {
-			throw new IllegalArgumentException("The tuple array must not be null");
+			throw new IllegalArgumentException(
+					"The tuple array must not be null");
 		}
 
 		return getTupleVariablesList(Arrays.asList(t));
@@ -245,14 +271,17 @@ public class VariableExtractor {
 
 	/**
 	 * Retrieves the variables out of a array of literals.
-	 * @param t the literals
+	 * 
+	 * @param t
+	 *            the literals
 	 * @return the list of variables
-	 * @throws IllegalArgumentException if the collection is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the collection is <code>null</code>
 	 */
 	public static List<IVariable> getVariablesList(final ILiteral... l) {
 		if (l == null) {
-			throw new IllegalArgumentException("The literal array must not be null");
+			throw new IllegalArgumentException(
+					"The literal array must not be null");
 		}
 
 		return getLiteralVariablesList(Arrays.asList(l));
@@ -260,14 +289,17 @@ public class VariableExtractor {
 
 	/**
 	 * Retrieves the variables out of a array of terms.
-	 * @param t the terms
+	 * 
+	 * @param t
+	 *            the terms
 	 * @return the list of variables
-	 * @throws IllegalArgumentException if the collection is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the collection is <code>null</code>
 	 */
 	public static Set<IVariable> getVariables(final ITerm... t) {
 		if (t == null) {
-			throw new IllegalArgumentException("The term array must not be null");
+			throw new IllegalArgumentException(
+					"The term array must not be null");
 		}
 
 		return getTermVariables(Arrays.asList(t));
@@ -275,14 +307,17 @@ public class VariableExtractor {
 
 	/**
 	 * Retrieves the variables out of a array of tuples.
-	 * @param t the tuples
+	 * 
+	 * @param t
+	 *            the tuples
 	 * @return the list of variables
-	 * @throws IllegalArgumentException if the collection is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the collection is <code>null</code>
 	 */
 	public static Set<IVariable> getVariables(final ITuple... t) {
 		if (t == null) {
-			throw new IllegalArgumentException("The tuple array must not be null");
+			throw new IllegalArgumentException(
+					"The tuple array must not be null");
 		}
 
 		return getTupleVariables(Arrays.asList(t));
@@ -290,14 +325,17 @@ public class VariableExtractor {
 
 	/**
 	 * Retrieves the variables out of a array of literals.
-	 * @param t the literals
+	 * 
+	 * @param t
+	 *            the literals
 	 * @return the list of variables
-	 * @throws IllegalArgumentException if the collection is
-	 * <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if the collection is <code>null</code>
 	 */
 	public static Set<IVariable> getVariables(final ILiteral... l) {
 		if (l == null) {
-			throw new IllegalArgumentException("The literal array must not be null");
+			throw new IllegalArgumentException(
+					"The literal array must not be null");
 		}
 
 		return getLiteralVariables(Arrays.asList(l));

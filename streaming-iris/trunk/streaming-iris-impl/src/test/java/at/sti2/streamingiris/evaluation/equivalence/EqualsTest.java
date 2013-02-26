@@ -1,30 +1,7 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2009 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.evaluation.equivalence;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 
 import at.sti2.streamingiris.evaluation.ProgramEvaluationTest;
 import at.sti2.streamingiris.rules.compiler.Helper;
@@ -52,7 +29,7 @@ public class EqualsTest extends ProgramEvaluationTest {
 		// Create rules.
 		expressions.add("?X = ?Y :- a(?X), b(?Y), ?X = 'A', ?Y = 'B'.");
 		expressions.add("?X = ?Y :- b(?Y), ?X = 'A', ?Y = 'B'.");
-		
+
 		expressions.add("'Peter' = 'Peter_Griffin' :- .");
 		expressions.add("unsat('foo') :- 'Peter' = 'Peter_Griffin'.");
 
@@ -64,11 +41,11 @@ public class EqualsTest extends ProgramEvaluationTest {
 
 		IRelation relation = evaluate("?- a(?X).");
 
-		assertTrue("A not in relation.", relation.contains(Helper
-				.createConstantTuple("A")));
-		assertTrue("B not in relation.", relation.contains(Helper
-				.createConstantTuple("B")));
-		
+		assertTrue("A not in relation.",
+				relation.contains(Helper.createConstantTuple("A")));
+		assertTrue("B not in relation.",
+				relation.contains(Helper.createConstantTuple("B")));
+
 		assertEquals("Relation does not have correct size", 2, relation.size());
 	}
 
@@ -77,22 +54,22 @@ public class EqualsTest extends ProgramEvaluationTest {
 
 		IRelation relation = evaluate("?- b(?X).");
 
-		assertTrue("A not in relation.", relation.contains(Helper
-				.createConstantTuple("A")));
-		assertTrue("B not in relation.", relation.contains(Helper
-				.createConstantTuple("B")));
-		
+		assertTrue("A not in relation.",
+				relation.contains(Helper.createConstantTuple("A")));
+		assertTrue("B not in relation.",
+				relation.contains(Helper.createConstantTuple("B")));
+
 		assertEquals("Relation does not have correct size", 2, relation.size());
 	}
-	
+
 	public void testUnsat() throws Exception {
 		// The result should be: foo
 
 		IRelation relation = evaluate("?- unsat(?X).");
 
-		assertTrue("foo not in relation.", relation.contains(Helper
-				.createConstantTuple("foo")));
-		
+		assertTrue("foo not in relation.",
+				relation.contains(Helper.createConstantTuple("foo")));
+
 		assertEquals("Relation does not have correct size", 1, relation.size());
 	}
 

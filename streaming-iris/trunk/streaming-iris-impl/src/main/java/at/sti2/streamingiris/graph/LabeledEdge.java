@@ -1,25 +1,3 @@
-/*
- * Integrated Rule Inference System (IRIS):
- * An extensible rule inference system for datalog with extensions.
- * 
- * Copyright (C) 2008 Semantic Technology Institute (STI) Innsbruck, 
- * University of Innsbruck, Technikerstrasse 21a, 6020 Innsbruck, Austria.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
- */
 package at.sti2.streamingiris.graph;
 
 import org.jgrapht.graph.DefaultEdge;
@@ -45,7 +23,8 @@ import at.sti2.streamingiris.api.graph.ILabeledEdge;
  * @author Richard Pöttler (richard dot poettler at deri dot org)
  * @version $Revision: 1.2 $
  */
-public class LabeledEdge<V, L> extends DefaultEdge implements ILabeledEdge<V, L> {
+public class LabeledEdge<V, L> extends DefaultEdge implements
+		ILabeledEdge<V, L> {
 
 	/** Label of this edge. */
 	private L label;
@@ -59,10 +38,12 @@ public class LabeledEdge<V, L> extends DefaultEdge implements ILabeledEdge<V, L>
 	/**
 	 * A constructor which sets the source, taget and the label.
 	 * 
-	 * @param source the source vertex
-	 * @param target the target vertex
-	 * @throws NullPointerException if the source or the tages are
-	 * <code>null</code>
+	 * @param source
+	 *            the source vertex
+	 * @param target
+	 *            the target vertex
+	 * @throws NullPointerException
+	 *             if the source or the tages are <code>null</code>
 	 */
 	public LabeledEdge(final V source, final V target) {
 		this(source, target, null);
@@ -71,15 +52,19 @@ public class LabeledEdge<V, L> extends DefaultEdge implements ILabeledEdge<V, L>
 	/**
 	 * A constructor which sets the source, taget and the label.
 	 * 
-	 * @param source the source vertex
-	 * @param target the target vertex
-	 * @param label the label to set
-	 * @throws NullPointerException if the source or the tages are
-	 * <code>null</code>
+	 * @param source
+	 *            the source vertex
+	 * @param target
+	 *            the target vertex
+	 * @param label
+	 *            the label to set
+	 * @throws NullPointerException
+	 *             if the source or the tages are <code>null</code>
 	 */
 	public LabeledEdge(final V source, final V target, final L label) {
 		if ((source == null) || (target == null)) {
-			throw new NullPointerException("The souece and the target must not be null");
+			throw new NullPointerException(
+					"The souece and the target must not be null");
 		}
 		this.label = label;
 		this.source = source;
@@ -119,7 +104,7 @@ public class LabeledEdge<V, L> extends DefaultEdge implements ILabeledEdge<V, L>
 		if (!(o instanceof LabeledEdge)) {
 			return false;
 		}
-		LabeledEdge<?,?> le = (LabeledEdge<?,?>) o;
+		LabeledEdge<?, ?> le = (LabeledEdge<?, ?>) o;
 
 		return le.getSource().equals(getSource())
 				&& le.getTarget().equals(getTarget())
@@ -140,7 +125,8 @@ public class LabeledEdge<V, L> extends DefaultEdge implements ILabeledEdge<V, L>
 	 * <b>The subject of the stringrepresentation is to change.</b>
 	 * </p>
 	 * <p>
-	 * An example String could be: <code>source->(label)->target</code>.</p>
+	 * An example String could be: <code>source->(label)->target</code>.
+	 * </p>
 	 * 
 	 * @return the string representation
 	 */
